@@ -31,3 +31,5 @@ Name | Mobile | Email | Development OS/Toolchain
 -:|:-:|:-|-|
 Bahety Arjavi | 81209564 | arjavibahety@gmail.com | Windows 10/Visual Studio 2022
 Johanna | 82860079 | johannagwan@gmail.com | Windows 10/Visual Studio 2019
+Roland | 85002834 | rolandyuwy@gmail.com | Windows 10/Visual Studio 2019
+
