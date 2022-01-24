@@ -34,4 +34,4 @@ Johanna | 82860079 | johannagwan@gmail.com | Windows 10/Visual Studio 2019
 Roland | 85002834 | rolandyuwy@gmail.com | Windows 10/Visual Studio 2019
 Alvin | 96320138 | alvinchee98@gmail.com | Windows 10/Visual Studio 2019
 Brandon | 98609998 | brandonfoongyankai@gmail.com | Windows 10/Visual Studio 2022
-Brandon | 97642882 | donavanlim28@gmail.com | Windows 11/Visual Studio 2019
+Donavan | 97642882 | donavanlim28@gmail.com | Windows 11/Visual Studio 2019
