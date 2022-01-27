@@ -6,7 +6,7 @@
 using namespace std;
 
 
-String processQuery (Query query) {
+string processQuery (Query query) {
 	return "hi";
 }
 
