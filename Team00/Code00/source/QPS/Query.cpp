@@ -7,7 +7,7 @@ void Query::setQuery(string userQuery)
     query = userQuery;
 }
 
-void Query::getQuery()
+string Query::getQuery()
 {
     return query;
 }

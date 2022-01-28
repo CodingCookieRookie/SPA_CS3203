@@ -3,11 +3,13 @@
 #include <string>
 #include <vector>
 
+#include"Query.h"
+
 using namespace std;
 
 
-string processQuery (Query query) {
-	return "hi";
+string processQuery (string query) {
+	return "success";
 }
 
 
