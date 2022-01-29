@@ -2,7 +2,6 @@
 using namespace std;
 
 #include "PQLTokeniser.h"
-#include "PQLDEToken.cpp"
 
 const string Select = "Select";
 
