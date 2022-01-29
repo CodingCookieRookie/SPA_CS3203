@@ -3,7 +3,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=c++,windows,visualstudio,qt,qtcreator
 
 ### Our own ###
-/Team00/Code00/AutoTester/AutoTester.vcxproj
+./Team00/Code00/AutoTester/AutoTester.vcxproj
 
 ### C++ ###
 # Prerequisites
