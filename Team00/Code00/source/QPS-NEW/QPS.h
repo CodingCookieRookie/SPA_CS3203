@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "Query.h"
+#include <vector>
 
 using namespace std;
-string processQuery(string query);
+string processQuery(vector<string> userQuery);

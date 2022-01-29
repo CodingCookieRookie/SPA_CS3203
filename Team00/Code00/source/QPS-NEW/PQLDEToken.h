@@ -1,3 +1,5 @@
+#pragma once
+
 using namespace std;
 
 #include <iostream>
@@ -13,5 +15,8 @@ private:
 public:
 	//void setPQLDEToken(string);
 	string getPQLDETokenString();
-	PQLDEToken getPQLDEToken(string);
+	void setSynonym(string s);
+	void setDesignEntity(string s);
+	static PQLDEToken getPQLDEToken(string);
+	
 };

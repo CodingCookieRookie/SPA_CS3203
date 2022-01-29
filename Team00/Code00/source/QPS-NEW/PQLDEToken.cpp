@@ -1,9 +1,8 @@
+#pragma once
 
 using namespace std;
 
 #include "PQLDEToken.h"
-#include "DesignEntity.h"
-
 
 //void PQLDEToken::setPQLDEToken(string userQuery)
 //{
@@ -13,6 +12,14 @@ using namespace std;
 //}
 string PQLDEToken::getPQLDETokenString() {
     return "Entity: " + designEntity + " synonym: " + synonym;
+}
+
+void PQLDEToken::setDesignEntity(string de) {
+    designEntity = de;
+}
+
+void PQLDEToken::setSynonym(string s) {
+    synonym = s;
 }
 
 PQLDEToken PQLDEToken::getPQLDEToken(string deString)
@@ -30,9 +37,9 @@ PQLDEToken PQLDEToken::getPQLDEToken(string deString)
         cout << "spaceIndex: " << spaceIndex << "\n";
         string word = deString.substr(index, spaceIndex);
         if (checkIfWordIsDesignEntity(word)) {   // means it is a designEntity
-            deToken.designEntity = word;
+            deToken.setDesignEntity(word);
         } else {
-            deToken.synonym = word;
+            deToken.setSynonym(word);
         }
         if (spaceIndex < 0) break; // means that this is the last word
         deString = deString.substr(spaceIndex);

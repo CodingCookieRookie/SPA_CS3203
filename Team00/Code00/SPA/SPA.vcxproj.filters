@@ -30,10 +30,10 @@
     <ClCompile Include="..\source\QPS-NEW\QPS.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\QPS-NEW\PQLDEToken.cpp">
+    <ClCompile Include="..\source\QPS-NEW\PQLTokeniser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\QPS-NEW\PQLTokeniser.cpp">
+    <ClCompile Include="..\source\QPS-NEW\PQLDEToken.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -50,10 +50,10 @@
     <ClInclude Include="..\source\QPS-NEW\DesignEntity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\QPS-NEW\PQLDEToken.h">
+    <ClInclude Include="..\source\QPS-NEW\PQLTokeniser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\QPS-NEW\PQLTokeniser.h">
+    <ClInclude Include="..\source\QPS-NEW\PQLDEToken.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

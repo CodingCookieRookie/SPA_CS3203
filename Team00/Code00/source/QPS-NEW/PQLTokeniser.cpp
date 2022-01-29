@@ -2,11 +2,11 @@
 using namespace std;
 
 #include "PQLTokeniser.h"
-#include "PQLDEToken.h";
+#include "PQLDEToken.cpp"
 
 const string Select = "Select";
 
-vector<PQLDEToken> PQLTokeniser::tokeniseQuery(vector<string> userQuery)
+vector<PQLDEToken> tokeniseQuery(vector<string> userQuery)
 {
     // Combine all queries
     // Take the string from start until see the word 'Select' and Handle those as PQLDETokens
@@ -23,7 +23,7 @@ vector<PQLDEToken> PQLTokeniser::tokeniseQuery(vector<string> userQuery)
         // Select is found and statement is valid for now
         string deString = wholeQuery.substr(0, select);
         cout << "check deString: " << deString;
-        PQLDEToken deToken = getPQLDEToken(deString);
-       
+        PQLDETokens.push_back(PQLDEToken::getPQLDEToken(deString));
     }
+    return PQLDETokens;
 }
