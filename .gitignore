@@ -2,6 +2,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/c++,windows,visualstudio,qt,qtcreator
 # Edit at https://www.toptal.com/developers/gitignore?templates=c++,windows,visualstudio,qt,qtcreator
 
+### Our own ###
+\Team00\Code00\AutoTester\AutoTester.vcxproj
+
 ### C++ ###
 # Prerequisites
 *.d
