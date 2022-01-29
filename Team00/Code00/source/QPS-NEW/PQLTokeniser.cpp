@@ -24,7 +24,8 @@ vector<PQLDEToken> tokeniseQuery(vector<string> userQuery)
         cout << "check deString: " << entireDeString << "\n";
         size_t index = entireDeString.find(";");
         while (index != string::npos) {
-            string deString = entireDeString.substr(0, index);
+            size_t firstNonSpace = entireDeString.find_first_not_of(" ");   // to eliminate any trailing spaces at start of deString
+            string deString = entireDeString.substr(firstNonSpace, index);
             PQLDETokens.push_back(PQLDEToken::getPQLDEToken(deString));
             entireDeString = entireDeString.substr(index + 1);
             index = entireDeString.find(";");
