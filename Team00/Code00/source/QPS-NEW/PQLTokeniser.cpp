@@ -20,9 +20,15 @@ vector<PQLDEToken> tokeniseQuery(vector<string> userQuery)
         return PQLDETokens;
     } else {
         // Select is found and statement is valid for now
-        string deString = wholeQuery.substr(0, select);
-        cout << "check deString: " << deString;
-        PQLDETokens.push_back(PQLDEToken::getPQLDEToken(deString));
+        string entireDeString = wholeQuery.substr(0, select);
+        cout << "check deString: " << entireDeString << "\n";
+        size_t index = entireDeString.find(";");
+        while (index != string::npos) {
+            string deString = entireDeString.substr(0, index);
+            PQLDETokens.push_back(PQLDEToken::getPQLDEToken(deString));
+            entireDeString = entireDeString.substr(index + 1);
+            index = entireDeString.find(";");
+        }
     }
     return PQLDETokens;
 }
