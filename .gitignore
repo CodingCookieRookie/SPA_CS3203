@@ -2,9 +2,6 @@
 # Created by https://www.toptal.com/developers/gitignore/api/c++,windows,visualstudio,qt,qtcreator
 # Edit at https://www.toptal.com/developers/gitignore?templates=c++,windows,visualstudio,qt,qtcreator
 
-## Our own
-/Team00/Code00/AutoTester/AutoTester.vcxproj
-
 ### C++ ###
 # Prerequisites
 *.d
@@ -531,3 +528,7 @@ FodyWeavers.xsd
 # Additional files built by Visual Studio
 
 # End of https://www.toptal.com/developers/gitignore/api/c++,windows,visualstudio,qt,qtcreator
+Team00/Code00/IntegrationTesting/IntegrationTesting.vcxproj
+Team00/Code00/SPA/SPA.vcxproj
+Team00/Code00/UnitTesting/UnitTesting.vcxproj
+Team00/Code00/AutoTester/AutoTester.vcxproj
