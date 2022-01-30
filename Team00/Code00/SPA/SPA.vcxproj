@@ -15,10 +15,13 @@
     <ClCompile Include="..\source\Parser.cpp" />
     <ClCompile Include="..\source\PKB.cpp" />
     <ClCompile Include="..\source\TNode.cpp" />
+    <ClCompile Include="Entity.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\PKB.h" />
     <ClInclude Include="..\source\TNode.h" />
+    <ClInclude Include="Entity.h" />
+    <ClInclude Include="Types.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{DC21A1EA-D2C6-4D14-A2B4-E025B64BDE81}</ProjectGuid>
@@ -30,7 +33,7 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
