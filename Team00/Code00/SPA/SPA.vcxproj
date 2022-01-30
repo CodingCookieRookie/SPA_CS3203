@@ -14,10 +14,17 @@
     <ClCompile Include="..\source\DesignExtractor.cpp" />
     <ClCompile Include="..\source\Parser.cpp" />
     <ClCompile Include="..\source\PKB.cpp" />
+    <ClCompile Include="..\source\QPS-NEW\Lexer.cpp" />
+    <ClCompile Include="..\source\QPS-NEW\ParsedQuery.cpp" />
+    <ClCompile Include="..\source\QPS-NEW\PQLParser.cpp" />
     <ClCompile Include="..\source\TNode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\PKB.h" />
+    <ClInclude Include="..\source\QPS-NEW\Lexer.h" />
+    <ClInclude Include="..\source\QPS-NEW\ParsedQuery.h" />
+    <ClInclude Include="..\source\QPS-NEW\PQLParser.h" />
+    <ClInclude Include="..\source\QPS-NEW\QPSCommons.h" />
     <ClInclude Include="..\source\TNode.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
