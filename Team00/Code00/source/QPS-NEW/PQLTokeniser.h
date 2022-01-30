@@ -2,4 +2,7 @@
 #include <vector>
 #include "PQLDEToken.h"
 
-vector<PQLDEToken> tokeniseQuery(vector<string> query);
+void tokeniseQuery(vector<string> query);
+vector<PQLDEToken> getPQLDETokens();
+vector<string> getSynonyms();
+
