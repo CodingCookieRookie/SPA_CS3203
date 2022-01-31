@@ -1,7 +1,7 @@
 #include "ParsedQuery.h"
 
-ParsedQuery::ParsedQuery(std::vector<PQL_VARIABLE> allDeclarations, std::vector<std::string> columns)
-	: columns(columns) {
+ParsedQuery::ParsedQuery(const std::vector<PQL_VARIABLE>& allDeclarations,
+	const std::vector<std::string>& allColumns) {
 	for (const PQL_VARIABLE& variable : allDeclarations) {
 		PQL_VARIABLE_TYPE variableType = variable.first;
 		std::string variableName = variable.second;
@@ -10,6 +10,13 @@ ParsedQuery::ParsedQuery(std::vector<PQL_VARIABLE> allDeclarations, std::vector<
 			return;
 		}
 		declarations[variableName] = variableType;
+	}
+	for (const std::string& column : allColumns) {
+		if (declarations.find(column) == declarations.end()) {
+			// Undeclared column -> throw exception
+			return;
+		}
+		columns.push_back(column);
 	}
 }
 
