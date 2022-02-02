@@ -9,8 +9,8 @@ using namespace std;
 class PQLDEToken
 {
 private:
-	string synonym;
-	string designEntity;
+    string synonym;
+    string designEntity;
 
 public:
     string getPQLDETokenString() {
@@ -36,30 +36,33 @@ public:
         bool expectDesignEntity = true;
         int count = 0;
         while (index != string::npos) {
-            if (count >= 2) {   // invalid, for now count should have ended at 2 - one DE one var
+            if (count > 2) {   // invalid, for now count should have ended at 2 - one DE one var
                 PQLDEToken newDEToken;
                 return newDEToken;
             }
             index = deString.find_first_not_of(" ");
+            if (index == string::npos) break; // means no word left
             cout << "index: " << index << "\n";
             spaceIndex = deString.find(" ");
             cout << "spaceIndex: " << spaceIndex << "\n";
+            cout << "check deString1: " << deString << "\n";
             string word = deString.substr(index, spaceIndex);   // will always return a word starting from non space char to right before there is a space
             if (checkIfWordIsDesignEntity(word)) {   // means it is a designEntity
                 if (!expectDesignEntity) return deToken;    // invalid
                 deToken.setDesignEntity(word);
                 expectDesignEntity = false;
-            } else {
+            }
+            else {
                 if (expectDesignEntity) return deToken;     // invalid
-                word.erase(remove(word.begin(), word.end(), ';'), word.end());  // remove ';' from synonyms
                 deToken.setSynonym(word);
                 expectDesignEntity = true;
             }
             count++;
             if (spaceIndex == string::npos) break; // means that this is the last word
             deString = deString.substr(spaceIndex + 1);
+            cout << "check deString2: " << deString << "\n";
         }
         return deToken;
     }
-	
+
 };
