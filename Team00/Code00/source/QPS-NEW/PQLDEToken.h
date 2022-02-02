@@ -51,6 +51,7 @@ public:
                 expectDesignEntity = false;
             } else {
                 if (expectDesignEntity) return deToken;     // invalid
+                word.erase(remove(word.begin(), word.end(), ';'), word.end());  // remove ';' from synonyms
                 deToken.setSynonym(word);
                 expectDesignEntity = true;
             }
