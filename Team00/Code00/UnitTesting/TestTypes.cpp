@@ -2,9 +2,8 @@
 #include "CppUnitTest.h"
 //#include "TNode.h"
 
-//#include "../SPA/Types.h"
-//#include "../SPA/Entity.h"
-#include "../SPA/Entity.cpp"
+#include "../SPA/Types.h"
+#include "../SPA/Entity.h"
 
 #include <iostream>
 #include <type_traits>
