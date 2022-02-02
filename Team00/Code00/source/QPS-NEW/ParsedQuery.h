@@ -3,6 +3,7 @@
 #include <unordered_map>
 
 #include "QPSCommons.h"
+#include "../Exception/SPAException.h"
 
 class ParsedQuery {
 private:

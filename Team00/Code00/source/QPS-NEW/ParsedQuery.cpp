@@ -6,8 +6,7 @@ ParsedQuery::ParsedQuery(const std::vector<PQL_VARIABLE>& allDeclarations,
 		PQL_VARIABLE_TYPE variableType = variable.first;
 		std::string variableName = variable.second;
 		if (declarations.find(variableName) != declarations.end()) {
-			// Previously declared variable -> throw exception
-			return;
+			throw SPAException(std::string("Repeated variable declaration found"));
 		}
 		declarations[variableName] = variableType;
 	}
