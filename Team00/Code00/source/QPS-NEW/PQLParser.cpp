@@ -33,27 +33,23 @@ std::vector<PQL_VARIABLE> PQLParser::parseSingleDeclaration() {
 	}
 	std::string whitespace = lexer.nextWhitespace();
 	if (whitespace.empty()) {
-		// Expected whitespace between two alphanumeric tokens -> throw exception
-		return std::vector<PQL_VARIABLE>();
+		throw SPAException(std::string("Whitespace expected between two alphanumeric tokens"));
 	}
 	std::string variableName = lexer.nextName();
 	if (variableName.empty()) {
-		// Expected variable name, got nothing -> throw exception
-		return std::vector<PQL_VARIABLE>();
+		throw SPAException(std::string("Expected alphanumeric token, got nothing"));
 	}
 	declarations.emplace_back(variableType, variableName);
 	while (lexer.match(",")) {
 		// Lookahead 1, expect more tokens
 		variableName = lexer.nextName();
 		if (variableName.empty()) {
-			// Expected variable name, got nothing -> throw exception
-			return std::vector<PQL_VARIABLE>();
+			throw SPAException(std::string("Expected alphanumeric token, got nothing"));
 		}
 		declarations.emplace_back(variableType, variableName);
 	}
 	if (!lexer.match(";")) {
-		// Expected end of declaration ";" but got nothing -> throw exception
-		return std::vector<PQL_VARIABLE>();
+		throw SPAException(std::string("Expected \";\", got nothing"));
 	}
 	return declarations;
 }
@@ -71,19 +67,16 @@ std::vector<PQL_VARIABLE> PQLParser::parseDeclarations() {
 
 std::vector<std::string> PQLParser::parseSelect() {
 	if (!lexer.match("Select")) {
-		// Expected "Select", but got nothing -> throw exception
-		return std::vector<std::string>();
+		throw SPAException(std::string("Expected \"Select\", got nothing"));
 	}
 	std::string whitespace = lexer.nextWhitespace();
 	if (whitespace.empty()) {
-		// Expected whitespace between two alphanumeric tokens -> throw exception
-		return std::vector<std::string>();
+		throw SPAException(std::string("Whitespace expected between two alphanumeric tokens"));
 	}
 	std::vector<std::string> columns;
 	std::string columnVariable = lexer.nextName();
 	if (columnVariable.empty()) {
-		// Expected column, got nothing -> throw exception
-		return std::vector<std::string>();
+		throw SPAException(std::string("Expected alphanumeric token, got nothing"));
 	}
 	columns.push_back(columnVariable);
 	return columns;
@@ -92,5 +85,8 @@ std::vector<std::string> PQLParser::parseSelect() {
 ParsedQuery PQLParser::parseQuery() {
 	std::vector<PQL_VARIABLE> allDeclarations = parseDeclarations();
 	std::vector<std::string> columns = parseSelect();
+	if (!lexer.reachedEnd()) {
+		throw SPAException(std::string("Extra characters at end of query"));
+	}
 	return ParsedQuery(allDeclarations, columns);
 }

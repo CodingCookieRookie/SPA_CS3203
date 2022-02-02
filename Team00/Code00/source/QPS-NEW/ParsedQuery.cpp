@@ -12,8 +12,7 @@ ParsedQuery::ParsedQuery(const std::vector<PQL_VARIABLE>& allDeclarations,
 	}
 	for (const std::string& column : allColumns) {
 		if (declarations.find(column) == declarations.end()) {
-			// Undeclared column -> throw exception
-			return;
+			throw SPAException(std::string("Undeclared variable found"));
 		}
 		columns.push_back(column);
 	}
