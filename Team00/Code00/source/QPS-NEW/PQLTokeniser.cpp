@@ -57,3 +57,11 @@ vector<PQLDEToken> getPQLDETokens() {
 vector<string> getSynonyms() {
     return synonyms;
 }
+
+void clearPQLDETokens() {
+    PQLDETokens.clear();
+}
+
+void clearSynonyms() {
+    synonyms.clear();
+}
