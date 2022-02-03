@@ -30,8 +30,8 @@ void tokeniseQuery(vector<string> userQuery)
         while (index != string::npos) {
             size_t firstNonSpace = entireDeString.find_first_not_of(" ");   // to eliminate any trailing spaces at start of deString
             string deString = entireDeString.substr(firstNonSpace, index);
-            //deString.erase(remove(deString.begin(), deString.end(), ";"), deString.end());
-            PQLDETokens.push_back(PQLDEToken::getPQLDEToken(deString));
+            deString.erase(remove(deString.begin(), deString.end(), ';'), deString.end());
+            if (deString.size() > 0) PQLDETokens.push_back(PQLDEToken::getPQLDEToken(deString));
             entireDeString = entireDeString.substr(index + 1);
             index = entireDeString.find(";");
         }
