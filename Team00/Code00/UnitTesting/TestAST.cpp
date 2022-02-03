@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
-//#include "TNode.h"
+#include "TNode.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
