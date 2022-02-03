@@ -2,8 +2,8 @@
 
 #include "stdafx.h"
 #include "CppUnitTest.h"
-#include "QPS-NEW/PQLTokeniser.h"
-#include "QPS-NEW/PQLDEToken.h"
+//#include "QPS-NEW/PQLTokeniser.h"
+//#include "QPS-NEW/PQLDEToken.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace std;
@@ -14,7 +14,7 @@ namespace UnitTesting
 	{
 	public:
 
-		TEST_METHOD(TestPQLTokeniserTrue1)
+		/*TEST_METHOD(TestPQLTokeniserTrue1)
 		{
 			string designEntities = "stmt s; assign a;";
 			string query = "Select s;";
@@ -93,21 +93,21 @@ namespace UnitTesting
 			clearSynonyms();
 		}
 
-		//TEST_METHOD(TestPQLTokeniserFalse2)
-		//{
-		//	string designEntities = "stmt s;; assign;";
-		//	string query = "Select s;";
-		//	vector<string> queryVec;
-		//	queryVec.push_back(designEntities);
-		//	queryVec.push_back(query);
-		//	tokeniseQuery(queryVec);
-		//	vector<PQLDEToken> actualTokens = getPQLDETokens();
-		//	vector<string> actualSynonyms = getSynonyms();
-		//	vector<PQLDEToken> expectedTokens;
-		//	Assert::AreEqual(expectedTokens.size(), actualTokens.size());
-		//	clearPQLDETokens();
-		//	clearSynonyms();
-		//}
+		TEST_METHOD(TestPQLTokeniserFalse2)
+		{
+			string designEntities = "stmt s;; assign;";
+			string query = "Select s;";
+			vector<string> queryVec;
+			queryVec.push_back(designEntities);
+			queryVec.push_back(query);
+			tokeniseQuery(queryVec);
+			vector<PQLDEToken> actualTokens = getPQLDETokens();
+			vector<string> actualSynonyms = getSynonyms();
+			vector<PQLDEToken> expectedTokens;
+			Assert::AreEqual(expectedTokens.size(), actualTokens.size());
+			clearPQLDETokens();
+			clearSynonyms();
+		}*/
 
 	};
 }
