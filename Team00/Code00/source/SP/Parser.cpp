@@ -17,12 +17,13 @@ bool Parser::isValidAST(const SourceAST& pqlAst) {
 
 /* program : procedure+ */
 ProgramNode* Parser::matchProgram() {
-	ProgramNode* programNode{};
+	ProgramNode* programNode = new ProgramNode();
 
 	// There must exist at least 1 procedure
 	ProcedureNode* procNode;
-	while (procNode = matchProcedure()) {
-		programNode->addChild(procNode);
+	while (!lexer.reachedEnd()) {
+		procNode = matchProcedure();
+		programNode->addProcedure(procNode);
 	}
 
 	if (procNode == nullptr) {
@@ -67,21 +68,23 @@ ProcedureNode* Parser::matchProcedure() {
 	}
 
 	ProcedureNode* procNode = new ProcedureNode(procName);
-	procNode->addChild(stmtListNode);
+	procNode->addStmtList(stmtListNode);
 
 	return procNode;
 }
 
 /* stmtLst : stmt+ */
 StmtListNode* Parser::matchStmtList() {
-	StmtListNode* stmtListNode{};
+	StmtListNode* stmtListNode = new StmtListNode();
 
 	// There must exist at least 1 stmt
 	StmtNode* stmtNode;
-	while (stmtNode = matchStmt()) {
-		stmtListNode->addChild(stmtNode);
+	while (!lexer.peek("}") && !lexer.reachedEnd()) {
+		stmtNode = matchStmt();
+		stmtListNode->addStmtNode(stmtNode);
 	}
 
+	// If any of the stmtNode is invalid, immediately terminate.
 	if (stmtNode == nullptr) {
 		return nullptr;
 	}
@@ -100,6 +103,8 @@ StmtNode* Parser::matchStmt() {
 		if (lexer.match(validStmt)) {
 			if (validStmt == "read") {
 				stmtNode = matchRead();
+			} else if (validStmt == "print") {
+				stmtNode = matchPrint();
 			}
 
 			isValidStmt = true;
@@ -131,4 +136,23 @@ ReadNode* Parser::matchRead() {
 	}
 
 	return new ReadNode(varName);
+}
+
+/* print : ‘print’ var_name; */
+PrintNode* Parser::matchPrint() {
+	std::string whitespace = lexer.nextWhitespace();
+	if (whitespace.empty()) {
+		return nullptr;
+	}
+
+	std::string varName = lexer.nextName();
+	if (varName.empty()) {
+		return nullptr;
+	}
+
+	if (!lexer.match(";")) {
+		return nullptr;
+	}
+
+	return new PrintNode(varName);
 }
