@@ -1,59 +1,110 @@
 #include "SourceASTNode.h"
 
+using namespace std;
+
 /* SourceASTNode */
-SourceASTNode::SourceASTNode() : value() {}
+SourceASTNode::SourceASTNode() {}
+//SourceASTNode::SourceASTNode() : value() {}
+//
+//SourceASTNode::SourceASTNode(std::string& value) :
+//	value(value) {}
+//
+//void SourceASTNode::addChild(SourceASTNode* node) {
+//	children.push_back(node);
+//}
+//
+//std::vector<SourceASTNode*> SourceASTNode::getChildren() {
+//	return children;
+//}
+//
+//std::string SourceASTNode::getValue() {
+//	return value;
+//}
 
-SourceASTNode::SourceASTNode(std::string& value) :
-	value(value) {}
+/* StmtNode */
+StmtNode::StmtNode(int stmtNum) : SourceASTNode(), stmtNum(stmtNum) { }
 
-void SourceASTNode::addChild(SourceASTNode* node) {
-	m_nodes.push_back(node);
+int StmtNode::getStmtNum() {
+	return stmtNum;
 }
 
-std::vector<SourceASTNode*> SourceASTNode::getChildren() {
-	return m_nodes;
-}
-
-std::string SourceASTNode::getValue() {
-	return value;
-}
-
-/* ProgramNode */
-ProgramNode::ProgramNode() : SourceASTNode() { }
-
-void ProgramNode::printNode(int depth) {
+void StmtNode::printNode(int depth) {
 	printDashes(depth);
-	std::cout << value << ":program" << std::endl;
+	std::cout << stmtNum << ":stmtNode" << std::endl;
 }
 
-/* ProcedureNode */
-ProcedureNode::ProcedureNode(std::string& value) : SourceASTNode(value) { }
+/* ReadNode */
+ReadNode::ReadNode(std::string varName) : varName(varName) { }
 
-void ProcedureNode::printNode(int depth) {
+std::string ReadNode::getVarName() {
+	return varName;
+}
+
+void ReadNode::printNode(int depth) {
 	printDashes(depth);
-	std::cout << value << ":procedure" << std::endl;
+	std::cout << varName << ":read" << std::endl;
+}
+
+/* PrintNode */
+PrintNode::PrintNode(std::string varName) : varName(varName) { }
+
+std::string PrintNode::getVarName() {
+	return varName;
+}
+
+void PrintNode::printNode(int depth) {
+	printDashes(depth);
+	std::cout << varName << ":print" << std::endl;
 }
 
 /* StmtListNode */
 StmtListNode::StmtListNode() : SourceASTNode() { }
 
+void StmtListNode::addStmtNode(StmtNode* stmtNode) {
+	stmtNodes.push_back(stmtNode);
+}
+
+std::vector<StmtNode*> StmtListNode::getStmtNodes() {
+	return stmtNodes;
+}
+
 void StmtListNode::printNode(int depth) {
 	printDashes(depth);
-	std::cout << value << ":stmtLISTNode" << std::endl;
+	std::cout << ":stmtLISTNode" << std::endl;
 }
 
-/* StmtNode */
-StmtNode::StmtNode(std::string& value) : SourceASTNode(value) { }
+/* ProcedureNode */
+ProcedureNode::ProcedureNode(std::string procName) : SourceASTNode(), procName(procName) { }
 
-void StmtNode::printNode(int depth) {
-	printDashes(depth);
-	std::cout << value << ":stmtNode" << std::endl;
+void ProcedureNode::addStmtList(StmtListNode* stmtListNode) {
+	this->stmtListNode = stmtListNode;
 }
 
-/* ReadNode */
-ReadNode::ReadNode(std::string& value) : StmtNode(value) { }
+StmtListNode* ProcedureNode::getStmtListNode() {
+	return stmtListNode;
+}
 
-void ReadNode::printNode(int depth) {
+std::string ProcedureNode::getProcName() {
+	return procName;
+}
+
+void ProcedureNode::printNode(int depth) {
 	printDashes(depth);
-	std::cout << value << ":read" << std::endl;
+	std::cout << procName << ":procedure" << std::endl;
+}
+
+/* ProgramNode */
+ProgramNode::ProgramNode() : SourceASTNode() { }
+
+void ProgramNode::addProcedure(ProcedureNode* procedureNode) {
+	procedureNodes.push_back(procedureNode);
+}
+
+std::vector<ProcedureNode*> ProgramNode::getProcedureNodes() {
+	return procedureNodes;
+}
+
+void ProgramNode::printNode(int depth) {
+	printDashes(depth);
+	std::cout << ":program" << std::endl;
 }

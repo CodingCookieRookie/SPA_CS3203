@@ -15,11 +15,7 @@ private:
 	StmtListNode* matchStmtList();
 	StmtNode* matchStmt();
 	ReadNode* matchRead();
-
-	/*SelectNode* matchSelectClause();
-	DeclarationListNode* matchDeclarationList();
-	DeclarationNode* matchDeclaration();
-	SynonymNode* matchSynonym();*/
+	PrintNode* matchPrint();
 public:
 	Parser(const std::string& query);
 	SourceAST parse();

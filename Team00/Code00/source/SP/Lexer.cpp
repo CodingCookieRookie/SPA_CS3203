@@ -61,6 +61,18 @@ std::string Lexer::nextWhitespace() {
 
 bool Lexer::match(const std::string& pattern) {
 	advance();
+
+	if (!peek(pattern)) {
+		return false;
+	}
+
+	index += pattern.length();
+	return true;
+}
+
+bool Lexer::peek(const std::string& pattern) {
+	advance();
+
 	if (index + pattern.length() > length) {
 		return false;
 	}
@@ -69,10 +81,10 @@ bool Lexer::match(const std::string& pattern) {
 			return false;
 		}
 	}
-	index += pattern.length();
 	return true;
 }
 
 bool Lexer::reachedEnd() {
+	advance();
 	return (index == length);
 }
