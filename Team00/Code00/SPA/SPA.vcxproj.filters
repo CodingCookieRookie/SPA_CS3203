@@ -47,9 +47,6 @@
     <ClCompile Include="..\source\TNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\QPS-NEW\DesignEntity.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\QPS-NEW\PQLTokeniser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
