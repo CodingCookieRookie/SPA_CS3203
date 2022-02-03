@@ -16,7 +16,7 @@ void tokeniseQuery(vector<string> userQuery)
     // Take the rest off the string and Handle the rest as ClausesToken
     string wholeQuery;
     // should changge this to incorporate both PQLDEToken and Clauses token
-    for (int i = 0; i < userQuery.size(); i++) {
+    for (size_t i = 0; i < userQuery.size(); i++) {
         wholeQuery += userQuery.at(i);
     }
     size_t select = wholeQuery.find(Select);
@@ -30,7 +30,7 @@ void tokeniseQuery(vector<string> userQuery)
         while (index != string::npos) {
             size_t firstNonSpace = entireDeString.find_first_not_of(" ");   // to eliminate any trailing spaces at start of deString
             string deString = entireDeString.substr(firstNonSpace, index);
-            deString.erase(remove(deString.begin(), deString.end(), ";"), deString.end());
+            //deString.erase(remove(deString.begin(), deString.end(), ";"), deString.end());
             PQLDETokens.push_back(PQLDEToken::getPQLDEToken(deString));
             entireDeString = entireDeString.substr(index + 1);
             index = entireDeString.find(";");

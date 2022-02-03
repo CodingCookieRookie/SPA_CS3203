@@ -18,10 +18,10 @@
     <ClInclude Include="..\source\TNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\Parser.h">
+    <ClInclude Include="..\source\PKB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\PKB.h">
+    <ClInclude Include="..\source\QPS-NEW\QPS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\QPS-NEW\DesignEntity.h">
@@ -31,9 +31,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\QPS-NEW\PQLTokeniser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS-NEW\QPS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -12,7 +12,7 @@ string processQuery (vector<string> query) {	// This should be an array of size 
 	tokeniseQuery(query);
 	vector<PQLDEToken> pqldeTokens = getPQLDETokens();
 	string res;
-	for (int i = 0; i < query.size(); i++) {
+	for (size_t i = 0; i < query.size(); i++) {
 		res = res + pqldeTokens.at(i).getPQLDETokenString() + "\n";
 	}
 	return res;

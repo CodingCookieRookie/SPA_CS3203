@@ -2,8 +2,8 @@
 
 #include "stdafx.h"
 #include "CppUnitTest.h"
-//#include "QPS-NEW/PQLTokeniser.h"
-//#include "QPS-NEW/PQLDEToken.h"
+#include "QPS-NEW/PQLTokeniser.h"
+#include "QPS-NEW/PQLDEToken.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace std;
@@ -14,7 +14,7 @@ namespace UnitTesting
 	{
 	public:
 
-		/*TEST_METHOD(TestPQLTokeniserTrue1)
+		TEST_METHOD(TestPQLTokeniserTrue1)
 		{
 			string designEntities = "stmt s; assign a;";
 			string query = "Select s;";
@@ -33,7 +33,7 @@ namespace UnitTesting
 			vector<PQLDEToken> expectedTokens;
 			expectedTokens.push_back(token1);
 			expectedTokens.push_back(token2);
-			for (int i = 0; i < actualTokens.size(); i++) {
+			for (size_t i = 0; i < actualTokens.size(); i++) {
 				
 				Assert::AreEqual(expectedTokens.at(i).getPQLDETokenString(), actualTokens.at(i).getPQLDETokenString());
 			}
@@ -60,7 +60,7 @@ namespace UnitTesting
 			vector<PQLDEToken> expectedTokens;
 			expectedTokens.push_back(token1);
 			expectedTokens.push_back(token2);
-			for (int i = 0; i < actualTokens.size(); i++) {
+			for (size_t i = 0; i < actualTokens.size(); i++) {
 
 				Assert::AreEqual(expectedTokens.at(i).getPQLDETokenString(), actualTokens.at(i).getPQLDETokenString());
 			}
@@ -85,7 +85,7 @@ namespace UnitTesting
 			vector<PQLDEToken> expectedTokens;
 			expectedTokens.push_back(token1);
 			expectedTokens.push_back(token2);
-			for (int i = 0; i < actualTokens.size(); i++) {
+			for (size_t i = 0; i < actualTokens.size(); i++) {
 
 				Assert::AreEqual(expectedTokens.at(i).getPQLDETokenString(), actualTokens.at(i).getPQLDETokenString());
 			}
@@ -107,7 +107,7 @@ namespace UnitTesting
 			Assert::AreEqual(expectedTokens.size(), actualTokens.size());
 			clearPQLDETokens();
 			clearSynonyms();
-		}*/
+		}
 
 	};
 }
