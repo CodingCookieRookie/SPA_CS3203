@@ -117,3 +117,14 @@ void Entity::insertStmtFromProc(ProcIndex procIdx, StmtIndex stmtIdx) {
 unordered_set<StmtIndex, StmtIndex::HashFunction> Entity::getStmtsFromProc(ProcIndex procIdx) {
 	return procStmtTable[procIdx];
 }
+
+void Entity::performCleanUp() {
+	varNameTable = {};
+	varIdxTable = {};
+	procNameTable = {};
+	procIdxTable = {};
+	constTable = {};
+	stmtTypeTable = {};
+	stmtIdxFromTypeTable = {};
+	procStmtTable = {};
+}

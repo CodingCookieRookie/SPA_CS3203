@@ -41,6 +41,7 @@ public:
 	static vector<StmtIndex> getAllStmts();
 	static void insertStmtFromProc(ProcIndex procIdx, StmtIndex stmtIdx);
 	static unordered_set<StmtIndex, StmtIndex::HashFunction> getStmtsFromProc(ProcIndex procIdx);
+	static void performCleanUp();
 };
 
 #endif
