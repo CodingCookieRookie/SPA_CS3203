@@ -29,13 +29,13 @@ namespace UnitTesting
 			std::vector<StmtNode*> statements = stmtListNode->getStmtNodes();
 			Assert::AreEqual(size_t(3), statements.size());
 
-			ReadNode* readNode1 = (ReadNode*) statements[0];
+			ReadNode* readNode1 = (ReadNode*)statements[0];
 			Assert::AreEqual(std::string("x1"), readNode1->getVarName());
 
-			PrintNode* printNode = (PrintNode*) statements[1];
+			PrintNode* printNode = (PrintNode*)statements[1];
 			Assert::AreEqual(std::string("y123"), printNode->getVarName());
 
-			ReadNode* readNode2 = (ReadNode*) statements[2];
+			ReadNode* readNode2 = (ReadNode*)statements[2];
 			Assert::AreEqual(std::string("Y1Yy"), readNode2->getVarName());
 		}
 
@@ -74,6 +74,5 @@ namespace UnitTesting
 			ReadNode* readNode2 = (ReadNode*)statements2[1];
 			Assert::AreEqual(std::string("Y1Yy"), readNode2->getVarName());
 		}
-
 	};
 }
