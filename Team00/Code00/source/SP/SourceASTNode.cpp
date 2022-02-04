@@ -4,29 +4,14 @@ using namespace std;
 
 /* SourceASTNode */
 SourceASTNode::SourceASTNode() {}
-//SourceASTNode::SourceASTNode() : value() {}
-//
-//SourceASTNode::SourceASTNode(std::string& value) :
-//	value(value) {}
-//
-//void SourceASTNode::addChild(SourceASTNode* node) {
-//	children.push_back(node);
-//}
-//
-//std::vector<SourceASTNode*> SourceASTNode::getChildren() {
-//	return children;
-//}
-//
-//std::string SourceASTNode::getValue() {
-//	return value;
-//}
 
 /* StmtNode */
-StmtNode::StmtNode(int stmtNum) : SourceASTNode(), stmtNum(stmtNum) { }
+StmtNode::StmtNode(size_t stmtNum) : SourceASTNode(), stmtNum(stmtNum) { }
 
-int StmtNode::getStmtNum() {
+size_t StmtNode::getStmtNum() {
 	return stmtNum;
 }
+
 
 void StmtNode::printNode(int depth) {
 	printDashes(depth);
@@ -34,7 +19,7 @@ void StmtNode::printNode(int depth) {
 }
 
 /* ReadNode */
-ReadNode::ReadNode(std::string varName) : varName(varName) { }
+ReadNode::ReadNode(std::string varName, size_t stmtNum) : StmtNode(stmtNum), varName(varName) { }
 
 std::string ReadNode::getVarName() {
 	return varName;
@@ -42,11 +27,11 @@ std::string ReadNode::getVarName() {
 
 void ReadNode::printNode(int depth) {
 	printDashes(depth);
-	std::cout << varName << ":read" << std::endl;
+	std::cout << varName << ":read, stmtNum: " << getStmtNum() << std::endl;
 }
 
 /* PrintNode */
-PrintNode::PrintNode(std::string varName) : varName(varName) { }
+PrintNode::PrintNode(std::string varName, size_t stmtNum) : StmtNode(stmtNum) , varName(varName) { }
 
 std::string PrintNode::getVarName() {
 	return varName;
@@ -54,7 +39,7 @@ std::string PrintNode::getVarName() {
 
 void PrintNode::printNode(int depth) {
 	printDashes(depth);
-	std::cout << varName << ":print" << std::endl;
+	std::cout << varName << ":print, stmtNum: " << getStmtNum() << std::endl;
 }
 
 /* StmtListNode */
@@ -71,10 +56,15 @@ std::vector<StmtNode*> StmtListNode::getStmtNodes() {
 void StmtListNode::printNode(int depth) {
 	printDashes(depth);
 	std::cout << ":stmtLISTNode" << std::endl;
+	for (StmtNode* stmtNode : stmtNodes) {
+		stmtNode->printNode(depth + 1);
+	}
 }
 
 /* ProcedureNode */
-ProcedureNode::ProcedureNode(std::string procName) : SourceASTNode(), procName(procName) { }
+ProcedureNode::ProcedureNode(std::string procName) : SourceASTNode(), procName(procName) { 
+	stmtListNode = new StmtListNode();
+}
 
 void ProcedureNode::addStmtList(StmtListNode* stmtListNode) {
 	this->stmtListNode = stmtListNode;
@@ -91,10 +81,13 @@ std::string ProcedureNode::getProcName() {
 void ProcedureNode::printNode(int depth) {
 	printDashes(depth);
 	std::cout << procName << ":procedure" << std::endl;
+	stmtListNode->printNode(depth + 1);
 }
 
 /* ProgramNode */
 ProgramNode::ProgramNode() : SourceASTNode() { }
+
+size_t ProgramNode::currStmtNum = 1;
 
 void ProgramNode::addProcedure(ProcedureNode* procedureNode) {
 	procedureNodes.push_back(procedureNode);
@@ -104,7 +97,14 @@ std::vector<ProcedureNode*> ProgramNode::getProcedureNodes() {
 	return procedureNodes;
 }
 
+void ProgramNode::incrCurrStmtNum() {
+	currStmtNum++;
+}
+
 void ProgramNode::printNode(int depth) {
 	printDashes(depth);
 	std::cout << ":program" << std::endl;
+	for (ProcedureNode* procedureNode : procedureNodes) {
+		procedureNode->printNode(depth + 1);
+	}
 }
