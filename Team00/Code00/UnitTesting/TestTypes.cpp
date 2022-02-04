@@ -2,109 +2,48 @@
 #include "CppUnitTest.h"
 
 #include "../source/common/Types.h"
-#include "../source/PKB/Entity.h"
-
-#include <iostream>
-#include <type_traits>
-#include <cstdint>
-using namespace std;
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting {
 	TEST_CLASS(TestTypes) {
 private:
-	int overloadedFunction(VarIndex v) {
+	int entityTypeOverloadedFunction(VarIndex varIdx) {
 		return 1;
 	}
 
-	int overloadedFunction(ProcIndex v) {
+	int entityTypeOverloadedFunction(ProcIndex procIdx) {
 		return 2;
 	}
 
-	TEST_METHOD_CLEANUP(clearEntityTables)
-	{
-		// test method cleanup  code
+	int entityTypeOverloadedFunction(StmtIndex stmtIdx) {
+		return 3;
 	}
 
 public:
 
-	TEST_METHOD(TestMethod1) {
-		struct VarIndex idx = { 1 };
-		struct ProcIndex idx2 = { 1 };
-		int i = overloadedFunction(idx);
-		int j = overloadedFunction(idx2);
-		Assert::AreEqual(i, 1);
-		Assert::AreEqual(j, 2);
+	TEST_METHOD(overloadedFunction_differentTypeArguments) {
+		struct VarIndex varIdx = VarIndex(1);
+		struct ProcIndex procIdx = ProcIndex(1);
+		struct StmtIndex stmtIdx = StmtIndex(1);
+
+		int varRes = entityTypeOverloadedFunction(varIdx);
+		int procRes = entityTypeOverloadedFunction(procIdx);
+		int stmtRes = entityTypeOverloadedFunction(stmtIdx);
+
+		Assert::AreEqual(varRes, 1);
+		Assert::AreEqual(procRes, 2);
+		Assert::AreEqual(stmtRes, 3);
 	}
 
-	//TEST_METHOD(TestMethod2) {
-	//	//TNode T;
-	//	// TODO: Your test code here
-	//	struct VarIndex name;
-	//	struct ProcIndex name2;
-	//	name.index = 1;
-	//	name2.index = 1;
-
-	//	Assert::AreEqual(name.index, name2.index);
-	//}
-
-	TEST_METHOD(TestMethod3) {
-		Assert::IsFalse(StatementType::assignType == StatementType::whileType);
+	TEST_METHOD(uniqueEntityTypes) {
 		Assert::IsFalse(typeid(VarIndex) == typeid(ProcIndex));
 		Assert::IsFalse(typeid(StmtIndex) == typeid(ProcIndex));
 		Assert::IsFalse(typeid(StmtIndex) == typeid(VarIndex));
 	}
 
-	TEST_METHOD(TestMethod4) {
-		//StmtIndex stmtIdx = { 1 };
-		//StmtIndex stmtIdx2 = { 5 };
-		VarIndex varIdx = { 2 };
-		VarIndex varIdx2 = VarIndex(2);
-		//VarIndex varIdx2 = { 4 };
-		//ProcIndex procIdx = { 3 };
-		Entity::insertVar("future");
-		Entity::insertVar("present");
-		VarIndex res = Entity::getVarIdx("present");
-		Assert::IsTrue(res == varIdx);
-		Assert::IsTrue(res == varIdx2);
-	}
-
-	//TEST_METHOD(TestMethod5) {
-	//	StmtIndex stmtIdx = { 1 };
-	//	StmtIndex stmtIdx2 = { 5 };
-	//	VarIndex varIdx = { 2 };
-	//	VarIndex varIdx2 = { 4 };
-	//	ProcIndex procIdx = { 3 };
-	//	ProcIndex procIdx2 = { 4 };
-	//	Entity::insertStmtFromProc(procIdx.index, stmtIdx.index);
-	//	Entity::insertStmtFromProc(procIdx2.index, stmtIdx2.index);
-	//	unordered_set<int> res1 = Entity::getStmtsFromProc(procIdx.index);
-	//	auto res2 = res1.begin();
-	//	Assert::AreEqual(*res2, stmtIdx.index);
-	//	Assert::AreEqual(*res2, 1);
-	//	//Assert::AreEqual(*res3, stmtIdx2.index);
-	//}
-
-	TEST_METHOD(TestMethod6) { //"persistence"
-		Entity::insertVar("future");
-		Entity::insertVar("present");
-		VarIndex res = Entity::getVarIdx("present");
-		//Assert::AreEqual(res.index, 4);
-	}
-
-	//TEST_METHOD(TestMethod7) {
-	//	Entity::insertVar("future");
-	//	Entity::insertVar("present");
-	//	vector<string> res = Entity::getAllVars();
-	//	Assert::AreEqual(*res.begin(), Entity::getVarName(1));
-	//}
-
-	TEST_METHOD(TestMethod8) {
-		Entity::insertVar("future");
-		Entity::insertVar("present");
-		string res = Entity::getVarName(VarIndex(2));
-		Assert::AreEqual(res, string("present"));
+	TEST_METHOD(uniqueStatementTypes) {
+		Assert::IsFalse(StatementType::assignType == StatementType::whileType);
 	}
 	};
 }
