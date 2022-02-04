@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "QPS-NEW/PQLParser.h"
+#include "../source/QPS-NEW/PQLParser.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
