@@ -6,6 +6,11 @@
 # Prerequisites
 *.d
 
+# Other miscs
+*.vcxproj
+*.DS_Store
+*.rc
+
 # Compiled Object files
 *.slo
 *.lo
