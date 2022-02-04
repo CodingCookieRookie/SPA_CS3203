@@ -12,7 +12,6 @@
 #include "../common/Types.h"
 
 class Entity {
-
 protected:
 	static int getVarTableSize();
 	static int getProcTableSize();
