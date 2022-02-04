@@ -2,7 +2,7 @@
 #include "CppUnitTest.h"
 //#include "TNode.h"
 
-#include "../source/PKB/Types.h"
+#include "../source/common/Types.h"
 #include "../source/PKB/Entity.h"
 
 #include <iostream>

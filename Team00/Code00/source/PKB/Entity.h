@@ -9,7 +9,7 @@
 #include <tuple>
 #include <vector>
 
-#include "./Types.h"
+#include "../common/Types.h"
 
 class Entity {
 

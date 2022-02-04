@@ -18,9 +18,9 @@
     <ClCompile Include="..\source\TNode.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\source\common\Types.h" />
     <ClInclude Include="..\source\PKB.h" />
     <ClInclude Include="..\source\PKB\Entity.h" />
-    <ClInclude Include="..\source\PKB\Types.h" />
     <ClInclude Include="..\source\TNode.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

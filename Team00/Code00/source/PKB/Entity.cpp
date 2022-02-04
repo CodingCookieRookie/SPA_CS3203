@@ -96,11 +96,13 @@ vector<int> Entity::getAllConsts() {
 	return res;
 }
 
-void Entity::insertStmt(StatementType stmtType) {
+StmtIndex Entity::insertStmt(StatementType stmtType) {
 	StmtIndex stmtIdx = StmtIndex(getStmtTypeTableSize() + 1);
 	stmtTypeTable[stmtIdx] = stmtType;
 
 	stmtIdxFromTypeTable[stmtType].insert(stmtIdx);
+
+	return stmtIdx;
 }
 
 unordered_set<StmtIndex, StmtIndex::HashFunction> Entity::getStmtIdxFromType(StatementType stmtType) {

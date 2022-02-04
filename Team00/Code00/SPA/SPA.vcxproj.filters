@@ -41,7 +41,7 @@
     <ClInclude Include="..\source\PKB\Entity.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\PKB\Types.h">
+    <ClInclude Include="..\source\common\Types.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
