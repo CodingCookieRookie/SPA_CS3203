@@ -17,14 +17,6 @@ unordered_map<StmtIndex, StatementType, StmtIndex::HashFunction> Entity::stmtTyp
 unordered_map<StatementType, unordered_set<StmtIndex, StmtIndex::HashFunction>> Entity::stmtIdxFromTypeTable;
 unordered_map<ProcIndex, unordered_set<StmtIndex, StmtIndex::HashFunction>, ProcIndex::HashFunction> Entity::procStmtTable;
 
-int Entity::insertNow(VarIndex v) {
-	return 1;
-}
-
-int Entity::insertNow(ProcIndex v) {
-	return 2;
-}
-
 int Entity::getVarTableSize() {
 	return varNameTable.size();
 }
@@ -53,7 +45,7 @@ VarIndex Entity::getVarIdx(string varName) {
 
 vector<string> Entity::getAllVars() {
 	vector<string> res;
-	
+
 	for (auto& varInfo : varIdxTable)
 		res.push_back(varInfo.first);
 
@@ -65,11 +57,11 @@ void Entity::insertProc(string procName) {
 	procNameTable[procIdx] = procName;
 	procIdxTable[procName] = procIdx;
 }
-	
+
 string Entity::getProcName(ProcIndex procIdx) {
 	return procNameTable[procIdx];
 }
-	
+
 ProcIndex Entity::getProcIdx(string procName) {
 	return procIdxTable[procName];
 }

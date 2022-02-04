@@ -12,7 +12,6 @@
 #include "../common/Types.h"
 
 class Entity {
-
 protected:
 	static int getVarTableSize();
 	static int getProcTableSize();
@@ -27,9 +26,6 @@ protected:
 	static unordered_map<ProcIndex, unordered_set<StmtIndex, StmtIndex::HashFunction>, ProcIndex::HashFunction> procStmtTable;
 
 public:
-	static int insertNow(VarIndex v);
-	static int insertNow(ProcIndex v);
-
 	static void insertVar(string varName);
 	static string getVarName(VarIndex varIdx);
 	static VarIndex getVarIdx(string varName);
