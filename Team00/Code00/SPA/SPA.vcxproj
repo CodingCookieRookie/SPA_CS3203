@@ -11,13 +11,21 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\source\DesignExtractor.cpp" />
-    <ClCompile Include="..\source\Parser.cpp" />
     <ClCompile Include="..\source\PKB.cpp" />
+    <ClCompile Include="..\source\SP\DesignExtractor.cpp" />
+    <ClCompile Include="..\source\SP\Lexer.cpp" />
+    <ClCompile Include="..\source\SP\Parser.cpp" />
+    <ClCompile Include="..\source\SP\SourceAST.cpp" />
+    <ClCompile Include="..\source\SP\SourceASTNode.cpp" />
     <ClCompile Include="..\source\TNode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\PKB.h" />
+    <ClInclude Include="..\source\SP\DesignExtractor.h" />
+    <ClInclude Include="..\source\SP\Lexer.h" />
+    <ClInclude Include="..\source\SP\Parser.h" />
+    <ClInclude Include="..\source\SP\SourceAST.h" />
+    <ClInclude Include="..\source\SP\SourceASTNode.h" />
     <ClInclude Include="..\source\TNode.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

@@ -1,13 +1,26 @@
-#include<stdio.h>
-#include <iostream>
-#include <string>
-#include <vector>
+#include "DesignExtractor.h"
+//#include "PKB.h"
 
-using namespace std;
+void DesignExtractor::ProcessNode(ProgramNode* programNode) {
+	for (ProcedureNode* procedureNode : programNode->getProcedureNodes()) {
+		ProcessNode(procedureNode);
+	}
+}
 
+void DesignExtractor::ProcessNode(ProcedureNode* procedureNode) {
+	ProcessNode(procedureNode->getStmtListNode());
+}
 
-#include "PKB.h"
+void DesignExtractor::ProcessNode(StmtListNode* stmtListNode) {
+	for (StmtNode* stmtNode : stmtListNode->getStmtNodes()) {
+		ProcessNode(stmtNode);
+	}
+}
 
-int DesignExtractor () {
-	return 0;
+void DesignExtractor::ProcessNode(ReadNode* readNode) {
+
+}
+
+void DesignExtractor::Extract(SourceAST& ast) {
+	ProcessNode(ast.getRoot());
 }
