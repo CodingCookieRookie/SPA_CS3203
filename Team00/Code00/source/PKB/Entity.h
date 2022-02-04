@@ -40,7 +40,7 @@ public:
 	static vector<string> getAllProcs();
 	static void insertConst(int constant);
 	static vector<int> getAllConsts();
-	static void insertStmt(StatementType stmtType);
+	static StmtIndex insertStmt(StatementType stmtType);
 	static unordered_set<StmtIndex, StmtIndex::HashFunction> getStmtIdxFromType(StatementType stmtType);
 	static vector<StmtIndex> getAllStmts();
 	static void insertStmtFromProc(ProcIndex procIdx, StmtIndex stmtIdx);
