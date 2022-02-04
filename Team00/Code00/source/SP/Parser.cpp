@@ -82,7 +82,6 @@ StmtListNode* Parser::matchStmtList() {
 	while (!lexer.peek("}") && !lexer.reachedEnd()) {
 		stmtNode = matchStmt();
 		stmtListNode->addStmtNode(stmtNode);
-		ProgramNode::incrCurrStmtNum();
 	}
 
 	// If any of the stmtNode is invalid, immediately terminate.
@@ -136,7 +135,7 @@ ReadNode* Parser::matchRead() {
 		return nullptr;
 	}
 
-	return new ReadNode(varName, ProgramNode::currStmtNum);
+	return new ReadNode(varName);
 }
 
 /* print : ‘print’ var_name; */
@@ -155,5 +154,5 @@ PrintNode* Parser::matchPrint() {
 		return nullptr;
 	}
 
-	return new PrintNode(varName, ProgramNode::currStmtNum);
+	return new PrintNode(varName);
 }
