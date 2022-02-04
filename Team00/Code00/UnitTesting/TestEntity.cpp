@@ -11,15 +11,23 @@ namespace UnitTesting {
 private:
 	string varName1 = "future";
 	string varName2 = "present";
+	string varName3 = "past";
+
+	string procName1 = "Peter";
+	string procName2 = "Stephen";
+
+	StatementType stmtType1 = StatementType::assignType;
+	StatementType stmtType2 = StatementType::whileType;
 
 	VarIndex varIdx1 = VarIndex(1);
 	VarIndex varIdx2 = VarIndex(2);
-
-	StmtIndex stmtIdx1 = StmtIndex(1);
-	StmtIndex stmtIdx2 = StmtIndex(2);
+	VarIndex varIdx3 = VarIndex(3);
 
 	ProcIndex procIdx1 = ProcIndex(1);
 	ProcIndex procIdx2 = ProcIndex(2);
+
+	StmtIndex stmtIdx1 = StmtIndex(1);
+	StmtIndex stmtIdx2 = StmtIndex(2);
 
 	TEST_METHOD_CLEANUP(clearEntityTables) {
 		Entity::performCleanUp();
@@ -42,19 +50,19 @@ public:
 
 		VarIndex res1 = Entity::getVarIdx(varName1);
 		VarIndex res2 = Entity::getVarIdx(varName2);
-		Assert::AreEqual(varIdx1, res1);
-		Assert::AreEqual(varIdx2, res2);
+		Assert::IsTrue(varIdx1 == res1);
+		Assert::IsTrue(varIdx2 == res2);
 	}
 
-	TEST_METHOD(insertVar_getVarIdx_sameVariable) {
+	TEST_METHOD(insertVar_getVarIdx_sameVar) {
 		Entity::insertVar(varName1);
 		Entity::insertVar(varName1);
 
 		VarIndex res = Entity::getVarIdx(varName1);
-		Assert::AreEqual(varIdx1, res);
+		Assert::IsTrue(varIdx1 == res);
 	}
 
-	TEST_METHOD(insertVar_getAllVars_differentVariables) {
+	TEST_METHOD(insertVar_getAllVars_differentVars) {
 		vector<string> expectedRes;
 		expectedRes.push_back(varName1);
 		expectedRes.push_back(varName2);
@@ -63,10 +71,10 @@ public:
 		Entity::insertVar(varName2);
 
 		vector<string> res = Entity::getAllVars();
-		Assert::AreEqual(expectedRes, res);
+		Assert::IsTrue(expectedRes == res);
 	}
 
-	TEST_METHOD(insertVar_getAllVars_sameVariable) {
+	TEST_METHOD(insertVar_getAllVars_sameVar) {
 		vector<string> expectedRes;
 		expectedRes.push_back(varName1);
 
@@ -74,74 +82,172 @@ public:
 		Entity::insertVar(varName1);
 
 		vector<string> res = Entity::getAllVars();
-		Assert::AreEqual(expectedRes, res);
+		Assert::IsTrue(expectedRes == res);
 	}
 
-	// BELOW OUTDATED
-	TEST_METHOD(insertVar_singleVariable) {
-		//StmtIndex stmtIdx = { 1 };
-		//StmtIndex stmtIdx2 = { 5 };
-		VarIndex varIdx = { 2 };
-		VarIndex varIdx2 = VarIndex(2);
-		//VarIndex varIdx2 = { 4 };
-		//ProcIndex procIdx = { 3 };
-		Entity::insertVar("future");
-		Entity::insertVar("present");
-		VarIndex res = Entity::getVarIdx("present");
-		Assert::IsTrue(res == varIdx);
-		Assert::IsTrue(res == varIdx2);
+	TEST_METHOD(insertProc_getProcName_differentProcs) {
+		Entity::insertProc(procName1);
+		Entity::insertProc(procName2);
+
+		string res1 = Entity::getProcName(procIdx1);
+		string res2 = Entity::getProcName(procIdx2);
+		Assert::AreEqual(procName1, res1);
+		Assert::AreEqual(procName2, res2);
 	}
 
-	TEST_METHOD(TestMethod6) { //"persistence"
-		Entity::insertVar("future");
-		Entity::insertVar("present");
-		VarIndex res = Entity::getVarIdx("present");
-		Assert::AreEqual(res.index, 4);
+	TEST_METHOD(insertProc_getProcIdx_differentProcs) {
+		Entity::insertProc(procName1);
+		Entity::insertProc(procName2);
+
+		ProcIndex res1 = Entity::getProcIdx(procName1);
+		ProcIndex res2 = Entity::getProcIdx(procName2);
+		Assert::IsTrue(procIdx1 == res1);
+		Assert::IsTrue(procIdx2 == res2);
 	}
 
-	TEST_METHOD(TestMethod6333) {
-		Entity::insertConst(5);
-		Entity::insertConst(6);
+	TEST_METHOD(insertProc_getProcIdx_sameProc) {
+		Entity::insertProc(procName1);
+		Entity::insertProc(procName1);
+
+		ProcIndex res = Entity::getProcIdx(procName1);
+		Assert::IsTrue(procIdx1 == res);
+	}
+
+	TEST_METHOD(insertProc_getAllProcs_differentProcs) {
+		vector<string> expectedRes;
+		expectedRes.push_back(procName1);
+		expectedRes.push_back(procName2);
+
+		Entity::insertProc(procName1);
+		Entity::insertProc(procName2);
+
+		vector<string> res = Entity::getAllProcs();
+		Assert::IsTrue(expectedRes == res);
+	}
+
+	TEST_METHOD(insertProc_getAllProcs_sameProc) {
+		vector<string> expectedRes;
+		expectedRes.push_back(procName1);
+
+		Entity::insertProc(procName1);
+		Entity::insertProc(procName1);
+
+		vector<string> res = Entity::getAllProcs();
+		Assert::IsTrue(expectedRes == res);
+	}
+
+	TEST_METHOD(insertConst_getAllConsts_differentConsts) {
+		vector<int> expectedRes;
+		expectedRes.push_back(1);
+		expectedRes.push_back(2);
+
+		Entity::insertConst(1);
+		Entity::insertConst(2);
+
 		vector<int> res = Entity::getAllConsts();
-		Assert::IsTrue(res.size() == 2);
+		Assert::IsTrue(expectedRes == res);
 	}
 
-	TEST_METHOD(Codecleanup) {
-		TestMethod6333();
-		Entity::insertConst(7);
-		Entity::insertConst(8);
+	TEST_METHOD(insertConst_getAllConsts_sameConst) {
+		vector<int> expectedRes;
+		expectedRes.push_back(1);
+
+		Entity::insertConst(1);
+		Entity::insertConst(1);
+
 		vector<int> res = Entity::getAllConsts();
-		Assert::IsTrue(res.size() == 4);
+		Assert::IsTrue(expectedRes == res);
 	}
 
-	//TEST_METHOD(TestMethod5) {
-	//	StmtIndex stmtIdx = { 1 };
-	//	StmtIndex stmtIdx2 = { 5 };
-	//	VarIndex varIdx = { 2 };
-	//	VarIndex varIdx2 = { 4 };
-	//	ProcIndex procIdx = { 3 };
-	//	ProcIndex procIdx2 = { 4 };
-	//	Entity::insertStmtFromProc(procIdx.index, stmtIdx.index);
-	//	Entity::insertStmtFromProc(procIdx2.index, stmtIdx2.index);
-	//	unordered_set<int> res1 = Entity::getStmtsFromProc(procIdx.index);
-	//	auto res2 = res1.begin();
-	//	Assert::AreEqual(*res2, stmtIdx.index);
-	//	Assert::AreEqual(*res2, 1);
-	//	//Assert::AreEqual(*res3, stmtIdx2.index);
-	//}
+	TEST_METHOD(insertStmt_differentStmts) {
+		StmtIndex res1 = Entity::insertStmt(stmtType1);
+		StmtIndex res2 = Entity::insertStmt(stmtType2);
 
-	//TEST_METHOD(TestMethod7) {
-	//	Entity::insertVar("future");
-	//	Entity::insertVar("present");
-	//	vector<string> res = Entity::getAllVars();
-	//	Assert::AreEqual(*res.begin(), Entity::getVarName(1));
-	//}
+		Assert::IsTrue(stmtIdx1 == res1);
+		Assert::IsTrue(stmtIdx2 == res2);
+	}
 
-	TEST_METHOD(TestMethod8) {
-		Entity::insertVar("future");
-		Entity::insertVar("present");
-		string res = Entity::getVarName(VarIndex(2));
-		Assert::AreEqual(res, string("present"));
+	TEST_METHOD(insertStmt_getStmtIdxFromType_differentStmts) {
+		unordered_set<StmtIndex, StmtIndex::HashFunction> expectedRes1;
+		expectedRes1.insert(stmtIdx1);
+
+		unordered_set<StmtIndex, StmtIndex::HashFunction> expectedRes2;
+		expectedRes2.insert(stmtIdx2);
+
+		Entity::insertStmt(stmtType1);
+		Entity::insertStmt(stmtType2);
+
+		unordered_set<StmtIndex, StmtIndex::HashFunction> res1 = Entity::getStmtIdxFromType(stmtType1);
+		unordered_set<StmtIndex, StmtIndex::HashFunction> res2 = Entity::getStmtIdxFromType(stmtType2);
+		Assert::IsTrue(expectedRes1 == res1);
+		Assert::IsTrue(expectedRes2 == res2);
+	}
+
+	TEST_METHOD(insertStmt_getAllStmts_differentStmts) {
+		vector<StmtIndex> expectedRes;
+		expectedRes.push_back(stmtIdx1);
+		expectedRes.push_back(stmtIdx2);
+
+		Entity::insertStmt(stmtType1);
+		Entity::insertStmt(stmtType2);
+
+		vector<StmtIndex> res = Entity::getAllStmts();
+		Assert::IsTrue(expectedRes == res);
+	}
+
+	TEST_METHOD(insertStmtFromProc_getStmtsFromProc_singleProcAndStmt) {
+		unordered_set<StmtIndex, StmtIndex::HashFunction> expectedRes;
+		expectedRes.insert(stmtIdx1);
+
+		Entity::insertStmtFromProc(procIdx1, stmtIdx1);
+
+		unordered_set<StmtIndex, StmtIndex::HashFunction> res = Entity::getStmtsFromProc(procIdx1);
+		Assert::IsTrue(expectedRes == res);
+	}
+
+	TEST_METHOD(insertStmtFromProc_getStmtsFromProc_multipleProcAndStmt) {
+		unordered_set<StmtIndex, StmtIndex::HashFunction> expectedRes1;
+		expectedRes1.insert(stmtIdx1);
+		expectedRes1.insert(stmtIdx2);
+
+		unordered_set<StmtIndex, StmtIndex::HashFunction> expectedRes2;
+		expectedRes2.insert(stmtIdx2);
+
+		Entity::insertStmtFromProc(procIdx1, stmtIdx1);
+		Entity::insertStmtFromProc(procIdx1, stmtIdx2);
+		Entity::insertStmtFromProc(procIdx2, stmtIdx2);
+
+		unordered_set<StmtIndex, StmtIndex::HashFunction> res1 = Entity::getStmtsFromProc(procIdx1);
+		unordered_set<StmtIndex, StmtIndex::HashFunction> res2 = Entity::getStmtsFromProc(procIdx2);
+		Assert::IsTrue(expectedRes1 == res1);
+		Assert::IsTrue(expectedRes2 == res2);
+	}
+
+	TEST_METHOD(performCleanUp_VarMap) {
+		Entity::insertVar(varName1);
+		Entity::insertVar(varName2);
+		VarIndex res = Entity::getVarIdx(varName1);
+		Assert::IsTrue(varIdx1 == res);
+
+		Entity::performCleanUp();
+
+		Entity::insertVar(varName3);
+		VarIndex res2 = Entity::getVarIdx(varName3);
+		Assert::IsTrue(varIdx1 == res2);
+		Assert::IsFalse(varIdx3 == res2);
+	}
+
+	TEST_METHOD(performCleanUp_ConstSet) {
+		Entity::insertConst(2);
+		Entity::insertConst(4);
+		vector<int> res1 = Entity::getAllConsts();
+		Assert::IsTrue(res1.size() == 2);
+
+		Entity::performCleanUp();
+
+		Entity::insertConst(3);
+		vector<int> res2 = Entity::getAllConsts();
+		Assert::IsTrue(res2.size() == 1);
 	}
 	};
 }
