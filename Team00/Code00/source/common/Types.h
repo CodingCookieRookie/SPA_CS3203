@@ -25,10 +25,8 @@ struct VarIndex {
 		return index == p.index;
 	}
 
-	struct HashFunction
-	{
-		size_t operator()(const VarIndex& k) const
-		{
+	struct HashFunction {
+		size_t operator()(const VarIndex& k) const {
 			return hash<int>()(k.index);
 		}
 	};
@@ -47,10 +45,8 @@ struct ProcIndex {
 		return index == p.index;
 	}
 
-	struct HashFunction
-	{
-		size_t operator()(const ProcIndex& k) const
-		{
+	struct HashFunction {
+		size_t operator()(const ProcIndex& k) const {
 			return hash<int>()(k.index);
 		}
 	};
@@ -69,10 +65,8 @@ struct StmtIndex {
 		return index == p.index;
 	}
 
-	struct HashFunction
-	{
-		size_t operator()(const StmtIndex& k) const
-		{
+	struct HashFunction {
+		size_t operator()(const StmtIndex& k) const {
 			return hash<int>()(k.index);
 		}
 	};

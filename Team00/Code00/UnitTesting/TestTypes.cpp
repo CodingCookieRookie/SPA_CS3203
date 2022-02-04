@@ -12,15 +12,12 @@ using namespace std;
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
-namespace UnitTesting
-{
+namespace UnitTesting {
 
-	TEST_CLASS(TestTypes)
-	{
+	TEST_CLASS(TestTypes) {
 	public:
 
-		TEST_METHOD(TestMethod1)
-		{
+		TEST_METHOD(TestMethod1) {
 			//TNode T;
 			// TODO: Your test code here
 			struct VarIndex idx = { 1 };
@@ -31,8 +28,7 @@ namespace UnitTesting
 			Assert::AreEqual(j, 2);
 		}
 
-		//TEST_METHOD(TestMethod2)
-		//{
+		//TEST_METHOD(TestMethod2) {
 		//	//TNode T;
 		//	// TODO: Your test code here
 		//	struct VarIndex name;
@@ -43,8 +39,7 @@ namespace UnitTesting
 		//	Assert::AreEqual(name.index, name2.index);
 		//}
 
-		TEST_METHOD(TestMethod3)
-		{
+		TEST_METHOD(TestMethod3) {
 			//TNode T;
 			// TODO: Your test code here
 			Assert::IsFalse(StatementType::assignType == StatementType::whileType);
@@ -53,8 +48,7 @@ namespace UnitTesting
 			Assert::IsFalse(typeid(StmtIndex) == typeid(VarIndex));
 		}
 
-		TEST_METHOD(TestMethod4)
-		{
+		TEST_METHOD(TestMethod4) {
 			//TNode T;
 			// TODO: Your test code here
 			//StmtIndex stmtIdx = { 1 };
@@ -70,8 +64,7 @@ namespace UnitTesting
 			Assert::IsTrue(res == varIdx2);
 		}
 
-		//TEST_METHOD(TestMethod5)
-		//{
+		//TEST_METHOD(TestMethod5) {
 		//	//TNode T;
 		//	// TODO: Your test code here
 		//	StmtIndex stmtIdx = { 1 };
@@ -89,8 +82,7 @@ namespace UnitTesting
 		//	//Assert::AreEqual(*res3, stmtIdx2.index);
 		//}
 
-		TEST_METHOD(TestMethod6) //"persistence"
-		{
+		TEST_METHOD(TestMethod6) { //"persistence" 
 			//TNode T;
 			// TODO: Your test code here
 			Entity::insertVar("future");
@@ -99,8 +91,7 @@ namespace UnitTesting
 			//Assert::AreEqual(res.index, 4);
 		}
 
-		//TEST_METHOD(TestMethod7) 
-		//{
+		//TEST_METHOD(TestMethod7) {
 		//	//TNode T;
 		//	// TODO: Your test code here
 		//	Entity::insertVar("future");
@@ -109,8 +100,7 @@ namespace UnitTesting
 		//	Assert::AreEqual(*res.begin(), Entity::getVarName(1));
 		//}
 
-		TEST_METHOD(TestMethod8) 
-		{
+		TEST_METHOD(TestMethod8) {
 			//TNode T;
 			// TODO: Your test code here
 			Entity::insertVar("future");
