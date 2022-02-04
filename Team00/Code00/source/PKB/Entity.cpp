@@ -13,8 +13,8 @@ unordered_map<string, VarIndex> Entity::varIdxTable;
 unordered_map<ProcIndex, string, ProcIndex::HashFunction> Entity::procNameTable;
 unordered_map<string, ProcIndex> Entity::procIdxTable;
 unordered_set<int> Entity::constTable;
-unordered_map<StmtIndex, string, StmtIndex::HashFunction> Entity::stmtTypeTable;
-unordered_map<string, unordered_set<StmtIndex, StmtIndex::HashFunction>> Entity::stmtIdxFromTypeTable;
+unordered_map<StmtIndex, StatementType, StmtIndex::HashFunction> Entity::stmtTypeTable;
+unordered_map<StatementType, unordered_set<StmtIndex, StmtIndex::HashFunction>> Entity::stmtIdxFromTypeTable;
 unordered_map<ProcIndex, unordered_set<StmtIndex, StmtIndex::HashFunction>, ProcIndex::HashFunction> Entity::procStmtTable;
 
 int Entity::insertNow(VarIndex v) {
@@ -96,14 +96,14 @@ vector<int> Entity::getAllConsts() {
 	return res;
 }
 
-void Entity::insertStmt(string stmtType) {
+void Entity::insertStmt(StatementType stmtType) {
 	StmtIndex stmtIdx = StmtIndex(getStmtTypeTableSize() + 1);
 	stmtTypeTable[stmtIdx] = stmtType;
 
 	stmtIdxFromTypeTable[stmtType].insert(stmtIdx);
 }
 
-unordered_set<StmtIndex, StmtIndex::HashFunction> Entity::getStmtIdxFromType(string stmtType) {
+unordered_set<StmtIndex, StmtIndex::HashFunction> Entity::getStmtIdxFromType(StatementType stmtType) {
 	return stmtIdxFromTypeTable[stmtType];
 }
 

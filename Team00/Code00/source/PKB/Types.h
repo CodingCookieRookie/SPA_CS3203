@@ -8,6 +8,10 @@
 
 using namespace std;
 
+enum class StatementType {
+	assignType, whileType, ifType, readType, printType, callType
+};
+
 struct VarIndex {
 	int index;
 

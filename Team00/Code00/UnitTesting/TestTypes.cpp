@@ -47,6 +47,7 @@ namespace UnitTesting
 		{
 			//TNode T;
 			// TODO: Your test code here
+			Assert::IsFalse(StatementType::assignType == StatementType::whileType);
 			Assert::IsFalse(typeid(VarIndex) == typeid(ProcIndex));
 			Assert::IsFalse(typeid(StmtIndex) == typeid(ProcIndex));
 			Assert::IsFalse(typeid(StmtIndex) == typeid(VarIndex));
