@@ -18,11 +18,12 @@ public:
 };
 
 class StmtNode : public SourceASTNode {
-protected:
-	int stmtNum;
+private:
+	size_t stmtNum;
 public:
-	StmtNode(int stmtNum = 1); // TODO: modify
-	int getStmtNum();
+	size_t getStmtNum();
+
+	StmtNode(size_t stmtNum);
 
 	void printNode(int depth = 1);
 
@@ -33,7 +34,7 @@ class ReadNode : public StmtNode {
 private:
 	std::string varName;
 public:
-	ReadNode(std::string varName);
+	ReadNode(std::string varName, size_t stmtNum);
 	std::string getVarName();
 	void printNode(int depth);
 
@@ -44,7 +45,7 @@ class PrintNode : public StmtNode {
 private:
 	std::string varName;
 public:
-	PrintNode(std::string varName);
+	PrintNode(std::string varName, size_t stmtNum);
 	std::string getVarName();
 	void printNode(int depth);
 
@@ -83,6 +84,9 @@ class ProgramNode : public SourceASTNode {
 private:
 	std::vector<ProcedureNode*> procedureNodes;
 public:
+	static size_t currStmtNum;
+	static void incrCurrStmtNum();
+
 	ProgramNode();
 	void addProcedure(ProcedureNode* procedureNode);
 	std::vector<ProcedureNode*> getProcedureNodes();

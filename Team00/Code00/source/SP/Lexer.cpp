@@ -9,6 +9,7 @@ void Lexer::advance() {
 	while (index < length && isspace(source[index])) {
 		index++;
 	}
+
 	return;
 }
 
