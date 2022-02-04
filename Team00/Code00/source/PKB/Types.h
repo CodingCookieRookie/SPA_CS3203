@@ -8,66 +8,66 @@
 
 using namespace std;
 
-struct VAR_IDX {
+struct VarIndex {
 	int index;
 
-	VAR_IDX():index() {}
+	VarIndex():index() {}
 
-	VAR_IDX(int index) {
+	VarIndex(int index) {
 		this->index = index;
 	}
 
-	bool operator==(const VAR_IDX& p) const {
+	bool operator==(const VarIndex& p) const {
 		return index == p.index;
 	}
 
-	struct hash_fn
+	struct HashFunction
 	{
-		size_t operator()(const VAR_IDX& k) const
+		size_t operator()(const VarIndex& k) const
 		{
 			return hash<int>()(k.index);
 		}
 	};
 };
 
-struct PROC_IDX {
+struct ProcIndex {
 	int index;
 
-	PROC_IDX() :index() {}
+	ProcIndex() :index() {}
 
-	PROC_IDX(int index) {
+	ProcIndex(int index) {
 		this->index = index;
 	}
 
-	bool operator==(const PROC_IDX& p) const {
+	bool operator==(const ProcIndex& p) const {
 		return index == p.index;
 	}
 
-	struct hash_fn
+	struct HashFunction
 	{
-		size_t operator()(const PROC_IDX& k) const
+		size_t operator()(const ProcIndex& k) const
 		{
 			return hash<int>()(k.index);
 		}
 	};
 };
 
-struct STMT_IDX {
+struct StmtIndex {
 	int index;
 
-	STMT_IDX() :index() {}
+	StmtIndex() :index() {}
 
-	STMT_IDX(int index) {
+	StmtIndex(int index) {
 		this->index = index;
 	}
 
-	bool operator==(const STMT_IDX& p) const {
+	bool operator==(const StmtIndex& p) const {
 		return index == p.index;
 	}
 
-	struct hash_fn
+	struct HashFunction
 	{
-		size_t operator()(const STMT_IDX& k) const
+		size_t operator()(const StmtIndex& k) const
 		{
 			return hash<int>()(k.index);
 		}

@@ -23,8 +23,8 @@ namespace UnitTesting
 		{
 			//TNode T;
 			// TODO: Your test code here
-			struct VAR_IDX idx = { 1 };
-			struct PROC_IDX idx2 = { 1 };
+			struct VarIndex idx = { 1 };
+			struct ProcIndex idx2 = { 1 };
 			int i = Entity::insertNow(idx);
 			int j = Entity::insertNow(idx2);
 			Assert::AreEqual(i, 1);
@@ -35,8 +35,8 @@ namespace UnitTesting
 		//{
 		//	//TNode T;
 		//	// TODO: Your test code here
-		//	struct VAR_IDX name;
-		//	struct PROC_IDX name2;
+		//	struct VarIndex name;
+		//	struct ProcIndex name2;
 		//	name.index = 1;
 		//	name2.index = 1;
 
@@ -47,36 +47,38 @@ namespace UnitTesting
 		{
 			//TNode T;
 			// TODO: Your test code here
-			Assert::IsFalse(typeid(VAR_IDX) == typeid(PROC_IDX));
-			Assert::IsFalse(typeid(STMT_IDX) == typeid(PROC_IDX));
-			Assert::IsFalse(typeid(STMT_IDX) == typeid(VAR_IDX));
+			Assert::IsFalse(typeid(VarIndex) == typeid(ProcIndex));
+			Assert::IsFalse(typeid(StmtIndex) == typeid(ProcIndex));
+			Assert::IsFalse(typeid(StmtIndex) == typeid(VarIndex));
 		}
 
-		//TEST_METHOD(TestMethod4)
-		//{
-		//	//TNode T;
-		//	// TODO: Your test code here
-		//	//STMT_IDX stmtIdx = { 1 };
-		//	//STMT_IDX stmtIdx2 = { 5 };
-		//	//VAR_IDX varIdx = { 2 };
-		//	//VAR_IDX varIdx2 = { 4 };
-		//	//PROC_IDX procIdx = { 3 };
-		//	Entity::insertVar("future");
-		//	Entity::insertVar("present");
-		//	int res = Entity::getVarIdx("present");
-		//	Assert::AreEqual(res, 2);
-		//}
+		TEST_METHOD(TestMethod4)
+		{
+			//TNode T;
+			// TODO: Your test code here
+			//StmtIndex stmtIdx = { 1 };
+			//StmtIndex stmtIdx2 = { 5 };
+			VarIndex varIdx = { 2 };
+			VarIndex varIdx2 = VarIndex(2);
+			//VarIndex varIdx2 = { 4 };
+			//ProcIndex procIdx = { 3 };
+			Entity::insertVar("future");
+			Entity::insertVar("present");
+			VarIndex res = Entity::getVarIdx("present");
+			Assert::IsTrue(res == varIdx);
+			Assert::IsTrue(res == varIdx2);
+		}
 
 		//TEST_METHOD(TestMethod5)
 		//{
 		//	//TNode T;
 		//	// TODO: Your test code here
-		//	STMT_IDX stmtIdx = { 1 };
-		//	STMT_IDX stmtIdx2 = { 5 };
-		//	VAR_IDX varIdx = { 2 };
-		//	VAR_IDX varIdx2 = { 4 };
-		//	PROC_IDX procIdx = { 3 };
-		//	PROC_IDX procIdx2 = { 4 };
+		//	StmtIndex stmtIdx = { 1 };
+		//	StmtIndex stmtIdx2 = { 5 };
+		//	VarIndex varIdx = { 2 };
+		//	VarIndex varIdx2 = { 4 };
+		//	ProcIndex procIdx = { 3 };
+		//	ProcIndex procIdx2 = { 4 };
 		//	Entity::insertStmtFromProc(procIdx.index, stmtIdx.index);
 		//	Entity::insertStmtFromProc(procIdx2.index, stmtIdx2.index);
 		//	unordered_set<int> res1 = Entity::getStmtsFromProc(procIdx.index);
@@ -92,7 +94,7 @@ namespace UnitTesting
 			// TODO: Your test code here
 			Entity::insertVar("future");
 			Entity::insertVar("present");
-			VAR_IDX res = Entity::getVarIdx("present");
+			VarIndex res = Entity::getVarIdx("present");
 			//Assert::AreEqual(res.index, 4);
 		}
 
@@ -112,7 +114,7 @@ namespace UnitTesting
 			// TODO: Your test code here
 			Entity::insertVar("future");
 			Entity::insertVar("present");
-			string res = Entity::getVarName(VAR_IDX(2));
+			string res = Entity::getVarName(VarIndex(2));
 			Assert::AreEqual(res, string("present"));
 		}
 	};

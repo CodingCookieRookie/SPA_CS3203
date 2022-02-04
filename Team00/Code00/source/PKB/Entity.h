@@ -17,34 +17,34 @@ protected:
 	static int getVarTableSize();
 	static int getProcTableSize();
 	static int getStmtTypeTableSize();
-	static unordered_map<VAR_IDX, string, VAR_IDX::hash_fn> varNameTable;
-	static unordered_map<string, VAR_IDX> varIdxTable;
-	static unordered_map<PROC_IDX, string, PROC_IDX::hash_fn> procNameTable;
-	static unordered_map<string, PROC_IDX> procIdxTable;
+	static unordered_map<VarIndex, string, VarIndex::HashFunction> varNameTable;
+	static unordered_map<string, VarIndex> varIdxTable;
+	static unordered_map<ProcIndex, string, ProcIndex::HashFunction> procNameTable;
+	static unordered_map<string, ProcIndex> procIdxTable;
 	static unordered_set<int> constTable;
-	static unordered_map<STMT_IDX, string, STMT_IDX::hash_fn> stmtTypeTable;
-	static unordered_map<string, unordered_set<STMT_IDX, STMT_IDX::hash_fn>> stmtIdxFromTypeTable;
-	static unordered_map<PROC_IDX, unordered_set<STMT_IDX, STMT_IDX::hash_fn>, PROC_IDX::hash_fn> procStmtTable;
+	static unordered_map<StmtIndex, string, StmtIndex::HashFunction> stmtTypeTable;
+	static unordered_map<string, unordered_set<StmtIndex, StmtIndex::HashFunction>> stmtIdxFromTypeTable;
+	static unordered_map<ProcIndex, unordered_set<StmtIndex, StmtIndex::HashFunction>, ProcIndex::HashFunction> procStmtTable;
 
 public:
-	static int insertNow(VAR_IDX v);
-	static int insertNow(PROC_IDX v);
+	static int insertNow(VarIndex v);
+	static int insertNow(ProcIndex v);
 
 	static void insertVar(string varName);
-	static string getVarName(VAR_IDX varIdx);
-	static VAR_IDX getVarIdx(string varName);
+	static string getVarName(VarIndex varIdx);
+	static VarIndex getVarIdx(string varName);
 	static vector<string> getAllVars();
 	static void insertProc(string procName);
-	static string getProcName(PROC_IDX procIdx);
-	static PROC_IDX getProcIdx(string procName);
+	static string getProcName(ProcIndex procIdx);
+	static ProcIndex getProcIdx(string procName);
 	static vector<string> getAllProcs();
 	static void insertConst(int constant);
 	static vector<int> getAllConsts();
 	static void insertStmt(string stmtType);
-	static unordered_set<STMT_IDX, STMT_IDX::hash_fn> getStmtIdxFromType(string stmtType);
-	static vector<STMT_IDX> getAllStmts();
-	static void insertStmtFromProc(PROC_IDX procIdx, STMT_IDX stmtIdx);
-	static unordered_set<STMT_IDX, STMT_IDX::hash_fn> getStmtsFromProc(PROC_IDX procIdx);
+	static unordered_set<StmtIndex, StmtIndex::HashFunction> getStmtIdxFromType(string stmtType);
+	static vector<StmtIndex> getAllStmts();
+	static void insertStmtFromProc(ProcIndex procIdx, StmtIndex stmtIdx);
+	static unordered_set<StmtIndex, StmtIndex::HashFunction> getStmtsFromProc(ProcIndex procIdx);
 };
 
 #endif

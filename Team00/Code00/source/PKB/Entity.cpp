@@ -8,20 +8,20 @@
 
 using namespace std;
 
-unordered_map<VAR_IDX, string, VAR_IDX::hash_fn> Entity::varNameTable;
-unordered_map<string, VAR_IDX> Entity::varIdxTable;
-unordered_map<PROC_IDX, string, PROC_IDX::hash_fn> Entity::procNameTable;
-unordered_map<string, PROC_IDX> Entity::procIdxTable;
+unordered_map<VarIndex, string, VarIndex::HashFunction> Entity::varNameTable;
+unordered_map<string, VarIndex> Entity::varIdxTable;
+unordered_map<ProcIndex, string, ProcIndex::HashFunction> Entity::procNameTable;
+unordered_map<string, ProcIndex> Entity::procIdxTable;
 unordered_set<int> Entity::constTable;
-unordered_map<STMT_IDX, string, STMT_IDX::hash_fn> Entity::stmtTypeTable;
-unordered_map<string, unordered_set<STMT_IDX, STMT_IDX::hash_fn>> Entity::stmtIdxFromTypeTable;
-unordered_map<PROC_IDX, unordered_set<STMT_IDX, STMT_IDX::hash_fn>, PROC_IDX::hash_fn> Entity::procStmtTable;
+unordered_map<StmtIndex, string, StmtIndex::HashFunction> Entity::stmtTypeTable;
+unordered_map<string, unordered_set<StmtIndex, StmtIndex::HashFunction>> Entity::stmtIdxFromTypeTable;
+unordered_map<ProcIndex, unordered_set<StmtIndex, StmtIndex::HashFunction>, ProcIndex::HashFunction> Entity::procStmtTable;
 
-int Entity::insertNow(VAR_IDX v) {
+int Entity::insertNow(VarIndex v) {
 	return 1;
 }
 
-int Entity::insertNow(PROC_IDX v) {
+int Entity::insertNow(ProcIndex v) {
 	return 2;
 }
 
@@ -38,16 +38,16 @@ int Entity::getStmtTypeTableSize() {
 }
 
 void Entity::insertVar(string varName) {
-	VAR_IDX varIdx = VAR_IDX(getVarTableSize() + 1);
+	VarIndex varIdx = VarIndex(getVarTableSize() + 1);
 	varNameTable[varIdx] = varName;
 	varIdxTable[varName] = varIdx;
 }
 
-string Entity::getVarName(VAR_IDX varIdx) {
+string Entity::getVarName(VarIndex varIdx) {
 	return varNameTable[varIdx];
 }
 
-VAR_IDX Entity::getVarIdx(string varName) {
+VarIndex Entity::getVarIdx(string varName) {
 	return varIdxTable[varName];
 }
 
@@ -61,16 +61,16 @@ vector<string> Entity::getAllVars() {
 }
 
 void Entity::insertProc(string procName) {
-	PROC_IDX procIdx = PROC_IDX(getProcTableSize() + 1);
+	ProcIndex procIdx = ProcIndex(getProcTableSize() + 1);
 	procNameTable[procIdx] = procName;
 	procIdxTable[procName] = procIdx;
 }
 	
-string Entity::getProcName(PROC_IDX procIdx) {
+string Entity::getProcName(ProcIndex procIdx) {
 	return procNameTable[procIdx];
 }
 	
-PROC_IDX Entity::getProcIdx(string procName) {
+ProcIndex Entity::getProcIdx(string procName) {
 	return procIdxTable[procName];
 }
 
@@ -97,18 +97,18 @@ vector<int> Entity::getAllConsts() {
 }
 
 void Entity::insertStmt(string stmtType) {
-	STMT_IDX stmtIdx = STMT_IDX(getStmtTypeTableSize() + 1);
+	StmtIndex stmtIdx = StmtIndex(getStmtTypeTableSize() + 1);
 	stmtTypeTable[stmtIdx] = stmtType;
 
 	stmtIdxFromTypeTable[stmtType].insert(stmtIdx);
 }
 
-unordered_set<STMT_IDX, STMT_IDX::hash_fn> Entity::getStmtIdxFromType(string stmtType) {
+unordered_set<StmtIndex, StmtIndex::HashFunction> Entity::getStmtIdxFromType(string stmtType) {
 	return stmtIdxFromTypeTable[stmtType];
 }
 
-vector<STMT_IDX> Entity::getAllStmts() {
-	vector<STMT_IDX> res;
+vector<StmtIndex> Entity::getAllStmts() {
+	vector<StmtIndex> res;
 
 	for (auto& stmtIdx : stmtTypeTable)
 		res.push_back(stmtIdx.first);
@@ -116,10 +116,10 @@ vector<STMT_IDX> Entity::getAllStmts() {
 	return res;
 }
 
-void Entity::insertStmtFromProc(PROC_IDX procIdx, STMT_IDX stmtIdx) {
+void Entity::insertStmtFromProc(ProcIndex procIdx, StmtIndex stmtIdx) {
 	procStmtTable[procIdx].insert(stmtIdx);
 }
 
-unordered_set<STMT_IDX, STMT_IDX::hash_fn> Entity::getStmtsFromProc(PROC_IDX procIdx) {
+unordered_set<StmtIndex, StmtIndex::HashFunction> Entity::getStmtsFromProc(ProcIndex procIdx) {
 	return procStmtTable[procIdx];
 }
