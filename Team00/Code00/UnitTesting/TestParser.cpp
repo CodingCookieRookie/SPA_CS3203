@@ -31,15 +31,12 @@ namespace UnitTesting
 
 			ReadNode* readNode1 = (ReadNode*) statements[0];
 			Assert::AreEqual(std::string("x1"), readNode1->getVarName());
-			Assert::AreEqual(size_t(1), readNode1->getStmtNum());
 
-			PrintNode* printNode = (PrintNode*)statements[1];
+			PrintNode* printNode = (PrintNode*) statements[1];
 			Assert::AreEqual(std::string("y123"), printNode->getVarName());
-			Assert::AreEqual(size_t(2), printNode->getStmtNum());
 
-			ReadNode* readNode2 = (ReadNode*)statements[2];
+			ReadNode* readNode2 = (ReadNode*) statements[2];
 			Assert::AreEqual(std::string("Y1Yy"), readNode2->getVarName());
-			Assert::AreEqual(size_t(3), readNode2->getStmtNum());
 		}
 
 		TEST_METHOD(Parse_MultipleProceduresReadPrint_Successful)
@@ -65,7 +62,6 @@ namespace UnitTesting
 
 			ReadNode* readNode1 = (ReadNode*)statements1[0];
 			Assert::AreEqual(std::string("x1"), readNode1->getVarName());
-			Assert::AreEqual(size_t(1), readNode1->getStmtNum());
 
 			/* Test statements in stmtListNode2 */
 			StmtListNode* stmtListNode2 = procNodes[1]->getStmtListNode();
@@ -74,11 +70,9 @@ namespace UnitTesting
 
 			PrintNode* printNode = (PrintNode*)statements2[0];
 			Assert::AreEqual(std::string("y123"), printNode->getVarName());
-			Assert::AreEqual(size_t(2), printNode->getStmtNum());
 
 			ReadNode* readNode2 = (ReadNode*)statements2[1];
 			Assert::AreEqual(std::string("Y1Yy"), readNode2->getVarName());
-			Assert::AreEqual(size_t(3), readNode2->getStmtNum());
 		}
 
 	};

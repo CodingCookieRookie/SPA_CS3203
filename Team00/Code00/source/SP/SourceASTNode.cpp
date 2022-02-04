@@ -6,20 +6,15 @@ using namespace std;
 SourceASTNode::SourceASTNode() {}
 
 /* StmtNode */
-StmtNode::StmtNode(size_t stmtNum) : SourceASTNode(), stmtNum(stmtNum) { }
-
-size_t StmtNode::getStmtNum() {
-	return stmtNum;
-}
-
+StmtNode::StmtNode() : SourceASTNode() { }
 
 void StmtNode::printNode(int depth) {
 	printDashes(depth);
-	std::cout << stmtNum << ":stmtNode" << std::endl;
+	std::cout << ":stmtNode" << std::endl;
 }
 
 /* ReadNode */
-ReadNode::ReadNode(std::string varName, size_t stmtNum) : StmtNode(stmtNum), varName(varName) { }
+ReadNode::ReadNode(std::string varName) : StmtNode(), varName(varName) { }
 
 std::string ReadNode::getVarName() {
 	return varName;
@@ -27,11 +22,11 @@ std::string ReadNode::getVarName() {
 
 void ReadNode::printNode(int depth) {
 	printDashes(depth);
-	std::cout << varName << ":read, stmtNum: " << getStmtNum() << std::endl;
+	std::cout << varName << ":read" << std::endl;
 }
 
 /* PrintNode */
-PrintNode::PrintNode(std::string varName, size_t stmtNum) : StmtNode(stmtNum) , varName(varName) { }
+PrintNode::PrintNode(std::string varName) : StmtNode() , varName(varName) { }
 
 std::string PrintNode::getVarName() {
 	return varName;
@@ -39,7 +34,7 @@ std::string PrintNode::getVarName() {
 
 void PrintNode::printNode(int depth) {
 	printDashes(depth);
-	std::cout << varName << ":print, stmtNum: " << getStmtNum() << std::endl;
+	std::cout << varName << ":print" << std::endl;
 }
 
 /* StmtListNode */
@@ -87,18 +82,12 @@ void ProcedureNode::printNode(int depth) {
 /* ProgramNode */
 ProgramNode::ProgramNode() : SourceASTNode() { }
 
-size_t ProgramNode::currStmtNum = 1;
-
 void ProgramNode::addProcedure(ProcedureNode* procedureNode) {
 	procedureNodes.push_back(procedureNode);
 }
 
 std::vector<ProcedureNode*> ProgramNode::getProcedureNodes() {
 	return procedureNodes;
-}
-
-void ProgramNode::incrCurrStmtNum() {
-	currStmtNum++;
 }
 
 void ProgramNode::printNode(int depth) {
