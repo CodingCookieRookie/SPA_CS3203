@@ -13,7 +13,7 @@ namespace UnitTesting
 	public:
 		TEST_METHOD(Parse_OneProcedureReadPrint_Successful)
 		{
-			const char* source = "   procedure proc  "
+			const char* source = "   procedure proc \n "
 				"{ read x1; print y123;  \n "
 				" read Y1Yy ; } ";
 			Parser parser(source);
