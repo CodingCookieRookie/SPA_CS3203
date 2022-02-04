@@ -29,7 +29,7 @@ private:
 	StmtIndex stmtIdx1 = StmtIndex(1);
 	StmtIndex stmtIdx2 = StmtIndex(2);
 
-	TEST_METHOD_CLEANUP(clearEntityTables) {
+	TEST_METHOD_CLEANUP(cleanUpEntities) {
 		Entity::performCleanUp();
 	}
 
