@@ -3,9 +3,6 @@
 #ifndef TYPES_H
 #define TYPES_H
 
-#include <stdio.h>
-#include <iostream>
-
 using namespace std;
 
 enum class StatementType {
@@ -15,7 +12,7 @@ enum class StatementType {
 struct VarIndex {
 	int index;
 
-	VarIndex():index() {}
+	VarIndex() :index() {}
 
 	VarIndex(int index) {
 		this->index = index;

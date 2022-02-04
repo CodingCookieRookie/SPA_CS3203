@@ -31,12 +31,15 @@ public:
 		int procRes = entityTypeOverloadedFunction(procIdx);
 		int stmtRes = entityTypeOverloadedFunction(stmtIdx);
 
-		Assert::AreEqual(varRes, 1);
-		Assert::AreEqual(procRes, 2);
-		Assert::AreEqual(stmtRes, 3);
+		Assert::AreEqual(1, varRes);
+		Assert::AreEqual(2, procRes);
+		Assert::AreEqual(3, stmtRes);
 	}
 
 	TEST_METHOD(uniqueEntityTypes) {
+		Assert::IsFalse(typeid(VarIndex) == typeid(ProcIndex));
+		Assert::IsFalse(typeid(StmtIndex) == typeid(ProcIndex));
+		Assert::IsFalse(typeid(StmtIndex) == typeid(VarIndex));
 		Assert::IsFalse(typeid(VarIndex) == typeid(ProcIndex));
 		Assert::IsFalse(typeid(StmtIndex) == typeid(ProcIndex));
 		Assert::IsFalse(typeid(StmtIndex) == typeid(VarIndex));

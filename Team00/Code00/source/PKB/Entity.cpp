@@ -30,9 +30,11 @@ int Entity::getStmtTypeTableSize() {
 }
 
 void Entity::insertVar(string varName) {
-	VarIndex varIdx = VarIndex(getVarTableSize() + 1);
-	varNameTable[varIdx] = varName;
-	varIdxTable[varName] = varIdx;
+	if (varIdxTable.find(varName) == varIdxTable.end()) {
+		VarIndex varIdx = VarIndex(getVarTableSize() + 1);
+		varNameTable[varIdx] = varName;
+		varIdxTable[varName] = varIdx;
+	}
 }
 
 string Entity::getVarName(VarIndex varIdx) {
@@ -53,9 +55,11 @@ vector<string> Entity::getAllVars() {
 }
 
 void Entity::insertProc(string procName) {
-	ProcIndex procIdx = ProcIndex(getProcTableSize() + 1);
-	procNameTable[procIdx] = procName;
-	procIdxTable[procName] = procIdx;
+	if (procIdxTable.find(procName) == procIdxTable.end()) {
+		ProcIndex procIdx = ProcIndex(getProcTableSize() + 1);
+		procNameTable[procIdx] = procName;
+		procIdxTable[procName] = procIdx;
+	}
 }
 
 string Entity::getProcName(ProcIndex procIdx) {
@@ -91,7 +95,6 @@ vector<int> Entity::getAllConsts() {
 StmtIndex Entity::insertStmt(StatementType stmtType) {
 	StmtIndex stmtIdx = StmtIndex(getStmtTypeTableSize() + 1);
 	stmtTypeTable[stmtIdx] = stmtType;
-
 	stmtIdxFromTypeTable[stmtType].insert(stmtIdx);
 
 	return stmtIdx;
