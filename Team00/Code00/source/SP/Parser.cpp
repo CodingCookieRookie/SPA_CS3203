@@ -24,6 +24,9 @@ ProgramNode* Parser::matchProgram() {
 	while (!lexer.reachedEnd()) {
 		procNode = matchProcedure();
 		programNode->addProcedure(procNode);
+		if (procNode == nullptr) {
+			return nullptr;
+		}
 	}
 
 	if (procNode == nullptr) {
@@ -82,9 +85,13 @@ StmtListNode* Parser::matchStmtList() {
 	while (!lexer.peek("}") && !lexer.reachedEnd()) {
 		stmtNode = matchStmt();
 		stmtListNode->addStmtNode(stmtNode);
+
+		// If any of the stmtNode is invalid, immediately terminate.
+		if (stmtNode == nullptr) {
+			return nullptr;
+		}
 	}
 
-	// If any of the stmtNode is invalid, immediately terminate.
 	if (stmtNode == nullptr) {
 		return nullptr;
 	}
@@ -103,7 +110,8 @@ StmtNode* Parser::matchStmt() {
 		if (lexer.match(validStmt)) {
 			if (validStmt == "read") {
 				stmtNode = matchRead();
-			} else if (validStmt == "print") {
+			}
+			else if (validStmt == "print") {
 				stmtNode = matchPrint();
 			}
 
