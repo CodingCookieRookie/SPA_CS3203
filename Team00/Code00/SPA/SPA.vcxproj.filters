@@ -36,6 +36,9 @@
     <ClCompile Include="..\source\SP\SourceASTNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\PKB\Entity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\PKB.h">
@@ -58,6 +61,11 @@
     </ClInclude>
     <ClInclude Include="..\source\SP\DesignExtractor.h">
       <Filter>Header Files</Filter>
+    <ClInclude Include="..\source\PKB\Entity.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\common\Types.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

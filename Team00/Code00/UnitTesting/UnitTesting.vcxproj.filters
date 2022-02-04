@@ -30,6 +30,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestParser.cpp">
+    <ClCompile Include="TestTypes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
