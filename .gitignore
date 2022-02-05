@@ -9,6 +9,7 @@
 # Other miscs
 *.xml
 *.vcxproj
+*.filters
 *.DS_Store
 *.rc
 
