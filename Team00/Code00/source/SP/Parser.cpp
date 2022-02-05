@@ -1,9 +1,5 @@
 #include "Parser.h"
 
-std::vector<std::string> Parser::validStmts = {
-	"read", "print", "call", "while", "if", "assign"
-};
-
 Parser::Parser(const std::string& source) : lexer(source) { }
 
 SourceAST Parser::parse() {
@@ -52,11 +48,6 @@ ProcedureNode* Parser::matchProcedure() {
 		return nullptr;
 	}
 
-	whitespace = lexer.nextWhitespace();
-	if (whitespace.empty()) {
-		return nullptr;
-	}
-
 	if (!lexer.match("{")) {
 		return nullptr;
 	}
@@ -82,7 +73,7 @@ StmtListNode* Parser::matchStmtList() {
 
 	// There must exist at least 1 stmt
 	StmtNode* stmtNode;
-	while (!lexer.peek("}") && !lexer.reachedEnd()) {
+	while (!lexer.peek("}")) {
 		stmtNode = matchStmt();
 		stmtListNode->addStmtNode(stmtNode);
 
@@ -102,26 +93,13 @@ StmtListNode* Parser::matchStmtList() {
 /* stmt : read | print | call | while | if | assign */
 StmtNode* Parser::matchStmt() {
 	bool isValidStmt = false;
-	std::string validStmt;
 	StmtNode* stmtNode{};
 
-	for (std::string& validStmt : validStmts) {
-		// TODO: make this more elegant.
-		if (lexer.match(validStmt)) {
-			if (validStmt == "read") {
-				stmtNode = matchRead();
-			}
-			else if (validStmt == "print") {
-				stmtNode = matchPrint();
-			}
-
-			isValidStmt = true;
-			break;
-		}
-	}
-
-	if (!isValidStmt) {
-		return nullptr;
+	// TODO: make this more elegant. Add invalid statement handler.
+	if (lexer.match("read")) {
+		stmtNode = matchRead();
+	} else if (lexer.match("print")) {
+		stmtNode = matchPrint();
 	}
 
 	return stmtNode;
