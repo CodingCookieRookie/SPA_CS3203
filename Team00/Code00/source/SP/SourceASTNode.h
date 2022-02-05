@@ -4,6 +4,8 @@
 #include <vector>
 #include <iostream>
 
+#include "../common/Types.h"
+
 class SourceASTNode {
 public:
 	SourceASTNode();
@@ -20,6 +22,9 @@ public:
 class StmtNode : public SourceASTNode {
 public:
 	StmtNode();
+	virtual StatementType getStmtType() = 0;
+	virtual std::vector<std::string> getModifies() = 0;
+	virtual std::vector<std::string> getUses() = 0;
 
 	void printNode(int depth = 1);
 
@@ -32,6 +37,9 @@ private:
 public:
 	ReadNode(std::string varName);
 	std::string getVarName();
+	StatementType getStmtType();
+	std::vector<std::string> getModifies();
+	std::vector<std::string> getUses();
 	void printNode(int depth);
 
 	friend class SourceAST;
@@ -43,6 +51,9 @@ private:
 public:
 	PrintNode(std::string varName);
 	std::string getVarName();
+	StatementType getStmtType();
+	std::vector<std::string> getModifies();
+	std::vector<std::string> getUses();
 	void printNode(int depth);
 
 	friend class SourceAST;

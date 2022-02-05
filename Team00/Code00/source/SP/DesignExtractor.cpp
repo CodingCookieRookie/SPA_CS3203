@@ -19,19 +19,15 @@ void DesignExtractor::ProcessNode(StmtListNode* stmtListNode) {
 }
 
 void DesignExtractor::ProcessNode(StmtNode* stmtNode) {
-	// We should never reach this, because we
-	// should never instanciate a StmtNode that
-	// isn't one of the subtypes
-}
-
-void DesignExtractor::ProcessNode(ReadNode* readNode) {
-	Entity::insertStmt(StatementType::readType);
-	Entity::insertVar(readNode->getVarName());
-}
-
-void DesignExtractor::ProcessNode(PrintNode* printNode) {
-	Entity::insertStmt(StatementType::printType);
-	Entity::insertVar(printNode->getVarName());
+	Entity::insertStmt(stmtNode->getStmtType());
+	std::vector<std::string> modifies = stmtNode->getModifies();
+	for (std::string& varName : modifies) {
+		Entity::insertVar(varName);
+	}
+	std::vector<std::string> uses = stmtNode->getUses();
+	for (std::string& varName : uses) {
+		Entity::insertVar(varName);
+	}
 }
 
 void DesignExtractor::Extract(SourceAST& ast) {

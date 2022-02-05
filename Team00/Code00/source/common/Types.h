@@ -15,7 +15,7 @@ enum class StatementType {
 struct VarIndex {
 	int index;
 
-	VarIndex():index() {}
+	VarIndex() :index() {}
 
 	VarIndex(int index) {
 		this->index = index;
