@@ -2,9 +2,9 @@
 #include <string>
 #include <vector>
 
+#include "Lexer.h"
 #include "SourceAST.h"
 #include "SourceASTNode.h"
-#include "Lexer.h"
 
 class Parser {
 private:
