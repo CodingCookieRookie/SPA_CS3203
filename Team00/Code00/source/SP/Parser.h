@@ -8,7 +8,6 @@
 
 class Parser {
 private:
-	static std::vector<std::string> validStmts;
 	Lexer lexer;
 	ProgramNode* matchProgram();
 	ProcedureNode* matchProcedure();
