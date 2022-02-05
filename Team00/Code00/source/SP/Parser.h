@@ -2,13 +2,12 @@
 #include <string>
 #include <vector>
 
+#include "../Commons/Lexer.h"
 #include "SourceAST.h"
 #include "SourceASTNode.h"
-#include "Lexer.h"
 
 class Parser {
 private:
-	static std::vector<std::string> validStmts;
 	Lexer lexer;
 	ProgramNode* matchProgram();
 	ProcedureNode* matchProcedure();
