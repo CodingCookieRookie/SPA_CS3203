@@ -11,7 +11,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace UnitTesting {
 	TEST_CLASS(TestParser) {
 public:
-	TEST_METHOD(Parse_OneProcedureReadPrint_Successful) {
+	TEST_METHOD(parse_oneProcedureReadPrint_success) {
 		const char* source = "   procedure proc \n "
 			"{ read x1; print y123;  \n "
 			" read Y1Yy ; } ";
@@ -38,7 +38,7 @@ public:
 		Assert::AreEqual(std::string("Y1Yy"), readNode2->getVarName());
 	}
 
-	TEST_METHOD(Parse_MultipleProceduresReadPrint_Successful) {
+	TEST_METHOD(parse_multipleProceduresReadPrint_success) {
 		const char* source = "   procedure proc1  "
 			"{ read x1; } "
 			" \n procedure proc2 { \n"
