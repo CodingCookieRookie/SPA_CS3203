@@ -73,7 +73,7 @@ StmtListNode* Parser::matchStmtList() {
 
 	// There must exist at least 1 stmt
 	StmtNode* stmtNode;
-	while (!lexer.peek("}") && !lexer.reachedEnd()) {
+	while (!lexer.peek("}")) {
 		stmtNode = matchStmt();
 		stmtListNode->addStmtNode(stmtNode);
 
