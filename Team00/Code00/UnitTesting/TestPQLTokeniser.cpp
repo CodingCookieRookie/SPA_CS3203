@@ -14,7 +14,7 @@ namespace UnitTesting
 	{
 	public:
 
-		TEST_METHOD(TestPQLTokeniserTrue1)
+		TEST_METHOD(tokeniseQuery_selectAllStmt_success)
 		{
 			string designEntities = "stmt s; assign a;";
 			string query = "Select s;";
@@ -41,7 +41,7 @@ namespace UnitTesting
 			clearSynonyms();
 		}
 
-		TEST_METHOD(TestPQLTokeniserTrue2)
+		TEST_METHOD(tokeniseQuery_weirdspacing_success)
 		{
 			string designEntities = "assign s     ;    assign veryLongAssignmentName;";
 			string query = "Select s;";
@@ -68,7 +68,7 @@ namespace UnitTesting
 			clearSynonyms();
 		}
 
-		TEST_METHOD(TestPQLTokeniserFalse1)
+		TEST_METHOD(tokeniseQuery_noSynonym_noSynonymAdded)
 		{
 			string designEntities = "stmt s; assign;";
 			string query = "Select s;";

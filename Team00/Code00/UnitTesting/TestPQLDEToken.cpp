@@ -9,7 +9,7 @@ namespace UnitTesting
 	{
 	public:
 
-		TEST_METHOD(TestPQLDETokenTrue1)
+		TEST_METHOD(testPQLDEToken_success)
 		{
 			PQLDEToken token;
 			token.setDesignEntity("stmt");

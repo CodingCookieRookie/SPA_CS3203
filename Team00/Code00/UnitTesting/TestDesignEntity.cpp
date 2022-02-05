@@ -9,17 +9,17 @@ namespace UnitTesting
 	{
 	public:
 
-		TEST_METHOD(TestDesignEntityTrue1)
+		TEST_METHOD(testDesignEntity_success)
 		{
 			Assert::IsTrue(checkIfWordIsDesignEntity("stmt"));
 		}
 
-		TEST_METHOD(TestDesignEntityFalse1)
+		TEST_METHOD(testDesignEntity_failure1)
 		{
 			Assert::IsFalse(checkIfWordIsDesignEntity("stmt dsadas"));
 		}
 
-		TEST_METHOD(TestDesignEntityFalse2)
+		TEST_METHOD(testDesignEntity_failure2)
 		{
 			Assert::IsFalse(checkIfWordIsDesignEntity("#@#&#@&assign#^^$"));
 		}
