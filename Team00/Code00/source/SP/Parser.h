@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 
-#include "Lexer.h"
+#include "../Commons/Lexer.h"
 #include "SourceAST.h"
 #include "SourceASTNode.h"
 
