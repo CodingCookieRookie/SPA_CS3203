@@ -52,11 +52,6 @@ ProcedureNode* Parser::matchProcedure() {
 		return nullptr;
 	}
 
-	whitespace = lexer.nextWhitespace();
-	if (whitespace.empty()) {
-		return nullptr;
-	}
-
 	if (!lexer.match("{")) {
 		return nullptr;
 	}
