@@ -1,5 +1,4 @@
 #include "DesignExtractor.h"
-#include "../PKB/Entity.h"
 
 void DesignExtractor::ProcessNode(ProgramNode* programNode) {
 	for (ProcedureNode* procedureNode : programNode->getProcedureNodes()) {

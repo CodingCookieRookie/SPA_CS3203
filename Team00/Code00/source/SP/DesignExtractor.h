@@ -1,5 +1,6 @@
 #pragma once
 #include "SourceAST.h"
+#include "../PKB/Entity.h"
 
 class DesignExtractor {
 private:
