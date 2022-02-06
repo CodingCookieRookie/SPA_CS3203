@@ -11,7 +11,7 @@ private:
 	std::vector<std::string> columns;
 public:
 
-	/* @brief Constructor for a ParsedQuery object */
+	/* Constructor for a ParsedQuery object */
 	ParsedQuery(const std::vector<PQL_VARIABLE>& allDeclarations,
 		const std::vector<std::string>& allColumns);
 

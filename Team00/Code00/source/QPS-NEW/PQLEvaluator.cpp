@@ -19,9 +19,13 @@ EvaluatedTable evaluate(ParsedQuery parsedQuery) {
 	return resultEvTable;
 }
 
-std::vector<INSTRUCTION> evalauteToInstructions(ParsedQuery parsedQuery) {
+std::vector<INSTRUCTION> evalauteToInstructions(ParsedQuery& pq) {
+	std::vector<INSTRUCTION> instructions;
 	// 1. Checks for what is required in the Select clause
-	//		Add respective instructions
+	std::vector<std::string> columns = pq.getColumns();
+	for (std::string entity : columns) {
+		// Match entity to 
+	}
 	// 2. If there are relations
 	//		checks for what relations are included in the ParsedQuery
 	//		Add respective instructions
@@ -40,5 +44,6 @@ EvaluatedTable executeInstruction(INSTRUCTION instruction) {
 }
 
 void innerJoinMerge(EvaluatedTable& newEvTable) {
-
+	// 1. Short-circuit if other table is empty
+	// 2. 
 }
