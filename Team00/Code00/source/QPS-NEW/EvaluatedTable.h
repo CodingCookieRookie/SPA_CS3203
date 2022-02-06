@@ -17,13 +17,15 @@ private:
 
 public:
 
-	/* For 
+	/* E.g. of an EvalauatedTable:
 	* {"s", "v"} = {{"1", "a"}, {"2", "b"}}
-	* EvalautedTable.entities = {"s", "v"} 
-	* EvalautedTable.*table = {
+	* 
+	* EvalautedTable.entities == {"s", "v"} 
+	* EvalautedTable.*table == {
 		{"s", {"1", "2"}},
 	*	{"v", {"a", "b"}}
 	* }
+	* numRow == 2
 	*/
 
 	/* Default constructor */
