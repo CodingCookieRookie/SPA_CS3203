@@ -3,7 +3,7 @@
 using namespace std;
 
 /* SourceASTNode */
-SourceASTNode::SourceASTNode() {}
+SourceASTNode::SourceASTNode() { }
 
 /* StmtNode */
 StmtNode::StmtNode() : SourceASTNode() { }
@@ -15,9 +15,20 @@ void StmtNode::printNode(int depth) {
 
 /* ReadNode */
 ReadNode::ReadNode(std::string varName) : StmtNode(), varName(varName) { }
-
 std::string ReadNode::getVarName() {
 	return varName;
+}
+
+StatementType ReadNode::getStmtType() {
+	return StatementType::readType;
+}
+
+std::vector<std::string> ReadNode::getModifies() {
+	return { varName };
+}
+
+std::vector<std::string> ReadNode::getUses() {
+	return std::vector<std::string>();
 }
 
 void ReadNode::printNode(int depth) {
@@ -30,6 +41,18 @@ PrintNode::PrintNode(std::string varName) : StmtNode() , varName(varName) { }
 
 std::string PrintNode::getVarName() {
 	return varName;
+}
+
+StatementType PrintNode::getStmtType() {
+	return StatementType::printType;
+}
+
+std::vector<std::string> PrintNode::getModifies() {
+	return std::vector<std::string>();
+}
+
+std::vector<std::string> PrintNode::getUses() {
+	return { varName };
 }
 
 void PrintNode::printNode(int depth) {

@@ -82,7 +82,6 @@ StmtListNode* Parser::matchStmtList() {
 	while (stmtNode = matchStmt()) {
 		stmtListNode->addStmtNode(stmtNode);
 	}
-
 	return stmtListNode;
 }
 

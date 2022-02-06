@@ -15,6 +15,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\source\SP\DesignExtractor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\source\TNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -65,6 +68,10 @@
     <ClInclude Include="..\source\SP\Parser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\source\SP\DesignExtractor.h">
+      <Filter>Header Files</Filter>
+  </ItemGroup>
+</Project>
     <ClInclude Include="..\source\QPS-NEW\PQLDEToken.h">
       <Filter>Header Files</Filter>
     </ClInclude>
