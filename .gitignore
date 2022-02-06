@@ -533,9 +533,3 @@ FodyWeavers.xsd
 
 ### VisualStudio Patch ###
 # Additional files built by Visual Studio
-
-# End of https://www.toptal.com/developers/gitignore/api/c++,windows,visualstudio,qt,qtcreator
-Team00/Code00/IntegrationTesting/IntegrationTesting.vcxproj
-Team00/Code00/SPA/SPA.vcxproj
-Team00/Code00/UnitTesting/UnitTesting.vcxproj
-Team00/Code00/AutoTester/AutoTester.vcxproj
