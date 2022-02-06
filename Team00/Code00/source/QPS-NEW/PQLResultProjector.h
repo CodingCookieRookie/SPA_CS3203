@@ -3,6 +3,15 @@
 
 class PQLResultProjector
 {
+private:
+	EvaluatedTable evaluatedTable;
+
 public:
-	std::list<std::string> resolveTableToResults(EvaluatedTable evaluatedTable);
+
+	/* Instantiate of a PQLResultProjector */
+	PQLResultProjector(EvaluatedTable evTable);
+
+
+	/* Resolves the EvaluatedTable results into a list of strings to present the results of the query. */
+	std::list<std::string> resolveTableToResults();
 };

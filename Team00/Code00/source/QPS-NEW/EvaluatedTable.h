@@ -49,7 +49,7 @@ public:
 
 	/* Wrapper constructor for all 3 fields */
 	EvaluatedTable::EvaluatedTable(std::unordered_set<PQL_VARIABLE_TYPE> newEntities,
-		std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>& newTable, int newNumRow)
+		std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>& newTable, int newNumRow);
 
 	/* Getter for entities */
 	std::unordered_set<PQL_VARIABLE_TYPE> getEntities() {
