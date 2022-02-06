@@ -1,14 +1,20 @@
 #ifndef TESTWRAPPER_H
 #define TESTWRAPPER_H
 
-#include <string>
+#include <fstream>
 #include <iostream>
 #include <list>
+#include <sstream>
+#include <string>
 
 // include your other headers here
 #include "AbstractWrapper.h"
+#include "SP/DesignExtractor.h"
+#include "SP/Parser.h"
 
 class TestWrapper : public AbstractWrapper {
+private:
+	std::string getFileContent(std::string& filename);
 public:
 	// default constructor
 	TestWrapper();
