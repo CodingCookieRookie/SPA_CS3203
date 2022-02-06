@@ -6,12 +6,10 @@
 class DesignExtractor {
 private:
 	DesignExtractor() {}
-	static void ProcessNode(ProgramNode* programNode);
-	static void ProcessNode(ProcedureNode* procedureNode);
-	static void ProcessNode(StmtListNode* stmtListNode);
-	static void ProcessNode(StmtNode* stmtNode);
-	static void ProcessNode(ReadNode* readNode);
-	static void ProcessNode(PrintNode* printNode);
+	static void processNode(ProgramNode* programNode);
+	static void processNode(ProcedureNode* procedureNode);
+	static void processNode(StmtListNode* stmtListNode);
+	static void processNode(StmtNode* stmtNode);
 public:
 	static void Extract(SourceAST& ast);
 };
