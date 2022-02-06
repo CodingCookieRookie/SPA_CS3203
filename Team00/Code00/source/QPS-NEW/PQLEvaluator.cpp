@@ -6,6 +6,9 @@
 #include <optional>
 
 
+PQLEvaluator::PQLEvaluator(ParsedQuery parsedQuery) :
+	parsedQuery(parsedQuery) {};
+
 EvaluatedTable PQLEvaluator::evaluate(ParsedQuery parsedQuery) {
 	std::vector<Instruction> instructions = PQLEvaluator::evaluateToInstructions(parsedQuery);
 	EvaluatedTable resultingEvTable = executeInstructions(instructions);

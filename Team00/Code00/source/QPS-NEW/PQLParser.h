@@ -16,9 +16,9 @@ private:
 
 public:
 
-	/* @brief Instiation of a PQLParser that calls a Lexer to lex the query */
+	/* Instiation of a PQLParser that calls a Lexer to lex the query */
 	PQLParser(const std::string& query);
 
-	/* @brief Main entry method for parsing the query */
+	/* Main entry method for parsing the query */
 	ParsedQuery parseQuery();
 };
