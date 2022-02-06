@@ -2,6 +2,7 @@
 #include "CppUnitTest.h"
 
 #include "SP/DesignExtractor.h"
+
 #include "PKB/Entity.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
