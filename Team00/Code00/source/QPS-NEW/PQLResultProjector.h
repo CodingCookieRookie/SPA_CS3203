@@ -1,6 +1,4 @@
 #pragma once
-#include <list>
-#include <string>
 #include "EvaluatedTable.h"
 
 class PQLResultProjector
