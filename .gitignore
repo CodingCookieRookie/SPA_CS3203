@@ -6,12 +6,6 @@
 # Prerequisites
 *.d
 
-# Other miscs
-*.xml
-*.filters
-*.DS_Store
-*.rc
-
 # Compiled Object files
 *.slo
 *.lo
