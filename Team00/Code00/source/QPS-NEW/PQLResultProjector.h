@@ -4,5 +4,5 @@
 class PQLResultProjector
 {
 public:
-	std::list<std::string> resolveTable(EvaluatedTable evaluatedTable);
+	std::list<std::string> resolveTableToResults(EvaluatedTable evaluatedTable);
 };

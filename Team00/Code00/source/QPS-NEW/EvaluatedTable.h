@@ -16,7 +16,6 @@ private:
 	int numRow;
 
 public:
-
 	/* E.g. of an EvalauatedTable:
 	* {"s", "v"} = {{"1", "a"}, {"2", "b"}}
 	* 
@@ -51,5 +50,10 @@ public:
 	* 
 	*/
 	EvaluatedTable(std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>> *table);
-
+	std::unordered_set<PQL_VARIABLE_TYPE> getEntities() {
+		return entities;
+	}
+	std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>* getTableRef() {
+		return table;
+	}
 };
