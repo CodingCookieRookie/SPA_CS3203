@@ -16,7 +16,7 @@ ProgramNode* Parser::matchProgram() {
 	ProgramNode* programNode = new ProgramNode();
 
 	// There must exist at least 1 procedure
-	ProcedureNode* procNode;
+	ProcedureNode* procNode{};
 	while (!lexer.reachedEnd()) {
 		procNode = matchProcedure();
 		programNode->addProcedure(procNode);
@@ -77,10 +77,10 @@ StmtListNode* Parser::matchStmtList() {
 	if (stmtNode == nullptr) {
 		return nullptr;
 	}
-	stmtListNode->addStmt(stmtNode);
+	stmtListNode->addStmtNode(stmtNode);
 
 	while (stmtNode = matchStmt()) {
-		stmtLstNode->addStmt(stmtNode);
+		stmtListNode->addStmtNode(stmtNode);
 	}
 
 	return stmtListNode;
