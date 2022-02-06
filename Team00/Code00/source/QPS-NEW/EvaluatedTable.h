@@ -12,7 +12,7 @@ typedef std::string VALUE;
 class EvaluatedTable {
 private:
 	std::unordered_set<PQL_VARIABLE_TYPE> entities;
-	std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>> *table;
+	std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>* table;
 	int numRow;
 
 public:
@@ -29,14 +29,12 @@ public:
 	*/
 
 	/* Default constructor */
-	EvaluatedTable() {
-		numRow = 0;
-	}
+	EvaluatedTable();
 
 	/* Wrapper constructor */
 	EvaluatedTable(const EvaluatedTable& anotherEvTable);
 
-	/** Construct based on *table only 
+	/** Wrapper constructor that constructs based on *table only 
 	* 
 	* e.g.
 	* Given this from the PKB:
@@ -47,9 +45,22 @@ public:
 	*	{"s", {"1", "2"}},
 	*	{"v", {"a", "b"}}
 	* }))
-	* 
-	* 
 	*/
 	EvaluatedTable(std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>> *table);
+
+	/* Getter for entities */
+	std::unordered_set<PQL_VARIABLE_TYPE> getEntities() {
+		return entities;
+	}
+
+	/* Getter for numRow */
+	int getNumRow() {
+		return numRow;
+	}
+
+	/* Getter for *table */
+	const std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>* getTable() {
+		return table;
+	}
 
 };

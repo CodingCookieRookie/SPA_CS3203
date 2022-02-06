@@ -7,7 +7,8 @@ EvaluatedTable::EvaluatedTable() {
 */
 
 EvaluatedTable::EvaluatedTable() {
-	table = new std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>();
+	entities = std::unordered_set<PQL_VARIABLE_TYPE>();
+	*table = std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>();
 	numRow = 0;
 }
 

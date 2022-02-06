@@ -7,20 +7,11 @@
 
 
 EvaluatedTable PQLEvaluator::evaluate(ParsedQuery parsedQuery) {
-	
 	std::vector<Instruction> instructions = PQLEvaluator::evaluateToInstructions(parsedQuery);
-	
-	EvaluatedTable resultEvTable = EvaluatedTable();
-	for (Instruction instruction : instructions) {
-		EvaluatedTable currEvTable = executeInstruction(instruction);
-		if (resultEvTable.getEntities().empty()) {
-			resultEvTable = currEvTable;
-		} else {
-			resultEvTable = innerJoinMerge(resultEvTable, currEvTable);
-		}
-	}
-	return resultEvTable;
+	EvaluatedTable resultingEvTable = executeInstructions(instructions);
+	return resultingEvTable;
 }
+
 
 std::vector<Instruction> PQLEvaluator::evaluateToInstructions(ParsedQuery& pq) {
 	std::vector<Instruction> instructions = std::vector<Instruction>();
@@ -41,6 +32,7 @@ std::vector<Instruction> PQLEvaluator::evaluateToInstructions(ParsedQuery& pq) {
 		}
 	}
 
+	// TODO:
 	// 2. If there are relations
 	//		checks for what relations are included in the ParsedQuery
 	//		Add respective instructions
@@ -48,15 +40,40 @@ std::vector<Instruction> PQLEvaluator::evaluateToInstructions(ParsedQuery& pq) {
 	//		checks for what patterns are included in the ParsedQuery
 	//		Add respective instructions
 
-	//TODO: Optimisation: Sort instructions.
+	// TODO: Optimisation: Sort instructions.
 	return instructions;
 }
 
-EvaluatedTable executeInstruction(Instruction instruction) {
-	EvaluatedTable PKBresults = EvaluatedTable();
-	// Call relevant API
+EvaluatedTable executeInstructions(std::vector<Instruction> instructions) {
+	EvaluatedTable resultEvTable = EvaluatedTable();
 
-	return PKBresults;
+	// Call relevant API
+	for (Instruction instruction : instructions) {
+		EvaluatedTable currEvTable = execute(instruction);
+		if (resultEvTable.getEntities().empty()) {
+			resultEvTable = currEvTable;
+		}
+		else {
+			// TODO: Merge Tables
+			// resultEvTable = innerJoinMerge(resultEvTable, currEvTable);
+		}
+	}
+
+	return resultEvTable;
+}
+
+EvaluatedTable execute(Instruction& instr) {
+	INSTRUCTION_TYPE instrType = instr.getType();
+	EvaluatedTable currTable;
+
+	switch (instrType) {
+
+	case INSTRUCTION_TYPE::getAllStmt:
+		//PKB's getAllStmts
+		//currTable = getAllStmts();
+	}
+
+	return currTable;
 }
 
 EvaluatedTable PQLEvaluator::innerJoinMerge(EvaluatedTable& evTable, EvaluatedTable& newEvTable) {

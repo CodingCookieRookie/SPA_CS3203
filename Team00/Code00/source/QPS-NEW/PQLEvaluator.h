@@ -5,12 +5,22 @@
 #include "QPSCommons.h"
 #include "ParsedQuery.h"
 #include "EvaluatedTable.h"
+#include "Instruction.h"
 
 
 class PQLEvaluator {
 private:
-	/* Helper method to break down parsedQuery into isntructions to call in PKB*/
-	std::vector<INSTRUCTIONS> evalauteToInstructions(ParsedQuery& parsedQuery);
+	/* Helper method to break down parsedQuery into isntructions to call in PKB */
+	std::vector<Instruction> evaluateToInstructions(ParsedQuery& pq);
+
+	/* Helper method to execute all instructions */
+	EvaluatedTable executeInstructions(std::vector<Instruction> instructions);
+
+	/* Helper method to execute one instruction */
+	EvaluatedTable execute(Instruction& instr);
+
+	/* Helper method to inner join two EvaluatedTables together via a hash join algo */
+	void innerJoinMerge(EvaluatedTable& newEvTable);
 
 public:
 
@@ -22,10 +32,6 @@ public:
 
 	/* Merges the current table with values from another EvaluatedTable
 	via an Inner Join, which can be implemented using Hash Join */
-	void innerJoinMerge(EvaluatedTable& newEvTable);
-};
+	EvaluatedTable innerJoinMerge(EvaluatedTable& evTable, EvaluatedTable& newEvTable);
 
-enum class INSTRUCTION {
-	getVar, getAsgn
 };
-
