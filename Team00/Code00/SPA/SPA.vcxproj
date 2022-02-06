@@ -25,7 +25,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\Exception\SPAException.h" />
-    <ClInclude Include="..\source\PKB.h" />
     <ClInclude Include="..\source\QPS-NEW\EvaluatedTable.h" />
     <ClInclude Include="..\source\QPS-NEW\Instruction.h" />
     <ClInclude Include="..\source\QPS-NEW\Lexer.h" />
@@ -33,6 +32,12 @@
     <ClInclude Include="..\source\QPS-NEW\PQLEvaluator.h" />
     <ClInclude Include="..\source\QPS-NEW\PQLParser.h" />
     <ClInclude Include="..\source\QPS-NEW\QPSCommons.h" />
+    <ClCompile Include="..\source\PKB\Entity.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\source\common\Types.h" />
+    <ClInclude Include="..\source\PKB.h" />
+    <ClInclude Include="..\source\PKB\Entity.h" />
     <ClInclude Include="..\source\TNode.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -45,7 +50,7 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
