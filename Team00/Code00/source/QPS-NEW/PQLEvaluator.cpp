@@ -1,9 +1,11 @@
 #include "PQLEvaluator.h"
 #include "QPSCommons.h"
 #include "Instruction.h"
+#include "../PKB/Entity.h"
 
 #include <string>
-#include <optional>
+#include <unordered_map>
+#include <unordered_set>
 
 
 PQLEvaluator::PQLEvaluator(ParsedQuery parsedQuery) :
@@ -57,7 +59,7 @@ EvaluatedTable PQLEvaluator::executeInstructions(std::vector<Instruction> instru
 			resultEvTable = currEvTable;
 		}
 		else {
-			// TODO: Merge Tables
+			// TODO: Merge Tables (for Select and Pattern clause in the future)
 			// resultEvTable = innerJoinMerge(resultEvTable, currEvTable);
 		}
 	}
@@ -73,7 +75,19 @@ EvaluatedTable PQLEvaluator::execute(Instruction& instr) {
 
 	case INSTRUCTION_TYPE::getAllStmt:
 		//PKB's getAllStmts
-		//currTable = getAllStmts();
+		std::vector<StmtIndex> results = Entity::getAllStmts();
+
+		// TODO: Generalise this logic below:
+		// Convert StmtIndex to string
+		std::vector<VALUE> resultsToStr;
+		// std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>> newTable = std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>({{PQL_VARIABLE_TYPE::STMT, resultsToStr}});
+
+		for (StmtIndex result : results) {
+			resultsToStr.emplace_back(result.getIndex());
+		}
+		currTable = EvaluatedTable(std::unordered_set<PQL_VARIABLE_TYPE>({ PQL_VARIABLE_TYPE::STMT }),
+			std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>({ {PQL_VARIABLE_TYPE::STMT, resultsToStr} }), results.size());
+
 		break;
 	}
 

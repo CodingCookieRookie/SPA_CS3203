@@ -26,3 +26,11 @@ EvaluatedTable::EvaluatedTable(std::unordered_map<PQL_VARIABLE_TYPE, std::vector
 	}
 	*table = *anotherTable;
 }
+
+EvaluatedTable::EvaluatedTable(std::unordered_set<PQL_VARIABLE_TYPE> newEntities,
+	std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>& newTable, int newNumRow ) {
+
+	entities = newEntities;
+	*table = newTable;
+	numRow = newNumRow;
+}

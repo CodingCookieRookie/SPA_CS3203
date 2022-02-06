@@ -67,6 +67,10 @@ struct StmtIndex {
 			return hash<int>()(k.index);
 		}
 	};
+
+	int getIndex() {
+		return this->index;
+	}
 };
 
 #endif
