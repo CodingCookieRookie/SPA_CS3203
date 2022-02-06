@@ -21,6 +21,7 @@
     <ClCompile Include="..\source\QPS-NEW\ParsedQuery.cpp" />
     <ClCompile Include="..\source\QPS-NEW\PQLEvaluator.cpp" />
     <ClCompile Include="..\source\QPS-NEW\PQLParser.cpp" />
+    <ClCompile Include="..\source\QPS-NEW\PQLResultProjector.cpp" />
     <ClCompile Include="..\source\TNode.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -31,6 +32,7 @@
     <ClInclude Include="..\source\QPS-NEW\ParsedQuery.h" />
     <ClInclude Include="..\source\QPS-NEW\PQLEvaluator.h" />
     <ClInclude Include="..\source\QPS-NEW\PQLParser.h" />
+    <ClInclude Include="..\source\QPS-NEW\PQLResultProjector.h" />
     <ClInclude Include="..\source\QPS-NEW\QPSCommons.h" />
     <ClCompile Include="..\source\PKB\Entity.cpp" />
   </ItemGroup>
@@ -50,7 +52,7 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>

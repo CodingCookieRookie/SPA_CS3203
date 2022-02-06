@@ -12,7 +12,7 @@ std::list<std::string> PQLResultProjector::resolveTableToResults() {
 		std::string res = "";
 
 		// Given { {STMT, {1, 2, 3}} }, Forms "1 2 3"
-		for (int i = 0; i < values.size(); i++) {
+		for (size_t i = 0; i < values.size(); i++) {
 			res += values.at(i);
 			if (i != values.size() - 1) {
 				res += " ";
