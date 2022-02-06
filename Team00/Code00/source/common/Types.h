@@ -3,9 +3,6 @@
 #ifndef TYPES_H
 #define TYPES_H
 
-#include <stdio.h>
-#include <iostream>
-
 using namespace std;
 
 enum class StatementType {

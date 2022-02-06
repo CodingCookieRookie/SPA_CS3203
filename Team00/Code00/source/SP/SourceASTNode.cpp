@@ -3,10 +3,10 @@
 using namespace std;
 
 /* SourceASTNode */
-SourceASTNode::SourceASTNode() {}
+SourceASTNode::SourceASTNode() { }
 
 /* StmtNode */
-StmtNode::StmtNode() : SourceASTNode() {}
+StmtNode::StmtNode() : SourceASTNode() { }
 
 void StmtNode::printNode(int depth) {
 	printDashes(depth);
@@ -14,8 +14,7 @@ void StmtNode::printNode(int depth) {
 }
 
 /* ReadNode */
-ReadNode::ReadNode(std::string varName) : StmtNode(), varName(varName) {}
-
+ReadNode::ReadNode(std::string varName) : StmtNode(), varName(varName) { }
 std::string ReadNode::getVarName() {
 	return varName;
 }
@@ -38,7 +37,7 @@ void ReadNode::printNode(int depth) {
 }
 
 /* PrintNode */
-PrintNode::PrintNode(std::string varName) : StmtNode(), varName(varName) {}
+PrintNode::PrintNode(std::string varName) : StmtNode() , varName(varName) { }
 
 std::string PrintNode::getVarName() {
 	return varName;
@@ -62,7 +61,7 @@ void PrintNode::printNode(int depth) {
 }
 
 /* StmtListNode */
-StmtListNode::StmtListNode() : SourceASTNode() {}
+StmtListNode::StmtListNode() : SourceASTNode() { }
 
 void StmtListNode::addStmtNode(StmtNode* stmtNode) {
 	stmtNodes.push_back(stmtNode);
@@ -81,7 +80,7 @@ void StmtListNode::printNode(int depth) {
 }
 
 /* ProcedureNode */
-ProcedureNode::ProcedureNode(std::string procName) : SourceASTNode(), procName(procName) {
+ProcedureNode::ProcedureNode(std::string procName) : SourceASTNode(), procName(procName) { 
 	stmtListNode = new StmtListNode();
 }
 
@@ -104,7 +103,7 @@ void ProcedureNode::printNode(int depth) {
 }
 
 /* ProgramNode */
-ProgramNode::ProgramNode() : SourceASTNode() {}
+ProgramNode::ProgramNode() : SourceASTNode() { }
 
 void ProgramNode::addProcedure(ProcedureNode* procedureNode) {
 	procedureNodes.push_back(procedureNode);

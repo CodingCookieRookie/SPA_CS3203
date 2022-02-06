@@ -1,6 +1,6 @@
 #include "Parser.h"
 
-Parser::Parser(const std::string& source) : lexer(source) {}
+Parser::Parser(const std::string& source) : lexer(source) { }
 
 SourceAST Parser::parse() {
 	ProgramNode* root = matchProgram();
@@ -16,7 +16,7 @@ ProgramNode* Parser::matchProgram() {
 	ProgramNode* programNode = new ProgramNode();
 
 	// There must exist at least 1 procedure
-	ProcedureNode* procNode;
+	ProcedureNode* procNode{};
 	while (!lexer.reachedEnd()) {
 		procNode = matchProcedure();
 		programNode->addProcedure(procNode);
@@ -71,22 +71,17 @@ ProcedureNode* Parser::matchProcedure() {
 StmtListNode* Parser::matchStmtList() {
 	StmtListNode* stmtListNode = new StmtListNode();
 
-	// There must exist at least 1 stmt
-	StmtNode* stmtNode;
-	while (!lexer.peek("}")) {
-		stmtNode = matchStmt();
-		stmtListNode->addStmtNode(stmtNode);
-
-		// If any of the stmtNode is invalid, immediately terminate.
-		if (stmtNode == nullptr) {
-			return nullptr;
-		}
-	}
-
+	// There must exist at least 1 stmt. 
+	// TODO: now we assume correct source program. Need to update impl.
+	StmtNode* stmtNode = matchStmt();
 	if (stmtNode == nullptr) {
 		return nullptr;
 	}
+	stmtListNode->addStmtNode(stmtNode);
 
+	while (stmtNode = matchStmt()) {
+		stmtListNode->addStmtNode(stmtNode);
+	}
 	return stmtListNode;
 }
 
