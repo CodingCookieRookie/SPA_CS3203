@@ -10,10 +10,10 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace UnitTesting {
 	TEST_CLASS(TestDesignExtractor) {
 	public:
-		[TestCleanup()]
-		void TestDesignExtractorCleanup() {
+		//[TestCleanup()]
+		//void TestDesignExtractorCleanup() {
 
-		}
+		//}
 
 		TEST_METHOD(extract_readStatementOnly_success) {
 			std::string varName = "x";
