@@ -16,7 +16,6 @@ private:
 	int numRow;
 
 public:
-
 	/* E.g. of an EvalauatedTable:
 	* {"s", "v"} = {{"1", "a"}, {"2", "b"}}
 	* 
@@ -63,8 +62,7 @@ public:
 	}
 
 	/* Getter for *table */
-	const std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>* getTable() {
+	std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>* getTableRef() {
 		return table;
 	}
-
 };
