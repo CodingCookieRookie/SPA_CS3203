@@ -15,16 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\source\PKB.cpp">
+    <ClCompile Include="..\source\SP\DesignExtractor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\source\TNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\SP\DesignExtractor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\SP\Lexer.cpp">
+    <ClCompile Include="..\source\common\Lexer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\source\SP\Parser.cpp">
@@ -39,18 +36,40 @@
     <ClCompile Include="..\source\PKB\Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\QPS-NEW\PQLTokeniser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS-NEW\QPS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\source\PKB.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\TNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\SP\Lexer.h">
+    <ClInclude Include="..\source\QPS-NEW\DesignEntity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\PKB\Entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\common\Lexer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\SP\Parser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\SP\DesignExtractor.h">
+      <Filter>Header Files</Filter>
+  </ItemGroup>
+</Project>
+    <ClInclude Include="..\source\QPS-NEW\PQLDEToken.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS-NEW\PQLTokeniser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS-NEW\QPS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\SP\SourceAST.h">
@@ -59,13 +78,8 @@
     <ClInclude Include="..\source\SP\SourceASTNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\SP\DesignExtractor.h">
-      <Filter>Header Files</Filter>
-    <ClInclude Include="..\source\PKB\Entity.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\common\Types.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
