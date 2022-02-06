@@ -48,6 +48,10 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestDesignExtractor.cpp">
+    <ClCompile Include="TestModifies.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestUses.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
