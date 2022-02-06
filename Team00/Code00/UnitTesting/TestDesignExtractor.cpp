@@ -10,12 +10,10 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace UnitTesting {
 	TEST_CLASS(TestDesignExtractor) {
 	public:
-		//[TestCleanup()]
-		//void TestDesignExtractorCleanup() {
-
-		//}
 
 		TEST_METHOD(extract_readStatementOnly_success) {
+			Entity::performCleanUp();
+
 			std::string varName = "x";
 			std::string procName = "main";
 
@@ -35,6 +33,7 @@ namespace UnitTesting {
 			Assert::AreEqual(varName, Entity::getAllVars()[0]);
 		}
 		TEST_METHOD(extract_printStatementOnly_success) {
+			Entity::performCleanUp();
 			std::string varName = "x";
 			std::string procName = "main";
 
@@ -54,6 +53,7 @@ namespace UnitTesting {
 			Assert::AreEqual(varName, Entity::getAllVars()[0]);
 		}
 		TEST_METHOD(extract_readandPrintStatement_success) {
+			Entity::performCleanUp();
 			std::string varNameX = "x";
 			std::string varNameY = "y";
 			std::string procName = "main";
