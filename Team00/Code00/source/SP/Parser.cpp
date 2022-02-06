@@ -1,6 +1,6 @@
 #include "Parser.h"
 
-Parser::Parser(const std::string& source) : lexer(source) { }
+Parser::Parser(const std::string& source) : lexer(source) {}
 
 SourceAST Parser::parse() {
 	ProgramNode* root = matchProgram();

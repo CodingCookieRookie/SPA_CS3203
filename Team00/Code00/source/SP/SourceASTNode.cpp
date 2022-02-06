@@ -6,7 +6,7 @@ using namespace std;
 SourceASTNode::SourceASTNode() {}
 
 /* StmtNode */
-StmtNode::StmtNode() : SourceASTNode() { }
+StmtNode::StmtNode() : SourceASTNode() {}
 
 void StmtNode::printNode(int depth) {
 	printDashes(depth);
@@ -14,10 +14,22 @@ void StmtNode::printNode(int depth) {
 }
 
 /* ReadNode */
-ReadNode::ReadNode(std::string varName) : StmtNode(), varName(varName) { }
+ReadNode::ReadNode(std::string varName) : StmtNode(), varName(varName) {}
 
 std::string ReadNode::getVarName() {
 	return varName;
+}
+
+StatementType ReadNode::getStmtType() {
+	return StatementType::readType;
+}
+
+std::vector<std::string> ReadNode::getModifies() {
+	return { varName };
+}
+
+std::vector<std::string> ReadNode::getUses() {
+	return std::vector<std::string>();
 }
 
 void ReadNode::printNode(int depth) {
@@ -26,10 +38,22 @@ void ReadNode::printNode(int depth) {
 }
 
 /* PrintNode */
-PrintNode::PrintNode(std::string varName) : StmtNode() , varName(varName) { }
+PrintNode::PrintNode(std::string varName) : StmtNode(), varName(varName) {}
 
 std::string PrintNode::getVarName() {
 	return varName;
+}
+
+StatementType PrintNode::getStmtType() {
+	return StatementType::printType;
+}
+
+std::vector<std::string> PrintNode::getModifies() {
+	return std::vector<std::string>();
+}
+
+std::vector<std::string> PrintNode::getUses() {
+	return { varName };
 }
 
 void PrintNode::printNode(int depth) {
@@ -38,7 +62,7 @@ void PrintNode::printNode(int depth) {
 }
 
 /* StmtListNode */
-StmtListNode::StmtListNode() : SourceASTNode() { }
+StmtListNode::StmtListNode() : SourceASTNode() {}
 
 void StmtListNode::addStmtNode(StmtNode* stmtNode) {
 	stmtNodes.push_back(stmtNode);
@@ -57,7 +81,7 @@ void StmtListNode::printNode(int depth) {
 }
 
 /* ProcedureNode */
-ProcedureNode::ProcedureNode(std::string procName) : SourceASTNode(), procName(procName) { 
+ProcedureNode::ProcedureNode(std::string procName) : SourceASTNode(), procName(procName) {
 	stmtListNode = new StmtListNode();
 }
 
@@ -80,7 +104,7 @@ void ProcedureNode::printNode(int depth) {
 }
 
 /* ProgramNode */
-ProgramNode::ProgramNode() : SourceASTNode() { }
+ProgramNode::ProgramNode() : SourceASTNode() {}
 
 void ProgramNode::addProcedure(ProcedureNode* procedureNode) {
 	procedureNodes.push_back(procedureNode);

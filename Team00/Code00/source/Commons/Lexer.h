@@ -16,4 +16,3 @@ public:
 	bool peek(const std::string& pattern);
 	bool reachedEnd();
 };
-

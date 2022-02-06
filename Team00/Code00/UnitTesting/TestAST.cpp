@@ -6,11 +6,11 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting {
 	TEST_CLASS(TestAST) {
-public:
+	public:
 
-	TEST_METHOD(TestMethod1) {
-		//TNode T;
-		// TODO: Your test code here
+		TEST_METHOD(TestMethod1) {
+			//TNode T;
+			// TODO: Your test code here
 	}
 	};
 }
