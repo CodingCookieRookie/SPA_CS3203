@@ -29,5 +29,11 @@
     <ClCompile Include="TestAST.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TestTypes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestEntity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
