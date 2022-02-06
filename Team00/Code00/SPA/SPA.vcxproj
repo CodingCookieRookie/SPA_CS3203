@@ -12,6 +12,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\common\Lexer.cpp" />
+    <ClCompile Include="..\source\PKB\Entity.cpp" />
+    <ClCompile Include="..\source\QPS-NEW\PQLTokeniser.cpp" />
+    <ClCompile Include="..\source\QPS-NEW\QPS.cpp" />
     <ClCompile Include="..\source\SP\Parser.cpp" />
     <ClCompile Include="..\source\SP\SourceAST.cpp" />
     <ClCompile Include="..\source\SP\SourceASTNode.cpp" />
@@ -19,6 +22,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\common\Lexer.h" />
+    <ClInclude Include="..\source\common\Types.h" />
+    <ClInclude Include="..\source\PKB\Entity.h" />
+    <ClInclude Include="..\source\QPS-NEW\DesignEntity.h" />
+    <ClInclude Include="..\source\QPS-NEW\PQLDEToken.h" />
+    <ClInclude Include="..\source\QPS-NEW\PQLTokeniser.h" />
+    <ClInclude Include="..\source\QPS-NEW\QPS.h" />
     <ClInclude Include="..\source\SP\Parser.h" />
     <ClInclude Include="..\source\SP\SourceAST.h" />
     <ClInclude Include="..\source\SP\SourceASTNode.h" />
