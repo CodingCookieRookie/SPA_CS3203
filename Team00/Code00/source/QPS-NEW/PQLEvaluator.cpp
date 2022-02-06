@@ -44,7 +44,7 @@ std::vector<Instruction> PQLEvaluator::evaluateToInstructions(ParsedQuery& pq) {
 	return instructions;
 }
 
-EvaluatedTable executeInstructions(std::vector<Instruction> instructions) {
+EvaluatedTable PQLEvaluator::executeInstructions(std::vector<Instruction> instructions) {
 	EvaluatedTable resultEvTable = EvaluatedTable();
 
 	// Call relevant API
@@ -62,7 +62,7 @@ EvaluatedTable executeInstructions(std::vector<Instruction> instructions) {
 	return resultEvTable;
 }
 
-EvaluatedTable execute(Instruction& instr) {
+EvaluatedTable PQLEvaluator::execute(Instruction& instr) {
 	INSTRUCTION_TYPE instrType = instr.getType();
 	EvaluatedTable currTable;
 
@@ -71,12 +71,18 @@ EvaluatedTable execute(Instruction& instr) {
 	case INSTRUCTION_TYPE::getAllStmt:
 		//PKB's getAllStmts
 		//currTable = getAllStmts();
+		break;
 	}
 
 	return currTable;
 }
 
 EvaluatedTable PQLEvaluator::innerJoinMerge(EvaluatedTable& evTable, EvaluatedTable& newEvTable) {
+	EvaluatedTable mergedTable;
+	// TODO:
 	// 1. Short-circuit if other table is empty
 	// 2.
+
+	mergedTable = evTable;
+	return mergedTable;
 }
