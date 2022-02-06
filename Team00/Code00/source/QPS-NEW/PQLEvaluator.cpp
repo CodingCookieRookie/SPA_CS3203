@@ -1,16 +1,22 @@
 #include "PQLEvaluator.h"
 
+#include <string>
+#include <optional>
+
 EvaluatedTable evaluate(ParsedQuery parsedQuery) {
-	// Question: Does the semantic check happen here?
 	
 	std::vector<INSTRUCTION> instructions = evalauteToInstructions(parsedQuery);
 	
-	std::vector<EvaluatedTable> evaluatedTables;
+	EvaluatedTable resultEvTable = EvaluatedTable();
 	for (INSTRUCTION instruction : instructions) {
-		evaluatedTables.push_back(executeInstruction(instruction));
+		EvaluatedTable currEvTable = executeInstruction(instruction);
+		if !(resultEvTable.entities) {
+			resultEvTable = currEvTable;
+		} else {
+			resultEvTable.innerJoinMerge(currEvTable);
+		}
 	}
-	//mergeInstructions(evaluatedTables);
-
+	return resultEvTable;
 }
 
 std::vector<INSTRUCTION> evalauteToInstructions(ParsedQuery parsedQuery) {
@@ -27,5 +33,12 @@ std::vector<INSTRUCTION> evalauteToInstructions(ParsedQuery parsedQuery) {
 }
 
 EvaluatedTable executeInstruction(INSTRUCTION instruction) {
+	EvaluatedTable PKBresults = EvaluatedTable();
+	// Call relevant API
+
+	return PKBresults;
+}
+
+void innerJoinMerge(EvaluatedTable& newEvTable) {
 
 }

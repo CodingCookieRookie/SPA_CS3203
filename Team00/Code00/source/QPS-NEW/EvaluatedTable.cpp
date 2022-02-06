@@ -1,2 +1,2 @@
-#include "EvalautedTable.h"
+#include "EvaluatedTable.h"
 

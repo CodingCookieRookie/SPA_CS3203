@@ -25,7 +25,7 @@ public:
 	void innerJoinMerge(EvaluatedTable& anotherEvaluatedTable);
 };
 
-enum class INSTRUCTIONS {
+enum class INSTRUCTION {
 	getVar, getAsgn
 };
 
