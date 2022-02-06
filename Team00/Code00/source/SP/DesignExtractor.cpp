@@ -1,23 +1,23 @@
 #include "DesignExtractor.h"
 
-void DesignExtractor::processNode(ProgramNode* programNode) {
+void DesignExtractor::processProgramNode(ProgramNode* programNode) {
 	for (ProcedureNode* procedureNode : programNode->getProcedureNodes()) {
-		processNode(procedureNode);
+		processProcedureNode(procedureNode);
 	}
 }
 
-void DesignExtractor::processNode(ProcedureNode* procedureNode) {
+void DesignExtractor::processProcedureNode(ProcedureNode* procedureNode) {
 	Entity::insertProc(procedureNode->getProcName());
-	processNode(procedureNode->getStmtListNode());
+	processStmtLstNode(procedureNode->getStmtListNode());
 }
 
-void DesignExtractor::processNode(StmtListNode* stmtListNode) {
+void DesignExtractor::processStmtLstNode(StmtListNode* stmtListNode) {
 	for (StmtNode* stmtNode : stmtListNode->getStmtNodes()) {
-		processNode(stmtNode);
+		processStmtNode(stmtNode);
 	}
 }
 
-void DesignExtractor::processNode(StmtNode* stmtNode) {
+void DesignExtractor::processStmtNode(StmtNode* stmtNode) {
 	Entity::insertStmt(stmtNode->getStmtType());
 	std::vector<std::string> modifies = stmtNode->getModifies();
 	for (std::string& varName : modifies) {
@@ -30,5 +30,5 @@ void DesignExtractor::processNode(StmtNode* stmtNode) {
 }
 
 void DesignExtractor::Extract(SourceAST& ast) {
-	processNode(ast.getRoot());
+	processProgramNode(ast.getRoot());
 }
