@@ -13,7 +13,12 @@ private:
 	std::vector<PQL_VARIABLE> parseSingleDeclaration();
 	std::vector<PQL_VARIABLE> parseDeclarations();
 	std::vector<std::string> parseSelect();
+
 public:
+
+	/* @brief Instiation of a PQLParser that calls a Lexer to lex the query */
 	PQLParser(const std::string& query);
+
+	/* @brief Main entry method for parsing the query */
 	ParsedQuery parseQuery();
 };

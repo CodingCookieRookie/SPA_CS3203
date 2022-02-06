@@ -10,7 +10,7 @@
 class PQLEvaluator {
 private:
 	/* Helper method to break down parsedQuery into isntructions to call in PKB*/
-	std::vector<INSTRUCTIONS> evalauteToInstructions(ParsedQuery parsedQuery);
+	std::vector<INSTRUCTIONS> evalauteToInstructions(ParsedQuery& parsedQuery);
 
 public:
 
@@ -18,14 +18,14 @@ public:
 	PQLEvaluator(ParsedQuery parsedQuery);
 
 	/* Main entry method for parsing the query */
-	EvaluatedTable evaluate();
+	EvaluatedTable evaluate(ParsedQuery parsedQuery);
 
 	/* Merges the current table with values from another EvaluatedTable
 	via an Inner Join, which can be implemented using Hash Join */
-	void innerJoinMerge(EvaluatedTable& anotherEvaluatedTable);
+	void innerJoinMerge(EvaluatedTable& newEvTable);
 };
 
-enum class INSTRUCTIONS {
+enum class INSTRUCTION {
 	getVar, getAsgn
 };
 
