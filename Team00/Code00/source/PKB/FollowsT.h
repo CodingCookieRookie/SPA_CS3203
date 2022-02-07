@@ -8,9 +8,9 @@
 
 class FollowsT : public RS2<FollowsT> {
 private:
-	static void insert(StmtIndex predecessor, unordered_set<StmtIndex, StmtIndex::HashFunction> successors);
-	static unordered_set<StmtIndex, StmtIndex::HashFunction> getAllSuccessors(StmtIndex predecessor,
-		unordered_map<StmtIndex, unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> followsPredSucTable);
+	static void insert(StmtIndex predecessor, std::unordered_set<StmtIndex, StmtIndex::HashFunction> successors);
+	static std::unordered_set<StmtIndex, StmtIndex::HashFunction> getAllSuccessors(StmtIndex predecessor,
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> followsPredSucTable);
 public:
 	static void generate();
 };
