@@ -23,6 +23,8 @@ protected:
 	static unordered_map<string, vector<tuple<StmtIndex, VarIndex>>> postFixVarTable;
 
 public:
+	static string generatePostFixExpression(string infixExpression);
+	static void insertPostFixInfo(VarIndex varIdx, string postFixExpression, StmtIndex stmtIdx);
 	static vector<StmtIndex> getStmtsFromVarPattern(VarIndex varIdx, string expression, bool isSubExpression);
 	static vector<tuple<StmtIndex, VarIndex>> getStmtsFromPattern(string expression, bool isSubExpression);
 	static vector<StmtIndex> getStmtsFromVarPattern(VarIndex varIdx);

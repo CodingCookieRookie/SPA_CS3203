@@ -13,6 +13,14 @@ int Pattern::getPostFixVarTableSize() {
 	return -1;
 }
 
+string Pattern::generatePostFixExpression(string infixExpression) {
+	string res;
+	return res;
+}
+
+void Pattern::insertPostFixInfo(VarIndex varIdx, string postFixExpression, StmtIndex stmtIdx) {
+}
+
 vector<StmtIndex> Pattern::getStmtsFromVarPattern(VarIndex varIdx, string expression, bool isSubExpression) {
 	vector<StmtIndex> res;
 	return res;
