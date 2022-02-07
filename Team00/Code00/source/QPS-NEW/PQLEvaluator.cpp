@@ -73,7 +73,7 @@ EvaluatedTable PQLEvaluator::execute(Instruction& instr) {
 
 	switch (instrType) {
 
-	case INSTRUCTION_TYPE::getAllStmt:
+	case INSTRUCTION_TYPE::getAllStmt :
 		//PKB's getAllStmts
 		std::vector<StmtIndex> results = Entity::getAllStmts();
 
@@ -83,7 +83,7 @@ EvaluatedTable PQLEvaluator::execute(Instruction& instr) {
 		// std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>> newTable = std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>({{PQL_VARIABLE_TYPE::STMT, resultsToStr}});
 
 		for (StmtIndex result : results) {
-			resultsToStr.emplace_back(result.getIndex());
+			resultsToStr.push_back((std::to_string(result.getIndex())));
 		}
 		currTable = EvaluatedTable(std::unordered_set<PQL_VARIABLE_TYPE>({ PQL_VARIABLE_TYPE::STMT }),
 			std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>({ {PQL_VARIABLE_TYPE::STMT, resultsToStr} }), results.size());
