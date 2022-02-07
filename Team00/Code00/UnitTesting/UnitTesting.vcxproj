@@ -75,6 +75,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -171,9 +173,16 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TestAST.cpp" />
-    <ClCompile Include="TestPQLParser.cpp" />
+    <ClCompile Include="TestDesignExtractor.cpp" />
+    <ClCompile Include="TestDesignEntity.cpp" />
     <ClCompile Include="TestEntity.cpp" />
+    <ClCompile Include="TestModifies.cpp" />
+    <ClCompile Include="TestParser.cpp" />
+    <ClCompile Include="TestPQLDEToken.cpp" />
+    <ClCompile Include="TestPQLTokeniser.cpp" />
     <ClCompile Include="TestTypes.cpp" />
+    <ClCompile Include="TestUses.cpp" />
+    <ClCompile Include="TestPQLParser.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -11,21 +11,37 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\source\DesignExtractor.cpp" />
-    <ClCompile Include="..\source\Exception\SPAException.cpp" />
-    <ClCompile Include="..\source\Parser.cpp" />
-    <ClCompile Include="..\source\PKB.cpp" />
-    <ClCompile Include="..\source\QPS-NEW\EvaluatedTable.cpp" />
-    <ClCompile Include="..\source\QPS-NEW\Instruction.cpp" />
-    <ClCompile Include="..\source\QPS-NEW\Lexer.cpp" />
+    <ClCompile Include="..\source\common\Lexer.cpp" />
+    <ClCompile Include="..\source\PKB\Entity.cpp" />
+    <ClCompile Include="..\source\PKB\Modifies.cpp" />
+    <ClCompile Include="..\source\PKB\RS1.cpp" />
+    <ClCompile Include="..\source\PKB\Uses.cpp" />
+    <ClCompile Include="..\source\QPS-NEW\PQLTokeniser.cpp" />
+    <ClCompile Include="..\source\QPS-NEW\QPS.cpp" />
     <ClCompile Include="..\source\QPS-NEW\ParsedQuery.cpp" />
     <ClCompile Include="..\source\QPS-NEW\PQLEvaluator.cpp" />
     <ClCompile Include="..\source\QPS-NEW\PQLParser.cpp" />
     <ClCompile Include="..\source\QPS-NEW\PQLResultProjector.cpp" />
+    <ClCompile Include="..\source\QPS-NEW\EvaluatedTable.cpp" />
+    <ClCompile Include="..\source\QPS-NEW\Instruction.cpp" />
+    <ClCompile Include="..\source\SP\DesignExtractor.cpp" />
+    <ClCompile Include="..\source\SP\Parser.cpp" />
+    <ClCompile Include="..\source\SP\SourceAST.cpp" />
+    <ClCompile Include="..\source\SP\SourceASTNode.cpp" />
+    <ClCompile Include="..\source\Exception\SPAException.cpp" />
     <ClCompile Include="..\source\TNode.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\source\Exception\SPAException.h" />
+    <ClInclude Include="..\source\common\Lexer.h" />
+    <ClInclude Include="..\source\common\Types.h" />
+    <ClInclude Include="..\source\PKB\Entity.h" />
+    <ClInclude Include="..\source\PKB\Modifies.h" />
+    <ClInclude Include="..\source\PKB\RS1.h" />
+    <ClInclude Include="..\source\PKB\Uses.h" />
+    <ClInclude Include="..\source\QPS-NEW\DesignEntity.h" />
+    <ClInclude Include="..\source\QPS-NEW\PQLDEToken.h" />
+    <ClInclude Include="..\source\QPS-NEW\PQLTokeniser.h" />
+    <ClInclude Include="..\source\QPS-NEW\QPS.h" />
     <ClInclude Include="..\source\QPS-NEW\EvaluatedTable.h" />
     <ClInclude Include="..\source\QPS-NEW\Instruction.h" />
     <ClInclude Include="..\source\QPS-NEW\Lexer.h" />
@@ -34,12 +50,11 @@
     <ClInclude Include="..\source\QPS-NEW\PQLParser.h" />
     <ClInclude Include="..\source\QPS-NEW\PQLResultProjector.h" />
     <ClInclude Include="..\source\QPS-NEW\QPSCommons.h" />
-    <ClCompile Include="..\source\PKB\Entity.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\source\common\Types.h" />
-    <ClInclude Include="..\source\PKB.h" />
-    <ClInclude Include="..\source\PKB\Entity.h" />
+    <ClInclude Include="..\source\SP\DesignExtractor.h" />
+    <ClInclude Include="..\source\SP\Parser.h" />
+    <ClInclude Include="..\source\SP\SourceAST.h" />
+    <ClInclude Include="..\source\SP\SourceASTNode.h" />
+    <ClInclude Include="..\source\Exception\SPAException.h" />
     <ClInclude Include="..\source\TNode.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
