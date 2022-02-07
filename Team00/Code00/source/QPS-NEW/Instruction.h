@@ -8,7 +8,7 @@
 class Instruction {
 private:
 	INSTRUCTION_TYPE type;
-	std::vector<std::string> arguments;
+	std::vector<std::string> arguments; // has to be generalised
 
 public:
 
