@@ -1,23 +1,20 @@
-#include "../common/Lexer.h"
+#include "../QPS-NEW/PQLLexer.h"
 
-Lexer::Lexer(const std::string& source) : source(source), index(0), length(source.length()) {}
+PQLLexer::PQLLexer(const std::string& source)
+	: source(source), index(0), length(source.length()) { }
 
-void Lexer::advance() {
-	if (index >= length) {
-		return;
-	}
+void PQLLexer::advance() {
 	while (index < length && isspace(source[index])) {
 		index++;
 	}
-
 	return;
 }
 
-std::string Lexer::nextInteger() {
+std::string PQLLexer::nextInteger() {
+	advance();
 	if (index >= length) {
 		return std::string();
 	}
-	advance();
 	if (!isdigit(source[index])) {
 		return std::string();
 	}
@@ -29,11 +26,11 @@ std::string Lexer::nextInteger() {
 	return match;
 }
 
-std::string Lexer::nextName() {
+std::string PQLLexer::nextName() {
+	advance();
 	if (index >= length) {
 		return std::string();
 	}
-	advance();
 	if (!isalpha(source[index])) {
 		return std::string();
 	}
@@ -45,7 +42,7 @@ std::string Lexer::nextName() {
 	return match;
 }
 
-std::string Lexer::nextWhitespace() {
+std::string PQLLexer::nextWhitespace() {
 	if (index >= length) {
 		return std::string();
 	}
@@ -60,20 +57,8 @@ std::string Lexer::nextWhitespace() {
 	return match;
 }
 
-bool Lexer::match(const std::string& pattern) {
+bool PQLLexer::match(const std::string& pattern) {
 	advance();
-
-	if (!peek(pattern)) {
-		return false;
-	}
-
-	index += pattern.length();
-	return true;
-}
-
-bool Lexer::peek(const std::string& pattern) {
-	advance();
-
 	if (index + pattern.length() > length) {
 		return false;
 	}
@@ -82,10 +67,10 @@ bool Lexer::peek(const std::string& pattern) {
 			return false;
 		}
 	}
+	index += pattern.length();
 	return true;
 }
 
-bool Lexer::reachedEnd() {
-	advance();
+bool PQLLexer::reachedEnd() {
 	return (index == length);
 }
