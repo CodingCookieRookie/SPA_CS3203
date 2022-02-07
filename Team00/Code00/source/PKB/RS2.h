@@ -13,22 +13,22 @@ template<class T>
 class RS2 {
 protected:
 	RS2();
-	static unordered_map<StmtIndex, unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> predSucTable;
-	static unordered_map<StmtIndex, unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> sucPredTable;
+	static std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> predSucTable;
+	static std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> sucPredTable;
 
 public:
 	static bool containsSuccessor(StmtIndex predecessor, StmtIndex successor);
 	static bool containsPredecessor(StmtIndex predecessor, StmtIndex successor);
-	static unordered_set<StmtIndex, StmtIndex::HashFunction> getSuccessorStmts(StmtIndex predecessor);
-	static unordered_set<StmtIndex, StmtIndex::HashFunction> getPredecessorStmts(StmtIndex successor);
-	static vector<tuple<StmtIndex, StmtIndex>> getAllPredecessorSuccessorInfo();
-	static unordered_map<StmtIndex, unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> getPredSucTable();
-	static unordered_map<StmtIndex, unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> getSucPredTable();
+	static std::unordered_set<StmtIndex, StmtIndex::HashFunction> getSuccessorStmts(StmtIndex predecessor);
+	static std::unordered_set<StmtIndex, StmtIndex::HashFunction> getPredecessorStmts(StmtIndex successor);
+	static std::vector<std::tuple<StmtIndex, StmtIndex>> getAllPredecessorSuccessorInfo();
+	static std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> getPredSucTable();
+	static std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> getSucPredTable();
 	static void performCleanUp();
 };
 
-template<class T> unordered_map<StmtIndex, unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> RS2<T>::predSucTable = {};
-template<class T> unordered_map<StmtIndex, unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> RS2<T>::sucPredTable = {};
+template<class T> std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> RS2<T>::predSucTable = {};
+template<class T> std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> RS2<T>::sucPredTable = {};
 
 template<class T>
 RS2<T>::RS2() {};
@@ -54,17 +54,17 @@ bool RS2<T>::containsSuccessor(StmtIndex predecessor, StmtIndex successor) {
 };
 
 template<class T>
-unordered_set<StmtIndex, StmtIndex::HashFunction> RS2<T>::getSuccessorStmts(StmtIndex predecessor) {
+std::unordered_set<StmtIndex, StmtIndex::HashFunction> RS2<T>::getSuccessorStmts(StmtIndex predecessor) {
 	return predSucTable[predecessor];
 };
 
 template<class T>
-unordered_set<StmtIndex, StmtIndex::HashFunction> RS2<T>::getPredecessorStmts(StmtIndex successor) {
+std::unordered_set<StmtIndex, StmtIndex::HashFunction> RS2<T>::getPredecessorStmts(StmtIndex successor) {
 	return sucPredTable[successor];
 };
 
 template<class T>
-vector<tuple<StmtIndex, StmtIndex>> RS2<T>::getAllPredecessorSuccessorInfo() {
+std::vector<std::tuple<StmtIndex, StmtIndex>> RS2<T>::getAllPredecessorSuccessorInfo() {
 	vector<tuple<StmtIndex, StmtIndex>> data;
 	for (auto& predSucEntry : predSucTable) {
 		for (auto& successor : predSucEntry.second) {
@@ -75,13 +75,13 @@ vector<tuple<StmtIndex, StmtIndex>> RS2<T>::getAllPredecessorSuccessorInfo() {
 };
 
 template<class T>
-unordered_map<StmtIndex, unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction>
+std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction>
 RS2<T>::getPredSucTable() {
 	return predSucTable;
 };
 
 template<class T>
-unordered_map<StmtIndex, unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction>
+std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction>
 RS2<T>::getSucPredTable() {
 	return sucPredTable;
 };

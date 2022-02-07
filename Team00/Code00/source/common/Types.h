@@ -24,7 +24,7 @@ struct VarIndex {
 
 	struct HashFunction {
 		size_t operator()(const VarIndex& k) const {
-			return hash<int>()(k.index);
+			return std::hash<int>()(k.index);
 		}
 	};
 };
@@ -44,7 +44,7 @@ struct ProcIndex {
 
 	struct HashFunction {
 		size_t operator()(const ProcIndex& k) const {
-			return hash<int>()(k.index);
+			return std::hash<int>()(k.index);
 		}
 	};
 };
@@ -64,7 +64,7 @@ struct StmtIndex {
 
 	struct HashFunction {
 		size_t operator()(const StmtIndex& k) const {
-			return hash<int>()(k.index);
+			return std::hash<int>()(k.index);
 		}
 	};
 
