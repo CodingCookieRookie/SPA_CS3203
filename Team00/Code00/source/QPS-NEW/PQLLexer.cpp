@@ -1,16 +1,16 @@
-#include "Lexer.h"
+#include "../QPS-NEW/PQLLexer.h"
 
-Lexer::Lexer(const std::string& source)
+PQLLexer::PQLLexer(const std::string& source)
 	: source(source), index(0), length(source.length()) { }
 
-void Lexer::advance() {
+void PQLLexer::advance() {
 	while (index < length && isspace(source[index])) {
 		index++;
 	}
 	return;
 }
 
-std::string Lexer::nextInteger() {
+std::string PQLLexer::nextInteger() {
 	advance();
 	if (index >= length) {
 		return std::string();
@@ -26,7 +26,7 @@ std::string Lexer::nextInteger() {
 	return match;
 }
 
-std::string Lexer::nextName() {
+std::string PQLLexer::nextName() {
 	advance();
 	if (index >= length) {
 		return std::string();
@@ -42,7 +42,7 @@ std::string Lexer::nextName() {
 	return match;
 }
 
-std::string Lexer::nextWhitespace() {
+std::string PQLLexer::nextWhitespace() {
 	if (index >= length) {
 		return std::string();
 	}
@@ -57,7 +57,7 @@ std::string Lexer::nextWhitespace() {
 	return match;
 }
 
-bool Lexer::match(const std::string& pattern) {
+bool PQLLexer::match(const std::string& pattern) {
 	advance();
 	if (index + pattern.length() > length) {
 		return false;
@@ -71,6 +71,6 @@ bool Lexer::match(const std::string& pattern) {
 	return true;
 }
 
-bool Lexer::reachedEnd() {
+bool PQLLexer::reachedEnd() {
 	return (index == length);
 }

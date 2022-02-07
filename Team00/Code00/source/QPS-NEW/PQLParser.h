@@ -3,13 +3,13 @@
 #include <vector>
 
 #include "QPSCommons.h"
-#include "Lexer.h"
+#include "../QPS-NEW/PQLLexer.h"
 #include "ParsedQuery.h"
 
 class PQLParser {
 private:
 	//static const std::vector<std::pair<std::string, PQL_VARIABLE_TYPE>> designEntityMap;
-	Lexer lexer;
+	PQLLexer lexer;
 	std::vector<PQL_VARIABLE> parseSingleDeclaration();
 	std::vector<PQL_VARIABLE> parseDeclarations();
 	std::vector<std::string> parseSelect();

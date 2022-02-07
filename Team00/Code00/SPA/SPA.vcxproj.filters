@@ -20,6 +20,7 @@
     <ClCompile Include="..\source\SP\SourceASTNode.cpp" />
     <ClCompile Include="..\source\Exception\SPAException.cpp" />
     <ClCompile Include="..\source\TNode.cpp" />
+    <ClCompile Include="..\source\QPS-NEW\PQLLexer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\common\Lexer.h" />
@@ -45,5 +46,6 @@
     <ClInclude Include="..\source\SP\SourceASTNode.h" />
     <ClInclude Include="..\source\Exception\SPAException.h" />
     <ClInclude Include="..\source\TNode.h" />
+    <ClInclude Include="..\source\QPS-NEW\PQLLexer.h" />
   </ItemGroup>
 </Project>

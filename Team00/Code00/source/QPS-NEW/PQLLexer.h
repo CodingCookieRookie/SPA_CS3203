@@ -1,14 +1,14 @@
 #pragma once
 #include <string>
 
-class Lexer {
+class PQLLexer {
 private:
 	std::string source;
 	size_t index;
 	size_t length;
 	void advance();
 public:
-	Lexer(const std::string& source);
+	PQLLexer(const std::string& source);
 	std::string nextInteger();
 	std::string nextName();
 	std::string nextWhitespace();
