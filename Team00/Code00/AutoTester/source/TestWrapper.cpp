@@ -22,6 +22,21 @@ TestWrapper::TestWrapper() {
 void TestWrapper::parse(std::string filename) {
 	// call your parser to do the parsing
   // ...rest of your code...
+	
+	std::string fileContent = getFileContent(filename);
+
+	Parser parser(fileContent);
+
+	SourceAST ast = parser.parse();
+	DesignExtractor::Extract(ast);
+}
+
+std::string TestWrapper::getFileContent(std::string& filename) {
+	std::ifstream inputFile(filename);
+	if (!inputFile.is_open()) {
+		exit(EXIT_FAILURE);
+	}
+	return std::string((std::istreambuf_iterator<char>(inputFile)), std::istreambuf_iterator<char>());
 }
 
 // method to evaluating a query
