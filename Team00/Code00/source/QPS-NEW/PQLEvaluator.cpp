@@ -87,6 +87,8 @@ EvaluatedTable PQLEvaluator::execute(Instruction& instr) {
 		for (StmtIndex result : results) {
 			resultsToStr.push_back((std::to_string(result.getIndex())));
 		}
+
+		// Look into resultsToStr 
 		currTable = EvaluatedTable(std::unordered_set<PQL_VARIABLE_TYPE>({ PQL_VARIABLE_TYPE::STMT }),
 			std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>({ {PQL_VARIABLE_TYPE::STMT, resultsToStr} }),
 			results.size());

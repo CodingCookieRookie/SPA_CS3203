@@ -13,6 +13,7 @@
     <ClCompile Include="TestTypes.cpp" />
     <ClCompile Include="TestUses.cpp" />
     <ClCompile Include="TestPQLParser.cpp" />
+    <ClCompile Include="TestPQLEvaluator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

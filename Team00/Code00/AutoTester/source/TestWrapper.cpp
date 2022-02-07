@@ -46,8 +46,9 @@ void TestWrapper::evaluate(std::string query, std::list<std::string>& results) {
 	PQLParser pqlParser = PQLParser(query);
 	ParsedQuery parsedQuery = pqlParser.parseQuery();
 	PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-	EvaluatedTable evTable = pqlEvaluator.evaluate();
-	PQLResultProjector resultProjector = PQLResultProjector(evTable);
+	// EvaluatedTable evTable = pqlEvaluator.evaluate(); //TODO
+
+	PQLResultProjector resultProjector = PQLResultProjector();
 	results = resultProjector.resolveTableToResults();
 
 	  // store the answers to the query in the results list (it is initially empty)

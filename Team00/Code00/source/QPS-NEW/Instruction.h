@@ -23,7 +23,7 @@ public:
 		this->arguments = arguments;
 	}
 
-	/* Executes instruction by calling the PKB */
+	/* TODO: To generalise. Executes instruction by calling the PKB */
 	void execute(Instruction& instr);
 
 	/* Getter for type */

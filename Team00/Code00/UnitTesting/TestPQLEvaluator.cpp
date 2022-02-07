@@ -38,38 +38,5 @@ namespace UnitTesting
 			Assert::IsFalse(parsedQuery.getColumns().empty());
 			Assert::AreEqual(std::string("s"), parsedQuery.getColumns()[0]);*/
 		}
-
-		/*TEST_METHOD(parseQuery_repeatDeclaration_exceptionThrown)
-		{
-			std::string query = "stmt s; if s; Select s";
-			PQLParser pqlParser(query);
-			auto wrapperFunc = [&pqlParser] { pqlParser.parseQuery(); };
-			Assert::ExpectException<SPAException>(wrapperFunc);
-		}
-
-		TEST_METHOD(parseQuery_undeclaredVariable_exceptionThrown)
-		{
-			std::string query = "stmt s; if ifs; Select s1";
-			PQLParser pqlParser(query);
-			auto wrapperFunc = [&pqlParser] { pqlParser.parseQuery(); };
-			Assert::ExpectException<SPAException>(wrapperFunc);
-		}
-
-		TEST_METHOD(parseQuery_noColumnSpecified_exceptionThrown)
-		{
-			std::string query = "stmt s; if ifs; Select";
-			PQLParser pqlParser(query);
-			auto wrapperFunc = [&pqlParser] { pqlParser.parseQuery(); };
-			Assert::ExpectException<SPAException>(wrapperFunc);
-		}
-
-		TEST_METHOD(parseQuery_extraCharacters_exceptionThrown)
-		{
-			std::string query = "stmt s; if ifs; Select s test";
-			PQLParser pqlParser(query);
-			auto wrapperFunc = [&pqlParser] { pqlParser.parseQuery(); };
-			Assert::ExpectException<SPAException>(wrapperFunc);
-		}*/
-
 	};
 }
