@@ -44,7 +44,6 @@
     <ClInclude Include="..\source\QPS-NEW\QPS.h" />
     <ClInclude Include="..\source\QPS-NEW\EvaluatedTable.h" />
     <ClInclude Include="..\source\QPS-NEW\Instruction.h" />
-    <ClInclude Include="..\source\QPS-NEW\Lexer.h" />
     <ClInclude Include="..\source\QPS-NEW\ParsedQuery.h" />
     <ClInclude Include="..\source\QPS-NEW\PQLEvaluator.h" />
     <ClInclude Include="..\source\QPS-NEW\PQLParser.h" />
@@ -67,7 +66,7 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
