@@ -52,6 +52,7 @@ std::vector<Instruction> PQLEvaluator::evaluateToInstructions(ParsedQuery& pq) {
 EvaluatedTable PQLEvaluator::executeInstructions(std::vector<Instruction> instructions) {
 	EvaluatedTable resultEvTable = EvaluatedTable();
 
+	// Assuming correct order of instructions already
 	// Call relevant API
 	for (Instruction instruction : instructions) {
 		EvaluatedTable currEvTable = execute(instruction);
@@ -79,6 +80,7 @@ EvaluatedTable PQLEvaluator::execute(Instruction& instr) {
 
 		// TODO: Generalise this logic below:
 		// Convert StmtIndex to string
+		// e.g {1, 2, 3}
 		std::vector<VALUE> resultsToStr;
 		// std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>> newTable = std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>({{PQL_VARIABLE_TYPE::STMT, resultsToStr}});
 
@@ -86,7 +88,8 @@ EvaluatedTable PQLEvaluator::execute(Instruction& instr) {
 			resultsToStr.push_back((std::to_string(result.getIndex())));
 		}
 		currTable = EvaluatedTable(std::unordered_set<PQL_VARIABLE_TYPE>({ PQL_VARIABLE_TYPE::STMT }),
-			std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>({ {PQL_VARIABLE_TYPE::STMT, resultsToStr} }), results.size());
+			std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>({ {PQL_VARIABLE_TYPE::STMT, resultsToStr} }),
+			results.size());
 
 		break;
 	}
