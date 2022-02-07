@@ -63,25 +63,17 @@ std::string Lexer::nextWhitespace() {
 bool Lexer::match(const std::string& pattern) {
 	advance();
 
-	if (!peek(pattern)) {
-		return false;
-	}
-
-	index += pattern.length();
-	return true;
-}
-
-bool Lexer::peek(const std::string& pattern) {
-	advance();
-
 	if (index + pattern.length() > length) {
 		return false;
 	}
+
 	for (size_t i = 0; i < pattern.length(); i++) {
 		if (pattern[i] != source[index + i]) {
 			return false;
 		}
 	}
+
+	index += pattern.length();
 	return true;
 }
 

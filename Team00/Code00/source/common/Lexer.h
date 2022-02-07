@@ -13,7 +13,6 @@ public:
 	std::string nextName();
 	std::string nextWhitespace();
 	bool match(const std::string& pattern);
-	bool peek(const std::string& pattern);
 	bool reachedEnd();
 };
 
