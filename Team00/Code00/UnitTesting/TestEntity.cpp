@@ -35,31 +35,36 @@ private:
 
 public:
 	TEST_METHOD(insertVar_getVarName_differentVariables) {
-		Entity::insertVar(varName1);
-		Entity::insertVar(varName2);
+		VarIndex idx1 = Entity::insertVar(varName1);
+		VarIndex idx2 = Entity::insertVar(varName2);
 
 		string res1 = Entity::getVarName(varIdx1);
 		string res2 = Entity::getVarName(varIdx2);
 		Assert::AreEqual(varName1, res1);
 		Assert::AreEqual(varName2, res2);
+		Assert::IsTrue(varIdx1 == idx1);
+		Assert::IsTrue(varIdx2 == idx2);
 	}
 
 	TEST_METHOD(insertVar_getVarIdx_differentVariables) {
-		Entity::insertVar(varName1);
-		Entity::insertVar(varName2);
+		VarIndex idx1 = Entity::insertVar(varName1);
+		VarIndex idx2 = Entity::insertVar(varName2);
 
 		VarIndex res1 = Entity::getVarIdx(varName1);
 		VarIndex res2 = Entity::getVarIdx(varName2);
 		Assert::IsTrue(varIdx1 == res1);
 		Assert::IsTrue(varIdx2 == res2);
+		Assert::IsTrue(idx1 == res1);
+		Assert::IsTrue(idx2 == res2);
 	}
 
 	TEST_METHOD(insertVar_getVarIdx_sameVar) {
-		Entity::insertVar(varName1);
-		Entity::insertVar(varName1);
+		VarIndex idx1 = Entity::insertVar(varName1);
+		VarIndex idx2 = Entity::insertVar(varName1);
 
 		VarIndex res = Entity::getVarIdx(varName1);
 		Assert::IsTrue(varIdx1 == res);
+		Assert::IsTrue(idx1 == res);
 	}
 
 	TEST_METHOD(insertVar_getAllVars_differentVars) {
@@ -86,31 +91,36 @@ public:
 	}
 
 	TEST_METHOD(insertProc_getProcName_differentProcs) {
-		Entity::insertProc(procName1);
-		Entity::insertProc(procName2);
+		ProcIndex idx1 = Entity::insertProc(procName1);
+		ProcIndex idx2 = Entity::insertProc(procName2);
 
 		string res1 = Entity::getProcName(procIdx1);
 		string res2 = Entity::getProcName(procIdx2);
 		Assert::AreEqual(procName1, res1);
 		Assert::AreEqual(procName2, res2);
+		Assert::IsTrue(procIdx1 == idx1);
+		Assert::IsTrue(procIdx2 == idx2);
 	}
 
 	TEST_METHOD(insertProc_getProcIdx_differentProcs) {
-		Entity::insertProc(procName1);
-		Entity::insertProc(procName2);
+		ProcIndex idx1 = Entity::insertProc(procName1);
+		ProcIndex idx2 = Entity::insertProc(procName2);
 
 		ProcIndex res1 = Entity::getProcIdx(procName1);
 		ProcIndex res2 = Entity::getProcIdx(procName2);
 		Assert::IsTrue(procIdx1 == res1);
 		Assert::IsTrue(procIdx2 == res2);
+		Assert::IsTrue(procIdx1 == idx1);
+		Assert::IsTrue(procIdx2 == idx2);
 	}
 
 	TEST_METHOD(insertProc_getProcIdx_sameProc) {
-		Entity::insertProc(procName1);
-		Entity::insertProc(procName1);
+		ProcIndex idx1 = Entity::insertProc(procName1);
+		ProcIndex idx2 = Entity::insertProc(procName1);
 
 		ProcIndex res = Entity::getProcIdx(procName1);
 		Assert::IsTrue(procIdx1 == res);
+		Assert::IsTrue(idx1 == res);
 	}
 
 	TEST_METHOD(insertProc_getAllProcs_differentProcs) {

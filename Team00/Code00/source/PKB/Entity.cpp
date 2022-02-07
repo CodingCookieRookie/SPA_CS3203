@@ -29,12 +29,13 @@ int Entity::getStmtTypeTableSize() {
 	return stmtTypeTable.size();
 }
 
-void Entity::insertVar(string varName) {
+VarIndex Entity::insertVar(string varName) {
 	if (varIdxTable.find(varName) == varIdxTable.end()) {
 		VarIndex varIdx = VarIndex(getVarTableSize() + 1);
 		varNameTable[varIdx] = varName;
 		varIdxTable[varName] = varIdx;
 	}
+	return varIdxTable[varName];
 }
 
 string Entity::getVarName(VarIndex varIdx) {
@@ -54,12 +55,13 @@ vector<string> Entity::getAllVars() {
 	return res;
 }
 
-void Entity::insertProc(string procName) {
+ProcIndex Entity::insertProc(string procName) {
 	if (procIdxTable.find(procName) == procIdxTable.end()) {
 		ProcIndex procIdx = ProcIndex(getProcTableSize() + 1);
 		procNameTable[procIdx] = procName;
 		procIdxTable[procName] = procIdx;
 	}
+	return procIdxTable[procName];
 }
 
 string Entity::getProcName(ProcIndex procIdx) {

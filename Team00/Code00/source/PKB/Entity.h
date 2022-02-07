@@ -26,11 +26,11 @@ protected:
 	static unordered_map<ProcIndex, unordered_set<StmtIndex, StmtIndex::HashFunction>, ProcIndex::HashFunction> procStmtTable;
 
 public:
-	static void insertVar(string varName);
+	static VarIndex insertVar(string varName);
 	static string getVarName(VarIndex varIdx);
 	static VarIndex getVarIdx(string varName);
 	static vector<string> getAllVars();
-	static void insertProc(string procName);
+	static ProcIndex insertProc(string procName);
 	static string getProcName(ProcIndex procIdx);
 	static ProcIndex getProcIdx(string procName);
 	static vector<string> getAllProcs();
