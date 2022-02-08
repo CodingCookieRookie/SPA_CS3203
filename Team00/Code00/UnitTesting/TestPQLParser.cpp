@@ -77,14 +77,14 @@ namespace UnitTesting
 		}
 
 		TEST_METHOD(parseQuery_followsClauseStmtIndex_stmtIndexExtracted) {
-			std::string query = "stmt s1, s2; Select s1 such that Follows(1, s1)";
+			std::string query = "stmt s1, s2; Select s1 such that Follows*(1, s1)";
 			PQLParser pqlParser(query);
 			ParsedQuery parsedQuery = pqlParser.parseQuery();
 			std::vector<ParsedRelationship> relationships =
 				parsedQuery.getRelationships();
 			Assert::AreEqual(size_t(1), relationships.size());
 			Assert::IsTrue(
-				PqlRelationshipType::Follows
+				PqlRelationshipType::FollowsT
 				== relationships[0].getRelationshipType());
 			Assert::IsTrue(
 				PqlReferenceType::integer
@@ -145,6 +145,29 @@ namespace UnitTesting
 			std::string query = "assign a; Select a pattern a(_, _\"x\"_)";
 			PQLParser pqlParser(query);
 			ParsedQuery parsedQuery = pqlParser.parseQuery();
+			std::vector<ParsedPattern> patterns =
+				parsedQuery.getPatterns();
+			Assert::AreEqual(size_t(1), patterns.size());
+			Assert::IsTrue(
+				PqlExpressionType::partial
+				== patterns[0].getExpression().first);
+			Assert::AreEqual(std::string("x"), patterns[0].getExpression().second);
+		}
+
+		TEST_METHOD(parseQuery_suchThatAndPatternClauses_bothExtracted) {
+			std::string query =
+				"assign a; stmt s; \n"
+				"Select a such that Parent*(s, a) pattern a(_, _\"x\"_)";
+			PQLParser pqlParser(query);
+			ParsedQuery parsedQuery = pqlParser.parseQuery();
+
+			std::vector<ParsedRelationship> relationships =
+				parsedQuery.getRelationships();
+			Assert::AreEqual(size_t(1), relationships.size());
+			Assert::IsTrue(
+				PqlRelationshipType::ParentT
+				== relationships[0].getRelationshipType());
+
 			std::vector<ParsedPattern> patterns =
 				parsedQuery.getPatterns();
 			Assert::AreEqual(size_t(1), patterns.size());
