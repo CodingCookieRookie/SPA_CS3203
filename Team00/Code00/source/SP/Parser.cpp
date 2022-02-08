@@ -52,8 +52,8 @@ ProcedureNode* Parser::matchProcedure() {
 		return nullptr;
 	}
 
-	StmtListNode* stmtListNode = matchStmtList();
-	if (stmtListNode == nullptr) {
+	StmtLstNode* stmtLstNode = matchStmtLst();
+	if (stmtLstNode == nullptr) {
 		return nullptr;
 	}
 
@@ -62,14 +62,14 @@ ProcedureNode* Parser::matchProcedure() {
 	}
 
 	ProcedureNode* procNode = new ProcedureNode(procName);
-	procNode->addStmtList(stmtListNode);
+	procNode->addStmtLst(stmtLstNode);
 
 	return procNode;
 }
 
 /* stmtLst : stmt+ */
-StmtListNode* Parser::matchStmtList() {
-	StmtListNode* stmtListNode = new StmtListNode();
+StmtLstNode* Parser::matchStmtLst() {
+	StmtLstNode* stmtLstNode = new StmtLstNode();
 
 	// There must exist at least 1 stmt. 
 	// TODO: now we assume correct source program. Need to update impl.
@@ -77,12 +77,12 @@ StmtListNode* Parser::matchStmtList() {
 	if (stmtNode == nullptr) {
 		return nullptr;
 	}
-	stmtListNode->addStmtNode(stmtNode);
+	stmtLstNode->addStmtNode(stmtNode);
 
 	while (stmtNode = matchStmt()) {
-		stmtListNode->addStmtNode(stmtNode);
+		stmtLstNode->addStmtNode(stmtNode);
 	}
-	return stmtListNode;
+	return stmtLstNode;
 }
 
 /* stmt : read | print | call | while | if | assign */
