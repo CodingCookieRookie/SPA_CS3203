@@ -72,39 +72,50 @@ EvaluatedTable PQLEvaluator::execute(Instruction instr) {
 	INSTRUCTION_TYPE instrType = instr.getType();
 	EvaluatedTable currTable;
 
-	switch (instrType) {
+	//switch (instrType) {
 
-	case INSTRUCTION_TYPE::getAllStmt :
-		//PKB's getAllStmts
-		std::vector<StmtIndex> results = Entity::getAllStmts();
+	//case INSTRUCTION_TYPE::getAllStmt :
+	//	//PKB's getAllStmts
+	//	std::vector<StmtIndex> results = Entity::getAllStmts();
 
-		// TODO: Generalise this logic below:
-		// Convert StmtIndex to string
-		// e.g {1, 2, 3}
-		std::vector<VALUE> resultsToStr;
-		// std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>> newTable = std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>({{PQL_VARIABLE_TYPE::STMT, resultsToStr}});
+	//	// TODO: Generalise this logic below:
+	//	// Convert StmtIndex to string
+	//	// e.g {1, 2, 3}
+	//	std::vector<VALUE> resultsToStr;
+	//	// std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>> newTable = std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>({{PQL_VARIABLE_TYPE::STMT, resultsToStr}});
 
-		for (StmtIndex result : results) {
-			resultsToStr.push_back((std::to_string(result.getIndex())));
-		}
-		
-		// Look into resultsToStr 
-		/*currTable = EvaluatedTable(std::unordered_set<PQL_VARIABLE_TYPE>({ PQL_VARIABLE_TYPE::STMT }),
-			std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>({ {PQL_VARIABLE_TYPE::STMT, resultsToStr} }),
-			results.size());*/
-		
-		
-		break;
+	//	for (StmtIndex result : results) {
+	//		resultsToStr.push_back((std::to_string(result.getIndex())));
+	//	}
+	//	
+	//	// Look into resultsToStr 
+	//	/*currTable = EvaluatedTable(std::unordered_set<PQL_VARIABLE_TYPE>({ PQL_VARIABLE_TYPE::STMT }),
+	//		std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>({ {PQL_VARIABLE_TYPE::STMT, resultsToStr} }),
+	//		results.size());*/
+	//	
+	//	
+	//	break;
+	//}
+	// bug with INSTRUCTION_TYPE statement
+	std::vector<StmtIndex> results = Entity::getAllStmts();
+	std::vector<VALUE> resultsToStr;
+	std::unordered_set<PQL_VARIABLE_TYPE> PQLtypes;
+	PQLtypes.insert(PQL_VARIABLE_TYPE::STMT);
+	std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>> PQLmap;
+	PQLmap[PQL_VARIABLE_TYPE::STMT] = resultsToStr;
+	for (StmtIndex result : results) {
+		resultsToStr.push_back((std::to_string(result.getIndex())));
 	}
+	currTable = EvaluatedTable(PQLtypes, PQLmap, results.size());
 	return currTable;
 }
 
-EvaluatedTable innerJoinMerge(EvaluatedTable& evTable, EvaluatedTable& newEvTable) {
-	EvaluatedTable mergedTable;
-	// TODO:
-	// 1. Short-circuit if other table is empty
-	// 2.
-
-	mergedTable = evTable;
-	return mergedTable;
-}
+//EvaluatedTable innerJoinMerge(EvaluatedTable& evTable, EvaluatedTable& newEvTable) {
+//	EvaluatedTable mergedTable;
+//	// TODO:
+//	// 1. Short-circuit if other table is empty
+//	// 2.
+//
+//	mergedTable = evTable;
+//	return mergedTable;
+//}
