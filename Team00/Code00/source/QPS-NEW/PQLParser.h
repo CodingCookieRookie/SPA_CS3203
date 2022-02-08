@@ -13,6 +13,14 @@ private:
 	std::vector<PQL_VARIABLE> parseSingleDeclaration();
 	std::vector<PQL_VARIABLE> parseDeclarations();
 	std::vector<std::string> parseSelect();
+	std::vector<ParsedRelationship> parseSuchThat();
+	std::vector<ParsedPattern> parsePattern();
+	ParsedRelationship parseFollows();
+	ParsedRelationship parseFollowsT();
+	ParsedRelationship parseParent();
+	ParsedRelationship parseParentT();
+	ParsedRelationship parseModifies();
+	ParsedRelationship parseUses();
 
 public:
 

@@ -21,6 +21,7 @@
     <ClCompile Include="..\source\Exception\SPAException.cpp" />
     <ClCompile Include="..\source\TNode.cpp" />
     <ClCompile Include="..\source\QPS-NEW\PQLLexer.cpp" />
+    <ClCompile Include="..\source\QPS-NEW\QPSCommons.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\common\Lexer.h" />
