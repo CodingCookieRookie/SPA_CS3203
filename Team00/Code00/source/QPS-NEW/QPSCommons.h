@@ -10,8 +10,14 @@ enum class INSTRUCTION_TYPE {
 	getAllStmt, getAllVar, getAllAsgn
 };
 
+// The Uses and Modifies are generic Uses/Modifies,
+// since we cannot disambiguate while parsing.
+// Hence, we re-assign the S and P relationships
+// when populating the ParsedQuery Object
+// To note for iter 2 and beyond
 enum class PqlRelationshipType {
 	Follows, FollowsT, Parent, ParentT,
+	UsesS, UsesP, ModifiesS, ModifiesP,
 	Uses, Modifies
 };
 
@@ -54,3 +60,14 @@ public:
 	PqlReference getEntRef() const;
 	PqlExpression getExpression() const;
 };
+
+bool isEntRef(PqlReference reference);
+bool isStmtRef(PqlReference reference);
+bool isWildcardRef(PqlReference reference);
+bool isSynonymRef(PqlReference reference);
+
+bool isUsesRelationship(ParsedRelationship relationship);
+bool isModifiesRelationship(ParsedRelationship relationship);
+
+bool isStatementEntity(PQL_VARIABLE_TYPE entityType);
+bool isProcedureEntity(PQL_VARIABLE_TYPE entityType);

@@ -32,20 +32,71 @@ void ParsedQuery::populateColumns(const std::vector<std::string>& allColumns) {
 void ParsedQuery::populateRelationships(const std::vector<ParsedRelationship>& allRelationships) {
 	for (const ParsedRelationship& relationship : allRelationships) {
 		PqlReference lhs = relationship.getLhs();
-		if (lhs.first == PqlReferenceType::synonym) {
-			std::string lhsVarName = lhs.second;
-			if (!isDeclared(lhsVarName)) {
-				throw SPAException(std::string(""));
-			}
-		}
 		PqlReference rhs = relationship.getRhs();
-		if (rhs.first == PqlReferenceType::synonym) {
-			std::string rhsVarName = rhs.second;
-			if (!isDeclared(rhsVarName)) {
-				throw SPAException(std::string(""));
+
+		if (isModifiesRelationship(relationship)) {
+			if (!isStmtRef(lhs)) {
+				// throw exception
 			}
+			if (isSynonymRef(lhs)) {
+				std::string lhsVarName = lhs.second;
+				if (!isDeclared(lhsVarName)) {
+					throw SPAException(std::string(""));
+				}
+			}
+			if (!isEntRef(rhs)) {
+				// throw exception
+			}
+			if (isSynonymRef(rhs)) {
+				std::string rhsVarName = rhs.second;
+				if (!isDeclared(rhsVarName)) {
+					throw SPAException(std::string(""));
+				}
+			}
+			relationships.push_back(
+				ParsedRelationship(PqlRelationshipType::ModifiesS, lhs, rhs));
+		} else if (isUsesRelationship(relationship)) {
+			if (!isStmtRef(lhs)) {
+				// throw exception
+			}
+			if (isSynonymRef(lhs)) {
+				std::string lhsVarName = lhs.second;
+				if (!isDeclared(lhsVarName)) {
+					throw SPAException(std::string(""));
+				}
+			}
+			if (!isEntRef(rhs)) {
+				// throw exception
+			}
+			if (isSynonymRef(rhs)) {
+				std::string rhsVarName = rhs.second;
+				if (!isDeclared(rhsVarName)) {
+					throw SPAException(std::string(""));
+				}
+			}
+			relationships.push_back(
+				ParsedRelationship(PqlRelationshipType::UsesS, lhs, rhs));
+		} else {
+			if (!isStmtRef(lhs)) {
+				// throw exception
+			}
+			if (isSynonymRef(lhs)) {
+				std::string lhsVarName = lhs.second;
+				if (!isDeclared(lhsVarName)) {
+					throw SPAException(std::string(""));
+				}
+			}
+			if (!isStmtRef(rhs)) {
+				// throw exception
+			}
+			if (isSynonymRef(rhs)) {
+				std::string rhsVarName = rhs.second;
+				if (!isDeclared(rhsVarName)) {
+					throw SPAException(std::string(""));
+				}
+			}
+			relationships.push_back(relationship);
 		}
-		relationships.push_back(relationship);
 	}
 }
 
@@ -60,10 +111,7 @@ void ParsedQuery::populatePatterns(const std::vector<ParsedPattern>& allPatterns
 		}
 		PqlReference ref = pattern.getEntRef();
 		PqlReferenceType refType = ref.first;
-		if (refType != PqlReferenceType::synonym
-			&& refType != PqlReferenceType::wildcard
-			&& refType != PqlReferenceType::ident) {
-
+		if (!isEntRef(ref)) {
 		}
 		patterns.push_back(pattern);
 	}

@@ -62,7 +62,7 @@ namespace UnitTesting
 				parsedQuery.getRelationships();
 			Assert::AreEqual(size_t(1), relationships.size());
 			Assert::IsTrue(
-				PqlRelationshipType::Uses
+				PqlRelationshipType::UsesS
 				== relationships[0].getRelationshipType());
 			Assert::IsTrue(
 				PqlReferenceType::synonym
@@ -100,7 +100,7 @@ namespace UnitTesting
 				parsedQuery.getRelationships();
 			Assert::AreEqual(size_t(1), relationships.size());
 			Assert::IsTrue(
-				PqlRelationshipType::Modifies
+				PqlRelationshipType::ModifiesS
 				== relationships[0].getRelationshipType());
 			Assert::IsTrue(
 				PqlReferenceType::ident
