@@ -11,6 +11,7 @@ int Pattern::getPostFixVarTableSize() {
 	return postFixVarTable.size();
 }
 
+// TO MOVE TO ENTITIES
 std::string Pattern::generatePostFixExpression(std::string infixExpression) {
 	//TO DO
 	std::string res;
