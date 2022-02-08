@@ -7,8 +7,10 @@ void FollowsT::insert(StmtIndex predecessor, std::unordered_set<StmtIndex, StmtI
 	}
 };
 
-std::unordered_set<StmtIndex, StmtIndex::HashFunction> FollowsT::getAllSuccessors(StmtIndex predecessor,
-	std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> followsPredSucTable) {
+std::unordered_set<StmtIndex, StmtIndex::HashFunction> FollowsT::getAllSuccessors(StmtIndex predecessor) {
+	std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction>
+		followsPredSucTable = Follows::getPredSucTable();
+
 	if (predSucTable.find(predecessor) != predSucTable.end()) {
 		return predSucTable[predecessor];
 	}
@@ -16,7 +18,7 @@ std::unordered_set<StmtIndex, StmtIndex::HashFunction> FollowsT::getAllSuccessor
 	std::unordered_set<StmtIndex, StmtIndex::HashFunction> successors;
 	for (auto& successor : followsPredSucTable[predecessor]) {
 		successors.insert(successor);
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> grandSuccessors = getAllSuccessors(successor, followsPredSucTable);
+		std::unordered_set<StmtIndex, StmtIndex::HashFunction> grandSuccessors = getAllSuccessors(successor);
 		for (auto& grandSuccessor : grandSuccessors) {
 			successors.insert(grandSuccessor);
 		}
@@ -25,13 +27,13 @@ std::unordered_set<StmtIndex, StmtIndex::HashFunction> FollowsT::getAllSuccessor
 	return successors;
 }
 
-void FollowsT::generate() {
+void FollowsT::populate() {
 	std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction>
 		followsPredSucTable = Follows::getPredSucTable();
 
 	for (auto& followsPredSucEntry : followsPredSucTable) {
 		StmtIndex predecessor = followsPredSucEntry.first;
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> successors = getAllSuccessors(predecessor, followsPredSucTable);
+		std::unordered_set<StmtIndex, StmtIndex::HashFunction> successors = getAllSuccessors(predecessor);
 		insert(predecessor, successors);
 	}
 };
