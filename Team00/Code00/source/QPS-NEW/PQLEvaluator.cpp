@@ -68,7 +68,7 @@ EvaluatedTable PQLEvaluator::executeInstructions(std::vector<Instruction> instru
 	return resultEvTable;
 }
 
-EvaluatedTable PQLEvaluator::execute(Instruction& instr) {
+EvaluatedTable PQLEvaluator::execute(Instruction instr) {
 	INSTRUCTION_TYPE instrType = instr.getType();
 	EvaluatedTable currTable;
 
@@ -87,19 +87,19 @@ EvaluatedTable PQLEvaluator::execute(Instruction& instr) {
 		for (StmtIndex result : results) {
 			resultsToStr.push_back((std::to_string(result.getIndex())));
 		}
-
+		
 		// Look into resultsToStr 
-		currTable = EvaluatedTable(std::unordered_set<PQL_VARIABLE_TYPE>({ PQL_VARIABLE_TYPE::STMT }),
+		/*currTable = EvaluatedTable(std::unordered_set<PQL_VARIABLE_TYPE>({ PQL_VARIABLE_TYPE::STMT }),
 			std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>({ {PQL_VARIABLE_TYPE::STMT, resultsToStr} }),
-			results.size());
-
+			results.size());*/
+		
+		
 		break;
 	}
-
 	return currTable;
 }
 
-EvaluatedTable PQLEvaluator::innerJoinMerge(EvaluatedTable& evTable, EvaluatedTable& newEvTable) {
+EvaluatedTable innerJoinMerge(EvaluatedTable& evTable, EvaluatedTable& newEvTable) {
 	EvaluatedTable mergedTable;
 	// TODO:
 	// 1. Short-circuit if other table is empty

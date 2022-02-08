@@ -18,8 +18,10 @@ private:
 	/* Helper method to execute all instructions */
 	EvaluatedTable executeInstructions(std::vector<Instruction> instructions);
 
+	EvaluatedTable execute(Instruction instr);
+
 	/* Helper method to execute one instruction */
-	EvaluatedTable execute(Instruction& instr);
+	//EvaluatedTable execute(Instruction& instr);
 
 	/* Helper method to inner join two EvaluatedTables together via a hash join algo */
 	void innerJoinMerge(EvaluatedTable& newEvTable);

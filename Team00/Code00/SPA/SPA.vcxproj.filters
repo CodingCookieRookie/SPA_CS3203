@@ -30,14 +30,14 @@
     <ClCompile Include="..\source\QPS-NEW\ParsedQuery.cpp">
       <Filter>QPS-new</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\QPS-NEW\QPS.cpp">
-      <Filter>QPS-new</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\QPS-NEW\EvaluatedTable.cpp">
       <Filter>QPS-new</Filter>
     </ClCompile>
     <ClCompile Include="..\source\QPS-NEW\Instruction.cpp">
       <Filter>QPS-new</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS-NEW\QPS.cpp">
+      <Filter>QPS-old</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -77,9 +77,6 @@
     <ClInclude Include="..\source\QPS-NEW\ParsedQuery.h">
       <Filter>QPS-new</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\QPS-NEW\QPS.h">
-      <Filter>QPS-new</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\QPS-NEW\QPSCommons.h">
       <Filter>QPS-new</Filter>
     </ClInclude>
@@ -88,6 +85,9 @@
     </ClInclude>
     <ClInclude Include="..\source\QPS-NEW\Instruction.h">
       <Filter>QPS-new</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS-NEW\QPS.h">
+      <Filter>QPS-old</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
