@@ -37,6 +37,7 @@ ParsedQuery::ParsedQuery(const std::vector<PQL_VARIABLE>& allDeclarations,
 				throw SPAException(std::string(""));
 			}
 		}
+		relationships.push_back(relationship);
 	}
 }
 
@@ -46,4 +47,8 @@ std::unordered_map<std::string, PQL_VARIABLE_TYPE> ParsedQuery::getDeclarations(
 
 std::vector<std::string> ParsedQuery::getColumns() {
 	return columns;
+}
+
+std::vector<ParsedRelationship> ParsedQuery::getRelationships() {
+	return relationships;
 }

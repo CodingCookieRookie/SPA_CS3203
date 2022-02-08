@@ -23,4 +23,5 @@ public:
 
 	std::unordered_map<std::string, PQL_VARIABLE_TYPE> getDeclarations();
 	std::vector<std::string> getColumns();
+	std::vector<ParsedRelationship> getRelationships();
 };

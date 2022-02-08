@@ -28,7 +28,9 @@ namespace UnitTesting
 			std::vector<std::string> columns;
 			columns.push_back("s");
 
-			ParsedQuery pq1 = ParsedQuery(declarations, columns);
+			std::vector<ParsedRelationship> relationships;
+			std::vector<ParsedPattern> patterns;
+			ParsedQuery pq1 = ParsedQuery(declarations, columns, relationships, patterns);
 
 			PQLEvaluator pqlEvaluator(pq1);
 			auto wrapperFunc = [&pqlEvaluator] { pqlEvaluator.evaluate(); };

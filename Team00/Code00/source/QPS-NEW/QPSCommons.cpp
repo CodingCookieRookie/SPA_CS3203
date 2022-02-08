@@ -5,6 +5,10 @@ ParsedRelationship::ParsedRelationship(PqlRelationshipType relationshipType,
 	: relationshipType(relationshipType), lhsRef(lhsRef), rhsRef(rhsRef)
 {}
 
+PqlRelationshipType ParsedRelationship::getRelationshipType() {
+	return relationshipType;
+}
+
 PqlReference ParsedRelationship::getLhs() const {
 	return lhsRef;
 }

@@ -12,7 +12,7 @@ enum class INSTRUCTION_TYPE {
 
 enum class PqlRelationshipType {
 	Follows, FollowsT, Parent, ParentT,
-	UsesS, UsesP, ModifiesS, ModifiesP
+	Uses, Modifies
 };
 
 enum class PqlReferenceType {
@@ -37,6 +37,7 @@ private:
 public:
 	ParsedRelationship(PqlRelationshipType relationshipType,
 		PqlReference lhsRef, PqlReference rhsRef);
+	PqlRelationshipType getRelationshipType();
 	PqlReference getLhs() const;
 	PqlReference getRhs() const;
 };

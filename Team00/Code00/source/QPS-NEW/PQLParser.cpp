@@ -84,37 +84,77 @@ std::vector<std::string> PQLParser::parseSelect() {
 
 std::vector<ParsedRelationship> PQLParser::parseSuchThat() {
     if (!lexer.match("such")) {
+        return std::vector<ParsedRelationship>();
     }
     std::string whitespace = lexer.nextWhitespace();
     if (whitespace.empty()) {
+        return std::vector<ParsedRelationship>();
     }
     if (!lexer.match("that")) {
+        return std::vector<ParsedRelationship>();
     }
     std::vector<ParsedRelationship> relationships;
-    while (true) {
-        if (lexer.match("Follows")) {
-            ParsedRelationship follows = parseFollows();
-            relationships.push_back(follows);
-        }else if (lexer.match("Follows*")) {
-            ParsedRelationship followsT = parseFollowsT();
-            relationships.push_back(followsT);
-        } else if (lexer.match("Parent")) {
-            ParsedRelationship follows = parseParent();
-            relationships.push_back(follows);
+    do {
+        PqlRelationshipType relationshipType;
+        if (lexer.match("Follows*")) {
+            relationshipType = PqlRelationshipType::FollowsT;
+        }else if (lexer.match("Follows")) {
+            relationshipType = PqlRelationshipType::Follows;
         } else if (lexer.match("Parent*")) {
-            ParsedRelationship parentT = parseParentT();
-            relationships.push_back(parentT);
+            relationshipType = PqlRelationshipType::ParentT;
+        } else if (lexer.match("Parent")) {
+            relationshipType = PqlRelationshipType::Parent;
         } else if (lexer.match("Modifies")) {
-            ParsedRelationship modifies = parseModifies();
-            relationships.push_back(modifies);
+            relationshipType = PqlRelationshipType::Modifies;
         } else if (lexer.match("Uses")) {
-            ParsedRelationship uses = parseUses();
-            relationships.push_back(uses);
+            relationshipType = PqlRelationshipType::Uses;
         } else {
-            return relationships;
+            // throw exception
         }
-    }
+        if (!lexer.match("(")) {
+            // throw exception
+        }
+        PqlReference lValue = parseRef();
+        if (!lexer.match(",")) {
+            // throw exception
+        }
+        PqlReference rValue = parseRef();
+        if (!lexer.match(")")) {
+            // throw exception
+        }
+        ParsedRelationship relationship(relationshipType, lValue, rValue);
+        relationships.push_back(relationship);
+    } while (lexer.match("and"));
     return relationships;
+}
+
+std::vector<ParsedPattern> PQLParser::parsePattern() {
+    return std::vector<ParsedPattern>();
+}
+
+PqlReference PQLParser::parseRef() {
+    if (lexer.match("_")) {
+        return PqlReference(PqlReferenceType::wildcard, std::string());
+    }
+    if (lexer.match("\"")) {
+        std::string ident = lexer.nextName();
+        if (ident.empty()) {
+            // throw exception
+        }
+        if (!lexer.match("\"")) {
+            // throw exception
+        }
+        return PqlReference(PqlReferenceType::ident, ident);
+    }
+    std::string nextToken = lexer.nextInteger();
+    if (!nextToken.empty()) {
+        return PqlReference(PqlReferenceType::integer, nextToken);
+    }
+    nextToken = lexer.nextName();
+    if (!nextToken.empty()) {
+        return PqlReference(PqlReferenceType::synonym, nextToken);
+    }
+    // throw exception
 }
 
 ParsedQuery PQLParser::parseQuery() {

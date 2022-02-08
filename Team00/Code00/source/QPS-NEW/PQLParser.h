@@ -21,6 +21,7 @@ private:
 	ParsedRelationship parseParentT();
 	ParsedRelationship parseModifies();
 	ParsedRelationship parseUses();
+	PqlReference parseRef();
 
 public:
 
