@@ -4,6 +4,10 @@ bool ParsedQuery::isDeclared(const std::string& synonym) {
 	return declarations.find(synonym) != declarations.end();
 }
 
+PQL_VARIABLE_TYPE ParsedQuery::getType(std::string& synonym) {
+	return declarations.at(synonym);
+}
+
 ParsedQuery::ParsedQuery(const std::vector<PQL_VARIABLE>& allDeclarations,
 	const std::vector<std::string>& allColumns,
 	const std::vector<ParsedRelationship>& allRelationships,
@@ -39,6 +43,23 @@ ParsedQuery::ParsedQuery(const std::vector<PQL_VARIABLE>& allDeclarations,
 		}
 		relationships.push_back(relationship);
 	}
+	for(const ParsedPattern& pattern : allPatterns) {
+		std::string synAssign = pattern.getSynonym();
+		if (!isDeclared(synAssign)) {
+		
+		}
+		if (getType(synAssign) != PQL_VARIABLE_TYPE::ASSIGN) {
+		
+		}
+		PqlReference ref = pattern.getEntRef();
+		PqlReferenceType refType = ref.first;
+		if (refType != PqlReferenceType::synonym
+			&& refType != PqlReferenceType::wildcard
+			&& refType != PqlReferenceType::ident) {
+			
+		}
+		patterns.push_back(pattern);
+	}
 }
 
 std::unordered_map<std::string, PQL_VARIABLE_TYPE> ParsedQuery::getDeclarations() {
@@ -51,4 +72,8 @@ std::vector<std::string> ParsedQuery::getColumns() {
 
 std::vector<ParsedRelationship> ParsedQuery::getRelationships() {
 	return relationships;
+}
+
+std::vector<ParsedPattern> ParsedQuery::getPatterns() {
+	return patterns;
 }

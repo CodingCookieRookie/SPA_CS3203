@@ -108,21 +108,50 @@ namespace UnitTesting
 			Assert::AreEqual(std::string("x"),
 				relationships[0].getRhs().second);
 		}
-		TEST_METHOD(parseQuery_parentTClauseWildcard_wildcardExtracted) {
-			std::string query = "stmt s1, s2; Select s1 such that Parent*(s1, _)";
+
+		TEST_METHOD(parseQuery_patternClause_patternExtracted) {
+			std::string query = "assign a; Select a pattern a(_, _)";
 			PQLParser pqlParser(query);
 			ParsedQuery parsedQuery = pqlParser.parseQuery();
-			std::vector<ParsedRelationship> relationships =
-				parsedQuery.getRelationships();
-			Assert::AreEqual(size_t(1), relationships.size());
-			Assert::IsTrue(
-				PqlRelationshipType::ParentT
-				== relationships[0].getRelationshipType());
+			std::vector<ParsedPattern> patterns =
+				parsedQuery.getPatterns();
+			Assert::AreEqual(size_t(1), patterns.size());
+			Assert::AreEqual(std::string("a"), patterns[0].getSynonym());
 			Assert::IsTrue(
 				PqlReferenceType::wildcard
-				== relationships[0].getRhs().first);
-			Assert::AreEqual(std::string(),
-				relationships[0].getRhs().second);
+				== patterns[0].getEntRef().first);
+			Assert::AreEqual(std::string(), patterns[0].getEntRef().second);
+			Assert::IsTrue(
+				PqlExpressionType::wildcard
+				== patterns[0].getExpression().first);
+			Assert::AreEqual(std::string(), patterns[0].getExpression().second);
+		}
+
+		TEST_METHOD(parseQuery_patternClauseSynonym_synonymExtracted) {
+			std::string query = "assign a; variable v; Select a pattern a(v, _)";
+			PQLParser pqlParser(query);
+			ParsedQuery parsedQuery = pqlParser.parseQuery();
+			std::vector<ParsedPattern> patterns =
+				parsedQuery.getPatterns();
+			Assert::AreEqual(size_t(1), patterns.size());
+			Assert::AreEqual(std::string("a"), patterns[0].getSynonym());
+			Assert::IsTrue(
+				PqlReferenceType::synonym
+				== patterns[0].getEntRef().first);
+			Assert::AreEqual(std::string("v"), patterns[0].getEntRef().second);
+		}
+
+		TEST_METHOD(parseQuery_patternClauseVarExpr_varExtracted) {
+			std::string query = "assign a; Select a pattern a(_, _\"x\"_)";
+			PQLParser pqlParser(query);
+			ParsedQuery parsedQuery = pqlParser.parseQuery();
+			std::vector<ParsedPattern> patterns =
+				parsedQuery.getPatterns();
+			Assert::AreEqual(size_t(1), patterns.size());
+			Assert::IsTrue(
+				PqlExpressionType::partial
+				== patterns[0].getExpression().first);
+			Assert::AreEqual(std::string("x"), patterns[0].getExpression().second);
 		}
 	};
 }

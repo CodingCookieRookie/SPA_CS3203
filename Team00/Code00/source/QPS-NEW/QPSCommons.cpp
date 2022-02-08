@@ -20,3 +20,15 @@ PqlReference ParsedRelationship::getRhs() const {
 ParsedPattern::ParsedPattern(std::string& synonym, PqlReference entRef, PqlExpression expressionSpec)
 	: synonym(synonym), entRef(entRef), expressionSpec(expressionSpec)
 {}
+
+std::string ParsedPattern::getSynonym() const {
+	return synonym;
+}
+
+PqlReference ParsedPattern::getEntRef() const{
+	return entRef;
+}
+
+PqlExpression ParsedPattern::getExpression() const {
+	return expressionSpec;
+}

@@ -50,4 +50,7 @@ private:
 public:
 	ParsedPattern(std::string& synonym,
 		PqlReference entRef, PqlExpression expressionSpec);
+	std::string getSynonym() const;
+	PqlReference getEntRef() const;
+	PqlExpression getExpression() const;
 };

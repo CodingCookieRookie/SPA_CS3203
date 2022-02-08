@@ -12,6 +12,7 @@ private:
 	std::vector<ParsedRelationship> relationships;
 	std::vector<ParsedPattern> patterns;
 	bool isDeclared(const std::string& synonym);
+	PQL_VARIABLE_TYPE getType(std::string& synonym);
 public:
 
 	/* Constructor for a ParsedQuery object */
@@ -24,4 +25,5 @@ public:
 	std::unordered_map<std::string, PQL_VARIABLE_TYPE> getDeclarations();
 	std::vector<std::string> getColumns();
 	std::vector<ParsedRelationship> getRelationships();
+	std::vector<ParsedPattern> getPatterns();
 };
