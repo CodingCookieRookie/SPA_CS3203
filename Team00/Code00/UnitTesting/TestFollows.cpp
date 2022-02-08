@@ -61,7 +61,7 @@ public:
 		Assert::IsFalse(Follows::containsPredecessor(successor1, predecessor1));
 		Assert::IsFalse(Follows::containsPredecessor(predecessor2, successor1));
 		Assert::IsFalse(Follows::containsPredecessor(predecessor1, successor2));
-	}
+	};
 
 	TEST_METHOD(containsSuccessor) {
 		Follows::insert(predecessor1, successor1);
@@ -71,7 +71,7 @@ public:
 		Assert::IsFalse(Follows::containsSuccessor(successor1, predecessor1));
 		Assert::IsFalse(Follows::containsSuccessor(predecessor2, successor1));
 		Assert::IsFalse(Follows::containsSuccessor(predecessor1, successor2));
-	}
+	};
 
 	TEST_METHOD(getAllPredecessorSuccessorInfo) {
 		std::vector<std::tuple<StmtIndex, StmtIndex>> expectedAns;
@@ -83,6 +83,6 @@ public:
 
 		auto predSucInfo = Follows::getAllPredecessorSuccessorInfo();
 		Assert::IsTrue(expectedAns == predSucInfo);
-	}
+	};
 	};
 }
