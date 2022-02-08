@@ -1,9 +1,7 @@
 #include "./Pattern.h"
 
-using namespace std;
-
-unordered_map<VarIndex, vector<tuple<StmtIndex, string>>, VarIndex::HashFunction> Pattern::varPostFixTable;
-unordered_map<string, vector<tuple<StmtIndex, VarIndex>>> Pattern::postFixVarTable;
+std::unordered_map<VarIndex, std::vector<std::tuple<StmtIndex, std::string>>, VarIndex::HashFunction> Pattern::varPostFixTable;
+std::unordered_map<std::string, std::vector<std::tuple<StmtIndex, VarIndex>>> Pattern::postFixVarTable;
 
 int Pattern::getVarPostFixTableSize() {
 	return varPostFixTable.size();
@@ -13,17 +11,17 @@ int Pattern::getPostFixVarTableSize() {
 	return postFixVarTable.size();
 }
 
-string Pattern::generatePostFixExpression(string infixExpression) {
+std::string Pattern::generatePostFixExpression(std::string infixExpression) {
 	//TO DO
-	string res;
+	std::string res;
 	return res;
 }
 
-void Pattern::insertPostFixInfo(VarIndex varIdx, string postFixExpression, StmtIndex stmtIdx) {
-	tuple<StmtIndex, string> varPostFixTuple = make_tuple(stmtIdx, postFixExpression);
-	tuple<StmtIndex, VarIndex> postFixVarTuple = make_tuple(stmtIdx, varIdx);
+void Pattern::insertPostFixInfo(VarIndex varIdx, std::string postFixExpression, StmtIndex stmtIdx) {
+	std::tuple<StmtIndex, std::string> varPostFixTuple = std::make_tuple(stmtIdx, postFixExpression);
+	std::tuple<StmtIndex, VarIndex> postFixVarTuple = std::make_tuple(stmtIdx, varIdx);
 	if (varPostFixTable.find(varIdx) == varPostFixTable.end()) {
-		vector<tuple<StmtIndex, string>> value;
+		std::vector<std::tuple<StmtIndex, std::string>> value;
 		value.push_back(varPostFixTuple);
 		varPostFixTable[varIdx] = value;
 	}
@@ -32,7 +30,7 @@ void Pattern::insertPostFixInfo(VarIndex varIdx, string postFixExpression, StmtI
 	}
 
 	if (postFixVarTable.find(postFixExpression) == postFixVarTable.end()) {
-		vector<tuple<StmtIndex, VarIndex>> value;
+		std::vector<std::tuple<StmtIndex, VarIndex>> value;
 		value.push_back(postFixVarTuple);
 		postFixVarTable[postFixExpression] = value;
 	}
@@ -41,13 +39,13 @@ void Pattern::insertPostFixInfo(VarIndex varIdx, string postFixExpression, StmtI
 	}
 }
 
-vector<StmtIndex> Pattern::getStmtsFromVarPattern(VarIndex varIdx, string expression, bool isSubExpression) {
-	vector<StmtIndex> res;
+std::vector<StmtIndex> Pattern::getStmtsFromVarPattern(VarIndex varIdx, std::string expression, bool isSubExpression) {
+	std::vector<StmtIndex> res;
 
-	vector<tuple<StmtIndex, string>> value = varPostFixTable[varIdx];
+	std::vector<std::tuple<StmtIndex, std::string>> value = varPostFixTable[varIdx];
 	for (auto& varPostFixTuple : value) {
 		if (isSubExpression) {
-			string storedExpression = get<1>(varPostFixTuple);
+			std::string storedExpression = get<1>(varPostFixTuple);
 			if (storedExpression.find(expression) != std::string::npos) {
 				res.push_back(get<0>(varPostFixTuple));
 			}
@@ -60,14 +58,14 @@ vector<StmtIndex> Pattern::getStmtsFromVarPattern(VarIndex varIdx, string expres
 	return res;
 }
 
-vector<tuple<StmtIndex, VarIndex>> Pattern::getStmtsFromPattern(string expression, bool isSubExpression) {
-	vector<tuple<StmtIndex, VarIndex>> res;
+std::vector<std::tuple<StmtIndex, VarIndex>> Pattern::getStmtsFromPattern(std::string expression, bool isSubExpression) {
+	std::vector<std::tuple<StmtIndex, VarIndex>> res;
 
 	if (isSubExpression) {
 		for (auto& postFixVarInfo : postFixVarTable) {
-			string postFixExpression = postFixVarInfo.first;
+			std::string postFixExpression = postFixVarInfo.first;
 			if (postFixExpression.find(expression) != std::string::npos) {
-				vector<tuple<StmtIndex, VarIndex>> value = postFixVarTable[postFixExpression];
+				std::vector<std::tuple<StmtIndex, VarIndex>> value = postFixVarTable[postFixExpression];
 				for (auto& postFixVarTuple : value) {
 					res.push_back(postFixVarTuple);
 				}
@@ -81,10 +79,10 @@ vector<tuple<StmtIndex, VarIndex>> Pattern::getStmtsFromPattern(string expressio
 	return res;
 }
 
-vector<StmtIndex> Pattern::getStmtsFromVarPattern(VarIndex varIdx) {
-	vector<StmtIndex> res;
+std::vector<StmtIndex> Pattern::getStmtsFromVarPattern(VarIndex varIdx) {
+	std::vector<StmtIndex> res;
 
-	vector<tuple<StmtIndex, string>> value = varPostFixTable[varIdx];
+	std::vector<std::tuple<StmtIndex, std::string>> value = varPostFixTable[varIdx];
 	for (auto& varPostFixTuple : value) {
 		res.push_back(get<0>(varPostFixTuple));
 	}
@@ -92,14 +90,14 @@ vector<StmtIndex> Pattern::getStmtsFromVarPattern(VarIndex varIdx) {
 	return res;
 }
 
-vector<tuple<StmtIndex, VarIndex>> Pattern::getAllAssignStmtVarsPatternInfo() {
-	vector<tuple<StmtIndex, VarIndex>> res;
+std::vector<std::tuple<StmtIndex, VarIndex>> Pattern::getAllAssignStmtVarsPatternInfo() {
+	std::vector<std::tuple<StmtIndex, VarIndex>> res;
 
 	for (auto& varPostFixInfo : varPostFixTable) {
 		VarIndex varIdx = varPostFixInfo.first;
-		vector<tuple<StmtIndex, string>> value = varPostFixTable[varIdx];
+		std::vector<std::tuple<StmtIndex, std::string>> value = varPostFixTable[varIdx];
 		for (auto& varPostFixTuple : value) {
-			res.push_back(make_tuple(get<0>(varPostFixTuple), varIdx));
+			res.push_back(std::make_tuple(get<0>(varPostFixTuple), varIdx));
 		}
 	}
 

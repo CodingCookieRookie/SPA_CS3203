@@ -19,16 +19,16 @@ class Pattern {
 protected:
 	static int getVarPostFixTableSize();
 	static int getPostFixVarTableSize();
-	static unordered_map<VarIndex, vector<tuple<StmtIndex, string>>, VarIndex::HashFunction> varPostFixTable;
-	static unordered_map<string, vector<tuple<StmtIndex, VarIndex>>> postFixVarTable;
+	static std::unordered_map<VarIndex, vector<tuple<StmtIndex, std::string>>, VarIndex::HashFunction> varPostFixTable;
+	static std::unordered_map<std::string, vector<tuple<StmtIndex, VarIndex>>> postFixVarTable;
 
 public:
-	static string generatePostFixExpression(string infixExpression);
-	static void insertPostFixInfo(VarIndex varIdx, string postFixExpression, StmtIndex stmtIdx);
-	static vector<StmtIndex> getStmtsFromVarPattern(VarIndex varIdx, string expression, bool isSubExpression);
-	static vector<tuple<StmtIndex, VarIndex>> getStmtsFromPattern(string expression, bool isSubExpression);
-	static vector<StmtIndex> getStmtsFromVarPattern(VarIndex varIdx);
-	static vector<tuple<StmtIndex, VarIndex>> getAllAssignStmtVarsPatternInfo();
+	static std::string generatePostFixExpression(std::string infixExpression);
+	static void insertPostFixInfo(VarIndex varIdx, std::string postFixExpression, StmtIndex stmtIdx);
+	static std::vector<StmtIndex> getStmtsFromVarPattern(VarIndex varIdx, std::string expression, bool isSubExpression);
+	static std::vector<tuple<StmtIndex, VarIndex>> getStmtsFromPattern(std::string expression, bool isSubExpression);
+	static std::vector<StmtIndex> getStmtsFromVarPattern(VarIndex varIdx);
+	static std::vector<std::tuple<StmtIndex, VarIndex>> getAllAssignStmtVarsPatternInfo();
 	static void performCleanUp();
 };
 
