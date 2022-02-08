@@ -11,7 +11,7 @@ private:
 	Lexer lexer;
 	ProgramNode* matchProgram();
 	ProcedureNode* matchProcedure();
-	StmtListNode* matchStmtList();
+	StmtLstNode* matchStmtLst();
 	StmtNode* matchStmt();
 	ReadNode* matchRead();
 	PrintNode* matchPrint();

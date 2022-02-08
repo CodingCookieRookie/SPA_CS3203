@@ -8,11 +8,11 @@ void DesignExtractor::processProgramNode(ProgramNode* programNode) {
 
 void DesignExtractor::processProcedureNode(ProcedureNode* procedureNode) {
 	Entity::insertProc(procedureNode->getProcName());
-	processStmtLstNode(procedureNode->getStmtListNode());
+	processStmtLstNode(procedureNode->getStmtLstNode());
 }
 
-void DesignExtractor::processStmtLstNode(StmtListNode* stmtListNode) {
-	for (StmtNode* stmtNode : stmtListNode->getStmtNodes()) {
+void DesignExtractor::processStmtLstNode(StmtLstNode* stmtLstNode) {
+	for (StmtNode* stmtNode : stmtLstNode->getStmtNodes()) {
 		processStmtNode(stmtNode);
 	}
 }

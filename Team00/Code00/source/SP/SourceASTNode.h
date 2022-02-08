@@ -59,11 +59,11 @@ public:
 	friend class SourceAST;
 };
 
-class StmtListNode : public SourceASTNode {
+class StmtLstNode : public SourceASTNode {
 private:
 	std::vector<StmtNode*> stmtNodes;
 public:
-	StmtListNode();
+	StmtLstNode();
 	void addStmtNode(StmtNode* stmtNode);
 	std::vector<StmtNode*> getStmtNodes();
 
@@ -75,11 +75,11 @@ public:
 class ProcedureNode : public SourceASTNode {
 private:
 	std::string procName;
-	StmtListNode* stmtListNode;
+	StmtLstNode* stmtLstNode;
 public:
 	ProcedureNode(std::string procName);
-	void addStmtList(StmtListNode* stmtListNode);
-	StmtListNode* getStmtListNode();
+	void addStmtLst(StmtLstNode* stmtLstNode);
+	StmtLstNode* getStmtLstNode();
 	std::string getProcName();
 
 	void printNode(int depth);
