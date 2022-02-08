@@ -70,5 +70,33 @@ public:
 		ReadNode* readNode2 = (ReadNode*)statements2[1];
 		Assert::AreEqual(std::string("Y1Yy"), readNode2->getVarName());
 	}
+
+	TEST_METHOD(parse_missingReadVarName_parseExceptionThrown) {
+		const char* source = "   procedure proc  "
+			"{ read ;} ";
+		Parser parser(source);
+		auto wrapperFunc = [&parser] { parser.parse(); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+
+		const char* source1 = "   procedure proc1  "
+			"{ print x1; read  ";
+		Parser parser1(source1);
+		auto wrapperFunc1 = [&parser1] { parser1.parse(); };
+		Assert::ExpectException<ParserException>(wrapperFunc1);
+	}
+
+	TEST_METHOD(parse_missingPrintVarName_parseExceptionThrown) {
+		const char* source = "   procedure proc  "
+			"{ print ;} ";
+		Parser parser(source);
+		auto wrapperFunc = [&parser] { parser.parse(); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+
+		const char* source1 = "   procedure proc1  "
+			"{ read x1; print  ";
+		Parser parser1(source1);
+		auto wrapperFunc1 = [&parser1] { parser1.parse(); };
+		Assert::ExpectException<ParserException>(wrapperFunc1);
+	}
 	};
 }
