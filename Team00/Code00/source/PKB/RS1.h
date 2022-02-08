@@ -9,6 +9,8 @@
 
 #include "../common/Types.h"
 
+using namespace std; //TO REMOVE
+
 template<class T>
 class RS1 {
 protected:
