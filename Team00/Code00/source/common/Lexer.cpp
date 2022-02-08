@@ -15,6 +15,7 @@ void Lexer::advance() {
 	return;
 }
 
+/* INTEGER: DIGIT+, but the first digit of an INTEGER cannot be 0. */
 std::string Lexer::nextInteger() {
 	if (index >= length) {
 		return std::string();
@@ -23,6 +24,12 @@ std::string Lexer::nextInteger() {
 	if (!isdigit(source[index])) {
 		return std::string();
 	}
+
+	// The first digit of an INTEGER cannot be 0.
+	if (source[index] == '0' && (index + 1 < length) && !isspace(source[index + 1])) {
+		return std::string();
+	}
+
 	std::string match;
 	while (index < length && isdigit(source[index])) {
 		match.push_back(source[index]);
