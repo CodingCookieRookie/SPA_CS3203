@@ -39,7 +39,7 @@ bool RS2<T>::containsPredecessor(StmtIndex predecessor, StmtIndex successor) {
 		return false;
 	}
 
-	unordered_set<StmtIndex, StmtIndex::HashFunction> predecessors = sucPredTable[successor];
+	std::unordered_set<StmtIndex, StmtIndex::HashFunction> predecessors = sucPredTable[successor];
 	return predecessors.find(predecessor) != predecessors.end();
 };
 
@@ -49,7 +49,7 @@ bool RS2<T>::containsSuccessor(StmtIndex predecessor, StmtIndex successor) {
 		return false;
 	}
 
-	unordered_set<StmtIndex, StmtIndex::HashFunction> successors = predSucTable[predecessor];
+	std::unordered_set<StmtIndex, StmtIndex::HashFunction> successors = predSucTable[predecessor];
 	return successors.find(successor) != successors.end();
 };
 
@@ -65,10 +65,10 @@ std::unordered_set<StmtIndex, StmtIndex::HashFunction> RS2<T>::getPredecessorStm
 
 template<class T>
 std::vector<std::tuple<StmtIndex, StmtIndex>> RS2<T>::getAllPredecessorSuccessorInfo() {
-	vector<tuple<StmtIndex, StmtIndex>> data;
+	std::vector<std::tuple<StmtIndex, StmtIndex>> data;
 	for (auto& predSucEntry : predSucTable) {
 		for (auto& successor : predSucEntry.second) {
-			data.push_back(make_tuple(predSucEntry.first, successor));
+			data.push_back(std::make_tuple(predSucEntry.first, successor));
 		}
 	}
 	return data;

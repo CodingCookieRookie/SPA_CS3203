@@ -20,7 +20,7 @@ private:
 
 public:
 	TEST_METHOD(insert_getSuccessorStmts) {
-		unordered_set<StmtIndex, StmtIndex::HashFunction> expectedAns;
+		std::unordered_set<StmtIndex, StmtIndex::HashFunction> expectedAns;
 		expectedAns.insert(successor1);
 		expectedAns.insert(successor2);
 
@@ -36,7 +36,7 @@ public:
 	};
 
 	TEST_METHOD(insert_getPredecessorStmts) {
-		unordered_set<StmtIndex, StmtIndex::HashFunction> expectedAns;
+		std::unordered_set<StmtIndex, StmtIndex::HashFunction> expectedAns;
 		expectedAns.insert(predecessor1);
 
 		Follows::insert(predecessor1, successor1);
@@ -74,9 +74,9 @@ public:
 	}
 
 	TEST_METHOD(getAllPredecessorSuccessorInfo) {
-		vector<tuple<StmtIndex, StmtIndex>> expectedAns;
-		expectedAns.push_back(make_tuple(predecessor1, successor1));
-		expectedAns.push_back(make_tuple(predecessor2, successor2));
+		std::vector<std::tuple<StmtIndex, StmtIndex>> expectedAns;
+		expectedAns.push_back(std::make_tuple(predecessor1, successor1));
+		expectedAns.push_back(std::make_tuple(predecessor2, successor2));
 
 		Follows::insert(predecessor1, successor1);
 		Follows::insert(predecessor2, successor2);

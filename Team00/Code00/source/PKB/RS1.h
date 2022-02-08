@@ -9,8 +9,6 @@
 
 #include "../common/Types.h"
 
-using namespace std; //TO REMOVE
-
 template<class T>
 class RS1 {
 protected:
@@ -60,7 +58,7 @@ bool RS1<T>::contains(StmtIndex  stmtIndex, VarIndex varIndex) {
 		return false;
 	}
 
-	unordered_set<VarIndex, VarIndex::HashFunction> variables = stmtVarTable[stmtIndex];
+	std::unordered_set<VarIndex, VarIndex::HashFunction> variables = stmtVarTable[stmtIndex];
 	if (variables.find(varIndex) == variables.end()) {
 		return false;
 	}
@@ -74,7 +72,7 @@ bool RS1<T>::contains(ProcIndex procIndex, VarIndex varIndex) {
 		return false;
 	}
 
-	unordered_set<VarIndex, VarIndex::HashFunction> variables = procVarTable[procIndex];
+	std::unordered_set<VarIndex, VarIndex::HashFunction> variables = procVarTable[procIndex];
 	if (variables.find(varIndex) == variables.end()) {
 		return false;
 	}
@@ -104,10 +102,10 @@ std::unordered_set<VarIndex, VarIndex::HashFunction> RS1<T>::getVariables(ProcIn
 
 template<class T>
 std::vector<std::tuple<ProcIndex, VarIndex>> RS1<T>::getAllProcVarInfo() {
-	vector<tuple<ProcIndex, VarIndex>> data;
+	std::vector<std::tuple<ProcIndex, VarIndex>> data;
 	for (auto& procVarEntry : procVarTable) {
 		for (auto& varIndex : procVarEntry.second) {
-			data.push_back(make_tuple(procVarEntry.first, varIndex));
+			data.push_back(std::make_tuple(procVarEntry.first, varIndex));
 		}
 	}
 	return data;
@@ -115,10 +113,10 @@ std::vector<std::tuple<ProcIndex, VarIndex>> RS1<T>::getAllProcVarInfo() {
 
 template<class T>
 std::vector<std::tuple<StmtIndex, VarIndex>> RS1<T>::getAllStmtVarInfo() {
-	vector<tuple<StmtIndex, VarIndex>> data;
+	std::vector<std::tuple<StmtIndex, VarIndex>> data;
 	for (auto& stmtVarEntry : stmtVarTable) {
 		for (auto& varIndex : stmtVarEntry.second) {
-			data.push_back(make_tuple(stmtVarEntry.first, varIndex));
+			data.push_back(std::make_tuple(stmtVarEntry.first, varIndex));
 		}
 	}
 	return data;
