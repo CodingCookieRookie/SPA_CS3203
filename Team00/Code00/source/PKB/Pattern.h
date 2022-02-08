@@ -4,11 +4,6 @@
 #define PATTERN_H
 
 #include <string>
-#include <unordered_set>
-#include <unordered_map>
-#include <tuple>
-#include <string>
-#include <unordered_set>
 #include <unordered_map>
 #include <tuple>
 #include <vector>
