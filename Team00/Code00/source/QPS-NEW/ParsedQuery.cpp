@@ -4,14 +4,14 @@ bool ParsedQuery::isDeclared(const std::string& synonym) {
 	return declarations.find(synonym) != declarations.end();
 }
 
-PQL_VARIABLE_TYPE ParsedQuery::getType(std::string& synonym) {
+PqlEntityType ParsedQuery::getType(std::string& synonym) {
 	return declarations.at(synonym);
 }
 
 void ParsedQuery::populateDeclarations(
 	const std::vector<PQL_VARIABLE>& allDeclarations) {
 	for (const PQL_VARIABLE& variable : allDeclarations) {
-		PQL_VARIABLE_TYPE variableType = variable.first;
+		PqlEntityType variableType = variable.first;
 		std::string variableName = variable.second;
 		if (isDeclared(variableName)) {
 			throw SPAException(std::string("Repeated variable declaration found"));
@@ -106,7 +106,7 @@ void ParsedQuery::populatePatterns(const std::vector<ParsedPattern>& allPatterns
 		if (!isDeclared(synAssign)) {
 
 		}
-		if (getType(synAssign) != PQL_VARIABLE_TYPE::ASSIGN) {
+		if (getType(synAssign) != PqlEntityType::Assign) {
 
 		}
 		PqlReference ref = pattern.getEntRef();
@@ -127,7 +127,7 @@ ParsedQuery::ParsedQuery(const std::vector<PQL_VARIABLE>& allDeclarations,
 	populatePatterns(allPatterns);
 }
 
-std::unordered_map<std::string, PQL_VARIABLE_TYPE> ParsedQuery::getDeclarations() {
+std::unordered_map<std::string, PqlEntityType> ParsedQuery::getDeclarations() {
 	return declarations;
 }
 

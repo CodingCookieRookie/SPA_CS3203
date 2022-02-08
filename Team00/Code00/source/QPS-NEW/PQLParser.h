@@ -8,7 +8,7 @@
 
 class PQLParser {
 private:
-	//static const std::vector<std::pair<std::string, PQL_VARIABLE_TYPE>> designEntityMap;
+	//static const std::vector<std::pair<std::string, PqlEntityType>> designEntityMap;
 	PQLLexer lexer;
 	std::vector<PQL_VARIABLE> parseSingleDeclaration();
 	std::vector<PQL_VARIABLE> parseDeclarations();

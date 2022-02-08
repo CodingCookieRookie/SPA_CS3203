@@ -6,7 +6,7 @@
 #include "../PKB/Entity.h"
 
 std::list<std::string> PQLResultProjector::resolveTableToResults() {
-	std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>* table = evaluatedTable.getTableRef();
+	std::unordered_map<PqlEntityType, std::vector<VALUE>>* table = evaluatedTable.getTableRef();
 	std::list<std::string> resList;
 
 	//TODO:
@@ -14,7 +14,7 @@ std::list<std::string> PQLResultProjector::resolveTableToResults() {
 	//	std::vector<VALUE> values = mappings.second;
 	//	std::string res = "";
 
-	//	// Given { {STMT, {1, 2, 3}} }, Forms "1 2 3"
+	//	// Given { {Stmt, {1, 2, 3}} }, Forms "1 2 3"
 	//	for (size_t i = 0; i < values.size(); i++) {
 	//		res += values.at(i);
 	//		if (i != values.size() - 1) {
@@ -22,7 +22,7 @@ std::list<std::string> PQLResultProjector::resolveTableToResults() {
 	//		}
 	//	}
 
-	//	// TODO: { {STMT, {1, 3, 4}, {ASGN, {2, 2, 3}} },
+	//	// TODO: { {Stmt, {1, 3, 4}, {ASGN, {2, 2, 3}} },
 	//	// Forms {"1, 2", "3, 2", "4, 3"} or 1 2 3 2 4 3 according to AutoTester
 	//	// A different for loop
 

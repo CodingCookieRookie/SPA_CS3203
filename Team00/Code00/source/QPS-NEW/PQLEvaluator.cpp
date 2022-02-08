@@ -20,18 +20,18 @@ EvaluatedTable PQLEvaluator::evaluate() {
 
 std::vector<Instruction> PQLEvaluator::evaluateToInstructions(ParsedQuery& pq) {
 	std::vector<Instruction> instructions = std::vector<Instruction>();
-	std::unordered_map<std::string, PQL_VARIABLE_TYPE> declarations = pq.getDeclarations();
+	std::unordered_map<std::string, PqlEntityType> declarations = pq.getDeclarations();
 	std::vector<std::string> columns = pq.getColumns();
 	
 	// 1. Check if entitiy in Select clause is found in declarations
 	for (std::string entity : columns) {
-		PQL_VARIABLE_TYPE entityTypeRequired = declarations.at(entity);
+		PqlEntityType entityTypeRequired = declarations.at(entity);
 
 		switch (entityTypeRequired) {
-		case PQL_VARIABLE_TYPE::STMT :
+		case PqlEntityType::Stmt :
 			instructions.push_back(Instruction(INSTRUCTION_TYPE::getAllStmt));
 			break;
-		case PQL_VARIABLE_TYPE::ASSIGN:
+		case PqlEntityType::Assign:
 			instructions.push_back(Instruction(INSTRUCTION_TYPE::getAllAsgn));
 			break;
 		}
@@ -82,15 +82,15 @@ EvaluatedTable PQLEvaluator::execute(Instruction& instr) {
 		// Convert StmtIndex to string
 		// e.g {1, 2, 3}
 		std::vector<VALUE> resultsToStr;
-		// std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>> newTable = std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>({{PQL_VARIABLE_TYPE::STMT, resultsToStr}});
+		// std::unordered_map<PqlEntityType, std::vector<VALUE>> newTable = std::unordered_map<PqlEntityType, std::vector<VALUE>>({{PqlEntityType::Stmt, resultsToStr}});
 
 		for (StmtIndex result : results) {
 			resultsToStr.push_back((std::to_string(result.getIndex())));
 		}
 
 		// Look into resultsToStr 
-		currTable = EvaluatedTable(std::unordered_set<PQL_VARIABLE_TYPE>({ PQL_VARIABLE_TYPE::STMT }),
-			std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>({ {PQL_VARIABLE_TYPE::STMT, resultsToStr} }),
+		currTable = EvaluatedTable(std::unordered_set<PqlEntityType>({ PqlEntityType::Stmt }),
+			std::unordered_map<PqlEntityType, std::vector<VALUE>>({ {PqlEntityType::Stmt, resultsToStr} }),
 			results.size());
 
 		break;

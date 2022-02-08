@@ -1,26 +1,26 @@
 #include "PQLParser.h"
 
 // TODO: Make this a static member of PQLParser
-std::vector<std::pair<std::string, PQL_VARIABLE_TYPE>> designEntityMap = {
-    {"stmt",		PQL_VARIABLE_TYPE::STMT},
-    {"read",		PQL_VARIABLE_TYPE::READ},
-    {"print",		PQL_VARIABLE_TYPE::PRINT},
-    {"call",		PQL_VARIABLE_TYPE::CALL},
-    {"while",		PQL_VARIABLE_TYPE::WHILE},
-    {"if",			PQL_VARIABLE_TYPE::IF},
-    {"assign",		PQL_VARIABLE_TYPE::ASSIGN},
-    {"variable",	PQL_VARIABLE_TYPE::VARIABLE},
-    {"constant",	PQL_VARIABLE_TYPE::CONSTANT},
-    {"procedure",	PQL_VARIABLE_TYPE::PROCEDURE}
+std::vector<std::pair<std::string, PqlEntityType>> designEntityMap = {
+    {"stmt",		PqlEntityType::Stmt},
+    {"read",		PqlEntityType::Read},
+    {"print",		PqlEntityType::Print},
+    {"call",		PqlEntityType::Call},
+    {"while",		PqlEntityType::While},
+    {"if",			PqlEntityType::If},
+    {"assign",		PqlEntityType::Assign},
+    {"variable",	PqlEntityType::Variable},
+    {"constant",	PqlEntityType::Constant},
+    {"procedure",	PqlEntityType::Procedure}
 };
 
 PQLParser::PQLParser(const std::string& query) : lexer(query) {}
 
 std::vector<PQL_VARIABLE> PQLParser::parseSingleDeclaration() {
-    PQL_VARIABLE_TYPE variableType;
+    PqlEntityType variableType;
     std::vector<PQL_VARIABLE> declarations;
     bool matchedEntity = false;
-    for (const std::pair<std::string, PQL_VARIABLE_TYPE>& designEntity : designEntityMap) {
+    for (const std::pair<std::string, PqlEntityType>& designEntity : designEntityMap) {
         std::string designEntityString = designEntity.first;
         if (lexer.match(designEntityString)) {
             variableType = designEntity.second;

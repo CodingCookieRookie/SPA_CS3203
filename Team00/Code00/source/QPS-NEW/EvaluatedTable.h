@@ -11,8 +11,8 @@ typedef std::string VALUE;
 
 class EvaluatedTable {
 private:
-	std::unordered_set<PQL_VARIABLE_TYPE> entities;
-	std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>* table;
+	std::unordered_set<PqlEntityType> entities;
+	std::unordered_map<PqlEntityType, std::vector<VALUE>>* table;
 	int numRow;
 
 public:
@@ -40,19 +40,19 @@ public:
 	* {"s", "v"} = {{"1", "a"}, {"2", "b"}}
 	* 
 	* We construct this:
-	* EvaluatedTable(new std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>({
+	* EvaluatedTable(new std::unordered_map<PqlEntityType, std::vector<VALUE>>({
 	*	{"s", {"1", "2"}},
 	*	{"v", {"a", "b"}}
 	* }))
 	*/
-	EvaluatedTable(std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>> *table);
+	EvaluatedTable(std::unordered_map<PqlEntityType, std::vector<VALUE>> *table);
 
 	/* Wrapper constructor for all 3 fields */
-	EvaluatedTable::EvaluatedTable(std::unordered_set<PQL_VARIABLE_TYPE> newEntities,
-		std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>& newTable, int newNumRow);
+	EvaluatedTable::EvaluatedTable(std::unordered_set<PqlEntityType> newEntities,
+		std::unordered_map<PqlEntityType, std::vector<VALUE>>& newTable, int newNumRow);
 
 	/* Getter for entities */
-	std::unordered_set<PQL_VARIABLE_TYPE> getEntities() {
+	std::unordered_set<PqlEntityType> getEntities() {
 		return entities;
 	}
 
@@ -62,7 +62,7 @@ public:
 	}
 
 	/* Getter for *table */
-	std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>* getTableRef() {
+	std::unordered_map<PqlEntityType, std::vector<VALUE>>* getTableRef() {
 		return table;
 	}
 };

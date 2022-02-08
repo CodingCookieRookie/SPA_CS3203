@@ -63,16 +63,16 @@ bool isModifiesRelationship(ParsedRelationship relationship) {
 	return relationship.getRelationshipType() == PqlRelationshipType::Modifies;
 }
 
-bool isStatementEntity(PQL_VARIABLE_TYPE entityType) {
-	return entityType == PQL_VARIABLE_TYPE::ASSIGN
-		|| entityType == PQL_VARIABLE_TYPE::STMT
-		|| entityType == PQL_VARIABLE_TYPE::IF
-		|| entityType == PQL_VARIABLE_TYPE::PRINT
-		|| entityType == PQL_VARIABLE_TYPE::READ
-		|| entityType == PQL_VARIABLE_TYPE::STMT
-		|| entityType == PQL_VARIABLE_TYPE::WHILE;
+bool isStatementEntity(PqlEntityType entityType) {
+	return entityType == PqlEntityType::Assign
+		|| entityType == PqlEntityType::Stmt
+		|| entityType == PqlEntityType::If
+		|| entityType == PqlEntityType::Print
+		|| entityType == PqlEntityType::Read
+		|| entityType == PqlEntityType::Stmt
+		|| entityType == PqlEntityType::While;
 }
 
-bool isProcedureEntity(PQL_VARIABLE_TYPE entityType) {
-	return entityType == PQL_VARIABLE_TYPE::PROCEDURE;
+bool isProcedureEntity(PqlEntityType entityType) {
+	return entityType == PqlEntityType::Procedure;
 }

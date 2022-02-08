@@ -1,9 +1,9 @@
 #pragma once
 #include <string>
 
-enum class PQL_VARIABLE_TYPE {
-	STMT, READ, PRINT, CALL, WHILE,
-	IF, ASSIGN, VARIABLE, CONSTANT, PROCEDURE
+enum class PqlEntityType {
+	Stmt, Read, Print, Call, While,
+	If, Assign, Variable, Constant, Procedure
 };
 
 enum class INSTRUCTION_TYPE {
@@ -29,7 +29,7 @@ enum class PqlExpressionType {
 	full, partial, wildcard
 };
 
-typedef std::pair<PQL_VARIABLE_TYPE, std::string> PQL_VARIABLE;
+typedef std::pair<PqlEntityType, std::string> PQL_VARIABLE;
 
 typedef std::pair<PqlReferenceType, std::string> PqlReference;
 
@@ -69,5 +69,5 @@ bool isSynonymRef(PqlReference reference);
 bool isUsesRelationship(ParsedRelationship relationship);
 bool isModifiesRelationship(ParsedRelationship relationship);
 
-bool isStatementEntity(PQL_VARIABLE_TYPE entityType);
-bool isProcedureEntity(PQL_VARIABLE_TYPE entityType);
+bool isStatementEntity(PqlEntityType entityType);
+bool isProcedureEntity(PqlEntityType entityType);

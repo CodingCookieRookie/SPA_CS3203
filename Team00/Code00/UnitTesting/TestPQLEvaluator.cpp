@@ -16,10 +16,10 @@ namespace UnitTesting
 		TEST_METHOD(evaluateQuery_declarationAndSelectOnly_designEntitiesExtracted)
 		{
 			// "stmt s; if ifs; Select s";
-			typedef std::pair<PQL_VARIABLE_TYPE, std::string> DECLARATION;
+			typedef std::pair<PqlEntityType, std::string> DECLARATION;
 
-			DECLARATION pair1 = DECLARATION(PQL_VARIABLE_TYPE::STMT, "s");
-			DECLARATION pair2 = DECLARATION(PQL_VARIABLE_TYPE::IF, "ifs");
+			DECLARATION pair1 = DECLARATION(PqlEntityType::Stmt, "s");
+			DECLARATION pair2 = DECLARATION(PqlEntityType::If, "ifs");
 
 			std::vector<PQL_VARIABLE> declarations;
 			declarations.push_back(pair1);
