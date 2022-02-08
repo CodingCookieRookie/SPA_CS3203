@@ -8,10 +8,8 @@ PQL_VARIABLE_TYPE ParsedQuery::getType(std::string& synonym) {
 	return declarations.at(synonym);
 }
 
-ParsedQuery::ParsedQuery(const std::vector<PQL_VARIABLE>& allDeclarations,
-	const std::vector<std::string>& allColumns,
-	const std::vector<ParsedRelationship>& allRelationships,
-	const std::vector<ParsedPattern>& allPatterns) {
+void ParsedQuery::populateDeclarations(
+	const std::vector<PQL_VARIABLE>& allDeclarations) {
 	for (const PQL_VARIABLE& variable : allDeclarations) {
 		PQL_VARIABLE_TYPE variableType = variable.first;
 		std::string variableName = variable.second;
@@ -20,12 +18,18 @@ ParsedQuery::ParsedQuery(const std::vector<PQL_VARIABLE>& allDeclarations,
 		}
 		declarations[variableName] = variableType;
 	}
+}
+
+void ParsedQuery::populateColumns(const std::vector<std::string>& allColumns) {
 	for (const std::string& column : allColumns) {
 		if (!isDeclared(column)) {
 			throw SPAException(std::string("Undeclared variable found"));
 		}
 		columns.push_back(column);
 	}
+}
+
+void ParsedQuery::populateRelationships(const std::vector<ParsedRelationship>& allRelationships) {
 	for (const ParsedRelationship& relationship : allRelationships) {
 		PqlReference lhs = relationship.getLhs();
 		if (lhs.first == PqlReferenceType::synonym) {
@@ -43,23 +47,36 @@ ParsedQuery::ParsedQuery(const std::vector<PQL_VARIABLE>& allDeclarations,
 		}
 		relationships.push_back(relationship);
 	}
-	for(const ParsedPattern& pattern : allPatterns) {
+}
+
+void ParsedQuery::populatePatterns(const std::vector<ParsedPattern>& allPatterns) {
+	for (const ParsedPattern& pattern : allPatterns) {
 		std::string synAssign = pattern.getSynonym();
 		if (!isDeclared(synAssign)) {
-		
+
 		}
 		if (getType(synAssign) != PQL_VARIABLE_TYPE::ASSIGN) {
-		
+
 		}
 		PqlReference ref = pattern.getEntRef();
 		PqlReferenceType refType = ref.first;
 		if (refType != PqlReferenceType::synonym
 			&& refType != PqlReferenceType::wildcard
 			&& refType != PqlReferenceType::ident) {
-			
+
 		}
 		patterns.push_back(pattern);
 	}
+}
+
+ParsedQuery::ParsedQuery(const std::vector<PQL_VARIABLE>& allDeclarations,
+	const std::vector<std::string>& allColumns,
+	const std::vector<ParsedRelationship>& allRelationships,
+	const std::vector<ParsedPattern>& allPatterns) {
+	populateDeclarations(allDeclarations);
+	populateColumns(allColumns);
+	populateRelationships(allRelationships);
+	populatePatterns(allPatterns);
 }
 
 std::unordered_map<std::string, PQL_VARIABLE_TYPE> ParsedQuery::getDeclarations() {

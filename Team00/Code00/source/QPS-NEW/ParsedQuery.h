@@ -11,8 +11,18 @@ private:
 	std::vector<std::string> columns;
 	std::vector<ParsedRelationship> relationships;
 	std::vector<ParsedPattern> patterns;
+
 	bool isDeclared(const std::string& synonym);
 	PQL_VARIABLE_TYPE getType(std::string& synonym);
+
+	void populateDeclarations(
+		const std::vector<PQL_VARIABLE>& allDeclarations);
+	void populateColumns(
+		const std::vector<std::string>& allColumns);
+	void populateRelationships(
+		const std::vector<ParsedRelationship>& allRelationships);
+	void populatePatterns(
+		const std::vector<ParsedPattern>& allPatterns);
 public:
 
 	/* Constructor for a ParsedQuery object */
