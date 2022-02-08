@@ -108,16 +108,16 @@ StmtNode* Parser::matchStmt() {
 ReadNode* Parser::matchRead() {
 	std::string whitespace = lexer.nextWhitespace();
 	if (whitespace.empty()) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_WHITESPACE);
 	}
 
 	std::string varName = lexer.nextName();
 	if (varName.empty()) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_VAR_NAME);
 	}
 
 	if (!lexer.match(";")) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_SEMICOLON);
 	}
 
 	return new ReadNode(varName);
@@ -127,16 +127,16 @@ ReadNode* Parser::matchRead() {
 PrintNode* Parser::matchPrint() {
 	std::string whitespace = lexer.nextWhitespace();
 	if (whitespace.empty()) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_WHITESPACE);
 	}
 
 	std::string varName = lexer.nextName();
 	if (varName.empty()) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_VAR_NAME);
 	}
 
 	if (!lexer.match(";")) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_SEMICOLON);
 	}
 
 	return new PrintNode(varName);
