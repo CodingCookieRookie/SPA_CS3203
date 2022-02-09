@@ -30,6 +30,10 @@ std::string ExpressionProcessor::convertInfixToPostFix(std::string s) {
 		// Operand: Add to res
 		if (isOperand(currentChar)) {
 			res += currentChar;
+			// All operands are appended by a space
+			if ((i < s.length() - 1 && !isOperand(s[i + 1])) || i == s.length() - 1) {
+				res += ' ';
+			}
 		}
 
 		// '(': Push to stack
