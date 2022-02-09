@@ -6,48 +6,42 @@
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting {
-    TEST_CLASS(TestLexer) {
+	TEST_CLASS(TestLexer) {
 public:
-    TEST_METHOD(nextInteger_integerNotStartingWithZero_integerReturned) {
-        const char* source = " 103 integer ";
-        Lexer lexer(source);    
-        Assert::AreEqual(std::string("103"), lexer.nextInteger());
-    }
+	TEST_METHOD(nextInteger_validIntegerNotStartingWithZero_attachedToNonDigit_integerReturned) {
+		const char* source = " 103;  ";
+		Lexer lexer(source);
+		Assert::AreEqual(std::string("103"), lexer.nextInteger());
+	}
 
-    TEST_METHOD(nextInteger_integerIsZeroAndNotEndOfString_zeroReturned) {
-        const char* source = "      0   ";
-        Lexer lexer(source);
-        Assert::AreEqual(std::string("0"), lexer.nextInteger());
-    }
+	TEST_METHOD(nextInteger_zeroAndNotEndOfString_attachedToNonDigit_zeroReturned) {
+		const char* source = "      0+ ;   ";
+		Lexer lexer(source);
+		Assert::AreEqual(std::string("0"), lexer.nextInteger());
+	}
 
-    TEST_METHOD(nextInteger_integerIsZeroAtEndOfString_zeroReturned) {
-        const char* source = "      0";
-        Lexer lexer(source);
-        Assert::AreEqual(std::string("0"), lexer.nextInteger());
-    }
+	TEST_METHOD(nextInteger_zeroAtEndOfString_zeroReturned) {
+		const char* source = "      0";
+		Lexer lexer(source);
+		Assert::AreEqual(std::string("0"), lexer.nextInteger());
+	}
 
-    TEST_METHOD(nextInteger_integerStartingWithZero_emptyStringReturned) {
-        const char* source = "      01234 integer";
-        Lexer lexer(source);
-        Assert::AreEqual(std::string(), lexer.nextInteger());
-    }
+	TEST_METHOD(nextInteger_zeroAttachedToNonDigit_zeroReturned) {
+		const char* source = "   0meString   01 ";
+		Lexer lexer(source);
+		Assert::AreEqual(std::string("0"), lexer.nextInteger());
+	}
 
-    TEST_METHOD(nextInteger_isNotDigit_emptyStringReturned) {
-        const char* source = "   s0meString   01 ";
-        Lexer lexer(source);
-        Assert::AreEqual(std::string(), lexer.nextInteger());
-    }
+	TEST_METHOD(nextInteger_invalidIntegerStartingWithZero_emptyStringReturned) {
+		const char* source = "      01234 + 456";
+		Lexer lexer(source);
+		Assert::AreEqual(std::string(), lexer.nextInteger());
+	}
 
-    TEST_METHOD(nextInteger_isNotDigitButStartingWithZero_emptyStringReturned) {
-        const char* source = "   0meString   01 ";
-        Lexer lexer(source);
-        Assert::AreEqual(std::string(), lexer.nextInteger());
-    }
-
-    TEST_METHOD(nextInteger_integerHasNonDigit_emptyStringReturned) {
-        const char* source = "   123a456   01 ";
-        Lexer lexer(source);
-        Assert::AreEqual(std::string(), lexer.nextInteger());
-    }
-    };
+	TEST_METHOD(nextInteger_invalidIntegerIsNotDigit_emptyStringReturned) {
+		const char* source = "   s0meString   01 ";
+		Lexer lexer(source);
+		Assert::AreEqual(std::string(), lexer.nextInteger());
+	}
+	};
 }

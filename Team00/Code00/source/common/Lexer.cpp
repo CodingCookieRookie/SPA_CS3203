@@ -26,11 +26,7 @@ std::string Lexer::nextInteger() {
 	}
 
 	std::string match;
-	while (index < length && !isspace(source[index])) {
-		// if there is any letter attached to the digits, don't consider the whole thing as INTEGER
-		if (!isdigit(source[index])) { 
-			return std::string();
-		}
+	while (index < length && isdigit(source[index])) {
 		match.push_back(source[index]);
 		index++;
 	}
