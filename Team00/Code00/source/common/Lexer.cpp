@@ -1,5 +1,7 @@
 #include "../common/Lexer.h"
 
+Lexer::Lexer() : source(), index(0), length(0) { }
+
 Lexer::Lexer(const std::string& source) : source(source), index(0), length(source.length()) {}
 
 void Lexer::advance() {

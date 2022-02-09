@@ -27,6 +27,7 @@
     <ClCompile Include="..\source\QPS-NEW\PQLResultProjector.cpp" />
     <ClCompile Include="..\source\QPS-NEW\EvaluatedTable.cpp" />
     <ClCompile Include="..\source\QPS-NEW\Instruction.cpp" />
+    <ClCompile Include="..\source\QPS-NEW\QPSCommons.cpp" />
     <ClCompile Include="..\source\SP\DesignExtractor.cpp" />
     <ClCompile Include="..\source\SP\Parser.cpp" />
     <ClCompile Include="..\source\SP\SourceAST.cpp" />
