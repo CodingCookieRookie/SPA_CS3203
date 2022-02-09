@@ -1,6 +1,6 @@
 #include "../common/Lexer.h"
 
-Lexer::Lexer() : source(), index(0), length(0) { }
+Lexer::Lexer() : source(), index(0), length(0) {}
 
 Lexer::Lexer(const std::string& source) : source(source), index(0), length(source.length()) {}
 
@@ -70,9 +70,8 @@ std::string Lexer::nextWhitespace() {
 	return match;
 }
 
-bool Lexer::match(const std::string& pattern) {
+bool Lexer::peek(const std::string& pattern) {
 	advance();
-
 	if (index + pattern.length() > length) {
 		return false;
 	}
@@ -81,6 +80,14 @@ bool Lexer::match(const std::string& pattern) {
 		if (pattern[i] != source[index + i]) {
 			return false;
 		}
+	}
+
+	return true;
+}
+
+bool Lexer::match(const std::string& pattern) {
+	if (!peek(pattern)) {
+		return false;
 	}
 
 	index += pattern.length();
