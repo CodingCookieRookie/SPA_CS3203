@@ -76,7 +76,7 @@ std::vector<Instruction> PQLEvaluator::evaluateToInstructions(ParsedQuery& pq) {
 EvaluatedTable PQLEvaluator::executeInstructions(std::vector<Instruction> instructions) {
     EvaluatedTable resultEvTable = EvaluatedTable();
 
-    // Assuming correct order of instructions already
+    // Assumptino: Correct order of instructions
     // Call relevant API
     for (Instruction instruction : instructions) {
         EvaluatedTable currEvTable = execute(instruction);
@@ -95,38 +95,21 @@ EvaluatedTable PQLEvaluator::executeInstructions(std::vector<Instruction> instru
 EvaluatedTable PQLEvaluator::execute(Instruction& instr) {
     InstructionType instrType = instr.getType();
     EvaluatedTable currTable;
+    std::unordered_set<PqlEntityType> PQLtypes;
+    std::unordered_map<PqlEntityType, std::vector<VALUE>> PQLmap;
 
     switch (instrType) {
 
     case InstructionType::getAllStmt :
-        //PKB's getAllStmts
         std::vector<StmtIndex> results = Entity::getAllStmts();
-
-        // TODO: Generalise this logic below:
-        // Convert StmtIndex to string
-        // e.g {1, 2, 3}
-        //std::vector<VALUE> resultsToStr;
-        // std::unordered_map<PqlEntityType, std::vector<VALUE>> newTable = std::unordered_map<PqlEntityType, std::vector<VALUE>>({{PqlEntityType::Stmt, resultsToStr}});
-
-        //for (StmtIndex result : results) {
-        //    resultsToStr.push_back((std::to_string(result.getIndex())));
-        //}
-
-        // Look into resultsToStr 
-       /* currTable = EvaluatedTable(std::unordered_set<PqlEntityType>({ PqlEntityType::Stmt }),
-            std::unordered_map<PqlEntityType, std::vector<VALUE>>({ {PqlEntityType::Stmt, resultsToStr} }),
-            results.size());*/
-
-        std::vector<VALUE> resultsToStr;
-        std::unordered_set<PqlEntityType> PQLtypes;
+        std::vector<VALUE> resultsToStr;  
         PQLtypes.insert(PqlEntityType::Stmt);
-        std::unordered_map<PqlEntityType, std::vector<VALUE>> PQLmap;
+        // Convert StmtIndex to string, e.g {1, 2, 3}  
         for (StmtIndex result : results) {
             resultsToStr.push_back((std::to_string(result.getIndex())));
         }
         PQLmap[PqlEntityType::Stmt] = resultsToStr;
         currTable = EvaluatedTable(PQLtypes, PQLmap, results.size());
-        return currTable;
         break;
     }
 

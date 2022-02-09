@@ -1,21 +1,49 @@
 <?xml-stylesheet type="text/xsl" href="analysis.xsl"?>
 <test_results>
 <info>
-<name>AutoTester</name><parsing_time_taken>0.000000</parsing_time_taken>
+<name>AutoTester</name><parsing_time_taken>1.000000</parsing_time_taken>
 </info>
 <queries>
 <query>
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo">1</id><querystr><![CDATA[stmt s; variable v; Select s]]></querystr>
-<stuans></stuans>
-<correct></correct>
-<time_taken>10.000000</time_taken>
+<stuans>1,2,3,4,5</stuans>
+<correct>1,2,3,4,5</correct>
+<time_taken>13.000000</time_taken>
 <passed/>
 </query>
 <query>
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 2">2</id><querystr><![CDATA[stmt s; Select s]]></querystr>
-<stuans></stuans>
-<correct></correct>
-<time_taken>10.000000</time_taken>
+<stuans>1,2,3,4,5</stuans>
+<correct>1,2,3,4,5</correct>
+<time_taken>12.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 3">3</id><querystr><![CDATA[stmt p; Select p]]></querystr>
+<stuans>1,2,3,4,5</stuans>
+<correct>1,2,3,4,5</correct>
+<time_taken>18.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 4">4</id><querystr><![CDATA[stmt stmt; Select stmt]]></querystr>
+<stuans>1,2,3,4,5</stuans>
+<correct>1,2,3,4,5</correct>
+<time_taken>7.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 5">5</id><querystr><![CDATA[stmt stmt; assign a; variable v; Select stmt]]></querystr>
+<stuans>1,2,3,4,5</stuans>
+<correct>1,2,3,4,5</correct>
+<time_taken>5.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 6">6</id><querystr><![CDATA[stmt stmt; assign a, a1; variable v; Select stmt]]></querystr>
+<stuans>1,2,3,4,5</stuans>
+<correct>1,2,3,4,5</correct>
+<time_taken>6.000000</time_taken>
 <passed/>
 </query>
 </queries>

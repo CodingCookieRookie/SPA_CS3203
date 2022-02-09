@@ -17,10 +17,10 @@ std::list<std::string> PQLResultProjector::resolveTableToResults() {
 		std::string res = "";
 		// Given { {STMT, {1, 2, 3}} }, Forms "1 2 3"
 		for (size_t i = 0; i < values.size(); i++) {
-			/*res += values.at(i);
+			res += values.at(i);
 			if (i != values.size() - 1) {
 				res += " ";
-			}*/
+			}
 			resList.push_back(values.at(i));	// each string in the list will be separated by space in the result
 		}
 		// resList.push_back(res);
