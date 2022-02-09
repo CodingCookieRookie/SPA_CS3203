@@ -22,6 +22,7 @@
     <ClCompile Include="..\source\TNode.cpp" />
     <ClCompile Include="..\source\QPS-NEW\PQLLexer.cpp" />
     <ClCompile Include="..\source\PKB\Pattern.cpp" />
+    <ClCompile Include="..\source\PKB\ExpressionProcessor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\common\Lexer.h" />
@@ -49,5 +50,6 @@
     <ClInclude Include="..\source\TNode.h" />
     <ClInclude Include="..\source\QPS-NEW\PQLLexer.h" />
     <ClInclude Include="..\source\PKB\Pattern.h" />
+    <ClInclude Include="..\source\PKB\ExpressionProcessor.h" />
   </ItemGroup>
 </Project>

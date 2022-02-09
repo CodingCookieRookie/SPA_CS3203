@@ -14,6 +14,7 @@
     <ClCompile Include="TestUses.cpp" />
     <ClCompile Include="TestPQLParser.cpp" />
     <ClCompile Include="TestPQLEvaluator.cpp" />
+    <ClCompile Include="TestExpressionProcessor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
