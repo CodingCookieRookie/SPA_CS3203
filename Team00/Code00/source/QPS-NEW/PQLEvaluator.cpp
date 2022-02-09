@@ -92,7 +92,7 @@ EvaluatedTable PQLEvaluator::execute(Instruction& instr) {
        /* currTable = EvaluatedTable(std::unordered_set<PqlEntityType>({ PqlEntityType::Stmt }),
             std::unordered_map<PqlEntityType, std::vector<VALUE>>({ {PqlEntityType::Stmt, resultsToStr} }),
             results.size());*/
-        std::vector<StmtIndex> results = Entity::getAllStmts();
+
         std::vector<VALUE> resultsToStr;
         std::unordered_set<PqlEntityType> PQLtypes;
         PQLtypes.insert(PqlEntityType::Stmt);
