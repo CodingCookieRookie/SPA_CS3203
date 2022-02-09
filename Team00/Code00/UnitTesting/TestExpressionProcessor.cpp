@@ -8,6 +8,11 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace UnitTesting {
 	TEST_CLASS(TestExpressionProcessor) {
 private:
+	int mulRes = ExpressionProcessor::evaluateOperatorPrecedence('*');
+	int divRes = ExpressionProcessor::evaluateOperatorPrecedence('/');
+	int modRes = ExpressionProcessor::evaluateOperatorPrecedence('%');
+	int addRes = ExpressionProcessor::evaluateOperatorPrecedence('+');
+	int subRes = ExpressionProcessor::evaluateOperatorPrecedence('-');
 
 public:
 	TEST_METHOD(isOperand_digit) {
@@ -27,25 +32,33 @@ public:
 		Assert::IsTrue(ExpressionProcessor::isOperand('Z'));
 	}
 
-	//TEST_METHOD(evaluateOperatorPrecedence_sameOperator) {
-	//	std::string res = ExpressionProcessor::convertInfixToPostFix(test1);
-	//	Assert::AreEqual(res, res1);
-	//}
+	TEST_METHOD(evaluateOperatorPrecedence_validOperator) {
+		Assert::AreEqual(2, mulRes);
+		Assert::AreEqual(2, divRes);
+		Assert::AreEqual(2, modRes);
+		Assert::AreEqual(1, addRes);
+		Assert::AreEqual(1, subRes);
+	}
+	TEST_METHOD(evaluateOperatorPrecedence_invalidOperator) {
+		int res = ExpressionProcessor::evaluateOperatorPrecedence('^');
+		Assert::AreEqual(-1, res);
+	}
 
-	//TEST_METHOD(evaluateOperatorPrecedence_differentOperatorSamePrecedence) {
-	//	std::string res = ExpressionProcessor::convertInfixToPostFix(test1);
-	//	Assert::AreEqual(res, res1);
-	//}
+	TEST_METHOD(evaluateOperatorPrecedence_comparePrecedenceDifferentOperator) {
+		Assert::IsTrue(mulRes > addRes);
+		Assert::IsTrue(divRes > addRes);
+		Assert::IsTrue(modRes > addRes);
+		Assert::IsTrue(mulRes > subRes);
+		Assert::IsTrue(divRes > subRes);
+		Assert::IsTrue(modRes > subRes);
+	}
 
-	//TEST_METHOD(evaluateOperatorPrecedence_differentOperatorDifferentPrecedence) {
-	//	std::string res = ExpressionProcessor::convertInfixToPostFix(test1);
-	//	Assert::AreEqual(res, res1);
-	//}
-
-	//TEST_METHOD(evaluateOperatorPrecedence_invalidOperator) {
-	//	std::string res = ExpressionProcessor::convertInfixToPostFix(test1);
-	//	Assert::AreEqual(res, res1);
-	//}
+	TEST_METHOD(evaluateOperatorPrecedence_comparePrecedenceSameOperator) {
+		Assert::AreEqual(mulRes, divRes);
+		Assert::AreEqual(mulRes, modRes);
+		Assert::AreEqual(divRes, modRes);
+		Assert::AreEqual(addRes, subRes);
+	}
 
 	TEST_METHOD(convertInfixToPostFix_brackets) {
 		std::string test1 = "((A+b)*c-d)*e";
