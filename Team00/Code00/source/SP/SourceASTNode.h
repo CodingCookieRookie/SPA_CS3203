@@ -7,6 +7,9 @@
 
 #include "../common/Types.h"
 
+/* Forward definition of StmtLstNode for compatibility with StmtNode */
+class StmtLstNode;
+
 class SourceASTNode {
 public:
 	SourceASTNode();
@@ -24,8 +27,11 @@ class StmtNode : public SourceASTNode {
 public:
 	StmtNode();
 	virtual StatementType getStmtType() = 0;
-	virtual std::unordered_set<std::string> getModifies();
-	virtual std::unordered_set<std::string> getUses();
+	virtual std::unordered_set<std::string> getModifiesVars();
+	virtual std::unordered_set<std::string> getUsesVars();
+	virtual std::unordered_set<std::string> getUsesConsts();
+	virtual std::string getPattern();
+	virtual std::vector<StmtLstNode*> getChildStmtLst();
 
 	void printNode(int depth = 1);
 
@@ -39,7 +45,7 @@ public:
 	ReadNode(std::string varName);
 	std::string getVarName();
 	StatementType getStmtType();
-	std::unordered_set<std::string> getModifies();
+	std::unordered_set<std::string> getModifiesVars();
 	void printNode(int depth);
 
 	friend class SourceAST;
@@ -52,7 +58,7 @@ public:
 	PrintNode(std::string varName);
 	std::string getVarName();
 	StatementType getStmtType();
-	std::unordered_set<std::string> getUses();
+	std::unordered_set<std::string> getUsesVars();
 	void printNode(int depth);
 
 	friend class SourceAST;

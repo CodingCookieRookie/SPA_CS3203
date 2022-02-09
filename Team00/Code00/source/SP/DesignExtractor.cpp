@@ -19,11 +19,11 @@ void DesignExtractor::processStmtLstNode(StmtLstNode* stmtLstNode) {
 
 void DesignExtractor::processStmtNode(StmtNode* stmtNode) {
 	Entity::insertStmt(stmtNode->getStmtType());
-	std::unordered_set<std::string> modifies = stmtNode->getModifies();
+	std::unordered_set<std::string> modifies = stmtNode->getModifiesVars();
 	for (const std::string& varName : modifies) {
 		Entity::insertVar(varName);
 	}
-	std::unordered_set<std::string> uses = stmtNode->getUses();
+	std::unordered_set<std::string> uses = stmtNode->getUsesVars();
 	for (const std::string& varName : uses) {
 		Entity::insertVar(varName);
 	}

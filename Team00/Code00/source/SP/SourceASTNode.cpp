@@ -6,12 +6,24 @@ SourceASTNode::SourceASTNode() { }
 /* StmtNode */
 StmtNode::StmtNode() : SourceASTNode() { }
 
-std::unordered_set<std::string> StmtNode::getModifies() {
+std::unordered_set<std::string> StmtNode::getModifiesVars() {
 	return std::unordered_set<std::string>();
 }
 
-std::unordered_set<std::string> StmtNode::getUses() {
+std::unordered_set<std::string> StmtNode::getUsesVars() {
 	return std::unordered_set<std::string>();
+}
+
+std::unordered_set<std::string> StmtNode::getUsesConsts() {
+	return std::unordered_set<std::string>();
+}
+
+std::string StmtNode::getPattern() {
+	return std::string();
+}
+
+std::vector<StmtLstNode*> StmtNode::getChildStmtLst() {
+	return std::vector<StmtLstNode*>();
 }
 
 void StmtNode::printNode(int depth) {
@@ -29,7 +41,7 @@ StatementType ReadNode::getStmtType() {
 	return StatementType::readType;
 }
 
-std::unordered_set<std::string> ReadNode::getModifies() {
+std::unordered_set<std::string> ReadNode::getModifiesVars() {
 	return { varName };
 }
 
@@ -49,7 +61,7 @@ StatementType PrintNode::getStmtType() {
 	return StatementType::printType;
 }
 
-std::unordered_set<std::string> PrintNode::getUses() {
+std::unordered_set<std::string> PrintNode::getUsesVars() {
 	return { varName };
 }
 
