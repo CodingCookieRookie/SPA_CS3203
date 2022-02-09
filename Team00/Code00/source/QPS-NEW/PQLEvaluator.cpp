@@ -102,7 +102,7 @@ EvaluatedTable PQLEvaluator::execute(Instruction& instr) {
         }
         PQLmap[PqlEntityType::Stmt] = resultsToStr;
         currTable = EvaluatedTable(PQLtypes, PQLmap, results.size());
-     
+        return currTable;
         break;
     }
 
