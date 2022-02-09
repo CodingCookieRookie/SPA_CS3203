@@ -3,8 +3,6 @@
 #ifndef TYPES_H
 #define TYPES_H
 
-using namespace std;
-
 enum class StatementType {
 	assignType, whileType, ifType, readType, printType, callType
 };
@@ -24,7 +22,7 @@ struct VarIndex {
 
 	struct HashFunction {
 		size_t operator()(const VarIndex& k) const {
-			return hash<int>()(k.index);
+			return std::hash<int>()(k.index);
 		}
 	};
 };
@@ -44,7 +42,7 @@ struct ProcIndex {
 
 	struct HashFunction {
 		size_t operator()(const ProcIndex& k) const {
-			return hash<int>()(k.index);
+			return std::hash<int>()(k.index);
 		}
 	};
 };
@@ -64,7 +62,7 @@ struct StmtIndex {
 
 	struct HashFunction {
 		size_t operator()(const StmtIndex& k) const {
-			return hash<int>()(k.index);
+			return std::hash<int>()(k.index);
 		}
 	};
 

@@ -24,8 +24,8 @@ namespace UnitTesting {
             Assert::AreEqual(std::string("proc"), procNodes[0]->getProcName());
 
             /* Test statements */
-            StmtListNode* stmtListNode = procNodes[0]->getStmtListNode();
-            std::vector<StmtNode*> statements = stmtListNode->getStmtNodes();
+            StmtLstNode* stmtLstNode = procNodes[0]->getStmtLstNode();
+            std::vector<StmtNode*> statements = stmtLstNode->getStmtNodes();
             Assert::AreEqual(size_t(3), statements.size());
 
             ReadNode* readNode1 = (ReadNode*)statements[0];
@@ -53,17 +53,17 @@ namespace UnitTesting {
             Assert::AreEqual(std::string("proc1"), procNodes[0]->getProcName());
             Assert::AreEqual(std::string("proc2"), procNodes[1]->getProcName());
 
-            /* Test statements in stmtListNode1 */
-            StmtListNode* stmtListNode1 = procNodes[0]->getStmtListNode();
-            std::vector<StmtNode*> statements1 = stmtListNode1->getStmtNodes();
+            /* Test statements in stmtLstNode1 */
+            StmtLstNode* stmtLstNode1 = procNodes[0]->getStmtLstNode();
+            std::vector<StmtNode*> statements1 = stmtLstNode1->getStmtNodes();
             Assert::AreEqual(size_t(1), statements1.size());
 
             ReadNode* readNode1 = (ReadNode*)statements1[0];
             Assert::AreEqual(std::string("x1"), readNode1->getVarName());
 
-            /* Test statements in stmtListNode2 */
-            StmtListNode* stmtListNode2 = procNodes[1]->getStmtListNode();
-            std::vector<StmtNode*> statements2 = stmtListNode2->getStmtNodes();
+            /* Test statements in stmtLstNode2 */
+            StmtLstNode* stmtLstNode2 = procNodes[1]->getStmtLstNode();
+            std::vector<StmtNode*> statements2 = stmtLstNode2->getStmtNodes();
             Assert::AreEqual(size_t(2), statements2.size());
 
             PrintNode* printNode = (PrintNode*)statements2[0];

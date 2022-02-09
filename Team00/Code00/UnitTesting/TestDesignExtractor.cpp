@@ -18,10 +18,10 @@ namespace UnitTesting {
 			std::string procName = "main";
 
 			ReadNode* readNode = new ReadNode(varName);
-			StmtListNode* stmtLstNode = new StmtListNode();
+			StmtLstNode* stmtLstNode = new StmtLstNode();
 			stmtLstNode->addStmtNode(readNode);
 			ProcedureNode* procedureNode = new ProcedureNode(procName);
-			procedureNode->addStmtList(stmtLstNode);
+			procedureNode->addStmtLst(stmtLstNode);
 			ProgramNode* programNode = new ProgramNode();
 			programNode->addProcedure(procedureNode);
 			SourceAST ast(programNode);
@@ -38,10 +38,10 @@ namespace UnitTesting {
 			std::string procName = "main";
 
 			PrintNode* printNode = new PrintNode(varName);
-			StmtListNode* stmtLstNode = new StmtListNode();
+			StmtLstNode* stmtLstNode = new StmtLstNode();
 			stmtLstNode->addStmtNode(printNode);
 			ProcedureNode* procedureNode = new ProcedureNode(procName);
-			procedureNode->addStmtList(stmtLstNode);
+			procedureNode->addStmtLst(stmtLstNode);
 			ProgramNode* programNode = new ProgramNode();
 			programNode->addProcedure(procedureNode);
 			SourceAST ast(programNode);
@@ -60,11 +60,11 @@ namespace UnitTesting {
 
 			ReadNode* readNode = new ReadNode(varNameX);
 			PrintNode* printNode = new PrintNode(varNameY);
-			StmtListNode* stmtLstNode = new StmtListNode();
+			StmtLstNode* stmtLstNode = new StmtLstNode();
 			stmtLstNode->addStmtNode(readNode);
 			stmtLstNode->addStmtNode(printNode);
 			ProcedureNode* procedureNode = new ProcedureNode(procName);
-			procedureNode->addStmtList(stmtLstNode);
+			procedureNode->addStmtLst(stmtLstNode);
 			ProgramNode* programNode = new ProgramNode();
 			programNode->addProcedure(procedureNode);
 			SourceAST ast(programNode);
