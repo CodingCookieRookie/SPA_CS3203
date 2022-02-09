@@ -99,20 +99,38 @@ EvaluatedTable PQLEvaluator::execute(Instruction& instr) {
     std::unordered_map<PqlEntityType, std::vector<VALUE>> PQLmap;
 
     switch (instrType) {
-
-    case InstructionType::getAllStmt :
-        std::vector<StmtIndex> results = Entity::getAllStmts();
-        std::vector<VALUE> resultsToStr;  
-        PQLtypes.insert(PqlEntityType::Stmt);
-        // Convert StmtIndex to string, e.g {1, 2, 3}  
-        for (StmtIndex result : results) {
-            resultsToStr.push_back((std::to_string(result.getIndex())));
+        case InstructionType::getAllStmt: {
+            std::vector<StmtIndex> results = Entity::getAllStmts();
+            std::vector<VALUE> resultsToStr;
+            PQLtypes.insert(PqlEntityType::Stmt);
+            // Convert StmtIndex to string, e.g {1, 2, 3}  
+            for (StmtIndex result : results) {
+                resultsToStr.push_back((std::to_string(result.getIndex())));
+            }
+            PQLmap[PqlEntityType::Stmt] = resultsToStr;
+            currTable = EvaluatedTable(PQLtypes, PQLmap, results.size());
+            break;
         }
-        PQLmap[PqlEntityType::Stmt] = resultsToStr;
-        currTable = EvaluatedTable(PQLtypes, PQLmap, results.size());
-        break;
-    }
+        //case InstructionType::getAllPrint :
+            //    std::vector<StmtIndex> results = Entity::getAllPrint();
+            //    std::vector<VALUE> resultsToStr;
+            //    PQLtypes.insert(PqlEntityType::Print);
+            //    // Convert StmtIndex to string, e.g {1, 2, 3}  
+            //    for (StmtIndex result : results) {
+            //        resultsToStr.push_back((std::to_string(result.getIndex())));
+            //    }
+            //    PQLmap[PqlEntityType::Print] = resultsToStr;
+            //    currTable = EvaluatedTable(PQLtypes, PQLmap, results.size());
+            //    break;
+        case InstructionType::getAllVar: {
+            std::vector<std::string> results = Entity::getAllVars();
+            PQLtypes.insert(PqlEntityType::Variable);
+            PQLmap[PqlEntityType::Variable] = results;
+            currTable = EvaluatedTable(PQLtypes, PQLmap, results.size());
+            break;
+        }
 
+    }
     return currTable;
 }
 
