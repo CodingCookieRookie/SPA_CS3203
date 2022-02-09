@@ -102,10 +102,10 @@ EvaluatedTable PQLEvaluator::execute(Instruction instr) {
 	std::unordered_set<PQL_VARIABLE_TYPE> PQLtypes;
 	PQLtypes.insert(PQL_VARIABLE_TYPE::STMT);
 	std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>> PQLmap;
-	PQLmap[PQL_VARIABLE_TYPE::STMT] = resultsToStr;
 	for (StmtIndex result : results) {
 		resultsToStr.push_back((std::to_string(result.getIndex())));
 	}
+	PQLmap[PQL_VARIABLE_TYPE::STMT] = resultsToStr;
 	currTable = EvaluatedTable(PQLtypes, PQLmap, results.size());
 	return currTable;
 }
