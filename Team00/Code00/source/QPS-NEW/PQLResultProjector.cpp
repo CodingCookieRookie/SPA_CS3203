@@ -1,12 +1,14 @@
 #include "PQLResultProjector.h"
 #include "EvaluatedTable.h"
+#include "../PKB/Entity.h"
+#include "QPSCommons.h"
+
 #include <string>
 #include <list>
 #include <unordered_set>
-#include "../PKB/Entity.h"
 
 std::list<std::string> PQLResultProjector::resolveTableToResults() {
-	std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>* table = evaluatedTable.getTableRef();
+	std::unordered_map<PqlEntityType, std::vector<VALUE>>* table = evaluatedTable.getTableRef();
 	std::list<std::string> resList;
 	for (std::pair mappings : *table) {  // should pass by reference
 		// mappings.first -> synonym i.e a
@@ -30,7 +32,7 @@ std::list<std::string> PQLResultProjector::resolveTableToResults() {
 }
 
 PQLResultProjector::PQLResultProjector(EvaluatedTable evTable) {
-	this->evaluatedTable = evTable;
+    this->evaluatedTable = evTable;
 }
 
 
