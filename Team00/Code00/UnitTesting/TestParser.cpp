@@ -14,7 +14,7 @@ public:
 	TEST_METHOD(parse_oneProcedureReadPrint_success) {
 		const char* source = "   procedure proc \n "
 			"{ read x1; print y123;  \n "
-			" read Y1Yy ; } ";
+			" read Y1Yy ;    } ";
 		SourceAST ast = Parser::parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
@@ -156,6 +156,27 @@ public:
 			Parser::parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchStmt_invalidStmt_parseExceptionThrown) {
+		const char* source = "   procedure proc  "
+			"{ r3ad x1;  } ";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_STATEMENT.c_str(), ex.what());
+		}
+
+		const char* source1 = "   procedure proc { } ";
+		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		Assert::ExpectException<ParserException>(wrapperFunc1);
+		try {
+			Parser::parse(source1);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_STATEMENT.c_str(), ex.what());
 		}
 	}
 	};
