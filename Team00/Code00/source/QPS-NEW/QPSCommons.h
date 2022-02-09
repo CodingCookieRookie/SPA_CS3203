@@ -7,7 +7,8 @@ enum class PqlEntityType {
 };
 
 enum class InstructionType {
-    getAllStmt, getAllVar, getAllAsgn
+    getAllStmt, getAllRead, getAllPrint, getAllCall, getAllWhile,
+    getAllIf, getAllAsgn, getAllVar, getAllConst, getAllProc
 };
 
 // The Uses and Modifies are generic Uses/Modifies,

@@ -22,7 +22,10 @@ std::vector<Instruction> PQLEvaluator::evaluateToInstructions(ParsedQuery& pq) {
     std::vector<Instruction> instructions = std::vector<Instruction>();
     std::unordered_map<std::string, PqlEntityType> declarations = pq.getDeclarations();
     std::vector<std::string> columns = pq.getColumns();
-    
+    std::vector<ParsedRelationship> relationships = pq.getRelationships();
+    std::vector<ParsedPattern> patterns = pq.getPatterns();
+
+    // Assumption: Semantically corrct ParsedQuery
     // 1. Check if entitiy in Select clause is found in declarations
     for (std::string entity : columns) {
         PqlEntityType entityTypeRequired = declarations.at(entity);
@@ -31,8 +34,29 @@ std::vector<Instruction> PQLEvaluator::evaluateToInstructions(ParsedQuery& pq) {
         case PqlEntityType::Stmt :
             instructions.push_back(Instruction(InstructionType::getAllStmt));
             break;
+        case PqlEntityType::Print :
+            instructions.push_back(Instruction(InstructionType::getAllPrint));
+            break;
+        case PqlEntityType::Call :
+            instructions.push_back(Instruction(InstructionType::getAllCall));
+            break;
+        case PqlEntityType::While :
+            instructions.push_back(Instruction(InstructionType::getAllWhile));
+            break;
+        case PqlEntityType::If :
+            instructions.push_back(Instruction(InstructionType::getAllIf));
+            break;
         case PqlEntityType::Assign :
             instructions.push_back(Instruction(InstructionType::getAllAsgn));
+            break;
+        case PqlEntityType::Variable :
+            instructions.push_back(Instruction(InstructionType::getAllVar));
+            break;
+        case PqlEntityType::Constant:
+            instructions.push_back(Instruction(InstructionType::getAllConst));
+            break;
+        case PqlEntityType::Procedure:
+            instructions.push_back(Instruction(InstructionType::getAllProc));
             break;
         }
     }
