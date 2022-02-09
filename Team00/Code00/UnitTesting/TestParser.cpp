@@ -114,5 +114,49 @@ public:
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
 	}
+
+	TEST_METHOD(parse_matchPrint_missingPrintVarName_parseExceptionThrown) {
+		const char* source = "   procedure proc  "
+			"{ read x1; print 0invalidName  ;} ";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_VAR_NAME.c_str(), ex.what());
+		}
+
+		const char* source1 = "   procedure proc1  "
+			"{ read x1;read y1 ; print  ";
+		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		Assert::ExpectException<ParserException>(wrapperFunc1);
+		try {
+			Parser::parse(source1);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_VAR_NAME.c_str(), ex.what());
+		}
+
+		const char* source2 = "   procedure proc1  "
+			"{ read x1;read y1 ; print invalid_name; ";
+		auto wrapperFunc2 = [&source2] { Parser::parse(source2); };
+		Assert::ExpectException<ParserException>(wrapperFunc2);
+		try {
+			Parser::parse(source2);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchPrint_missingSemicolon_parseExceptionThrown) {
+		const char* source = "   procedure proc  "
+			"{ read x1; print vAliD123nAmE  } ";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
+		}
+	}
 	};
 }
