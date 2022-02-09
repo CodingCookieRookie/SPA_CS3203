@@ -7,18 +7,18 @@
 
 class Instruction {
 private:
-	INSTRUCTION_TYPE type;
+	InstructionType type;
 	std::vector<std::string> arguments; // has to be generalised
 
 public:
 
 	/* Constructor for an Instruction object */
-	Instruction(INSTRUCTION_TYPE type) {
+	Instruction(InstructionType type) {
 		this->type = type;
 	}
 
 	/* Constructor for an Instruction object */
-	Instruction(INSTRUCTION_TYPE type, std::vector<std::string> arguments) {
+	Instruction(InstructionType type, std::vector<std::string> arguments) {
 		this->type = type;
 		this->arguments = arguments;
 	}
@@ -27,7 +27,7 @@ public:
 	void execute(Instruction& instr);
 
 	/* Getter for type */
-	INSTRUCTION_TYPE getType() {
+	InstructionType getType() {
 		return this->type;
 	};
 

@@ -6,7 +6,7 @@ enum class PqlEntityType {
     If, Assign, Variable, Constant, Procedure
 };
 
-enum class INSTRUCTION_TYPE {
+enum class InstructionType {
     getAllStmt, getAllVar, getAllAsgn
 };
 

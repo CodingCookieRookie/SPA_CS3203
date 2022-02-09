@@ -29,10 +29,10 @@ std::vector<Instruction> PQLEvaluator::evaluateToInstructions(ParsedQuery& pq) {
 
         switch (entityTypeRequired) {
         case PqlEntityType::Stmt :
-            instructions.push_back(Instruction(INSTRUCTION_TYPE::getAllStmt));
+            instructions.push_back(Instruction(InstructionType::getAllStmt));
             break;
-        case PqlEntityType::Assign:
-            instructions.push_back(Instruction(INSTRUCTION_TYPE::getAllAsgn));
+        case PqlEntityType::Assign :
+            instructions.push_back(Instruction(InstructionType::getAllAsgn));
             break;
         }
     }
@@ -69,12 +69,12 @@ EvaluatedTable PQLEvaluator::executeInstructions(std::vector<Instruction> instru
 }
 
 EvaluatedTable PQLEvaluator::execute(Instruction& instr) {
-    INSTRUCTION_TYPE instrType = instr.getType();
+    InstructionType instrType = instr.getType();
     EvaluatedTable currTable;
 
     switch (instrType) {
 
-    case INSTRUCTION_TYPE::getAllStmt :
+    case InstructionType::getAllStmt :
         //PKB's getAllStmts
         std::vector<StmtIndex> results = Entity::getAllStmts();
 
