@@ -179,5 +179,17 @@ public:
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 	}
+
+	TEST_METHOD(parse_matchStmt_missingClosingBracket_parseExceptionThrown) {
+		const char* source = "   procedure proc  "
+			"{ read x1; print y  ;  ";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
+		}
+	}
 	};
 }
