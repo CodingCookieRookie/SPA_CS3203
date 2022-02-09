@@ -167,7 +167,7 @@ public:
 		try {
 			Parser::parse(source);
 		} catch (ParserException& ex) {
-			Assert::AreEqual(ParserException::INVALID_STATEMENT.c_str(), ex.what());
+			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 
 		const char* source1 = "   procedure proc { } ";
@@ -176,7 +176,7 @@ public:
 		try {
 			Parser::parse(source1);
 		} catch (ParserException& ex) {
-			Assert::AreEqual(ParserException::INVALID_STATEMENT.c_str(), ex.what());
+			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 	}
 	};

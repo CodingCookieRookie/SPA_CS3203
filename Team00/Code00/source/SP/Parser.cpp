@@ -96,7 +96,7 @@ StmtNode* Parser::matchStmt() {
 	} else if (lexer.match("print")) {
 		stmtNode = matchPrint();
 	} else {
-		throw ParserException(ParserException::INVALID_STATEMENT);
+		throw ParserException(ParserException::INVALID_STMT);
 	}
 
 	return stmtNode;
