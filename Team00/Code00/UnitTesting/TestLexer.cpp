@@ -43,5 +43,11 @@ public:
         Lexer lexer(source);
         Assert::AreEqual(std::string(), lexer.nextInteger());
     }
+
+    TEST_METHOD(nextInteger_integerHasNonDigit_emptyStringReturned) {
+        const char* source = "   123a456   01 ";
+        Lexer lexer(source);
+        Assert::AreEqual(std::string(), lexer.nextInteger());
+    }
     };
 }
