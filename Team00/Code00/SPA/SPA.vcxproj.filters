@@ -6,21 +6,39 @@
     <ClCompile Include="..\source\PKB\Modifies.cpp" />
     <ClCompile Include="..\source\PKB\RS1.cpp" />
     <ClCompile Include="..\source\PKB\Uses.cpp" />
-    <ClCompile Include="..\source\QPS-NEW\PQLTokeniser.cpp" />
-    <ClCompile Include="..\source\QPS-NEW\QPS.cpp" />
-    <ClCompile Include="..\source\QPS-NEW\ParsedQuery.cpp" />
-    <ClCompile Include="..\source\QPS-NEW\PQLEvaluator.cpp" />
-    <ClCompile Include="..\source\QPS-NEW\PQLParser.cpp" />
-    <ClCompile Include="..\source\QPS-NEW\PQLResultProjector.cpp" />
-    <ClCompile Include="..\source\QPS-NEW\EvaluatedTable.cpp" />
-    <ClCompile Include="..\source\QPS-NEW\Instruction.cpp" />
     <ClCompile Include="..\source\SP\DesignExtractor.cpp" />
     <ClCompile Include="..\source\SP\Parser.cpp" />
     <ClCompile Include="..\source\SP\SourceAST.cpp" />
     <ClCompile Include="..\source\SP\SourceASTNode.cpp" />
     <ClCompile Include="..\source\Exception\SPAException.cpp" />
     <ClCompile Include="..\source\TNode.cpp" />
-    <ClCompile Include="..\source\QPS-NEW\PQLLexer.cpp" />
+    <ClCompile Include="..\source\QPS-NEW\PQLTokeniser.cpp">
+      <Filter>QPS-old</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS-NEW\PQLEvaluator.cpp">
+      <Filter>QPS-new</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS-NEW\PQLLexer.cpp">
+      <Filter>QPS-new</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS-NEW\PQLParser.cpp">
+      <Filter>QPS-new</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS-NEW\PQLResultProjector.cpp">
+      <Filter>QPS-new</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS-NEW\ParsedQuery.cpp">
+      <Filter>QPS-new</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS-NEW\EvaluatedTable.cpp">
+      <Filter>QPS-new</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS-NEW\Instruction.cpp">
+      <Filter>QPS-new</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS-NEW\QPS.cpp">
+      <Filter>QPS-old</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\common\Lexer.h" />
@@ -29,23 +47,55 @@
     <ClInclude Include="..\source\PKB\Modifies.h" />
     <ClInclude Include="..\source\PKB\RS1.h" />
     <ClInclude Include="..\source\PKB\Uses.h" />
-    <ClInclude Include="..\source\QPS-NEW\DesignEntity.h" />
-    <ClInclude Include="..\source\QPS-NEW\PQLDEToken.h" />
-    <ClInclude Include="..\source\QPS-NEW\PQLTokeniser.h" />
-    <ClInclude Include="..\source\QPS-NEW\QPS.h" />
-    <ClInclude Include="..\source\QPS-NEW\EvaluatedTable.h" />
-    <ClInclude Include="..\source\QPS-NEW\Instruction.h" />
-    <ClInclude Include="..\source\QPS-NEW\ParsedQuery.h" />
-    <ClInclude Include="..\source\QPS-NEW\PQLEvaluator.h" />
-    <ClInclude Include="..\source\QPS-NEW\PQLParser.h" />
-    <ClInclude Include="..\source\QPS-NEW\PQLResultProjector.h" />
-    <ClInclude Include="..\source\QPS-NEW\QPSCommons.h" />
     <ClInclude Include="..\source\SP\DesignExtractor.h" />
     <ClInclude Include="..\source\SP\Parser.h" />
     <ClInclude Include="..\source\SP\SourceAST.h" />
     <ClInclude Include="..\source\SP\SourceASTNode.h" />
     <ClInclude Include="..\source\Exception\SPAException.h" />
     <ClInclude Include="..\source\TNode.h" />
-    <ClInclude Include="..\source\QPS-NEW\PQLLexer.h" />
+    <ClInclude Include="..\source\QPS-NEW\PQLDEToken.h">
+      <Filter>QPS-old</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS-NEW\PQLTokeniser.h">
+      <Filter>QPS-old</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS-NEW\DesignEntity.h">
+      <Filter>QPS-old</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS-NEW\PQLParser.h">
+      <Filter>QPS-new</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS-NEW\PQLResultProjector.h">
+      <Filter>QPS-new</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS-NEW\PQLEvaluator.h">
+      <Filter>QPS-new</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS-NEW\PQLLexer.h">
+      <Filter>QPS-new</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS-NEW\ParsedQuery.h">
+      <Filter>QPS-new</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS-NEW\QPSCommons.h">
+      <Filter>QPS-new</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS-NEW\EvaluatedTable.h">
+      <Filter>QPS-new</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS-NEW\Instruction.h">
+      <Filter>QPS-new</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS-NEW\QPS.h">
+      <Filter>QPS-old</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="QPS-old">
+      <UniqueIdentifier>{14c9b015-4313-4e51-8ba8-faebf6606bac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="QPS-new">
+      <UniqueIdentifier>{fdecaacc-08f5-4833-95a3-991db0b790ae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
