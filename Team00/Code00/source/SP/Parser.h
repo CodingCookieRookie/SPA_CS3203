@@ -8,15 +8,15 @@
 
 class Parser {
 private:
-	Lexer lexer;
-	ProgramNode* matchProgram();
-	ProcedureNode* matchProcedure();
-	StmtLstNode* matchStmtLst();
-	StmtNode* matchStmt();
-	ReadNode* matchRead();
-	PrintNode* matchPrint();
+	static Lexer lexer;
+	static ProgramNode* matchProgram();
+	static ProcedureNode* matchProcedure();
+	static StmtLstNode* matchStmtLst();
+	static StmtNode* matchStmt();
+	static ReadNode* matchRead();
+	static PrintNode* matchPrint();
 public:
-	Parser(const std::string& query);
-	SourceAST parse();
+	Parser();
+	static SourceAST parse(const std::string& source);
 	static bool isValidAST(const SourceAST& ast);
 };
