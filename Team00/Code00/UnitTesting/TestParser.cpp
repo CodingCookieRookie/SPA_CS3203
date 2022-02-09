@@ -71,32 +71,48 @@ public:
 		Assert::AreEqual(std::string("Y1Yy"), readNode2->getVarName());
 	}
 
-	TEST_METHOD(parse_missingReadVarName_parseExceptionThrown) {
+	TEST_METHOD(parse_matchRead_missingReadVarName_parseExceptionThrown) {
 		const char* source = "   procedure proc  "
-			"{ read ;} ";
-		Parser parser(source);
-		auto wrapperFunc = [&parser] { parser.parse(); };
+			"{ print x1; read 0invalidName  ;} ";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_VAR_NAME.c_str(), ex.what());
+		}
 
 		const char* source1 = "   procedure proc1  "
-			"{ print x1; read  ";
-		Parser parser1(source1);
-		auto wrapperFunc1 = [&parser1] { parser1.parse(); };
+			"{ print x1;print y1 ; read  ";
+		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
+		try {
+			Parser::parse(source1);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_VAR_NAME.c_str(), ex.what());
+		}
+
+		const char* source2 = "   procedure proc1  "
+			"{ print x1;print y1 ; read invalid_name; ";
+		auto wrapperFunc2 = [&source2] { Parser::parse(source2); };
+		Assert::ExpectException<ParserException>(wrapperFunc2);
+		try {
+			Parser::parse(source2);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
+		}
 	}
 
-	TEST_METHOD(parse_missingPrintVarName_parseExceptionThrown) {
+	TEST_METHOD(parse_matchRead_missingSemicolon_parseExceptionThrown) {
 		const char* source = "   procedure proc  "
-			"{ print ;} ";
-		Parser parser(source);
-		auto wrapperFunc = [&parser] { parser.parse(); };
+			"{ print x1; read vAliD123nAmE  } ";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
-
-		const char* source1 = "   procedure proc1  "
-			"{ read x1; print  ";
-		Parser parser1(source1);
-		auto wrapperFunc1 = [&parser1] { parser1.parse(); };
-		Assert::ExpectException<ParserException>(wrapperFunc1);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
+		}
 	}
 	};
 }
