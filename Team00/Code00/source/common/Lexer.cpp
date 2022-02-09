@@ -25,16 +25,21 @@ std::string Lexer::nextInteger() {
 		return std::string();
 	}
 
-	// The first digit of an INTEGER cannot be 0.
-	if (source[index] == '0' && (index + 1 < length) && !isspace(source[index + 1])) {
-		return std::string();
-	}
-
 	std::string match;
-	while (index < length && isdigit(source[index])) {
+	while (index < length && !isspace(source[index])) {
+		// if there is any letter attached to the digits, don't consider the whole thing as INTEGER
+		if (!isdigit(source[index])) { 
+			return std::string();
+		}
 		match.push_back(source[index]);
 		index++;
 	}
+
+	// The first digit of an INTEGER cannot be 0.
+	if (match.length() > 1 && match[0] == '0') {
+		return std::string();
+	}
+
 	return match;
 }
 
