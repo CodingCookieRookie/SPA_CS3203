@@ -33,7 +33,7 @@ std::string Lexer::nextInteger() {
 
 	// The first digit of an INTEGER cannot be 0.
 	if (match.length() > 1 && match[0] == '0') {
-		return std::string();
+		throw LexerException(LexerException::INVALID_INT);
 	}
 
 	return match;
