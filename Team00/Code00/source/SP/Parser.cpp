@@ -1,8 +1,11 @@
 #include "Parser.h"
 
-Parser::Parser(const std::string& source) : lexer(source) { }
+Parser::Parser() { }
 
-SourceAST Parser::parse() {
+Lexer Parser::lexer;
+
+SourceAST Parser::parse(const std::string& source) {
+	lexer = Lexer(source);
 	ProgramNode* root = matchProgram();
 	return SourceAST(root);
 }
@@ -71,7 +74,7 @@ ProcedureNode* Parser::matchProcedure() {
 StmtLstNode* Parser::matchStmtLst() {
 	StmtLstNode* stmtLstNode = new StmtLstNode();
 
-	// There must exist at least 1 stmt. 
+	// There must exist at least 1 stmt.
 	// TODO: now we assume correct source program. Need to update impl.
 	StmtNode* stmtNode = matchStmt();
 	if (stmtNode == nullptr) {
@@ -93,7 +96,8 @@ StmtNode* Parser::matchStmt() {
 	// TODO: make this more elegant. Add invalid statement handler.
 	if (lexer.match("read")) {
 		stmtNode = matchRead();
-	} else if (lexer.match("print")) {
+	}
+	else if (lexer.match("print")) {
 		stmtNode = matchPrint();
 	}
 
