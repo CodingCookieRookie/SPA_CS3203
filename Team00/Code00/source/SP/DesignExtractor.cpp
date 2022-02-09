@@ -7,7 +7,7 @@ void DesignExtractor::processProgramNode(ProgramNode* programNode) {
 }
 
 void DesignExtractor::processProcedureNode(ProcedureNode* procedureNode) {
-	Entity::insertProc(procedureNode->getProcName());
+	ProcIndex procIdx = Entity::insertProc(procedureNode->getProcName());
 	processStmtLstNode(procedureNode->getStmtLstNode());
 }
 
@@ -19,12 +19,12 @@ void DesignExtractor::processStmtLstNode(StmtLstNode* stmtLstNode) {
 
 void DesignExtractor::processStmtNode(StmtNode* stmtNode) {
 	Entity::insertStmt(stmtNode->getStmtType());
-	std::vector<std::string> modifies = stmtNode->getModifies();
-	for (std::string& varName : modifies) {
+	std::unordered_set<std::string> modifies = stmtNode->getModifies();
+	for (const std::string& varName : modifies) {
 		Entity::insertVar(varName);
 	}
-	std::vector<std::string> uses = stmtNode->getUses();
-	for (std::string& varName : uses) {
+	std::unordered_set<std::string> uses = stmtNode->getUses();
+	for (const std::string& varName : uses) {
 		Entity::insertVar(varName);
 	}
 }

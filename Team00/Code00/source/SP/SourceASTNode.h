@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <unordered_set>
 
 #include "../common/Types.h"
 
@@ -23,8 +24,8 @@ class StmtNode : public SourceASTNode {
 public:
 	StmtNode();
 	virtual StatementType getStmtType() = 0;
-	virtual std::vector<std::string> getModifies() = 0;
-	virtual std::vector<std::string> getUses() = 0;
+	virtual std::unordered_set<std::string> getModifies();
+	virtual std::unordered_set<std::string> getUses();
 
 	void printNode(int depth = 1);
 
@@ -38,8 +39,7 @@ public:
 	ReadNode(std::string varName);
 	std::string getVarName();
 	StatementType getStmtType();
-	std::vector<std::string> getModifies();
-	std::vector<std::string> getUses();
+	std::unordered_set<std::string> getModifies();
 	void printNode(int depth);
 
 	friend class SourceAST;
@@ -52,8 +52,7 @@ public:
 	PrintNode(std::string varName);
 	std::string getVarName();
 	StatementType getStmtType();
-	std::vector<std::string> getModifies();
-	std::vector<std::string> getUses();
+	std::unordered_set<std::string> getUses();
 	void printNode(int depth);
 
 	friend class SourceAST;

@@ -1,12 +1,18 @@
 #include "SourceASTNode.h"
 
-using namespace std;
-
 /* SourceASTNode */
 SourceASTNode::SourceASTNode() { }
 
 /* StmtNode */
 StmtNode::StmtNode() : SourceASTNode() { }
+
+std::unordered_set<std::string> StmtNode::getModifies() {
+	return std::unordered_set<std::string>();
+}
+
+std::unordered_set<std::string> StmtNode::getUses() {
+	return std::unordered_set<std::string>();
+}
 
 void StmtNode::printNode(int depth) {
 	printDashes(depth);
@@ -23,12 +29,8 @@ StatementType ReadNode::getStmtType() {
 	return StatementType::readType;
 }
 
-std::vector<std::string> ReadNode::getModifies() {
+std::unordered_set<std::string> ReadNode::getModifies() {
 	return { varName };
-}
-
-std::vector<std::string> ReadNode::getUses() {
-	return std::vector<std::string>();
 }
 
 void ReadNode::printNode(int depth) {
@@ -47,11 +49,7 @@ StatementType PrintNode::getStmtType() {
 	return StatementType::printType;
 }
 
-std::vector<std::string> PrintNode::getModifies() {
-	return std::vector<std::string>();
-}
-
-std::vector<std::string> PrintNode::getUses() {
+std::unordered_set<std::string> PrintNode::getUses() {
 	return { varName };
 }
 
