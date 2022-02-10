@@ -3,7 +3,6 @@
 
 #include "../source/common/Types.h"
 #include "../source/PKB/Pattern.h"
-#include "../source/PKB/Entity.h"//REMOVE
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -14,251 +13,175 @@ private:
 	std::string varName2 = "present";
 	std::string varName3 = "past";
 
-	std::string procName1 = "Peter";
-	std::string procName2 = "Stephen";
-
-	StatementType stmtType1 = StatementType::assignType;
-	StatementType stmtType2 = StatementType::whileType;
+	std::string postFix1 = "a b +";
+	std::string postFix2 = "5 b *c %d /deab %";
+	std::string postFix3 = "a b *";
+	std::string postFix4 = "c a b * +";
 
 	VarIndex varIdx1 = VarIndex(1);
 	VarIndex varIdx2 = VarIndex(2);
 	VarIndex varIdx3 = VarIndex(3);
 
-	ProcIndex procIdx1 = ProcIndex(1);
-	ProcIndex procIdx2 = ProcIndex(2);
-
 	StmtIndex stmtIdx1 = StmtIndex(1);
 	StmtIndex stmtIdx2 = StmtIndex(2);
+	StmtIndex stmtIdx3 = StmtIndex(3);
 
 	TEST_METHOD_CLEANUP(cleanUpPatternInfo) {
-		Entity::performCleanUp();
+		Pattern::performCleanUp();
 	}
 
 public:
-	TEST_METHOD(insertVar_getVarName_differentVariables) {
-		VarIndex idx1 = Entity::insertVar(varName1);
-		VarIndex idx2 = Entity::insertVar(varName2);
-
-		std::string res1 = Entity::getVarName(varIdx1);
-		std::string res2 = Entity::getVarName(varIdx2);
-		Assert::AreEqual(varName1, res1);
-		Assert::AreEqual(varName2, res2);
-		Assert::IsTrue(varIdx1 == idx1);
-		Assert::IsTrue(varIdx2 == idx2);
-	}
-
-	TEST_METHOD(insertVar_getVarIdx_differentVariables) {
-		VarIndex idx1 = Entity::insertVar(varName1);
-		VarIndex idx2 = Entity::insertVar(varName2);
-
-		VarIndex res1 = Entity::getVarIdx(varName1);
-		VarIndex res2 = Entity::getVarIdx(varName2);
-		Assert::IsTrue(varIdx1 == res1);
-		Assert::IsTrue(varIdx2 == res2);
-		Assert::IsTrue(idx1 == res1);
-		Assert::IsTrue(idx2 == res2);
-	}
-
-	TEST_METHOD(insertVar_getVarIdx_sameVar) {
-		VarIndex idx1 = Entity::insertVar(varName1);
-		VarIndex idx2 = Entity::insertVar(varName1);
-
-		VarIndex res = Entity::getVarIdx(varName1);
-		Assert::IsTrue(varIdx1 == res);
-		Assert::IsTrue(idx1 == res);
-	}
-
-	TEST_METHOD(insertVar_getAllVars_differentVars) {
-		std::vector<std::string> expectedRes;
-		expectedRes.push_back(varName1);
-		expectedRes.push_back(varName2);
-
-		Entity::insertVar(varName1);
-		Entity::insertVar(varName2);
-
-		std::vector<std::string> res = Entity::getAllVars();
-		Assert::IsTrue(expectedRes == res);
-	}
-
-	TEST_METHOD(insertVar_getAllVars_sameVar) {
-		std::vector<std::string> expectedRes;
-		expectedRes.push_back(varName1);
-
-		Entity::insertVar(varName1);
-		Entity::insertVar(varName1);
-
-		std::vector<std::string> res = Entity::getAllVars();
-		Assert::IsTrue(expectedRes == res);
-	}
-
-	TEST_METHOD(insertProc_getProcName_differentProcs) {
-		ProcIndex idx1 = Entity::insertProc(procName1);
-		ProcIndex idx2 = Entity::insertProc(procName2);
-
-		std::string res1 = Entity::getProcName(procIdx1);
-		std::string res2 = Entity::getProcName(procIdx2);
-		Assert::AreEqual(procName1, res1);
-		Assert::AreEqual(procName2, res2);
-		Assert::IsTrue(procIdx1 == idx1);
-		Assert::IsTrue(procIdx2 == idx2);
-	}
-
-	TEST_METHOD(insertProc_getProcIdx_differentProcs) {
-		ProcIndex idx1 = Entity::insertProc(procName1);
-		ProcIndex idx2 = Entity::insertProc(procName2);
-
-		ProcIndex res1 = Entity::getProcIdx(procName1);
-		ProcIndex res2 = Entity::getProcIdx(procName2);
-		Assert::IsTrue(procIdx1 == res1);
-		Assert::IsTrue(procIdx2 == res2);
-		Assert::IsTrue(procIdx1 == idx1);
-		Assert::IsTrue(procIdx2 == idx2);
-	}
-
-	TEST_METHOD(insertProc_getProcIdx_sameProc) {
-		ProcIndex idx1 = Entity::insertProc(procName1);
-		ProcIndex idx2 = Entity::insertProc(procName1);
-
-		ProcIndex res = Entity::getProcIdx(procName1);
-		Assert::IsTrue(procIdx1 == res);
-		Assert::IsTrue(idx1 == res);
-	}
-
-	TEST_METHOD(insertProc_getAllProcs_differentProcs) {
-		std::vector<std::string> expectedRes;
-		expectedRes.push_back(procName1);
-		expectedRes.push_back(procName2);
-
-		Entity::insertProc(procName1);
-		Entity::insertProc(procName2);
-
-		std::vector<std::string> res = Entity::getAllProcs();
-		Assert::IsTrue(expectedRes == res);
-	}
-
-	TEST_METHOD(insertProc_getAllProcs_sameProc) {
-		std::vector<std::string> expectedRes;
-		expectedRes.push_back(procName1);
-
-		Entity::insertProc(procName1);
-		Entity::insertProc(procName1);
-
-		std::vector<std::string> res = Entity::getAllProcs();
-		Assert::IsTrue(expectedRes == res);
-	}
-
-	TEST_METHOD(insertConst_getAllConsts_differentConsts) {
-		std::vector<int> expectedRes;
-		expectedRes.push_back(1);
-		expectedRes.push_back(2);
-
-		Entity::insertConst(1);
-		Entity::insertConst(2);
-
-		std::vector<int> res = Entity::getAllConsts();
-		Assert::IsTrue(expectedRes == res);
-	}
-
-	TEST_METHOD(insertConst_getAllConsts_sameConst) {
-		std::vector<int> expectedRes;
-		expectedRes.push_back(1);
-
-		Entity::insertConst(1);
-		Entity::insertConst(1);
-
-		std::vector<int> res = Entity::getAllConsts();
-		Assert::IsTrue(expectedRes == res);
-	}
-
-	TEST_METHOD(insertStmt_differentStmts) {
-		StmtIndex res1 = Entity::insertStmt(stmtType1);
-		StmtIndex res2 = Entity::insertStmt(stmtType2);
-
-		Assert::IsTrue(stmtIdx1 == res1);
-		Assert::IsTrue(stmtIdx2 == res2);
-	}
-
-	TEST_METHOD(insertStmt_getStmtIdxFromType_differentStmts) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> expectedRes1;
-		expectedRes1.insert(stmtIdx1);
-
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> expectedRes2;
-		expectedRes2.insert(stmtIdx2);
-
-		Entity::insertStmt(stmtType1);
-		Entity::insertStmt(stmtType2);
-
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> res1 = Entity::getStmtIdxFromType(stmtType1);
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> res2 = Entity::getStmtIdxFromType(stmtType2);
-		Assert::IsTrue(expectedRes1 == res1);
-		Assert::IsTrue(expectedRes2 == res2);
-	}
-
-	TEST_METHOD(insertStmt_getAllStmts_differentStmts) {
+	TEST_METHOD(insertPostFixInfo_getStmtsFromVarPattern_fromVar_sameVariable_differentStmtIdx) {
 		std::vector<StmtIndex> expectedRes;
 		expectedRes.push_back(stmtIdx1);
 		expectedRes.push_back(stmtIdx2);
+		expectedRes.push_back(stmtIdx3);
 
-		Entity::insertStmt(stmtType1);
-		Entity::insertStmt(stmtType2);
+		Pattern::insertPostFixInfo(varIdx1, postFix1, stmtIdx1);
+		Pattern::insertPostFixInfo(varIdx1, postFix1, stmtIdx2);
+		Pattern::insertPostFixInfo(varIdx1, postFix1, stmtIdx3);
 
-		std::vector<StmtIndex> res = Entity::getAllStmts();
+		std::vector<StmtIndex> res = Pattern::getStmtsFromVarPattern(varIdx1);
+
 		Assert::IsTrue(expectedRes == res);
 	}
 
-	TEST_METHOD(insertStmtFromProc_getStmtsFromProc_singleProcAndStmt) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> expectedRes;
-		expectedRes.insert(stmtIdx1);
+	TEST_METHOD(insertPostFixInfo_getStmtsFromVarPattern_fromVar_sameVariable_differentStmtIdx_repeatedStmtIdx) {
+		std::vector<StmtIndex> expectedRes;
+		expectedRes.push_back(stmtIdx1);
+		expectedRes.push_back(stmtIdx2);
+		expectedRes.push_back(stmtIdx3);
 
-		Entity::insertStmtFromProc(procIdx1, stmtIdx1);
+		Pattern::insertPostFixInfo(varIdx1, postFix1, stmtIdx1);
+		Pattern::insertPostFixInfo(varIdx1, postFix1, stmtIdx2);
+		Pattern::insertPostFixInfo(varIdx1, postFix1, stmtIdx3);
+		Pattern::insertPostFixInfo(varIdx1, postFix1, stmtIdx2);
+		Pattern::insertPostFixInfo(varIdx1, postFix1, stmtIdx3);
+		Pattern::insertPostFixInfo(varIdx1, postFix1, stmtIdx3);
 
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> res = Entity::getStmtsFromProc(procIdx1);
+		std::vector<StmtIndex> res = Pattern::getStmtsFromVarPattern(varIdx1);
+
 		Assert::IsTrue(expectedRes == res);
 	}
 
-	TEST_METHOD(insertStmtFromProc_getStmtsFromProc_multipleProcAndStmt) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> expectedRes1;
-		expectedRes1.insert(stmtIdx1);
-		expectedRes1.insert(stmtIdx2);
+	TEST_METHOD(insertPostFixInfo_getStmtsFromVarPattern_fromVar_differentVariables_differentStmtIdx_repeatedStmtIdx) {
+		std::vector<StmtIndex> expectedRes;
+		expectedRes.push_back(stmtIdx2);
+		expectedRes.push_back(stmtIdx1);
 
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> expectedRes2;
-		expectedRes2.insert(stmtIdx2);
+		Pattern::insertPostFixInfo(varIdx1, postFix1, stmtIdx1);
+		Pattern::insertPostFixInfo(varIdx2, postFix1, stmtIdx2);
+		Pattern::insertPostFixInfo(varIdx1, postFix1, stmtIdx3);
+		Pattern::insertPostFixInfo(varIdx2, postFix1, stmtIdx1);
+		Pattern::insertPostFixInfo(varIdx2, postFix1, stmtIdx1);
 
-		Entity::insertStmtFromProc(procIdx1, stmtIdx1);
-		Entity::insertStmtFromProc(procIdx1, stmtIdx2);
-		Entity::insertStmtFromProc(procIdx2, stmtIdx2);
+		std::vector<StmtIndex> res = Pattern::getStmtsFromVarPattern(varIdx2);
 
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> res1 = Entity::getStmtsFromProc(procIdx1);
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> res2 = Entity::getStmtsFromProc(procIdx2);
-		Assert::IsTrue(expectedRes1 == res1);
-		Assert::IsTrue(expectedRes2 == res2);
+		Assert::IsTrue(expectedRes == res);
 	}
 
-	TEST_METHOD(performCleanUp_VarMap) {
-		Entity::insertVar(varName1);
-		Entity::insertVar(varName2);
-		VarIndex res = Entity::getVarIdx(varName1);
-		Assert::IsTrue(varIdx1 == res);
+	//Add getStmtsFromVarPattern
 
-		Entity::performCleanUp();
+	TEST_METHOD(insertPostFixInfo_getStmtsFromPattern_sameExpression_exactExpression) {
+		std::vector<std::tuple<StmtIndex, VarIndex>> expectedRes;
+		expectedRes.push_back(std::make_tuple(stmtIdx1, varIdx1));
+		expectedRes.push_back(std::make_tuple(stmtIdx2, varIdx1));
+		expectedRes.push_back(std::make_tuple(stmtIdx3, varIdx2));
 
-		Entity::insertVar(varName3);
-		VarIndex res2 = Entity::getVarIdx(varName3);
-		Assert::IsTrue(varIdx1 == res2);
-		Assert::IsFalse(varIdx3 == res2);
+		Pattern::insertPostFixInfo(varIdx1, postFix1, stmtIdx1);
+		Pattern::insertPostFixInfo(varIdx1, postFix1, stmtIdx2);
+		Pattern::insertPostFixInfo(varIdx2, postFix1, stmtIdx3);
+
+		std::vector<std::tuple<StmtIndex, VarIndex>> res = Pattern::getStmtsFromPattern(postFix1, false);
+
+		Assert::IsTrue(expectedRes == res);
 	}
 
-	TEST_METHOD(performCleanUp_ConstSet) {
-		Entity::insertConst(2);
-		Entity::insertConst(4);
-		std::vector<int> res1 = Entity::getAllConsts();
-		Assert::IsTrue(res1.size() == 2);
+	TEST_METHOD(insertPostFixInfo_getStmtsFromPattern_differentExpression_exactExpression) {
+		std::vector<std::tuple<StmtIndex, VarIndex>> expectedRes;
+		expectedRes.push_back(std::make_tuple(stmtIdx2, varIdx1));
+		expectedRes.push_back(std::make_tuple(stmtIdx3, varIdx2));
 
-		Entity::performCleanUp();
+		Pattern::insertPostFixInfo(varIdx1, postFix1, stmtIdx1);
+		Pattern::insertPostFixInfo(varIdx1, postFix2, stmtIdx2);
+		Pattern::insertPostFixInfo(varIdx2, postFix1, stmtIdx3);
+		Pattern::insertPostFixInfo(varIdx2, postFix2, stmtIdx3);
 
-		Entity::insertConst(3);
-		std::vector<int> res2 = Entity::getAllConsts();
-		Assert::IsTrue(res2.size() == 1);
+		std::vector<std::tuple<StmtIndex, VarIndex>> res = Pattern::getStmtsFromPattern(postFix2, false);
+
+		Assert::IsTrue(expectedRes == res);
 	}
+
+	TEST_METHOD(insertPostFixInfo_getStmtsFromPattern_sameExpression_subExpression_subExpressionQuery) {
+		std::vector<std::tuple<StmtIndex, VarIndex>> expectedRes;
+		expectedRes.push_back(std::make_tuple(stmtIdx1, varIdx1));
+		expectedRes.push_back(std::make_tuple(stmtIdx2, varIdx1));
+		expectedRes.push_back(std::make_tuple(stmtIdx3, varIdx2));
+
+		Pattern::insertPostFixInfo(varIdx1, postFix4, stmtIdx1);
+		Pattern::insertPostFixInfo(varIdx1, postFix4, stmtIdx2);
+		Pattern::insertPostFixInfo(varIdx2, postFix4, stmtIdx3);
+
+		// postFix3 is a subexpression of postFix4
+		std::vector<std::tuple<StmtIndex, VarIndex>> res1 = Pattern::getStmtsFromPattern(postFix3, true);
+		std::vector<std::tuple<StmtIndex, VarIndex>> res2 = Pattern::getStmtsFromPattern(postFix4, true);
+		Assert::IsTrue(expectedRes == res1);
+		Assert::IsTrue(expectedRes == res2);
+
+		// Add subexpression postFix3
+		expectedRes.insert(expectedRes.begin(), std::make_tuple(stmtIdx3, varIdx3));
+		Pattern::insertPostFixInfo(varIdx3, postFix3, stmtIdx3);
+
+		std::vector<std::tuple<StmtIndex, VarIndex>> res3 = Pattern::getStmtsFromPattern(postFix3, true);
+		std::vector<std::tuple<StmtIndex, VarIndex>> res4 = Pattern::getStmtsFromPattern(postFix4, true);
+
+		Assert::IsTrue(expectedRes == res3);
+		Assert::IsFalse(expectedRes == res4);
+	}
+
+	TEST_METHOD(insertPostFixInfo_getStmtsFromPattern_sameExpression_subExpression_nonSubExpressionQuery) {
+		std::vector<std::tuple<StmtIndex, VarIndex>> expectedRes;
+		expectedRes.push_back(std::make_tuple(stmtIdx2, varIdx3));
+
+		Pattern::insertPostFixInfo(varIdx1, postFix1, stmtIdx1);
+		Pattern::insertPostFixInfo(varIdx1, postFix1, stmtIdx2);
+		Pattern::insertPostFixInfo(varIdx2, postFix1, stmtIdx3);
+		Pattern::insertPostFixInfo(varIdx3, postFix4, stmtIdx2);
+
+		// postFix1 is a not subexpression of postFix4
+		std::vector<std::tuple<StmtIndex, VarIndex>> res = Pattern::getStmtsFromPattern(postFix4, true);
+
+		Assert::IsTrue(expectedRes == res);
+	}
+
+	TEST_METHOD(insertPostFixInfo_getStmtsFromPattern_differentExpression_subExpression) {
+	}
+
+	//TEST_METHOD(performCleanUp_VarMap) {
+	//	Entity::insertVar(varName1);
+	//	Entity::insertVar(varName2);
+	//	VarIndex res = Entity::getVarIdx(varName1);
+	//	Assert::IsTrue(varIdx1 == res);
+
+	//	Entity::performCleanUp();
+
+	//	Entity::insertVar(varName3);
+	//	VarIndex res2 = Entity::getVarIdx(varName3);
+	//	Assert::IsTrue(varIdx1 == res2);
+	//	Assert::IsFalse(varIdx3 == res2);
+	//}
+
+	//TEST_METHOD(performCleanUp_ConstSet) {
+	//	Entity::insertConst(2);
+	//	Entity::insertConst(4);
+	//	std::vector<int> res1 = Entity::getAllConsts();
+	//	Assert::IsTrue(res1.size() == 2);
+
+	//	Entity::performCleanUp();
+
+	//	Entity::insertConst(3);
+	//	std::vector<int> res2 = Entity::getAllConsts();
+	//	Assert::IsTrue(res2.size() == 1);
+	//}
 	};
 }

@@ -5,6 +5,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <tuple>
 #include <vector>
 
@@ -12,8 +13,6 @@
 
 class Pattern {
 protected:
-	static int getVarPostFixTableSize();
-	static int getPostFixVarTableSize();
 	static std::unordered_map<VarIndex, std::vector<std::tuple<StmtIndex, std::string>>, VarIndex::HashFunction> varPostFixTable;
 	static std::unordered_map<std::string, std::vector<std::tuple<StmtIndex, VarIndex>>> postFixVarTable;
 

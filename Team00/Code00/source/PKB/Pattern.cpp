@@ -3,14 +3,6 @@
 std::unordered_map<VarIndex, std::vector<std::tuple<StmtIndex, std::string>>, VarIndex::HashFunction> Pattern::varPostFixTable;
 std::unordered_map<std::string, std::vector<std::tuple<StmtIndex, VarIndex>>> Pattern::postFixVarTable;
 
-int Pattern::getVarPostFixTableSize() {
-	return varPostFixTable.size();
-}
-
-int Pattern::getPostFixVarTableSize() {
-	return postFixVarTable.size();
-}
-
 // TO MOVE TO ENTITIES
 std::string Pattern::generatePostFixExpression(std::string infixExpression) {
 	//TO DO
@@ -82,10 +74,15 @@ std::vector<std::tuple<StmtIndex, VarIndex>> Pattern::getStmtsFromPattern(std::s
 
 std::vector<StmtIndex> Pattern::getStmtsFromVarPattern(VarIndex varIdx) {
 	std::vector<StmtIndex> res;
+	std::unordered_set<StmtIndex, StmtIndex::HashFunction> stmtSet;
 
 	std::vector<std::tuple<StmtIndex, std::string>> value = varPostFixTable[varIdx];
 	for (auto& varPostFixTuple : value) {
-		res.push_back(std::get<0>(varPostFixTuple));
+		stmtSet.insert(std::get<0>(varPostFixTuple));
+	}
+
+	for (auto& stmtIdx : stmtSet) {
+		res.push_back(stmtIdx);
 	}
 
 	return res;
