@@ -8,7 +8,7 @@
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting {
-	TEST_CLASS(TestEntity) {
+	TEST_CLASS(TestPattern) {
 private:
 	std::string varName1 = "future";
 	std::string varName2 = "present";
@@ -30,7 +30,7 @@ private:
 	StmtIndex stmtIdx1 = StmtIndex(1);
 	StmtIndex stmtIdx2 = StmtIndex(2);
 
-	TEST_METHOD_CLEANUP(cleanUpEntities) {
+	TEST_METHOD_CLEANUP(cleanUpPatternInfo) {
 		Entity::performCleanUp();
 	}
 
