@@ -13,10 +13,14 @@
 
 class Pattern {
 protected:
+
+
+public:
+
 	static std::unordered_map<VarIndex, std::vector<std::tuple<StmtIndex, std::string>>, VarIndex::HashFunction> varPostFixTable;
 	static std::unordered_map<std::string, std::vector<std::tuple<StmtIndex, VarIndex>>> postFixVarTable;
 
-public:
+	//PUT BACK
 	static std::string generatePostFixExpression(std::string infixExpression);
 	static void insertPostFixInfo(VarIndex varIdx, std::string postFixExpression, StmtIndex stmtIdx);
 	static std::vector<StmtIndex> getStmtsFromVarPattern(VarIndex varIdx, std::string expression, bool isSubExpression);

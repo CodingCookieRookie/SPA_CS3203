@@ -34,18 +34,27 @@ void Pattern::insertPostFixInfo(VarIndex varIdx, std::string postFixExpression, 
 
 std::vector<StmtIndex> Pattern::getStmtsFromVarPattern(VarIndex varIdx, std::string expression, bool isSubExpression) {
 	std::vector<StmtIndex> res;
+	std::unordered_set<StmtIndex, StmtIndex::HashFunction> stmtSet;
 
 	std::vector<std::tuple<StmtIndex, std::string>> value = varPostFixTable[varIdx];
 	for (auto& varPostFixTuple : value) {
+		std::string storedExpression = std::get<1>(varPostFixTuple);
 		if (isSubExpression) {
-			std::string storedExpression = std::get<1>(varPostFixTuple);
 			if (storedExpression.find(expression) != std::string::npos) {
-				res.push_back(std::get<0>(varPostFixTuple));
+				StmtIndex stmtIdx = std::get<0>(varPostFixTuple);
+				stmtSet.insert(stmtIdx);
 			}
 		}
 		else {
-			res.push_back(std::get<0>(varPostFixTuple));
+			if (storedExpression == expression) {
+				StmtIndex stmtIdx = std::get<0>(varPostFixTuple);
+				stmtSet.insert(stmtIdx);
+			}
 		}
+	}
+
+	for (auto& stmtIdx : stmtSet) {
+		res.push_back(stmtIdx);
 	}
 
 	return res;
