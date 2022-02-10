@@ -13,27 +13,22 @@ private:
 public:
 
 	/* Constructor for an Instruction object */
-	Instruction(InstructionType type) {
-		this->type = type;
-	}
+	Instruction(InstructionType type) : type(type) {}
 
 	/* Constructor for an Instruction object */
-	Instruction(InstructionType type, std::vector<std::string> arguments) {
-		this->type = type;
-		this->arguments = arguments;
-	}
+	Instruction(InstructionType type, std::vector<std::string> arguments) : type(type), arguments(arguments) {}
 
 	/* TODO: To generalise. Executes instruction by calling the PKB */
 	void execute(Instruction& instr);
 
 	/* Getter for type */
 	InstructionType getType() {
-		return this->type;
+		return type;
 	};
 
 	/* Getter for arguments */
 	std::vector<std::string> getArgs() {
-		return this->arguments;
+		return arguments;
 	};
 
 };

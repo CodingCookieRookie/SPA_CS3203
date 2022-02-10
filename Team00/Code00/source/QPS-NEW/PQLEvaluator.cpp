@@ -76,7 +76,7 @@ std::vector<Instruction> PQLEvaluator::evaluateToInstructions(ParsedQuery& pq) {
 EvaluatedTable PQLEvaluator::executeInstructions(std::vector<Instruction> instructions) {
     EvaluatedTable resultEvTable = EvaluatedTable();
 
-    // Assumptino: Correct order of instructions
+    // Assumption: Correct order of instructions
     // Call relevant API
     for (Instruction instruction : instructions) {
         EvaluatedTable currEvTable = execute(instruction);

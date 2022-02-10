@@ -5,10 +5,24 @@
 </info>
 <queries>
 <query>
+<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 8">8</id><querystr><![CDATA[stmt stmt; variable v; procedure p; Select p]]></querystr>
+<stuans>Example</stuans>
+<correct>Example</correct>
+<time_taken>7.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 9">9</id><querystr><![CDATA[stmt stmt; variable v; procedure p; constant c; Select c]]></querystr>
+<stuans>None</stuans>
+<correct>None</correct>
+<time_taken>5.000000</time_taken>
+<passed/>
+</query>
+<query>
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 6">6</id><querystr><![CDATA[stmt stmt; variable v; Select v]]></querystr>
 <stuans>x1,yA123z,AbC1,print,read</stuans>
 <correct>x1 yA123z AbC1 print read</correct>
-<time_taken>6.000000</time_taken>
+<time_taken>8.000000</time_taken>
 <failed>
 <missing>x1 yA123z AbC1 print read</missing>
 <additional>AbC1,print,read,x1,yA123z</additional>
@@ -24,40 +38,8 @@
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 7">7</id><querystr><![CDATA[stmt stmt; variable v; Select stmt]]></querystr>
 <stuans>1,2,3,4,5</stuans>
 <correct>1,2,3,4,5</correct>
-<time_taken>5.000000</time_taken>
+<time_taken>9.000000</time_taken>
 <passed/>
-</query>
-<query>
-<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 8">8</id><querystr><![CDATA[stmt stmt; variable v; procedure p; Select p]]></querystr>
-<stuans>Example</stuans>
-<correct>1</correct>
-<time_taken>7.000000</time_taken>
-<failed>
-<missing>1</missing>
-<additional>Example</additional>
-<summary>
-<expected>1</expected>
-<matched>0</matched>
-<missing>1</missing>
-<additional>1</additional>
-</summary>
-</failed>
-</query>
-<query>
-<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 9">9</id><querystr><![CDATA[stmt stmt; variable v; procedure p; constant c; Select c]]></querystr>
-<stuans></stuans>
-<correct>None</correct>
-<time_taken>7.000000</time_taken>
-<failed>
-<missing>None</missing>
-<additional></additional>
-<summary>
-<expected>1</expected>
-<matched>0</matched>
-<missing>1</missing>
-<additional>0</additional>
-</summary>
-</failed>
 </query>
 </queries>
 </test_results>
