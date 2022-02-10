@@ -258,31 +258,35 @@ public:
 		Assert::IsFalse(expectedRes == res4);
 	}
 
-	//TEST_METHOD(performCleanUp_VarMap) {
-	//	Entity::insertVar(varName1);
-	//	Entity::insertVar(varName2);
-	//	VarIndex res = Entity::getVarIdx(varName1);
-	//	Assert::IsTrue(varIdx1 == res);
+	TEST_METHOD(insertPostFixInfo_getAllAssignStmtVarsPatternInfo) {
+		std::vector<std::tuple<StmtIndex, VarIndex>> expectedRes;
+		expectedRes.push_back(std::make_tuple(stmtIdx1, varIdx1));
+		expectedRes.push_back(std::make_tuple(stmtIdx2, varIdx1));
+		expectedRes.push_back(std::make_tuple(stmtIdx3, varIdx1));
+		expectedRes.push_back(std::make_tuple(stmtIdx3, varIdx2));
 
-	//	Entity::performCleanUp();
+		Pattern::insertPostFixInfo(varIdx1, postFix4, stmtIdx1);
+		Pattern::insertPostFixInfo(varIdx1, postFix1, stmtIdx2);
+		Pattern::insertPostFixInfo(varIdx1, postFix2, stmtIdx3);
+		Pattern::insertPostFixInfo(varIdx2, postFix4, stmtIdx3);
 
-	//	Entity::insertVar(varName3);
-	//	VarIndex res2 = Entity::getVarIdx(varName3);
-	//	Assert::IsTrue(varIdx1 == res2);
-	//	Assert::IsFalse(varIdx3 == res2);
-	//}
+		std::vector<std::tuple<StmtIndex, VarIndex>> res = Pattern::getAllAssignStmtVarsPatternInfo();
 
-	//TEST_METHOD(performCleanUp_ConstSet) {
-	//	Entity::insertConst(2);
-	//	Entity::insertConst(4);
-	//	std::vector<int> res1 = Entity::getAllConsts();
-	//	Assert::IsTrue(res1.size() == 2);
+		Assert::IsTrue(expectedRes == res);
+	}
 
-	//	Entity::performCleanUp();
+	TEST_METHOD(performCleanUp_VarMap) {
+		Pattern::insertPostFixInfo(varIdx1, postFix4, stmtIdx1);
+		Pattern::insertPostFixInfo(varIdx2, postFix1, stmtIdx2);
+		Pattern::insertPostFixInfo(varIdx1, postFix2, stmtIdx3);
 
-	//	Entity::insertConst(3);
-	//	std::vector<int> res2 = Entity::getAllConsts();
-	//	Assert::IsTrue(res2.size() == 1);
-	//}
+		std::vector<StmtIndex> res1 = Pattern::getStmtsFromVarPattern(varIdx1);
+		Assert::IsTrue(res1.size() == 2);
+
+		Pattern::performCleanUp();
+
+		std::vector<StmtIndex> res2 = Pattern::getStmtsFromVarPattern(varIdx1);
+		Assert::IsTrue(res2.size() == 0);
+	}
 	};
 }
