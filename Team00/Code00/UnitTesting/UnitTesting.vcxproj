@@ -177,6 +177,7 @@
     <ClCompile Include="TestDesignEntity.cpp" />
     <ClCompile Include="TestEntity.cpp" />
     <ClCompile Include="TestExpressionProcessor.cpp" />
+    <ClCompile Include="TestLexer.cpp" />
     <ClCompile Include="TestModifies.cpp" />
     <ClCompile Include="TestParser.cpp" />
     <ClCompile Include="TestPattern.cpp" />

@@ -5,8 +5,15 @@
 // Base class that we inherit for all SPA-related exceptions
 class SPAException : std::exception {
 private:
-	std::string reason;
+	const std::string reason;
 public:
-	SPAException(std::string& reason);
+	SPAException(const std::string& reason);
 	const char* what() const noexcept override;
+};
+
+class LexerException : public SPAException {
+public:
+	static const std::string INVALID_INT;
+
+	LexerException(const std::string& reason);
 };
