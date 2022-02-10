@@ -7,30 +7,30 @@ EvaluatedTable::EvaluatedTable() {
 */
 
 EvaluatedTable::EvaluatedTable() {
-    entities = std::unordered_set<PqlEntityType>();
-    table = new std::unordered_map<PqlEntityType, std::vector<VALUE>>();
+    entities = std::unordered_map<std::string, PqlEntityType>(); 
+    table = new std::unordered_map<std::string, std::vector<VALUE>>();
     numRow = 0;
 }
 
 EvaluatedTable::EvaluatedTable(const EvaluatedTable& anotherEvTable) {
     entities = anotherEvTable.entities;
     numRow = anotherEvTable.numRow;
-    table = new std::unordered_map<PqlEntityType, std::vector<VALUE>>();
+    //table = new std::unordered_map<std::string, std::vector<VALUE>>();
     *table = *anotherEvTable.table;
 }
 
-EvaluatedTable::EvaluatedTable(std::unordered_map<PqlEntityType, std::vector<VALUE>>* anotherTable) {
-    int numRows = anotherTable->size() != 0 ? (*anotherTable->begin()).second.size() : 0;
-    for (const std::pair< PqlEntityType, std::vector<VALUE>> kvPair : *anotherTable) {
-        entities.insert(kvPair.first);
-    }
-    *table = *anotherTable;
-}
+//EvaluatedTable::EvaluatedTable(std::unordered_map<std::string, std::vector<VALUE>>* anotherTable) {
+//    int numRows = anotherTable->size() != 0 ? (*anotherTable->begin()).second.size() : 0;
+//    for (const std::pair< std::string, std::vector<VALUE>> kvPair : *anotherTable) {
+//        //entities[kvPair.first] = getType()..
+//    }
+//    *table = *anotherTable;
+//}
 
-EvaluatedTable::EvaluatedTable(std::unordered_set<PqlEntityType> newEntities,
-    std::unordered_map<PqlEntityType, std::vector<VALUE>>& newTable, int newNumRow ) {
-
-    entities = newEntities;
-    table = &newTable;
-    numRow = newNumRow;
-}
+//EvaluatedTable::EvaluatedTable(std::unordered_map<std::string, PqlEntityType> newEntities,
+//    std::unordered_map<std::string, std::vector<VALUE>>& newTable, int newNumRow ) {
+//
+//    entities = newEntities;
+//    table = &newTable;
+//    numRow = newNumRow;
+//}

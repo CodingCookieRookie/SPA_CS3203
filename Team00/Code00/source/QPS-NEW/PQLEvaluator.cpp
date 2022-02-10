@@ -101,7 +101,7 @@ EvaluatedTable PQLEvaluator::execute(Instruction& instr) {
             resultsToStr.push_back((std::to_string(result.getIndex())));
         }
         PQLmap[PqlEntityType::Stmt] = resultsToStr;
-        currTable = EvaluatedTable(PQLtypes, PQLmap, results.size());
+        //currTable = EvaluatedTable(PQLtypes, PQLmap, results.size());
         return currTable;
         break;
     }
@@ -109,12 +109,17 @@ EvaluatedTable PQLEvaluator::execute(Instruction& instr) {
     return currTable;
 }
 
-EvaluatedTable PQLEvaluator::innerJoinMerge(EvaluatedTable& evTable, EvaluatedTable& newEvTable) {
+// merging of tables with at most two columns
+EvaluatedTable PQLEvaluator::innerJoinMerge(EvaluatedTable& currentTable, EvaluatedTable& newTable) {
     EvaluatedTable mergedTable;
-    // TODO:
-    // 1. Short-circuit if other table is empty
-    // 2.
-
-    mergedTable = evTable;
+    // first check if newTable col has same as that of currentTable
+    std::unordered_map<std::string, std::vector<VALUE>> currentTableHm = *currentTable.getTableRef();
+    std::unordered_map<std::string, std::vector<VALUE>> newTableHm = *newTable.getTableRef();
+    for (auto& it : newTableHm) {
+        std::string col = it.first;
+        if (currentTableHm.find(col) == currentTableHm.end()) { // if synonym not present in currentTable just merge
+            currentTableHm[col] = newTableHm[col];
+        }
+    }
     return mergedTable;
 }

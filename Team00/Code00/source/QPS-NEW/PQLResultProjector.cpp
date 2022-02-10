@@ -8,7 +8,7 @@
 #include <unordered_set>
 
 std::list<std::string> PQLResultProjector::resolveTableToResults() {
-	std::unordered_map<PqlEntityType, std::vector<VALUE>>* table = evaluatedTable.getTableRef();
+	std::unordered_map<std::string, std::vector<VALUE>>* table = evaluatedTable.getTableRef();
 	std::list<std::string> resList;
 	for (std::pair mappings : *table) {  // should pass by reference
 		// mappings.first -> synonym i.e a

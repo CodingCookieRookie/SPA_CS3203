@@ -22,7 +22,7 @@ private:
 	EvaluatedTable execute(Instruction& instr);
 
 	/* Helper method to inner join two EvaluatedTables together via a hash join algo */
-	void innerJoinMerge(EvaluatedTable& newEvTable);
+	// void innerJoinMerge(EvaluatedTable& currentTable, EvaluatedTable& newTable);
 
 public:
 
