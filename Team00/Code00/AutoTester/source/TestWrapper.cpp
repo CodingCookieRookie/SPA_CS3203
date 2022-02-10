@@ -22,13 +22,15 @@ TestWrapper::TestWrapper() {
 void TestWrapper::parse(std::string filename) {
 	// call your parser to do the parsing
   // ...rest of your code...
-	
+
 	std::string fileContent = getFileContent(filename);
 
-	Parser parser(fileContent);
-
-	SourceAST ast = parser.parse();
-	DesignExtractor::Extract(ast);
+	try {
+		SourceAST ast = Parser::parse(fileContent);
+		DesignExtractor::Extract(ast);
+	} catch (...) {
+		exit(EXIT_FAILURE);
+	}
 }
 
 std::string TestWrapper::getFileContent(std::string& filename) {
@@ -50,6 +52,6 @@ void TestWrapper::evaluate(std::string query, std::list<std::string>& results) {
 	PQLResultProjector resultProjector = PQLResultProjector(evTable);
 	results = resultProjector.resolveTableToResults();
 
-	  // store the answers to the query in the results list (it is initially empty)
-	  // each result must be a string.
+	// store the answers to the query in the results list (it is initially empty)
+	// each result must be a string.
 }
