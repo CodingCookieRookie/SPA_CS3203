@@ -301,5 +301,31 @@ public:
 			Assert::AreEqual(ParserException::MISSING_PROC_KEYWORD.c_str(), ex.what());
 		}
 	}
+
+	TEST_METHOD(parse_matchProgram_noProc_parseExceptionThrown) {
+		const char* source = "		 ";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_PROG.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_multipleProcsHasMissingLeftCurly_parseExceptionThrown) {
+		const char* source = "   procedure proc1  "
+			"{ read x1; } "
+			" \n procedure proc2  \n"
+			" print y123;  \n "
+			" read Y1Yy ; } ";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_LEFT_CURLY.c_str(), ex.what());
+		}
+	}
 	};
 }
