@@ -3,13 +3,6 @@
 std::unordered_map<VarIndex, std::vector<std::tuple<StmtIndex, std::string>>, VarIndex::HashFunction> Pattern::varPostFixTable;
 std::unordered_map<std::string, std::vector<std::tuple<StmtIndex, VarIndex>>> Pattern::postFixVarTable;
 
-// TO MOVE TO ENTITIES
-std::string Pattern::generatePostFixExpression(std::string infixExpression) {
-	//TO DO
-	std::string res;
-	return res;
-}
-
 void Pattern::insertPostFixInfo(VarIndex varIdx, std::string postFixExpression, StmtIndex stmtIdx) {
 	std::tuple<StmtIndex, std::string> varPostFixTuple = std::make_tuple(stmtIdx, postFixExpression);
 	std::tuple<StmtIndex, VarIndex> postFixVarTuple = std::make_tuple(stmtIdx, varIdx);

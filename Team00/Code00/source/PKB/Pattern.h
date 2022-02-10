@@ -17,7 +17,6 @@ protected:
 	static std::unordered_map<std::string, std::vector<std::tuple<StmtIndex, VarIndex>>> postFixVarTable;
 
 public:
-	static std::string generatePostFixExpression(std::string infixExpression);
 	static void insertPostFixInfo(VarIndex varIdx, std::string postFixExpression, StmtIndex stmtIdx);
 	static std::vector<StmtIndex> getStmtsFromVarPattern(VarIndex varIdx, std::string expression, bool isSubExpression);
 	static std::vector<std::tuple<StmtIndex, VarIndex>> getStmtsFromPattern(std::string expression, bool isSubExpression);
