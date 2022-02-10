@@ -38,30 +38,27 @@ ProgramNode* Parser::matchProgram() {
 /* procedure : ‘procedure’ proc_name ‘{‘ stmtLst ‘}’ */
 ProcedureNode* Parser::matchProcedure() {
 	if (!lexer.match("procedure")) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_PROC_KEYWORD);
 	}
 
 	std::string whitespace = lexer.nextWhitespace();
 	if (whitespace.empty()) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_WHITESPACE);
 	}
 
 	std::string procName = lexer.nextName();
 	if (procName.empty()) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_PROC_NAME);
 	}
 
 	if (!lexer.match("{")) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_LEFT_CURLY);
 	}
 
 	StmtLstNode* stmtLstNode = matchStmtLst();
-	if (stmtLstNode == nullptr) {
-		return nullptr;
-	}
 
 	if (!lexer.match("}")) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_RIGHT_CURLY);
 	}
 
 	ProcedureNode* procNode = new ProcedureNode(procName);
