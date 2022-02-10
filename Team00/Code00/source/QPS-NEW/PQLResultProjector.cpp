@@ -21,14 +21,8 @@ std::list<std::string> PQLResultProjector::resolveTableToResults() {
 		while (it != table->end()) {	// for each col
 			res += it->second[i];
 			resList.push_back(res);
-			if (i != numRow - 1) {
-				res += " ";
-			}
 			it++;
 		}
-	}
-	if (resList.empty()) {
-		resList.push_back("None");
 	}
 	return resList;
 }
