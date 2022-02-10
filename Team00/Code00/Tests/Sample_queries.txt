@@ -1,35 +1,5 @@
-1 - Demo
-stmt s; variable v;
-Select s
-1, 2, 3, 4, 5
-5000
-2 - Demo 2
-stmt s;
-Select s
-1, 2, 3, 4, 5
-5000
-3 - Demo 3
-stmt p;
-Select p
-1, 2, 3, 4, 5
-5000
-4 - Demo 4
-stmt stmt;
-Select stmt
-1, 2, 3, 4, 5
-5000
-5 - Demo 5
-stmt stmt; assign a; variable v;
-Select stmt
-1, 2, 3, 4, 5
-5000
-6 - Demo 6
-stmt stmt; assign a, a1; variable v;
-Select stmt
-1, 2, 3, 4, 5
-5000
-6 - Demo 6
-stmt stmt; assign a, a1; variable v;
-Select v
-x1 yA123z AbC1 print read
+7 - Demo 7
+stmt stmt; variable v;
+Select stmt, v
+1 x1 2 yA123z 3 AbC1 4 print 5 read
 5000

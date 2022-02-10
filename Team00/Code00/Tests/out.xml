@@ -1,66 +1,8 @@
 <?xml-stylesheet type="text/xsl" href="analysis.xsl"?>
 <test_results>
 <info>
-<name>AutoTester</name><parsing_time_taken>2.000000</parsing_time_taken>
+<name>AutoTester</name><parsing_time_taken>1.000000</parsing_time_taken>
 </info>
 <queries>
 <query>
-<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo">1</id><querystr><![CDATA[stmt s; variable v; Select s]]></querystr>
-<stuans>1,2,3,4,5</stuans>
-<correct>1,2,3,4,5</correct>
-<time_taken>17.000000</time_taken>
-<passed/>
-</query>
-<query>
-<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 2">2</id><querystr><![CDATA[stmt s; Select s]]></querystr>
-<stuans>1,2,3,4,5</stuans>
-<correct>1,2,3,4,5</correct>
-<time_taken>23.000000</time_taken>
-<passed/>
-</query>
-<query>
-<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 3">3</id><querystr><![CDATA[stmt p; Select p]]></querystr>
-<stuans>1,2,3,4,5</stuans>
-<correct>1,2,3,4,5</correct>
-<time_taken>15.000000</time_taken>
-<passed/>
-</query>
-<query>
-<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 4">4</id><querystr><![CDATA[stmt stmt; Select stmt]]></querystr>
-<stuans>1,2,3,4,5</stuans>
-<correct>1,2,3,4,5</correct>
-<time_taken>17.000000</time_taken>
-<passed/>
-</query>
-<query>
-<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 5">5</id><querystr><![CDATA[stmt stmt; assign a; variable v; Select stmt]]></querystr>
-<stuans>1,2,3,4,5</stuans>
-<correct>1,2,3,4,5</correct>
-<time_taken>29.000000</time_taken>
-<passed/>
-</query>
-<query>
-<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 6">6</id><querystr><![CDATA[stmt stmt; assign a, a1; variable v; Select stmt]]></querystr>
-<stuans>1,2,3,4,5</stuans>
-<correct>1,2,3,4,5</correct>
-<time_taken>29.000000</time_taken>
-<passed/>
-</query>
-<query>
-<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 6">6</id><querystr><![CDATA[stmt stmt; assign a, a1; variable v; Select v]]></querystr>
-<stuans>x1,yA123z,AbC1,print,read</stuans>
-<correct>x1 yA123z AbC1 print read</correct>
-<time_taken>25.000000</time_taken>
-<failed>
-<missing>x1 yA123z AbC1 print read</missing>
-<additional>AbC1,print,read,x1,yA123z</additional>
-<summary>
-<expected>1</expected>
-<matched>0</matched>
-<missing>1</missing>
-<additional>5</additional>
-</summary>
-</failed>
-</query>
-</queries>
-</test_results>
+<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 7">7</id><querystr><![CDATA[stmt stmt; variable v; Select stmt, v]]></querystr>

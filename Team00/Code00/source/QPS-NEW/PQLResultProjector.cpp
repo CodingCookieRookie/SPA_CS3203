@@ -14,7 +14,7 @@ std::list<std::string> PQLResultProjector::resolveTableToResults() {
 		// mappings.first -> synonym i.e a
 		// mappings.second -> Each number/string value corresponding to synonym i.e {"varName1", "varName2"}
 		
-		// if Single mapping
+	// Single mapping
 	if (table->size() == 1) {
 		std::vector<VALUE> values = table->begin()->second;
 		std::string res = "";
@@ -27,7 +27,22 @@ std::list<std::string> PQLResultProjector::resolveTableToResults() {
 			resList.push_back(values.at(i));	// each string in the list will be separated by space in the result
 		}
 	}
-		// else (more than 1 mapping, need to interlace answers 
+
+	// More than 1 mapping, interlace answers 
+	else {
+		std::unordered_map<PqlEntityType, std::vector<VALUE>>::iterator it = table->begin();
+		std::string res = "";
+		int numRow = evaluatedTable.getNumRow();
+		for (int i = 0; i < numRow; i++) { // for each row
+			while (it != table->end()) {  // for each col
+				res += it->second[i];
+				if (i != numRow - 1) {
+					res += " ";
+				}
+				resList.push_back(it->second[i]);
+			}
+		}
+	}
 
 		// resList.push_back(res);
 		// TODO: { {STMT, {1, 3, 4}, {ASGN, {2, 2, 3}} },

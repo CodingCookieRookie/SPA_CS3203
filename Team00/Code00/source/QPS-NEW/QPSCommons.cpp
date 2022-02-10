@@ -21,6 +21,9 @@ ParsedPattern::ParsedPattern(std::string& synonym, PqlReference entRef, PqlExpre
     : synonym(synonym), entRef(entRef), expressionSpec(expressionSpec)
 {}
 
+ParsedPattern::ParsedPattern()
+{}
+
 std::string ParsedPattern::getSynonym() const {
     return synonym;
 }
