@@ -25,8 +25,12 @@ void TestWrapper::parse(std::string filename) {
 
 	std::string fileContent = getFileContent(filename);
 
-	SourceAST ast = Parser::parse(fileContent);
-	DesignExtractor::Extract(ast);
+	try {
+		SourceAST ast = Parser::parse(fileContent);
+		DesignExtractor::Extract(ast);
+	} catch (...) {
+		exit(EXIT_FAILURE);
+	}
 }
 
 std::string TestWrapper::getFileContent(std::string& filename) {
