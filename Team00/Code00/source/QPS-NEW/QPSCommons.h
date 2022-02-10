@@ -6,8 +6,9 @@ enum class PqlEntityType {
     If, Assign, Variable, Constant, Procedure
 };
 
-enum class INSTRUCTION_TYPE {
-    getAllStmt, getAllVar, getAllAsgn
+enum class InstructionType {
+    getAllStmt, getAllRead, getAllPrint, getAllCall, getAllWhile,
+    getAllIf, getAllAsgn, getAllVar, getAllConst, getAllProc
 };
 
 // The Uses and Modifies are generic Uses/Modifies,
@@ -43,6 +44,7 @@ private:
 public:
     ParsedRelationship(PqlRelationshipType relationshipType,
         PqlReference lhsRef, PqlReference rhsRef);
+    ParsedRelationship();
     PqlRelationshipType getRelationshipType();
     PqlReference getLhs() const;
     PqlReference getRhs() const;
@@ -56,6 +58,7 @@ private:
 public:
     ParsedPattern(std::string& synonym,
         PqlReference entRef, PqlExpression expressionSpec);
+    ParsedPattern();
     std::string getSynonym() const;
     PqlReference getEntRef() const;
     PqlExpression getExpression() const;

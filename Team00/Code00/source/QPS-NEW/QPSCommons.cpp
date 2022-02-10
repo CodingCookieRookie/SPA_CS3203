@@ -5,6 +5,8 @@ ParsedRelationship::ParsedRelationship(PqlRelationshipType relationshipType,
     : relationshipType(relationshipType), lhsRef(lhsRef), rhsRef(rhsRef)
 {}
 
+ParsedRelationship::ParsedRelationship() {}
+
 PqlRelationshipType ParsedRelationship::getRelationshipType() {
     return relationshipType;
 }
@@ -20,6 +22,8 @@ PqlReference ParsedRelationship::getRhs() const {
 ParsedPattern::ParsedPattern(std::string& synonym, PqlReference entRef, PqlExpression expressionSpec)
     : synonym(synonym), entRef(entRef), expressionSpec(expressionSpec)
 {}
+
+ParsedPattern::ParsedPattern() {}
 
 std::string ParsedPattern::getSynonym() const {
     return synonym;

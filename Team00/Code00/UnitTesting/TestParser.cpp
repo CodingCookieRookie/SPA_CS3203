@@ -14,7 +14,7 @@ public:
 	TEST_METHOD(parse_oneProcedureReadPrint_success) {
 		const char* source = "   procedure proc \n "
 			"{ read x1; print y123;  \n "
-			" read Y1Yy ; } ";
+			" read Y1Yy ;    } ";
 		SourceAST ast = Parser::parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
@@ -69,6 +69,263 @@ public:
 
 		ReadNode* readNode2 = (ReadNode*)statements2[1];
 		Assert::AreEqual(std::string("Y1Yy"), readNode2->getVarName());
+	}
+
+	TEST_METHOD(parse_matchRead_missingReadVarName_parseExceptionThrown) {
+		const char* source = "   procedure proc  "
+			"{ print x1; read 0invalidName  ;} ";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_VAR_NAME.c_str(), ex.what());
+		}
+
+		const char* source1 = "   procedure proc1  "
+			"{ print x1;print y1 ; read  ";
+		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		Assert::ExpectException<ParserException>(wrapperFunc1);
+		try {
+			Parser::parse(source1);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_VAR_NAME.c_str(), ex.what());
+		}
+
+		const char* source2 = "   procedure proc1  "
+			"{ print x1;print y1 ; read invalid_name; ";
+		auto wrapperFunc2 = [&source2] { Parser::parse(source2); };
+		Assert::ExpectException<ParserException>(wrapperFunc2);
+		try {
+			Parser::parse(source2);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchRead_missingSemicolon_parseExceptionThrown) {
+		const char* source = "   procedure proc  "
+			"{ print x1; read vAliD123nAmE  } ";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchPrint_missingPrintVarName_parseExceptionThrown) {
+		const char* source = "   procedure proc  "
+			"{ read x1; print 0invalidName  ;} ";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_VAR_NAME.c_str(), ex.what());
+		}
+
+		const char* source1 = "   procedure proc1  "
+			"{ read x1;read y1 ; print  ";
+		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		Assert::ExpectException<ParserException>(wrapperFunc1);
+		try {
+			Parser::parse(source1);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_VAR_NAME.c_str(), ex.what());
+		}
+
+		const char* source2 = "   procedure proc1  "
+			"{ read x1;read y1 ; print invalid_name; ";
+		auto wrapperFunc2 = [&source2] { Parser::parse(source2); };
+		Assert::ExpectException<ParserException>(wrapperFunc2);
+		try {
+			Parser::parse(source2);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchPrint_missingSemicolon_parseExceptionThrown) {
+		const char* source = "   procedure proc  "
+			"{ read x1; print vAliD123nAmE  } ";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchStmt_invalidStmt_parseExceptionThrown) {
+		const char* source = "   procedure proc  "
+			"{ r3ad x1;  } ";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
+		}
+
+		const char* source1 = "   procedure proc { } ";
+		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		Assert::ExpectException<ParserException>(wrapperFunc1);
+		try {
+			Parser::parse(source1);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchStmt_missingClosingBracket_parseExceptionThrown) {
+		const char* source = "   procedure proc  "
+			"{ read x1; print y  ;  ";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchProcedure_missingProcKeyword_parseExceptionThrown) {
+		const char* source = "   proc procName  "
+			"{ read x1; print y  ; } ";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_PROC_KEYWORD.c_str(), ex.what());
+		}
+
+		const char* source1 = "   Procedure procName  "
+			"{ read x1; print y  ; } ";
+		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		Assert::ExpectException<ParserException>(wrapperFunc1);
+		try {
+			Parser::parse(source1);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_PROC_KEYWORD.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchProcedure_missingProcName_parseExceptionThrown) {
+		const char* source = "   procedure  "
+			"{ read x1; print y  ; } ";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_PROC_NAME.c_str(), ex.what());
+		}
+
+		const char* source1 = "   procedure !invalidProcName  "
+			"{ read x1; print y  ; } ";
+		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		Assert::ExpectException<ParserException>(wrapperFunc1);
+		try {
+			Parser::parse(source1);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_PROC_NAME.c_str(), ex.what());
+		}
+
+		const char* source3 = "   procedure   ";
+		auto wrapperFunc3 = [&source3] { Parser::parse(source3); };
+		Assert::ExpectException<ParserException>(wrapperFunc3);
+		try {
+			Parser::parse(source3);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_PROC_NAME.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchProcedure_missingLeftCurly_parseExceptionThrown) {
+		const char* source = "   procedure proc "
+			" read x1; print y  ; } ";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_LEFT_CURLY.c_str(), ex.what());
+		}
+
+		const char* source1 = "   procedure validProcName }; ";
+		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		Assert::ExpectException<ParserException>(wrapperFunc1);
+		try {
+			Parser::parse(source1);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_LEFT_CURLY.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchProcedure_missingRightCurly_parseExceptionThrown) {
+		const char* source = "   procedure proc "
+			"  {read x1; print y  ;  ";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchProcedure_tooManyLeftCurly_parseExceptionThrown) {
+		const char* source = "   procedure proc "
+			"  { {{ read x1; print y  ; } ";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchProcedure_tooManyRightCurly_parseExceptionThrown) {
+		const char* source = "   procedure proc "
+			"  {read x1; print y  ; }} } ";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_PROC_KEYWORD.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchProgram_noProc_parseExceptionThrown) {
+		const char* source = "		 ";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_PROG.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_multipleProcsHasMissingLeftCurly_parseExceptionThrown) {
+		const char* source = "   procedure proc1  "
+			"{ read x1; } "
+			" \n procedure proc2  \n"
+			" print y123;  \n "
+			" read Y1Yy ; } ";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_LEFT_CURLY.c_str(), ex.what());
+		}
 	}
 	};
 }
