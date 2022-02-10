@@ -20,6 +20,7 @@ public:
 
 class ParserException : public SPAException {
 public:
+	static const std::string INVALID_PROG;
 	static const std::string INVALID_STMT;
 	static const std::string MISSING_LEFT_CURLY;
 	static const std::string MISSING_RIGHT_CURLY;

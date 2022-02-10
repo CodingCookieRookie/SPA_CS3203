@@ -23,13 +23,10 @@ ProgramNode* Parser::matchProgram() {
 	while (!lexer.reachedEnd()) {
 		procNode = matchProcedure();
 		programNode->addProcedure(procNode);
-		if (procNode == nullptr) {
-			return nullptr;
-		}
 	}
 
 	if (procNode == nullptr) {
-		return nullptr;
+		throw ParserException(ParserException::INVALID_PROG);
 	}
 
 	return programNode;

@@ -12,6 +12,7 @@ const std::string LexerException::INVALID_INT = "Integer cannot start with 0";
 LexerException::LexerException(const std::string& reason) : SPAException(reason) {}
 
 /* ParserException */
+const std::string ParserException::INVALID_PROG = "A program must have at least 1 procedure";
 const std::string ParserException::INVALID_STMT = "Invalid statement (stmt : read | print | call | while | if | assign)";
 const std::string ParserException::MISSING_LEFT_CURLY = "Left curly bracket is missing";
 const std::string ParserException::MISSING_RIGHT_CURLY = "Right curly bracket is missing";
