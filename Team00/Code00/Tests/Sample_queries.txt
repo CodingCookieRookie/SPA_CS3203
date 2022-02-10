@@ -1,5 +1,20 @@
+6 - Demo 6
+stmt stmt; variable v;
+Select v
+ x1 yA123z AbC1 print read
+5000
 7 - Demo 7
 stmt stmt; variable v;
-Select stmt, v
-1 x1 2 yA123z 3 AbC1 4 print 5 read
+Select stmt
+1, 2, 3, 4, 5
+5000
+8 - Demo 8
+stmt stmt; variable v; procedure p;
+Select p
+1
+5000
+9 - Demo 9
+stmt stmt; variable v; procedure p; constant c;
+Select c
+None
 5000

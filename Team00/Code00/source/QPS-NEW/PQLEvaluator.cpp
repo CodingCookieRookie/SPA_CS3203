@@ -129,6 +129,24 @@ EvaluatedTable PQLEvaluator::execute(Instruction& instr) {
             currTable = EvaluatedTable(PQLtypes, PQLmap, results.size());
             break;
         }
+        case InstructionType::getAllProc: {
+            std::vector<std::string> results = Entity::getAllProcs();
+            PQLtypes.insert(PqlEntityType::Procedure);
+            PQLmap[PqlEntityType::Procedure] = results;
+            currTable = EvaluatedTable(PQLtypes, PQLmap, results.size());
+            break;
+        }
+        case InstructionType::getAllConst: {
+            std::vector<int> results = Entity::getAllConsts();
+            std::vector<VALUE> resultsToStr;
+            for (int result : results) {
+                resultsToStr.emplace_back((std::to_string(result)));
+            }
+            PQLtypes.insert(PqlEntityType::Constant);
+            PQLmap[PqlEntityType::Constant] = resultsToStr;
+            currTable = EvaluatedTable(PQLtypes, PQLmap, results.size());
+            break;
+        }   
 
     }
     return currTable;
