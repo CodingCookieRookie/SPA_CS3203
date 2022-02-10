@@ -1,71 +1,74 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestAST.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestDesignEntity.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestDesignExtractor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestEntity.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestModifies.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestParser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestPQLDEToken.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestPQLEvaluator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestPQLParser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestPQLTokeniser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestTypes.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestUses.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestAST.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestTypes.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestEntity.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{92d72464-5230-4f14-bfbd-a03c3b8948c4}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-  </ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="stdafx.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="TestAST.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="TestDesignEntity.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="TestDesignExtractor.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="TestEntity.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="TestModifies.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="TestParser.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="TestPQLDEToken.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="TestPQLEvaluator.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="TestPQLParser.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="TestPQLTokeniser.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="TestTypes.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="TestUses.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="TestLexer.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="stdafx.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="TestAST.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="TestTypes.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="TestEntity.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+	</ItemGroup>
+	<ItemGroup>
+		<Filter Include="Source Files">
+			<UniqueIdentifier>{92d72464-5230-4f14-bfbd-a03c3b8948c4}</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="stdafx.h">
+			<Filter>Source Files</Filter>
+		</ClInclude>
+		<ClInclude Include="targetver.h">
+			<Filter>Source Files</Filter>
+		</ClInclude>
+	</ItemGroup>
 </Project>

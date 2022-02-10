@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 
+#include "../Exception/SPAException.h"
+
 class Lexer {
 private:
 	std::string source;
