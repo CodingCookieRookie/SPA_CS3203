@@ -93,6 +93,11 @@ namespace UnitTesting {
 			Assert::AreEqual(size_t(1), procStmtMap.size());
 			ProcIndex procIndex = Entity::getProcIdx(procName);
 			Assert::AreEqual(size_t(2), procStmtMap.at(procIndex).size());
+
+			std::unordered_map<StmtIndex, StmtIndex, StmtIndex::HashFunction>
+				stmtFollowsMap = DesignExtractor::getStmtFollowsMap();
+			Assert::AreEqual(size_t(1), stmtFollowsMap.size());
+			Assert::IsTrue(StmtIndex(2) == stmtFollowsMap.at(StmtIndex(1)));
 		}
 	};
 }

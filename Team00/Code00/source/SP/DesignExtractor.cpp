@@ -2,6 +2,7 @@
 
 std::unordered_map<ProcIndex, std::vector<StmtIndex>, ProcIndex::HashFunction> DesignExtractor::procStmtMap{};
 std::unordered_map<StmtIndex, std::vector<StmtIndex>, StmtIndex::HashFunction> DesignExtractor::stmtParentMap{};
+std::unordered_map<StmtIndex, StmtIndex, StmtIndex::HashFunction> DesignExtractor::stmtFollowsMap{};
 
 void DesignExtractor::processProgramNode(ProgramNode* programNode) {
 	for (ProcedureNode* procedureNode : programNode->getProcedureNodes()) {
@@ -19,15 +20,20 @@ void DesignExtractor::processProcedureNode(ProcedureNode* procedureNode) {
 std::vector<StmtIndex> DesignExtractor::processStmtLstNode(
 	StmtLstNode* stmtLstNode) {
 	std::vector<StmtIndex> stmtIndices;
+	StmtIndex prevIndex;
 	for (StmtNode* stmtNode : stmtLstNode->getStmtNodes()) {
-		StmtIndex stmtIndex = processStmtNode(stmtNode);
+		StmtIndex stmtIndex = processStmtNode(stmtNode, prevIndex);
 		stmtIndices.push_back(stmtIndex);
+		prevIndex = stmtIndex;
 	}
 	return stmtIndices;
 }
 
-StmtIndex DesignExtractor::processStmtNode(StmtNode* stmtNode) {
+StmtIndex DesignExtractor::processStmtNode(StmtNode* stmtNode, StmtIndex prevIndex) {
 	StmtIndex stmtIndex = Entity::insertStmt(stmtNode->getStmtType());
+	if (!(prevIndex == StmtIndex())) {
+		stmtFollowsMap[prevIndex] = stmtIndex;
+	}
 	std::unordered_set<std::string> modifies = stmtNode->getModifiesVars();
 	for (const std::string& varName : modifies) {
 		Entity::insertVar(varName);
@@ -58,4 +64,8 @@ std::unordered_map<ProcIndex, std::vector<StmtIndex>, ProcIndex::HashFunction> D
 
 std::unordered_map<StmtIndex, std::vector<StmtIndex>, StmtIndex::HashFunction> DesignExtractor::getStmtParentMap() {
 	return stmtParentMap;
+}
+
+std::unordered_map<StmtIndex, StmtIndex, StmtIndex::HashFunction> DesignExtractor::getStmtFollowsMap() {
+	return stmtFollowsMap;
 }
