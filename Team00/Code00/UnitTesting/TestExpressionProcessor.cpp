@@ -67,6 +67,14 @@ public:
 		Assert::AreEqual(expectedRes, res);
 	}
 
+	TEST_METHOD(convertInfixToPostFix_oneOperand) {
+		std::string input = "a";
+		std::string expectedRes = "a ";
+		std::string res = ExpressionProcessor::convertInfixToPostFix(input);
+		Assert::AreEqual(expectedRes, res);
+		Assert::AreEqual(expectedRes, res);
+	}
+
 	TEST_METHOD(convertInfixToPostFix_oneOperator) {
 		std::string input = "a+b";
 		std::string expectedRes = "a b +";
