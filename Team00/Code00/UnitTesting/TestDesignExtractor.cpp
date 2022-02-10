@@ -31,6 +31,12 @@ namespace UnitTesting {
 			Assert::AreEqual(size_t(1), Entity::getAllStmts().size());
 			Assert::AreEqual(size_t(1), Entity::getAllVars().size());
 			Assert::AreEqual(varName, Entity::getAllVars()[0]);
+
+			std::unordered_map<ProcIndex, std::vector<StmtIndex>, ProcIndex::HashFunction>
+				procStmtMap = DesignExtractor::getProcStmtMap();
+			Assert::AreEqual(size_t(1), procStmtMap.size());
+			ProcIndex procIndex = Entity::getProcIdx(procName);
+			Assert::AreEqual(size_t(1), procStmtMap.at(procIndex).size());
 		}
 		TEST_METHOD(extract_printStatementOnly_success) {
 			Entity::performCleanUp();
@@ -51,6 +57,12 @@ namespace UnitTesting {
 			Assert::AreEqual(size_t(1), Entity::getAllStmts().size());
 			Assert::AreEqual(size_t(1), Entity::getAllVars().size());
 			Assert::AreEqual(varName, Entity::getAllVars()[0]);
+
+			std::unordered_map<ProcIndex, std::vector<StmtIndex>, ProcIndex::HashFunction>
+				procStmtMap = DesignExtractor::getProcStmtMap();
+			Assert::AreEqual(size_t(1), procStmtMap.size());
+			ProcIndex procIndex = Entity::getProcIdx(procName);
+			Assert::AreEqual(size_t(1), procStmtMap.at(procIndex).size());
 		}
 		TEST_METHOD(extract_readandPrintStatement_success) {
 			Entity::performCleanUp();
@@ -75,6 +87,12 @@ namespace UnitTesting {
 			Assert::AreEqual(size_t(2), Entity::getAllVars().size());
 			Assert::AreEqual(varNameX, Entity::getAllVars()[0]);
 			Assert::AreEqual(varNameY, Entity::getAllVars()[1]);
+
+			std::unordered_map<ProcIndex, std::vector<StmtIndex>, ProcIndex::HashFunction>
+				procStmtMap = DesignExtractor::getProcStmtMap();
+			Assert::AreEqual(size_t(1), procStmtMap.size());
+			ProcIndex procIndex = Entity::getProcIdx(procName);
+			Assert::AreEqual(size_t(2), procStmtMap.at(procIndex).size());
 		}
 	};
 }
