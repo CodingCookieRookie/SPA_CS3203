@@ -15,6 +15,7 @@ public:
 	std::string nextInteger();
 	std::string nextName();
 	std::string nextWhitespace();
+	bool peek(const std::string& pattern);
 	bool match(const std::string& pattern);
 	bool reachedEnd();
 };

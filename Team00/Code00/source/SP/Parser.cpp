@@ -1,6 +1,6 @@
 #include "Parser.h"
 
-Parser::Parser() { }
+Parser::Parser() {}
 
 Lexer Parser::lexer;
 
@@ -75,15 +75,12 @@ StmtLstNode* Parser::matchStmtLst() {
 	StmtLstNode* stmtLstNode = new StmtLstNode();
 
 	// There must exist at least 1 stmt.
-	// TODO: now we assume correct source program. Need to update impl.
-	StmtNode* stmtNode = matchStmt();
-	if (stmtNode == nullptr) {
-		return nullptr;
-	}
-	stmtLstNode->addStmtNode(stmtNode);
-
+	StmtNode* stmtNode{};
 	while (stmtNode = matchStmt()) {
 		stmtLstNode->addStmtNode(stmtNode);
+		if (lexer.peek("}")) {
+			break;
+		}
 	}
 	return stmtLstNode;
 }
@@ -96,9 +93,10 @@ StmtNode* Parser::matchStmt() {
 	// TODO: make this more elegant. Add invalid statement handler.
 	if (lexer.match("read")) {
 		stmtNode = matchRead();
-	}
-	else if (lexer.match("print")) {
+	} else if (lexer.match("print")) {
 		stmtNode = matchPrint();
+	} else {
+		throw ParserException(ParserException::INVALID_STMT);
 	}
 
 	return stmtNode;

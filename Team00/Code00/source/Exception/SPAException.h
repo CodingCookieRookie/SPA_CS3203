@@ -20,6 +20,7 @@ public:
 
 class ParserException : public SPAException {
 public:
+	static const std::string INVALID_STMT;
 	static const std::string MISSING_SEMICOLON;
 	static const std::string MISSING_WHITESPACE;
 	static const std::string MISSING_VAR_NAME;
