@@ -36,11 +36,13 @@ StmtIndex DesignExtractor::processStmtNode(StmtNode* stmtNode, StmtIndex prevInd
 	}
 	std::unordered_set<std::string> modifies = stmtNode->getModifiesVars();
 	for (const std::string& varName : modifies) {
-		Entity::insertVar(varName);
+		VarIndex varIndex = Entity::insertVar(varName);
+		Modifies::insert(stmtIndex, varIndex);
 	}
 	std::unordered_set<std::string> uses = stmtNode->getUsesVars();
 	for (const std::string& varName : uses) {
-		Entity::insertVar(varName);
+		VarIndex varIndex = Entity::insertVar(varName);
+		Uses::insert(stmtIndex, varIndex);
 	}
 	std::vector<StmtLstNode*> childStmtLsts = stmtNode->getChildStmtLst();
 	for (StmtLstNode* stmtLstNode : childStmtLsts) {

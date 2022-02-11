@@ -9,11 +9,16 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting {
 	TEST_CLASS(TestDesignExtractor) {
+	private:
+		TEST_METHOD_CLEANUP(cleanUpTables) {
+			Entity::performCleanUp();
+			Uses::performCleanUp();
+			Modifies::performCleanUp();
+		}
+
 	public:
 
 		TEST_METHOD(extract_readStatementOnly_success) {
-			Entity::performCleanUp();
-
 			std::string varName = "x";
 			std::string procName = "main";
 
@@ -37,9 +42,10 @@ namespace UnitTesting {
 			Assert::AreEqual(size_t(1), procStmtMap.size());
 			ProcIndex procIndex = Entity::getProcIdx(procName);
 			Assert::AreEqual(size_t(1), procStmtMap.at(procIndex).size());
+
+			Assert::AreEqual(size_t(1), Modifies::getAllStmtVarInfo().size());
 		}
 		TEST_METHOD(extract_printStatementOnly_success) {
-			Entity::performCleanUp();
 			std::string varName = "x";
 			std::string procName = "main";
 
@@ -63,9 +69,10 @@ namespace UnitTesting {
 			Assert::AreEqual(size_t(1), procStmtMap.size());
 			ProcIndex procIndex = Entity::getProcIdx(procName);
 			Assert::AreEqual(size_t(1), procStmtMap.at(procIndex).size());
+
+			Assert::AreEqual(size_t(1), Uses::getAllStmtVarInfo().size());
 		}
 		TEST_METHOD(extract_readandPrintStatement_success) {
-			Entity::performCleanUp();
 			std::string varNameX = "x";
 			std::string varNameY = "y";
 			std::string procName = "main";
@@ -98,6 +105,9 @@ namespace UnitTesting {
 				stmtFollowsMap = DesignExtractor::getStmtFollowsMap();
 			Assert::AreEqual(size_t(1), stmtFollowsMap.size());
 			Assert::IsTrue(StmtIndex(2) == stmtFollowsMap.at(StmtIndex(1)));
+
+			Assert::AreEqual(size_t(1), Modifies::getAllStmtVarInfo().size());
+			Assert::AreEqual(size_t(1), Uses::getAllStmtVarInfo().size());
 		}
 	};
 }

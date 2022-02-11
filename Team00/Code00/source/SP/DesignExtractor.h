@@ -2,6 +2,8 @@
 #include "SourceAST.h"
 
 #include "../PKB/Entity.h"
+#include "../PKB/Modifies.h"
+#include "../PKB/Uses.h"
 
 class DesignExtractor {
 private:
