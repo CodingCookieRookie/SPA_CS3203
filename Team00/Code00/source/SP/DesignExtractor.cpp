@@ -55,6 +55,7 @@ StmtIndex DesignExtractor::processStmtNode(StmtNode* stmtNode, StmtIndex prevInd
 void DesignExtractor::Extract(SourceAST& ast) {
 	procStmtMap.clear();
 	stmtParentMap.clear();
+	stmtFollowsMap.clear();
 	processProgramNode(ast.getRoot());
 }
 
