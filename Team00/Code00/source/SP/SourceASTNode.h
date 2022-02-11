@@ -3,8 +3,12 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <unordered_set>
 
 #include "../common/Types.h"
+
+/* Forward definition of StmtLstNode for compatibility with StmtNode */
+class StmtLstNode;
 
 class SourceASTNode {
 public:
@@ -23,8 +27,11 @@ class StmtNode : public SourceASTNode {
 public:
 	StmtNode();
 	virtual StatementType getStmtType() = 0;
-	virtual std::vector<std::string> getModifies() = 0;
-	virtual std::vector<std::string> getUses() = 0;
+	virtual std::unordered_set<std::string> getModifiesVars();
+	virtual std::unordered_set<std::string> getUsesVars();
+	virtual std::unordered_set<std::string> getUsesConsts();
+	virtual std::string getPattern();
+	virtual std::vector<StmtLstNode*> getChildStmtLst();
 
 	void printNode(int depth = 1);
 
@@ -38,8 +45,7 @@ public:
 	ReadNode(std::string varName);
 	std::string getVarName();
 	StatementType getStmtType();
-	std::vector<std::string> getModifies();
-	std::vector<std::string> getUses();
+	std::unordered_set<std::string> getModifiesVars();
 	void printNode(int depth);
 
 	friend class SourceAST;
@@ -52,18 +58,17 @@ public:
 	PrintNode(std::string varName);
 	std::string getVarName();
 	StatementType getStmtType();
-	std::vector<std::string> getModifies();
-	std::vector<std::string> getUses();
+	std::unordered_set<std::string> getUsesVars();
 	void printNode(int depth);
 
 	friend class SourceAST;
 };
 
-class StmtListNode : public SourceASTNode {
+class StmtLstNode : public SourceASTNode {
 private:
 	std::vector<StmtNode*> stmtNodes;
 public:
-	StmtListNode();
+	StmtLstNode();
 	void addStmtNode(StmtNode* stmtNode);
 	std::vector<StmtNode*> getStmtNodes();
 
@@ -75,11 +80,11 @@ public:
 class ProcedureNode : public SourceASTNode {
 private:
 	std::string procName;
-	StmtListNode* stmtListNode;
+	StmtLstNode* stmtLstNode;
 public:
 	ProcedureNode(std::string procName);
-	void addStmtList(StmtListNode* stmtListNode);
-	StmtListNode* getStmtListNode();
+	void addStmtLst(StmtLstNode* stmtLstNode);
+	StmtLstNode* getStmtLstNode();
 	std::string getProcName();
 
 	void printNode(int depth);

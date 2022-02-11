@@ -178,6 +178,7 @@
     <ClCompile Include="TestEntity.cpp" />
     <ClCompile Include="TestFollows.cpp" />
     <ClCompile Include="TestFollowsT.cpp" />
+    <ClCompile Include="TestLexer.cpp" />
     <ClCompile Include="TestModifies.cpp" />
     <ClCompile Include="TestParser.cpp" />
     <ClCompile Include="TestPQLDEToken.cpp" />

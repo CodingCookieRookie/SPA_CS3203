@@ -1,8 +1,11 @@
 #include "Parser.h"
 
-Parser::Parser(const std::string& source) : lexer(source) { }
+Parser::Parser() {}
 
-SourceAST Parser::parse() {
+Lexer Parser::lexer;
+
+SourceAST Parser::parse(const std::string& source) {
+	lexer = Lexer(source);
 	ProgramNode* root = matchProgram();
 	return SourceAST(root);
 }
@@ -20,13 +23,10 @@ ProgramNode* Parser::matchProgram() {
 	while (!lexer.reachedEnd()) {
 		procNode = matchProcedure();
 		programNode->addProcedure(procNode);
-		if (procNode == nullptr) {
-			return nullptr;
-		}
 	}
 
 	if (procNode == nullptr) {
-		return nullptr;
+		throw ParserException(ParserException::INVALID_PROG);
 	}
 
 	return programNode;
@@ -35,54 +35,48 @@ ProgramNode* Parser::matchProgram() {
 /* procedure : ‘procedure’ proc_name ‘{‘ stmtLst ‘}’ */
 ProcedureNode* Parser::matchProcedure() {
 	if (!lexer.match("procedure")) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_PROC_KEYWORD);
 	}
 
 	std::string whitespace = lexer.nextWhitespace();
 	if (whitespace.empty()) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_WHITESPACE);
 	}
 
 	std::string procName = lexer.nextName();
 	if (procName.empty()) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_PROC_NAME);
 	}
 
 	if (!lexer.match("{")) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_LEFT_CURLY);
 	}
 
-	StmtListNode* stmtListNode = matchStmtList();
-	if (stmtListNode == nullptr) {
-		return nullptr;
-	}
+	StmtLstNode* stmtLstNode = matchStmtLst();
 
 	if (!lexer.match("}")) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_RIGHT_CURLY);
 	}
 
 	ProcedureNode* procNode = new ProcedureNode(procName);
-	procNode->addStmtList(stmtListNode);
+	procNode->addStmtLst(stmtLstNode);
 
 	return procNode;
 }
 
 /* stmtLst : stmt+ */
-StmtListNode* Parser::matchStmtList() {
-	StmtListNode* stmtListNode = new StmtListNode();
+StmtLstNode* Parser::matchStmtLst() {
+	StmtLstNode* stmtLstNode = new StmtLstNode();
 
-	// There must exist at least 1 stmt. 
-	// TODO: now we assume correct source program. Need to update impl.
-	StmtNode* stmtNode = matchStmt();
-	if (stmtNode == nullptr) {
-		return nullptr;
-	}
-	stmtListNode->addStmtNode(stmtNode);
-
+	// There must exist at least 1 stmt.
+	StmtNode* stmtNode{};
 	while (stmtNode = matchStmt()) {
-		stmtListNode->addStmtNode(stmtNode);
+		stmtLstNode->addStmtNode(stmtNode);
+		if (lexer.peek("}")) {
+			break;
+		}
 	}
-	return stmtListNode;
+	return stmtLstNode;
 }
 
 /* stmt : read | print | call | while | if | assign */
@@ -95,6 +89,8 @@ StmtNode* Parser::matchStmt() {
 		stmtNode = matchRead();
 	} else if (lexer.match("print")) {
 		stmtNode = matchPrint();
+	} else {
+		throw ParserException(ParserException::INVALID_STMT);
 	}
 
 	return stmtNode;
@@ -104,16 +100,16 @@ StmtNode* Parser::matchStmt() {
 ReadNode* Parser::matchRead() {
 	std::string whitespace = lexer.nextWhitespace();
 	if (whitespace.empty()) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_WHITESPACE);
 	}
 
 	std::string varName = lexer.nextName();
 	if (varName.empty()) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_VAR_NAME);
 	}
 
 	if (!lexer.match(";")) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_SEMICOLON);
 	}
 
 	return new ReadNode(varName);
@@ -123,16 +119,16 @@ ReadNode* Parser::matchRead() {
 PrintNode* Parser::matchPrint() {
 	std::string whitespace = lexer.nextWhitespace();
 	if (whitespace.empty()) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_WHITESPACE);
 	}
 
 	std::string varName = lexer.nextName();
 	if (varName.empty()) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_VAR_NAME);
 	}
 
 	if (!lexer.match(";")) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_SEMICOLON);
 	}
 
 	return new PrintNode(varName);

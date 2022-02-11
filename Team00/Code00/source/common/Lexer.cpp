@@ -1,5 +1,7 @@
 #include "../common/Lexer.h"
 
+Lexer::Lexer() : source(), index(0), length(0) {}
+
 Lexer::Lexer(const std::string& source) : source(source), index(0), length(source.length()) {}
 
 void Lexer::advance() {
@@ -13,6 +15,7 @@ void Lexer::advance() {
 	return;
 }
 
+/* INTEGER: DIGIT+, but the first digit of an INTEGER cannot be 0. */
 std::string Lexer::nextInteger() {
 	if (index >= length) {
 		return std::string();
@@ -21,11 +24,18 @@ std::string Lexer::nextInteger() {
 	if (!isdigit(source[index])) {
 		return std::string();
 	}
+
 	std::string match;
 	while (index < length && isdigit(source[index])) {
 		match.push_back(source[index]);
 		index++;
 	}
+
+	// The first digit of an INTEGER cannot be 0.
+	if (match.length() > 1 && match[0] == '0') {
+		throw LexerException(LexerException::INVALID_INT);
+	}
+
 	return match;
 }
 
@@ -60,9 +70,8 @@ std::string Lexer::nextWhitespace() {
 	return match;
 }
 
-bool Lexer::match(const std::string& pattern) {
+bool Lexer::peek(const std::string& pattern) {
 	advance();
-
 	if (index + pattern.length() > length) {
 		return false;
 	}
@@ -71,6 +80,14 @@ bool Lexer::match(const std::string& pattern) {
 		if (pattern[i] != source[index + i]) {
 			return false;
 		}
+	}
+
+	return true;
+}
+
+bool Lexer::match(const std::string& pattern) {
+	if (!peek(pattern)) {
+		return false;
 	}
 
 	index += pattern.length();
