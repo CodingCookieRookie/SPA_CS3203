@@ -45,6 +45,9 @@ public:
 		auto followsStmts = Follows::getSuccessorStmts(stmt1);
 		Assert::IsTrue(followsExpAns == followsStmts);
 
+		auto followsTEmptyStmts = FollowsT::getSuccessorStmts(stmt5);
+		Assert::IsTrue(0 == followsTEmptyStmts.size());
+
 		/*TODO: When parent code is added, check it does not get affected*/
 	};
 
@@ -70,6 +73,9 @@ public:
 		auto followsStmts = Follows::getSuccessorStmts(stmt5);
 		Assert::IsTrue(followsExpAns == followsStmts);
 
+		auto followsTEmptyStmts = FollowsT::getSuccessorStmts(stmt4);
+		Assert::IsTrue(0 == followsTEmptyStmts.size());
+
 		/*TODO: When parent code is added, check it does not get affected*/
 	};
 
@@ -93,6 +99,9 @@ public:
 
 		auto followsStmts = Follows::getPredecessorStmts(stmt5);
 		Assert::IsTrue(followsExpAns == followsStmts);
+
+		auto followsTEmptyStmts = FollowsT::getPredecessorStmts(stmt1);
+		Assert::IsTrue(0 == followsTEmptyStmts.size());
 
 		/*TODO: When parent code is added, check it does not get affected*/
 	};
@@ -118,6 +127,9 @@ public:
 
 		auto followsStmts = Follows::getPredecessorStmts(stmt4);
 		Assert::IsTrue(followsExpAns == followsStmts);
+
+		auto followsTEmptyStmts = FollowsT::getPredecessorStmts(stmt5);
+		Assert::IsTrue(0 == followsTEmptyStmts.size());
 
 		/*TODO: When parent code is added, check it does not get affected*/
 	};
