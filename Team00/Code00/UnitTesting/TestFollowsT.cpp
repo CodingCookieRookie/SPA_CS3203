@@ -16,7 +16,7 @@ private:
 	StmtIndex stmt4 = { 4 };
 	StmtIndex stmt5 = { 5 };
 
-	TEST_METHOD_CLEANUP(cleanUpEntities) {
+	TEST_METHOD_CLEANUP(cleanUpFollowsFollowsT) {
 		FollowsT::performCleanUp();
 		Follows::performCleanUp();
 	}

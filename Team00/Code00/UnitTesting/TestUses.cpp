@@ -19,7 +19,7 @@ private:
 	ProcIndex procIndex1 = { 5 };
 	ProcIndex procIndex2 = { 6 };
 
-	TEST_METHOD_CLEANUP(cleanUpEntities) {
+	TEST_METHOD_CLEANUP(cleanUpUses) {
 		Uses::performCleanUp();
 	}
 
