@@ -1,6 +1,6 @@
 #include "Parser.h"
 
-Parser::Parser() { }
+Parser::Parser() {}
 
 Lexer Parser::lexer;
 
@@ -23,13 +23,10 @@ ProgramNode* Parser::matchProgram() {
 	while (!lexer.reachedEnd()) {
 		procNode = matchProcedure();
 		programNode->addProcedure(procNode);
-		if (procNode == nullptr) {
-			return nullptr;
-		}
 	}
 
 	if (procNode == nullptr) {
-		return nullptr;
+		throw ParserException(ParserException::INVALID_PROG);
 	}
 
 	return programNode;
@@ -38,30 +35,27 @@ ProgramNode* Parser::matchProgram() {
 /* procedure : ‘procedure’ proc_name ‘{‘ stmtLst ‘}’ */
 ProcedureNode* Parser::matchProcedure() {
 	if (!lexer.match("procedure")) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_PROC_KEYWORD);
 	}
 
 	std::string whitespace = lexer.nextWhitespace();
 	if (whitespace.empty()) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_WHITESPACE);
 	}
 
 	std::string procName = lexer.nextName();
 	if (procName.empty()) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_PROC_NAME);
 	}
 
 	if (!lexer.match("{")) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_LEFT_CURLY);
 	}
 
 	StmtLstNode* stmtLstNode = matchStmtLst();
-	if (stmtLstNode == nullptr) {
-		return nullptr;
-	}
 
 	if (!lexer.match("}")) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_RIGHT_CURLY);
 	}
 
 	ProcedureNode* procNode = new ProcedureNode(procName);
@@ -75,15 +69,12 @@ StmtLstNode* Parser::matchStmtLst() {
 	StmtLstNode* stmtLstNode = new StmtLstNode();
 
 	// There must exist at least 1 stmt.
-	// TODO: now we assume correct source program. Need to update impl.
-	StmtNode* stmtNode = matchStmt();
-	if (stmtNode == nullptr) {
-		return nullptr;
-	}
-	stmtLstNode->addStmtNode(stmtNode);
-
+	StmtNode* stmtNode{};
 	while (stmtNode = matchStmt()) {
 		stmtLstNode->addStmtNode(stmtNode);
+		if (lexer.peek("}")) {
+			break;
+		}
 	}
 	return stmtLstNode;
 }
@@ -96,9 +87,10 @@ StmtNode* Parser::matchStmt() {
 	// TODO: make this more elegant. Add invalid statement handler.
 	if (lexer.match("read")) {
 		stmtNode = matchRead();
-	}
-	else if (lexer.match("print")) {
+	} else if (lexer.match("print")) {
 		stmtNode = matchPrint();
+	} else {
+		throw ParserException(ParserException::INVALID_STMT);
 	}
 
 	return stmtNode;

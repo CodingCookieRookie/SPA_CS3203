@@ -22,17 +22,41 @@ std::vector<Instruction> PQLEvaluator::evaluateToInstructions(ParsedQuery& pq) {
     std::vector<Instruction> instructions = std::vector<Instruction>();
     std::unordered_map<std::string, PqlEntityType> declarations = pq.getDeclarations();
     std::vector<std::string> columns = pq.getColumns();
-    
+    std::vector<ParsedRelationship> relationships = pq.getRelationships();
+    std::vector<ParsedPattern> patterns = pq.getPatterns();
+
+    // Assumption: Semantically corrct ParsedQuery
     // 1. Check if entitiy in Select clause is found in declarations
     for (std::string entity : columns) {
         PqlEntityType entityTypeRequired = declarations.at(entity);
 
         switch (entityTypeRequired) {
         case PqlEntityType::Stmt :
-            instructions.push_back(Instruction(INSTRUCTION_TYPE::getAllStmt));
+            instructions.push_back(Instruction(InstructionType::getAllStmt));
             break;
-        case PqlEntityType::Assign:
-            instructions.push_back(Instruction(INSTRUCTION_TYPE::getAllAsgn));
+        case PqlEntityType::Print :
+            instructions.push_back(Instruction(InstructionType::getAllPrint));
+            break;
+        case PqlEntityType::Call :
+            instructions.push_back(Instruction(InstructionType::getAllCall));
+            break;
+        case PqlEntityType::While :
+            instructions.push_back(Instruction(InstructionType::getAllWhile));
+            break;
+        case PqlEntityType::If :
+            instructions.push_back(Instruction(InstructionType::getAllIf));
+            break;
+        case PqlEntityType::Assign :
+            instructions.push_back(Instruction(InstructionType::getAllAsgn));
+            break;
+        case PqlEntityType::Variable :
+            instructions.push_back(Instruction(InstructionType::getAllVar));
+            break;
+        case PqlEntityType::Constant:
+            instructions.push_back(Instruction(InstructionType::getAllConst));
+            break;
+        case PqlEntityType::Procedure:
+            instructions.push_back(Instruction(InstructionType::getAllProc));
             break;
         }
     }
@@ -52,7 +76,7 @@ std::vector<Instruction> PQLEvaluator::evaluateToInstructions(ParsedQuery& pq) {
 EvaluatedTable PQLEvaluator::executeInstructions(std::vector<Instruction> instructions) {
     EvaluatedTable resultEvTable = EvaluatedTable();
 
-    // Assuming correct order of instructions already
+    // Assumption: Correct order of instructions
     // Call relevant API
     for (Instruction instruction : instructions) {
         EvaluatedTable currEvTable = execute(instruction);
@@ -69,43 +93,62 @@ EvaluatedTable PQLEvaluator::executeInstructions(std::vector<Instruction> instru
 }
 
 EvaluatedTable PQLEvaluator::execute(Instruction& instr) {
-    INSTRUCTION_TYPE instrType = instr.getType();
+    InstructionType instrType = instr.getType();
     EvaluatedTable currTable;
+    std::unordered_set<PqlEntityType> PQLtypes;
+    std::unordered_map<PqlEntityType, std::vector<VALUE>> PQLmap;
 
     switch (instrType) {
-
-    case INSTRUCTION_TYPE::getAllStmt :
-        //PKB's getAllStmts
-        std::vector<StmtIndex> results = Entity::getAllStmts();
-
-        // TODO: Generalise this logic below:
-        // Convert StmtIndex to string
-        // e.g {1, 2, 3}
-        //std::vector<VALUE> resultsToStr;
-        // std::unordered_map<PqlEntityType, std::vector<VALUE>> newTable = std::unordered_map<PqlEntityType, std::vector<VALUE>>({{PqlEntityType::Stmt, resultsToStr}});
-
-        //for (StmtIndex result : results) {
-        //    resultsToStr.push_back((std::to_string(result.getIndex())));
-        //}
-
-        // Look into resultsToStr 
-       /* currTable = EvaluatedTable(std::unordered_set<PqlEntityType>({ PqlEntityType::Stmt }),
-            std::unordered_map<PqlEntityType, std::vector<VALUE>>({ {PqlEntityType::Stmt, resultsToStr} }),
-            results.size());*/
-
-        std::vector<VALUE> resultsToStr;
-        std::unordered_set<PqlEntityType> PQLtypes;
-        PQLtypes.insert(PqlEntityType::Stmt);
-        std::unordered_map<PqlEntityType, std::vector<VALUE>> PQLmap;
-        for (StmtIndex result : results) {
-            resultsToStr.push_back((std::to_string(result.getIndex())));
+        case InstructionType::getAllStmt: {
+            std::vector<StmtIndex> results = Entity::getAllStmts();
+            std::vector<VALUE> resultsToStr;
+            PQLtypes.insert(PqlEntityType::Stmt);
+            // Convert StmtIndex to string, e.g {1, 2, 3}  
+            for (StmtIndex result : results) {
+                resultsToStr.push_back((std::to_string(result.getIndex())));
+            }
+            PQLmap[PqlEntityType::Stmt] = resultsToStr;
+            currTable = EvaluatedTable(PQLtypes, PQLmap, results.size());
+            break;
         }
-        PQLmap[PqlEntityType::Stmt] = resultsToStr;
-        currTable = EvaluatedTable(PQLtypes, PQLmap, results.size());
-        return currTable;
-        break;
-    }
+        //case InstructionType::getAllPrint :
+            //    std::vector<StmtIndex> results = Entity::getAllPrint();
+            //    std::vector<VALUE> resultsToStr;
+            //    PQLtypes.insert(PqlEntityType::Print);
+            //    // Convert StmtIndex to string, e.g {1, 2, 3}  
+            //    for (StmtIndex result : results) {
+            //        resultsToStr.push_back((std::to_string(result.getIndex())));
+            //    }
+            //    PQLmap[PqlEntityType::Print] = resultsToStr;
+            //    currTable = EvaluatedTable(PQLtypes, PQLmap, results.size());
+            //    break;
+        case InstructionType::getAllVar: {
+            std::vector<std::string> results = Entity::getAllVars();
+            PQLtypes.insert(PqlEntityType::Variable);
+            PQLmap[PqlEntityType::Variable] = results;
+            currTable = EvaluatedTable(PQLtypes, PQLmap, results.size());
+            break;
+        }
+        case InstructionType::getAllProc: {
+            std::vector<std::string> results = Entity::getAllProcs();
+            PQLtypes.insert(PqlEntityType::Procedure);
+            PQLmap[PqlEntityType::Procedure] = results;
+            currTable = EvaluatedTable(PQLtypes, PQLmap, results.size());
+            break;
+        }
+        case InstructionType::getAllConst: {
+            std::vector<int> results = Entity::getAllConsts();
+            std::vector<VALUE> resultsToStr;
+            for (int result : results) {
+                resultsToStr.emplace_back((std::to_string(result)));
+            }
+            PQLtypes.insert(PqlEntityType::Constant);
+            PQLmap[PqlEntityType::Constant] = resultsToStr;
+            currTable = EvaluatedTable(PQLtypes, PQLmap, results.size());
+            break;
+        }   
 
+    }
     return currTable;
 }
 
