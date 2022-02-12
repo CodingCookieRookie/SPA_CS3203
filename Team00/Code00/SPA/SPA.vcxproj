@@ -13,12 +13,9 @@
   <ItemGroup>
     <ClCompile Include="..\source\common\Lexer.cpp" />
     <ClCompile Include="..\source\PKB\Entity.cpp" />
-<<<<<<< HEAD
     <ClCompile Include="..\source\PKB\ExpressionProcessor.cpp" />
-=======
     <ClCompile Include="..\source\PKB\Follows.cpp" />
     <ClCompile Include="..\source\PKB\FollowsT.cpp" />
->>>>>>> master
     <ClCompile Include="..\source\PKB\Modifies.cpp" />
     <ClCompile Include="..\source\PKB\Pattern.cpp" />
     <ClCompile Include="..\source\PKB\RS1.cpp" />
@@ -45,12 +42,9 @@
     <ClInclude Include="..\source\common\Lexer.h" />
     <ClInclude Include="..\source\common\Types.h" />
     <ClInclude Include="..\source\PKB\Entity.h" />
-<<<<<<< HEAD
     <ClInclude Include="..\source\PKB\ExpressionProcessor.h" />
-=======
     <ClInclude Include="..\source\PKB\Follows.h" />
     <ClInclude Include="..\source\PKB\FollowsT.h" />
->>>>>>> master
     <ClInclude Include="..\source\PKB\Modifies.h" />
     <ClInclude Include="..\source\PKB\Pattern.h" />
     <ClInclude Include="..\source\PKB\RS1.h" />
