@@ -13,14 +13,6 @@ class StmtLstNode;
 class SourceASTNode {
 public:
 	SourceASTNode();
-
-	// For debugging purpose.
-	void printDashes(int depth) {
-		for (int i = 0; i < depth; i++) {
-			std::cout << "-";
-		}
-	}
-	virtual void printNode(int depth) = 0;
 };
 
 class StmtNode : public SourceASTNode {
@@ -33,8 +25,6 @@ public:
 	virtual std::string getPattern();
 	virtual std::vector<StmtLstNode*> getChildStmtLst();
 
-	void printNode(int depth = 1);
-
 	friend class SourceAST;
 };
 
@@ -46,7 +36,6 @@ public:
 	std::string getVarName();
 	StatementType getStmtType();
 	std::unordered_set<std::string> getModifiesVars();
-	void printNode(int depth);
 
 	friend class SourceAST;
 };
@@ -59,7 +48,6 @@ public:
 	std::string getVarName();
 	StatementType getStmtType();
 	std::unordered_set<std::string> getUsesVars();
-	void printNode(int depth);
 
 	friend class SourceAST;
 };
@@ -71,8 +59,6 @@ public:
 	StmtLstNode();
 	void addStmtNode(StmtNode* stmtNode);
 	std::vector<StmtNode*> getStmtNodes();
-
-	void printNode(int depth = 1);
 
 	friend class SourceAST;
 };
@@ -87,8 +73,6 @@ public:
 	StmtLstNode* getStmtLstNode();
 	std::string getProcName();
 
-	void printNode(int depth);
-
 	friend class SourceAST;
 };
 
@@ -99,8 +83,6 @@ public:
 	ProgramNode();
 	void addProcedure(ProcedureNode* procedureNode);
 	std::vector<ProcedureNode*> getProcedureNodes();
-
-	void printNode(int depth = 1);
 
 	friend class SourceAST;
 };
