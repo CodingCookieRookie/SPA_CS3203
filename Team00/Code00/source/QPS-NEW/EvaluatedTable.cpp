@@ -34,3 +34,5 @@ EvaluatedTable::EvaluatedTable(std::unordered_set<PqlEntityType> newEntities,
     table = &newTable;
     numRow = newNumRow;
 }
+
+

@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "../common/Lexer.h"
+#include "../Exception/SPAException.h"
 #include "SourceAST.h"
 #include "SourceASTNode.h"
 
