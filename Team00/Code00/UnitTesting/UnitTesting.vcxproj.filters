@@ -16,6 +16,9 @@
 		<ClCompile Include="TestEntity.cpp">
 			<Filter>Source Files</Filter>
 		</ClCompile>
+		<ClCompile Include="TestExpressionProcessor.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
 		<ClCompile Include="TestModifies.cpp">
 			<Filter>Source Files</Filter>
 		</ClCompile>
@@ -26,6 +29,9 @@
 			<Filter>Source Files</Filter>
 		</ClCompile>
 		<ClCompile Include="TestParser.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="TestPattern.cpp">
 			<Filter>Source Files</Filter>
 		</ClCompile>
 		<ClCompile Include="TestPQLDEToken.cpp">

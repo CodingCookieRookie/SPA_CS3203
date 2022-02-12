@@ -1,168 +1,180 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <ClCompile Include="..\source\SP\DesignExtractor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\PKB\Entity.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS-NEW\EvaluatedTable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS-NEW\Instruction.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\common\Lexer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\PKB\Modifies.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS-NEW\ParsedQuery.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\SP\Parser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS-NEW\PQLEvaluator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS-NEW\PQLLexer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS-NEW\PQLParser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS-NEW\PQLResultProjector.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS-NEW\PQLTokeniser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS-NEW\QPS.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS-NEW\QPSCommons.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\PKB\RS1.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\PKB\RS2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\SP\SourceAST.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\SP\SourceASTNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\Exception\SPAException.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\TNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\PKB\Uses.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\PKB\Follows.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\PKB\FollowsT.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\source\QPS-NEW\DesignEntity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\SP\DesignExtractor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\Entity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS-NEW\EvaluatedTable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS-NEW\Instruction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\common\Lexer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\Modifies.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS-NEW\ParsedQuery.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\SP\Parser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS-NEW\PQLDEToken.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS-NEW\PQLEvaluator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS-NEW\PQLLexer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS-NEW\PQLParser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS-NEW\PQLResultProjector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS-NEW\PQLTokeniser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS-NEW\QPS.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS-NEW\QPSCommons.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\RS1.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\RS2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\SP\SourceAST.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\SP\SourceASTNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\Exception\SPAException.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\TNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\Uses.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\Follows.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\FollowsT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\common\Types.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{b1265b5e-9af2-4c3a-be4f-2c3f883fbf10}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{aff91e50-27cd-4ee9-abfd-4f83b5737450}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\source\SP\DesignExtractor.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\PKB\Entity.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\PKB\ExpressionProcessor.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS-NEW\EvaluatedTable.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\PKB\Follows.cpp">
+		  <Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\PKB\FollowsT.cpp">
+		  <Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS-NEW\Instruction.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\common\Lexer.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\PKB\Modifies.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS-NEW\ParsedQuery.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\SP\Parser.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\PKB\Pattern.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS-NEW\PQLEvaluator.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS-NEW\PQLLexer.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS-NEW\PQLParser.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS-NEW\PQLResultProjector.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS-NEW\PQLTokeniser.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS-NEW\QPS.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS-NEW\QPSCommons.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\PKB\RS1.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\PKB\RS2.cpp">
+		  <Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\SP\SourceAST.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\SP\SourceASTNode.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\Exception\SPAException.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\TNode.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\PKB\Uses.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\source\QPS-NEW\DesignEntity.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\SP\DesignExtractor.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\Entity.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\ExpressionProcessor.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS-NEW\EvaluatedTable.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\Follows.h">
+		  <Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\FollowsT.h">
+		  <Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS-NEW\Instruction.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\common\Lexer.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\Modifies.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS-NEW\ParsedQuery.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\SP\Parser.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\Pattern.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS-NEW\PQLDEToken.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS-NEW\PQLEvaluator.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS-NEW\PQLLexer.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS-NEW\PQLParser.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS-NEW\PQLResultProjector.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS-NEW\PQLTokeniser.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS-NEW\QPS.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS-NEW\QPSCommons.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\RS1.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\RS2.h">
+		  <Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\SP\SourceAST.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\SP\SourceASTNode.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\Exception\SPAException.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\TNode.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\Uses.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\common\Types.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+	</ItemGroup>
+	<ItemGroup>
+		<Filter Include="Header Files">
+			<UniqueIdentifier>{b1265b5e-9af2-4c3a-be4f-2c3f883fbf10}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="Source Files">
+			<UniqueIdentifier>{aff91e50-27cd-4ee9-abfd-4f83b5737450}</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
 </Project>
