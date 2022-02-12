@@ -4,7 +4,7 @@
 
 bool ExpressionProcessor::isOperand(char currentChar) {
 	// var_name and const_value consists of letters and digits.
-	return (currentChar >= 'a' && currentChar <= 'z') || (currentChar >= 'A' && currentChar <= 'Z') || (currentChar >= '0' && currentChar <= '9');
+	return std::isalpha(currentChar) || std::isdigit(currentChar);
 }
 
 int ExpressionProcessor::evaluateOperatorPrecedence(char currentChar) {
