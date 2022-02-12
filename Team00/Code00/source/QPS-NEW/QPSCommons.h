@@ -7,8 +7,22 @@ enum class PqlEntityType {
 };
 
 enum class InstructionType {
+    getAll, relationship, pattern
+};
+
+enum class GetAllInstructionType {
     getAllStmt, getAllRead, getAllPrint, getAllCall, getAllWhile,
     getAllIf, getAllAsgn, getAllVar, getAllConst, getAllProc
+};
+
+enum class RelationshipInstructionType{
+    getFollows, getFollowsT, getParent, getParentT,
+    getUsesS, getUsesP, getModifiesS, getModifiesP,
+    getUses, getModifies
+};
+
+enum class PatternInstructionType {
+    getPattern
 };
 
 // The Uses and Modifies are generic Uses/Modifies,
