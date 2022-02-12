@@ -9,13 +9,16 @@ bool ExpressionProcessor::isOperand(char currentChar) {
 
 int ExpressionProcessor::evaluateOperatorPrecedence(char currentChar) {
 	// Multiplication, division and modulus
-	if (currentChar == '*' || currentChar == '/' || currentChar == '%')
+	if (currentChar == '*' || currentChar == '/' || currentChar == '%') {
 		return 2;
+	}
 	// Addition and subtraction
-	else if (currentChar == '+' || currentChar == '-')
+	else if (currentChar == '+' || currentChar == '-') {
 		return 1;
-	else
+	}
+	else {
 		return -1;
+	}
 }
 
 // Shunting yard algorithm

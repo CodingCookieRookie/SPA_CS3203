@@ -54,23 +54,22 @@ std::vector<StmtIndex> Pattern::getStmtsFromVarPattern(VarIndex varIdx, std::str
 }
 
 std::vector<std::tuple<StmtIndex, VarIndex>> Pattern::getStmtsFromPattern(std::string expression, bool isSubExpression) {
-	std::vector<std::tuple<StmtIndex, VarIndex>> res;
+	if (!isSubExpression) {
+		return postFixVarTable[expression];
+	}
 
-	if (isSubExpression) {
-		for (auto& postFixVarInfo : postFixVarTable) {
-			std::string postFixExpression = postFixVarInfo.first;
-			if (postFixExpression.find(expression) != std::string::npos) {
-				std::vector<std::tuple<StmtIndex, VarIndex>> value = postFixVarTable[postFixExpression];
-				for (auto& postFixVarTuple : value) {
-					res.push_back(postFixVarTuple);
-				}
-			}
+	// Check subexpression
+	std::vector<std::tuple<StmtIndex, VarIndex>> res;
+	for (auto& postFixVarInfo : postFixVarTable) {
+		std::string postFixExpression = postFixVarInfo.first;
+		if (postFixExpression.find(expression) == std::string::npos) {
+			continue;
+		}
+		std::vector<std::tuple<StmtIndex, VarIndex>> value = postFixVarTable[postFixExpression];
+		for (auto& postFixVarTuple : value) {
+			res.push_back(postFixVarTuple);
 		}
 	}
-	else {
-		res = postFixVarTable[expression];
-	}
-
 	return res;
 }
 
