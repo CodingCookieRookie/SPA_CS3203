@@ -12,7 +12,7 @@ typedef std::string VALUE;
 class EvaluatedTable {
 private:
     std::unordered_map<std::string, PqlEntityType> entities;
-    std::unordered_map<std::string, std::vector<VALUE>> *table;
+    std::unordered_map<std::string, std::vector<int>> table;
     int numRow;
 
 public:
@@ -31,7 +31,7 @@ public:
     EvaluatedTable();
 
     /* Wrapper constructor */
-    EvaluatedTable(const EvaluatedTable& anotherEvTable);
+    //EvaluatedTable(EvaluatedTable anotherEvTable);
 
     /** Wrapper constructor that constructs based on *table only 
     * 
@@ -45,11 +45,11 @@ public:
     *	{"v", {"a", "b"}}
     * }))
     */
-    EvaluatedTable(std::unordered_map<std::string, std::vector<VALUE>> *table);
+    EvaluatedTable(std::unordered_map<std::string, std::vector<int>> table);
 
     /* Wrapper constructor for all 3 fields */
     EvaluatedTable::EvaluatedTable(std::unordered_map<std::string, PqlEntityType> newEntities,
-        std::unordered_map<std::string, std::vector<VALUE>>& newTable, int newNumRow);
+        std::unordered_map<std::string, std::vector<int>> newTable, int newNumRow);
 
     /* Getter for entities */
     std::unordered_map<std::string, PqlEntityType> getEntities() {
@@ -62,7 +62,7 @@ public:
     }
 
     /* Getter for *table */
-    std::unordered_map<std::string, std::vector<VALUE>>* getTableRef() {
+    std::unordered_map<std::string, std::vector<int>> getTableRef() {
         return table;
     }
 };
