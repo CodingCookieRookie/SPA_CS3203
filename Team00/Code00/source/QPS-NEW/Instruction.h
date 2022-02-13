@@ -80,6 +80,22 @@ public:
 		return this;
 	};
 };
+
+class PatternInstruction : public Instruction {
+private:
+	std::string synonym;
+    PqlReference entRef;
+    PqlExpression expressionSpec;
+
+public:
+
+	PatternInstruction::PatternInstruction(std::string synonym, PqlReference entRef, PqlExpression expressionSpec) : synonym(synonym), entRef(entRef), expressionSpec(expressionSpec) {}
+
+	EvaluatedTable execute(Instruction* relationshipInstruction) {
+		EvaluatedTable evTable;
+		return evTable;
+	}
+};
 //class ParsedRelationship {
 //private:
 //    PqlRelationshipType relationshipType;
