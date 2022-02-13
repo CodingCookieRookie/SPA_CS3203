@@ -36,7 +36,6 @@ public:
 		/*Check Follows data does not get affected*/
 		auto followsStmts = Follows::getSuccessorStmts(predecessor1);
 		Assert::IsTrue(0 == followsStmts.size());
-		Follows::performCleanUp();
 	};
 
 	TEST_METHOD(insert_getPredecessorStmts) {
@@ -57,7 +56,6 @@ public:
 		/*Check Follows data does not get affected*/
 		auto followsStmts = Follows::getPredecessorStmts(predecessor1);
 		Assert::IsTrue(0 == followsStmts.size());
-		Follows::performCleanUp();
 	};
 
 	TEST_METHOD(containsPredecessor) {
