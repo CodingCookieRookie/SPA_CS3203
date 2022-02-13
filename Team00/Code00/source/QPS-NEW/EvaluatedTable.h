@@ -45,7 +45,9 @@ public:
     *	{"v", {"a", "b"}}
     * }))
     */
-    EvaluatedTable(std::unordered_map<std::string, std::vector<int>> table);
+    EvaluatedTable(std::unordered_map<std::string, std::vector<int>> newTable) {
+        table = newTable;
+    }
 
     /* Wrapper constructor for all 3 fields */
     EvaluatedTable::EvaluatedTable(std::unordered_map<std::string, PqlEntityType> newEntities,
@@ -67,7 +69,7 @@ public:
     }
 
     std::string getTableString() {
-        std::string res = "Table String: \n";
+        std::string res = "Table String: size: " + std::to_string(table.size()) + "\n";
         for (auto& it : table) {
             res += "Synonym: " + it.first + " ";
             res += "Values: ";

@@ -65,7 +65,6 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
         ParsedRelationship parsedRelationship = relationships.at(i);
         PqlRelationshipType pqlRelationshipType =  parsedRelationship.getRelationshipType();
         instructions.push_back(new RelationshipInstruction(pqlRelationshipType, parsedRelationship.getLhs().second, parsedRelationship.getRhs().second));
-        //RelationshipInstruction(pqlRelationshipType, parsedRelationship.getLhs().second, parsedRelationship.getRhs().second).execute();
     }
 
     // TODO:
@@ -81,13 +80,12 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
 }
 
 EvaluatedTable PQLEvaluator::executeInstructions(std::vector<Instruction*> instructions) {
-    EvaluatedTable resultEvTable = EvaluatedTable();
+    EvaluatedTable resultEvTable;
     for (size_t i = 0; i < instructions.size(); i++) {
         Instruction* instruction = instructions.at(i);
-        EvaluatedTable evTable;
-        evTable = instruction->execute();
-        resultEvTable = evTable;
-        cout << resultEvTable.getTableString();
+        EvaluatedTable evTable = instruction->execute();
+        resultEvTable = evTable;    // should merge instead
+        std::cout << evTable.getTableString();  // check Table String
     }
     return resultEvTable;
 }

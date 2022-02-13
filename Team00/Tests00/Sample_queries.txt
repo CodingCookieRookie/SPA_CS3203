@@ -128,3 +128,9 @@ stmt stmt; variable v;
 Select stmt such that Modifies*(2, v)
 2, 3, 5
 5000
+
+8 - Personal test 
+stmt stmt; variable v;
+Select stmt such that Modifies(stmt, v)
+2, 3, 4
+5000

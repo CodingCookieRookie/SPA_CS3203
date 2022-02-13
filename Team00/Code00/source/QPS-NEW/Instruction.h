@@ -59,30 +59,22 @@ private:
 	std::string lhsRefString;
 	std::string rhsRefString;
 
-	void handleModifiesS(EvaluatedTable* evTable) {
+	EvaluatedTable handleModifiesS() {
 		EvaluatedTable newEvTable;
 		VarIndex varIndex = Entity::getVarIdx(rhsRefString);
 		std::unordered_set<StmtIndex, StmtIndex::HashFunction> allModifiesStmts = Modifies::getStatements(varIndex);	// (s,v) -> ({1 1 2}, {3, 4, 4}) 
 		std::vector<std::tuple<StmtIndex, VarIndex>> allStmtVarInfos = Modifies::getAllStmtVarInfo();
-		std::cout << "handled\n";
-		
+		std::cout << "handled ModifiesS\n";
+		std::unordered_map<std::string, std::vector<int>> table;
 		for (int i = 0; i < allStmtVarInfos.size(); i++) {
-			tuple<StmtIndex, VarIndex> pair = allStmtVarInfos.at(i);
-			evTable->getTableRef()[lhsRefString].push_back(std::get<0>(pair).getIndex());
-			evTable->getTableRef()[rhsRefString].push_back(std::get<1>(pair).index);
-			std::cout << "alvin\n";
-			std::cout << std::get<0>(pair).getIndex();
-			std::cout << std::get<1>(pair).index;
+			std::tuple<StmtIndex, VarIndex> pair = allStmtVarInfos.at(i);
+			table[lhsRefString].push_back(std::get<0>(pair).getIndex());
+			table[rhsRefString].push_back(std::get<1>(pair).index);
+			std::cout << "test\n";
+			std::cout << std::get<0>(pair).getIndex() << "\n";
+			std::cout << std::get<1>(pair).index << "\n";
 		}
-		//for (auto& it : allModifiesStmts) {
-		//	
-		//	StmtIndex stmtIndex = it.index;
-		//	std::unordered_set<VarIndex, VarIndex::HashFunction> allVariablesModifiedByAStmt = Modifies::getVariables(stmtIndex);		
-		//	for (auto& it2 : allVariablesModifiedByAStmt) {
-		//		evTable->getTableRef()[lhsRefString].push_back(stmtIndex.getIndex());	// push back all indexes of stmt for all variables
-		//		evTable->getTableRef()[rhsRefString].push_back(it2.index);	// push back all indexes of variables for all stmts;
-		//	}
-		//}
+		return EvaluatedTable(table);
 	}
 
 public:
@@ -102,15 +94,12 @@ public:
 		EvaluatedTable evTable;
 		switch (pqlRelationshipType) {
 		case PqlRelationshipType::ModifiesS :
-			
-			handleModifiesS(&evTable);
+			evTable = handleModifiesS();
 			break;
 		case PqlRelationshipType::UsesS:
 
 			break;
 		}
-
-		
 		return evTable;
 	}
 
