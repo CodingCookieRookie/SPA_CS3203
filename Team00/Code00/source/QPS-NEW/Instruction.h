@@ -4,11 +4,13 @@
 
 #include "QPSCommons.h"
 #include "../Exception/SPAException.h"
+#include "EvaluatedTable.h"
+#include "../PKB/Entity.h"
 
 class Instruction {
 //protected:	//-> Use protected if need any shared fields
 public:
-	Instruction getClassType();
+	virtual EvaluatedTable execute(Instruction* instruction) = 0;
 };
 
 class GetAllInstruction : public Instruction{
@@ -17,12 +19,17 @@ private:
 	std::vector<std::string> arguments; // has to be generalised
 
 public:
-
 	/* Constructor for an Instruction object */
 	GetAllInstruction(GetAllInstructionType type) : type(type) {}
 
 	/* Constructor for an Instruction object */
 	GetAllInstruction(GetAllInstructionType type, std::vector<std::string> arguments) : type(type), arguments(arguments) {}
+
+	EvaluatedTable execute(Instruction* getAllInstruction) {
+		EvaluatedTable evTable;
+
+		return evTable;
+	}
 
 	///* TODO: To generalise. Executes instruction by calling the PKB */
 	//void execute(Instruction& instr);
@@ -45,21 +52,29 @@ public:
 
 class RelationshipInstruction : public Instruction {
 private:
-	int relationshipType;
-	std::string lhsString;
+	RelationshipInstructionType type;
+	PqlRelationshipType pqlRelationshipType;
+	std::string lhsRefString;
 	std::string rhsRefString;
+
 public:
-	RelationshipInstruction::RelationshipInstruction(int relationshipType, std::string lhsString, std::string rhsRefString)
-	{
-		relationshipType = relationshipType;
-		lhsString = lhsString;
-		rhsRefString = rhsRefString;
+
+	RelationshipInstruction::RelationshipInstruction(PqlRelationshipType pqlRelationshipType, std::string lhsString, std::string rhsRefString) : pqlRelationshipType(pqlRelationshipType), lhsRefString(lhsRefString), rhsRefString(rhsRefString) {}
+
+	EvaluatedTable execute(Instruction* relationshipInstruction) {
+		EvaluatedTable evTable;
+		switch (pqlRelationshipType) {
+		case PqlRelationshipType::ModifiesS :
+			std::vector<StmtIndex> allStmts = Entity::getAllStmts();
+			break;
+		}
+		
+		return evTable;
 	}
 
-
-	/*RelationshipInstructionType getType() {
-		return 
-	};*/
+	RelationshipInstructionType getType() {
+		return type;
+	};
 
 	RelationshipInstruction* getClassType() {
 		return this;

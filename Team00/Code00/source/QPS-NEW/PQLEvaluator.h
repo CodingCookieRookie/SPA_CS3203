@@ -13,10 +13,10 @@ private:
 	ParsedQuery parsedQuery;
 
 	/* Helper method to break down parsedQuery into isntructions to call in PKB */
-	std::vector<Instruction> evaluateToInstructions(ParsedQuery pq);
+	std::vector<Instruction*> evaluateToInstructions(ParsedQuery pq);
 
 	/* Helper method to execute all instructions */
-	EvaluatedTable executeInstructions(std::vector<Instruction> instructions);
+	EvaluatedTable executeInstructions(std::vector<Instruction*> instructions);
 
 	/* Helper method to execute one instruction */
 	EvaluatedTable execute(Instruction instr);
