@@ -2,6 +2,7 @@
 #include <vector>
 #include <unordered_map>
 
+#include <iostream>
 #include "QPSCommons.h"
 #include "../Exception/SPAException.h"
 #include "EvaluatedTable.h"
@@ -62,14 +63,26 @@ private:
 		EvaluatedTable newEvTable;
 		VarIndex varIndex = Entity::getVarIdx(rhsRefString);
 		std::unordered_set<StmtIndex, StmtIndex::HashFunction> allModifiesStmts = Modifies::getStatements(varIndex);	// (s,v) -> ({1 1 2}, {3, 4, 4}) 
-		for (auto& it : allModifiesStmts) {
-			StmtIndex stmtIndex = it.index;
-			std::unordered_set<VarIndex, VarIndex::HashFunction> allVariablesModifiedByAStmt = Modifies::getVariables(stmtIndex);		
-			for (auto& it2 : allVariablesModifiedByAStmt) {
-				evTable->getTableRef()[lhsRefString].push_back(stmtIndex.getIndex());	// push back all indexes of stmt for all variables
-				evTable->getTableRef()[rhsRefString].push_back(it2.index);	// push back all indexes of variables for all stmts;
-			}
+		std::vector<std::tuple<StmtIndex, VarIndex>> allStmtVarInfos = Modifies::getAllStmtVarInfo();
+		std::cout << "handled\n";
+		
+		for (int i = 0; i < allStmtVarInfos.size(); i++) {
+			tuple<StmtIndex, VarIndex> pair = allStmtVarInfos.at(i);
+			evTable->getTableRef()[lhsRefString].push_back(std::get<0>(pair).getIndex());
+			evTable->getTableRef()[rhsRefString].push_back(std::get<1>(pair).index);
+			std::cout << "alvin\n";
+			std::cout << std::get<0>(pair).getIndex();
+			std::cout << std::get<1>(pair).index;
 		}
+		//for (auto& it : allModifiesStmts) {
+		//	
+		//	StmtIndex stmtIndex = it.index;
+		//	std::unordered_set<VarIndex, VarIndex::HashFunction> allVariablesModifiedByAStmt = Modifies::getVariables(stmtIndex);		
+		//	for (auto& it2 : allVariablesModifiedByAStmt) {
+		//		evTable->getTableRef()[lhsRefString].push_back(stmtIndex.getIndex());	// push back all indexes of stmt for all variables
+		//		evTable->getTableRef()[rhsRefString].push_back(it2.index);	// push back all indexes of variables for all stmts;
+		//	}
+		//}
 	}
 
 public:
@@ -89,7 +102,8 @@ public:
 		EvaluatedTable evTable;
 		switch (pqlRelationshipType) {
 		case PqlRelationshipType::ModifiesS :
-			//handleModifiesS(&evTable);
+			
+			handleModifiesS(&evTable);
 			break;
 		case PqlRelationshipType::UsesS:
 

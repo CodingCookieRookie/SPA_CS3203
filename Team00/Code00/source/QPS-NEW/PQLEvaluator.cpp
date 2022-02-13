@@ -87,6 +87,7 @@ EvaluatedTable PQLEvaluator::executeInstructions(std::vector<Instruction*> instr
         EvaluatedTable evTable;
         evTable = instruction->execute();
         resultEvTable = evTable;
+        cout << resultEvTable.getTableString();
     }
     return resultEvTable;
 }

@@ -67,8 +67,16 @@ public:
     }
 
     std::string getTableString() {
-        for (auto it : table) {
-            
+        std::string res = "Table String: \n";
+        for (auto& it : table) {
+            res += "Synonym: " + it.first + " ";
+            res += "Values: ";
+            std::vector<int> values = it.second;
+            for (size_t i = 0; i < values.size(); i++) {
+                res = res + std::to_string(values.at(i)) + " ";
+            }
+            res += "\n";
         }
+        return res;
     }
 };
