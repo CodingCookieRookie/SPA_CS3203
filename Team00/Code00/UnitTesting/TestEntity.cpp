@@ -34,6 +34,20 @@ private:
 	}
 
 public:
+
+	TEST_METHOD(insertVar_containsVar_variableExists) {
+		VarIndex idx1 = Entity::insertVar(varName1);
+
+		bool res = Entity::containsVar(varName1);
+		Assert::IsTrue(res);
+	}
+
+	TEST_METHOD(insertVar_containsVar_variableDoesNotExists) {
+		VarIndex idx1 = Entity::insertVar(varName1);
+
+		bool res = Entity::containsVar(varName2);
+		Assert::IsFalse(res);
+	}
 	TEST_METHOD(insertVar_getVarName_differentVariables) {
 		VarIndex idx1 = Entity::insertVar(varName1);
 		VarIndex idx2 = Entity::insertVar(varName2);
