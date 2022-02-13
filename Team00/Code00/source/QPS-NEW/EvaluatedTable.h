@@ -65,4 +65,10 @@ public:
     std::unordered_map<std::string, std::vector<int>> getTableRef() {
         return table;
     }
+
+    std::string getTableString() {
+        for (auto it : table) {
+            
+        }
+    }
 };

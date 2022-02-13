@@ -6,11 +6,12 @@
 #include "../Exception/SPAException.h"
 #include "EvaluatedTable.h"
 #include "../PKB/Entity.h"
+#include "../PKB/Modifies.h"
 
 class Instruction {
 //protected:	//-> Use protected if need any shared fields
 public:
-	virtual EvaluatedTable execute(Instruction* instruction) = 0;
+	virtual EvaluatedTable execute() = 0;
 };
 
 class GetAllInstruction : public Instruction{
@@ -25,7 +26,7 @@ public:
 	/* Constructor for an Instruction object */
 	GetAllInstruction(GetAllInstructionType type, std::vector<std::string> arguments) : type(type), arguments(arguments) {}
 
-	EvaluatedTable execute(Instruction* getAllInstruction) {
+	EvaluatedTable execute() override {
 		EvaluatedTable evTable;
 
 		return evTable;
@@ -52,29 +53,56 @@ public:
 
 class RelationshipInstruction : public Instruction {
 private:
-	RelationshipInstructionType type;
+	//RelationshipInstructionType type;
 	PqlRelationshipType pqlRelationshipType;
 	std::string lhsRefString;
 	std::string rhsRefString;
 
+	void handleModifiesS(EvaluatedTable* evTable) {
+		EvaluatedTable newEvTable;
+		VarIndex varIndex = Entity::getVarIdx(rhsRefString);
+		std::unordered_set<StmtIndex, StmtIndex::HashFunction> allModifiesStmts = Modifies::getStatements(varIndex);	// (s,v) -> ({1 1 2}, {3, 4, 4}) 
+		for (auto& it : allModifiesStmts) {
+			StmtIndex stmtIndex = it.index;
+			std::unordered_set<VarIndex, VarIndex::HashFunction> allVariablesModifiedByAStmt = Modifies::getVariables(stmtIndex);		
+			for (auto& it2 : allVariablesModifiedByAStmt) {
+				evTable->getTableRef()[lhsRefString].push_back(stmtIndex.getIndex());	// push back all indexes of stmt for all variables
+				evTable->getTableRef()[rhsRefString].push_back(it2.index);	// push back all indexes of variables for all stmts;
+			}
+		}
+	}
+
 public:
+	//enum class PqlRelationshipType {
+	//	Follows, FollowsT, Parent, ParentT,
+	//	UsesS, UsesP, ModifiesS, ModifiesP,
+	//	Uses, Modifies
+	//};
+	//RelationshipInstruction::RelationshipInstruction(PqlRelationshipType pqlRelationshipType, std::string lhsString, std::string rhsRefString) : pqlRelationshipType(pqlRelationshipType), lhsRefString(lhsRefString), rhsRefString(rhsRefString) {}
+	RelationshipInstruction(PqlRelationshipType pqlRSType, std::string lhsString, std::string rhsString) {
+		pqlRelationshipType = pqlRSType;
+		lhsRefString = lhsString;
+		rhsRefString = rhsString;
+	}
 
-	RelationshipInstruction::RelationshipInstruction(PqlRelationshipType pqlRelationshipType, std::string lhsString, std::string rhsRefString) : pqlRelationshipType(pqlRelationshipType), lhsRefString(lhsRefString), rhsRefString(rhsRefString) {}
-
-	EvaluatedTable execute(Instruction* relationshipInstruction) {
+	EvaluatedTable execute() override {
 		EvaluatedTable evTable;
 		switch (pqlRelationshipType) {
 		case PqlRelationshipType::ModifiesS :
-			std::vector<StmtIndex> allStmts = Entity::getAllStmts();
+			//handleModifiesS(&evTable);
+			break;
+		case PqlRelationshipType::UsesS:
+
 			break;
 		}
+
 		
 		return evTable;
 	}
 
-	RelationshipInstructionType getType() {
-		return type;
-	};
+	//RelationshipInstructionType getType() {
+	//	return type;
+	//};
 
 	RelationshipInstruction* getClassType() {
 		return this;

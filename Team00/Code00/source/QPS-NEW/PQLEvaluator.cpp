@@ -28,7 +28,7 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
 
     // Assumption: Semantically corrct ParsedQuery
     // 1. Check if entitiy in Select clause is found in declarations
-    for (std::string entity : columns) {
+   /* for (std::string entity : columns) {
         PqlEntityType entityTypeRequired = declarations.at(entity);
         switch (entityTypeRequired) {
         case PqlEntityType::Stmt :
@@ -59,13 +59,13 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
             instructions.push_back(&GetAllInstruction(GetAllInstructionType::getAllProc));
             break;
         }
-    }
+    }*/
 
-    //std::vector<ParsedRelationship> relationships = pq.getRelationships();
     for (size_t i = 0; i < relationships.size(); i++) {
         ParsedRelationship parsedRelationship = relationships.at(i);
         PqlRelationshipType pqlRelationshipType =  parsedRelationship.getRelationshipType();
-        instructions.push_back(&RelationshipInstruction(pqlRelationshipType, parsedRelationship.getLhs().second, parsedRelationship.getRhs().second));
+        instructions.push_back(new RelationshipInstruction(pqlRelationshipType, parsedRelationship.getLhs().second, parsedRelationship.getRhs().second));
+        //RelationshipInstruction(pqlRelationshipType, parsedRelationship.getLhs().second, parsedRelationship.getRhs().second).execute();
     }
 
     // TODO:
@@ -82,20 +82,12 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
 
 EvaluatedTable PQLEvaluator::executeInstructions(std::vector<Instruction*> instructions) {
     EvaluatedTable resultEvTable = EvaluatedTable();
-
-    //// Assumption: Correct order of instructions
-    //// Call relevant API
-    //for (Instruction instruction : instructions) {
-    //    EvaluatedTable currEvTable = execute(instruction);
-    //    if (resultEvTable.getEntities().empty()) {
-    //        resultEvTable = currEvTable;
-    //    }
-    //    else {
-    //        // TODO: Merge Tables (for Select and Pattern clause in the future)
-    //        // resultEvTable = innerJoinMerge(resultEvTable, currEvTable);
-    //    }
-    //}
-
+    for (size_t i = 0; i < instructions.size(); i++) {
+        Instruction* instruction = instructions.at(i);
+        EvaluatedTable evTable;
+        evTable = instruction->execute();
+        resultEvTable = evTable;
+    }
     return resultEvTable;
 }
 
