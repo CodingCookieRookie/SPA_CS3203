@@ -19,13 +19,13 @@ private:
 	ProcIndex procIndex1 = { 5 };
 	ProcIndex procIndex2 = { 6 };
 
-	TEST_METHOD_CLEANUP(cleanUpEntities) {
+	TEST_METHOD_CLEANUP(cleanUpModifies) {
 		Modifies::performCleanUp();
 	}
 
 public:
 	TEST_METHOD(insert_getStatements_stmtIndex) {
-		unordered_set<StmtIndex, StmtIndex::HashFunction> expectedAns;
+		std::unordered_set<StmtIndex, StmtIndex::HashFunction> expectedAns;
 		expectedAns.insert(stmtIndex1);
 
 		Modifies::insert(stmtIndex1, varIndex1);
@@ -39,7 +39,7 @@ public:
 	};
 
 	TEST_METHOD(insert_getProcedures_procIndex) {
-		unordered_set<ProcIndex, ProcIndex::HashFunction> expectedAns;
+		std::unordered_set<ProcIndex, ProcIndex::HashFunction> expectedAns;
 		expectedAns.insert(procIndex1);
 
 		Modifies::insert(procIndex1, varIndex1);
@@ -69,7 +69,7 @@ public:
 	};
 
 	TEST_METHOD(insert_getVariables_procIndex) {
-		unordered_set<VarIndex, VarIndex::HashFunction> expectedAns;
+		std::unordered_set<VarIndex, VarIndex::HashFunction> expectedAns;
 		expectedAns.insert(varIndex1);
 		expectedAns.insert(varIndex2);
 
@@ -80,7 +80,7 @@ public:
 	};
 
 	TEST_METHOD(insert_getVariables_stmtIndex) {
-		unordered_set<VarIndex, VarIndex::HashFunction> expectedAns;
+		std::unordered_set<VarIndex, VarIndex::HashFunction> expectedAns;
 		expectedAns.insert(varIndex1);
 		expectedAns.insert(varIndex2);
 
@@ -91,11 +91,11 @@ public:
 	};
 
 	TEST_METHOD(getAllProcVarInfo) {
-		vector<tuple<ProcIndex, VarIndex>> expectedAns;
-		expectedAns.push_back(make_tuple(procIndex1, varIndex1));
-		expectedAns.push_back(make_tuple(procIndex1, varIndex2));
-		expectedAns.push_back(make_tuple(procIndex2, varIndex1));
-		expectedAns.push_back(make_tuple(procIndex2, varIndex2));
+		std::vector<std::tuple<ProcIndex, VarIndex>> expectedAns;
+		expectedAns.push_back(std::make_tuple(procIndex1, varIndex1));
+		expectedAns.push_back(std::make_tuple(procIndex1, varIndex2));
+		expectedAns.push_back(std::make_tuple(procIndex2, varIndex1));
+		expectedAns.push_back(std::make_tuple(procIndex2, varIndex2));
 
 		Modifies::insert(procIndex1, varIndex1);
 		Modifies::insert(procIndex1, varIndex2);
@@ -107,11 +107,11 @@ public:
 	};
 
 	TEST_METHOD(getAllStmtVarInfo) {
-		vector<tuple<StmtIndex, VarIndex>> expectedAns;
-		expectedAns.push_back(make_tuple(stmtIndex1, varIndex1));
-		expectedAns.push_back(make_tuple(stmtIndex1, varIndex2));
-		expectedAns.push_back(make_tuple(stmtIndex2, varIndex1));
-		expectedAns.push_back(make_tuple(stmtIndex2, varIndex2));
+		std::vector<std::tuple<StmtIndex, VarIndex>> expectedAns;
+		expectedAns.push_back(std::make_tuple(stmtIndex1, varIndex1));
+		expectedAns.push_back(std::make_tuple(stmtIndex1, varIndex2));
+		expectedAns.push_back(std::make_tuple(stmtIndex2, varIndex1));
+		expectedAns.push_back(std::make_tuple(stmtIndex2, varIndex2));
 
 		Modifies::insert(stmtIndex1, varIndex1);
 		Modifies::insert(stmtIndex1, varIndex2);

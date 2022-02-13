@@ -3,30 +3,27 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <unordered_set>
 
 #include "../common/Types.h"
+
+/* Forward definition of StmtLstNode for compatibility with StmtNode */
+class StmtLstNode;
 
 class SourceASTNode {
 public:
 	SourceASTNode();
-
-	// For debugging purpose.
-	void printDashes(int depth) {
-		for (int i = 0; i < depth; i++) {
-			std::cout << "-";
-		}
-	}
-	virtual void printNode(int depth) = 0;
 };
 
 class StmtNode : public SourceASTNode {
 public:
 	StmtNode();
 	virtual StatementType getStmtType() = 0;
-	virtual std::vector<std::string> getModifies() = 0;
-	virtual std::vector<std::string> getUses() = 0;
-
-	void printNode(int depth = 1);
+	virtual std::unordered_set<std::string> getModifiesVars();
+	virtual std::unordered_set<std::string> getUsesVars();
+	virtual std::unordered_set<std::string> getUsesConsts();
+	virtual std::string getPattern();
+	virtual std::vector<StmtLstNode*> getChildStmtLst();
 
 	friend class SourceAST;
 };
@@ -38,9 +35,7 @@ public:
 	ReadNode(std::string varName);
 	std::string getVarName();
 	StatementType getStmtType();
-	std::vector<std::string> getModifies();
-	std::vector<std::string> getUses();
-	void printNode(int depth);
+	std::unordered_set<std::string> getModifiesVars();
 
 	friend class SourceAST;
 };
@@ -52,9 +47,7 @@ public:
 	PrintNode(std::string varName);
 	std::string getVarName();
 	StatementType getStmtType();
-	std::vector<std::string> getModifies();
-	std::vector<std::string> getUses();
-	void printNode(int depth);
+	std::unordered_set<std::string> getUsesVars();
 
 	friend class SourceAST;
 };
@@ -66,8 +59,6 @@ public:
 	StmtLstNode();
 	void addStmtNode(StmtNode* stmtNode);
 	std::vector<StmtNode*> getStmtNodes();
-
-	void printNode(int depth = 1);
 
 	friend class SourceAST;
 };
@@ -82,8 +73,6 @@ public:
 	StmtLstNode* getStmtLstNode();
 	std::string getProcName();
 
-	void printNode(int depth);
-
 	friend class SourceAST;
 };
 
@@ -94,8 +83,6 @@ public:
 	ProgramNode();
 	void addProcedure(ProcedureNode* procedureNode);
 	std::vector<ProcedureNode*> getProcedureNodes();
-
-	void printNode(int depth = 1);
 
 	friend class SourceAST;
 };
