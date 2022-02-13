@@ -52,6 +52,32 @@ public:
 	friend class SourceAST;
 };
 
+class ExprNode : public SourceASTNode {
+private:
+	std::string value;
+	std::vector<ExprNode*> children;
+public:
+	ExprNode(std::string value);
+	void addChild(ExprNode* child);
+	std::vector<ExprNode*> getChildren();
+	std::string getValue();
+
+	friend class SourceAST;
+};
+
+class AssignNode : public StmtNode {
+private:
+	std::string varName;
+	ExprNode* expr;
+public:
+	AssignNode(std::string varName, ExprNode* expr);
+	std::string getVarName();
+	ExprNode* getExpr();
+	StatementType getStmtType();
+
+	friend class SourceAST;
+};
+
 class StmtLstNode : public SourceASTNode {
 private:
 	std::vector<StmtNode*> stmtNodes;

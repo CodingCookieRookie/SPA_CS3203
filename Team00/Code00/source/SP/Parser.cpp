@@ -4,6 +4,9 @@ Parser::Parser() {}
 
 Lexer Parser::lexer;
 
+std::vector<std::string> termOperands = { "*", "/", "%" };
+std::vector<std::string> exprOperands = { "+", "-" };
+
 SourceAST Parser::parse(const std::string& source) {
 	lexer = Lexer(source);
 	ProgramNode* root = matchProgram();
@@ -90,7 +93,12 @@ StmtNode* Parser::matchStmt() {
 	} else if (lexer.match("print")) {
 		stmtNode = matchPrint();
 	} else {
-		throw ParserException(ParserException::INVALID_STMT);
+		std::string varName = lexer.nextName();
+		if (!varName.empty() && lexer.match("=")) {
+			stmtNode = matchAssign(varName);
+		} else {
+			throw ParserException(ParserException::INVALID_STMT);
+		}
 	}
 
 	return stmtNode;
@@ -132,4 +140,90 @@ PrintNode* Parser::matchPrint() {
 	}
 
 	return new PrintNode(varName);
+}
+
+ExprNode* matchExpr();
+
+/* assign: var_name '=' expr ';' */
+AssignNode* Parser::matchAssign(std::string varName) {
+	ExprNode* expr = matchExpr();
+
+	if (!lexer.match(";")) {
+		throw ParserException(ParserException::MISSING_SEMICOLON);
+	}
+	return new AssignNode(varName, expr);
+}
+
+/* <factor> ::= var_name | const_value | '(' expr ')' */
+ExprNode* Parser::matchFactor() {
+	std::string varName = lexer.nextName();
+	if (!varName.empty()) {
+		return new ExprNode(varName);
+	}
+
+	std::string constVal = lexer.nextInteger();
+	if (!constVal.empty()) {
+		return new ExprNode(constVal);
+	}
+
+	if (lexer.match("(")) {
+		ExprNode* expr = matchExpr();
+		if (!lexer.match(")")) {
+			throw ParserException(ParserException::INVALID_EXPR);
+		}
+		return expr;
+	}
+
+	throw ParserException(ParserException::INVALID_EXPR);
+}
+
+/* <term_tail> ::= * <factor> <term_tail>
+			  | / <factor> <term_tail>
+			  | % <factor> <term_tail>
+			  | <empty>
+*/
+ExprNode* Parser::matchTermTail(ExprNode* lvalue) {
+	for (const std::string op : termOperands) {
+		if (lexer.match(op)) {
+			ExprNode* factor = matchFactor();
+			ExprNode* operand = new ExprNode(op);
+			operand->addChild(lvalue);
+			operand->addChild(factor);
+			return matchTermTail(operand);
+		}
+	}
+
+	return lvalue;
+}
+
+/* <term> ::= <factor> <term_tail> */
+ExprNode* Parser::matchTerm() {
+	ExprNode* lvalue = matchFactor();
+	return matchTermTail(lvalue);
+}
+
+/*
+<expr_tail> ::= + <term> <expr_tail>
+			  | - <term> <expr_tail>
+			  | <empty>
+
+ */
+ExprNode* Parser::matchExprTail(ExprNode* lvalue) {
+	for (const std::string op : exprOperands) {
+		if (lexer.match(op)) {
+			ExprNode* term = matchTerm();
+			ExprNode* operand = new ExprNode(op);
+			operand->addChild(lvalue);
+			operand->addChild(term);
+			return matchExprTail(operand);
+		}
+	}
+
+	return lvalue;
+}
+
+/* <expr> ::= <term> <expr_tail> */
+ExprNode* Parser::matchExpr() {
+	ExprNode* lvalue = matchTerm();
+	return matchExprTail(lvalue);
 }

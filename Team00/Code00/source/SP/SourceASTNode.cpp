@@ -55,6 +55,36 @@ std::unordered_set<std::string> PrintNode::getUsesVars() {
 	return { varName };
 }
 
+/* AssignNode */
+AssignNode::AssignNode(std::string varName, ExprNode* expr) : StmtNode(), varName(varName), expr(expr) {}
+
+std::string AssignNode::getVarName() {
+	return varName;
+}
+
+StatementType AssignNode::getStmtType() {
+	return StatementType::assignType;
+}
+
+ExprNode* AssignNode::getExpr() {
+	return expr;
+}
+
+/* ExprNode */
+ExprNode::ExprNode(std::string value) : SourceASTNode(), value(value) {}
+
+void ExprNode::addChild(ExprNode* child) {
+	children.push_back(child);
+}
+
+std::vector<ExprNode*> ExprNode::getChildren() {
+	return children;
+}
+
+std::string ExprNode::getValue() {
+	return value;
+}
+
 /* StmtLstNode */
 StmtLstNode::StmtLstNode() : SourceASTNode() {}
 

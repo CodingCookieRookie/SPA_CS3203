@@ -337,7 +337,7 @@ public:
 		}
 	}
 
-	TEST_METHOD(parse_multipleProcsHasMissingLeftCurly_parseExceptionThrown) {
+	TEST_METHOD(parse_matchProgram_multipleProcsHasMissingLeftCurly_parseExceptionThrown) {
 		const char* source = "   procedure proc1  "
 			"{ read x1; } "
 			" \n procedure proc2  \n"
@@ -350,6 +350,229 @@ public:
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_CURLY.c_str(), ex.what());
 		}
+	}
+
+	TEST_METHOD(parse_matchAssign_noMathOp_success) {
+		const char* source = "   procedure procedure123name \n "
+			"{ flag    = 123;   count =    someVar123	; }  \n ";
+		SourceAST ast = Parser::parse(source);
+		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
+
+		/* Test procedureNodes */
+		Assert::AreEqual(size_t(1), procNodes.size());
+		Assert::AreEqual(std::string("procedure123name"), procNodes[0]->getProcName());
+
+		/* Test statements */
+		StmtLstNode* stmtLstNode = procNodes[0]->getStmtLstNode();
+		std::vector<StmtNode*> statements = stmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(2), statements.size());
+
+		/* Test assign nodes*/
+		// flag    = 123;
+		AssignNode* assignNode1 = (AssignNode*)statements[0];
+		Assert::AreEqual(std::string("flag"), assignNode1->getVarName());
+
+		ExprNode* expr1 = assignNode1->getExpr();
+		Assert::AreEqual(std::string("123"), expr1->getValue());
+		Assert::IsTrue(expr1->getChildren().empty());
+
+		// count =    someVar123	;
+		AssignNode* assignNode2 = (AssignNode*)statements[1];
+		Assert::AreEqual(std::string("count"), assignNode2->getVarName());
+
+		ExprNode* expr2 = assignNode2->getExpr();
+		Assert::AreEqual(std::string("someVar123"), expr2->getValue());
+		Assert::IsTrue(expr2->getChildren().empty());
+	}
+
+	TEST_METHOD(parse_matchAssign_withMathOp_success) {
+		const char* source = "   procedure procedure123name \n "
+			"{ CenX = 9 + CenX; count = COUNT % 2   ;"
+			" x = x + z * 5 ; "
+			" y = y / w - 1; "
+			" z = z + a123 / b0b - c  ;}";
+		SourceAST ast = Parser::parse(source);
+		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
+
+		/* Test procedureNodes */
+		Assert::AreEqual(size_t(1), procNodes.size());
+		Assert::AreEqual(std::string("procedure123name"), procNodes[0]->getProcName());
+
+		/* Test statements */
+		StmtLstNode* stmtLstNode = procNodes[0]->getStmtLstNode();
+		std::vector<StmtNode*> statements = stmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(5), statements.size());
+
+		/* Test assign nodes*/
+		// CenX = 9 + CenX;
+		AssignNode* assignNode1 = (AssignNode*)statements[0];
+		Assert::AreEqual(std::string("CenX"), assignNode1->getVarName());
+
+		ExprNode* expr1 = assignNode1->getExpr();
+		Assert::AreEqual(std::string("+"), expr1->getValue());
+		std::vector<ExprNode*> children1 = expr1->getChildren();
+		Assert::AreEqual(size_t(2), children1.size());
+		Assert::AreEqual(std::string("9"), children1[0]->getValue());
+		Assert::AreEqual(std::string("CenX"), children1[1]->getValue());
+
+		// count = COUNT % 2   ;
+		AssignNode* assignNode2 = (AssignNode*)statements[1];
+		Assert::AreEqual(std::string("count"), assignNode2->getVarName());
+
+		ExprNode* expr2 = assignNode2->getExpr();
+		Assert::AreEqual(std::string("%"), expr2->getValue());
+		std::vector<ExprNode*> children2 = expr2->getChildren();
+		Assert::AreEqual(size_t(2), children2.size());
+		Assert::AreEqual(std::string("COUNT"), children2[0]->getValue());
+		Assert::AreEqual(std::string("2"), children2[1]->getValue());
+
+		// x = x + z * 5 ;
+		AssignNode* assignNode3 = (AssignNode*)statements[2];
+		Assert::AreEqual(std::string("x"), assignNode3->getVarName());
+
+		ExprNode* expr3 = assignNode3->getExpr();
+		Assert::AreEqual(std::string("+"), expr3->getValue());
+		std::vector<ExprNode*> children3 = expr3->getChildren();
+		Assert::AreEqual(size_t(2), children3.size());
+		Assert::AreEqual(std::string("x"), children3[0]->getValue());
+		Assert::AreEqual(std::string("*"), children3[1]->getValue());
+
+		std::vector<ExprNode*> zTimesFive = children3[1]->getChildren();
+		Assert::AreEqual(size_t(2), zTimesFive.size());
+		Assert::AreEqual(std::string("z"), zTimesFive[0]->getValue());
+		Assert::AreEqual(std::string("5"), zTimesFive[1]->getValue());
+
+		// y = y / w - 1;
+		AssignNode* assignNode4 = (AssignNode*)statements[3];
+		Assert::AreEqual(std::string("y"), assignNode4->getVarName());
+
+		ExprNode* expr4 = assignNode4->getExpr();
+		Assert::AreEqual(std::string("-"), expr4->getValue());
+		std::vector<ExprNode*> children4 = expr4->getChildren();
+		Assert::AreEqual(size_t(2), children4.size());
+		Assert::AreEqual(std::string("/"), children4[0]->getValue());
+		Assert::AreEqual(std::string("1"), children4[1]->getValue());
+
+		std::vector<ExprNode*> yDividedByW = children4[0]->getChildren();
+		Assert::AreEqual(size_t(2), yDividedByW.size());
+		Assert::AreEqual(std::string("y"), yDividedByW[0]->getValue());
+		Assert::AreEqual(std::string("w"), yDividedByW[1]->getValue());
+
+		// z = z + a123 / b0b - c  ;
+		AssignNode* assignNode5 = (AssignNode*)statements[4];
+		Assert::AreEqual(std::string("z"), assignNode5->getVarName());
+
+		ExprNode* expr5 = assignNode5->getExpr();
+		Assert::AreEqual(std::string("-"), expr5->getValue());
+		std::vector<ExprNode*> children5 = expr5->getChildren();
+		Assert::AreEqual(size_t(2), children5.size());
+		Assert::AreEqual(std::string("+"), children5[0]->getValue());
+		Assert::AreEqual(std::string("c"), children5[1]->getValue());
+
+		std::vector<ExprNode*> zPlusA123DividedByB0b = children5[0]->getChildren();
+		Assert::AreEqual(size_t(2), zPlusA123DividedByB0b.size());
+		Assert::AreEqual(std::string("z"), zPlusA123DividedByB0b[0]->getValue());
+		Assert::AreEqual(std::string("/"), zPlusA123DividedByB0b[1]->getValue());
+
+		std::vector<ExprNode*> a123DividedByB0b = zPlusA123DividedByB0b[1]->getChildren();
+		Assert::AreEqual(size_t(2), a123DividedByB0b.size());
+		Assert::AreEqual(std::string("a123"), a123DividedByB0b[0]->getValue());
+		Assert::AreEqual(std::string("b0b"), a123DividedByB0b[1]->getValue());
+	}
+
+	TEST_METHOD(parse_matchAssign_withBracketedExpr_success) {
+		const char* source = "   procedure procedure123name \n "
+			"{ CenX = (9 + CenX); count = (COUNT % 2)   ;"
+			"   x = (x + z) * 5 ; "
+			" y = y / (w - 1); "
+			" z = (z + a123) / (b0b - c)  ;}";
+		SourceAST ast = Parser::parse(source);
+		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
+
+		/* Test procedureNodes */
+		Assert::AreEqual(size_t(1), procNodes.size());
+		Assert::AreEqual(std::string("procedure123name"), procNodes[0]->getProcName());
+
+		/* Test statements */
+		StmtLstNode* stmtLstNode = procNodes[0]->getStmtLstNode();
+		std::vector<StmtNode*> statements = stmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(5), statements.size());
+
+		/* Test assign nodes*/
+		// CenX = (9 + CenX);
+		AssignNode* assignNode1 = (AssignNode*)statements[0];
+		Assert::AreEqual(std::string("CenX"), assignNode1->getVarName());
+
+		ExprNode* expr1 = assignNode1->getExpr();
+		Assert::AreEqual(std::string("+"), expr1->getValue());
+		std::vector<ExprNode*> children1 = expr1->getChildren();
+		Assert::AreEqual(size_t(2), children1.size());
+		Assert::AreEqual(std::string("9"), children1[0]->getValue());
+		Assert::AreEqual(std::string("CenX"), children1[1]->getValue());
+
+		// count = (COUNT % 2)   ;
+		AssignNode* assignNode2 = (AssignNode*)statements[1];
+		Assert::AreEqual(std::string("count"), assignNode2->getVarName());
+
+		ExprNode* expr2 = assignNode2->getExpr();
+		Assert::AreEqual(std::string("%"), expr2->getValue());
+		std::vector<ExprNode*> children2 = expr2->getChildren();
+		Assert::AreEqual(size_t(2), children2.size());
+		Assert::AreEqual(std::string("COUNT"), children2[0]->getValue());
+		Assert::AreEqual(std::string("2"), children2[1]->getValue());
+
+		// x = (x + z) * 5 ;
+		AssignNode* assignNode3 = (AssignNode*)statements[2];
+		Assert::AreEqual(std::string("x"), assignNode3->getVarName());
+
+		ExprNode* expr3 = assignNode3->getExpr();
+		Assert::AreEqual(std::string("*"), expr3->getValue());
+		std::vector<ExprNode*> children3 = expr3->getChildren();
+		Assert::AreEqual(size_t(2), children3.size());
+		Assert::AreEqual(std::string("+"), children3[0]->getValue());
+		Assert::AreEqual(std::string("5"), children3[1]->getValue());
+
+		std::vector<ExprNode*> xPlusZ = children3[0]->getChildren();
+		Assert::AreEqual(size_t(2), xPlusZ.size());
+		Assert::AreEqual(std::string("x"), xPlusZ[0]->getValue());
+		Assert::AreEqual(std::string("z"), xPlusZ[1]->getValue());
+
+		// y = y / (w - 1);
+		AssignNode* assignNode4 = (AssignNode*)statements[3];
+		Assert::AreEqual(std::string("y"), assignNode4->getVarName());
+
+		ExprNode* expr4 = assignNode4->getExpr();
+		Assert::AreEqual(std::string("/"), expr4->getValue());
+		std::vector<ExprNode*> children4 = expr4->getChildren();
+		Assert::AreEqual(size_t(2), children4.size());
+		Assert::AreEqual(std::string("y"), children4[0]->getValue());
+		Assert::AreEqual(std::string("-"), children4[1]->getValue());
+
+		std::vector<ExprNode*> wMinusOne = children4[1]->getChildren();
+		Assert::AreEqual(size_t(2), wMinusOne.size());
+		Assert::AreEqual(std::string("w"), wMinusOne[0]->getValue());
+		Assert::AreEqual(std::string("1"), wMinusOne[1]->getValue());
+
+		// z = (z + a123) / (b0b - c)  ;
+		AssignNode* assignNode5 = (AssignNode*)statements[4];
+		Assert::AreEqual(std::string("z"), assignNode5->getVarName());
+
+		ExprNode* expr5 = assignNode5->getExpr();
+		Assert::AreEqual(std::string("/"), expr5->getValue());
+		std::vector<ExprNode*> children5 = expr5->getChildren();
+		Assert::AreEqual(size_t(2), children5.size());
+		Assert::AreEqual(std::string("+"), children5[0]->getValue());
+		Assert::AreEqual(std::string("-"), children5[1]->getValue());
+
+		std::vector<ExprNode*> zPlusA123 = children5[0]->getChildren();
+		Assert::AreEqual(size_t(2), zPlusA123.size());
+		Assert::AreEqual(std::string("z"), zPlusA123[0]->getValue());
+		Assert::AreEqual(std::string("a123"), zPlusA123[1]->getValue());
+
+		std::vector<ExprNode*> b0bMinusC = children5[1]->getChildren();
+		Assert::AreEqual(size_t(2), b0bMinusC.size());
+		Assert::AreEqual(std::string("b0b"), b0bMinusC[0]->getValue());
+		Assert::AreEqual(std::string("c"), b0bMinusC[1]->getValue());
 	}
 	};
 }
