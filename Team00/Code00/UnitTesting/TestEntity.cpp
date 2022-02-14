@@ -34,6 +34,20 @@ private:
 	}
 
 public:
+
+	TEST_METHOD(insertVar_containsVar_variableExists) {
+		VarIndex idx = Entity::insertVar(varName1);
+
+		bool res = Entity::containsVar(varName1);
+		Assert::IsTrue(res);
+	}
+
+	TEST_METHOD(insertVar_containsVar_variableDoesNotExist) {
+		VarIndex idx = Entity::insertVar(varName1);
+
+		bool res = Entity::containsVar(varName2);
+		Assert::IsFalse(res);
+	}
 	TEST_METHOD(insertVar_getVarName_differentVariables) {
 		VarIndex idx1 = Entity::insertVar(varName1);
 		VarIndex idx2 = Entity::insertVar(varName2);
@@ -88,6 +102,20 @@ public:
 
 		std::vector<std::string> res = Entity::getAllVars();
 		Assert::IsTrue(expectedRes == res);
+	}
+
+	TEST_METHOD(insertProc_containsProc_procExists) {
+		ProcIndex idx = Entity::insertProc(procName1);
+
+		bool res = Entity::containsProc(procName1);
+		Assert::IsTrue(res);
+	}
+
+	TEST_METHOD(insertProc_containsProc_procDoesNotExist) {
+		ProcIndex idx = Entity::insertProc(procName1);
+
+		bool res = Entity::containsProc(procName2);
+		Assert::IsFalse(res);
 	}
 
 	TEST_METHOD(insertProc_getProcName_differentProcs) {
@@ -167,6 +195,20 @@ public:
 
 		std::vector<int> res = Entity::getAllConsts();
 		Assert::IsTrue(expectedRes == res);
+	}
+
+	TEST_METHOD(insertStmt_containsStmt_stmtExists) {
+		StmtIndex idx = Entity::insertStmt(stmtType1);
+
+		bool res = Entity::containsStmt(1);
+		Assert::IsTrue(res);
+	}
+
+	TEST_METHOD(insertStmt_containsStmt_stmtDoesNotExist) {
+		StmtIndex idx = Entity::insertStmt(stmtType1);
+
+		bool res = Entity::containsStmt(2);
+		Assert::IsFalse(res);
 	}
 
 	TEST_METHOD(insertStmt_differentStmts) {

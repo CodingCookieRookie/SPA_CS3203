@@ -36,6 +36,10 @@ VarIndex Entity::insertVar(std::string varName) {
 	return varIdxTable[varName];
 }
 
+bool Entity::containsVar(std::string varName) {
+	return varIdxTable.find(varName) != varIdxTable.end();
+}
+
 std::string Entity::getVarName(VarIndex varIdx) {
 	return varNameTable[varIdx];
 }
@@ -60,6 +64,10 @@ ProcIndex Entity::insertProc(std::string procName) {
 		procIdxTable[procName] = procIdx;
 	}
 	return procIdxTable[procName];
+}
+
+bool Entity::containsProc(std::string procName) {
+	return procIdxTable.find(procName) != procIdxTable.end();
 }
 
 std::string Entity::getProcName(ProcIndex procIdx) {
@@ -103,6 +111,10 @@ StmtIndex Entity::insertStmt(StatementType stmtType) {
 bool Entity::isContainerStmt(StmtIndex stmtIdx) {
 	StatementType stmtType = stmtTypeTable[stmtIdx];
 	return stmtType == StatementType::whileType || stmtType == StatementType::ifType;
+}
+
+bool Entity::containsStmt(int stmtNo) {
+	return stmtTypeTable.find(StmtIndex(stmtNo)) != stmtTypeTable.end();
 }
 
 std::unordered_set<StmtIndex, StmtIndex::HashFunction> Entity::getStmtIdxFromType(StatementType stmtType) {

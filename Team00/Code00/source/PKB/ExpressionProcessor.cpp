@@ -32,8 +32,12 @@ std::string ExpressionProcessor::convertInfixToPostFix(std::string s) {
 
 		// Operand: Add to res
 		if (isOperand(currentChar)) {
+			// All variable names and constants are prepended by a space
+			if ((i > 0 && !isOperand(s[i - 1])) || i == 0) {
+				res += ' ';
+			}
 			res += currentChar;
-			// All operands are appended by a space
+			// All variable names and constants are appended by a space
 			if ((i < s.length() - 1 && !isOperand(s[i + 1])) || i == s.length() - 1) {
 				res += ' ';
 			}
