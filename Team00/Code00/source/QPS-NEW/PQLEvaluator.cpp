@@ -149,6 +149,7 @@ EvaluatedTable PQLEvaluator::executeInstructions(std::vector<Instruction*> instr
 //   // }
 //    return currTable;
 //}
+
 // Select x such that pattern a1("x", _ ) => key = a1, entRef = ? or no entRef
 // new Table has at most two columns => Modifies(s, v1) / Uses(a, v2) / pattern a("x", _ ) / Modifies(s1, "x") => In all of this we know that there is definitely a stmt index (key/col)
 EvaluatedTable PQLEvaluator::innerJoinMerge(EvaluatedTable currentTable, EvaluatedTable newTable, std::string stmtRef, std::string entRef, std::unordered_set<std::string> currentTableColumns) {  // We assume the number of cols for currentTable is non-decreasing
@@ -163,12 +164,9 @@ EvaluatedTable PQLEvaluator::innerJoinMerge(EvaluatedTable currentTable, Evaluat
         for (int i = 0; i < currentTable.getNumRow(); i++) {    //--!-- getNumRow() should keep updating num of rows (num of values in each vector<VALUE>)
             for (auto& it : currentTableHm) { // for each col in original
                 std::string col = it.first; 
-                //int newTableHmEntryIndex = 0;
                 for (auto& it : newTableHm) { // for each col in new
                     mergedTableHm[col].push_back(currentTableHm[col].at(i));
-                    //mergedTableHm[it.first].push_back(newTableHm[it.first].at(newTableHmEntryIndex));
                 }
-                //newTableHmEntryIndex++;
             }
             for (auto& it : newTableHm) {   // For each row in original, and for each new_col in newTableHm, just add the entire vector under each col in newTableHm to mergedTable[new_col]
                 mergedTableHm[it.first].insert(mergedTableHm[it.first].end(), newTableHm[it.first].begin(), newTableHm[it.first].end());

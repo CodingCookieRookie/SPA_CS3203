@@ -8,6 +8,7 @@
 #include "EvaluatedTable.h"
 #include "../PKB/Entity.h"
 #include "../PKB/Modifies.h"
+#include "../PKB/Uses.h"
 
 class Instruction {
 //protected:	//-> Use protected if need any shared fields
@@ -41,10 +42,6 @@ public:
 		return type;
 	};
 
-	GetAllInstruction* getClassType() {
-		return this;
-	}
-
 	/* Getter for arguments */
 	std::vector<std::string> getArgs() {
 		return arguments;
@@ -61,18 +58,24 @@ private:
 
 	EvaluatedTable handleModifiesS() {
 		EvaluatedTable newEvTable;
-		VarIndex varIndex = Entity::getVarIdx(rhsRefString);
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> allModifiesStmts = Modifies::getStatements(varIndex);	// (s,v) -> ({1 1 2}, {3, 4, 4}) 
 		std::vector<std::tuple<StmtIndex, VarIndex>> allStmtVarInfos = Modifies::getAllStmtVarInfo();
-		std::cout << "handled ModifiesS\n";
 		std::unordered_map<std::string, std::vector<int>> table;
 		for (int i = 0; i < allStmtVarInfos.size(); i++) {
 			std::tuple<StmtIndex, VarIndex> pair = allStmtVarInfos.at(i);
 			table[lhsRefString].push_back(std::get<0>(pair).getIndex());
 			table[rhsRefString].push_back(std::get<1>(pair).index);
-			std::cout << "test\n";
-			std::cout << std::get<0>(pair).getIndex() << "\n";
-			std::cout << std::get<1>(pair).index << "\n";
+		}
+		return EvaluatedTable(table);
+	}
+
+	EvaluatedTable handleUsesS() {
+		EvaluatedTable newEvTable;
+		std::vector<std::tuple<StmtIndex, VarIndex>> allStmtVarInfos = Uses::getAllStmtVarInfo();
+		std::unordered_map<std::string, std::vector<int>> table;
+		for (int i = 0; i < allStmtVarInfos.size(); i++) {
+			std::tuple<StmtIndex, VarIndex> pair = allStmtVarInfos.at(i);
+			table[lhsRefString].push_back(std::get<0>(pair).getIndex());
+			table[rhsRefString].push_back(std::get<1>(pair).index);
 		}
 		return EvaluatedTable(table);
 	}
@@ -83,7 +86,6 @@ public:
 	//	UsesS, UsesP, ModifiesS, ModifiesP,
 	//	Uses, Modifies
 	//};
-	//RelationshipInstruction::RelationshipInstruction(PqlRelationshipType pqlRelationshipType, std::string lhsString, std::string rhsRefString) : pqlRelationshipType(pqlRelationshipType), lhsRefString(lhsRefString), rhsRefString(rhsRefString) {}
 	RelationshipInstruction(PqlRelationshipType pqlRSType, std::string lhsString, std::string rhsString) {
 		pqlRelationshipType = pqlRSType;
 		lhsRefString = lhsString;
@@ -97,7 +99,7 @@ public:
 			evTable = handleModifiesS();
 			break;
 		case PqlRelationshipType::UsesS:
-
+			evTable = handleUsesS();
 			break;
 		}
 		return evTable;
@@ -107,9 +109,6 @@ public:
 	//	return type;
 	//};
 
-	RelationshipInstruction* getClassType() {
-		return this;
-	};
 };
 
 class PatternInstruction : public Instruction {
@@ -127,6 +126,7 @@ public:
 		return evTable;
 	}
 };
+// For reference <To be removed after PatternInstruction done>
 //class ParsedRelationship {
 //private:
 //    PqlRelationshipType relationshipType;
