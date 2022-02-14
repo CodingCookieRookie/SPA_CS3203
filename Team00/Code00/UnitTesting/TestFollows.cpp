@@ -36,6 +36,7 @@ public:
 		/*Check Parents data does not get affected*/
 		auto parentStmts = Parent::getSuccessorStmts(predecessor1);
 		Assert::IsTrue(0 == parentStmts.size());
+		Parent::performCleanUp();
 	};
 
 	TEST_METHOD(insert_getPredecessorStmts) {
@@ -56,6 +57,7 @@ public:
 		/*Check Parents data does not get affected*/
 		auto parentStmts = Parent::getPredecessorStmts(predecessor1);
 		Assert::IsTrue(0 == parentStmts.size());
+		Parent::performCleanUp();
 	};
 
 	TEST_METHOD(containsPredecessor) {

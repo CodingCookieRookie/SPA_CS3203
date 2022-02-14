@@ -52,6 +52,7 @@ public:
 		/*Check FollowsT data does not get affected*/
 		auto followsTStmts = FollowsT::getSuccessorStmts(stmt1);
 		Assert::IsTrue(0 == followsTStmts.size());
+		FollowsT::performCleanUp();
 	};
 
 	TEST_METHOD(populate_getSuccessorStmts_linear) {
@@ -82,6 +83,7 @@ public:
 		/*Check FollowsT data does not get affected*/
 		auto followsTStmts = FollowsT::getSuccessorStmts(stmt5);
 		Assert::IsTrue(0 == followsTStmts.size());
+		FollowsT::performCleanUp();
 	};
 
 	TEST_METHOD(populate_getPredecessorStmts_branched) {
@@ -111,6 +113,7 @@ public:
 		/*Check FollowsT data does not get affected*/
 		auto followsTStmts = FollowsT::getPredecessorStmts(stmt5);
 		Assert::IsTrue(0 == followsTStmts.size());
+		FollowsT::performCleanUp();
 	};
 
 	TEST_METHOD(populate_getPredecessorStmts_linear) {
@@ -141,6 +144,7 @@ public:
 		/*Check FollowsT data does not get affected*/
 		auto followsTStmts = FollowsT::getPredecessorStmts(stmt4);
 		Assert::IsTrue(0 == followsTStmts.size());
+		FollowsT::performCleanUp();
 	};
 
 	TEST_METHOD(containsSuccessor) {
