@@ -3,6 +3,7 @@
 
 #include "../source/common/Types.h"
 #include "../source/PKB/Follows.h"
+#include "../source/PKB/Parent.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -32,7 +33,9 @@ public:
 		statements = Follows::getSuccessorStmts(successor1);
 		Assert::IsTrue(0 == statements.size());
 
-		/*TODO: When parent code is added, check it does not get affected*/
+		/*Check Parents data does not get affected*/
+		auto parentStmts = Parent::getSuccessorStmts(predecessor1);
+		Assert::IsTrue(0 == parentStmts.size());
 	};
 
 	TEST_METHOD(insert_getPredecessorStmts) {
@@ -50,7 +53,9 @@ public:
 		statements = Follows::getPredecessorStmts(predecessor1);
 		Assert::IsTrue(0 == statements.size());
 
-		/*TODO: When parent code is added, check it does not get affected*/
+		/*Check Parents data does not get affected*/
+		auto parentStmts = Parent::getPredecessorStmts(predecessor1);
+		Assert::IsTrue(0 == parentStmts.size());
 	};
 
 	TEST_METHOD(containsPredecessor) {

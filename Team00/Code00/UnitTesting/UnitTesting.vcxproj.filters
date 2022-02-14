@@ -4,6 +4,7 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TestAST.cpp">
     <ClCompile Include="TestSourceASTNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -53,6 +54,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestLexer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestParent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestParentT.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
