@@ -35,41 +35,42 @@ public:
 		return synonym;
 	};
 
+	/* Main entry method for executing instruction based on PqlEntityType in Select-cl */
 	EvaluatedTable execute() override {
 		EvaluatedTable evTable;
 		switch (pqlEntityType) {
 		case PqlEntityType::Stmt:
-
 			handleGetAllStmt(evTable, synonym);
 			break;
 		case PqlEntityType::Print:
-
+			handleGetAllPrint(evTable, synonym);
 			break;
 		case PqlEntityType::Call:
-
+			// TODO: PKB to add getAllCalls().
 			break;
 		case PqlEntityType::While:
-
+			// TODO: PKB to add.
 			break;
 		case PqlEntityType::If:
-
+			// TODO: PKB to add.
 			break;
 		case PqlEntityType::Assign:
-
+			// TODO: PKB to add.
 			break;
 		case PqlEntityType::Variable:
-
+			handleGetAllVar(evTable, synonym);
 			break;
 		case PqlEntityType::Constant:
-
+			handleGetAllProc(evTable, synonym);
 			break;
 		case PqlEntityType::Procedure:
-
+			handleGetAllProc(evTable, synonym);
 			break;
 		}
 		return evTable;
 	}
 
+	/* All handlers to set EvaluatedTable to results from PKB. Uses Pass by Reference on EvTable. */
 	void handleGetAllStmt(EvaluatedTable& evTable, std::string synonym) {
 		std::vector<StmtIndex> results = Entity::getAllStmts();
 		std::vector<int> resultsToInt;
@@ -82,6 +83,70 @@ public:
 
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLmap[synonym] = resultsToInt;
+
+		evTable.setEntities(PQLentities);
+		evTable.setTable(PQLmap);
+		evTable.setNumRow(results.size());
+	}
+
+	void handleGetAllPrint(EvaluatedTable& evTable, std::string synonym) {
+		// TODO: PKB to add getAllPrints().
+		/*std::vector<int> results = Entity::getAllPrints();
+
+		std::unordered_map<std::string, PqlEntityType> PQLentities;
+		PQLentities.insert(std::pair(synonym, PqlEntityType::Print));
+
+		std::unordered_map<std::string, std::vector<int>> PQLmap;
+		PQLmap[synonym] = resultsToInt;
+
+		evTable.setEntities(PQLentities);
+		evTable.setTable(PQLmap);
+		evTable.setNumRow(results.size());*/
+	}
+	void handleGetAllVar(EvaluatedTable& evTable, std::string synonym) {
+		// TODO: PKB to change getAllVars() to return VarIndex.
+		/*std::vector<VarIndex> results = Entity::getAllVars();
+		std::vector<int> resultsToInt;
+		for (VarIndex result : results) {
+			resultsToInt.emplace_back(result.getIndex());
+		}
+
+		std::unordered_map<std::string, PqlEntityType> PQLentities;
+		PQLentities.insert(std::pair(synonym, PqlEntityType::Variable));
+
+		std::unordered_map<std::string, std::vector<int>> PQLmap;
+		PQLmap[synonym] = resultsToInt;
+
+		evTable.setEntities(PQLentities);
+		evTable.setTable(PQLmap);
+		evTable.setNumRow(results.size());*/
+	}
+	void handleGetAllProc(EvaluatedTable& evTable, std::string synonym) {
+		// TODO: PKB to change getAllProcs() to return ProcIndex.
+		/*std::vector<VarIndex> results = Entity::getAllVars();
+		std::vector<int> resultsToInt;
+		for (VarIndex result : results) {
+			resultsToInt.emplace_back(result.getIndex());
+		}
+
+		std::unordered_map<std::string, PqlEntityType> PQLentities;
+		PQLentities.insert(std::pair(synonym, PqlEntityType::Procedure));
+
+		std::unordered_map<std::string, std::vector<int>> PQLmap;
+		PQLmap[synonym] = resultsToInt;
+
+		evTable.setEntities(PQLentities);
+		evTable.setTable(PQLmap);
+		evTable.setNumRow(results.size());*/
+	}
+	void handleGetAllConst(EvaluatedTable& evTable, std::string synonym) {
+		std::vector<int> results = Entity::getAllConsts();
+		
+		std::unordered_map<std::string, PqlEntityType> PQLentities;
+		PQLentities.insert(std::pair(synonym, PqlEntityType::Constant));
+
+		std::unordered_map<std::string, std::vector<int>> PQLmap;
+		PQLmap[synonym] = results;
 
 		evTable.setEntities(PQLentities);
 		evTable.setTable(PQLmap);

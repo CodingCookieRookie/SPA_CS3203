@@ -32,9 +32,7 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
         instructions.push_back(new GetAllInstruction(declarations.at(columns[i]), columns[i]));
     }
 
-    // 2. If there are relations
-    //		checks for what relations are included in the ParsedQuery
-    //		Add respective instructions
+    // 2. Get all relationship results from such-that-clause
     for (size_t i = 0; i < relationships.size(); i++) {
         ParsedRelationship parsedRelationship = relationships.at(i);
         PqlRelationshipType pqlRelationshipType =  parsedRelationship.getRelationshipType();
@@ -42,9 +40,7 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
     }
 
     // TODO:
-    // 3. If there are patterns
-    //		checks for what patterns are included in the ParsedQuery
-    //		Add respective instructions
+    // 3. Get all pattern results from pattern-clause
 
     // TODO: Optimisation: Sort instructions.
     return instructions;
