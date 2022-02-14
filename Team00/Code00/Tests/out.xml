@@ -5,10 +5,17 @@
 </info>
 <queries>
 <query>
+<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 7">7</id><querystr><![CDATA[stmt stmt; variable v; Select stmt]]></querystr>
+<stuans>1,2,3,4,5</stuans>
+<correct>1,2,3,4,5</correct>
+<time_taken>22.000000</time_taken>
+<passed/>
+</query>
+<query>
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 8">8</id><querystr><![CDATA[stmt stmt; variable v; procedure p; Select p]]></querystr>
 <stuans></stuans>
 <correct>Example</correct>
-<time_taken>11.000000</time_taken>
+<time_taken>15.000000</time_taken>
 <failed>
 <missing>Example</missing>
 <additional></additional>
@@ -24,7 +31,7 @@
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 9">9</id><querystr><![CDATA[stmt stmt; variable v; procedure p; constant c; Select c]]></querystr>
 <stuans></stuans>
 <correct>None</correct>
-<time_taken>10.000000</time_taken>
+<time_taken>32.000000</time_taken>
 <failed>
 <missing>None</missing>
 <additional></additional>
@@ -40,7 +47,7 @@
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 6">6</id><querystr><![CDATA[stmt stmt; variable v; Select v]]></querystr>
 <stuans></stuans>
 <correct>x1 yA123z AbC1 print read</correct>
-<time_taken>51.000000</time_taken>
+<time_taken>56.000000</time_taken>
 <failed>
 <missing>x1 yA123z AbC1 print read</missing>
 <additional></additional>
@@ -48,38 +55,6 @@
 <expected>1</expected>
 <matched>0</matched>
 <missing>1</missing>
-<additional>0</additional>
-</summary>
-</failed>
-</query>
-<query>
-<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 7">7</id><querystr><![CDATA[stmt stmt; variable v; Select stmt]]></querystr>
-<stuans></stuans>
-<correct>1,2,3,4,5</correct>
-<time_taken>22.000000</time_taken>
-<failed>
-<missing>1,2,3,4,5</missing>
-<additional></additional>
-<summary>
-<expected>5</expected>
-<matched>0</matched>
-<missing>5</missing>
-<additional>0</additional>
-</summary>
-</failed>
-</query>
-<query>
-<id ReturnTuple="1" Modifies="1" SuchThat="1" CondNum="3" RelNum="1" comment="Personal test">8</id><querystr><![CDATA[read r; variable v; Select r such that Modifies(r, v)]]></querystr>
-<stuans></stuans>
-<correct>2,3,5</correct>
-<time_taken>58.000000</time_taken>
-<failed>
-<missing>2,3,5</missing>
-<additional></additional>
-<summary>
-<expected>3</expected>
-<matched>0</matched>
-<missing>3</missing>
 <additional>0</additional>
 </summary>
 </failed>

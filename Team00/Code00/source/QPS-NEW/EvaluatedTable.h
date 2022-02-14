@@ -33,8 +33,10 @@ public:
     /* Default constructor */
     EvaluatedTable();
 
+    EvaluatedTable(std::unordered_map<std::string, std::vector<int>> table);
+
     /* Wrapper constructor for all 3 fields */
-    EvaluatedTable::EvaluatedTable(std::unordered_map<std::string, PqlEntityType> newEntities,
+    EvaluatedTable(std::unordered_map<std::string, PqlEntityType> newEntities,
         std::unordered_map<std::string, std::vector<int>> newTable, int newNumRow);
 
     /* Getter for entities */
