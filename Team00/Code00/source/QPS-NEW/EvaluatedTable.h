@@ -11,8 +11,8 @@ typedef std::string VALUE;
 
 class EvaluatedTable {
 private:
-    std::unordered_set<PqlEntityType> entities;
-    std::unordered_map<PqlEntityType, std::vector<VALUE>>* table;
+    std::unordered_map<std::string, PqlEntityType> entities;
+    std::unordered_map<std::string, std::vector<int>> table;
     int numRow;
 
 public:
@@ -31,7 +31,7 @@ public:
     EvaluatedTable();
 
     /* Wrapper constructor */
-    EvaluatedTable(const EvaluatedTable& anotherEvTable);
+    //EvaluatedTable(EvaluatedTable anotherEvTable);
 
     /** Wrapper constructor that constructs based on *table only 
     * 
@@ -45,14 +45,16 @@ public:
     *	{"v", {"a", "b"}}
     * }))
     */
-    EvaluatedTable(std::unordered_map<PqlEntityType, std::vector<VALUE>> *table);
+    EvaluatedTable(std::unordered_map<std::string, std::vector<int>> newTable) {
+        table = newTable;
+    }
 
     /* Wrapper constructor for all 3 fields */
-    EvaluatedTable::EvaluatedTable(std::unordered_set<PqlEntityType> newEntities,
-        std::unordered_map<PqlEntityType, std::vector<VALUE>>& newTable, int newNumRow);
+    EvaluatedTable::EvaluatedTable(std::unordered_map<std::string, PqlEntityType> newEntities,
+        std::unordered_map<std::string, std::vector<int>> newTable, int newNumRow);
 
     /* Getter for entities */
-    std::unordered_set<PqlEntityType> getEntities() {
+    std::unordered_map<std::string, PqlEntityType> getEntities() {
         return entities;
     }
 
@@ -62,7 +64,21 @@ public:
     }
 
     /* Getter for *table */
-    std::unordered_map<PqlEntityType, std::vector<VALUE>>* getTableRef() {
+    std::unordered_map<std::string, std::vector<int>> getTableRef() {
         return table;
+    }
+
+    std::string getTableString() {
+        std::string res = "Table String: size: " + std::to_string(table.size()) + "\n";
+        for (auto& it : table) {
+            res += "Synonym: " + it.first + " ";
+            res += "Values: ";
+            std::vector<int> values = it.second;
+            for (size_t i = 0; i < values.size(); i++) {
+                res = res + std::to_string(values.at(i)) + " ";
+            }
+            res += "\n";
+        }
+        return res;
     }
 };
