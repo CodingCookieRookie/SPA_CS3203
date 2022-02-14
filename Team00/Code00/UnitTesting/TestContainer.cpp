@@ -151,7 +151,7 @@ public:
 		Assert::IsTrue(expectedRes == res2);
 	};
 
-	TEST_METHOD(performCleanUp_VarMap) {
+	TEST_METHOD(performCleanUp) {
 		std::unordered_set<StmtIndex, StmtIndex::HashFunction> expectedRes;
 		expectedRes.insert(stmtIdx2);
 

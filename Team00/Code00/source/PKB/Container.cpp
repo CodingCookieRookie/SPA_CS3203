@@ -7,43 +7,16 @@ std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunct
 std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> Container::containedStmtTable;
 
 void Container::insertStmtInContainer(StmtIndex containerStmtIdx, StmtIndex containedStmtIdx) {
-	if (containerStmtTable.find(containerStmtIdx) == containerStmtTable.end()) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> containedStmtSet;
-		containedStmtSet.insert(containedStmtIdx);
-		containerStmtTable[containerStmtIdx] = containedStmtSet;
-	}
-	else {
-		containerStmtTable[containerStmtIdx].insert(containedStmtIdx);
-	}
-
-	if (containedStmtTable.find(containedStmtIdx) == containedStmtTable.end()) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> containerStmtSet;
-		containerStmtSet.insert(containerStmtIdx);
-		containedStmtTable[containedStmtIdx] = containerStmtSet;
-	}
-	else {
-		containedStmtTable[containedStmtIdx].insert(containerStmtIdx);
-	}
+	containerStmtTable[containerStmtIdx].insert(containedStmtIdx);
+	containedStmtTable[containedStmtIdx].insert(containerStmtIdx);
 }
 
 std::unordered_set<StmtIndex, StmtIndex::HashFunction> Container::getStmtsInContainer(StmtIndex containerStmtIdx) {
-	if (containerStmtTable.find(containerStmtIdx) == containerStmtTable.end()) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> stmtSet;
-		return stmtSet;
-	}
-	else {
-		return containerStmtTable[containerStmtIdx];
-	}
+	return containerStmtTable[containerStmtIdx];
 }
 
 std::unordered_set<StmtIndex, StmtIndex::HashFunction> Container::getContainersOfStmt(StmtIndex containedStmtIdx) {
-	if (containedStmtTable.find(containedStmtIdx) == containedStmtTable.end()) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> stmtSet;
-		return stmtSet;
-	}
-	else {
-		return containedStmtTable[containedStmtIdx];
-	}
+	return containedStmtTable[containedStmtIdx];
 }
 
 void Container::insert(StmtIndex containerStmtIdx, std::unordered_set<StmtIndex, StmtIndex::HashFunction> containedStmts) {
@@ -54,10 +27,6 @@ void Container::insert(StmtIndex containerStmtIdx, std::unordered_set<StmtIndex,
 };
 
 std::unordered_set<StmtIndex, StmtIndex::HashFunction> Container::getAllContainedStmts(StmtIndex containerStmtIdx) {
-	if (containerStmtTable.find(containerStmtIdx) == containerStmtTable.end()) {
-		return containerStmtTable[containerStmtIdx];
-	}
-
 	std::unordered_set<StmtIndex, StmtIndex::HashFunction> containedStmts;
 	for (auto& containedStmtIdx : containerStmtTable[containerStmtIdx]) {
 		containedStmts.insert(containedStmtIdx);
