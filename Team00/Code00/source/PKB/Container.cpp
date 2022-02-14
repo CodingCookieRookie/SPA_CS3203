@@ -54,7 +54,7 @@ void Container::insert(StmtIndex containerStmtIdx, std::unordered_set<StmtIndex,
 };
 
 std::unordered_set<StmtIndex, StmtIndex::HashFunction> Container::getAllContainedStmts(StmtIndex containerStmtIdx) {
-	if (containerStmtTable.find(containerStmtIdx) != containerStmtTable.end()) {
+	if (containerStmtTable.find(containerStmtIdx) == containerStmtTable.end()) {
 		return containerStmtTable[containerStmtIdx];
 	}
 
