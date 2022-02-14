@@ -60,7 +60,11 @@ public:
 
     /* Getter for numRow */
     int getNumRow() {
-        return numRow;
+        int numRows = 0;
+        for (auto& it : table) { // for each col in original
+            numRows = it.second.size();
+        }
+        return numRows;
     }
 
     /* Getter for *table */
