@@ -37,6 +37,7 @@ public:
 	static void insertConst(int constant);
 	static std::vector<int> getAllConsts();
 	static StmtIndex insertStmt(StatementType stmtType);
+	static bool isContainerStmt(StmtIndex stmtIdx);
 	static std::unordered_set<StmtIndex, StmtIndex::HashFunction> getStmtIdxFromType(StatementType stmtType);
 	static std::vector<StmtIndex> getAllStmts();
 	static void insertStmtFromProc(ProcIndex procIdx, StmtIndex stmtIdx);

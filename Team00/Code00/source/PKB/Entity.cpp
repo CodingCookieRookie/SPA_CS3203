@@ -100,6 +100,11 @@ StmtIndex Entity::insertStmt(StatementType stmtType) {
 	return stmtIdx;
 }
 
+bool Entity::isContainerStmt(StmtIndex stmtIdx) {
+	StatementType stmtType = stmtTypeTable[stmtIdx];
+	return stmtType == StatementType::whileType || stmtType == StatementType::ifType;
+}
+
 std::unordered_set<StmtIndex, StmtIndex::HashFunction> Entity::getStmtIdxFromType(StatementType stmtType) {
 	return stmtIdxFromTypeTable[stmtType];
 }
