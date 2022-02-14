@@ -158,12 +158,12 @@ AssignNode* Parser::matchAssign(std::string varName) {
 ExprNode* Parser::matchFactor() {
 	std::string varName = lexer.nextName();
 	if (!varName.empty()) {
-		return new ExprNode(varName);
+		return new ExprNode(ExprNodeValueType::varName, varName);
 	}
 
 	std::string constVal = lexer.nextInteger();
 	if (!constVal.empty()) {
-		return new ExprNode(constVal);
+		return new ExprNode(ExprNodeValueType::constValue, constVal);
 	}
 
 	if (lexer.match("(")) {
@@ -186,7 +186,7 @@ ExprNode* Parser::matchTermTail(ExprNode* lvalue) {
 	for (const std::string op : termOperands) {
 		if (lexer.match(op)) {
 			ExprNode* factor = matchFactor();
-			ExprNode* operand = new ExprNode(op);
+			ExprNode* operand = new ExprNode(ExprNodeValueType::operand, op);
 			operand->addChild(lvalue);
 			operand->addChild(factor);
 			return matchTermTail(operand);
@@ -212,7 +212,7 @@ ExprNode* Parser::matchExprTail(ExprNode* lvalue) {
 	for (const std::string op : exprOperands) {
 		if (lexer.match(op)) {
 			ExprNode* term = matchTerm();
-			ExprNode* operand = new ExprNode(op);
+			ExprNode* operand = new ExprNode(ExprNodeValueType::operand, op);
 			operand->addChild(lvalue);
 			operand->addChild(term);
 			return matchExprTail(operand);

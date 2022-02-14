@@ -55,12 +55,14 @@ public:
 class ExprNode : public SourceASTNode {
 private:
 	std::string value;
+	ExprNodeValueType valueType;
 	std::vector<ExprNode*> children;
 public:
-	ExprNode(std::string value);
+	ExprNode(ExprNodeValueType valueType, std::string value);
 	void addChild(ExprNode* child);
 	std::vector<ExprNode*> getChildren();
 	std::string getValue();
+	ExprNodeValueType getExprNodeValueType();
 
 	friend class SourceAST;
 };
@@ -69,11 +71,17 @@ class AssignNode : public StmtNode {
 private:
 	std::string varName;
 	ExprNode* expr;
+	std::unordered_set<std::string> usesVars;
+	std::unordered_set<std::string> usesConsts;
 public:
 	AssignNode(std::string varName, ExprNode* expr);
 	std::string getVarName();
 	ExprNode* getExpr();
 	StatementType getStmtType();
+	void populateUsesSet();
+	std::unordered_set<std::string> getUsesVars();
+	std::unordered_set<std::string> getUsesConsts();
+	std::unordered_set<std::string> getModifiesVars();
 
 	friend class SourceAST;
 };

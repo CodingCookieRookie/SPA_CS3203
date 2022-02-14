@@ -7,6 +7,10 @@ enum class StatementType {
 	assignType, whileType, ifType, readType, printType, callType
 };
 
+enum class ExprNodeValueType {
+	varName, constValue, operand
+};
+
 struct VarIndex {
 	int index;
 
