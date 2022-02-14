@@ -18,3 +18,8 @@ stmt stmt; variable v;
 Select stmt
 1, 2, 3, 4, 5
 5000
+8 - Personal test 
+read r; variable v;
+Select r such that Modifies(r, v)
+2, 3, 5
+5000

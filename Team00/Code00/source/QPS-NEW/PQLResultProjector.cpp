@@ -8,7 +8,7 @@
 #include <unordered_set>
 
 std::list<std::string> PQLResultProjector::resolveTableToResults() {
-	std::unordered_map<PqlEntityType, std::vector<VALUE>>* table = evaluatedTable.getTableRef();
+	std::unordered_map<std::string, std::vector<int>> table = evaluatedTable.getTableRef();
 	std::list<std::string> resList;
 
 	// E.g.
@@ -16,13 +16,13 @@ std::list<std::string> PQLResultProjector::resolveTableToResults() {
 	// Forms {"1, 2", "3, 2", "4, 3"} or 1 2 3 2 4 3 according to AutoTester
 	int numRow = evaluatedTable.getNumRow();
 	for (int i = 0; i < numRow; i++) {	// for each row
-		std::unordered_map<PqlEntityType, std::vector<VALUE>>::iterator it = table->begin();
-		std::string res = "";
-		while (it != table->end()) {	// for each col
-			res += it->second[i];
-			resList.push_back(res);
-			it++;
-		}
+		//std::unordered_map<std::string, std::vector<int>>::iterator it = table.begin();
+		//std::string res = "";
+		//while (it != table.end()) {	// for each col
+		//	res += it->second[i];
+		//	resList.push_back(res);
+		//	it++;
+		//}
 	}
 	return resList;
 }
