@@ -9,6 +9,7 @@
 #include "../PKB/Entity.h"
 #include "../PKB/Modifies.h"
 #include "../PKB/Uses.h"
+#include "../PKB/Follows.h"
 
 class Instruction {
 //protected:	//-> Use protected if need any shared fields
@@ -158,10 +159,10 @@ class RelationshipInstruction : public Instruction {
 private:
 	//RelationshipInstructionType type;
 	PqlRelationshipType pqlRelationshipType;
-	std::string lhsRefString;
-	std::string rhsRefString;
+	PqlReference lhsRef;
+	PqlReference rhsRef;
 
-	EvaluatedTable handleModifiesS() {
+	/*EvaluatedTable handleModifiesS() {
 		EvaluatedTable newEvTable;
 		std::vector<std::tuple<StmtIndex, VarIndex>> allStmtVarInfos = Modifies::getAllStmtVarInfo();
 		std::unordered_map<std::string, std::vector<int>> table;
@@ -183,6 +184,48 @@ private:
 			table[rhsRefString].push_back(std::get<1>(pair).index);
 		}
 		return EvaluatedTable(table);
+	}*/
+
+	void handleFollows(EvaluatedTable& evTable) {
+
+		
+		if (lhsRef.first == PqlReferenceType::synonym || lhsRef.first == PqlReferenceType::wildcard) {
+			std::vector<StmtIndex> stmts = Entity::getAllStmts();
+
+			if (rhsRef.first == PqlReferenceType::integer) {
+				std::vector<int> results;
+				int rhsRefValue = stoi(rhsRef.second); //might throw error if string value can't be converted to int
+				StmtIndex rhsStmt = stmts[rhsRefValue - 1];
+				for (StmtIndex stmt : stmts) {
+					if (Follows::containsSuccessor(stmt, rhsStmt)) {
+						results.emplace_back(stmt.getIndex());
+					}
+				}
+				std::unordered_map<std::string, PqlEntityType> PQLentities;
+				PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
+
+				std::unordered_map<std::string, std::vector<int>> PQLmap;
+				PQLmap[lhsRef.second] = results;
+
+				evTable.setEntities(PQLentities);
+				evTable.setTable(PQLmap);
+				evTable.setNumRow(results.size());
+			}
+			else { //rhsRef is either a synonym or a wildcard
+
+			}
+
+
+		}
+		else { //lhsRef is an integer
+			if (rhsRef.first == PqlReferenceType::integer) { 
+
+			}
+			else { //rhsRef is either a synonym or a wildcard
+
+			}
+
+		}
 	}
 
 public:
@@ -191,22 +234,25 @@ public:
 	//	UsesS, UsesP, ModifiesS, ModifiesP,
 	//	Uses, Modifies
 	//};
-	RelationshipInstruction(PqlRelationshipType pqlRSType, std::string lhsString, std::string rhsString) {
-		pqlRelationshipType = pqlRSType;
-		lhsRefString = lhsString;
-		rhsRefString = rhsString;
-	}
+	RelationshipInstruction(PqlRelationshipType pqlRSType, PqlReference lhs, PqlReference rhs) :
+		pqlRelationshipType(pqlRSType),lhsRef(lhs), rhsRef(rhs) {}
+
 
 	EvaluatedTable execute() override {
 		EvaluatedTable evTable;
 		switch (pqlRelationshipType) {
-		case PqlRelationshipType::ModifiesS :
+		/*case PqlRelationshipType::ModifiesS :
 			evTable = handleModifiesS();
 			break;
 		case PqlRelationshipType::UsesS:
 			evTable = handleUsesS();
+			break;*/
+		case PqlRelationshipType::Follows:
+			handleFollows(evTable);
 			break;
 		}
+
+
 		return evTable;
 	}
 
