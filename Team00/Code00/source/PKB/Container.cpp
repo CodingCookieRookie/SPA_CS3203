@@ -3,20 +3,47 @@
 
 #include "./Container.h"
 
-std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> containerStmtTable;
-std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> containedStmtTable;
+std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> Container::containerStmtTable;
+std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> Container::containedStmtTable;
 
-void Container::insertStmtInContainer(StmtIndex containerStmtIdx, StmtIndex stmtIdx) {
+void Container::insertStmtInContainer(StmtIndex containerStmtIdx, StmtIndex containedStmtIdx) {
+	if (containerStmtTable.find(containerStmtIdx) == containerStmtTable.end()) {
+		std::unordered_set<StmtIndex, StmtIndex::HashFunction> containedStmtSet;
+		containedStmtSet.insert(containedStmtIdx);
+		containerStmtTable[containerStmtIdx] = containedStmtSet;
+	}
+	else {
+		containerStmtTable[containerStmtIdx].insert(containedStmtIdx);
+	}
+
+	if (containedStmtTable.find(containedStmtIdx) == containedStmtTable.end()) {
+		std::unordered_set<StmtIndex, StmtIndex::HashFunction> containerStmtSet;
+		containerStmtSet.insert(containerStmtIdx);
+		containedStmtTable[containedStmtIdx] = containerStmtSet;
+	}
+	else {
+		containedStmtTable[containedStmtIdx].insert(containerStmtIdx);
+	}
 }
 
 std::unordered_set<StmtIndex, StmtIndex::HashFunction> Container::getStmtsInContainer(StmtIndex containerStmtIdx) {
-	std::unordered_set<StmtIndex, StmtIndex::HashFunction> stmtSet;
-	return stmtSet;
+	if (containerStmtTable.find(containerStmtIdx) == containerStmtTable.end()) {
+		std::unordered_set<StmtIndex, StmtIndex::HashFunction> stmtSet;
+		return stmtSet;
+	}
+	else {
+		return containerStmtTable[containerStmtIdx];
+	}
 }
 
-std::unordered_set<StmtIndex, StmtIndex::HashFunction> Container::getContainersOfStmt(StmtIndex stmtIdx) {
-	std::unordered_set<StmtIndex, StmtIndex::HashFunction> stmtSet;
-	return stmtSet;
+std::unordered_set<StmtIndex, StmtIndex::HashFunction> Container::getContainersOfStmt(StmtIndex containedStmtIdx) {
+	if (containedStmtTable.find(containedStmtIdx) == containedStmtTable.end()) {
+		std::unordered_set<StmtIndex, StmtIndex::HashFunction> stmtSet;
+		return stmtSet;
+	}
+	else {
+		return containedStmtTable[containedStmtIdx];
+	}
 }
 
 void Container::populate() {
