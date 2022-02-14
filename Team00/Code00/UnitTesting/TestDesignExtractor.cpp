@@ -109,5 +109,46 @@ namespace UnitTesting {
 			Assert::AreEqual(size_t(1), Modifies::getAllStmtVarInfo().size());
 			Assert::AreEqual(size_t(1), Uses::getAllStmtVarInfo().size());
 		}
+
+		TEST_METHOD(extract_assign_postfixExpressionExtracted) {
+			std::string varNameX = "x";
+			std::string varNameY = "y";
+			std::string constName1 = "1";
+			std::string constName2 = "2";
+			std::string constName3 = "3";
+			std::string plusName = "+";
+			std::string multiplyName = "*";
+			std::string divideName = "/";
+			std::string modName = "%";
+			std::string procName = "main";
+
+			ExprNode* exprNodeX = new ExprNode(varNameX);
+			ExprNode* exprNodeY = new ExprNode(varNameY);
+			ExprNode* exprNodePlus = new ExprNode(plusName);
+			exprNodePlus->addChild(exprNodeX);
+			exprNodePlus->addChild(exprNodeY);
+			ExprNode* exprNode1 = new ExprNode(constName1);
+			ExprNode* exprNode2 = new ExprNode(constName2);
+			ExprNode* exprNodeMultiply = new ExprNode(multiplyName);
+			exprNodeMultiply->addChild(exprNode1);
+			exprNodeMultiply->addChild(exprNode2);
+			ExprNode* exprNodeDivide = new ExprNode(divideName);
+			exprNodeDivide->addChild(exprNodePlus);
+			exprNodeDivide->addChild(exprNodeMultiply);
+			ExprNode* exprNode3 = new ExprNode(constName3);
+			ExprNode* exprNodeMod = new ExprNode(modName);
+			exprNodeMod->addChild(exprNodeDivide);
+			exprNodeMod->addChild(exprNode3);
+			AssignNode* assignNode = new AssignNode(varNameX, exprNodeMod);
+
+			StmtLstNode* stmtLstNode = new StmtLstNode();
+			stmtLstNode->addStmtNode(assignNode);
+			ProcedureNode* procedureNode = new ProcedureNode(procName);
+			procedureNode->addStmtLst(stmtLstNode);
+			ProgramNode* programNode = new ProgramNode();
+			programNode->addProcedure(procedureNode);
+			SourceAST ast(programNode);
+			DesignExtractor::Extract(ast);
+		}
 	};
 }
