@@ -13,6 +13,8 @@ class Container {
 protected:
 	static std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> containerStmtTable;
 	static std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> containedStmtTable;
+	static void insert(StmtIndex containerStmtIdx, std::unordered_set<StmtIndex, StmtIndex::HashFunction> containedStmts);
+	static std::unordered_set<StmtIndex, StmtIndex::HashFunction> getAllContainedStmts(StmtIndex containerStmtIdx);
 
 public:
 	static void insertStmtInContainer(StmtIndex containerStmtIdx, StmtIndex containedStmtIdx);

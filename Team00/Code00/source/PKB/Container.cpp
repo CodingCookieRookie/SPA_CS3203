@@ -46,7 +46,36 @@ std::unordered_set<StmtIndex, StmtIndex::HashFunction> Container::getContainersO
 	}
 }
 
+void Container::insert(StmtIndex containerStmtIdx, std::unordered_set<StmtIndex, StmtIndex::HashFunction> containedStmts) {
+	for (auto& containedStmtIdx : containedStmts) {
+		containerStmtTable[containerStmtIdx].insert(containedStmtIdx);
+		containedStmtTable[containedStmtIdx].insert(containerStmtIdx);
+	}
+};
+
+std::unordered_set<StmtIndex, StmtIndex::HashFunction> Container::getAllContainedStmts(StmtIndex containerStmtIdx) {
+	if (containerStmtTable.find(containerStmtIdx) != containerStmtTable.end()) {
+		return containerStmtTable[containerStmtIdx];
+	}
+
+	std::unordered_set<StmtIndex, StmtIndex::HashFunction> containedStmts;
+	for (auto& containedStmtIdx : containerStmtTable[containerStmtIdx]) {
+		containedStmts.insert(containedStmtIdx);
+		std::unordered_set<StmtIndex, StmtIndex::HashFunction> grandContainedStmts = getAllContainedStmts(containedStmtIdx);
+		for (auto& grandContainedStmtIdx : grandContainedStmts) {
+			containedStmts.insert(grandContainedStmtIdx);
+		}
+	}
+
+	return containedStmts;
+}
+
 void Container::populate() {
+	for (auto& containerEntry : containerStmtTable) {
+		StmtIndex containerStmtIdx = containerEntry.first;
+		std::unordered_set<StmtIndex, StmtIndex::HashFunction> containedStmts = getAllContainedStmts(containerStmtIdx);
+		insert(containerStmtIdx, containedStmts);
+	}
 }
 
 void Container::performCleanUp() {
