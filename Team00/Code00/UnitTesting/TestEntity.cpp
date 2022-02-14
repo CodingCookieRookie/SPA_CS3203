@@ -177,6 +177,16 @@ public:
 		Assert::IsTrue(stmtIdx2 == res2);
 	}
 
+	TEST_METHOD(insertStmt_isContainerStmt) {
+		Entity::insertStmt(stmtType1);
+		Entity::insertStmt(stmtType2);
+
+		bool res1 = Entity::isContainerStmt(stmtIdx1);
+		bool res2 = Entity::isContainerStmt(stmtIdx2);
+		Assert::IsFalse(res1);
+		Assert::IsTrue(res2);
+	}
+
 	TEST_METHOD(insertStmt_getStmtIdxFromType_differentStmts) {
 		std::unordered_set<StmtIndex, StmtIndex::HashFunction> expectedRes1;
 		expectedRes1.insert(stmtIdx1);
