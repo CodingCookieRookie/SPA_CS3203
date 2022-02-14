@@ -18,35 +18,75 @@ public:
 
 class GetAllInstruction : public Instruction{
 private:
-	GetAllInstructionType type;
-	std::vector<std::string> arguments; // has to be generalised
+	PqlEntityType pqlEntityType;
+	std::string synonym;
 
 public:
-	/* Constructor for an Instruction object */
-	GetAllInstruction(GetAllInstructionType type) : type(type) {}
+	/* Constructor for a GetAllInstruction object */
+	GetAllInstruction(PqlEntityType type, std::string synonym) : pqlEntityType(type), synonym(synonym) {}
 
-	/* Constructor for an Instruction object */
-	GetAllInstruction(GetAllInstructionType type, std::vector<std::string> arguments) : type(type), arguments(arguments) {}
+	/* Getter for type */
+	PqlEntityType getType() {
+		return pqlEntityType;
+	};
+
+	/* Getter for synonym */
+	std::string getSynonym() {
+		return synonym;
+	};
 
 	EvaluatedTable execute() override {
 		EvaluatedTable evTable;
+		switch (pqlEntityType) {
+		case PqlEntityType::Stmt:
 
+			handleGetAllStmt(evTable, synonym);
+			break;
+		case PqlEntityType::Print:
+
+			break;
+		case PqlEntityType::Call:
+
+			break;
+		case PqlEntityType::While:
+
+			break;
+		case PqlEntityType::If:
+
+			break;
+		case PqlEntityType::Assign:
+
+			break;
+		case PqlEntityType::Variable:
+
+			break;
+		case PqlEntityType::Constant:
+
+			break;
+		case PqlEntityType::Procedure:
+
+			break;
+		}
 		return evTable;
 	}
 
-	///* TODO: To generalise. Executes instruction by calling the PKB */
-	//void execute(Instruction& instr);
+	void handleGetAllStmt(EvaluatedTable& evTable, std::string synonym) {
+		std::vector<StmtIndex> results = Entity::getAllStmts();
+		std::vector<int> resultsToInt;
+		for (StmtIndex result : results) {
+			resultsToInt.emplace_back(result.getIndex());
+		}
 
-	/* Getter for type */
-	GetAllInstructionType getType() {
-		return type;
-	};
+		std::unordered_map<std::string, PqlEntityType> PQLentities;
+		PQLentities.insert(std::pair(synonym, PqlEntityType::Stmt));
 
-	/* Getter for arguments */
-	std::vector<std::string> getArgs() {
-		return arguments;
-	};
+		std::unordered_map<std::string, std::vector<int>> PQLmap;
+		PQLmap[synonym] = resultsToInt;
 
+		evTable.setEntities(PQLentities);
+		evTable.setTable(PQLmap);
+		evTable.setNumRow(results.size());
+	}
 };
 
 class RelationshipInstruction : public Instruction {
