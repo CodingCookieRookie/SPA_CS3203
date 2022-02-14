@@ -153,7 +153,8 @@ namespace UnitTesting {
 
 			Assert::AreEqual(size_t(2), Entity::getAllVars().size());
 			Assert::AreEqual(size_t(3), Entity::getAllConsts().size());
-			Assert::AreEqual(size_t(1), Pattern::getAllAssignStmtVarsPatternInfo().size());
+			Assert::AreEqual(size_t(1), Pattern::getStmtsFromPattern(std::string(" x "), true).size());
+			Assert::AreEqual(size_t(1), Pattern::getStmtsFromPattern(std::string(" 1 "), true).size());
 		}
 	};
 }
