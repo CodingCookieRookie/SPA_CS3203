@@ -121,22 +121,23 @@ namespace UnitTesting {
 			std::string divideName = "/";
 			std::string modName = "%";
 			std::string procName = "main";
+			std::string postfixString = " x y + 1 2 * / 3 % ";
 
-			ExprNode* exprNodeX = new ExprNode(varNameX);
-			ExprNode* exprNodeY = new ExprNode(varNameY);
-			ExprNode* exprNodePlus = new ExprNode(plusName);
+			ExprNode* exprNodeX = new ExprNode(ExprNodeValueType::varName, varNameX);
+			ExprNode* exprNodeY = new ExprNode(ExprNodeValueType::varName, varNameY);
+			ExprNode* exprNodePlus = new ExprNode(ExprNodeValueType::operand, plusName);
 			exprNodePlus->addChild(exprNodeX);
 			exprNodePlus->addChild(exprNodeY);
-			ExprNode* exprNode1 = new ExprNode(constName1);
-			ExprNode* exprNode2 = new ExprNode(constName2);
-			ExprNode* exprNodeMultiply = new ExprNode(multiplyName);
+			ExprNode* exprNode1 = new ExprNode(ExprNodeValueType::constValue, constName1);
+			ExprNode* exprNode2 = new ExprNode(ExprNodeValueType::constValue, constName2);
+			ExprNode* exprNodeMultiply = new ExprNode(ExprNodeValueType::operand, multiplyName);
 			exprNodeMultiply->addChild(exprNode1);
 			exprNodeMultiply->addChild(exprNode2);
-			ExprNode* exprNodeDivide = new ExprNode(divideName);
+			ExprNode* exprNodeDivide = new ExprNode(ExprNodeValueType::operand, divideName);
 			exprNodeDivide->addChild(exprNodePlus);
 			exprNodeDivide->addChild(exprNodeMultiply);
-			ExprNode* exprNode3 = new ExprNode(constName3);
-			ExprNode* exprNodeMod = new ExprNode(modName);
+			ExprNode* exprNode3 = new ExprNode(ExprNodeValueType::constValue, constName3);
+			ExprNode* exprNodeMod = new ExprNode(ExprNodeValueType::operand, modName);
 			exprNodeMod->addChild(exprNodeDivide);
 			exprNodeMod->addChild(exprNode3);
 			AssignNode* assignNode = new AssignNode(varNameX, exprNodeMod);
@@ -149,6 +150,10 @@ namespace UnitTesting {
 			programNode->addProcedure(procedureNode);
 			SourceAST ast(programNode);
 			DesignExtractor::Extract(ast);
+
+			Assert::AreEqual(size_t(2), Entity::getAllVars().size());
+			Assert::AreEqual(size_t(3), Entity::getAllConsts().size());
+			Assert::AreEqual(size_t(1), Pattern::getAllAssignStmtVarsPatternInfo().size());
 		}
 	};
 }

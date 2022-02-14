@@ -59,7 +59,8 @@ std::unordered_set<std::string> PrintNode::getUsesVars() {
 
 /* AssignNode */
 AssignNode::AssignNode(std::string varName, ExprNode* expr) : StmtNode(), varName(varName), expr(expr) {
-	this->populateUsesSet();
+	populateUsesSet();
+	populatePattern();
 }
 
 std::string AssignNode::getVarName() {
@@ -96,6 +97,23 @@ void AssignNode::populateUsesSet() {
 	}
 }
 
+void AssignNode::populatePattern() {
+	pattern.clear();
+	std::vector<std::string> tokens;
+	expr->populatePattern(tokens);
+	pattern.push_back(' ');
+	for (std::string& token : tokens) {
+		for (char c : token) {
+			pattern.push_back(c);
+		}
+		pattern.push_back(' ');
+	}
+}
+
+std::string AssignNode::getPattern() {
+	return pattern;
+}
+
 std::unordered_set<std::string> AssignNode::getUsesVars() {
 	return usesVars;
 }
@@ -121,6 +139,13 @@ std::string ExprNode::getValue() {
 
 ExprNodeValueType ExprNode::getExprNodeValueType() {
 	return valueType;
+}
+
+void ExprNode::populatePattern(std::vector<std::string>& tokens) {
+	for (ExprNode* child : children) {
+		child->populatePattern(tokens);
+	}
+	tokens.push_back(value);
 }
 
 /* StmtLstNode */
