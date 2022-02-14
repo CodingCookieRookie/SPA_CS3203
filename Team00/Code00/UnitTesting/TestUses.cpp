@@ -25,28 +25,26 @@ private:
 
 public:
 	TEST_METHOD(insert_getStatements_stmtIndex) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> expectedAns;
-		expectedAns.insert(stmtIndex1);
+		std::vector<int> expectedAns{ stmtIndex1.index };
 
 		Uses::insert(stmtIndex1, varIndex1);
 		auto statements = Uses::getStatements(varIndex1);
 		Assert::IsTrue(expectedAns == statements);
 
-		// Check if other relationship gets affected
+		/*Check if other relationship gets affected*/
 		auto statements2 = Modifies::getStatements(varIndex1);
 		Assert::IsTrue(0 == statements2.size());
 		Modifies::performCleanUp();
 	};
 
 	TEST_METHOD(insert_getProcedures_procIndex) {
-		std::unordered_set<ProcIndex, ProcIndex::HashFunction> expectedAns;
-		expectedAns.insert(procIndex1);
+		std::vector<int> expectedAns{ procIndex1.index };
 
 		Uses::insert(procIndex1, varIndex1);
 		auto procedures = Uses::getProcedures(varIndex1);
 		Assert::IsTrue(expectedAns == procedures);
 
-		// Check if other relationship gets affected
+		/*Check if other relationship gets affected*/
 		auto procedures2 = Modifies::getProcedures(varIndex1);
 		Assert::IsTrue(0 == procedures2.size());
 		Modifies::performCleanUp();
@@ -69,9 +67,7 @@ public:
 	};
 
 	TEST_METHOD(insert_getVariables_procIndex) {
-		std::unordered_set<VarIndex, VarIndex::HashFunction> expectedAns;
-		expectedAns.insert(varIndex1);
-		expectedAns.insert(varIndex2);
+		std::vector<int> expectedAns{ varIndex1.index, varIndex2.index };
 
 		Uses::insert(procIndex1, varIndex1);
 		Uses::insert(procIndex1, varIndex2);
@@ -80,9 +76,7 @@ public:
 	};
 
 	TEST_METHOD(insert_getVariables_stmtIndex) {
-		std::unordered_set<VarIndex, VarIndex::HashFunction> expectedAns;
-		expectedAns.insert(varIndex1);
-		expectedAns.insert(varIndex2);
+		std::vector<int> expectedAns{ varIndex1.index, varIndex2.index };
 
 		Uses::insert(stmtIndex1, varIndex1);
 		Uses::insert(stmtIndex1, varIndex2);
@@ -91,11 +85,9 @@ public:
 	};
 
 	TEST_METHOD(getAllProcVarInfo) {
-		std::vector<std::tuple<ProcIndex, VarIndex>> expectedAns;
-		expectedAns.push_back(std::make_tuple(procIndex1, varIndex1));
-		expectedAns.push_back(std::make_tuple(procIndex1, varIndex2));
-		expectedAns.push_back(std::make_tuple(procIndex2, varIndex1));
-		expectedAns.push_back(std::make_tuple(procIndex2, varIndex2));
+		std::vector<int> procedures{ procIndex1.index, procIndex1.index, procIndex2.index, procIndex2.index };
+		std::vector<int> variables{ varIndex1.index, varIndex2.index, varIndex1.index, varIndex2.index };
+		std::tuple<std::vector<int>, std::vector<int>> expectedAns = std::make_tuple(procedures, variables);
 
 		Uses::insert(procIndex1, varIndex1);
 		Uses::insert(procIndex1, varIndex2);
@@ -107,11 +99,9 @@ public:
 	};
 
 	TEST_METHOD(getAllStmtVarInfo) {
-		std::vector<std::tuple<StmtIndex, VarIndex>> expectedAns;
-		expectedAns.push_back(std::make_tuple(stmtIndex1, varIndex1));
-		expectedAns.push_back(std::make_tuple(stmtIndex1, varIndex2));
-		expectedAns.push_back(std::make_tuple(stmtIndex2, varIndex1));
-		expectedAns.push_back(std::make_tuple(stmtIndex2, varIndex2));
+		std::vector<int> statements{ stmtIndex1.index, stmtIndex1.index, stmtIndex2.index, stmtIndex2.index };
+		std::vector<int> variables{ varIndex1.index, varIndex2.index, varIndex1.index, varIndex2.index };
+		std::tuple<std::vector<int>, std::vector<int>> expectedAns = std::make_tuple(statements, variables);
 
 		Uses::insert(stmtIndex1, varIndex1);
 		Uses::insert(stmtIndex1, varIndex2);
