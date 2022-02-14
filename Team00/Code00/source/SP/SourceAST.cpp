@@ -6,10 +6,6 @@ ProgramNode* SourceAST::getRoot() {
 	return root;
 }
 
-void SourceAST::printTree() {
-	root->printNode();
-}
-
 SourceAST::~SourceAST() {
 	delete root;
 }

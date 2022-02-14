@@ -5,6 +5,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestAST.cpp">
+    <ClCompile Include="TestSourceASTNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestDesignEntity.cpp">
