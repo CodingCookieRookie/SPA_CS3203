@@ -172,6 +172,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TestContainer.cpp" />
     <ClCompile Include="TestSourceASTNode.cpp" />
     <ClCompile Include="TestDesignExtractor.cpp" />
     <ClCompile Include="TestDesignEntity.cpp" />
@@ -181,6 +182,8 @@
     <ClCompile Include="TestFollowsT.cpp" />
     <ClCompile Include="TestLexer.cpp" />
     <ClCompile Include="TestModifies.cpp" />
+    <ClCompile Include="TestParent.cpp" />
+    <ClCompile Include="TestParentT.cpp" />
     <ClCompile Include="TestParser.cpp" />
     <ClCompile Include="TestPattern.cpp" />
     <ClCompile Include="TestPQLDEToken.cpp" />

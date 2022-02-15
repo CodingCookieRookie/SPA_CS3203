@@ -12,11 +12,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\common\Lexer.cpp" />
+    <ClCompile Include="..\source\PKB\Container.cpp" />
     <ClCompile Include="..\source\PKB\Entity.cpp" />
     <ClCompile Include="..\source\PKB\ExpressionProcessor.cpp" />
     <ClCompile Include="..\source\PKB\Follows.cpp" />
     <ClCompile Include="..\source\PKB\FollowsT.cpp" />
     <ClCompile Include="..\source\PKB\Modifies.cpp" />
+    <ClCompile Include="..\source\PKB\Parent.cpp" />
+    <ClCompile Include="..\source\PKB\ParentT.cpp" />
     <ClCompile Include="..\source\PKB\Pattern.cpp" />
     <ClCompile Include="..\source\PKB\RS1.cpp" />
     <ClCompile Include="..\source\PKB\RS2.cpp" />
@@ -41,14 +44,18 @@
   <ItemGroup>
     <ClInclude Include="..\source\common\Lexer.h" />
     <ClInclude Include="..\source\common\Types.h" />
+    <ClInclude Include="..\source\PKB\Container.h" />
     <ClInclude Include="..\source\PKB\Entity.h" />
     <ClInclude Include="..\source\PKB\ExpressionProcessor.h" />
     <ClInclude Include="..\source\PKB\Follows.h" />
     <ClInclude Include="..\source\PKB\FollowsT.h" />
     <ClInclude Include="..\source\PKB\Modifies.h" />
+    <ClInclude Include="..\source\PKB\Parent.h" />
+    <ClInclude Include="..\source\PKB\ParentT.h" />
     <ClInclude Include="..\source\PKB\Pattern.h" />
     <ClInclude Include="..\source\PKB\RS1.h" />
     <ClInclude Include="..\source\PKB\RS2.h" />
+    <ClInclude Include="..\source\PKB\RS2T.h" />
     <ClInclude Include="..\source\PKB\Uses.h" />
     <ClInclude Include="..\source\QPS-NEW\DesignEntity.h" />
     <ClInclude Include="..\source\QPS-NEW\PQLLexer.h" />

@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<ItemGroup>
+		<ClCompile Include="..\source\PKB\Container.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
 		<ClCompile Include="..\source\SP\DesignExtractor.cpp">
 			<Filter>Source Files</Filter>
 		</ClCompile>
@@ -14,10 +17,10 @@
 			<Filter>Source Files</Filter>
 		</ClCompile>
 		<ClCompile Include="..\source\PKB\Follows.cpp">
-		  <Filter>Source Files</Filter>
+			<Filter>Source Files</Filter>
 		</ClCompile>
 		<ClCompile Include="..\source\PKB\FollowsT.cpp">
-		  <Filter>Source Files</Filter>
+			<Filter>Source Files</Filter>
 		</ClCompile>
 		<ClCompile Include="..\source\QPS-NEW\Instruction.cpp">
 			<Filter>Source Files</Filter>
@@ -26,6 +29,12 @@
 			<Filter>Source Files</Filter>
 		</ClCompile>
 		<ClCompile Include="..\source\PKB\Modifies.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\PKB\Parent.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\PKB\ParentT.cpp">
 			<Filter>Source Files</Filter>
 		</ClCompile>
 		<ClCompile Include="..\source\QPS-NEW\ParsedQuery.cpp">
@@ -62,7 +71,7 @@
 			<Filter>Source Files</Filter>
 		</ClCompile>
 		<ClCompile Include="..\source\PKB\RS2.cpp">
-		  <Filter>Source Files</Filter>
+			<Filter>Source Files</Filter>
 		</ClCompile>
 		<ClCompile Include="..\source\SP\SourceAST.cpp">
 			<Filter>Source Files</Filter>
@@ -81,6 +90,9 @@
 		</ClCompile>
 	</ItemGroup>
 	<ItemGroup>
+		<ClInclude Include="..\source\PKB\Container.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
 		<ClInclude Include="..\source\QPS-NEW\DesignEntity.h">
 			<Filter>Header Files</Filter>
 		</ClInclude>
@@ -97,10 +109,10 @@
 			<Filter>Header Files</Filter>
 		</ClInclude>
 		<ClInclude Include="..\source\PKB\Follows.h">
-		  <Filter>Header Files</Filter>
+			<Filter>Header Files</Filter>
 		</ClInclude>
 		<ClInclude Include="..\source\PKB\FollowsT.h">
-		  <Filter>Header Files</Filter>
+			<Filter>Header Files</Filter>
 		</ClInclude>
 		<ClInclude Include="..\source\QPS-NEW\Instruction.h">
 			<Filter>Header Files</Filter>
@@ -110,6 +122,12 @@
 		</ClInclude>
 		<ClInclude Include="..\source\PKB\Modifies.h">
 			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\Parent.h">
+			<Filter>Source Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\ParentT.h">
+			<Filter>Source Files</Filter>
 		</ClInclude>
 		<ClInclude Include="..\source\QPS-NEW\ParsedQuery.h">
 			<Filter>Header Files</Filter>
@@ -148,7 +166,10 @@
 			<Filter>Header Files</Filter>
 		</ClInclude>
 		<ClInclude Include="..\source\PKB\RS2.h">
-		  <Filter>Header Files</Filter>
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\RS2T.h">
+			<Filter>Source Files</Filter>
 		</ClInclude>
 		<ClInclude Include="..\source\SP\SourceAST.h">
 			<Filter>Header Files</Filter>
@@ -162,10 +183,10 @@
 		<ClInclude Include="..\source\TNode.h">
 			<Filter>Header Files</Filter>
 		</ClInclude>
-		<ClInclude Include="..\source\PKB\Uses.h">
+		<ClInclude Include="..\source\common\Types.h">
 			<Filter>Header Files</Filter>
 		</ClInclude>
-		<ClInclude Include="..\source\common\Types.h">
+		<ClInclude Include="..\source\PKB\Uses.h">
 			<Filter>Header Files</Filter>
 		</ClInclude>
 	</ItemGroup>
