@@ -1,61 +1,61 @@
 <?xml-stylesheet type="text/xsl" href="analysis.xsl"?>
 <test_results>
 <info>
-<name>AutoTester</name><parsing_time_taken>3.000000</parsing_time_taken>
+<name>AutoTester</name><parsing_time_taken>1.000000</parsing_time_taken>
 </info>
 <queries>
 <query>
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 7">7</id><querystr><![CDATA[stmt stmt; variable v; Select stmt]]></querystr>
 <stuans>1,2,3,4,5</stuans>
 <correct>1,2,3,4,5</correct>
-<time_taken>27.000000</time_taken>
+<time_taken>7.000000</time_taken>
 <passed/>
 </query>
 <query>
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 8">8</id><querystr><![CDATA[stmt stmt; variable v; procedure p; Select p]]></querystr>
-<stuans></stuans>
+<stuans>1</stuans>
 <correct>Example</correct>
-<time_taken>19.000000</time_taken>
+<time_taken>5.000000</time_taken>
 <failed>
 <missing>Example</missing>
-<additional></additional>
+<additional>1</additional>
 <summary>
 <expected>1</expected>
 <matched>0</matched>
 <missing>1</missing>
-<additional>0</additional>
+<additional>1</additional>
 </summary>
 </failed>
 </query>
 <query>
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 9">9</id><querystr><![CDATA[stmt stmt; variable v; procedure p; constant c; Select c]]></querystr>
-<stuans></stuans>
+<stuans>1</stuans>
 <correct>None</correct>
-<time_taken>33.000000</time_taken>
+<time_taken>7.000000</time_taken>
 <failed>
 <missing>None</missing>
-<additional></additional>
+<additional>1</additional>
 <summary>
 <expected>1</expected>
 <matched>0</matched>
 <missing>1</missing>
-<additional>0</additional>
+<additional>1</additional>
 </summary>
 </failed>
 </query>
 <query>
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 6">6</id><querystr><![CDATA[stmt stmt; variable v; Select v]]></querystr>
-<stuans></stuans>
+<stuans>1,2,3,4,5</stuans>
 <correct>x1 yA123z AbC1 print read</correct>
-<time_taken>27.000000</time_taken>
+<time_taken>7.000000</time_taken>
 <failed>
 <missing>x1 yA123z AbC1 print read</missing>
-<additional></additional>
+<additional>1,2,3,4,5</additional>
 <summary>
 <expected>1</expected>
 <matched>0</matched>
 <missing>1</missing>
-<additional>0</additional>
+<additional>5</additional>
 </summary>
 </failed>
 </query>

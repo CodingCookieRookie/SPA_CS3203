@@ -22,7 +22,7 @@ private:
 	std::string synonym;
 
 	/* All handlers to set EvaluatedTable to results from PKB. Uses Pass by Reference on EvTable. */
-	void handleGetAllStmt(EvaluatedTable& evTable, std::string synonym) {
+	EvaluatedTable handleGetAllStmt(std::string synonym) {
 		std::vector<StmtIndex> results = Entity::getAllStmts();
 		
 		std::vector<int> resultsToInt;
@@ -36,12 +36,10 @@ private:
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLmap[synonym] = resultsToInt;
 
-		evTable.setEntities(PQLentities);
-		evTable.setTable(PQLmap);
-		evTable.setNumRow(results.size());
+		return EvaluatedTable(PQLentities, PQLmap, results.size());
 	}
 
-	void handleGetAllStmtByType(EvaluatedTable& evTable, std::string synonym, StatementType stmtType) {
+	EvaluatedTable handleGetAllStmtByType(std::string synonym, StatementType stmtType) {
 		// TODO: PKB to change return type of getStmtIdxFromType()
 		std::vector<StmtIndex> results = Entity::getStmtIdxFromType(stmtType);
 
@@ -56,14 +54,12 @@ private:
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLmap[synonym] = resultsToInt;
 
-		evTable.setEntities(PQLentities);
-		evTable.setTable(PQLmap);
-		evTable.setNumRow(results.size());
+		return EvaluatedTable(PQLentities, PQLmap, results.size());
 	}
 
 
 
-	void handleGetAllVar(EvaluatedTable& evTable, std::string synonym) {
+	EvaluatedTable handleGetAllVar(std::string synonym) {
 		// TODO: PKB to change getAllVars() to return VarIndex.
 		std::vector<VarIndex> results = Entity::getAllVars();
 		std::vector<int> resultsToInt;
@@ -77,12 +73,10 @@ private:
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLmap[synonym] = resultsToInt;
 
-		evTable.setEntities(PQLentities);
-		evTable.setTable(PQLmap);
-		evTable.setNumRow(results.size());
+		return EvaluatedTable(PQLentities, PQLmap, results.size());
 	}
 
-	void handleGetAllProc(EvaluatedTable& evTable, std::string synonym) {
+	EvaluatedTable handleGetAllProc(std::string synonym) {
 		// TODO: PKB to change getAllProcs() to return ProcIndex.
 		std::vector<ProcIndex> results = Entity::getAllProcs();
 		std::vector<int> resultsToInt;
@@ -96,12 +90,10 @@ private:
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLmap[synonym] = resultsToInt;
 
-		evTable.setEntities(PQLentities);
-		evTable.setTable(PQLmap);
-		evTable.setNumRow(results.size());
+		return EvaluatedTable(PQLentities, PQLmap, results.size());
 	}
 
-	void handleGetAllConst(EvaluatedTable& evTable, std::string synonym) {
+	EvaluatedTable handleGetAllConst(std::string synonym) {
 		std::vector<int> results = Entity::getAllConsts();
 
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
@@ -110,9 +102,7 @@ private:
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLmap[synonym] = results;
 
-		evTable.setEntities(PQLentities);
-		evTable.setTable(PQLmap);
-		evTable.setNumRow(results.size());
+		return EvaluatedTable(PQLentities, PQLmap, results.size());
 	}
 
 public:
@@ -134,34 +124,34 @@ public:
 		EvaluatedTable evTable;
 		switch (pqlEntityType) {
 		case PqlEntityType::Stmt:
-			handleGetAllStmt(evTable, synonym);
+			evTable = handleGetAllStmt(synonym);
 			break;
 		case PqlEntityType::Read:
-			handleGetAllStmtByType(evTable, synonym, StatementType::readType);
+			evTable = handleGetAllStmtByType(synonym, StatementType::readType);
 			break;
 		case PqlEntityType::Print:
-			handleGetAllStmtByType(evTable, synonym, StatementType::printType);
+			evTable = handleGetAllStmtByType(synonym, StatementType::printType);
 			break;
 		case PqlEntityType::Call:
-			handleGetAllStmtByType(evTable, synonym, StatementType::callType);
+			evTable = handleGetAllStmtByType(synonym, StatementType::callType);
 			break;
 		case PqlEntityType::While:
-			handleGetAllStmtByType(evTable, synonym, StatementType::whileType);
+			evTable = handleGetAllStmtByType(synonym, StatementType::whileType);
 			break;
 		case PqlEntityType::If:
-			handleGetAllStmtByType(evTable, synonym, StatementType::ifType);
+			evTable = handleGetAllStmtByType(synonym, StatementType::ifType);
 			break;
 		case PqlEntityType::Assign:
-			handleGetAllStmtByType(evTable, synonym, StatementType::assignType);
+			evTable = handleGetAllStmtByType(synonym, StatementType::assignType);
 			break;
 		case PqlEntityType::Variable:
-			handleGetAllVar(evTable, synonym);
+			evTable = handleGetAllVar(synonym);
 			break;
 		case PqlEntityType::Constant:
-			handleGetAllProc(evTable, synonym);
+			evTable = handleGetAllProc(synonym);
 			break;
 		case PqlEntityType::Procedure:
-			handleGetAllProc(evTable, synonym);
+			evTable = handleGetAllProc(synonym);
 			break;
 		}
 		return evTable;
