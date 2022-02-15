@@ -32,6 +32,12 @@ namespace UnitTesting
             std::string queryUndeclared = "stmt s; if ifs; Select s1";
             auto wrapperFuncUndeclared = [&queryUndeclared] { PQLParser::parseQuery(queryUndeclared); };
             Assert::ExpectException<QPSException>(wrapperFuncUndeclared);
+
+            /* Putting an entRef where we would expect stmtRef */
+            std::string queryModifiesEntRef = "stmt s; variable v; Select s such that Modifies(v, _)";
+            auto wrapperModifiesEntRef =
+                [&queryModifiesEntRef] { PQLParser::parseQuery(queryModifiesEntRef); };
+            Assert::ExpectException<QPSException>(wrapperModifiesEntRef);
         }
 
         TEST_METHOD(parseQuery_syntaxError_exceptionThrown)
@@ -41,7 +47,7 @@ namespace UnitTesting
             auto wrapperFuncMissingSelect = [&queryMissingSelect] { PQLParser::parseQuery(queryMissingSelect); };
             Assert::ExpectException<QPSException>(wrapperFuncMissingSelect);
 
-            ///* Extra trailing characters */
+            /* Extra trailing characters */
             std::string queryExtra = "stmt s; if ifs; Select s test";
             auto wrapperFuncExtra = [&queryExtra] { PQLParser::parseQuery(queryExtra); };
             Assert::ExpectException<QPSException>(wrapperFuncExtra);
