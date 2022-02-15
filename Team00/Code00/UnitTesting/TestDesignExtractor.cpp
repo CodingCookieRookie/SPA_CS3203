@@ -115,7 +115,7 @@ public:
 
 		Assert::AreEqual(size_t(1), std::get<0>(Follows::getAllPredecessorSuccessorInfo()).size());
 		/* TODO: test transitive closures after they are implemented */
-		//Assert::AreEqual(size_t(1), std::get<0>(FollowsT::getAllPredecessorSuccessorInfo()).size());
+		Assert::AreEqual(size_t(1), std::get<0>(FollowsT::getAllPredecessorSuccessorInfo()).size());
 	}
 
 	TEST_METHOD(extract_multipleStatements_allFollowsFollowsTCaptured) {
@@ -139,9 +139,8 @@ public:
 		DesignExtractor::Extract(ast);
 
 		Assert::AreEqual(size_t(2), std::get<0>(Follows::getAllPredecessorSuccessorInfo()).size());
-		/* TODO: test transitive closures after they are implemented */
 		/* We expect (3 choose 2) = 3 relationships in Follows T */
-		//Assert::AreEqual(size_t(3), std::get<0>(FollowsT::getAllPredecessorSuccessorInfo()).size());
+		Assert::AreEqual(size_t(3), std::get<0>(FollowsT::getAllPredecessorSuccessorInfo()).size());
 	}
 
 	TEST_METHOD(extract_assign_postfixExpressionExtracted) {
