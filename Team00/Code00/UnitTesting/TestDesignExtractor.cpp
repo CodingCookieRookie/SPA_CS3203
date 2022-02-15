@@ -15,6 +15,8 @@ private:
 		Uses::performCleanUp();
 		Modifies::performCleanUp();
 		Pattern::performCleanUp();
+		Parent::performCleanUp();
+		Follows::performCleanUp();
 	}
 
 public:
@@ -108,6 +110,36 @@ public:
 
 		Assert::AreEqual(size_t(1), std::get<0>(Modifies::getAllStmtVarInfo()).size());
 		Assert::AreEqual(size_t(1), std::get<0>(Uses::getAllStmtVarInfo()).size());
+
+		Assert::AreEqual(size_t(1), std::get<0>(Follows::getAllPredecessorSuccessorInfo()).size());
+		/* TODO: test transitive closures after they are implemented */
+		//Assert::AreEqual(size_t(1), std::get<0>(FollowsT::getAllPredecessorSuccessorInfo()).size());
+	}
+
+	TEST_METHOD(extract_multipleStatements_allFollowsFollowsTCaptured) {
+		std::string varNameX = "x";
+		std::string varNameY = "y";
+		std::string procName = "main";
+
+		ReadNode* readNode = new ReadNode(varNameX);
+		PrintNode* printNode = new PrintNode(varNameY);
+		ExprNode* exprNode = new ExprNode(ExprNodeValueType::varName, varNameX);
+		AssignNode* assignNode = new AssignNode(varNameY, exprNode);
+		StmtLstNode* stmtLstNode = new StmtLstNode();
+		stmtLstNode->addStmtNode(readNode);
+		stmtLstNode->addStmtNode(printNode);
+		stmtLstNode->addStmtNode(assignNode);
+		ProcedureNode* procedureNode = new ProcedureNode(procName);
+		procedureNode->addStmtLst(stmtLstNode);
+		ProgramNode* programNode = new ProgramNode();
+		programNode->addProcedure(procedureNode);
+		SourceAST ast(programNode);
+		DesignExtractor::Extract(ast);
+
+		Assert::AreEqual(size_t(2), std::get<0>(Follows::getAllPredecessorSuccessorInfo()).size());
+		/* TODO: test transitive closures after they are implemented */
+		/* We expect (3 choose 2) = 3 relationships in Follows T */
+		//Assert::AreEqual(size_t(3), std::get<0>(FollowsT::getAllPredecessorSuccessorInfo()).size());
 	}
 
 	TEST_METHOD(extract_assign_postfixExpressionExtracted) {
