@@ -43,7 +43,7 @@ private:
 
 	void handleGetAllStmtByType(EvaluatedTable& evTable, std::string synonym, StatementType stmtType) {
 		// TODO: PKB to change return type of getStmtIdxFromType()
-		/*std::vector<StmtIndex> results = Entity::getStmtIdxFromType(stmtType);
+		std::vector<StmtIndex> results = Entity::getStmtIdxFromType(stmtType);
 
 		std::vector<int> resultsToInt;
 		for (StmtIndex result : results) {
@@ -58,14 +58,14 @@ private:
 
 		evTable.setEntities(PQLentities);
 		evTable.setTable(PQLmap);
-		evTable.setNumRow(results.size());*/
+		evTable.setNumRow(results.size());
 	}
 
 
 
 	void handleGetAllVar(EvaluatedTable& evTable, std::string synonym) {
 		// TODO: PKB to change getAllVars() to return VarIndex.
-		/*std::vector<VarIndex> results = Entity::getAllVars();
+		std::vector<VarIndex> results = Entity::getAllVars();
 		std::vector<int> resultsToInt;
 		for (VarIndex result : results) {
 			resultsToInt.emplace_back(result.getIndex());
@@ -79,14 +79,14 @@ private:
 
 		evTable.setEntities(PQLentities);
 		evTable.setTable(PQLmap);
-		evTable.setNumRow(results.size());*/
+		evTable.setNumRow(results.size());
 	}
 
 	void handleGetAllProc(EvaluatedTable& evTable, std::string synonym) {
 		// TODO: PKB to change getAllProcs() to return ProcIndex.
-		/*std::vector<VarIndex> results = Entity::getAllVars();
+		std::vector<ProcIndex> results = Entity::getAllProcs();
 		std::vector<int> resultsToInt;
-		for (VarIndex result : results) {
+		for (ProcIndex result : results) {
 			resultsToInt.emplace_back(result.getIndex());
 		}
 
@@ -98,7 +98,7 @@ private:
 
 		evTable.setEntities(PQLentities);
 		evTable.setTable(PQLmap);
-		evTable.setNumRow(results.size());*/
+		evTable.setNumRow(results.size());
 	}
 
 	void handleGetAllConst(EvaluatedTable& evTable, std::string synonym) {
