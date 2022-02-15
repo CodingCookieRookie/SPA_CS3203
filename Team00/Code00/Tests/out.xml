@@ -1,63 +1,89 @@
 <?xml-stylesheet type="text/xsl" href="analysis.xsl"?>
 <test_results>
 <info>
-<name>AutoTester</name><parsing_time_taken>3.000000</parsing_time_taken>
+<name>AutoTester</name><parsing_time_taken>1.000000</parsing_time_taken>
 </info>
 <queries>
 <query>
-<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 7">7</id><querystr><![CDATA[stmt stmt; variable v; Select stmt]]></querystr>
-<stuans>1,2,3,4,5</stuans>
-<correct>1,2,3,4,5</correct>
-<time_taken>27.000000</time_taken>
+<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Get All Statements">1</id><querystr><![CDATA[stmt stmt; variable v; Select stmt]]></querystr>
+<stuans>1,2,3,4,5,6,7</stuans>
+<correct>1,2,3,4,5,6,7</correct>
+<time_taken>9.000000</time_taken>
 <passed/>
 </query>
 <query>
-<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 8">8</id><querystr><![CDATA[stmt stmt; variable v; procedure p; Select p]]></querystr>
-<stuans></stuans>
+<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Get All Procedures">2</id><querystr><![CDATA[stmt stmt; variable v; procedure p; Select p]]></querystr>
+<stuans>Example</stuans>
 <correct>Example</correct>
-<time_taken>19.000000</time_taken>
+<time_taken>6.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Get All Constants">3</id><querystr><![CDATA[stmt stmt; variable v; procedure p; constant c; Select c]]></querystr>
+<stuans>Example</stuans>
+<correct></correct>
+<time_taken>9.000000</time_taken>
 <failed>
-<missing>Example</missing>
-<additional></additional>
+<missing></missing>
+<additional>Example</additional>
 <summary>
-<expected>1</expected>
+<expected>0</expected>
 <matched>0</matched>
-<missing>1</missing>
-<additional>0</additional>
+<missing>0</missing>
+<additional>1</additional>
 </summary>
 </failed>
 </query>
 <query>
-<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 9">9</id><querystr><![CDATA[stmt stmt; variable v; procedure p; constant c; Select c]]></querystr>
-<stuans></stuans>
-<correct>None</correct>
-<time_taken>33.000000</time_taken>
+<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Get All Varirables">4</id><querystr><![CDATA[stmt stmt; variable v; Select v]]></querystr>
+<stuans>x1,yA123z,AbC1,print,read,x</stuans>
+<correct>x1 yA123z AbC1 print read x</correct>
+<time_taken>7.000000</time_taken>
 <failed>
-<missing>None</missing>
-<additional></additional>
+<missing>x1 yA123z AbC1 print read x</missing>
+<additional>AbC1,print,read,x,x1,yA123z</additional>
 <summary>
 <expected>1</expected>
 <matched>0</matched>
 <missing>1</missing>
-<additional>0</additional>
+<additional>6</additional>
 </summary>
 </failed>
 </query>
 <query>
-<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 6">6</id><querystr><![CDATA[stmt stmt; variable v; Select v]]></querystr>
+<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Get All Print Statments">5</id><querystr><![CDATA[print pn; variable v; Select pn]]></querystr>
+<stuans>1,4</stuans>
+<correct>1,4</correct>
+<time_taken>4.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Get All If statements">6</id><querystr><![CDATA[if ifs; variable v; Select ifs]]></querystr>
 <stuans></stuans>
-<correct>x1 yA123z AbC1 print read</correct>
-<time_taken>27.000000</time_taken>
-<failed>
-<missing>x1 yA123z AbC1 print read</missing>
-<additional></additional>
-<summary>
-<expected>1</expected>
-<matched>0</matched>
-<missing>1</missing>
-<additional>0</additional>
-</summary>
-</failed>
+<correct></correct>
+<time_taken>5.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Get All While statements">7</id><querystr><![CDATA[while w; variable v; Select w]]></querystr>
+<stuans></stuans>
+<correct></correct>
+<time_taken>4.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Get All Read statements">8</id><querystr><![CDATA[read r; variable v; Select r]]></querystr>
+<stuans>2,3,6</stuans>
+<correct>2,3,6</correct>
+<time_taken>5.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" CondNum="1" RelNum="0" comment="Get All Assigments statements">8</id><querystr><![CDATA[assign a; variable v; Select a]]></querystr>
+<stuans>5,7</stuans>
+<correct>5,7</correct>
+<time_taken>4.000000</time_taken>
+<passed/>
 </query>
 </queries>
 </test_results>
