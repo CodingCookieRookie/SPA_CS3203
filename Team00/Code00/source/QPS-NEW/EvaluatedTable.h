@@ -16,7 +16,7 @@ private:
     int numRow;
 
     EvaluatedTable blockNestedJoin(EvaluatedTable& otherTable,
-        std::unordered_map<std::string, PqlEntityType>& commonEntities);
+        std::unordered_set<std::string>& commonEntities);
 
 public:
     /* E.g. of an EvalauatedTable:
