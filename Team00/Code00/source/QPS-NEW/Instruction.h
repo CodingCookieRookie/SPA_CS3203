@@ -191,15 +191,15 @@ private:
 
 	void handleFollows(EvaluatedTable& evTable) {
 		
-		// Follows(s1, ?)
+		// Follows(s1, ?), or Follows(_, ?)
 		if (lhsRef.first == PqlReferenceType::synonym || lhsRef.first == PqlReferenceType::wildcard) {
 			std::vector<StmtIndex> stmts = Entity::getAllStmts();
 
-			// e.g. Follows(s1, 6)
+			// e.g. Follows(s1, 6), or Follows(_, 6)
 			if (rhsRef.first == PqlReferenceType::integer) { 
 				std::vector<int> results;
 				int rhsRefValue = stoi(rhsRef.second); //might throw error if string value can't be converted to int
-				StmtIndex rhsStmt = stmts[rhsRefValue - 1];
+				StmtIndex rhsStmt = stmts[rhsRefValue - 1]; //check if off by 1
 				for (StmtIndex stmt : stmts) {
 					if (Follows::containsSuccessor(stmt, rhsStmt)) {
 						results.emplace_back(stmt.getIndex()); //e.g {3} because 3 is followed by 6
@@ -215,7 +215,7 @@ private:
 				evTable.setTable(PQLmap);
 				evTable.setNumRow(results.size());
 			}
-			// rhsRef is either a synonym or a wildcard (i.e. Follows(s1, s2), or Follows(s1, _))
+			// rhsRef is either a synonym or a wildcard (i.e. Follows(s1, s2), Follows(s1, _), Follows(_, s2), Follows(_, _))
 			else { 
 				//Assumption: Different synonym names (i.e. Follows(s1, s2), not Follows(s1, s1))
 				std::tuple<std::vector<int>, std::vector<int>> results = Follows::getAllPredecessorSuccessorInfo();
@@ -232,12 +232,13 @@ private:
 				evTable.setTable(PQLmap);
 				evTable.setNumRow(std::get<0>(results).size());
 			}
-
-
 		}
+
 		else { //lhsRef is an integer (e.g. Follows(6, ?))
-			if (rhsRef.first == PqlReferenceType::integer) { // e.g. Follows(6, 7)
-				std::vector<StmtIndex> stmts = Entity::getAllStmts();
+			std::vector<StmtIndex> stmts = Entity::getAllStmts();
+
+			// e.g. Follows(6, 7)
+			if (rhsRef.first == PqlReferenceType::integer) { 
 				StmtIndex lhsStmtIndex, rhsStmtIndex;
 				for (StmtIndex stmt : stmts) {
 					if (stmt.getIndex() == stoi(lhsRef.second)) {
@@ -250,10 +251,27 @@ private:
 				evTable.setBoolean((Follows::containsSuccessor(lhsStmtIndex, rhsStmtIndex))); 
 				//e.g True, if 6 is follwed by 7
 			}
-			else { //rhsRef is either a synonym or a wildcard (e.g. Follows(6, s2), or Follows(6, _))
 
+			//rhsRef is either a synonym or a wildcard (e.g. Follows(6, s2), or Follows(6, _))
+			else { 
+				std::vector<int> results;
+				int lhsRefValue = stoi(lhsRef.second); //might throw error if string value can't be converted to int
+				StmtIndex lhsStmt = stmts[lhsRefValue - 1];
+				for (StmtIndex stmt : stmts) {
+					if (Follows::containsSuccessor(lhsStmt, stmt)) {
+						results.emplace_back(stmt.getIndex()); //e.g {7} because 6 is followed by 7
+					}
+				}
+				std::unordered_map<std::string, PqlEntityType> PQLentities;
+				PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Stmt));
+
+				std::unordered_map<std::string, std::vector<int>> PQLmap;
+				PQLmap[rhsRef.second] = results;
+
+				evTable.setEntities(PQLentities);
+				evTable.setTable(PQLmap);
+				evTable.setNumRow(results.size());
 			}
-
 		}
 	}
 
