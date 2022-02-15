@@ -19,6 +19,7 @@ protected:
 		StmtIndex::HashFunction> sucPredTable;
 
 public:
+	static void insert(StmtIndex predecessor, StmtIndex successors);
 	static bool containsSuccessor(StmtIndex predecessor, StmtIndex successor);
 	static bool containsPredecessor(StmtIndex predecessor, StmtIndex successor);
 	static std::vector<int> getSuccessorStmts(StmtIndex predecessor);
@@ -38,6 +39,12 @@ template<class T> std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, St
 
 template<class T>
 RS2<T>::RS2() {};
+
+template<class T>
+void RS2<T>::insert(StmtIndex predecessor, StmtIndex successor) {
+	predSucTable[predecessor].insert(successor);
+	sucPredTable[successor].insert(predecessor);
+}
 
 template<class T>
 bool RS2<T>::containsPredecessor(StmtIndex predecessor, StmtIndex successor) {
