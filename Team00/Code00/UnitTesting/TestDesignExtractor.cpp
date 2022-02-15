@@ -14,6 +14,7 @@ private:
         Entity::performCleanUp();
         Uses::performCleanUp();
         Modifies::performCleanUp();
+        Pattern::performCleanUp();
     }
 
 public:
