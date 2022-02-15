@@ -44,6 +44,17 @@ StmtIndex DesignExtractor::processStmtNode(StmtNode* stmtNode, StmtIndex prevInd
 		VarIndex varIndex = Entity::insertVar(varName);
 		Uses::insert(stmtIndex, varIndex);
 	}
+	std::unordered_set<std::string> consts = stmtNode->getUsesConsts();
+	for (const std::string& constName : consts) {
+		int constVal = stoi(constName);
+		Entity::insertConst(constVal);
+	}
+	std::string pattern = stmtNode->getPattern();
+	if (!pattern.empty() && modifies.size() == 1) {
+		std::string varName = *(modifies.begin());
+		VarIndex varIndex = Entity::getVarIdx(varName);
+		Pattern::insertPostFixInfo(varIndex, pattern, stmtIndex);
+	}
 	std::vector<StmtLstNode*> childStmtLsts = stmtNode->getChildStmtLst();
 	for (StmtLstNode* stmtLstNode : childStmtLsts) {
 		std::vector<StmtIndex> stmtIndices = processStmtLstNode(stmtLstNode);

@@ -13,29 +13,37 @@ template<class T>
 class RS1 {
 protected:
 	RS1();
-	static std::unordered_map<VarIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, VarIndex::HashFunction> varStmtTable;
-	static std::unordered_map<StmtIndex, std::unordered_set<VarIndex, VarIndex::HashFunction>, StmtIndex::HashFunction> stmtVarTable;
-	static std::unordered_map<VarIndex, std::unordered_set<ProcIndex, ProcIndex::HashFunction>, VarIndex::HashFunction> varProcTable;
-	static std::unordered_map<ProcIndex, std::unordered_set<VarIndex, VarIndex::HashFunction>, ProcIndex::HashFunction> procVarTable;
+	static std::unordered_map<VarIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>,
+		VarIndex::HashFunction> varStmtTable;
+	static std::unordered_map<StmtIndex, std::unordered_set<VarIndex, VarIndex::HashFunction>,
+		StmtIndex::HashFunction> stmtVarTable;
+	static std::unordered_map<VarIndex, std::unordered_set<ProcIndex, ProcIndex::HashFunction>,
+		VarIndex::HashFunction> varProcTable;
+	static std::unordered_map<ProcIndex, std::unordered_set<VarIndex, VarIndex::HashFunction>,
+		ProcIndex::HashFunction> procVarTable;
 
 public:
 	static void insert(StmtIndex  stmtIndex, VarIndex varIndex);
 	static void insert(ProcIndex procIndex, VarIndex varIndex);
 	static bool contains(StmtIndex  stmtIndex, VarIndex varIndex);
 	static bool contains(ProcIndex procIndex, VarIndex varIndex);
-	static std::unordered_set<StmtIndex, StmtIndex::HashFunction> getStatements(VarIndex varIndex);
-	static std::unordered_set<ProcIndex, ProcIndex::HashFunction> getProcedures(VarIndex varIndex);
-	static std::unordered_set<VarIndex, VarIndex::HashFunction> getVariables(StmtIndex  stmtIndex);
-	static std::unordered_set<VarIndex, VarIndex::HashFunction> getVariables(ProcIndex procIndex);
-	static std::vector<std::tuple<ProcIndex, VarIndex>> getAllProcVarInfo();
-	static std::vector<std::tuple<StmtIndex, VarIndex>> getAllStmtVarInfo();
+	static std::vector<int> getStatements(VarIndex varIndex);
+	static std::vector<int> getProcedures(VarIndex varIndex);
+	static std::vector<int> getVariables(StmtIndex  stmtIndex);
+	static std::vector<int> getVariables(ProcIndex procIndex);
+	static std::tuple<std::vector<int>, std::vector<int>> getAllProcVarInfo();
+	static std::tuple<std::vector<int>, std::vector<int>> getAllStmtVarInfo();
 	static void performCleanUp();
 };
 
-template<class T> std::unordered_map<VarIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, VarIndex::HashFunction> RS1<T>::varStmtTable = {};
-template<class T> std::unordered_map<StmtIndex, std::unordered_set<VarIndex, VarIndex::HashFunction>, StmtIndex::HashFunction> RS1<T>::stmtVarTable = {};
-template<class T> std::unordered_map<VarIndex, std::unordered_set<ProcIndex, ProcIndex::HashFunction>, VarIndex::HashFunction> RS1<T>::varProcTable = {};
-template<class T> std::unordered_map<ProcIndex, std::unordered_set<VarIndex, VarIndex::HashFunction>, ProcIndex::HashFunction> RS1<T>::procVarTable = {};
+template<class T> std::unordered_map<VarIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>,
+	VarIndex::HashFunction> RS1<T>::varStmtTable = {};
+template<class T> std::unordered_map<StmtIndex, std::unordered_set<VarIndex, VarIndex::HashFunction>,
+	StmtIndex::HashFunction> RS1<T>::stmtVarTable = {};
+template<class T> std::unordered_map<VarIndex, std::unordered_set<ProcIndex, ProcIndex::HashFunction>,
+	VarIndex::HashFunction> RS1<T>::varProcTable = {};
+template<class T> std::unordered_map<ProcIndex, std::unordered_set<VarIndex, VarIndex::HashFunction>,
+	ProcIndex::HashFunction> RS1<T>::procVarTable = {};
 
 template<class T>
 RS1<T>::RS1() {};
@@ -81,45 +89,65 @@ bool RS1<T>::contains(ProcIndex procIndex, VarIndex varIndex) {
 };
 
 template<class T>
-std::unordered_set<StmtIndex, StmtIndex::HashFunction> RS1<T>::getStatements(VarIndex varIndex) {
-	return varStmtTable[varIndex];
+std::vector<int> RS1<T>::getStatements(VarIndex varIndex) {
+	std::vector<int> statements;
+	for (auto& statement : varStmtTable[varIndex]) {
+		statements.push_back(statement.index);
+	}
+	return statements;
 };
 
 template<class T>
-std::unordered_set<ProcIndex, ProcIndex::HashFunction> RS1<T>::getProcedures(VarIndex varIndex) {
-	return varProcTable[varIndex];
+std::vector<int> RS1<T>::getProcedures(VarIndex varIndex) {
+	std::vector<int> procedures;
+	for (auto& procedure : varProcTable[varIndex]) {
+		procedures.push_back(procedure.index);
+	}
+	return procedures;
 };
 
 template<class T>
-std::unordered_set<VarIndex, VarIndex::HashFunction> RS1<T>::getVariables(StmtIndex  stmtIndex) {
-	return stmtVarTable[stmtIndex];
+std::vector<int> RS1<T>::getVariables(StmtIndex  stmtIndex) {
+	std::vector<int> variables;
+	for (auto& variable : stmtVarTable[stmtIndex]) {
+		variables.push_back(variable.index);
+	}
+	return variables;
 };
 
 template<class T>
-std::unordered_set<VarIndex, VarIndex::HashFunction> RS1<T>::getVariables(ProcIndex procIndex) {
-	return procVarTable[procIndex];
+std::vector<int> RS1<T>::getVariables(ProcIndex procIndex) {
+	std::vector<int> variables;
+	for (auto& variable : procVarTable[procIndex]) {
+		variables.push_back(variable.index);
+	}
+	return variables;
 };
 
 template<class T>
-std::vector<std::tuple<ProcIndex, VarIndex>> RS1<T>::getAllProcVarInfo() {
-	std::vector<std::tuple<ProcIndex, VarIndex>> data;
+std::tuple<std::vector<int>, std::vector<int>> RS1<T>::getAllProcVarInfo() {
+	std::vector<int> procedures;
+	std::vector<int> variables;
 	for (auto& procVarEntry : procVarTable) {
 		for (auto& varIndex : procVarEntry.second) {
-			data.push_back(std::make_tuple(procVarEntry.first, varIndex));
+			procedures.push_back(procVarEntry.first.index);
+			variables.push_back(varIndex.index);
 		}
 	}
-	return data;
+	return std::make_tuple(procedures, variables);
 };
 
 template<class T>
-std::vector<std::tuple<StmtIndex, VarIndex>> RS1<T>::getAllStmtVarInfo() {
-	std::vector<std::tuple<StmtIndex, VarIndex>> data;
+std::tuple<std::vector<int>, std::vector<int>> RS1<T>::getAllStmtVarInfo() {
+	std::vector<int> statements;
+	std::vector<int> variables;
 	for (auto& stmtVarEntry : stmtVarTable) {
 		for (auto& varIndex : stmtVarEntry.second) {
-			data.push_back(std::make_tuple(stmtVarEntry.first, varIndex));
+			statements.push_back(stmtVarEntry.first.index);
+			variables.push_back(varIndex.index);
 		}
 	}
-	return data;
+	return std::make_tuple(statements, variables);
 };
 
 template<class T>

@@ -48,11 +48,12 @@ VarIndex Entity::getVarIdx(std::string varName) {
 	return varIdxTable[varName];
 }
 
-std::vector<std::string> Entity::getAllVars() {
-	std::vector<std::string> res;
+std::vector<VarIndex> Entity::getAllVars() {
+	std::vector<VarIndex> res;
 
-	for (auto& varInfo : varIdxTable)
+	for (auto& varInfo : varNameTable) {
 		res.push_back(varInfo.first);
+	}
 
 	return res;
 }
@@ -78,11 +79,12 @@ ProcIndex Entity::getProcIdx(std::string procName) {
 	return procIdxTable[procName];
 }
 
-std::vector<std::string> Entity::getAllProcs() {
-	std::vector<std::string> res;
+std::vector<ProcIndex> Entity::getAllProcs() {
+	std::vector<ProcIndex> res;
 
-	for (auto& procInfo : procIdxTable)
+	for (auto& procInfo : procNameTable) {
 		res.push_back(procInfo.first);
+	}
 
 	return res;
 }
@@ -94,8 +96,9 @@ void Entity::insertConst(int constant) {
 std::vector<int> Entity::getAllConsts() {
 	std::vector<int> res;
 
-	for (auto& constant : constTable)
+	for (auto& constant : constTable) {
 		res.push_back(constant);
+	}
 
 	return res;
 }
@@ -108,19 +111,31 @@ StmtIndex Entity::insertStmt(StatementType stmtType) {
 	return stmtIdx;
 }
 
+bool Entity::isContainerStmt(StmtIndex stmtIdx) {
+	StatementType stmtType = stmtTypeTable[stmtIdx];
+	return stmtType == StatementType::whileType || stmtType == StatementType::ifType;
+}
+
 bool Entity::containsStmt(int stmtNo) {
 	return stmtTypeTable.find(StmtIndex(stmtNo)) != stmtTypeTable.end();
 }
 
-std::unordered_set<StmtIndex, StmtIndex::HashFunction> Entity::getStmtIdxFromType(StatementType stmtType) {
-	return stmtIdxFromTypeTable[stmtType];
+std::vector<StmtIndex> Entity::getStmtIdxFromType(StatementType stmtType) {
+	std::vector<StmtIndex> res;
+
+	for (auto& stmtIdx : stmtIdxFromTypeTable[stmtType]) {
+		res.push_back(stmtIdx);
+	}
+
+	return res;
 }
 
 std::vector<StmtIndex> Entity::getAllStmts() {
 	std::vector<StmtIndex> res;
 
-	for (auto& stmtIdx : stmtTypeTable)
+	for (auto& stmtIdx : stmtTypeTable) {
 		res.push_back(stmtIdx.first);
+	}
 
 	return res;
 }

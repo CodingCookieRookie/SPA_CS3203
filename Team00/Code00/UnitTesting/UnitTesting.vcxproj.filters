@@ -64,6 +64,9 @@
     <ClCompile Include="TestEvaluatedTable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TestContainer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
