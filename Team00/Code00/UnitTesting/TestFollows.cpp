@@ -21,9 +21,7 @@ private:
 
 public:
 	TEST_METHOD(insert_getSuccessorStmts) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> expectedAns;
-		expectedAns.insert(successor1);
-		expectedAns.insert(successor2);
+		std::vector<int> expectedAns{ successor1.index, successor2.index };
 
 		Follows::insert(predecessor1, successor1);
 		Follows::insert(predecessor1, successor2);
@@ -40,8 +38,7 @@ public:
 	};
 
 	TEST_METHOD(insert_getPredecessorStmts) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> expectedAns;
-		expectedAns.insert(predecessor1);
+		std::vector<int> expectedAns{ predecessor1.index };
 
 		Follows::insert(predecessor1, successor1);
 		Follows::insert(predecessor1, successor2);
@@ -81,15 +78,43 @@ public:
 	};
 
 	TEST_METHOD(getAllPredecessorSuccessorInfo) {
-		std::vector<std::tuple<StmtIndex, StmtIndex>> expectedAns;
-		expectedAns.push_back(std::make_tuple(predecessor1, successor1));
-		expectedAns.push_back(std::make_tuple(predecessor2, successor2));
+		std::vector<int> predecessors{ predecessor1.index, predecessor2.index };
+		std::vector<int> successors{ successor1.index, successor2.index };
+		std::tuple<std::vector<int>, std::vector<int>> expectedAns = std::make_tuple(predecessors, successors);
 
 		Follows::insert(predecessor1, successor1);
 		Follows::insert(predecessor2, successor2);
 
 		auto predSucInfo = Follows::getAllPredecessorSuccessorInfo();
 		Assert::IsTrue(expectedAns == predSucInfo);
+	};
+
+	TEST_METHOD(getPredSucTable) {
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>,
+			StmtIndex::HashFunction> expectedAns;
+		expectedAns[predecessor1].insert(successor1);
+		expectedAns[predecessor2].insert(successor2);
+
+		Follows::insert(predecessor1, successor1);
+		Follows::insert(predecessor2, successor2);
+
+		auto followsTable = Follows::getPredSucTable();
+
+		Assert::IsTrue(expectedAns == followsTable);
+	};
+
+	TEST_METHOD(getSucPredTable) {
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>,
+			StmtIndex::HashFunction> expectedAns;
+		expectedAns[successor1].insert(predecessor1);
+		expectedAns[successor2].insert(predecessor2);
+
+		Follows::insert(predecessor1, successor1);
+		Follows::insert(predecessor2, successor2);
+
+		auto followsTable = Follows::getSucPredTable();
+
+		Assert::IsTrue(expectedAns == followsTable);
 	};
 	};
 }
