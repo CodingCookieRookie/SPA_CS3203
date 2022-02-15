@@ -292,6 +292,35 @@ namespace UnitTesting
                 [&queryParentVarName] { PQLParser::parseQuery(queryParentVarName); };
             Assert::ExpectException<QPSException>(wrapperParentVarName);
         }
+
+        TEST_METHOD(parseQuery_patternSynAssignInvalid_exceptionThrown) {
+            std::string queryVariable = "assign a; variable v; Select a pattern v(_, _)";
+            auto wrapperVariable =
+                [&queryVariable] { PQLParser::parseQuery(queryVariable); };
+            Assert::ExpectException<QPSException>(wrapperVariable);
+
+            std::string queryPrint = "assign a; print pn; Select a pattern pn(_, _)";
+            auto wrapperPrint =
+                [&queryPrint] { PQLParser::parseQuery(queryPrint); };
+            Assert::ExpectException<QPSException>(wrapperPrint);
+        }
+
+        TEST_METHOD(parseQuery_patternEntRefInvalid_exceptionThrown) {
+            std::string queryAssign = "assign a; variable v; Select a pattern a(a, _)";
+            auto wrapperAssign =
+                [&queryAssign] { PQLParser::parseQuery(queryAssign); };
+            Assert::ExpectException<QPSException>(wrapperAssign);
+
+            std::string queryConstant = "assign a; constant c; Select a pattern a(c, _)";
+            auto wrapperConstant =
+                [&queryConstant] { PQLParser::parseQuery(queryConstant); };
+            Assert::ExpectException<QPSException>(wrapperConstant);
+
+            std::string queryRead= "assign a; read r; Select a pattern a(r, _)";
+            auto wrapperRead=
+                [&queryRead] { PQLParser::parseQuery(queryRead); };
+            Assert::ExpectException<QPSException>(wrapperRead);
+        }
         TEST_METHOD(parseQuery_syntaxError_exceptionThrown)
         {
             /* No synonym Selected */

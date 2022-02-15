@@ -145,6 +145,11 @@ void ParsedQuery::populatePatterns(const std::vector<ParsedPattern>& allPatterns
         if (!isEntRef(ref)) {
             throw QPSException(QPSException::VALIDATOR_ERROR);
         }
+        if (isSynonymRef(ref)) {
+            if (!isVarSynonym(ref)) {
+                throw QPSException(QPSException::VALIDATOR_ERROR);
+            }
+        }
         patterns.push_back(pattern);
     }
 }
