@@ -57,8 +57,6 @@ private:
 		return EvaluatedTable(PQLentities, PQLmap, results.size());
 	}
 
-
-
 	EvaluatedTable handleGetAllVar(std::string synonym) {
 		// TODO: PKB to change getAllVars() to return VarIndex.
 		std::vector<VarIndex> results = Entity::getAllVars();
