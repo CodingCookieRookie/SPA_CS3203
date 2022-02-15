@@ -18,10 +18,10 @@ protected:
 
 public:
 	static void insertPostFixInfo(VarIndex varIdx, std::string postFixExpression, StmtIndex stmtIdx);
-	static std::vector<StmtIndex> getStmtsFromVarPattern(VarIndex varIdx, std::string expression, bool isSubExpression);
-	static std::vector<std::tuple<StmtIndex, VarIndex>> getStmtsFromPattern(std::string expression, bool isSubExpression);
-	static std::vector<StmtIndex> getStmtsFromVarPattern(VarIndex varIdx);
-	static std::vector<std::tuple<StmtIndex, VarIndex>> getAllAssignStmtVarsPatternInfo();
+	static std::vector<int> getStmtsFromVarPattern(VarIndex varIdx, std::string expression, bool isSubExpression);
+	static std::tuple<std::vector<int>, std::vector<int>> getStmtsFromPattern(std::string expression, bool isSubExpression);
+	static std::vector<int> getStmtsFromVarPattern(VarIndex varIdx);
+	static std::tuple<std::vector<int>, std::vector<int>> getAllAssignStmtVarsPatternInfo();
 	static void performCleanUp();
 };
 

@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\common\Lexer.cpp" />
+    <ClCompile Include="..\source\PKB\Container.cpp" />
     <ClCompile Include="..\source\PKB\Entity.cpp" />
     <ClCompile Include="..\source\PKB\ExpressionProcessor.cpp" />
     <ClCompile Include="..\source\PKB\Follows.cpp" />
@@ -43,6 +44,7 @@
   <ItemGroup>
     <ClInclude Include="..\source\common\Lexer.h" />
     <ClInclude Include="..\source\common\Types.h" />
+    <ClInclude Include="..\source\PKB\Container.h" />
     <ClInclude Include="..\source\PKB\Entity.h" />
     <ClInclude Include="..\source\PKB\ExpressionProcessor.h" />
     <ClInclude Include="..\source\PKB\Follows.h" />

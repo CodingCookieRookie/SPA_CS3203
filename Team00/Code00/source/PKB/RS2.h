@@ -19,6 +19,7 @@ protected:
 		StmtIndex::HashFunction> sucPredTable;
 
 public:
+	static void insert(StmtIndex predecessor, StmtIndex successors);
 	static bool containsSuccessor(StmtIndex predecessor, StmtIndex successor);
 	static bool containsPredecessor(StmtIndex predecessor, StmtIndex successor);
 	static std::vector<int> getSuccessorStmts(StmtIndex predecessor);
@@ -38,6 +39,12 @@ template<class T> std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, St
 
 template<class T>
 RS2<T>::RS2() {};
+
+template<class T>
+void RS2<T>::insert(StmtIndex predecessor, StmtIndex successor) {
+	predSucTable[predecessor].insert(successor);
+	sucPredTable[successor].insert(predecessor);
+}
 
 template<class T>
 bool RS2<T>::containsPredecessor(StmtIndex predecessor, StmtIndex successor) {
@@ -93,13 +100,25 @@ std::tuple<std::vector<int>, std::vector<int>> RS2<T>::getAllPredecessorSuccesso
 template<class T>
 std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction>
 RS2<T>::getPredSucTable() {
-	return predSucTable;
+	std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> data;
+	for (auto& predSucEntry : predSucTable) {
+		for (auto& successor : predSucEntry.second) {
+			data[predSucEntry.first].insert(successor);
+		}
+	}
+	return data;
 };
 
 template<class T>
 std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction>
 RS2<T>::getSucPredTable() {
-	return sucPredTable;
+	std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> data;
+	for (auto& sucPredEntry : sucPredTable) {
+		for (auto& predecessor : sucPredEntry.second) {
+			data[sucPredEntry.first].insert(predecessor);
+		}
+	}
+	return data;
 };
 
 template<class T>

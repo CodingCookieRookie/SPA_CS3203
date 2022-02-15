@@ -8,7 +8,7 @@
 template<class T, class U>
 class RS2T : public RS2<RS2T<T, U>> {
 private:
-	static void insert(StmtIndex predecessor, std::unordered_set<StmtIndex, StmtIndex::HashFunction> successors);
+	using RS2<RS2T<T, U>>::insert;
 	static std::unordered_set<StmtIndex, StmtIndex::HashFunction> getAllSuccessors(StmtIndex predecessor);
 protected:
 	RS2T();
@@ -18,14 +18,6 @@ public:
 
 template<class T, class U>
 RS2T<T, U>::RS2T() {};
-
-template<class T, class U>
-void RS2T<T, U>::insert(StmtIndex predecessor, std::unordered_set<StmtIndex, StmtIndex::HashFunction> successors) {
-	for (auto& successor : successors) {
-		predSucTable[predecessor].insert(successor);
-		sucPredTable[successor].insert(predecessor);
-	}
-};
 
 template<class T, class U>
 std::unordered_set<StmtIndex, StmtIndex::HashFunction> RS2T<T, U>::getAllSuccessors(StmtIndex predecessor) {
@@ -56,7 +48,9 @@ void RS2T<T, U>::populate() {
 	for (auto& uPredSucEntry : uPredSucTable) {
 		StmtIndex predecessor = uPredSucEntry.first;
 		std::unordered_set<StmtIndex, StmtIndex::HashFunction> successors = getAllSuccessors(predecessor);
-		insert(predecessor, successors);
+		for (auto& successor : successors) {
+			insert(predecessor, successor);
+		}
 	}
 };
 
