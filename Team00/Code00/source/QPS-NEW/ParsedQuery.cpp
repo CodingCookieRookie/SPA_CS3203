@@ -38,9 +38,16 @@ void ParsedQuery::populateRelationships(const std::vector<ParsedRelationship>& a
             if (!isStmtRef(lhs)) {
                 throw QPSException(QPSException::VALIDATOR_ERROR);
             }
+            if (isWildcardRef(lhs)) {
+                throw QPSException(QPSException::VALIDATOR_ERROR);
+            }
             if (isSynonymRef(lhs)) {
                 std::string lhsVarName = lhs.second;
                 if (!isDeclared(lhsVarName)) {
+                    throw QPSException(QPSException::VALIDATOR_ERROR);
+                }
+                /* Note: Add the case for ModifiesP in iteration 2 */
+                if (!isStmtSynonym(lhs)) {
                     throw QPSException(QPSException::VALIDATOR_ERROR);
                 }
             }
@@ -52,16 +59,28 @@ void ParsedQuery::populateRelationships(const std::vector<ParsedRelationship>& a
                 if (!isDeclared(rhsVarName)) {
                     throw QPSException(QPSException::VALIDATOR_ERROR);
                 }
+                if (!isVarSynonym(rhs)) {
+                    throw QPSException(QPSException::VALIDATOR_ERROR);
+                }
             }
+            PqlRelationshipType relationshipType =
+                (isStmtRef(lhs) ? PqlRelationshipType::ModifiesS : PqlRelationshipType::ModifiesP);
             relationships.push_back(
-                ParsedRelationship(PqlRelationshipType::ModifiesS, lhs, rhs));
+                ParsedRelationship(relationshipType, lhs, rhs));
         } else if (isUsesRelationship(relationship)) {
             if (!isStmtRef(lhs)) {
                 throw QPSException(QPSException::VALIDATOR_ERROR);
             }
+            if (isWildcardRef(lhs)) {
+                throw QPSException(QPSException::VALIDATOR_ERROR);
+            }
             if (isSynonymRef(lhs)) {
                 std::string lhsVarName = lhs.second;
                 if (!isDeclared(lhsVarName)) {
+                    throw QPSException(QPSException::VALIDATOR_ERROR);
+                }
+                /* Note: Add the case for ModifiesP in iteration 2 */
+                if (!isStmtSynonym(lhs)) {
                     throw QPSException(QPSException::VALIDATOR_ERROR);
                 }
             }
@@ -73,16 +92,25 @@ void ParsedQuery::populateRelationships(const std::vector<ParsedRelationship>& a
                 if (!isDeclared(rhsVarName)) {
                     throw QPSException(QPSException::VALIDATOR_ERROR);
                 }
+                if (!isVarSynonym(rhs)) {
+                    throw QPSException(QPSException::VALIDATOR_ERROR);
+                }
             }
+            PqlRelationshipType relationshipType =
+                (isStmtRef(lhs) ? PqlRelationshipType::UsesS : PqlRelationshipType::UsesP);
             relationships.push_back(
-                ParsedRelationship(PqlRelationshipType::UsesS, lhs, rhs));
+                ParsedRelationship(relationshipType, lhs, rhs));
         } else {
+            /* By default, else handles Parent / T and FollowsT */
             if (!isStmtRef(lhs)) {
                 throw QPSException(QPSException::VALIDATOR_ERROR);
             }
             if (isSynonymRef(lhs)) {
                 std::string lhsVarName = lhs.second;
                 if (!isDeclared(lhsVarName)) {
+                    throw QPSException(QPSException::VALIDATOR_ERROR);
+                }
+                if (!isStmtSynonym(lhs)) {
                     throw QPSException(QPSException::VALIDATOR_ERROR);
                 }
             }
@@ -92,6 +120,9 @@ void ParsedQuery::populateRelationships(const std::vector<ParsedRelationship>& a
             if (isSynonymRef(rhs)) {
                 std::string rhsVarName = rhs.second;
                 if (!isDeclared(rhsVarName)) {
+                    throw QPSException(QPSException::VALIDATOR_ERROR);
+                }
+                if (!isStmtSynonym(rhs)) {
                     throw QPSException(QPSException::VALIDATOR_ERROR);
                 }
             }
@@ -116,6 +147,24 @@ void ParsedQuery::populatePatterns(const std::vector<ParsedPattern>& allPatterns
         }
         patterns.push_back(pattern);
     }
+}
+
+bool ParsedQuery::isStmtSynonym(PqlReference ref) {
+    std::string& refName = ref.second;
+    PqlEntityType entType = declarations.at(refName);
+    return (entType == PqlEntityType::Assign)
+        || (entType == PqlEntityType::Call)
+        || (entType == PqlEntityType::If)
+        || (entType == PqlEntityType::Print)
+        || (entType == PqlEntityType::Read)
+        || (entType == PqlEntityType::Stmt)
+        || (entType == PqlEntityType::While);
+}
+
+bool ParsedQuery::isVarSynonym(PqlReference ref) {
+    std::string& refName = ref.second;
+    PqlEntityType entType = declarations.at(refName);
+    return (entType == PqlEntityType::Variable);
 }
 
 ParsedQuery::ParsedQuery(const std::vector<PQL_VARIABLE>& allDeclarations,

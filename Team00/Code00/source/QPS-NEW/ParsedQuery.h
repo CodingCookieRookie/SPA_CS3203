@@ -23,6 +23,10 @@ private:
         const std::vector<ParsedRelationship>& allRelationships);
     void populatePatterns(
         const std::vector<ParsedPattern>& allPatterns);
+
+    bool isStmtSynonym(PqlReference ref);
+    bool isVarSynonym(PqlReference ref);
+    bool isProcSynonym(PqlReference ref);
 public:
 
     /* Constructor for a ParsedQuery object */
