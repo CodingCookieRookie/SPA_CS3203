@@ -69,7 +69,7 @@ public:
 
 	TEST_METHOD(convertInfixToPostFix_oneOperand) {
 		std::string input = "a";
-		std::string expectedRes = "a ";
+		std::string expectedRes = " a ";
 		std::string res = ExpressionProcessor::convertInfixToPostFix(input);
 		Assert::AreEqual(expectedRes, res);
 		Assert::AreEqual(expectedRes, res);
@@ -77,7 +77,7 @@ public:
 
 	TEST_METHOD(convertInfixToPostFix_oneOperator) {
 		std::string input = "a+b";
-		std::string expectedRes = "a b +";
+		std::string expectedRes = " a  b +";
 		std::string res = ExpressionProcessor::convertInfixToPostFix(input);
 		Assert::AreEqual(expectedRes, res);
 	}
@@ -86,8 +86,8 @@ public:
 		std::string input1 = "ab+b0";
 		std::string input2 = "a+bb0";
 		// Ensures unique infix expressions remain unique after postfix conversion (with complex operand names)
-		std::string expectedRes1 = "ab b0 +";
-		std::string expectedRes2 = "a bb0 +";
+		std::string expectedRes1 = " ab  b0 +";
+		std::string expectedRes2 = " a  bb0 +";
 		std::string res1 = ExpressionProcessor::convertInfixToPostFix(input1);
 		std::string res2 = ExpressionProcessor::convertInfixToPostFix(input2);
 		Assert::AreEqual(expectedRes1, res1);
@@ -98,8 +98,8 @@ public:
 		std::string input1 = "ab+93238";
 		std::string input2 = "a+b93238";
 		// Ensures unique infix expressions remain unique after postfix conversion (with complex operand names)
-		std::string expectedRes1 = "ab 93238 +";
-		std::string expectedRes2 = "a b93238 +";
+		std::string expectedRes1 = " ab  93238 +";
+		std::string expectedRes2 = " a  b93238 +";
 		std::string res1 = ExpressionProcessor::convertInfixToPostFix(input1);
 		std::string res2 = ExpressionProcessor::convertInfixToPostFix(input2);
 		Assert::AreEqual(expectedRes1, res1);
@@ -108,7 +108,7 @@ public:
 
 	TEST_METHOD(convertInfixToPostFix_twoOperators_samePrecedence) {
 		std::string input = "a+b-c";
-		std::string expectedRes = "a b +c -";
+		std::string expectedRes = " a  b + c -";
 		std::string res = ExpressionProcessor::convertInfixToPostFix(input);
 		Assert::AreEqual(expectedRes, res);
 	}
@@ -128,21 +128,21 @@ public:
 
 	TEST_METHOD(convertInfixToPostFix_twoOperators_differentPrecedence) {
 		std::string input = "a+b*c";
-		std::string expectedRes = "a b c *+";
+		std::string expectedRes = " a  b  c *+";
 		std::string res = ExpressionProcessor::convertInfixToPostFix(input);
 		Assert::AreEqual(expectedRes, res);
 	}
 
 	TEST_METHOD(convertInfixToPostFix_manyOperators_samePrecedence) {
 		std::string input = "a*b%c/d%deab";
-		std::string expectedRes = "a b *c %d /deab %";
+		std::string expectedRes = " a  b * c % d / deab %";
 		std::string res = ExpressionProcessor::convertInfixToPostFix(input);
 		Assert::AreEqual(expectedRes, res);
 	}
 
 	TEST_METHOD(convertInfixToPostFix_manyOperators_samePrecedence_repeatedOperands) {
 		std::string input = "a*deab%c/d%deab*deab";
-		std::string expectedRes = "a deab *c %d /deab %deab *";
+		std::string expectedRes = " a  deab * c % d / deab % deab *";
 		std::string res = ExpressionProcessor::convertInfixToPostFix(input);
 		Assert::AreEqual(expectedRes, res);
 	}
@@ -162,63 +162,63 @@ public:
 
 	TEST_METHOD(convertInfixToPostFix_manyOperators_differentPrecedence) {
 		std::string input = "a+b/c%d/e";
-		std::string expectedRes = "a b c /d %e /+";
+		std::string expectedRes = " a  b  c / d % e /+";
 		std::string res = ExpressionProcessor::convertInfixToPostFix(input);
 		Assert::AreEqual(expectedRes, res);
 	}
 
 	TEST_METHOD(convertInfixToPostFix_manyOperators_differentPrecedence_differentOperandTypes) {
 		std::string input = "a+0/c%123/e";
-		std::string expectedRes = "a 0 c /123 %e /+";
+		std::string expectedRes = " a  0  c / 123 % e /+";
 		std::string res = ExpressionProcessor::convertInfixToPostFix(input);
 		Assert::AreEqual(expectedRes, res);
 	}
 
 	TEST_METHOD(convertInfixToPostFix_manyOperators_differentPrecedence_differentOperandTypes_complexOperandNames) {
 		std::string input = "A123+0/print%1234567890/statement123";
-		std::string expectedRes = "A123 0 print /1234567890 %statement123 /+";
+		std::string expectedRes = " A123  0  print / 1234567890 % statement123 /+";
 		std::string res = ExpressionProcessor::convertInfixToPostFix(input);
 		Assert::AreEqual(expectedRes, res);
 	}
 
 	TEST_METHOD(convertInfixToPostFix_manyOperators_differentPrecedence_differentOperandTypes_complexOperandNames_repeatedOperands) {
 		std::string input = "print+print%print*printprint1234567890/statement123+print/1234567890";
-		std::string expectedRes = "print print print %printprint1234567890 *statement123 /+print 1234567890 /+";
+		std::string expectedRes = " print  print  print % printprint1234567890 * statement123 /+ print  1234567890 /+";
 		std::string res = ExpressionProcessor::convertInfixToPostFix(input);
 		Assert::AreEqual(expectedRes, res);
 	}
 
 	TEST_METHOD(convertInfixToPostFix_twoSingleLevelBrackets) {
 		std::string input = "((A+b)*c-d)*e";
-		std::string expectedRes = "A b +c *d -e *";
+		std::string expectedRes = " A  b + c * d - e *";
 		std::string res = ExpressionProcessor::convertInfixToPostFix(input);
 		Assert::AreEqual(expectedRes, res);
 	}
 
 	TEST_METHOD(convertInfixToPostFix_twoDifferentLevelBrackets) {
 		std::string input = "((a+b))*c";
-		std::string expectedRes = "a b +c *";
+		std::string expectedRes = " a  b + c *";
 		std::string res = ExpressionProcessor::convertInfixToPostFix(input);
 		Assert::AreEqual(expectedRes, res);
 	}
 
 	TEST_METHOD(convertInfixToPostFix_manySingleLevelBrackets) {
 		std::string input = "((H*((((A+((B+C)*D))*F)*G)*E))+J)";
-		std::string expectedRes = "H A B C +D *+F *G *E **J +";
+		std::string expectedRes = " H  A  B  C + D *+ F * G * E ** J +";
 		std::string res = ExpressionProcessor::convertInfixToPostFix(input);
 		Assert::AreEqual(expectedRes, res);
 	}
 
 	TEST_METHOD(convertInfixToPostFix_manyDifferentLevelBrackets) {
 		std::string input = "(((H*(((((((A)))+(((B+(((C)))))*D))*F)*G)*E))+J))";
-		std::string expectedRes = "H A B C +D *+F *G *E **J +";
+		std::string expectedRes = " H  A  B  C + D *+ F * G * E ** J +";
 		std::string res = ExpressionProcessor::convertInfixToPostFix(input);
 		Assert::AreEqual(expectedRes, res);
 	}
 
 	TEST_METHOD(convertInfixToPostFix_manyOperators_differentPrecedence_differentOperandTypes_complexOperandNames_repeatedOperands_manyDifferentLevelBrackets) {
 		std::string input = "((digit*((((A0123+(((statement+(((procedure*procedure1)))))*read/read))*F%123)*123%((((pattern)))))*44))-patterm9)";
-		std::string expectedRes = "digit A0123 statement procedure procedure1 *+read *read /+F *123 %123 *pattern %44 **patterm9 -";
+		std::string expectedRes = " digit  A0123  statement  procedure  procedure1 *+ read * read /+ F * 123 % 123 * pattern % 44 ** patterm9 -";
 		std::string res = ExpressionProcessor::convertInfixToPostFix(input);
 		Assert::AreEqual(expectedRes, res);
 	}

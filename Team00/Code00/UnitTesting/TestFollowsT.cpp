@@ -4,6 +4,7 @@
 #include "../source/common/Types.h"
 #include "../source/PKB/Follows.h"
 #include "../source/PKB/FollowsT.h"
+#include "../source/PKB/ParentT.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -23,15 +24,8 @@ private:
 
 public:
 	TEST_METHOD(populate_getSuccessorStmts_branched) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> followsTExpAns;
-		followsTExpAns.insert(stmt2);
-		followsTExpAns.insert(stmt3);
-		followsTExpAns.insert(stmt4);
-		followsTExpAns.insert(stmt5);
-
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> followsExpAns;
-		followsExpAns.insert(stmt2);
-		followsExpAns.insert(stmt5);
+		std::vector<int> followsTExpAns{ stmt2.index, stmt3.index, stmt4.index, stmt5.index };
+		std::vector<int> followsExpAns{ stmt2.index, stmt5.index };
 
 		Follows::insert(stmt1, stmt2);
 		Follows::insert(stmt2, stmt3);
@@ -48,18 +42,15 @@ public:
 		auto followsTEmptyStmts = FollowsT::getSuccessorStmts(stmt5);
 		Assert::IsTrue(0 == followsTEmptyStmts.size());
 
-		/*TODO: When parent code is added, check it does not get affected*/
+		/*Check ParentT data does not get affected*/
+		auto parentTStmts = ParentT::getSuccessorStmts(stmt1);
+		Assert::IsTrue(0 == parentTStmts.size());
+		ParentT::performCleanUp();
 	};
 
 	TEST_METHOD(populate_getSuccessorStmts_linear) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> followsTExpAns;
-		followsTExpAns.insert(stmt1);
-		followsTExpAns.insert(stmt2);
-		followsTExpAns.insert(stmt3);
-		followsTExpAns.insert(stmt4);
-
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> followsExpAns;
-		followsExpAns.insert(stmt1);
+		std::vector<int> followsTExpAns{ stmt1.index, stmt2.index, stmt3.index, stmt4.index };
+		std::vector<int> followsExpAns{ stmt1.index };
 
 		Follows::insert(stmt1, stmt2);
 		Follows::insert(stmt2, stmt3);
@@ -76,17 +67,15 @@ public:
 		auto followsTEmptyStmts = FollowsT::getSuccessorStmts(stmt4);
 		Assert::IsTrue(0 == followsTEmptyStmts.size());
 
-		/*TODO: When parent code is added, check it does not get affected*/
+		/*Check ParentT data does not get affected*/
+		auto parentTStmts = ParentT::getSuccessorStmts(stmt5);
+		Assert::IsTrue(0 == parentTStmts.size());
+		ParentT::performCleanUp();
 	};
 
 	TEST_METHOD(populate_getPredecessorStmts_branched) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> followsTExpAns;
-		followsTExpAns.insert(stmt1);
-		followsTExpAns.insert(stmt2);
-		followsTExpAns.insert(stmt4);
-
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> followsExpAns;
-		followsExpAns.insert(stmt4);
+		std::vector<int> followsTExpAns{ stmt1.index, stmt2.index, stmt4.index };
+		std::vector<int> followsExpAns{ stmt4.index };
 
 		Follows::insert(stmt1, stmt2);
 		Follows::insert(stmt2, stmt3);
@@ -103,18 +92,15 @@ public:
 		auto followsTEmptyStmts = FollowsT::getPredecessorStmts(stmt1);
 		Assert::IsTrue(0 == followsTEmptyStmts.size());
 
-		/*TODO: When parent code is added, check it does not get affected*/
+		/*Check ParentTs data does not get affected*/
+		auto parentTStmts = ParentT::getPredecessorStmts(stmt5);
+		Assert::IsTrue(0 == parentTStmts.size());
+		ParentT::performCleanUp();
 	};
 
 	TEST_METHOD(populate_getPredecessorStmts_linear) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> followsTExpAns;
-		followsTExpAns.insert(stmt1);
-		followsTExpAns.insert(stmt2);
-		followsTExpAns.insert(stmt3);
-		followsTExpAns.insert(stmt5);
-
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> followsExpAns;
-		followsExpAns.insert(stmt3);
+		std::vector<int> followsTExpAns{ stmt1.index, stmt2.index, stmt3.index, stmt5.index };
+		std::vector<int> followsExpAns{ stmt3.index };
 
 		Follows::insert(stmt1, stmt2);
 		Follows::insert(stmt2, stmt3);
@@ -131,7 +117,10 @@ public:
 		auto followsTEmptyStmts = FollowsT::getPredecessorStmts(stmt5);
 		Assert::IsTrue(0 == followsTEmptyStmts.size());
 
-		/*TODO: When parent code is added, check it does not get affected*/
+		/*Check ParentTs data does not get affected*/
+		auto parentTStmts = ParentT::getPredecessorStmts(stmt4);
+		Assert::IsTrue(0 == parentTStmts.size());
+		ParentT::performCleanUp();
 	};
 
 	TEST_METHOD(containsSuccessor) {
@@ -163,14 +152,15 @@ public:
 	};
 
 	TEST_METHOD(getAllPredecessorSuccessorInfo) {
-		std::vector<std::tuple<StmtIndex, StmtIndex>> followsTExpAns;
-		followsTExpAns.push_back(std::make_tuple(stmt1, stmt2));
-		followsTExpAns.push_back(std::make_tuple(stmt1, stmt3));
-		followsTExpAns.push_back(std::make_tuple(stmt2, stmt3));
+		std::vector<int> followsTpredecessors{ stmt1.index, stmt1.index, stmt2.index };
+		std::vector<int> followsTsuccessors{ stmt2.index, stmt3.index, stmt3.index };
+		std::tuple<std::vector<int>, std::vector<int>> followsTExpAns =
+			std::make_tuple(followsTpredecessors, followsTsuccessors);
 
-		std::vector<std::tuple<StmtIndex, StmtIndex>> followsExpAns;
-		followsExpAns.push_back(std::make_tuple(stmt1, stmt2));
-		followsExpAns.push_back(std::make_tuple(stmt2, stmt3));
+		std::vector<int> followsPredecessors{ stmt1.index, stmt2.index };
+		std::vector<int> followsSuccessors{ stmt2.index, stmt3.index };
+		std::tuple<std::vector<int>, std::vector<int>> followsExpAns =
+			std::make_tuple(followsPredecessors, followsSuccessors);
 
 		Follows::insert(stmt1, stmt2);
 		Follows::insert(stmt2, stmt3);
@@ -184,12 +174,14 @@ public:
 	};
 
 	TEST_METHOD(getPredSucTable) {
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> followsTExpAns;
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>,
+			StmtIndex::HashFunction> followsTExpAns;
 		followsTExpAns[stmt1].insert(stmt2);
 		followsTExpAns[stmt1].insert(stmt3);
 		followsTExpAns[stmt2].insert(stmt3);
 
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> followsExpAns;
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>,
+			StmtIndex::HashFunction> followsExpAns;
 		followsExpAns[stmt1].insert(stmt2);
 		followsExpAns[stmt2].insert(stmt3);
 
@@ -205,12 +197,14 @@ public:
 	};
 
 	TEST_METHOD(getSucPredTable) {
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> followsTExpAns;
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>,
+			StmtIndex::HashFunction> followsTExpAns;
 		followsTExpAns[stmt2].insert(stmt1);
 		followsTExpAns[stmt3].insert(stmt1);
 		followsTExpAns[stmt3].insert(stmt2);
 
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> followsExpAns;
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>,
+			StmtIndex::HashFunction> followsExpAns;
 		followsExpAns[stmt2].insert(stmt1);
 		followsExpAns[stmt3].insert(stmt2);
 

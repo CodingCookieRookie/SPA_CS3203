@@ -13,22 +13,28 @@ template<class T>
 class RS2 {
 protected:
 	RS2();
-	static std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> predSucTable;
-	static std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> sucPredTable;
+	static std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>,
+		StmtIndex::HashFunction> predSucTable;
+	static std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>,
+		StmtIndex::HashFunction> sucPredTable;
 
 public:
 	static bool containsSuccessor(StmtIndex predecessor, StmtIndex successor);
 	static bool containsPredecessor(StmtIndex predecessor, StmtIndex successor);
-	static std::unordered_set<StmtIndex, StmtIndex::HashFunction> getSuccessorStmts(StmtIndex predecessor);
-	static std::unordered_set<StmtIndex, StmtIndex::HashFunction> getPredecessorStmts(StmtIndex successor);
-	static std::vector<std::tuple<StmtIndex, StmtIndex>> getAllPredecessorSuccessorInfo();
-	static std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> getPredSucTable();
-	static std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> getSucPredTable();
+	static std::vector<int> getSuccessorStmts(StmtIndex predecessor);
+	static std::vector<int> getPredecessorStmts(StmtIndex successor);
+	static std::tuple<std::vector<int>, std::vector<int>> getAllPredecessorSuccessorInfo();
+	static std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>,
+		StmtIndex::HashFunction> getPredSucTable();
+	static std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>,
+		StmtIndex::HashFunction> getSucPredTable();
 	static void performCleanUp();
 };
 
-template<class T> std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> RS2<T>::predSucTable = {};
-template<class T> std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> RS2<T>::sucPredTable = {};
+template<class T> std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>,
+	StmtIndex::HashFunction> RS2<T>::predSucTable = {};
+template<class T> std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>,
+	StmtIndex::HashFunction> RS2<T>::sucPredTable = {};
 
 template<class T>
 RS2<T>::RS2() {};
@@ -54,24 +60,34 @@ bool RS2<T>::containsSuccessor(StmtIndex predecessor, StmtIndex successor) {
 };
 
 template<class T>
-std::unordered_set<StmtIndex, StmtIndex::HashFunction> RS2<T>::getSuccessorStmts(StmtIndex predecessor) {
-	return predSucTable[predecessor];
+std::vector<int> RS2<T>::getSuccessorStmts(StmtIndex predecessor) {
+	std::vector<int> successors;
+	for (auto& successor : predSucTable[predecessor]) {
+		successors.push_back(successor.index);
+	}
+	return successors;
 };
 
 template<class T>
-std::unordered_set<StmtIndex, StmtIndex::HashFunction> RS2<T>::getPredecessorStmts(StmtIndex successor) {
-	return sucPredTable[successor];
+std::vector<int> RS2<T>::getPredecessorStmts(StmtIndex successor) {
+	std::vector<int> predecessors;
+	for (auto& predecessor : sucPredTable[successor]) {
+		predecessors.push_back(predecessor.index);
+	}
+	return predecessors;
 };
 
 template<class T>
-std::vector<std::tuple<StmtIndex, StmtIndex>> RS2<T>::getAllPredecessorSuccessorInfo() {
-	std::vector<std::tuple<StmtIndex, StmtIndex>> data;
+std::tuple<std::vector<int>, std::vector<int>> RS2<T>::getAllPredecessorSuccessorInfo() {
+	std::vector<int> predecessors;
+	std::vector<int> successors;
 	for (auto& predSucEntry : predSucTable) {
 		for (auto& successor : predSucEntry.second) {
-			data.push_back(std::make_tuple(predSucEntry.first, successor));
+			predecessors.push_back(predSucEntry.first.index);
+			successors.push_back(successor.index);
 		}
 	}
-	return data;
+	return std::make_tuple(predecessors, successors);
 };
 
 template<class T>
