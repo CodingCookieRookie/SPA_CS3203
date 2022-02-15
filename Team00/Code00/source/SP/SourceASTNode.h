@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <unordered_set>
+#include <stack>
 
 #include "../common/Types.h"
 
@@ -57,6 +58,7 @@ private:
 	std::string value;
 	ExprNodeValueType valueType;
 	std::vector<ExprNode*> children;
+	void populatePattern(std::vector<std::string>& tokens);
 public:
 	ExprNode(ExprNodeValueType valueType, std::string value);
 	void addChild(ExprNode* child);
@@ -65,6 +67,7 @@ public:
 	ExprNodeValueType getExprNodeValueType();
 
 	friend class SourceAST;
+	friend class AssignNode;
 };
 
 class AssignNode : public StmtNode {
@@ -73,15 +76,18 @@ private:
 	ExprNode* expr;
 	std::unordered_set<std::string> usesVars;
 	std::unordered_set<std::string> usesConsts;
+	std::string pattern;
+	void populateUsesSet();
+	void populatePattern();
 public:
 	AssignNode(std::string varName, ExprNode* expr);
 	std::string getVarName();
 	ExprNode* getExpr();
 	StatementType getStmtType();
-	void populateUsesSet();
 	std::unordered_set<std::string> getUsesVars();
 	std::unordered_set<std::string> getUsesConsts();
 	std::unordered_set<std::string> getModifiesVars();
+	std::string getPattern();
 
 	friend class SourceAST;
 };
