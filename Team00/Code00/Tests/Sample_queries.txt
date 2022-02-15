@@ -1,3 +1,8 @@
+7 - Demo 7
+stmt stmt; variable v;
+Select stmt
+1, 2, 3, 4, 5
+5000
 8 - Demo 8
 stmt stmt; variable v; procedure p;
 Select p
@@ -13,13 +18,4 @@ stmt stmt; variable v;
 Select v
 x1 yA123z AbC1 print read
 5000
-7 - Demo 7
-stmt stmt; variable v;
-Select stmt
-1, 2, 3, 4, 5
-5000
-8 - Personal test 
-read r; variable v;
-Select r such that Modifies(r, v)
-2, 3, 5
-5000
+
