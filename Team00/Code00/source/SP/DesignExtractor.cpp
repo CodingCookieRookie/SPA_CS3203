@@ -77,11 +77,13 @@ void DesignExtractor::Extract(SourceAST& ast) {
 			Parent::insert(predecessor, successor);
 		}
 	}
+	ParentT::populate();
 	for (const std::pair<StmtIndex, StmtIndex>& followsPair : stmtFollowsMap) {
 		StmtIndex predecessor = followsPair.first;
 		StmtIndex successor = followsPair.second;
 		Follows::insert(predecessor, successor);
 	}
+	FollowsT::populate();
 }
 
 std::unordered_map<ProcIndex, std::vector<StmtIndex>, ProcIndex::HashFunction> DesignExtractor::getProcStmtMap() {

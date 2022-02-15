@@ -16,7 +16,9 @@ private:
 		Modifies::performCleanUp();
 		Pattern::performCleanUp();
 		Parent::performCleanUp();
+		ParentT::performCleanUp();
 		Follows::performCleanUp();
+		FollowsT::performCleanUp();
 	}
 
 public:
