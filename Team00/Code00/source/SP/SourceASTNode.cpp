@@ -194,6 +194,25 @@ std::vector<StmtLstNode*> WhileNode::getChildStmtLst() {
 	return { stmtLst };
 }
 
+/* IfNode */
+IfNode::IfNode(ExprNode* condExpr, StmtLstNode* thenStmtLst, StmtLstNode* elseStmtLst) : StmtNode(), condExpr(condExpr), thenStmtLst(thenStmtLst), elseStmtLst(elseStmtLst) {}
+
+ExprNode* IfNode::getCondExpr() {
+	return condExpr;
+}
+
+StmtLstNode* IfNode::getThenStmtLst() {
+	return thenStmtLst;
+}
+
+StmtLstNode* IfNode::getElseStmtLst() {
+	return elseStmtLst;
+}
+
+StatementType IfNode::getStmtType() {
+	return StatementType::ifType;
+}
+
 /* StmtLstNode */
 StmtLstNode::StmtLstNode() : SourceASTNode() {}
 

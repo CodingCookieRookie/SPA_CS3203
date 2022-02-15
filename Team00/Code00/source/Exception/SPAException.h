@@ -25,6 +25,8 @@ public:
 	static const std::string INVALID_EXPR;
 	static const std::string INVALID_PROG;
 	static const std::string INVALID_STMT;
+	static const std::string MISSING_ELSE;
+	static const std::string MISSING_THEN;
 	static const std::string MISSING_LEFT_BRACKET;
 	static const std::string MISSING_RIGHT_BRACKET;
 	static const std::string MISSING_LEFT_CURLY;

@@ -79,6 +79,7 @@ public:
 	friend class SourceAST;
 	friend class AssignNode;
 	friend class WhileNode;
+	friend class IfNode;
 };
 
 class AssignNode : public StmtNode {
@@ -113,6 +114,21 @@ public:
 	std::unordered_set<std::string> getUsesVars();
 	std::unordered_set<std::string> getConsts();
 	std::vector<StmtLstNode*> getChildStmtLst();
+
+	friend class SourceAST;
+};
+
+class IfNode : public StmtNode {
+private:
+	ExprNode* condExpr;
+	StmtLstNode* thenStmtLst;
+	StmtLstNode* elseStmtLst;
+public:
+	IfNode(ExprNode* condExpr, StmtLstNode* thenStmtLst, StmtLstNode* elseStmtLst);
+	ExprNode* getCondExpr();
+	StmtLstNode* getThenStmtLst();
+	StmtLstNode* getElseStmtLst();
+	StatementType getStmtType();
 
 	friend class SourceAST;
 };
