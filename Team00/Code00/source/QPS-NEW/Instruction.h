@@ -41,10 +41,10 @@ public:
 		EvaluatedTable evTable;
 		switch (pqlEntityType) {
 		case PqlEntityType::Stmt:
-			handleGetAllStmt(evTable, synonym);
+			evTable = handleGetAllStmt(evTable, synonym);
 			break;
 		case PqlEntityType::Print:
-			handleGetAllPrint(evTable, synonym);
+			//evTable = handleGetAllPrint(evTable, synonym);
 			break;
 		case PqlEntityType::Call:
 			// TODO: PKB to add getAllCalls().
@@ -59,20 +59,20 @@ public:
 			// TODO: PKB to add.
 			break;
 		case PqlEntityType::Variable:
-			handleGetAllVar(evTable, synonym);
+			//evTable = handleGetAllVar(evTable, synonym);
 			break;
 		case PqlEntityType::Constant:
-			handleGetAllProc(evTable, synonym);
+			evTable = handleGetAllConst(evTable, synonym);
 			break;
 		case PqlEntityType::Procedure:
-			handleGetAllProc(evTable, synonym);
+			//evTable = handleGetAllProc(evTable, synonym);
 			break;
 		}
 		return evTable;
 	}
 
 	/* All handlers to set EvaluatedTable to results from PKB. Uses Pass by Reference on EvTable. */
-	void handleGetAllStmt(EvaluatedTable& evTable, std::string synonym) {
+	EvaluatedTable handleGetAllStmt(EvaluatedTable& evTable, std::string synonym) {
 		std::vector<StmtIndex> results = Entity::getAllStmts();
 		std::vector<int> resultsToInt;
 		for (StmtIndex result : results) {
@@ -85,12 +85,10 @@ public:
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLmap[synonym] = resultsToInt;
 
-		evTable.setEntities(PQLentities);
-		evTable.setTable(PQLmap);
-		evTable.setNumRow(results.size());
+		return EvaluatedTable(PQLentities, PQLmap, results.size());
 	}
 
-	void handleGetAllPrint(EvaluatedTable& evTable, std::string synonym) {
+	//EvaluatedTable handleGetAllPrint(EvaluatedTable& evTable, std::string synonym) {
 		// TODO: PKB to add getAllPrints().
 		/*std::vector<int> results = Entity::getAllPrints();
 
@@ -103,8 +101,8 @@ public:
 		evTable.setEntities(PQLentities);
 		evTable.setTable(PQLmap);
 		evTable.setNumRow(results.size());*/
-	}
-	void handleGetAllVar(EvaluatedTable& evTable, std::string synonym) {
+	//}
+	//EvaluatedTable handleGetAllVar(EvaluatedTable& evTable, std::string synonym) {
 		// TODO: PKB to change getAllVars() to return VarIndex.
 		/*std::vector<VarIndex> results = Entity::getAllVars();
 		std::vector<int> resultsToInt;
@@ -121,8 +119,8 @@ public:
 		evTable.setEntities(PQLentities);
 		evTable.setTable(PQLmap);
 		evTable.setNumRow(results.size());*/
-	}
-	void handleGetAllProc(EvaluatedTable& evTable, std::string synonym) {
+	//}
+	//EvaluatedTable handleGetAllProc(EvaluatedTable& evTable, std::string synonym) {
 		// TODO: PKB to change getAllProcs() to return ProcIndex.
 		/*std::vector<VarIndex> results = Entity::getAllVars();
 		std::vector<int> resultsToInt;
@@ -139,8 +137,8 @@ public:
 		evTable.setEntities(PQLentities);
 		evTable.setTable(PQLmap);
 		evTable.setNumRow(results.size());*/
-	}
-	void handleGetAllConst(EvaluatedTable& evTable, std::string synonym) {
+	//}
+	EvaluatedTable handleGetAllConst(EvaluatedTable& evTable, std::string synonym) {
 		std::vector<int> results = Entity::getAllConsts();
 		
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
@@ -149,9 +147,7 @@ public:
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLmap[synonym] = results;
 
-		evTable.setEntities(PQLentities);
-		evTable.setTable(PQLmap);
-		evTable.setNumRow(results.size());
+		return EvaluatedTable(PQLentities, PQLmap, results.size());
 	}
 };
 
@@ -189,8 +185,8 @@ private:
 		return EvaluatedTable(table);
 	}*/
 
-	void handleFollows(EvaluatedTable& evTable) {
-		
+	EvaluatedTable handleFollows() {
+		EvaluatedTable evTable;
 		// Follows(s1, ?), or Follows(_, ?)
 		if (lhsRef.first == PqlReferenceType::synonym || lhsRef.first == PqlReferenceType::wildcard) {
 			std::vector<StmtIndex> stmts = Entity::getAllStmts();
@@ -211,9 +207,7 @@ private:
 				std::unordered_map<std::string, std::vector<int>> PQLmap;
 				PQLmap[lhsRef.second] = results;
 
-				evTable.setEntities(PQLentities);
-				evTable.setTable(PQLmap);
-				evTable.setNumRow(results.size());
+				return EvaluatedTable(PQLentities, PQLmap, results.size());
 			}
 			// rhsRef is either a synonym or a wildcard (i.e. Follows(s1, s2), Follows(s1, _), Follows(_, s2), Follows(_, _))
 			else { 
@@ -228,9 +222,7 @@ private:
 				PQLmap[lhsRef.second] = std::get<0>(results);
 				PQLmap[rhsRef.second] = std::get<1>(results);
 
-				evTable.setEntities(PQLentities);
-				evTable.setTable(PQLmap);
-				evTable.setNumRow(std::get<0>(results).size());
+				return EvaluatedTable(PQLentities, PQLmap, std::get<0>(results).size());
 			}
 		}
 
@@ -247,8 +239,8 @@ private:
 					if (stmt.getIndex() == stoi(rhsRef.second)) {
 						rhsStmtIndex = stmt;
 					}
-				}
-				evTable.setBoolean((Follows::containsSuccessor(lhsStmtIndex, rhsStmtIndex))); 
+				} 
+				return EvaluatedTable(Follows::containsSuccessor(lhsStmtIndex, rhsStmtIndex));
 				//e.g True, if 6 is follwed by 7
 			}
 
@@ -268,9 +260,7 @@ private:
 				std::unordered_map<std::string, std::vector<int>> PQLmap;
 				PQLmap[rhsRef.second] = results;
 
-				evTable.setEntities(PQLentities);
-				evTable.setTable(PQLmap);
-				evTable.setNumRow(results.size());
+				return EvaluatedTable(PQLentities, PQLmap, results.size());
 			}
 		}
 	}
@@ -295,7 +285,7 @@ public:
 			evTable = handleUsesS();
 			break;*/
 		case PqlRelationshipType::Follows:
-			handleFollows(evTable);
+			evTable = handleFollows();
 			break;
 		}
 
