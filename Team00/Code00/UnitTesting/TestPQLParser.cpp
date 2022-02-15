@@ -28,11 +28,21 @@ namespace UnitTesting
             Assert::ExpectException<QPSException>(wrapperFuncRepeat);
         }
 
-        TEST_METHOD(parseQuery_modifiesFirstArgStmtSynonym_exceptionThrown) {
-            std::string queryModifiesEntRef = "stmt s; variable v; Select s such that Modifies(v, _)";
-            auto wrapperModifiesEntRef =
-                [&queryModifiesEntRef] { PQLParser::parseQuery(queryModifiesEntRef); };
-            Assert::ExpectException<QPSException>(wrapperModifiesEntRef);
+        TEST_METHOD(parseQuery_modifiesFirstArgNonStmtSynonym_exceptionThrown) {
+            std::string queryVar = "stmt s; variable v; Select s such that Modifies(v, _)";
+            auto wrapperVar =
+                [&queryVar] { PQLParser::parseQuery(queryVar); };
+            Assert::ExpectException<QPSException>(wrapperVar);
+
+            std::string queryProc = "stmt s; variable v; procedure p; Select s such that Modifies(p, _)";
+            auto wrapperProc =
+                [&queryProc] { PQLParser::parseQuery(queryProc); };
+            Assert::ExpectException<QPSException>(wrapperProc);
+
+            std::string queryConst = "stmt s; variable v; constant c; Select s such that Modifies(c, _)";
+            auto wrapperConst =
+                [&queryConst] { PQLParser::parseQuery(queryConst); };
+            Assert::ExpectException<QPSException>(wrapperConst);
         }
 
         TEST_METHOD(parseQuery_modifiesFirstArgVariable_exceptionThrown) {
@@ -63,11 +73,21 @@ namespace UnitTesting
             Assert::ExpectException<QPSException>(wrapperModifiesStmtRef);
         }
 
-        TEST_METHOD(parseQuery_usesFirstArgStmtSynonym_exceptionThrown) {
-            std::string queryUsesEntRef = "stmt s; variable v; Select s such that Uses(v, _)";
-            auto wrapperUsesEntRef =
-                [&queryUsesEntRef] { PQLParser::parseQuery(queryUsesEntRef); };
-            Assert::ExpectException<QPSException>(wrapperUsesEntRef);
+        TEST_METHOD(parseQuery_usesFirstArgNonStmtSynonym_exceptionThrown) {
+            std::string queryVar = "stmt s; variable v; Select s such that Uses(v, _)";
+            auto wrapperVar =
+                [&queryVar] { PQLParser::parseQuery(queryVar); };
+            Assert::ExpectException<QPSException>(wrapperVar);
+
+            std::string queryProc = "stmt s; variable v; procedure p; Select s such that Uses(p, _)";
+            auto wrapperProc =
+                [&queryProc] { PQLParser::parseQuery(queryProc); };
+            Assert::ExpectException<QPSException>(wrapperProc);
+
+            std::string queryConst = "stmt s; variable v; constant c; Select s such that Uses(c, _)";
+            auto wrapperConst =
+                [&queryConst] { PQLParser::parseQuery(queryConst); };
+            Assert::ExpectException<QPSException>(wrapperConst);
         }
 
         TEST_METHOD(parseQuery_usesFirstArgVariable_exceptionThrown) {
@@ -86,6 +106,13 @@ namespace UnitTesting
 
         TEST_METHOD(parseQuery_usesSecondArgSynonym_exceptionThrown) {
             std::string queryUsesStmtRef = "while w; call c; Select w such that Uses(c, w)";
+            auto wrapperUsesStmtRef =
+                [&queryUsesStmtRef] { PQLParser::parseQuery(queryUsesStmtRef); };
+            Assert::ExpectException<QPSException>(wrapperUsesStmtRef);
+        }
+
+        TEST_METHOD(parseQuery_followsFirstArgNonSynonym_exceptionThrown) {
+            std::string queryUsesStmtRef = "assign a; variable v; Select a such that Uses(a, 1)";
             auto wrapperUsesStmtRef =
                 [&queryUsesStmtRef] { PQLParser::parseQuery(queryUsesStmtRef); };
             Assert::ExpectException<QPSException>(wrapperUsesStmtRef);
