@@ -15,6 +15,9 @@ private:
     std::unordered_map<std::string, std::vector<int>> table;
     int numRow;
 
+    void blockNestedJoin(EvaluatedTable& otherTable,
+        std::unordered_map<std::string, PqlEntityType>& commonEntities);
+
 public:
     /* E.g. of an EvalauatedTable:
     * {"s", "v"} = {{"1", "a"}, {"2", "b"}}
@@ -52,6 +55,9 @@ public:
     /* Wrapper constructor for all 3 fields */
     EvaluatedTable::EvaluatedTable(std::unordered_map<std::string, PqlEntityType> newEntities,
         std::unordered_map<std::string, std::vector<int>> newTable, int newNumRow);
+
+    /* Handle table joins */
+    void innerJoinMerge(EvaluatedTable& otherTable);
 
     /* Getter for entities */
     std::unordered_map<std::string, PqlEntityType> getEntities() {
