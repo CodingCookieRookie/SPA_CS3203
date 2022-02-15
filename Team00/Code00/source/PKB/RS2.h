@@ -100,13 +100,25 @@ std::tuple<std::vector<int>, std::vector<int>> RS2<T>::getAllPredecessorSuccesso
 template<class T>
 std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction>
 RS2<T>::getPredSucTable() {
-	return predSucTable;
+	std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> data;
+	for (auto& predSucEntry : predSucTable) {
+		for (auto& successor : predSucEntry.second) {
+			data[predSucEntry.first].insert(successor);
+		}
+	}
+	return data;
 };
 
 template<class T>
 std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction>
 RS2<T>::getSucPredTable() {
-	return sucPredTable;
+	std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> data;
+	for (auto& sucPredEntry : sucPredTable) {
+		for (auto& predecessor : sucPredEntry.second) {
+			data[sucPredEntry.first].insert(predecessor);
+		}
+	}
+	return data;
 };
 
 template<class T>
