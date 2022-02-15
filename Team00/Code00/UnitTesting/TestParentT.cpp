@@ -2,9 +2,9 @@
 #include "CppUnitTest.h"
 
 #include "../source/common/Types.h"
-#include "../source/PKB/FollowsT.h"
 #include "../source/PKB/Parent.h"
 #include "../source/PKB/ParentT.h"
+#include "../source/PKB/FollowsT.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -24,15 +24,8 @@ private:
 
 public:
 	TEST_METHOD(populate_getSuccessorStmts_branched) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> parentTExpAns;
-		parentTExpAns.insert(stmt2);
-		parentTExpAns.insert(stmt3);
-		parentTExpAns.insert(stmt4);
-		parentTExpAns.insert(stmt5);
-
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> parentExpAns;
-		parentExpAns.insert(stmt2);
-		parentExpAns.insert(stmt5);
+		std::vector<int> parentTExpAns{ stmt2.index, stmt3.index, stmt4.index, stmt5.index };
+		std::vector<int> parentExpAns{ stmt2.index, stmt5.index };
 
 		Parent::insert(stmt1, stmt2);
 		Parent::insert(stmt2, stmt3);
@@ -56,14 +49,8 @@ public:
 	};
 
 	TEST_METHOD(populate_getSuccessorStmts_linear) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> parentTExpAns;
-		parentTExpAns.insert(stmt1);
-		parentTExpAns.insert(stmt2);
-		parentTExpAns.insert(stmt3);
-		parentTExpAns.insert(stmt4);
-
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> parentExpAns;
-		parentExpAns.insert(stmt1);
+		std::vector<int> parentTExpAns{ stmt1.index, stmt2.index, stmt3.index, stmt4.index };
+		std::vector<int> parentExpAns{ stmt1.index };
 
 		Parent::insert(stmt1, stmt2);
 		Parent::insert(stmt2, stmt3);
@@ -87,13 +74,8 @@ public:
 	};
 
 	TEST_METHOD(populate_getPredecessorStmts_branched) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> parentTExpAns;
-		parentTExpAns.insert(stmt1);
-		parentTExpAns.insert(stmt2);
-		parentTExpAns.insert(stmt4);
-
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> parentExpAns;
-		parentExpAns.insert(stmt4);
+		std::vector<int> parentTExpAns{ stmt1.index, stmt2.index, stmt4.index };
+		std::vector<int> parentExpAns{ stmt4.index };
 
 		Parent::insert(stmt1, stmt2);
 		Parent::insert(stmt2, stmt3);
@@ -117,14 +99,8 @@ public:
 	};
 
 	TEST_METHOD(populate_getPredecessorStmts_linear) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> parentTExpAns;
-		parentTExpAns.insert(stmt1);
-		parentTExpAns.insert(stmt2);
-		parentTExpAns.insert(stmt3);
-		parentTExpAns.insert(stmt5);
-
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> parentExpAns;
-		parentExpAns.insert(stmt3);
+		std::vector<int> parentTExpAns{ stmt1.index, stmt2.index, stmt3.index, stmt5.index };
+		std::vector<int> parentExpAns{ stmt3.index };
 
 		Parent::insert(stmt1, stmt2);
 		Parent::insert(stmt2, stmt3);
@@ -176,14 +152,15 @@ public:
 	};
 
 	TEST_METHOD(getAllPredecessorSuccessorInfo) {
-		std::vector<std::tuple<StmtIndex, StmtIndex>> parentTExpAns;
-		parentTExpAns.push_back(std::make_tuple(stmt1, stmt2));
-		parentTExpAns.push_back(std::make_tuple(stmt1, stmt3));
-		parentTExpAns.push_back(std::make_tuple(stmt2, stmt3));
+		std::vector<int> parentTpredecessors{ stmt1.index, stmt1.index, stmt2.index };
+		std::vector<int> parentTsuccessors{ stmt2.index, stmt3.index, stmt3.index };
+		std::tuple<std::vector<int>, std::vector<int>> parentTExpAns =
+			std::make_tuple(parentTpredecessors, parentTsuccessors);
 
-		std::vector<std::tuple<StmtIndex, StmtIndex>> parentExpAns;
-		parentExpAns.push_back(std::make_tuple(stmt1, stmt2));
-		parentExpAns.push_back(std::make_tuple(stmt2, stmt3));
+		std::vector<int> parentPredecessors{ stmt1.index, stmt2.index };
+		std::vector<int> parentSuccessors{ stmt2.index, stmt3.index };
+		std::tuple<std::vector<int>, std::vector<int>> parentExpAns =
+			std::make_tuple(parentPredecessors, parentSuccessors);
 
 		Parent::insert(stmt1, stmt2);
 		Parent::insert(stmt2, stmt3);
@@ -197,12 +174,14 @@ public:
 	};
 
 	TEST_METHOD(getPredSucTable) {
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> parentTExpAns;
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>,
+			StmtIndex::HashFunction> parentTExpAns;
 		parentTExpAns[stmt1].insert(stmt2);
 		parentTExpAns[stmt1].insert(stmt3);
 		parentTExpAns[stmt2].insert(stmt3);
 
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> parentExpAns;
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>,
+			StmtIndex::HashFunction> parentExpAns;
 		parentExpAns[stmt1].insert(stmt2);
 		parentExpAns[stmt2].insert(stmt3);
 
@@ -218,12 +197,14 @@ public:
 	};
 
 	TEST_METHOD(getSucPredTable) {
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> parentTExpAns;
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>,
+			StmtIndex::HashFunction> parentTExpAns;
 		parentTExpAns[stmt2].insert(stmt1);
 		parentTExpAns[stmt3].insert(stmt1);
 		parentTExpAns[stmt3].insert(stmt2);
 
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> parentExpAns;
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>,
+			StmtIndex::HashFunction> parentExpAns;
 		parentExpAns[stmt2].insert(stmt1);
 		parentExpAns[stmt3].insert(stmt2);
 

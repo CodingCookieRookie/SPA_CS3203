@@ -58,24 +58,27 @@ private:
 
 	EvaluatedTable handleModifiesS() {
 		EvaluatedTable newEvTable;
-		std::vector<std::tuple<StmtIndex, VarIndex>> allStmtVarInfos = Modifies::getAllStmtVarInfo();
+		std::tuple<std::vector<int>, std::vector<int>> allStmtVarInfos = Modifies::getAllStmtVarInfo();
 		std::unordered_map<std::string, std::vector<int>> table;
-		for (int i = 0; i < allStmtVarInfos.size(); i++) {
-			std::tuple<StmtIndex, VarIndex> pair = allStmtVarInfos.at(i);
-			table[lhsRefString].push_back(std::get<0>(pair).getIndex());
-			table[rhsRefString].push_back(std::get<1>(pair).index);
+		//Assumption: stmt's vector<int> is same size as var's vector<int>
+		for (size_t i = 0; i < (std::get<0>(allStmtVarInfos).size()); i++) {
+			int lhs = std::get<0>(allStmtVarInfos)[i];
+			int rhs = std::get<1>(allStmtVarInfos)[i];
+			table[lhsRefString].push_back(lhs);
+			table[rhsRefString].push_back(rhs);
 		}
 		return EvaluatedTable(table);
 	}
 
 	EvaluatedTable handleUsesS() {
 		EvaluatedTable newEvTable;
-		std::vector<std::tuple<StmtIndex, VarIndex>> allStmtVarInfos = Uses::getAllStmtVarInfo();
+		std::tuple<std::vector<int>, std::vector<int>>  allStmtVarInfos = Uses::getAllStmtVarInfo();
 		std::unordered_map<std::string, std::vector<int>> table;
-		for (int i = 0; i < allStmtVarInfos.size(); i++) {
-			std::tuple<StmtIndex, VarIndex> pair = allStmtVarInfos.at(i);
-			table[lhsRefString].push_back(std::get<0>(pair).getIndex());
-			table[rhsRefString].push_back(std::get<1>(pair).index);
+		for (size_t i = 0; i < (std::get<0>(allStmtVarInfos).size()); i++) {
+			int lhs = std::get<0>(allStmtVarInfos)[i];
+			int rhs = std::get<1>(allStmtVarInfos)[i];
+			table[lhsRefString].push_back(lhs);
+			table[rhsRefString].push_back(rhs);
 		}
 		return EvaluatedTable(table);
 	}
