@@ -235,11 +235,22 @@ private:
 
 
 		}
-		else { //lhsRef is an integer
-			if (rhsRef.first == PqlReferenceType::integer) { 
-
+		else { //lhsRef is an integer (e.g. Follows(6, ?))
+			if (rhsRef.first == PqlReferenceType::integer) { // e.g. Follows(6, 7)
+				std::vector<StmtIndex> stmts = Entity::getAllStmts();
+				StmtIndex lhsStmtIndex, rhsStmtIndex;
+				for (StmtIndex stmt : stmts) {
+					if (stmt.getIndex() == stoi(lhsRef.second)) {
+						lhsStmtIndex = stmt;
+					}
+					if (stmt.getIndex() == stoi(rhsRef.second)) {
+						rhsStmtIndex = stmt;
+					}
+				}
+				evTable.setBoolean((Follows::containsSuccessor(lhsStmtIndex, rhsStmtIndex))); 
+				//e.g True, if 6 is follwed by 7
 			}
-			else { //rhsRef is either a synonym or a wildcard
+			else { //rhsRef is either a synonym or a wildcard (e.g. Follows(6, s2), or Follows(6, _))
 
 			}
 

@@ -13,6 +13,7 @@ class EvaluatedTable {
 private:
     std::unordered_map<std::string, PqlEntityType> entities;
     std::unordered_map<std::string, std::vector<int>> table;
+    bool boolean;
     int numRow;
 
 public:
@@ -35,9 +36,13 @@ public:
 
     EvaluatedTable(std::unordered_map<std::string, std::vector<int>> table);
 
-    /* Wrapper constructor for all 3 fields */
+    /* Wrapper constructor for all 3 fields, less boolean */
     EvaluatedTable(std::unordered_map<std::string, PqlEntityType> newEntities,
         std::unordered_map<std::string, std::vector<int>> newTable, int newNumRow);
+
+    /* Wrapper constructor for boolean only (i.e. when the result evaluates to only a boolean) */
+    EvaluatedTable(bool boolean) :
+        boolean(boolean) {}
 
     /* Getter for entities */
     std::unordered_map<std::string, PqlEntityType> getEntities() {
@@ -67,6 +72,11 @@ public:
     /* Setter for table */
     void setTable(std::unordered_map<std::string, std::vector<int>> newTable) {
         table = newTable;
+    }
+
+    /* Setter for boolean */
+    void setBoolean(bool boolean) {
+        boolean = boolean;
     }
 
 

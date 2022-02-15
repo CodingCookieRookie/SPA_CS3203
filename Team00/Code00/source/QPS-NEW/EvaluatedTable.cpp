@@ -25,3 +25,6 @@ EvaluatedTable::EvaluatedTable(
     table = newTable;
     numRow = newNumRow;
 }
+
+
+EvaluatedTable::EvaluatedTable(bool boolean) : boolean(boolean) {}
