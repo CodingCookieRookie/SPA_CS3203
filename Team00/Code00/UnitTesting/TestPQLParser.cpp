@@ -111,18 +111,186 @@ namespace UnitTesting
             Assert::ExpectException<QPSException>(wrapperUsesStmtRef);
         }
 
-        TEST_METHOD(parseQuery_followsFirstArgNonSynonym_exceptionThrown) {
+        TEST_METHOD(parseQuery_usesSecondArgStmtNumber_exceptionThrown) {
             std::string queryUsesStmtRef = "assign a; variable v; Select a such that Uses(a, 1)";
             auto wrapperUsesStmtRef =
                 [&queryUsesStmtRef] { PQLParser::parseQuery(queryUsesStmtRef); };
             Assert::ExpectException<QPSException>(wrapperUsesStmtRef);
         }
 
-        TEST_METHOD(parseQuery_usesSecondArgStmtNumber_exceptionThrown) {
-            std::string queryUsesStmtRef = "assign a; variable v; Select a such that Uses(a, 1)";
-            auto wrapperUsesStmtRef =
-                [&queryUsesStmtRef] { PQLParser::parseQuery(queryUsesStmtRef); };
-            Assert::ExpectException<QPSException>(wrapperUsesStmtRef);
+        TEST_METHOD(parseQuery_followsFirstArgNonStmtSynonym_exceptionThrown) {
+            std::string queryFollowsVariable = "assign a; variable v; Select a such that Follows(v, a)";
+            auto wrapperFollowsVariable =
+                [&queryFollowsVariable] { PQLParser::parseQuery(queryFollowsVariable); };
+            Assert::ExpectException<QPSException>(wrapperFollowsVariable);
+
+            std::string queryFollowsProc = "assign a; procedure p; Select a such that Follows(p, a)";
+            auto wrapperFollowsProc =
+                [&queryFollowsProc] { PQLParser::parseQuery(queryFollowsProc); };
+            Assert::ExpectException<QPSException>(wrapperFollowsProc);
+
+            std::string queryFollowsConst = "assign a; constant c; Select a such that Follows(c, a)";
+            auto wrapperFollowsConst =
+                [&queryFollowsConst] { PQLParser::parseQuery(queryFollowsConst); };
+            Assert::ExpectException<QPSException>(wrapperFollowsConst);
+
+            std::string queryFollowsVarName = "assign a; constant c; Select a such that Follows(\"x\", a)";
+            auto wrapperFollowsVarName =
+                [&queryFollowsVarName] { PQLParser::parseQuery(queryFollowsVarName); };
+            Assert::ExpectException<QPSException>(wrapperFollowsVarName);
+        }
+
+        TEST_METHOD(parseQuery_followsSecondArgNonStmtSynonym_exceptionThrown) {
+            std::string queryFollowsVariable = "assign a; variable v; Select a such that Follows(a, v)";
+            auto wrapperFollowsVariable =
+                [&queryFollowsVariable] { PQLParser::parseQuery(queryFollowsVariable); };
+            Assert::ExpectException<QPSException>(wrapperFollowsVariable);
+
+            std::string queryFollowsProc = "assign a; procedure p; Select a such that Follows(a, p)";
+            auto wrapperFollowsProc =
+                [&queryFollowsProc] { PQLParser::parseQuery(queryFollowsProc); };
+            Assert::ExpectException<QPSException>(wrapperFollowsProc);
+
+            std::string queryFollowsConst = "assign a; constant c; Select a such that Follows(a, c)";
+            auto wrapperFollowsConst =
+                [&queryFollowsConst] { PQLParser::parseQuery(queryFollowsConst); };
+            Assert::ExpectException<QPSException>(wrapperFollowsConst);
+
+            std::string queryFollowsVarName = "assign a; constant c; Select a such that Follows(a, \"x\")";
+            auto wrapperFollowsVarName =
+                [&queryFollowsVarName] { PQLParser::parseQuery(queryFollowsVarName); };
+            Assert::ExpectException<QPSException>(wrapperFollowsVarName);
+        }
+
+        TEST_METHOD(parseQuery_followsTFirstArgNonStmtSynonym_exceptionThrown) {
+            std::string queryFollowsVariable = "assign a; variable v; Select a such that Follows*(v, a)";
+            auto wrapperFollowsVariable =
+                [&queryFollowsVariable] { PQLParser::parseQuery(queryFollowsVariable); };
+            Assert::ExpectException<QPSException>(wrapperFollowsVariable);
+
+            std::string queryFollowsProc = "assign a; procedure p; Select a such that Follows*(p, a)";
+            auto wrapperFollowsProc =
+                [&queryFollowsProc] { PQLParser::parseQuery(queryFollowsProc); };
+            Assert::ExpectException<QPSException>(wrapperFollowsProc);
+
+            std::string queryFollowsConst = "assign a; constant c; Select a such that Follows*(c, a)";
+            auto wrapperFollowsConst =
+                [&queryFollowsConst] { PQLParser::parseQuery(queryFollowsConst); };
+            Assert::ExpectException<QPSException>(wrapperFollowsConst);
+
+            std::string queryFollowsVarName = "assign a; constant c; Select a such that Follows*(\"x\", a)";
+            auto wrapperFollowsVarName =
+                [&queryFollowsVarName] { PQLParser::parseQuery(queryFollowsVarName); };
+            Assert::ExpectException<QPSException>(wrapperFollowsVarName);
+        }
+
+        TEST_METHOD(parseQuery_followsTSecondArgNonStmtSynonym_exceptionThrown) {
+            std::string queryFollowsVariable = "assign a; variable v; Select a such that Follows*(a, v)";
+            auto wrapperFollowsVariable =
+                [&queryFollowsVariable] { PQLParser::parseQuery(queryFollowsVariable); };
+            Assert::ExpectException<QPSException>(wrapperFollowsVariable);
+
+            std::string queryFollowsProc = "assign a; procedure p; Select a such that Follows*(a, p)";
+            auto wrapperFollowsProc =
+                [&queryFollowsProc] { PQLParser::parseQuery(queryFollowsProc); };
+            Assert::ExpectException<QPSException>(wrapperFollowsProc);
+
+            std::string queryFollowsConst = "assign a; constant c; Select a such that Follows*(a, c)";
+            auto wrapperFollowsConst =
+                [&queryFollowsConst] { PQLParser::parseQuery(queryFollowsConst); };
+            Assert::ExpectException<QPSException>(wrapperFollowsConst);
+
+            std::string queryFollowsVarName = "assign a; constant c; Select a such that Follows*(a, \"x\")";
+            auto wrapperFollowsVarName =
+                [&queryFollowsVarName] { PQLParser::parseQuery(queryFollowsVarName); };
+            Assert::ExpectException<QPSException>(wrapperFollowsVarName);
+        }
+        TEST_METHOD(parseQuery_parentFirstArgNonStmtSynonym_exceptionThrown) {
+            std::string queryParentVariable = "assign a; variable v; Select a such that Parent(v, a)";
+            auto wrapperParentVariable =
+                [&queryParentVariable] { PQLParser::parseQuery(queryParentVariable); };
+            Assert::ExpectException<QPSException>(wrapperParentVariable);
+
+            std::string queryParentProc = "assign a; procedure p; Select a such that Parent(p, a)";
+            auto wrapperParentProc =
+                [&queryParentProc] { PQLParser::parseQuery(queryParentProc); };
+            Assert::ExpectException<QPSException>(wrapperParentProc);
+
+            std::string queryParentConst = "assign a; constant c; Select a such that Parent(c, a)";
+            auto wrapperParentConst =
+                [&queryParentConst] { PQLParser::parseQuery(queryParentConst); };
+            Assert::ExpectException<QPSException>(wrapperParentConst);
+
+            std::string queryParentVarName = "assign a; constant c; Select a such that Parent(\"x\", a)";
+            auto wrapperParentVarName =
+                [&queryParentVarName] { PQLParser::parseQuery(queryParentVarName); };
+            Assert::ExpectException<QPSException>(wrapperParentVarName);
+        }
+
+        TEST_METHOD(parseQuery_parentSecondArgNonStmtSynonym_exceptionThrown) {
+            std::string queryParentVariable = "assign a; variable v; Select a such that Parent(a, v)";
+            auto wrapperParentVariable =
+                [&queryParentVariable] { PQLParser::parseQuery(queryParentVariable); };
+            Assert::ExpectException<QPSException>(wrapperParentVariable);
+
+            std::string queryParentProc = "assign a; procedure p; Select a such that Parent(a, p)";
+            auto wrapperParentProc =
+                [&queryParentProc] { PQLParser::parseQuery(queryParentProc); };
+            Assert::ExpectException<QPSException>(wrapperParentProc);
+
+            std::string queryParentConst = "assign a; constant c; Select a such that Parent(a, c)";
+            auto wrapperParentConst =
+                [&queryParentConst] { PQLParser::parseQuery(queryParentConst); };
+            Assert::ExpectException<QPSException>(wrapperParentConst);
+
+            std::string queryParentVarName = "assign a; constant c; Select a such that Parent(a, \"x\")";
+            auto wrapperParentVarName =
+                [&queryParentVarName] { PQLParser::parseQuery(queryParentVarName); };
+            Assert::ExpectException<QPSException>(wrapperParentVarName);
+        }
+
+        TEST_METHOD(parseQuery_parentTFirstArgNonStmtSynonym_exceptionThrown) {
+            std::string queryParentVariable = "assign a; variable v; Select a such that Parent*(v, a)";
+            auto wrapperParentVariable =
+                [&queryParentVariable] { PQLParser::parseQuery(queryParentVariable); };
+            Assert::ExpectException<QPSException>(wrapperParentVariable);
+
+            std::string queryParentProc = "assign a; procedure p; Select a such that Parent*(p, a)";
+            auto wrapperParentProc =
+                [&queryParentProc] { PQLParser::parseQuery(queryParentProc); };
+            Assert::ExpectException<QPSException>(wrapperParentProc);
+
+            std::string queryParentConst = "assign a; constant c; Select a such that Parent*(c, a)";
+            auto wrapperParentConst =
+                [&queryParentConst] { PQLParser::parseQuery(queryParentConst); };
+            Assert::ExpectException<QPSException>(wrapperParentConst);
+
+            std::string queryParentVarName = "assign a; constant c; Select a such that Parent*(\"x\", a)";
+            auto wrapperParentVarName =
+                [&queryParentVarName] { PQLParser::parseQuery(queryParentVarName); };
+            Assert::ExpectException<QPSException>(wrapperParentVarName);
+        }
+
+        TEST_METHOD(parseQuery_parentTSecondArgNonStmtSynonym_exceptionThrown) {
+            std::string queryParentVariable = "assign a; variable v; Select a such that Parent*(a, v)";
+            auto wrapperParentVariable =
+                [&queryParentVariable] { PQLParser::parseQuery(queryParentVariable); };
+            Assert::ExpectException<QPSException>(wrapperParentVariable);
+
+            std::string queryParentProc = "assign a; procedure p; Select a such that Parent*(a, p)";
+            auto wrapperParentProc =
+                [&queryParentProc] { PQLParser::parseQuery(queryParentProc); };
+            Assert::ExpectException<QPSException>(wrapperParentProc);
+
+            std::string queryParentConst = "assign a; constant c; Select a such that Parent*(a, c)";
+            auto wrapperParentConst =
+                [&queryParentConst] { PQLParser::parseQuery(queryParentConst); };
+            Assert::ExpectException<QPSException>(wrapperParentConst);
+
+            std::string queryParentVarName = "assign a; constant c; Select a such that Parent*(a, \"x\")";
+            auto wrapperParentVarName =
+                [&queryParentVarName] { PQLParser::parseQuery(queryParentVarName); };
+            Assert::ExpectException<QPSException>(wrapperParentVarName);
         }
         TEST_METHOD(parseQuery_syntaxError_exceptionThrown)
         {
