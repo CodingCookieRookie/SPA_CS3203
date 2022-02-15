@@ -24,6 +24,7 @@ private:
 	/* All handlers to set EvaluatedTable to results from PKB. Uses Pass by Reference on EvTable. */
 	void handleGetAllStmt(EvaluatedTable& evTable, std::string synonym) {
 		std::vector<StmtIndex> results = Entity::getAllStmts();
+		
 		std::vector<int> resultsToInt;
 		for (StmtIndex result : results) {
 			resultsToInt.emplace_back(result.getIndex());
@@ -40,12 +41,17 @@ private:
 		evTable.setNumRow(results.size());
 	}
 
-	void handleGetAllPrint(EvaluatedTable& evTable, std::string synonym) {
-		// TODO: PKB to add getAllPrints().
-		/*std::vector<int> results = Entity::getAllPrints();
+	void handleGetAllStmtByType(EvaluatedTable& evTable, std::string synonym, StatementType stmtType) {
+		// TODO: PKB to change return type of getStmtIdxFromType()
+		/*std::vector<StmtIndex> results = Entity::getStmtIdxFromType(stmtType);
+
+		std::vector<int> resultsToInt;
+		for (StmtIndex result : results) {
+			resultsToInt.emplace_back(result.getIndex());
+		}
 
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
-		PQLentities.insert(std::pair(synonym, PqlEntityType::Print));
+		PQLentities.insert(std::pair(synonym, PqlEntityType::Stmt));
 
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLmap[synonym] = resultsToInt;
@@ -54,6 +60,8 @@ private:
 		evTable.setTable(PQLmap);
 		evTable.setNumRow(results.size());*/
 	}
+
+
 
 	void handleGetAllVar(EvaluatedTable& evTable, std::string synonym) {
 		// TODO: PKB to change getAllVars() to return VarIndex.
@@ -128,20 +136,23 @@ public:
 		case PqlEntityType::Stmt:
 			handleGetAllStmt(evTable, synonym);
 			break;
+		case PqlEntityType::Read:
+			handleGetAllStmtByType(evTable, synonym, StatementType::readType);
+			break;
 		case PqlEntityType::Print:
-			handleGetAllPrint(evTable, synonym);
+			handleGetAllStmtByType(evTable, synonym, StatementType::printType);
 			break;
 		case PqlEntityType::Call:
-			// TODO: PKB to add getAllCalls().
+			handleGetAllStmtByType(evTable, synonym, StatementType::callType);
 			break;
 		case PqlEntityType::While:
-			// TODO: PKB to add.
+			handleGetAllStmtByType(evTable, synonym, StatementType::whileType);
 			break;
 		case PqlEntityType::If:
-			// TODO: PKB to add.
+			handleGetAllStmtByType(evTable, synonym, StatementType::ifType);
 			break;
 		case PqlEntityType::Assign:
-			// TODO: PKB to add.
+			handleGetAllStmtByType(evTable, synonym, StatementType::assignType);
 			break;
 		case PqlEntityType::Variable:
 			handleGetAllVar(evTable, synonym);
