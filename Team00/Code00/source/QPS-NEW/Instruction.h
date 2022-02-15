@@ -152,38 +152,127 @@ public:
 };
 
 class RelationshipInstruction : public Instruction {
+	//enum class PqlReferenceType {
+	//	synonym, wildcard, integer, ident
+	//};
+
 private:
 	//RelationshipInstructionType type;
 	PqlRelationshipType pqlRelationshipType;
 	PqlReference lhsRef;
 	PqlReference rhsRef;
 
-	/*EvaluatedTable handleModifiesS() {
-		EvaluatedTable newEvTable;
+	EvaluatedTable handleModifiesS() {
+		// Modifies (a/r/s/a1, v) or Modifies (a/r/s/a1, _ )
+		// Modifies (p/p1, v)	or Modifies (p/p1, _ )	proc
+		// Modifies (1, v)	=> true or Modifies (1, _ ) (under statement)
+		std::unordered_map<std::string, PqlEntityType> PQLentities;
+		std::unordered_map<std::string, std::vector<int>> PQLmap;
+		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
+		PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Variable));
 		std::tuple<std::vector<int>, std::vector<int>> allStmtVarInfos = Modifies::getAllStmtVarInfo();
-		std::unordered_map<std::string, std::vector<int>> table;
-		//Assumption: stmt's vector<int> is same size as var's vector<int>
-		for (size_t i = 0; i < (std::get<0>(allStmtVarInfos).size()); i++) {
-			int lhs = std::get<0>(allStmtVarInfos)[i];
-			int rhs = std::get<1>(allStmtVarInfos)[i];
-			table[lhsRefString].push_back(lhs);
-			table[rhsRefString].push_back(rhs);
+		if (lhsRef.first == PqlReferenceType::ident) {
+			for (size_t i = 0; i < (std::get<0>(allStmtVarInfos).size()); i++) {
+				int lhs = std::get<0>(allStmtVarInfos)[i];
+				PQLmap[lhsRef.second].push_back(lhs);
+				if (rhsRef.first != PqlReferenceType::wildcard) {
+					int rhs = std::get<1>(allStmtVarInfos)[i];
+					PQLmap[rhsRef.second].push_back(rhs);
+				}
+			}
 		}
-		return EvaluatedTable(table);
+		else if (lhsRef.first == PqlReferenceType::integer) {
+			int lhsRefValue = stoi(lhsRef.second);
+			StmtIndex stmtIndex = { lhsRefValue };
+			VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
+			return EvaluatedTable(Modifies::contains(stmtIndex, varIndex));
+		}
+		else {
+			std::cout << "Error in handleModifiesS\n";
+		}
+		return EvaluatedTable(PQLentities, PQLmap);
+	}
+
+	EvaluatedTable handleModifiesP() {
+		// Modifies (a/r/s/a1, v) or Modifies (a/r/s/a1, _ )
+		// Modifies (p/p1, v)	or Modifies (p/p1, _ )	proc
+		// Modifies (1, v)	=> true or Modifies (1, _ ) (under statement)
+		std::unordered_map<std::string, PqlEntityType> PQLentities;
+		std::unordered_map<std::string, std::vector<int>> PQLmap;
+		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Procedure));
+		PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Variable));
+		std::tuple<std::vector<int>, std::vector<int>> allProcVarInfos = Modifies::getAllProcVarInfo();
+		if (lhsRef.first == PqlReferenceType::ident) {
+			for (size_t i = 0; i < (std::get<0>(allProcVarInfos).size()); i++) {
+				int lhs = std::get<0>(allProcVarInfos)[i];
+				PQLmap[lhsRef.second].push_back(lhs);
+				if (rhsRef.first != PqlReferenceType::wildcard) {
+					int rhs = std::get<1>(allProcVarInfos)[i];
+					PQLmap[rhsRef.second].push_back(rhs);
+				}
+			}
+		}
+		else {
+			std::cout << "Error in handleModifiesP\n";
+		}
+		return EvaluatedTable(PQLentities, PQLmap);
 	}
 
 	EvaluatedTable handleUsesS() {
-		EvaluatedTable newEvTable;
+		// Uses (a/r/s/a1, v) or Uses (a/r/s/a1, _ )
+		// Uses (p/p1, v)	or Uses (p/p1, _ )	proc
+		// Uses (1, v)	=> true or Uses (1, _ ) (under statement)
+		std::unordered_map<std::string, PqlEntityType> PQLentities;
+		std::unordered_map<std::string, std::vector<int>> PQLmap;
+		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
+		PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Variable));
 		std::tuple<std::vector<int>, std::vector<int>>  allStmtVarInfos = Uses::getAllStmtVarInfo();
-		std::unordered_map<std::string, std::vector<int>> table;
-		for (size_t i = 0; i < (std::get<0>(allStmtVarInfos).size()); i++) {
-			int lhs = std::get<0>(allStmtVarInfos)[i];
-			int rhs = std::get<1>(allStmtVarInfos)[i];
-			table[lhsRefString].push_back(lhs);
-			table[rhsRefString].push_back(rhs);
+		if (lhsRef.first == PqlReferenceType::ident) {
+			for (size_t i = 0; i < (std::get<0>(allStmtVarInfos).size()); i++) {
+				int lhs = std::get<0>(allStmtVarInfos)[i];
+				PQLmap[lhsRef.second].push_back(lhs);
+				if (rhsRef.first != PqlReferenceType::wildcard) {
+					int rhs = std::get<1>(allStmtVarInfos)[i];
+					PQLmap[rhsRef.second].push_back(rhs);
+				}
+			}
 		}
-		return EvaluatedTable(table);
-	}*/
+		else if (lhsRef.first == PqlReferenceType::integer) {
+			int lhsRefValue = stoi(lhsRef.second);
+			StmtIndex stmtIndex = { lhsRefValue };
+			VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
+			return EvaluatedTable(Modifies::contains(stmtIndex, varIndex));
+		}
+		else {
+			std::cout << "Error in handleModifiesS\n";
+		}
+		return EvaluatedTable(PQLentities, PQLmap);
+	}
+
+	EvaluatedTable handleUsesP() {
+		// Uses (a/r/s/a1, v) or Uses (a/r/s/a1, _ )
+		// Uses (p/p1, v)	or Uses (p/p1, _ )	proc
+		// Uses (1, v)	=> true or Uses (1, _ ) (under statement)
+		std::unordered_map<std::string, PqlEntityType> PQLentities;
+		std::unordered_map<std::string, std::vector<int>> PQLmap;
+		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
+		PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Variable));
+		std::tuple<std::vector<int>, std::vector<int>>  allStmtVarInfos = Uses::getAllStmtVarInfo();
+		if (lhsRef.first == PqlReferenceType::ident) {
+			for (size_t i = 0; i < (std::get<0>(allStmtVarInfos).size()); i++) {
+				int lhs = std::get<0>(allStmtVarInfos)[i];
+				PQLmap[lhsRef.second].push_back(lhs);
+				if (rhsRef.first != PqlReferenceType::wildcard) {
+					int rhs = std::get<1>(allStmtVarInfos)[i];
+					PQLmap[rhsRef.second].push_back(rhs);
+				}
+			}
+		}
+		else {
+			std::cout << "Error in handleModifiesP\n";
+		}
+		return EvaluatedTable(PQLentities, PQLmap);
+	}
 
 	EvaluatedTable handleFollows() {
 		EvaluatedTable evTable;
@@ -278,12 +367,18 @@ public:
 	EvaluatedTable execute() override {
 		EvaluatedTable evTable;
 		switch (pqlRelationshipType) {
-		/*case PqlRelationshipType::ModifiesS :
+		case PqlRelationshipType::ModifiesS :
 			evTable = handleModifiesS();
+			break;
+		case PqlRelationshipType::ModifiesP:
+			evTable = handleModifiesP();
 			break;
 		case PqlRelationshipType::UsesS:
 			evTable = handleUsesS();
-			break;*/
+			break;
+		case PqlRelationshipType::UsesP:
+			evTable = handleUsesP();
+			break;
 		case PqlRelationshipType::Follows:
 			evTable = handleFollows();
 			break;

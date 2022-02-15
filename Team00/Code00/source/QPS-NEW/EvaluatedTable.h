@@ -36,6 +36,9 @@ public:
 
     EvaluatedTable(std::unordered_map<std::string, std::vector<int>> table);
 
+    EvaluatedTable(std::unordered_map<std::string, PqlEntityType> newEntities,
+        std::unordered_map<std::string, std::vector<int>> newTable);
+
     /* Wrapper constructor for all 3 fields, less boolean */
     EvaluatedTable(std::unordered_map<std::string, PqlEntityType> newEntities,
         std::unordered_map<std::string, std::vector<int>> newTable, int newNumRow);
