@@ -190,18 +190,19 @@ private:
 	}*/
 
 	void handleFollows(EvaluatedTable& evTable) {
-
 		
+		// Follows(s1, ?)
 		if (lhsRef.first == PqlReferenceType::synonym || lhsRef.first == PqlReferenceType::wildcard) {
 			std::vector<StmtIndex> stmts = Entity::getAllStmts();
 
-			if (rhsRef.first == PqlReferenceType::integer) {
+			// e.g. Follows(s1, 6)
+			if (rhsRef.first == PqlReferenceType::integer) { 
 				std::vector<int> results;
 				int rhsRefValue = stoi(rhsRef.second); //might throw error if string value can't be converted to int
 				StmtIndex rhsStmt = stmts[rhsRefValue - 1];
 				for (StmtIndex stmt : stmts) {
 					if (Follows::containsSuccessor(stmt, rhsStmt)) {
-						results.emplace_back(stmt.getIndex());
+						results.emplace_back(stmt.getIndex()); //e.g {3} because 3 is followed by 6
 					}
 				}
 				std::unordered_map<std::string, PqlEntityType> PQLentities;
@@ -214,8 +215,22 @@ private:
 				evTable.setTable(PQLmap);
 				evTable.setNumRow(results.size());
 			}
-			else { //rhsRef is either a synonym or a wildcard
+			// rhsRef is either a synonym or a wildcard (i.e. Follows(s1, s2), or Follows(s1, _))
+			else { 
+				//Assumption: Different synonym names (i.e. Follows(s1, s2), not Follows(s1, s1))
+				std::tuple<std::vector<int>, std::vector<int>> results = Follows::getAllPredecessorSuccessorInfo();
+			    //e.g. {1, 2}, {2, 3}, {3, 6}
+				std::unordered_map<std::string, PqlEntityType> PQLentities;
+				PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
+				PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Stmt));
 
+				std::unordered_map<std::string, std::vector<int>> PQLmap;
+				PQLmap[lhsRef.second] = std::get<0>(results);
+				PQLmap[rhsRef.second] = std::get<1>(results);
+
+				evTable.setEntities(PQLentities);
+				evTable.setTable(PQLmap);
+				evTable.setNumRow(std::get<0>(results).size());
 			}
 
 
