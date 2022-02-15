@@ -32,10 +32,7 @@ private:
 
 public:
 	TEST_METHOD(insertPostFixInfo_getStmtsFromVarPattern_fromVar_sameVariable_differentStmtIdx) {
-		std::vector<int> expectedRes;
-		expectedRes.push_back(1);
-		expectedRes.push_back(2);
-		expectedRes.push_back(3);
+		std::vector<int> expectedRes{ 1, 2, 3 };
 
 		Pattern::insertPostFixInfo(varIdx1, postFix1, stmtIdx1);
 		Pattern::insertPostFixInfo(varIdx1, postFix1, stmtIdx2);
@@ -47,10 +44,7 @@ public:
 	}
 
 	TEST_METHOD(insertPostFixInfo_getStmtsFromVarPattern_fromVar_sameVariable_differentStmtIdx_repeatedStmtIdx) {
-		std::vector<int> expectedRes;
-		expectedRes.push_back(1);
-		expectedRes.push_back(2);
-		expectedRes.push_back(3);
+		std::vector<int> expectedRes{ 1, 2, 3 };
 
 		Pattern::insertPostFixInfo(varIdx1, postFix1, stmtIdx1);
 		Pattern::insertPostFixInfo(varIdx1, postFix1, stmtIdx2);
@@ -65,9 +59,7 @@ public:
 	}
 
 	TEST_METHOD(insertPostFixInfo_getStmtsFromVarPattern_fromVar_differentVariables_differentStmtIdx_repeatedStmtIdx) {
-		std::vector<int> expectedRes;
-		expectedRes.push_back(2);
-		expectedRes.push_back(1);
+		std::vector<int> expectedRes{ 2, 1 };
 
 		Pattern::insertPostFixInfo(varIdx1, postFix1, stmtIdx1);
 		Pattern::insertPostFixInfo(varIdx2, postFix1, stmtIdx2);
@@ -81,9 +73,7 @@ public:
 	}
 
 	TEST_METHOD(insertPostFixInfo_getStmtsFromVarPattern_fromExpression_sameExpression_exactExpression) {
-		std::vector<int> expectedRes;
-		expectedRes.push_back(1);
-		expectedRes.push_back(2);
+		std::vector<int> expectedRes{ 1, 2 };
 
 		Pattern::insertPostFixInfo(varIdx1, postFix1, stmtIdx1);
 		Pattern::insertPostFixInfo(varIdx1, postFix1, stmtIdx2);
@@ -96,8 +86,7 @@ public:
 	}
 
 	TEST_METHOD(insertPostFixInfo_getStmtsFromVarPattern_fromExpression_differentExpression_repeatedStmtIdx_exactExpression) {
-		std::vector<int> expectedRes;
-		expectedRes.push_back(1);
+		std::vector<int> expectedRes{ 1 };
 
 		Pattern::insertPostFixInfo(varIdx1, postFix1, stmtIdx1);
 		Pattern::insertPostFixInfo(varIdx1, postFix2, stmtIdx2);
@@ -111,9 +100,7 @@ public:
 	}
 
 	TEST_METHOD(insertPostFixInfo_getStmtsFromVarPattern_fromExpression_sameExpression_subExpression_subExpressionQuery) {
-		std::vector<int> expectedRes;
-		expectedRes.push_back(1);
-		expectedRes.push_back(2);
+		std::vector<int> expectedRes{ 1, 2 };
 
 		Pattern::insertPostFixInfo(varIdx1, postFix4, stmtIdx1);
 		Pattern::insertPostFixInfo(varIdx1, postFix4, stmtIdx2);
@@ -128,8 +115,7 @@ public:
 	}
 
 	TEST_METHOD(insertPostFixInfo_getStmtsFromVarPattern_fromExpression_sameExpression_subExpression_nonSubExpressionQuery) {
-		std::vector<int> expectedRes;
-		expectedRes.push_back(1);
+		std::vector<int> expectedRes{ 1 };
 
 		Pattern::insertPostFixInfo(varIdx1, postFix4, stmtIdx1);
 		Pattern::insertPostFixInfo(varIdx1, postFix1, stmtIdx2);
@@ -142,9 +128,7 @@ public:
 	}
 
 	TEST_METHOD(insertPostFixInfo_getStmtsFromVarPattern_fromExpression_differentExpression_subExpression) {
-		std::vector<int> expectedRes;
-		expectedRes.push_back(1);
-		expectedRes.push_back(2);
+		std::vector<int> expectedRes{ 1, 2 };
 
 		Pattern::insertPostFixInfo(varIdx1, postFix4, stmtIdx1);
 		Pattern::insertPostFixInfo(varIdx1, postFix4, stmtIdx2);
@@ -169,15 +153,8 @@ public:
 	}
 
 	TEST_METHOD(insertPostFixInfo_getStmtsFromPattern_sameExpression_exactExpression) {
-		std::vector<int> stmtIndices;
-		std::vector<int> varIndices;
-
-		stmtIndices.push_back(1);
-		stmtIndices.push_back(2);
-		stmtIndices.push_back(3);
-		varIndices.push_back(1);
-		varIndices.push_back(1);
-		varIndices.push_back(2);
+		std::vector<int> stmtIndices{ 1, 2, 3 };
+		std::vector<int> varIndices{ 1, 1, 2 };
 
 		std::tuple<std::vector<int>, std::vector<int>> expectedRes = std::make_tuple(stmtIndices, varIndices);
 
@@ -191,13 +168,8 @@ public:
 	}
 
 	TEST_METHOD(insertPostFixInfo_getStmtsFromPattern_differentExpression_exactExpression) {
-		std::vector<int> stmtIndices;
-		std::vector<int> varIndices;
-
-		stmtIndices.push_back(2);
-		stmtIndices.push_back(3);
-		varIndices.push_back(1);
-		varIndices.push_back(2);
+		std::vector<int> stmtIndices{ 2, 3 };
+		std::vector<int> varIndices{ 1, 2 };
 
 		std::tuple<std::vector<int>, std::vector<int>> expectedRes = std::make_tuple(stmtIndices, varIndices);
 
@@ -212,15 +184,8 @@ public:
 	}
 
 	TEST_METHOD(insertPostFixInfo_getStmtsFromPattern_sameExpression_subExpression_subExpressionQuery) {
-		std::vector<int> stmtIndices;
-		std::vector<int> varIndices;
-
-		stmtIndices.push_back(1);
-		stmtIndices.push_back(2);
-		stmtIndices.push_back(3);
-		varIndices.push_back(1);
-		varIndices.push_back(1);
-		varIndices.push_back(2);
+		std::vector<int> stmtIndices{ 1, 2, 3 };
+		std::vector<int> varIndices{ 1, 1, 2 };
 
 		std::tuple<std::vector<int>, std::vector<int>> expectedRes = std::make_tuple(stmtIndices, varIndices);
 
@@ -236,11 +201,8 @@ public:
 	}
 
 	TEST_METHOD(insertPostFixInfo_getStmtsFromPattern_sameExpression_subExpression_nonSubExpressionQuery) {
-		std::vector<int> stmtIndices;
-		std::vector<int> varIndices;
-
-		stmtIndices.push_back(2);
-		varIndices.push_back(3);
+		std::vector<int> stmtIndices{ 2 };
+		std::vector<int> varIndices{ 3 };
 
 		std::tuple<std::vector<int>, std::vector<int>> expectedRes = std::make_tuple(stmtIndices, varIndices);
 
@@ -256,15 +218,8 @@ public:
 	}
 
 	TEST_METHOD(insertPostFixInfo_getStmtsFromPattern_differentExpression_subExpression) {
-		std::vector<int> stmtIndices;
-		std::vector<int> varIndices;
-
-		stmtIndices.push_back(1);
-		stmtIndices.push_back(2);
-		stmtIndices.push_back(3);
-		varIndices.push_back(1);
-		varIndices.push_back(1);
-		varIndices.push_back(2);
+		std::vector<int> stmtIndices{ 1, 2, 3 };
+		std::vector<int> varIndices{ 1, 1, 2 };
 
 		std::tuple<std::vector<int>, std::vector<int>> expectedRes = std::make_tuple(stmtIndices, varIndices);
 
@@ -294,17 +249,8 @@ public:
 	}
 
 	TEST_METHOD(insertPostFixInfo_getAllAssignStmtVarsPatternInfo) {
-		std::vector<int> stmtIndices;
-		std::vector<int> varIndices;
-
-		stmtIndices.push_back(1);
-		stmtIndices.push_back(2);
-		stmtIndices.push_back(3);
-		stmtIndices.push_back(3);
-		varIndices.push_back(1);
-		varIndices.push_back(1);
-		varIndices.push_back(1);
-		varIndices.push_back(2);
+		std::vector<int> stmtIndices{ 1, 2, 3, 3 };
+		std::vector<int> varIndices{ 1, 1, 1, 2 };
 
 		std::tuple<std::vector<int>, std::vector<int>> expectedRes = std::make_tuple(stmtIndices, varIndices);
 
