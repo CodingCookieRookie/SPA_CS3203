@@ -43,7 +43,7 @@ namespace UnitTesting {
 			ProcIndex procIndex = Entity::getProcIdx(procName);
 			Assert::AreEqual(size_t(1), procStmtMap.at(procIndex).size());
 
-			Assert::AreEqual(size_t(1), Modifies::getAllStmtVarInfo().size());
+			Assert::AreEqual(size_t(1), std::get<0>(Modifies::getAllStmtVarInfo()).size());
 		}
 		TEST_METHOD(extract_printStatementOnly_success) {
 			std::string varName = "x";
@@ -70,7 +70,7 @@ namespace UnitTesting {
 			ProcIndex procIndex = Entity::getProcIdx(procName);
 			Assert::AreEqual(size_t(1), procStmtMap.at(procIndex).size());
 
-			Assert::AreEqual(size_t(1), Uses::getAllStmtVarInfo().size());
+			Assert::AreEqual(size_t(1), std::get<0>(Uses::getAllStmtVarInfo()).size());
 		}
 		TEST_METHOD(extract_readandPrintStatement_success) {
 			std::string varNameX = "x";
@@ -106,8 +106,8 @@ namespace UnitTesting {
 			Assert::AreEqual(size_t(1), stmtFollowsMap.size());
 			Assert::IsTrue(StmtIndex(2) == stmtFollowsMap.at(StmtIndex(1)));
 
-			Assert::AreEqual(size_t(1), Modifies::getAllStmtVarInfo().size());
-			Assert::AreEqual(size_t(1), Uses::getAllStmtVarInfo().size());
+			Assert::AreEqual(size_t(1), std::get<0>(Modifies::getAllStmtVarInfo()).size());
+			Assert::AreEqual(size_t(1), std::get<0>(Uses::getAllStmtVarInfo()).size());
 		}
 	};
 }
