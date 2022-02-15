@@ -13,28 +13,19 @@
 </query>
 <query>
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 8">8</id><querystr><![CDATA[stmt stmt; variable v; procedure p; Select p]]></querystr>
-<stuans>1</stuans>
+<stuans>Example</stuans>
 <correct>Example</correct>
-<time_taken>5.000000</time_taken>
-<failed>
-<missing>Example</missing>
-<additional>1</additional>
-<summary>
-<expected>1</expected>
-<matched>0</matched>
-<missing>1</missing>
-<additional>1</additional>
-</summary>
-</failed>
+<time_taken>4.000000</time_taken>
+<passed/>
 </query>
 <query>
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 9">9</id><querystr><![CDATA[stmt stmt; variable v; procedure p; constant c; Select c]]></querystr>
-<stuans>1</stuans>
+<stuans>Example</stuans>
 <correct>None</correct>
 <time_taken>7.000000</time_taken>
 <failed>
 <missing>None</missing>
-<additional>1</additional>
+<additional>Example</additional>
 <summary>
 <expected>1</expected>
 <matched>0</matched>
@@ -45,12 +36,12 @@
 </query>
 <query>
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="Demo 6">6</id><querystr><![CDATA[stmt stmt; variable v; Select v]]></querystr>
-<stuans>1,2,3,4,5</stuans>
+<stuans>x1,yA123z,AbC1,print,read</stuans>
 <correct>x1 yA123z AbC1 print read</correct>
-<time_taken>7.000000</time_taken>
+<time_taken>8.000000</time_taken>
 <failed>
 <missing>x1 yA123z AbC1 print read</missing>
-<additional>1,2,3,4,5</additional>
+<additional>AbC1,print,read,x1,yA123z</additional>
 <summary>
 <expected>1</expected>
 <matched>0</matched>
