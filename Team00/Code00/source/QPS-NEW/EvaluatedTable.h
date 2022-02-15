@@ -15,7 +15,7 @@ private:
     std::unordered_map<std::string, std::vector<int>> table;
     int numRow;
 
-    void blockNestedJoin(EvaluatedTable& otherTable,
+    EvaluatedTable blockNestedJoin(EvaluatedTable& otherTable,
         std::unordered_map<std::string, PqlEntityType>& commonEntities);
 
 public:
@@ -57,7 +57,7 @@ public:
         std::unordered_map<std::string, std::vector<int>> newTable, int newNumRow);
 
     /* Handle table joins */
-    void innerJoinMerge(EvaluatedTable& otherTable);
+    EvaluatedTable innerJoinMerge(EvaluatedTable& otherTable);
 
     /* Getter for entities */
     std::unordered_map<std::string, PqlEntityType> getEntities() {

@@ -1,6 +1,6 @@
 #include "EvaluatedTable.h"
 
-void EvaluatedTable::blockNestedJoin(EvaluatedTable& otherTable,
+EvaluatedTable EvaluatedTable::blockNestedJoin(EvaluatedTable& otherTable,
     std::unordered_map<std::string, PqlEntityType>& commonEntities) {
 
     std::unordered_map<std::string, std::vector<int>> nextTable;
@@ -21,7 +21,6 @@ void EvaluatedTable::blockNestedJoin(EvaluatedTable& otherTable,
             nextEntities.insert(taggedEntity);
         }
     }
-
 
     for (int i = 0; i < numRow; i++) {
         for (int j = 0; j < otherTable.numRow; j++) {
@@ -56,9 +55,7 @@ void EvaluatedTable::blockNestedJoin(EvaluatedTable& otherTable,
             }
         }
     }
-    table = nextTable;
-    entities = nextEntities;
-    numRow = nextNumRow;
+    return EvaluatedTable(nextEntities, nextTable, nextNumRow);
 }
 
 EvaluatedTable::EvaluatedTable() {
@@ -75,21 +72,18 @@ EvaluatedTable::EvaluatedTable(std::unordered_map<std::string, PqlEntityType> ne
 }
 
 /* Modifies the table in place, buy joining it with otherTable */
-void EvaluatedTable::innerJoinMerge(EvaluatedTable& otherTable) {
+EvaluatedTable EvaluatedTable::innerJoinMerge(EvaluatedTable& otherTable) {
     /* Handle the case when we perform the first merge, which is done on a table with no rows */
     if (entities.empty()) {
-        entities = otherTable.entities;
-        table = otherTable.table;
-        numRow = otherTable.numRow;
-    } else {
-        std::unordered_map<std::string, PqlEntityType> commonEntities;
-        for (const std::pair<std::string, PqlEntityType>& taggedEntity : entities) {
-            std::string entityName = taggedEntity.first;
-            if (otherTable.entities.find(entityName) != otherTable.entities.end()) {
-                commonEntities.insert(taggedEntity);
-            }
-        }
-        /* Perform an block nested join -- To update to a inner hash join where possible */
-        blockNestedJoin(otherTable, commonEntities);
+        return EvaluatedTable(otherTable);
     }
+    std::unordered_map<std::string, PqlEntityType> commonEntities;
+    for (const std::pair<std::string, PqlEntityType>& taggedEntity : entities) {
+        std::string entityName = taggedEntity.first;
+        if (otherTable.entities.find(entityName) != otherTable.entities.end()) {
+            commonEntities.insert(taggedEntity);
+        }
+    }
+    /* Perform an block nested join -- To update to a inner hash join where possible */
+    return blockNestedJoin(otherTable, commonEntities);
 }

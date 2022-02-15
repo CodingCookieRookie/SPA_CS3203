@@ -11,18 +11,18 @@ namespace UnitTesting {
     TEST_CLASS(TestEvaluatedTable) {
 public:
     TEST_METHOD(innerJoinMerge_emptyLHS_RHSCopiedOver) {
-        EvaluatedTable evTable1;
+        EvaluatedTable leftEvTable;
 
-        std::unordered_map<std::string, PqlEntityType> entities = { {"s", PqlEntityType::Stmt} };
-        std::unordered_map<std::string, std::vector<int>> table = {
+        std::unordered_map<std::string, PqlEntityType> rightEntities = { {"s", PqlEntityType::Stmt} };
+        std::unordered_map<std::string, std::vector<int>> rightTable = {
             {"s", { 1, 3, 6, 7, 10 } } };
-        int numRow = 5;
-        EvaluatedTable evTable2(entities, table, numRow);
+        int rightNumRow = 5;
+        EvaluatedTable rightEvTable(rightEntities, rightTable, rightNumRow);
 
-        evTable1.innerJoinMerge(evTable2);
-        Assert::AreEqual(size_t(1), evTable1.getEntities().size());
-        Assert::AreEqual(std::string("s"), (evTable1.getEntities().begin())->first);
-        Assert::AreEqual(5, evTable1.getNumRow());
+        EvaluatedTable mergedTable = leftEvTable.innerJoinMerge(rightEvTable);
+        Assert::AreEqual(size_t(1), mergedTable.getEntities().size());
+        Assert::AreEqual(std::string("s"), (mergedTable.getEntities().begin())->first);
+        Assert::AreEqual(5, mergedTable.getNumRow());
     }
 
     TEST_METHOD(innerJoinMerge_noCommonColumns_crossProduct) {
@@ -48,14 +48,14 @@ public:
         int rightNumRow = 3;
         EvaluatedTable rightEvTable(rightEntities, rightTable, rightNumRow);
 
-        leftEvTable.innerJoinMerge(rightEvTable);
-        Assert::AreEqual(size_t(4), leftEvTable.getEntities().size());
-        std::unordered_map<std::string, PqlEntityType> entities = leftEvTable.getEntities();
+        EvaluatedTable mergedTable = leftEvTable.innerJoinMerge(rightEvTable);
+        Assert::AreEqual(size_t(4), mergedTable.getEntities().size());
+        std::unordered_map<std::string, PqlEntityType> entities = mergedTable.getEntities();
         Assert::IsTrue(entities.find(std::string("s1")) != entities.end());
         Assert::IsTrue(entities.find(std::string("v1")) != entities.end());
         Assert::IsTrue(entities.find(std::string("s2")) != entities.end());
         Assert::IsTrue(entities.find(std::string("v2")) != entities.end());
-        Assert::AreEqual(6, leftEvTable.getNumRow());
+        Assert::AreEqual(6, mergedTable.getNumRow());
     }
 
     TEST_METHOD(innerJoinMerge_commonColumnExists_innerJoin) {
@@ -81,13 +81,13 @@ public:
         int rightNumRow = 3;
         EvaluatedTable rightEvTable(rightEntities, rightTable, rightNumRow);
 
-        leftEvTable.innerJoinMerge(rightEvTable);
-        Assert::AreEqual(size_t(3), leftEvTable.getEntities().size());
-        std::unordered_map<std::string, PqlEntityType> entities = leftEvTable.getEntities();
+        EvaluatedTable mergedTable = leftEvTable.innerJoinMerge(rightEvTable);
+        Assert::AreEqual(size_t(3), mergedTable.getEntities().size());
+        std::unordered_map<std::string, PqlEntityType> entities = mergedTable.getEntities();
         Assert::IsTrue(entities.find(std::string("s")) != entities.end());
         Assert::IsTrue(entities.find(std::string("v1")) != entities.end());
         Assert::IsTrue(entities.find(std::string("v2")) != entities.end());
-        Assert::AreEqual(2, leftEvTable.getNumRow());
+        Assert::AreEqual(2, mergedTable.getNumRow());
     }
     };
 }
