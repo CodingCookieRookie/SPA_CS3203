@@ -181,6 +181,8 @@
     <ClCompile Include="TestFollowsT.cpp" />
     <ClCompile Include="TestLexer.cpp" />
     <ClCompile Include="TestModifies.cpp" />
+    <ClCompile Include="TestParent.cpp" />
+    <ClCompile Include="TestParentT.cpp" />
     <ClCompile Include="TestParser.cpp" />
     <ClCompile Include="TestPattern.cpp" />
     <ClCompile Include="TestPQLDEToken.cpp" />
