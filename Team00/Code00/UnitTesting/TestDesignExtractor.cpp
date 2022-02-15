@@ -17,7 +17,6 @@ private:
     }
 
 public:
-
     TEST_METHOD(extract_readStatementOnly_success) {
         std::string varName = "x";
         std::string procName = "main";

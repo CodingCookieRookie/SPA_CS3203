@@ -39,6 +39,7 @@ public:
 	static void insertConst(int constant);
 	static std::vector<int> getAllConsts();
 	static StmtIndex insertStmt(StatementType stmtType);
+	static bool isContainerStmt(StmtIndex stmtIdx);
 	static bool containsStmt(int stmtNo);
 	static std::vector<StmtIndex> getStmtIdxFromType(StatementType stmtType);
 	static std::vector<StmtIndex> getAllStmts();

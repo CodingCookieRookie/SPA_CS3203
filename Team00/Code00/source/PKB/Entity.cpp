@@ -111,6 +111,11 @@ StmtIndex Entity::insertStmt(StatementType stmtType) {
 	return stmtIdx;
 }
 
+bool Entity::isContainerStmt(StmtIndex stmtIdx) {
+	StatementType stmtType = stmtTypeTable[stmtIdx];
+	return stmtType == StatementType::whileType || stmtType == StatementType::ifType;
+}
+
 bool Entity::containsStmt(int stmtNo) {
 	return stmtTypeTable.find(StmtIndex(stmtNo)) != stmtTypeTable.end();
 }
