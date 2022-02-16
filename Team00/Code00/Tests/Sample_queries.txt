@@ -1,25 +1,46 @@
-8 - Demo 8
+1 - Get All Statements
+stmt stmt; variable v;
+Select stmt
+1, 2, 3, 4, 5, 6, 7
+5000
+2 - Get All Procedures
 stmt stmt; variable v; procedure p;
 Select p
 Example
 5000
-9 - Demo 9
+3 - Get All Constants
 stmt stmt; variable v; procedure p; constant c;
 Select c
-None
+
 5000
-6 - Demo 6
+4 - Get All Varirables
 stmt stmt; variable v;
 Select v
-x1 yA123z AbC1 print read
+x1 yA123z AbC1 print read x
 5000
-7 - Demo 7
-stmt stmt; variable v;
-Select stmt
-1, 2, 3, 4, 5
+5 - Get All Print Statments
+print pn; variable v;
+Select pn
+1, 4
 5000
-8 - Personal test 
+6 - Get All If statements
+if ifs; variable v;
+Select ifs
+
+5000
+7 - Get All While statements
+while w; variable v;
+Select w
+
+5000
+8 - Get All Read statements
 read r; variable v;
-Select r such that Modifies(r, v)
-2, 3, 5
+Select r
+2, 3, 6
 5000
+8 - Get All Assigments statements
+assign a; variable v;
+Select a
+5, 7
+5000
+
