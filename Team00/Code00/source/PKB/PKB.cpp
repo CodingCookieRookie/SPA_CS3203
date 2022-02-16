@@ -18,9 +18,19 @@ void PKB::populateRS1ContainerInfo() {
 	}
 }
 
+void PKB::populateFollowsT() {
+	auto followsPredSucTable = Follows::getPredSucTable();
+	FollowsT::populate(followsPredSucTable);
+}
+
+void PKB::populateParentT() {
+	auto parentPredSucTable = Parent::getPredSucTable();
+	ParentT::populate(parentPredSucTable);
+}
+
 void PKB::populateRecursiveInfo() {
 	Container::populate();
-	FollowsT::populate();
-	ParentT::populate();
+	populateFollowsT();
+	populateParentT();
 	populateRS1ContainerInfo();
 }
