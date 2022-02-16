@@ -70,6 +70,8 @@ void DesignExtractor::Extract(SourceAST& ast) {
 	stmtParentMap.clear();
 	stmtFollowsMap.clear();
 	processProgramNode(ast.getRoot());
+
+	/* Populate Parent and Follows Tables, and compute their transitive closures */
 	for (const std::pair<StmtIndex, std::vector<StmtIndex>> parentPair : stmtParentMap) {
 		StmtIndex predecessor = parentPair.first;
 		std::vector<StmtIndex> successors = parentPair.second;
