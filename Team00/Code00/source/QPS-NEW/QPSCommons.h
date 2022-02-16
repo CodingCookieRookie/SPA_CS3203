@@ -10,11 +10,6 @@ enum class InstructionType {
     getAll, relationship, pattern
 };
 
-enum class GetAllInstructionType {
-    getAllStmt, getAllRead, getAllPrint, getAllCall, getAllWhile,
-    getAllIf, getAllAsgn, getAllVar, getAllConst, getAllProc
-};
-
 enum class RelationshipInstructionType{
     getFollows, getFollowsT, getParent, getParentT,
     getUsesS, getUsesP, getModifiesS, getModifiesP,
