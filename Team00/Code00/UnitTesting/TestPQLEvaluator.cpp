@@ -2,6 +2,7 @@
 #include "CppUnitTest.h"
 
 #include <string>
+#include <algorithm>
 
 #include "../source/QPS-NEW/PQLEvaluator.h"
 #include "../source/QPS-NEW/PQLParser.h"
@@ -218,7 +219,7 @@ namespace UnitTesting
             Follows::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_follows_lhsStmtrhsWildcard)
+        TEST_METHOD(executeInstruction_follows_lhsStmtrhsWildcard_stress)
         {
 
             // 1. Setup:
@@ -456,5 +457,74 @@ namespace UnitTesting
             Entity::performCleanUp();
             Parent::performCleanUp();
         }
+
+        TEST_METHOD(executeInstruction_parent_lhsStmtrhsWildcard_stress)
+        {
+
+            // 1. Setup:
+            // Follows(s1, _) RelationshipInstruction
+            PqlReference lhsRef, rhsRef;
+            lhsRef = std::make_pair(PqlReferenceType::synonym, "s1");
+            rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
+            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::Parent, lhsRef, rhsRef);
+
+            // PKB inserts 37213 statements
+            std::vector<StmtIndex> stmts;
+            for (int i = 0; i < 37213; i++) {
+                stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+            }
+            for (int i = 0; i < 37213-1; i++) {
+                Parent::insert(stmts[i], stmts[i + 1]);
+            }
+
+            // 2. Main test:
+            EvaluatedTable evTable = instruction->execute();
+
+            // Test numRow:
+            Assert::AreEqual(size_t(37213-1), evTable.getNumRow());
+
+            // Test Table: std::unordered_map<std::string, std::vector<int>>
+            auto tableRef = evTable.getTableRef();
+            Assert::AreEqual(true, tableRef.find("s1") != tableRef.end());
+            Assert::AreEqual(false, tableRef.find("stress") != tableRef.end());
+
+            // Test Table size:
+            Assert::AreEqual(size_t(2), tableRef.size()); // RHS wildcard will still have column (innerJoinMerge() will drop it during merge)
+
+            // Test Entities: std::unordered_map<std::string, PqlEntityType>
+            std::vector<int> s1values, wildcardValues;
+            for (int i = 0; i < 37213 - 1; i++) {
+                s1values.emplace_back(i + 1);
+                wildcardValues.emplace_back(i + 2);
+            }
+            auto actuals1Values = tableRef.at("s1");
+            // Cannot check equality due to misordering (actuals1Values is not {1, 2, ... 37212}), this is PKB's optimisation.
+            // Instead sort, and check for equality
+            std::sort(actuals1Values.begin(), actuals1Values.end());
+            bool areVecEqual = std::equal(s1values.begin(), s1values.end(), actuals1Values.begin());
+            Assert::AreEqual(true, areVecEqual); // s1values == {1, 2, ... 37212}
+
+            auto actualWildcardValues = tableRef.at("_");
+            std::sort(actualWildcardValues.begin(), actualWildcardValues.end());
+            bool areVecEqual2 = std::equal(wildcardValues.begin(), wildcardValues.end(), actualWildcardValues.begin());
+            Assert::AreEqual(true, areVecEqual2); // wildcardValues == {2, 3, ... 37213}
+
+
+            auto actualEntities = evTable.getEntities();
+            Assert::AreEqual(true, actualEntities.find("s1") != actualEntities.end());
+            Assert::AreEqual(true, actualEntities.find("_") != actualEntities.end());
+            Assert::AreEqual(false, actualEntities.find("stress") != actualEntities.end());
+            bool isPqlEntityType = PqlEntityType::Stmt == actualEntities.at("_");
+            Assert::AreEqual(true, isPqlEntityType);
+
+            // Test EvResult:
+            bool actualEvResult = evTable.getEvResult();
+            Assert::AreEqual(true, actualEvResult);
+
+            // 3. Clean-up:
+            Entity::performCleanUp();
+            Parent::performCleanUp();
+        }
+
     };
 }
