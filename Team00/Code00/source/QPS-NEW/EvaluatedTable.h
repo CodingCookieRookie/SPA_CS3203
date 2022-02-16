@@ -14,7 +14,7 @@ private:
     std::unordered_map<std::string, PqlEntityType> entities;
     std::unordered_map<std::string, std::vector<int>> table;
     bool evResult; //if evaluated to false
-    int numRow;
+    size_t numRow;
 
     EvaluatedTable blockNestedJoin(EvaluatedTable& otherTable,
         std::unordered_set<std::string>& commonEntities);
@@ -34,14 +34,13 @@ public:
     * numRow == 2
     */
 
-    /* Default constructor */
+    /* Dummy default constructor -- to remove if we can better handle this */
     EvaluatedTable();
 
-    EvaluatedTable(std::unordered_map<std::string, std::vector<int>> table);
-
-    /* Wrapper constructor for 2 fields, less boolean and numRow */
+    /* Wrapper constructor for 3 fields, less boolean */
     EvaluatedTable(std::unordered_map<std::string, PqlEntityType> newEntities,
-        std::unordered_map<std::string, std::vector<int>> newTable);
+        std::unordered_map<std::string, std::vector<int>> newTable,
+        size_t numRow);
 
     /* Wrapper constructor for boolean only (i.e. when the result evaluates to only a boolean) */
     EvaluatedTable(bool evResult);
@@ -55,7 +54,7 @@ public:
     }
 
     /* Getter for numRow */
-    int getNumRow() {
+    size_t getNumRow() {
         return numRow;
     }
 

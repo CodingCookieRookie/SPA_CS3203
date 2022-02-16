@@ -55,18 +55,20 @@ EvaluatedTable EvaluatedTable::blockNestedJoin(EvaluatedTable& otherTable,
     return EvaluatedTable(nextEntities, nextTable, nextNumRow);
 }
 
-EvaluatedTable::EvaluatedTable() {
-    entities = std::unordered_map<std::string, PqlEntityType>(); 
-    table = std::unordered_map<std::string, std::vector<int>>();
-    evResult = true;
-    numRow = table.size();
-}
-
-/* Modifies the table in place, buy joining it with otherTable */
+/* Joins the current table with otherTable, returning a new EvaluatedTable object */
 EvaluatedTable EvaluatedTable::innerJoinMerge(EvaluatedTable& otherTable) {
-    /* Handle the case when we perform the first merge, which is done on a table with no rows */
-    if (entities.empty()) {
-        return EvaluatedTable(otherTable);
+    /* If either table is "false", the joined table is also "false" */
+    if (!evResult || !otherTable.evResult) {
+        return EvaluatedTable(false);
+    }
+    /* If this table is "true", return the other table */
+    if (entities.size() == 0) {
+        return EvaluatedTable(
+            otherTable.entities, otherTable.table, otherTable.numRow);
+    }
+    /* Likewise, if otherTable is "true", return this table */
+    if (otherTable.entities.size() == 0) {
+        return EvaluatedTable(entities, table, numRow);
     }
     std::unordered_set<std::string> commonEntities;
     for (const std::pair<std::string, PqlEntityType>& taggedEntity : entities) {
@@ -79,20 +81,21 @@ EvaluatedTable EvaluatedTable::innerJoinMerge(EvaluatedTable& otherTable) {
     return blockNestedJoin(otherTable, commonEntities);
 }
 
-EvaluatedTable::EvaluatedTable(std::unordered_map<std::string, std::vector<int>> table) :
-    table(table),
-    numRow(table.size()),
-    evResult(false)
-    {}
+EvaluatedTable::EvaluatedTable() : EvaluatedTable(true) { }
 
 EvaluatedTable::EvaluatedTable(
     std::unordered_map<std::string, PqlEntityType> newEntities,
-    std::unordered_map<std::string, std::vector<int>> newTable) :
-    entities(newEntities),
+    std::unordered_map<std::string, std::vector<int>> newTable,
+    size_t numRow) :
     table(newTable),
-    numRow(newTable.size()),
-    evResult(false)
-    {}
+    entities(newEntities),
+    evResult(true),
+    numRow(numRow)
+{}
 
-
-EvaluatedTable::EvaluatedTable(bool evResult) : evResult(evResult), numRow(0) {}
+EvaluatedTable::EvaluatedTable(bool evResult) :
+    table(),
+    entities(),
+    evResult(evResult),
+    numRow(0)
+{}
