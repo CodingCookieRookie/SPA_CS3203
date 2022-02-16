@@ -13,16 +13,16 @@ private:
 	ParsedQuery parsedQuery;
 
 	/* Helper method to break down parsedQuery into isntructions to call in PKB */
-	std::vector<Instruction> evaluateToInstructions(ParsedQuery& pq);
+	std::vector<Instruction*> evaluateToInstructions(ParsedQuery pq);
 
 	/* Helper method to execute all instructions */
-	EvaluatedTable executeInstructions(std::vector<Instruction> instructions);
+	EvaluatedTable executeInstructions(std::vector<Instruction*> instructions);
 
 	/* Helper method to execute one instruction */
-	EvaluatedTable execute(Instruction& instr);
+	EvaluatedTable execute(Instruction instr);
 
 	/* Helper method to inner join two EvaluatedTables together via a hash join algo */
-	void innerJoinMerge(EvaluatedTable& newEvTable);
+	// void innerJoinMerge(EvaluatedTable& currentTable, EvaluatedTable& newTable);
 
 public:
 
@@ -34,6 +34,10 @@ public:
 
 	/* Merges the current table with values from another EvaluatedTable
 	via an Inner Join, which can be implemented using Hash Join */
-	EvaluatedTable innerJoinMerge(EvaluatedTable& evTable, EvaluatedTable& newEvTable);
+	EvaluatedTable innerJoinMerge(EvaluatedTable evTable, EvaluatedTable newEvTable, std::unordered_set<std::string> currentTableColumns);
+
+	///* Merges the current table with values from another EvaluatedTable
+	//via an Inner Join, which can be implemented using Hash Join */
+	//EvaluatedTable innerJoinMerge(EvaluatedTable evTable, EvaluatedTable newEvTable, std::string stmtRef, std::string entRef, std::unordered_set<std::string> currentTableColumns);
 
 };

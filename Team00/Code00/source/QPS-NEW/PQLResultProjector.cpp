@@ -1,36 +1,49 @@
 #include "PQLResultProjector.h"
 #include "EvaluatedTable.h"
+#include "../PKB/Entity.h"
+#include "QPSCommons.h"
+
 #include <string>
 #include <list>
 #include <unordered_set>
-#include "../PKB/Entity.h"
 
 std::list<std::string> PQLResultProjector::resolveTableToResults() {
-	std::unordered_map<PQL_VARIABLE_TYPE, std::vector<VALUE>>* table = evaluatedTable.getTableRef();
+	std::unordered_map<std::string, PqlEntityType> entities = evaluatedTable.getEntities();
+	std::unordered_map<std::string, std::vector<int>> table = evaluatedTable.getTableRef();
+	int numRow = evaluatedTable.getNumRow();
 	std::list<std::string> resList;
-	for (std::pair mappings : *table) {  // should pass by reference
-		// mappings.first -> synonym i.e a
-		// mappings.second -> Each number/string value corresponding to synonym i.e {"varName1", "varName2"}
-		std::vector<VALUE> values = mappings.second;
+
+	// E.g.
+	// { {STMT, {1, 3, 4}, {ASGN, {2, 2, 3}} },
+	// Forms {"1, 2", "3, 2", "4, 3"} or 1 2 3 2 4 3 according to AutoTester
+	for (int i = 0; i < numRow; i++) {	// for each row	
+		std::unordered_map<std::string, std::vector<int>>::iterator it = table.begin();
 		std::string res = "";
-		// Given { {STMT, {1, 2, 3}} }, Forms "1 2 3"
-		for (size_t i = 0; i < values.size(); i++) {
-			/*res += values.at(i);
-			if (i != values.size() - 1) {
-				res += " ";
-			}*/
-			resList.push_back(values.at(i));	// each string in the list will be separated by space in the result
+		while (it != table.end()) {	// for each col
+			std::string entityName = it->first;
+			std::string value;
+			if (it->second.size() == 0) {
+				break;
+			}
+			if (entities[entityName] == PqlEntityType::Stmt) {
+				value = std::to_string(it->second[i]);
+			}
+			else if ((entities[entityName] == PqlEntityType::Variable)) {
+				value = Entity::getVarName(it->second[i]);
+			}
+			else { //PqlEntityType::Procedure
+				value = Entity::getProcName(it->second[i]);
+			}
+			res += value;
+			resList.push_back(res);
+			it++;
 		}
-		// resList.push_back(res);
-		// TODO: { {STMT, {1, 3, 4}, {ASGN, {2, 2, 3}} },
-		// Forms {"1, 2", "3, 2", "4, 3"} or 1 2 3 2 4 3 according to AutoTester
-		// A different for loop
 	}
 	return resList;
 }
 
 PQLResultProjector::PQLResultProjector(EvaluatedTable evTable) {
-	this->evaluatedTable = evTable;
+    this->evaluatedTable = evTable;
 }
 
 

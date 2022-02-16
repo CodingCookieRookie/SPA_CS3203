@@ -1,8 +1,24 @@
 #include "Parser.h"
 
-Parser::Parser(const std::string& source) : lexer(source) { }
+Parser::Parser() {}
 
-SourceAST Parser::parse() {
+Lexer Parser::lexer;
+
+const std::string Parser::WHILE = "while";
+
+const std::string Parser::NOT = "!";
+const std::string Parser::LEFT_BRACKET = "(";
+const std::string Parser::RIGHT_BRACKET = ")";
+const std::string Parser::LEFT_CURLY = "{";
+const std::string Parser::RIGHT_CURLY = "}";
+
+const std::vector<std::string> Parser::termOperators = { "*", "/", "%" };
+const std::vector<std::string> Parser::exprOperators = { "+", "-" };
+const std::vector<std::string> Parser::relOperators = { ">=", ">", "<=", "<", "!=", "==" };
+const std::vector<std::string> Parser::logicalOperators = { "&&", "||" };
+
+SourceAST Parser::parse(const std::string& source) {
+	lexer = Lexer(source);
 	ProgramNode* root = matchProgram();
 	return SourceAST(root);
 }
@@ -20,13 +36,10 @@ ProgramNode* Parser::matchProgram() {
 	while (!lexer.reachedEnd()) {
 		procNode = matchProcedure();
 		programNode->addProcedure(procNode);
-		if (procNode == nullptr) {
-			return nullptr;
-		}
 	}
 
 	if (procNode == nullptr) {
-		return nullptr;
+		throw ParserException(ParserException::INVALID_PROG);
 	}
 
 	return programNode;
@@ -35,54 +48,48 @@ ProgramNode* Parser::matchProgram() {
 /* procedure : ‘procedure’ proc_name ‘{‘ stmtLst ‘}’ */
 ProcedureNode* Parser::matchProcedure() {
 	if (!lexer.match("procedure")) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_PROC_KEYWORD);
 	}
 
 	std::string whitespace = lexer.nextWhitespace();
 	if (whitespace.empty()) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_WHITESPACE);
 	}
 
 	std::string procName = lexer.nextName();
 	if (procName.empty()) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_PROC_NAME);
 	}
 
 	if (!lexer.match("{")) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_LEFT_CURLY);
 	}
 
-	StmtListNode* stmtListNode = matchStmtList();
-	if (stmtListNode == nullptr) {
-		return nullptr;
-	}
+	StmtLstNode* stmtLstNode = matchStmtLst();
 
 	if (!lexer.match("}")) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_RIGHT_CURLY);
 	}
 
 	ProcedureNode* procNode = new ProcedureNode(procName);
-	procNode->addStmtList(stmtListNode);
+	procNode->addStmtLst(stmtLstNode);
 
 	return procNode;
 }
 
 /* stmtLst : stmt+ */
-StmtListNode* Parser::matchStmtList() {
-	StmtListNode* stmtListNode = new StmtListNode();
+StmtLstNode* Parser::matchStmtLst() {
+	StmtLstNode* stmtLstNode = new StmtLstNode();
 
-	// There must exist at least 1 stmt. 
-	// TODO: now we assume correct source program. Need to update impl.
-	StmtNode* stmtNode = matchStmt();
-	if (stmtNode == nullptr) {
-		return nullptr;
-	}
-	stmtListNode->addStmtNode(stmtNode);
-
+	// There must exist at least 1 stmt.
+	StmtNode* stmtNode{};
 	while (stmtNode = matchStmt()) {
-		stmtListNode->addStmtNode(stmtNode);
+		stmtLstNode->addStmtNode(stmtNode);
+		if (lexer.peek("}")) {
+			break;
+		}
 	}
-	return stmtListNode;
+	return stmtLstNode;
 }
 
 /* stmt : read | print | call | while | if | assign */
@@ -95,6 +102,15 @@ StmtNode* Parser::matchStmt() {
 		stmtNode = matchRead();
 	} else if (lexer.match("print")) {
 		stmtNode = matchPrint();
+	} else if (lexer.match(WHILE)) {
+		stmtNode = matchWhile();
+	} else {
+		std::string varName = lexer.nextName();
+		if (!varName.empty() && lexer.match("=")) {
+			stmtNode = matchAssign(varName);
+		} else {
+			throw ParserException(ParserException::INVALID_STMT);
+		}
 	}
 
 	return stmtNode;
@@ -104,16 +120,16 @@ StmtNode* Parser::matchStmt() {
 ReadNode* Parser::matchRead() {
 	std::string whitespace = lexer.nextWhitespace();
 	if (whitespace.empty()) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_WHITESPACE);
 	}
 
 	std::string varName = lexer.nextName();
 	if (varName.empty()) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_VAR_NAME);
 	}
 
 	if (!lexer.match(";")) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_SEMICOLON);
 	}
 
 	return new ReadNode(varName);
@@ -123,17 +139,248 @@ ReadNode* Parser::matchRead() {
 PrintNode* Parser::matchPrint() {
 	std::string whitespace = lexer.nextWhitespace();
 	if (whitespace.empty()) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_WHITESPACE);
 	}
 
 	std::string varName = lexer.nextName();
 	if (varName.empty()) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_VAR_NAME);
 	}
 
 	if (!lexer.match(";")) {
-		return nullptr;
+		throw ParserException(ParserException::MISSING_SEMICOLON);
 	}
 
 	return new PrintNode(varName);
+}
+
+ExprNode* matchExpr();
+
+/* assign: var_name '=' expr ';' */
+AssignNode* Parser::matchAssign(std::string varName) {
+	ExprNode* expr = matchExpr();
+
+	if (!lexer.match(";")) {
+		throw ParserException(ParserException::MISSING_SEMICOLON);
+	}
+	return new AssignNode(varName, expr);
+}
+
+/* <factor> ::= var_name | const_value | '(' expr ')' */
+ExprNode* Parser::matchFactor() {
+	std::string varName = lexer.nextName();
+	if (!varName.empty()) {
+		return new ExprNode(ExprNodeValueType::varName, varName);
+	}
+
+	std::string constVal = lexer.nextInteger();
+	if (!constVal.empty()) {
+		return new ExprNode(ExprNodeValueType::constValue, constVal);
+	}
+
+	if (lexer.match("(")) {
+		ExprNode* expr = matchExpr();
+		if (!lexer.match(")")) {
+			throw ParserException(ParserException::INVALID_EXPR);
+		}
+		return expr;
+	}
+
+	throw ParserException(ParserException::INVALID_EXPR);
+}
+
+/* <term_tail> ::= * <factor> <term_tail>
+			  | / <factor> <term_tail>
+			  | % <factor> <term_tail>
+			  | <empty>
+*/
+ExprNode* Parser::matchTermTail(ExprNode* lvalue) {
+	for (const std::string op : termOperators) {
+		if (lexer.match(op)) {
+			ExprNode* factor = matchFactor();
+			ExprNode* arithOp = new ExprNode(ExprNodeValueType::arithmeticOperator, op);
+			arithOp->addChild(lvalue);
+			arithOp->addChild(factor);
+			return matchTermTail(arithOp);
+		}
+	}
+
+	return lvalue;
+}
+
+/* <term> ::= <factor> <term_tail> */
+ExprNode* Parser::matchTerm() {
+	ExprNode* lvalue = matchFactor();
+	return matchTermTail(lvalue);
+}
+
+/*
+<expr_tail> ::= + <term> <expr_tail>
+			  | - <term> <expr_tail>
+			  | <empty>
+
+ */
+ExprNode* Parser::matchExprTail(ExprNode* lvalue) {
+	for (const std::string op : exprOperators) {
+		if (lexer.match(op)) {
+			ExprNode* term = matchTerm();
+			ExprNode* arithOp = new ExprNode(ExprNodeValueType::arithmeticOperator, op);
+			arithOp->addChild(lvalue);
+			arithOp->addChild(term);
+			return matchExprTail(arithOp);
+		}
+	}
+
+	return lvalue;
+}
+
+/* <expr> ::= <term> <expr_tail> */
+ExprNode* Parser::matchExpr() {
+	ExprNode* lvalue = matchTerm();
+	return matchExprTail(lvalue);
+}
+
+/* while : ‘while’ ‘(’ cond_expr ‘)’ ‘{‘ stmtLst ‘}’ */
+WhileNode* Parser::matchWhile() {
+	if (!lexer.match(LEFT_BRACKET)) {
+		throw ParserException(ParserException::MISSING_LEFT_BRACKET);
+	}
+
+	ExprNode* condNode = matchCondExpr();
+
+	if (!lexer.match(RIGHT_BRACKET)) {
+		throw ParserException(ParserException::MISSING_RIGHT_BRACKET);
+	}
+
+	if (!lexer.match(LEFT_CURLY)) {
+		throw ParserException(ParserException::MISSING_LEFT_CURLY);
+	}
+
+	StmtLstNode* stmtLstNode = matchStmtLst();
+
+	if (!lexer.match(RIGHT_CURLY)) {
+		throw ParserException(ParserException::MISSING_RIGHT_CURLY);
+	}
+
+	return new WhileNode(condNode, stmtLstNode);
+}
+
+/* cond_expr : rel_expr
+			| ‘!’ ‘(’ cond_expr ‘)’
+			| ‘(’ cond_expr ‘)’ ‘&&’ ‘(’ cond_expr ‘)’
+			| ‘(’ cond_expr ‘)’ ‘||’ ‘(’ cond_expr ‘)’
+*/
+ExprNode* Parser::matchCondExpr() {
+	/* ‘!’ ‘(’ cond_expr ‘)’*/
+	if (lexer.match(NOT)) {
+		if (!lexer.match(LEFT_BRACKET)) {
+			throw ParserException(ParserException::MISSING_LEFT_BRACKET);
+		}
+
+		ExprNode* condExpr = matchCondExpr();
+
+		if (!lexer.match(RIGHT_BRACKET)) {
+			throw ParserException(ParserException::MISSING_RIGHT_BRACKET);
+		}
+
+		ExprNode* notNode = new ExprNode(ExprNodeValueType::logicalOperator, NOT);
+		notNode->addChild(condExpr);
+
+		return notNode;
+	}
+
+	/* ‘(’ cond_expr ‘)’ ‘&&’ ‘(’ cond_expr ‘)’
+		| ‘(’ cond_expr ‘)’ ‘||’ ‘(’ cond_expr ‘)’ */
+	if (lexer.match(LEFT_BRACKET)) {
+		ExprNode* leftCondExpr = matchCondExpr();
+
+		if (!lexer.match(RIGHT_BRACKET)) {
+			throw ParserException(ParserException::MISSING_RIGHT_BRACKET);
+		}
+
+		ExprNode* logOpNode{};
+		for (const std::string op : logicalOperators) {
+			if (lexer.match(op)) {
+				logOpNode = new ExprNode(ExprNodeValueType::logicalOperator, op);
+				break;
+			}
+		}
+
+		if (logOpNode == nullptr) {
+			throw ParserException(ParserException::INVALID_COND_EXPR);
+		}
+
+		if (!lexer.match(LEFT_BRACKET)) {
+			throw ParserException(ParserException::MISSING_LEFT_BRACKET);
+		}
+
+		ExprNode* rightCondExpr = matchCondExpr();
+
+		if (!lexer.match(RIGHT_BRACKET)) {
+			throw ParserException(ParserException::MISSING_RIGHT_BRACKET);
+		}
+
+		logOpNode->addChild(leftCondExpr);
+		logOpNode->addChild(rightCondExpr);
+
+		return logOpNode;
+	}
+
+	/* rel_expr */
+	ExprNode* relExprNode = matchRelExpr();
+
+	return relExprNode;
+}
+
+/* rel_expr: rel_factor ‘ > ’ rel_factor
+			| rel_factor ‘ >= ’ rel_factor
+			| rel_factor ‘ < ’ rel_factor
+			| rel_factor ‘ <= ’ rel_factor
+			| rel_factor ‘ == ’ rel_factor
+			| rel_factor ‘ != ’ rel_factor
+*/
+ExprNode* Parser::matchRelExpr() {
+	ExprNode* leftRelFactor = matchRelFactor();
+
+	ExprNode* relOpNode{};
+	for (const std::string op : relOperators) {
+		if (lexer.match(op)) {
+			relOpNode = new ExprNode(ExprNodeValueType::relOperator, op);
+			break;
+		}
+	}
+	if (relOpNode == nullptr) {
+		throw ParserException(ParserException::INVALID_REL_EXPR);
+	}
+
+	ExprNode* rightRelFactor = matchRelFactor();
+
+	relOpNode->addChild(leftRelFactor);
+	relOpNode->addChild(rightRelFactor);
+	return relOpNode;
+}
+
+/* rel_factor : var_name
+				| const_value
+				| expr
+*/
+ExprNode* Parser::matchRelFactor() {
+	ExprNode* expr{};
+	try {
+		expr = matchExpr();
+	} catch (ParserException& ex) {
+		std::string varName = lexer.nextName();
+		if (!varName.empty()) {
+			return new ExprNode(ExprNodeValueType::varName, varName);
+		}
+
+		std::string constVal = lexer.nextInteger();
+		if (!constVal.empty()) {
+			return new ExprNode(ExprNodeValueType::constValue, constVal);
+		}
+
+		throw ParserException(ParserException::INVALID_REL_EXPR);
+	}
+
+	return expr;
 }

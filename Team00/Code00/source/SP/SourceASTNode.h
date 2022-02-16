@@ -3,30 +3,28 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <unordered_set>
+#include <stack>
 
 #include "../common/Types.h"
+
+/* Forward definition of StmtLstNode for compatibility with StmtNode */
+class StmtLstNode;
 
 class SourceASTNode {
 public:
 	SourceASTNode();
-
-	// For debugging purpose.
-	void printDashes(int depth) {
-		for (int i = 0; i < depth; i++) {
-			std::cout << "-";
-		}
-	}
-	virtual void printNode(int depth) = 0;
 };
 
 class StmtNode : public SourceASTNode {
 public:
 	StmtNode();
 	virtual StatementType getStmtType() = 0;
-	virtual std::vector<std::string> getModifies() = 0;
-	virtual std::vector<std::string> getUses() = 0;
-
-	void printNode(int depth = 1);
+	virtual std::unordered_set<std::string> getModifiesVars();
+	virtual std::unordered_set<std::string> getUsesVars();
+	virtual std::unordered_set<std::string> getUsesConsts();
+	virtual std::string getPattern();
+	virtual std::vector<StmtLstNode*> getChildStmtLst();
 
 	friend class SourceAST;
 };
@@ -38,9 +36,7 @@ public:
 	ReadNode(std::string varName);
 	std::string getVarName();
 	StatementType getStmtType();
-	std::vector<std::string> getModifies();
-	std::vector<std::string> getUses();
-	void printNode(int depth);
+	std::unordered_set<std::string> getModifiesVars();
 
 	friend class SourceAST;
 };
@@ -52,22 +48,71 @@ public:
 	PrintNode(std::string varName);
 	std::string getVarName();
 	StatementType getStmtType();
-	std::vector<std::string> getModifies();
-	std::vector<std::string> getUses();
-	void printNode(int depth);
+	std::unordered_set<std::string> getUsesVars();
 
 	friend class SourceAST;
 };
 
-class StmtListNode : public SourceASTNode {
+class ExprNode : public SourceASTNode {
+private:
+	std::string value;
+	ExprNodeValueType valueType;
+	std::vector<ExprNode*> children;
+	void populatePattern(std::vector<std::string>& tokens);
+public:
+	ExprNode(ExprNodeValueType valueType, std::string value);
+	void addChild(ExprNode* child);
+	std::vector<ExprNode*> getChildren();
+	std::string getValue();
+	ExprNodeValueType getExprNodeValueType();
+
+	friend class SourceAST;
+	friend class AssignNode;
+	friend class WhileNode;
+};
+
+class AssignNode : public StmtNode {
+private:
+	std::string varName;
+	ExprNode* expr;
+	std::unordered_set<std::string> usesVars;
+	std::unordered_set<std::string> usesConsts;
+	std::string pattern;
+	void populateUsesSet();
+	void populatePattern();
+public:
+	AssignNode(std::string varName, ExprNode* expr);
+	std::string getVarName();
+	ExprNode* getExpr();
+	StatementType getStmtType();
+	std::unordered_set<std::string> getUsesVars();
+	std::unordered_set<std::string> getUsesConsts();
+	std::unordered_set<std::string> getModifiesVars();
+	std::string getPattern();
+
+	friend class SourceAST;
+};
+
+class WhileNode : public StmtNode {
+private:
+	ExprNode* condExpr;
+	StmtLstNode* stmtLst;
+public:
+	WhileNode(ExprNode* condExpr, StmtLstNode* stmtLst);
+	ExprNode* getCondExpr();
+	StmtLstNode* getStmtLst();
+	StatementType getStmtType();
+
+	friend class SourceAST;
+};
+
+class StmtLstNode : public SourceASTNode {
 private:
 	std::vector<StmtNode*> stmtNodes;
 public:
-	StmtListNode();
+	StmtLstNode();
 	void addStmtNode(StmtNode* stmtNode);
 	std::vector<StmtNode*> getStmtNodes();
-
-	void printNode(int depth = 1);
 
 	friend class SourceAST;
 };
@@ -75,14 +120,12 @@ public:
 class ProcedureNode : public SourceASTNode {
 private:
 	std::string procName;
-	StmtListNode* stmtListNode;
+	StmtLstNode* stmtLstNode;
 public:
 	ProcedureNode(std::string procName);
-	void addStmtList(StmtListNode* stmtListNode);
-	StmtListNode* getStmtListNode();
+	void addStmtLst(StmtLstNode* stmtLstNode);
+	StmtLstNode* getStmtLstNode();
 	std::string getProcName();
-
-	void printNode(int depth);
 
 	friend class SourceAST;
 };
@@ -94,8 +137,6 @@ public:
 	ProgramNode();
 	void addProcedure(ProcedureNode* procedureNode);
 	std::vector<ProcedureNode*> getProcedureNodes();
-
-	void printNode(int depth = 1);
 
 	friend class SourceAST;
 };

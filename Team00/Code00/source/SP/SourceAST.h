@@ -10,7 +10,4 @@ public:
 	~SourceAST();
 
 	ProgramNode* getRoot();
-
-	// For debugging purposes only
-	void printTree();
 };

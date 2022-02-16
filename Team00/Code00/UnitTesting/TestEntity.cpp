@@ -34,6 +34,20 @@ private:
 	}
 
 public:
+
+	TEST_METHOD(insertVar_containsVar_variableExists) {
+		VarIndex idx = Entity::insertVar(varName1);
+
+		bool res = Entity::containsVar(varName1);
+		Assert::IsTrue(res);
+	}
+
+	TEST_METHOD(insertVar_containsVar_variableDoesNotExist) {
+		VarIndex idx = Entity::insertVar(varName1);
+
+		bool res = Entity::containsVar(varName2);
+		Assert::IsFalse(res);
+	}
 	TEST_METHOD(insertVar_getVarName_differentVariables) {
 		VarIndex idx1 = Entity::insertVar(varName1);
 		VarIndex idx2 = Entity::insertVar(varName2);
@@ -68,26 +82,40 @@ public:
 	}
 
 	TEST_METHOD(insertVar_getAllVars_differentVars) {
-		std::vector<std::string> expectedRes;
-		expectedRes.push_back(varName1);
-		expectedRes.push_back(varName2);
+		std::vector<VarIndex> expectedRes;
+		expectedRes.push_back(varIdx1);
+		expectedRes.push_back(varIdx2);
 
 		Entity::insertVar(varName1);
 		Entity::insertVar(varName2);
 
-		std::vector<std::string> res = Entity::getAllVars();
+		std::vector<VarIndex> res = Entity::getAllVars();
 		Assert::IsTrue(expectedRes == res);
 	}
 
 	TEST_METHOD(insertVar_getAllVars_sameVar) {
-		std::vector<std::string> expectedRes;
-		expectedRes.push_back(varName1);
+		std::vector<VarIndex> expectedRes;
+		expectedRes.push_back(varIdx1);
 
 		Entity::insertVar(varName1);
 		Entity::insertVar(varName1);
 
-		std::vector<std::string> res = Entity::getAllVars();
+		std::vector<VarIndex> res = Entity::getAllVars();
 		Assert::IsTrue(expectedRes == res);
+	}
+
+	TEST_METHOD(insertProc_containsProc_procExists) {
+		ProcIndex idx = Entity::insertProc(procName1);
+
+		bool res = Entity::containsProc(procName1);
+		Assert::IsTrue(res);
+	}
+
+	TEST_METHOD(insertProc_containsProc_procDoesNotExist) {
+		ProcIndex idx = Entity::insertProc(procName1);
+
+		bool res = Entity::containsProc(procName2);
+		Assert::IsFalse(res);
 	}
 
 	TEST_METHOD(insertProc_getProcName_differentProcs) {
@@ -124,25 +152,25 @@ public:
 	}
 
 	TEST_METHOD(insertProc_getAllProcs_differentProcs) {
-		std::vector<std::string> expectedRes;
-		expectedRes.push_back(procName1);
-		expectedRes.push_back(procName2);
+		std::vector<ProcIndex> expectedRes;
+		expectedRes.push_back(procIdx1);
+		expectedRes.push_back(procIdx2);
 
 		Entity::insertProc(procName1);
 		Entity::insertProc(procName2);
 
-		std::vector<std::string> res = Entity::getAllProcs();
+		std::vector<ProcIndex> res = Entity::getAllProcs();
 		Assert::IsTrue(expectedRes == res);
 	}
 
 	TEST_METHOD(insertProc_getAllProcs_sameProc) {
-		std::vector<std::string> expectedRes;
-		expectedRes.push_back(procName1);
+		std::vector<ProcIndex> expectedRes;
+		expectedRes.push_back(procIdx1);
 
 		Entity::insertProc(procName1);
 		Entity::insertProc(procName1);
 
-		std::vector<std::string> res = Entity::getAllProcs();
+		std::vector<ProcIndex> res = Entity::getAllProcs();
 		Assert::IsTrue(expectedRes == res);
 	}
 
@@ -169,6 +197,20 @@ public:
 		Assert::IsTrue(expectedRes == res);
 	}
 
+	TEST_METHOD(insertStmt_containsStmt_stmtExists) {
+		StmtIndex idx = Entity::insertStmt(stmtType1);
+
+		bool res = Entity::containsStmt(1);
+		Assert::IsTrue(res);
+	}
+
+	TEST_METHOD(insertStmt_containsStmt_stmtDoesNotExist) {
+		StmtIndex idx = Entity::insertStmt(stmtType1);
+
+		bool res = Entity::containsStmt(2);
+		Assert::IsFalse(res);
+	}
+
 	TEST_METHOD(insertStmt_differentStmts) {
 		StmtIndex res1 = Entity::insertStmt(stmtType1);
 		StmtIndex res2 = Entity::insertStmt(stmtType2);
@@ -177,18 +219,28 @@ public:
 		Assert::IsTrue(stmtIdx2 == res2);
 	}
 
-	TEST_METHOD(insertStmt_getStmtIdxFromType_differentStmts) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> expectedRes1;
-		expectedRes1.insert(stmtIdx1);
+	TEST_METHOD(insertStmt_isContainerStmt) {
+		Entity::insertStmt(stmtType1);
+		Entity::insertStmt(stmtType2);
 
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> expectedRes2;
-		expectedRes2.insert(stmtIdx2);
+		bool res1 = Entity::isContainerStmt(stmtIdx1);
+		bool res2 = Entity::isContainerStmt(stmtIdx2);
+		Assert::IsFalse(res1);
+		Assert::IsTrue(res2);
+	}
+
+	TEST_METHOD(insertStmt_getStmtIdxFromType_differentStmts) {
+		std::vector<StmtIndex> expectedRes1;
+		expectedRes1.push_back(stmtIdx1);
+
+		std::vector<StmtIndex> expectedRes2;
+		expectedRes2.push_back(stmtIdx2);
 
 		Entity::insertStmt(stmtType1);
 		Entity::insertStmt(stmtType2);
 
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> res1 = Entity::getStmtIdxFromType(stmtType1);
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> res2 = Entity::getStmtIdxFromType(stmtType2);
+		std::vector<StmtIndex> res1 = Entity::getStmtIdxFromType(stmtType1);
+		std::vector<StmtIndex> res2 = Entity::getStmtIdxFromType(stmtType2);
 		Assert::IsTrue(expectedRes1 == res1);
 		Assert::IsTrue(expectedRes2 == res2);
 	}
