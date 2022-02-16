@@ -21,10 +21,10 @@ private:
 public:
     /* E.g. of an EvalauatedTable:
     * {"s", "v"} = {{"1", "a"}, {"2", "b"}}
-    * 
+    *
     * EvalautedTable.entities == {
         {"s", Stmt},
-        {"v", Variable} 
+        {"v", Variable}
       }
     * EvalautedTable.table == {
         {"s", {"1", "2"}},
@@ -51,6 +51,7 @@ public:
         return entities;
     }
 
+    /* Getter for numRow */
     size_t getNumRow() {
         if (table.empty()) {
             return 0;
