@@ -26,7 +26,7 @@ const std::string ParserException::MISSING_WHITESPACE = "Whitespace is missing";
 ParserException::ParserException(const std::string& reason) : SPAException(reason) {}
 
 /* QPSException */
-const std::string QPSException::PARSER_ERROR = "Error occurred while parsing PQL query";
-const std::string QPSException::VALIDATOR_ERROR = "Error occurred while validating semantics of PQL query";
+const std::string QPSException::PARSER_ERROR = "Syntax error detected while parsing PQL query";
+const std::string QPSException::VALIDATOR_ERROR = "PQL query failed validator check";
 
 QPSException::QPSException(const std::string& reason) : SPAException(reason) {}
