@@ -126,12 +126,6 @@
     <ClInclude Include="..\source\PKB\Modifies.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\PKB\Parent.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\ParentT.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\QPS-NEW\ParsedQuery.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -171,9 +165,6 @@
     <ClInclude Include="..\source\PKB\RS2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\PKB\RS2T.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\SP\SourceAST.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -193,6 +184,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\PKB\PKB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\PKB\ParentT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\PKB\Parent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\PKB\RS2T.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
