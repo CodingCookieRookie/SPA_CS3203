@@ -15,6 +15,9 @@ private:
     bool isDeclared(const std::string& synonym);
     PqlEntityType getType(std::string& synonym);
 
+    bool validatateStmtRef(PqlReference ref);
+    bool validatateEntRef(PqlReference ref);
+
     void populateDeclarations(
         const std::vector<PQL_VARIABLE>& allDeclarations);
     void populateColumns(
