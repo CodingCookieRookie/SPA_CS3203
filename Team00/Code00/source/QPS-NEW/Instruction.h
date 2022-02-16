@@ -10,6 +10,7 @@
 #include "../PKB/Modifies.h"
 #include "../PKB/Uses.h"
 #include "../PKB/Follows.h"
+#include "../PKB/Parent.h"
 
 class Instruction {
 //protected:	//-> Use protected if need any shared fields
@@ -295,6 +296,111 @@ private:
 		}
 	}
 
+
+	EvaluatedTable handleParent() {
+		EvaluatedTable evTable;
+		std::vector<StmtIndex> stmts = Entity::getAllStmts();
+
+		// e.g Parent(6, 7)
+		if (lhsRef.first == PqlReferenceType::integer && rhsRef.first == PqlReferenceType::integer) {
+
+			StmtIndex lhsStmtIndex, rhsStmtIndex;
+			for (StmtIndex stmt : stmts) {
+				if (stmt.getIndex() == stoi(lhsRef.second)) {
+					lhsStmtIndex = stmt;
+				}
+				if (stmt.getIndex() == stoi(rhsRef.second)) {
+					rhsStmtIndex = stmt;
+				}
+			}
+			bool evResult = Parent::containsPredecessor(lhsStmtIndex, rhsStmtIndex);
+			return EvaluatedTable(evResult); //e.g evResult == true, if 6 is a parent of 7
+
+		}
+		// e.g Parent(6, s2)
+		else if (lhsRef.first == PqlReferenceType::integer && rhsRef.first != PqlReferenceType::wildcard)
+		{
+			std::vector<int> results;
+			int lhsRefValue = stoi(lhsRef.second); // might throw error if string value can't be converted to int
+			StmtIndex lhsStmt = stmts[lhsRefValue - 1];
+			for (StmtIndex stmt : stmts) {
+				if (Parent::containsSuccessor(lhsStmt, stmt)) {
+					results.emplace_back(stmt.getIndex()); // e.g {6} because 6 is a parent of 7
+				}
+			}
+			std::unordered_map<std::string, PqlEntityType> PQLentities;
+			PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Stmt));
+
+			std::unordered_map<std::string, std::vector<int>> PQLmap;
+			PQLmap[rhsRef.second] = results;
+
+			return EvaluatedTable(PQLentities, PQLmap);
+
+		}
+		// e.g. Parent(s1, 7)
+		else if (rhsRef.first == PqlReferenceType::integer && lhsRef.first != PqlReferenceType::wildcard)
+		{
+			std::vector<int> results;
+			int rhsRefValue = stoi(rhsRef.second); //might throw error if string value can't be converted to int
+			StmtIndex rhsStmt = stmts[rhsRefValue - 1]; //check if off by 1
+			for (StmtIndex stmt : stmts) {
+				if (Parent::containsSuccessor(stmt, rhsStmt)) {
+					results.emplace_back(stmt.getIndex()); //e.g {6} because 6 is a parent of 7
+				}
+			}
+			std::unordered_map<std::string, PqlEntityType> PQLentities;
+			PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
+
+			std::unordered_map<std::string, std::vector<int>> PQLmap;
+			PQLmap[lhsRef.second] = results;
+
+			return EvaluatedTable(PQLentities, PQLmap);
+		}
+		// Parent(s1, s2), Parent(s1, _), Parent(_, s2)
+		else if (lhsRef.first != PqlReferenceType::wildcard && rhsRef.first != PqlReferenceType::wildcard) {
+			//Assumption: Different synonym names (i.e. Parent(s1, s2), not Parent(s1, s1))
+			std::tuple<std::vector<int>, std::vector<int>> results = Parent::getAllPredecessorSuccessorInfo();
+			//e.g. {1, 2}, {2, 3}, {3, 6}
+			std::unordered_map<std::string, PqlEntityType> PQLentities;
+			std::unordered_map<std::string, std::vector<int>> PQLmap;
+
+			if (lhsRef.first == PqlReferenceType::synonym) {
+				PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
+				PQLmap[lhsRef.second] = std::get<0>(results); // if RHS is wildcard, LHS may have duplicate values
+			}
+			if (lhsRef.first == PqlReferenceType::synonym) {
+				PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Stmt));
+				PQLmap[rhsRef.second] = std::get<1>(results); // if LHS is wildcard, RHS may have duplicate values
+			}
+			return EvaluatedTable(PQLentities, PQLmap);
+		}
+		// Parent(_, _), or Parent(6, _), or Parent(_, 7)
+		else {
+			bool isEmptyTable = true;
+			if (lhsRef.first == PqlReferenceType::wildcard && rhsRef.first == PqlReferenceType::wildcard) { // Parent(_, _)
+				isEmptyTable = std::get<0>(Parent::getAllPredecessorSuccessorInfo()).empty();
+			}
+			StmtIndex lhsStmtIndex, rhsStmtIndex;
+			if (lhsRef.first == PqlReferenceType::integer) { // e.g. Parent(6, _)
+				for (StmtIndex stmt : stmts) {
+					if (stmt.getIndex() == stoi(lhsRef.second)) {
+						lhsStmtIndex = stmt;
+						return EvaluatedTable(Parent::getSuccessorStmts(lhsStmtIndex).empty()); // False == Parent exists
+					}
+				}
+			}
+			else { // e.g. Parent(_, 7)
+				for (StmtIndex stmt : stmts) {
+					if (stmt.getIndex() == stoi(rhsRef.second)) {
+						rhsStmtIndex = stmt;
+						return EvaluatedTable(Parent::getSuccessorStmts(rhsStmtIndex).empty());
+					}
+				}
+			}
+			return EvaluatedTable(isEmptyTable);
+		}
+	}
+
 public:
 	//enum class PqlRelationshipType {
 	//	Follows, FollowsT, Parent, ParentT,
@@ -317,7 +423,10 @@ public:
 		case PqlRelationshipType::Follows:
 			evTable = handleFollows();
 			break;
-		}
+		case PqlRelationshipType::Parent:
+			evTable = handleParent();
+			break;
+	}
 
 
 		return evTable;
