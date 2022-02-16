@@ -8,7 +8,7 @@ enum class StatementType {
 };
 
 enum class ExprNodeValueType {
-	varName, constValue, operand
+	varName, constValue, arithmeticOperator
 };
 
 struct VarIndex {
