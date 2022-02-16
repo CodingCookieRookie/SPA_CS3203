@@ -36,7 +36,7 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
     for (size_t i = 0; i < relationships.size(); i++) {
         ParsedRelationship parsedRelationship = relationships.at(i);
         PqlRelationshipType pqlRelationshipType =  parsedRelationship.getRelationshipType();
-        instructions.push_back(new RelationshipInstruction(pqlRelationshipType, parsedRelationship.getLhs().second, parsedRelationship.getRhs().second));
+        instructions.push_back(new RelationshipInstruction(pqlRelationshipType, parsedRelationship.getLhs(), parsedRelationship.getRhs()));
     }
 
     // TODO:

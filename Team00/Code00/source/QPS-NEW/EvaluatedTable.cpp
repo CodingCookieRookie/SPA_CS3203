@@ -9,19 +9,24 @@ EvaluatedTable::EvaluatedTable() {
 EvaluatedTable::EvaluatedTable() {
     entities = std::unordered_map<std::string, PqlEntityType>(); 
     table = std::unordered_map<std::string, std::vector<int>>();
-    numRow = 0;
+    evResult = true;
+    numRow = table.size();
 }
 
 EvaluatedTable::EvaluatedTable(std::unordered_map<std::string, std::vector<int>> table) :
     table(table),
-    numRow(table.size())
+    numRow(table.size()),
+    evResult(false)
     {}
 
 EvaluatedTable::EvaluatedTable(
     std::unordered_map<std::string, PqlEntityType> newEntities,
-    std::unordered_map<std::string, std::vector<int>> newTable, 
-    int newNumRow ) {
-    entities = newEntities;
-    table = newTable;
-    numRow = newNumRow;
-}
+    std::unordered_map<std::string, std::vector<int>> newTable) :
+    entities(newEntities),
+    table(newTable),
+    numRow(newTable.size()),
+    evResult(false)
+    {}
+
+
+EvaluatedTable::EvaluatedTable(bool evResult) : evResult(evResult), numRow(0) {}
