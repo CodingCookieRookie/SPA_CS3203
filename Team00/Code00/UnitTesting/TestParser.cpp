@@ -771,5 +771,392 @@ public:
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 	}
+
+	TEST_METHOD(parse_matchWhile_oneRelExpr_success) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while ( y + 2 > 5) "
+			"{ flag    = 123;   count =    someVar123	; "
+			" read flag ; print COUNT	; } "
+			"} \n ";
+
+		SourceAST ast = Parser::parse(source);
+		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
+
+		/* Test procedureNodes */
+		Assert::AreEqual(size_t(1), procNodes.size());
+		Assert::AreEqual(std::string("procedure123name"), procNodes[0]->getProcName());
+
+		/* Test statements */
+		StmtLstNode* stmtLstNode = procNodes[0]->getStmtLstNode();
+		std::vector<StmtNode*> statements = stmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), statements.size());
+
+		/* Test while stmt */
+		WhileNode* whileNode = (WhileNode*)statements[0];
+		ExprNode* gtOp = whileNode->getCondExpr();
+		StmtLstNode* stmtLstNodeWhile = whileNode->getStmtLst();
+
+		/* Test cond expr */
+		// y + 2 > 5
+		Assert::AreEqual(std::string(">"), gtOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::relOperator == gtOp->getExprNodeValueType());
+		std::vector<ExprNode*> childrenGtOp = gtOp->getChildren();
+		Assert::AreEqual(size_t(2), childrenGtOp.size());
+
+		// y + 2
+		ExprNode* plusOp = childrenGtOp[0];
+		Assert::AreEqual(std::string("+"), plusOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == plusOp->getExprNodeValueType());
+		std::vector<ExprNode*> childrenPlusOp = plusOp->getChildren();
+		Assert::AreEqual(size_t(2), childrenPlusOp.size());
+		Assert::AreEqual(std::string("y"), childrenPlusOp[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == childrenPlusOp[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("2"), childrenPlusOp[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == childrenPlusOp[1]->getExprNodeValueType());
+
+		// 5
+		Assert::AreEqual(std::string("5"), childrenGtOp[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == childrenGtOp[1]->getExprNodeValueType());
+
+		/* Test stmtLst in while container */
+		std::vector<StmtNode*> stmtsInWhile = stmtLstNodeWhile->getStmtNodes();
+		Assert::AreEqual(size_t(4), stmtsInWhile.size());
+
+		// flag    = 123;
+		AssignNode* assignNode1 = (AssignNode*)stmtsInWhile[0];
+		Assert::AreEqual(std::string("flag"), assignNode1->getVarName());
+
+		ExprNode* expr1 = assignNode1->getExpr();
+		Assert::AreEqual(std::string("123"), expr1->getValue());
+		Assert::IsTrue(expr1->getChildren().empty());
+
+		// count =  ((  someVar123 )  )	;
+		AssignNode* assignNode2 = (AssignNode*)stmtsInWhile[1];
+		Assert::AreEqual(std::string("count"), assignNode2->getVarName());
+
+		ExprNode* expr2 = assignNode2->getExpr();
+		Assert::AreEqual(std::string("someVar123"), expr2->getValue());
+		Assert::IsTrue(expr2->getChildren().empty());
+
+		// read flag ;
+		ReadNode* readNode = (ReadNode*)stmtsInWhile[2];
+		Assert::AreEqual(std::string("flag"), readNode->getVarName());
+
+		// print COUNT	;
+		PrintNode* printNode = (PrintNode*)stmtsInWhile[3];
+		Assert::AreEqual(std::string("COUNT"), printNode->getVarName());
+	}
+
+	TEST_METHOD(parse_matchWhile_NOTOpCondExpr_success) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while (!(x >= 0)) "
+			"{ flag    = 123;   count =    someVar123	; "
+			" read flag ; print COUNT	; } "
+			"} \n ";
+		SourceAST ast = Parser::parse(source);
+		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
+
+		/* Test procedureNodes */
+		Assert::AreEqual(size_t(1), procNodes.size());
+		Assert::AreEqual(std::string("procedure123name"), procNodes[0]->getProcName());
+
+		/* Test statements */
+		StmtLstNode* stmtLstNode = procNodes[0]->getStmtLstNode();
+		std::vector<StmtNode*> statements = stmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), statements.size());
+
+		/* Test while stmt */
+		WhileNode* whileNode = (WhileNode*)statements[0];
+		ExprNode* notOp = whileNode->getCondExpr();
+		StmtLstNode* stmtLstNodeWhile = whileNode->getStmtLst();
+
+		/* Test cond expr */
+		Assert::AreEqual(std::string("!"), notOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::logicalOperator == notOp->getExprNodeValueType());
+		std::vector<ExprNode*> childrenNotOp = notOp->getChildren();
+		Assert::AreEqual(size_t(1), childrenNotOp.size());
+
+		ExprNode* gteOp = childrenNotOp[0];
+		Assert::AreEqual(std::string(">="), gteOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::relOperator == gteOp->getExprNodeValueType());
+		std::vector<ExprNode*> childrenGteOp = gteOp->getChildren();
+		Assert::AreEqual(size_t(2), childrenGteOp.size());
+
+		Assert::AreEqual(std::string("x"), childrenGteOp[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == childrenGteOp[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("0"), childrenGteOp[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == childrenGteOp[1]->getExprNodeValueType());
+
+		/* Test stmtLst in while container */
+		std::vector<StmtNode*> stmtsInWhile = stmtLstNodeWhile->getStmtNodes();
+		Assert::AreEqual(size_t(4), stmtsInWhile.size());
+
+		// flag    = 123;
+		AssignNode* assignNode1 = (AssignNode*)stmtsInWhile[0];
+		Assert::AreEqual(std::string("flag"), assignNode1->getVarName());
+
+		ExprNode* expr1 = assignNode1->getExpr();
+		Assert::AreEqual(std::string("123"), expr1->getValue());
+		Assert::IsTrue(expr1->getChildren().empty());
+
+		// count =  ((  someVar123 )  )	;
+		AssignNode* assignNode2 = (AssignNode*)stmtsInWhile[1];
+		Assert::AreEqual(std::string("count"), assignNode2->getVarName());
+
+		ExprNode* expr2 = assignNode2->getExpr();
+		Assert::AreEqual(std::string("someVar123"), expr2->getValue());
+		Assert::IsTrue(expr2->getChildren().empty());
+
+		// read flag ;
+		ReadNode* readNode = (ReadNode*)stmtsInWhile[2];
+		Assert::AreEqual(std::string("flag"), readNode->getVarName());
+
+		// print COUNT	;
+		PrintNode* printNode = (PrintNode*)stmtsInWhile[3];
+		Assert::AreEqual(std::string("COUNT"), printNode->getVarName());
+	}
+
+	TEST_METHOD(parse_matchWhile_ANDOpCondExpr_success) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while ( ( !(x >= 0) ) && ( y < 5 - z )    ) "
+			"{ read fl123ag 	; } "
+			"} \n ";
+
+		SourceAST ast = Parser::parse(source);
+		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
+
+		/* Test procedureNodes */
+		Assert::AreEqual(size_t(1), procNodes.size());
+		Assert::AreEqual(std::string("procedure123name"), procNodes[0]->getProcName());
+
+		/* Test statements */
+		StmtLstNode* stmtLstNode = procNodes[0]->getStmtLstNode();
+		std::vector<StmtNode*> statements = stmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), statements.size());
+
+		/* Test while stmt */
+		WhileNode* whileNode = (WhileNode*)statements[0];
+		ExprNode* andOp = whileNode->getCondExpr();
+		StmtLstNode* stmtLstNodeWhile = whileNode->getStmtLst();
+
+		/* Test cond expr */
+		Assert::AreEqual(std::string("&&"), andOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::logicalOperator == andOp->getExprNodeValueType());
+		std::vector<ExprNode*> childrenAndOp = andOp->getChildren();
+		Assert::AreEqual(size_t(2), childrenAndOp.size());
+
+		// !(x >= 0)
+		ExprNode* notOp = childrenAndOp[0];
+		Assert::AreEqual(std::string("!"), notOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::logicalOperator == notOp->getExprNodeValueType());
+		std::vector<ExprNode*> childrenNotOp = notOp->getChildren();
+		Assert::AreEqual(size_t(1), childrenNotOp.size());
+
+		ExprNode* gteOp = childrenNotOp[0];
+		Assert::AreEqual(std::string(">="), gteOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::relOperator == gteOp->getExprNodeValueType());
+		std::vector<ExprNode*> childrenGteOp = gteOp->getChildren();
+		Assert::AreEqual(size_t(2), childrenGteOp.size());
+
+		Assert::AreEqual(std::string("x"), childrenGteOp[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == childrenGteOp[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("0"), childrenGteOp[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == childrenGteOp[1]->getExprNodeValueType());
+
+		// ( y < 5 - z )
+		ExprNode* ltOp = childrenAndOp[1];
+		Assert::AreEqual(std::string("<"), ltOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::relOperator == ltOp->getExprNodeValueType());
+		std::vector<ExprNode*> childrenLtOp = ltOp->getChildren();
+		Assert::AreEqual(size_t(2), childrenLtOp.size());
+
+		Assert::AreEqual(std::string("y"), childrenLtOp[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == childrenLtOp[0]->getExprNodeValueType());
+
+		ExprNode* minusOp = childrenLtOp[1];
+		Assert::AreEqual(std::string("-"), minusOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == minusOp->getExprNodeValueType());
+		std::vector<ExprNode*> childrenMinusOp = minusOp->getChildren();
+		Assert::AreEqual(size_t(2), childrenMinusOp.size());
+
+		Assert::AreEqual(std::string("5"), childrenMinusOp[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == childrenMinusOp[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("z"), childrenMinusOp[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == childrenMinusOp[1]->getExprNodeValueType());
+
+		/* Test stmtLst in while container */
+		std::vector<StmtNode*> stmtsInWhile = stmtLstNodeWhile->getStmtNodes();
+		Assert::AreEqual(size_t(1), stmtsInWhile.size());
+
+		// read fl123ag ;
+		ReadNode* readNode = (ReadNode*)stmtsInWhile[0];
+		Assert::AreEqual(std::string("fl123ag"), readNode->getVarName());
+	}
+
+	TEST_METHOD(parse_matchWhile_OROpCondExpr_success) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while ( (x <= 0)  || \n"
+			" (y * 1 == 5 - z)    ) "
+			"{ read fl123ag 	; } "
+			"} \n ";
+
+		SourceAST ast = Parser::parse(source);
+		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
+
+		/* Test procedureNodes */
+		Assert::AreEqual(size_t(1), procNodes.size());
+		Assert::AreEqual(std::string("procedure123name"), procNodes[0]->getProcName());
+
+		/* Test statements */
+		StmtLstNode* stmtLstNode = procNodes[0]->getStmtLstNode();
+		std::vector<StmtNode*> statements = stmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), statements.size());
+
+		/* Test while stmt */
+		WhileNode* whileNode = (WhileNode*)statements[0];
+		ExprNode* orOp = whileNode->getCondExpr();
+		StmtLstNode* stmtLstNodeWhile = whileNode->getStmtLst();
+
+		/* Test cond expr */
+		Assert::AreEqual(std::string("||"), orOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::logicalOperator == orOp->getExprNodeValueType());
+		std::vector<ExprNode*> childrenOrOp = orOp->getChildren();
+		Assert::AreEqual(size_t(2), childrenOrOp.size());
+
+		// (x <= 0)
+		ExprNode* lteOp = childrenOrOp[0];
+		Assert::AreEqual(std::string("<="), lteOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::relOperator == lteOp->getExprNodeValueType());
+		std::vector<ExprNode*> childrenLteOp = lteOp->getChildren();
+		Assert::AreEqual(size_t(2), childrenLteOp.size());
+
+		Assert::AreEqual(std::string("x"), childrenLteOp[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == childrenLteOp[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("0"), childrenLteOp[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == childrenLteOp[1]->getExprNodeValueType());
+
+		// ( y * 1 == 5 - z )
+		ExprNode* eqOp = childrenOrOp[1];
+		Assert::AreEqual(std::string("=="), eqOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::relOperator == eqOp->getExprNodeValueType());
+		std::vector<ExprNode*> childrenEqOp = eqOp->getChildren();
+		Assert::AreEqual(size_t(2), childrenEqOp.size());
+
+		ExprNode* multiplyOp = childrenEqOp[0];
+		Assert::AreEqual(std::string("*"), multiplyOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == multiplyOp->getExprNodeValueType());
+		std::vector<ExprNode*> childrenMultiplyOp = multiplyOp->getChildren();
+		Assert::AreEqual(size_t(2), childrenMultiplyOp.size());
+
+		Assert::AreEqual(std::string("y"), childrenMultiplyOp[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == childrenMultiplyOp[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("1"), childrenMultiplyOp[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == childrenMultiplyOp[1]->getExprNodeValueType());
+
+		ExprNode* minusOp = childrenEqOp[1];
+		Assert::AreEqual(std::string("-"), minusOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == minusOp->getExprNodeValueType());
+		std::vector<ExprNode*> childrenMinusOp = minusOp->getChildren();
+		Assert::AreEqual(size_t(2), childrenMinusOp.size());
+
+		Assert::AreEqual(std::string("5"), childrenMinusOp[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == childrenMinusOp[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("z"), childrenMinusOp[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == childrenMinusOp[1]->getExprNodeValueType());
+
+		/* Test stmtLst in while container */
+		std::vector<StmtNode*> stmtsInWhile = stmtLstNodeWhile->getStmtNodes();
+		Assert::AreEqual(size_t(1), stmtsInWhile.size());
+
+		// read fl123ag ;
+		ReadNode* readNode = (ReadNode*)stmtsInWhile[0];
+		Assert::AreEqual(std::string("fl123ag"), readNode->getVarName());
+	}
+
+	TEST_METHOD(parse_matchWhile_OROpNestedInNOTOp_success) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while ( !( (y * 1 == 5 - z) || (x != 0)  )    ) "
+			"{ read fl123ag 	; } "
+			"} \n ";
+
+		SourceAST ast = Parser::parse(source);
+		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
+
+		/* Test procedureNodes */
+		Assert::AreEqual(size_t(1), procNodes.size());
+		Assert::AreEqual(std::string("procedure123name"), procNodes[0]->getProcName());
+
+		/* Test statements */
+		StmtLstNode* stmtLstNode = procNodes[0]->getStmtLstNode();
+		std::vector<StmtNode*> statements = stmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), statements.size());
+
+		/* Test while stmt */
+		WhileNode* whileNode = (WhileNode*)statements[0];
+		ExprNode* notOp = whileNode->getCondExpr();
+		StmtLstNode* stmtLstNodeWhile = whileNode->getStmtLst();
+
+		/* Test cond expr */
+		// !( (y * 1 == 5 - z) || (x != 0)  )
+		Assert::AreEqual(std::string("!"), notOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::logicalOperator == notOp->getExprNodeValueType());
+		std::vector<ExprNode*> childrenNotOp = notOp->getChildren();
+		Assert::AreEqual(size_t(1), childrenNotOp.size());
+
+		ExprNode* orOp = childrenNotOp[0];
+		Assert::AreEqual(std::string("||"), orOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::logicalOperator == orOp->getExprNodeValueType());
+		std::vector<ExprNode*> childrenOrOp = orOp->getChildren();
+		Assert::AreEqual(size_t(2), childrenOrOp.size());
+
+		// (y * 1 == 5 - z)
+		ExprNode* eqOp = childrenOrOp[0];
+		Assert::AreEqual(std::string("=="), eqOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::relOperator == eqOp->getExprNodeValueType());
+		std::vector<ExprNode*> childrenEqOp = eqOp->getChildren();
+		Assert::AreEqual(size_t(2), childrenEqOp.size());
+
+		ExprNode* multiplyOp = childrenEqOp[0];
+		Assert::AreEqual(std::string("*"), multiplyOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == multiplyOp->getExprNodeValueType());
+		std::vector<ExprNode*> childrenMultiplyOp = multiplyOp->getChildren();
+		Assert::AreEqual(size_t(2), childrenMultiplyOp.size());
+
+		Assert::AreEqual(std::string("y"), childrenMultiplyOp[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == childrenMultiplyOp[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("1"), childrenMultiplyOp[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == childrenMultiplyOp[1]->getExprNodeValueType());
+
+		ExprNode* minusOp = childrenEqOp[1];
+		Assert::AreEqual(std::string("-"), minusOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == minusOp->getExprNodeValueType());
+		std::vector<ExprNode*> childrenMinusOp = minusOp->getChildren();
+		Assert::AreEqual(size_t(2), childrenMinusOp.size());
+
+		Assert::AreEqual(std::string("5"), childrenMinusOp[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == childrenMinusOp[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("z"), childrenMinusOp[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == childrenMinusOp[1]->getExprNodeValueType());
+
+		// (x != 0)
+		ExprNode* neqOp = childrenOrOp[1];
+		Assert::AreEqual(std::string("!="), neqOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::relOperator == neqOp->getExprNodeValueType());
+		std::vector<ExprNode*> childrenNeqOp = neqOp->getChildren();
+		Assert::AreEqual(size_t(2), childrenNeqOp.size());
+
+		Assert::AreEqual(std::string("x"), childrenNeqOp[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == childrenNeqOp[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("0"), childrenNeqOp[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == childrenNeqOp[1]->getExprNodeValueType());
+
+		/* Test stmtLst in while container */
+		std::vector<StmtNode*> stmtsInWhile = stmtLstNodeWhile->getStmtNodes();
+		Assert::AreEqual(size_t(1), stmtsInWhile.size());
+
+		// read fl123ag ;
+		ReadNode* readNode = (ReadNode*)stmtsInWhile[0];
+		Assert::AreEqual(std::string("fl123ag"), readNode->getVarName());
+	}
 	};
 }
