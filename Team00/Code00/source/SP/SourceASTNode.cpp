@@ -57,6 +57,32 @@ std::unordered_set<std::string> PrintNode::getUsesVars() {
 	return { varName };
 }
 
+/* ExprNode */
+ExprNode::ExprNode(ExprNodeValueType valueType, std::string value) : SourceASTNode(), valueType(valueType), value(value) {}
+
+void ExprNode::addChild(ExprNode* child) {
+	children.push_back(child);
+}
+
+std::vector<ExprNode*> ExprNode::getChildren() {
+	return children;
+}
+
+std::string ExprNode::getValue() {
+	return value;
+}
+
+ExprNodeValueType ExprNode::getExprNodeValueType() {
+	return valueType;
+}
+
+void ExprNode::populatePattern(std::vector<std::string>& tokens) {
+	for (ExprNode* child : children) {
+		child->populatePattern(tokens);
+	}
+	tokens.push_back(value);
+}
+
 /* AssignNode */
 AssignNode::AssignNode(std::string varName, ExprNode* expr) : StmtNode(), varName(varName), expr(expr) {
 	populateUsesSet();
@@ -122,30 +148,19 @@ std::unordered_set<std::string> AssignNode::getUsesConsts() {
 	return usesConsts;
 }
 
-/* ExprNode */
-ExprNode::ExprNode(ExprNodeValueType valueType, std::string value) : SourceASTNode(), valueType(valueType), value(value) {}
+/* WhileNode */
+WhileNode::WhileNode(ExprNode* condExpr, StmtLstNode* stmtLst) : StmtNode(), condExpr(condExpr), stmtLst(stmtLst) {}
 
-void ExprNode::addChild(ExprNode* child) {
-	children.push_back(child);
+ExprNode* WhileNode::getCondExpr() {
+	return condExpr;
 }
 
-std::vector<ExprNode*> ExprNode::getChildren() {
-	return children;
+StmtLstNode* WhileNode::getStmtLst() {
+	return stmtLst;
 }
 
-std::string ExprNode::getValue() {
-	return value;
-}
-
-ExprNodeValueType ExprNode::getExprNodeValueType() {
-	return valueType;
-}
-
-void ExprNode::populatePattern(std::vector<std::string>& tokens) {
-	for (ExprNode* child : children) {
-		child->populatePattern(tokens);
-	}
-	tokens.push_back(value);
+StatementType WhileNode::getStmtType() {
+	return StatementType::whileType;
 }
 
 /* StmtLstNode */

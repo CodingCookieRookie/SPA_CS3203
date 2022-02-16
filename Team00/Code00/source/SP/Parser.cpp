@@ -4,8 +4,18 @@ Parser::Parser() {}
 
 Lexer Parser::lexer;
 
-std::vector<std::string> termOperators = { "*", "/", "%" };
-std::vector<std::string> exprOperators = { "+", "-" };
+const std::string Parser::WHILE = "while";
+
+const std::string Parser::NOT = "!";
+const std::string Parser::LEFT_BRACKET = "(";
+const std::string Parser::RIGHT_BRACKET = ")";
+const std::string Parser::LEFT_CURLY = "{";
+const std::string Parser::RIGHT_CURLY = "}";
+
+const std::vector<std::string> Parser::termOperators = { "*", "/", "%" };
+const std::vector<std::string> Parser::exprOperators = { "+", "-" };
+const std::vector<std::string> Parser::relOperators = { ">=", ">", "<=", "<", "!=", "==" };
+const std::vector<std::string> Parser::logicalOperators = { "&&", "||" };
 
 SourceAST Parser::parse(const std::string& source) {
 	lexer = Lexer(source);
@@ -92,6 +102,8 @@ StmtNode* Parser::matchStmt() {
 		stmtNode = matchRead();
 	} else if (lexer.match("print")) {
 		stmtNode = matchPrint();
+	} else if (lexer.match(WHILE)) {
+		stmtNode = matchWhile();
 	} else {
 		std::string varName = lexer.nextName();
 		if (!varName.empty() && lexer.match("=")) {
@@ -226,4 +238,149 @@ ExprNode* Parser::matchExprTail(ExprNode* lvalue) {
 ExprNode* Parser::matchExpr() {
 	ExprNode* lvalue = matchTerm();
 	return matchExprTail(lvalue);
+}
+
+/* while : ‘while’ ‘(’ cond_expr ‘)’ ‘{‘ stmtLst ‘}’ */
+WhileNode* Parser::matchWhile() {
+	if (!lexer.match(LEFT_BRACKET)) {
+		throw ParserException(ParserException::MISSING_LEFT_BRACKET);
+	}
+
+	ExprNode* condNode = matchCondExpr();
+
+	if (!lexer.match(RIGHT_BRACKET)) {
+		throw ParserException(ParserException::MISSING_RIGHT_BRACKET);
+	}
+
+	if (!lexer.match(LEFT_CURLY)) {
+		throw ParserException(ParserException::MISSING_LEFT_CURLY);
+	}
+
+	StmtLstNode* stmtLstNode = matchStmtLst();
+
+	if (!lexer.match(RIGHT_CURLY)) {
+		throw ParserException(ParserException::MISSING_RIGHT_CURLY);
+	}
+
+	return new WhileNode(condNode, stmtLstNode);
+}
+
+/* cond_expr : rel_expr
+			| ‘!’ ‘(’ cond_expr ‘)’
+			| ‘(’ cond_expr ‘)’ ‘&&’ ‘(’ cond_expr ‘)’
+			| ‘(’ cond_expr ‘)’ ‘||’ ‘(’ cond_expr ‘)’
+*/
+ExprNode* Parser::matchCondExpr() {
+	/* ‘!’ ‘(’ cond_expr ‘)’*/
+	if (lexer.match(NOT)) {
+		if (!lexer.match(LEFT_BRACKET)) {
+			throw ParserException(ParserException::MISSING_LEFT_BRACKET);
+		}
+
+		ExprNode* condExpr = matchCondExpr();
+
+		if (!lexer.match(RIGHT_BRACKET)) {
+			throw ParserException(ParserException::MISSING_RIGHT_BRACKET);
+		}
+
+		ExprNode* notNode = new ExprNode(ExprNodeValueType::logicalOperator, NOT);
+		notNode->addChild(condExpr);
+
+		return notNode;
+	}
+
+	/* ‘(’ cond_expr ‘)’ ‘&&’ ‘(’ cond_expr ‘)’
+		| ‘(’ cond_expr ‘)’ ‘||’ ‘(’ cond_expr ‘)’ */
+	if (lexer.match(LEFT_BRACKET)) {
+		ExprNode* leftCondExpr = matchCondExpr();
+
+		if (!lexer.match(RIGHT_BRACKET)) {
+			throw ParserException(ParserException::MISSING_RIGHT_BRACKET);
+		}
+
+		ExprNode* logOpNode{};
+		for (const std::string op : logicalOperators) {
+			if (lexer.match(op)) {
+				logOpNode = new ExprNode(ExprNodeValueType::logicalOperator, op);
+				break;
+			}
+		}
+
+		if (logOpNode == nullptr) {
+			throw ParserException(ParserException::INVALID_COND_EXPR);
+		}
+
+		if (!lexer.match(LEFT_BRACKET)) {
+			throw ParserException(ParserException::MISSING_LEFT_BRACKET);
+		}
+
+		ExprNode* rightCondExpr = matchCondExpr();
+
+		if (!lexer.match(RIGHT_BRACKET)) {
+			throw ParserException(ParserException::MISSING_RIGHT_BRACKET);
+		}
+
+		logOpNode->addChild(leftCondExpr);
+		logOpNode->addChild(rightCondExpr);
+
+		return logOpNode;
+	}
+
+	/* rel_expr */
+	ExprNode* relExprNode = matchRelExpr();
+
+	return relExprNode;
+}
+
+/* rel_expr: rel_factor ‘ > ’ rel_factor
+			| rel_factor ‘ >= ’ rel_factor
+			| rel_factor ‘ < ’ rel_factor
+			| rel_factor ‘ <= ’ rel_factor
+			| rel_factor ‘ == ’ rel_factor
+			| rel_factor ‘ != ’ rel_factor
+*/
+ExprNode* Parser::matchRelExpr() {
+	ExprNode* leftRelFactor = matchRelFactor();
+
+	ExprNode* relOpNode{};
+	for (const std::string op : relOperators) {
+		if (lexer.match(op)) {
+			relOpNode = new ExprNode(ExprNodeValueType::relOperator, op);
+			break;
+		}
+	}
+	if (relOpNode == nullptr) {
+		throw ParserException(ParserException::INVALID_REL_EXPR);
+	}
+
+	ExprNode* rightRelFactor = matchRelFactor();
+
+	relOpNode->addChild(leftRelFactor);
+	relOpNode->addChild(rightRelFactor);
+	return relOpNode;
+}
+
+/* rel_factor : var_name
+				| const_value
+				| expr
+*/
+ExprNode* Parser::matchRelFactor() {
+	ExprNode* expr{};
+	try {
+		expr = matchExpr();
+	} catch (ParserException& ex) {
+		std::string varName = lexer.nextName();
+		if (!varName.empty()) {
+			return new ExprNode(ExprNodeValueType::varName, varName);
+		}
+
+		std::string constVal = lexer.nextInteger();
+		if (!constVal.empty()) {
+			return new ExprNode(ExprNodeValueType::constValue, constVal);
+		}
+
+		throw ParserException(ParserException::INVALID_REL_EXPR);
+	}
+
+	return expr;
 }

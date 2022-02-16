@@ -22,6 +22,23 @@ private:
 	static ExprNode* matchTermTail(ExprNode* lvalue);
 	static ExprNode* matchTerm();
 	static ExprNode* matchExprTail(ExprNode* lvalue);
+	static WhileNode* matchWhile();
+	static ExprNode* matchCondExpr();
+	static ExprNode* matchRelExpr();
+	static ExprNode* matchRelFactor();
+
+	static const std::string WHILE;
+
+	static const std::string NOT;
+	static const std::string LEFT_BRACKET;
+	static const std::string RIGHT_BRACKET;
+	static const std::string LEFT_CURLY;
+	static const std::string RIGHT_CURLY;
+
+	static const std::vector<std::string> termOperators;
+	static const std::vector<std::string> exprOperators;
+	static const std::vector<std::string> relOperators;
+	static const std::vector<std::string> logicalOperators;
 
 public:
 	Parser();
