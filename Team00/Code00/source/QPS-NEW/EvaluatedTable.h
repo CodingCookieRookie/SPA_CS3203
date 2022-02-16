@@ -51,7 +51,6 @@ public:
         return entities;
     }
 
-    /* Getter for numRow */
     size_t getNumRow() {
         if (table.empty()) {
             return 0;

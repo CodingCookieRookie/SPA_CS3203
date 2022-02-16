@@ -34,6 +34,10 @@ public:
 
 	/* Merges the current table with values from another EvaluatedTable
 	via an Inner Join, which can be implemented using Hash Join */
-	EvaluatedTable innerJoinMerge(EvaluatedTable evTable, EvaluatedTable newEvTable, std::string stmtRef, std::string entRef, std::unordered_set<std::string> currentTableColumns);
+	EvaluatedTable innerJoinMerge(EvaluatedTable evTable, EvaluatedTable newEvTable, std::unordered_set<std::string> currentTableColumns);
+
+	///* Merges the current table with values from another EvaluatedTable
+	//via an Inner Join, which can be implemented using Hash Join */
+	//EvaluatedTable innerJoinMerge(EvaluatedTable evTable, EvaluatedTable newEvTable, std::string stmtRef, std::string entRef, std::unordered_set<std::string> currentTableColumns);
 
 };
