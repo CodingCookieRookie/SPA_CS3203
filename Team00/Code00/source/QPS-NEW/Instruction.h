@@ -273,7 +273,7 @@ private:
 			}
 		}
 		else {
-			std::cout << "Error in handleModifiesP\n";
+			std::cout << "Error in handleModifiesS\n";
 		}
 		return EvaluatedTable(PQLentities, PQLmap);
 	}
@@ -468,31 +468,30 @@ public:
 		else {
 			std::cout << "Invalid expression type";
 		}
-
-		if ((entRef.first == PqlReferenceType::ident || entRef.first == PqlReferenceType::synonym) && !containsWildCard(expressionSpec.second)) {
-			VarIndex varIndex = Entity::getVarIdx(entRef.second);
-			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
+		if (entRef.first == PqlReferenceType::ident || entRef.first == PqlReferenceType::synonym) {
+			std::vector<int> allStmts;
 			std::vector<int> varIndices;
-			std::fill(varIndices.begin(), varIndices.end(), varIndex.getIndex());
-			PQLmap[synonym] = allStmts;
-			PQLmap[entRef.second] = varIndices;
-		} else if ((entRef.first == PqlReferenceType::ident || entRef.first == PqlReferenceType::synonym)
-			&& containsWildCard(expressionSpec.second)) {
 			VarIndex varIndex = Entity::getVarIdx(entRef.second);
-			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex);
-			std::vector<int> varIndices;
-			std::fill(varIndices.begin(), varIndices.end(), varIndex.getIndex());
+			if (!containsWildCard(expressionSpec.second)) {
+				allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
+			}
+			else {
+				allStmts = Pattern::getStmtsFromVarPattern(varIndex);
+			}
+			std::fill(varIndices.begin(), varIndices.end(), varIndex.getIndex());	// vector filled with varIndex for rhs of row
 			PQLmap[synonym] = allStmts;
 			PQLmap[entRef.second] = varIndices;
 		}
-
-		
-
-		for (size_t i = 0; i < (std::get<0>(allPatternStmtInfo).size()); i++) {
-			int lhs = std::get<0>(allPatternStmtInfo)[i];
-			int rhs = std::get<1>(allPatternStmtInfo)[i];
-			PQLmap[synonym].push_back(lhs);
-			PQLmap[entRef.second].push_back(rhs);
+		else if (entRef.first == PqlReferenceType::wildcard) {
+			if (containsWildCard(expressionSpec.second)) {
+				return EvaluatedTable(true);
+			}
+			for (size_t i = 0; i < (std::get<0>(allPatternStmtInfo).size()); i++) {
+				int lhs = std::get<0>(allPatternStmtInfo)[i];
+				int rhs = std::get<1>(allPatternStmtInfo)[i];
+				PQLmap[synonym].push_back(lhs);
+				PQLmap[entRef.second].push_back(rhs);
+			}
 		}
 		return EvaluatedTable(PQLentities, PQLmap);
 	}

@@ -68,6 +68,7 @@ public:
 
 	friend class SourceAST;
 	friend class AssignNode;
+	friend class WhileNode;
 };
 
 class AssignNode : public StmtNode {
@@ -88,6 +89,19 @@ public:
 	std::unordered_set<std::string> getUsesConsts();
 	std::unordered_set<std::string> getModifiesVars();
 	std::string getPattern();
+
+	friend class SourceAST;
+};
+
+class WhileNode : public StmtNode {
+private:
+	ExprNode* condExpr;
+	StmtLstNode* stmtLst;
+public:
+	WhileNode(ExprNode* condExpr, StmtLstNode* stmtLst);
+	ExprNode* getCondExpr();
+	StmtLstNode* getStmtLst();
+	StatementType getStmtType();
 
 	friend class SourceAST;
 };
