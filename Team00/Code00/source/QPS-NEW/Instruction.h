@@ -336,7 +336,7 @@ private:
 			return EvaluatedTable(PQLentities, PQLmap);
 		}
 		// Follows(s1, s2), Follows(s1, _), Follows(_, s2)
-		else if (lhsRef.first != PqlReferenceType::wildcard && rhsRef.first != PqlReferenceType::wildcard) {
+		else if (!(lhsRef.first == PqlReferenceType::wildcard && rhsRef.first == PqlReferenceType::wildcard)) {
 			//Assumption: Different synonym names (i.e. Follows(s1, s2), not Follows(s1, s1))
 			std::tuple<std::vector<int>, std::vector<int>> results = Follows::getAllPredecessorSuccessorInfo();
 			//e.g. {1, 2}, {2, 3}, {3, 6}
@@ -441,7 +441,7 @@ private:
 			return EvaluatedTable(PQLentities, PQLmap);
 		}
 		// Parent(s1, s2), Parent(s1, _), Parent(_, s2)
-		else if (lhsRef.first != PqlReferenceType::wildcard && rhsRef.first != PqlReferenceType::wildcard) {
+		else if (!(lhsRef.first == PqlReferenceType::wildcard && rhsRef.first == PqlReferenceType::wildcard)) {
 			//Assumption: Different synonym names (i.e. Parent(s1, s2), not Parent(s1, s1))
 			std::tuple<std::vector<int>, std::vector<int>> results = Parent::getAllPredecessorSuccessorInfo();
 			//e.g. {1, 2}, {2, 3}, {3, 6}
