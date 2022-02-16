@@ -170,22 +170,14 @@ private:
 	PqlReference rhsRef;
 
 	EvaluatedTable handleModifiesS() {
-<<<<<<< HEAD
 		// Modifies (a/r/s/a1, v) or Modifies(a/r/s/a1, "x) or Modifies (a/r/s/a1, _ ) 
-=======
-		// Modifies (a/r/s/a1, v) or Modifies (a/r/s/a1, _ )
->>>>>>> master
 		// Modifies (1, v)	=> true or Modifies (1, _ ) (under statement)
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
 		PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Variable));
 		std::tuple<std::vector<int>, std::vector<int>> allStmtVarInfos = Modifies::getAllStmtVarInfo();
-<<<<<<< HEAD
 		if (lhsRef.first == PqlReferenceType::synonym) {
-=======
-		if (lhsRef.first == PqlReferenceType::ident) {
->>>>>>> master
 			for (size_t i = 0; i < (std::get<0>(allStmtVarInfos).size()); i++) {
 				int lhs = std::get<0>(allStmtVarInfos)[i];
 				PQLmap[lhsRef.second].push_back(lhs);
@@ -208,21 +200,13 @@ private:
 	}
 
 	EvaluatedTable handleModifiesP() {
-<<<<<<< HEAD
 		// Modifies (p/p1, v) or Modifies (p/p1, "x") or Modifies (p/p1, _ )	proc
-=======
-		// Modifies (p/p1, v)	or Modifies (p/p1, _ )	proc
->>>>>>> master
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Procedure));
 		PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Variable));
 		std::tuple<std::vector<int>, std::vector<int>> allProcVarInfos = Modifies::getAllProcVarInfo();
-<<<<<<< HEAD
 		if (lhsRef.first == PqlReferenceType::synonym) {
-=======
-		if (lhsRef.first == PqlReferenceType::ident) {
->>>>>>> master
 			for (size_t i = 0; i < (std::get<0>(allProcVarInfos).size()); i++) {
 				int lhs = std::get<0>(allProcVarInfos)[i];
 				PQLmap[lhsRef.second].push_back(lhs);
@@ -231,38 +215,22 @@ private:
 					PQLmap[rhsRef.second].push_back(rhs);
 				}
 			}
-<<<<<<< HEAD
 		}
 		else {
 			std::cout << "Error in handleModifiesP\n";
 		}
-=======
-		}
-		else {
-			std::cout << "Error in handleModifiesP\n";
-		}
->>>>>>> master
 		return EvaluatedTable(PQLentities, PQLmap);
 	}
 
 	EvaluatedTable handleUsesS() {
-<<<<<<< HEAD
 		// Uses (a/r/s/a1, v) or Uses(a/r/s/a1, "x") or Uses (a/r/s/a1, _ )
-=======
-		// Uses (a/r/s/a1, v) or Uses (a/r/s/a1, _ )
->>>>>>> master
-		// Uses (p/p1, v)	or Uses (p/p1, _ )	proc
 		// Uses (1, v)	=> true or Uses (1, _ ) (under statement)
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
 		PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Variable));
 		std::tuple<std::vector<int>, std::vector<int>>  allStmtVarInfos = Uses::getAllStmtVarInfo();
-<<<<<<< HEAD
 		if (lhsRef.first == PqlReferenceType::synonym) {
-=======
-		if (lhsRef.first == PqlReferenceType::ident) {
->>>>>>> master
 			for (size_t i = 0; i < (std::get<0>(allStmtVarInfos).size()); i++) {
 				int lhs = std::get<0>(allStmtVarInfos)[i];
 				PQLmap[lhsRef.second].push_back(lhs);
@@ -285,23 +253,13 @@ private:
 	}
 
 	EvaluatedTable handleUsesP() {
-<<<<<<< HEAD
 		// Uses (p/p1, v) or Uses (p/p1, "x") or Uses (p/p1, _ )	proc
-=======
-		// Uses (a/r/s/a1, v) or Uses (a/r/s/a1, _ )
-		// Uses (p/p1, v)	or Uses (p/p1, _ )	proc
-		// Uses (1, v)	=> true or Uses (1, _ ) (under statement)
->>>>>>> master
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
 		PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Variable));
 		std::tuple<std::vector<int>, std::vector<int>>  allStmtVarInfos = Uses::getAllStmtVarInfo();
-<<<<<<< HEAD
 		if (lhsRef.first == PqlReferenceType::synonym) {
-=======
-		if (lhsRef.first == PqlReferenceType::ident) {
->>>>>>> master
 			for (size_t i = 0; i < (std::get<0>(allStmtVarInfos).size()); i++) {
 				int lhs = std::get<0>(allStmtVarInfos)[i];
 				PQLmap[lhsRef.second].push_back(lhs);
@@ -434,11 +392,7 @@ public:
 	EvaluatedTable execute() override {
 		EvaluatedTable evTable;
 		switch (pqlRelationshipType) {
-<<<<<<< HEAD
-		case PqlRelationshipType::ModifiesS :
-=======
 		case PqlRelationshipType::ModifiesS:
->>>>>>> master
 			evTable = handleModifiesS();
 			break;
 		case PqlRelationshipType::ModifiesP:
