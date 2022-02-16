@@ -21,11 +21,10 @@ EvaluatedTable::EvaluatedTable(std::unordered_map<std::string, std::vector<int>>
 
 EvaluatedTable::EvaluatedTable(
     std::unordered_map<std::string, PqlEntityType> newEntities,
-    std::unordered_map<std::string, std::vector<int>> newTable, 
-    int newNumRow ) :
+    std::unordered_map<std::string, std::vector<int>> newTable) :
     entities(newEntities),
     table(newTable),
-    numRow(newNumRow),
+    numRow(newTable.size()),
     isEmpty(false)
     {}
 
