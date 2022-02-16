@@ -114,6 +114,54 @@ namespace UnitTesting
             Follows::performCleanUp();
         }
 
+        TEST_METHOD(executeInstruction_follows_lhsStmtrhsConst)
+        {
+
+            // 1. Setup:
+            // Follows(s1, 2) RelationshipInstruction
+            PqlReference lhsRef, rhsRef;
+            lhsRef = std::make_pair(PqlReferenceType::synonym, "s1");
+            rhsRef = std::make_pair(PqlReferenceType::integer, "2");
+            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::Follows, lhsRef, rhsRef);
+
+            // PKB insert statements
+            StmtIndex stmt1 = Entity::insertStmt(StatementType::assignType);
+            StmtIndex stmt2 = Entity::insertStmt(StatementType::assignType);
+            Follows::insert(stmt1, stmt2);
+
+            // 2. Main test:
+            EvaluatedTable evTable = instruction->execute();
+
+            // Test numRow:
+            Assert::AreEqual(size_t(1), evTable.getNumRow());
+
+            // Test Table: std::unordered_map<std::string, std::vector<int>>
+            auto tableRef = evTable.getTableRef();
+            Assert::AreEqual(true, tableRef.find("s1") != tableRef.end());
+            Assert::AreEqual(false, tableRef.find("s5") != tableRef.end());
+
+            // Test Entities: std::unordered_map<std::string, PqlEntityType>
+            std::vector<int> values{ 1 };
+            auto actualValues = tableRef.at("s1");
+            bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+            Assert::AreEqual(true, areVecEqual);
+            auto actualEntities = evTable.getEntities();
+            Assert::AreEqual(true, actualEntities.find("s1") != actualEntities.end());
+            Assert::AreEqual(false, actualEntities.find("s5") != actualEntities.end());
+            bool isPqlEntityType = PqlEntityType::Stmt == actualEntities.at("s1");
+            Assert::AreEqual(true, isPqlEntityType);
+
+            // Test EvResult:
+            bool actualEvResult = evTable.getEvResult();
+            Assert::AreEqual(true, actualEvResult);
+
+            // 3. Clean-up:
+            Entity::performCleanUp();
+            Follows::performCleanUp();
+        }
+
+
+
         // Parent Relationship Tests
 
         TEST_METHOD(executeInstruction_parent_twoConstants) {
