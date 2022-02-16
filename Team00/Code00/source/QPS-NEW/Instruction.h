@@ -170,14 +170,14 @@ private:
 	PqlReference rhsRef;
 
 	EvaluatedTable handleModifiesS() {
-		// Modifies (a/r/s/a1, v) or Modifies (a/r/s/a1, _ )
+		// Modifies (a/r/s/a1, v) or Modifies(a/r/s/a1, "x) or Modifies (a/r/s/a1, _ ) 
 		// Modifies (1, v)	=> true or Modifies (1, _ ) (under statement)
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
 		PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Variable));
 		std::tuple<std::vector<int>, std::vector<int>> allStmtVarInfos = Modifies::getAllStmtVarInfo();
-		if (lhsRef.first == PqlReferenceType::ident) {
+		if (lhsRef.first == PqlReferenceType::synonym) {
 			for (size_t i = 0; i < (std::get<0>(allStmtVarInfos).size()); i++) {
 				int lhs = std::get<0>(allStmtVarInfos)[i];
 				PQLmap[lhsRef.second].push_back(lhs);
@@ -200,13 +200,15 @@ private:
 	}
 
 	EvaluatedTable handleModifiesP() {
+		// Modifies (a/r/s/a1, v) or Modifies (a/r/s/a1, _ )
 		// Modifies (p/p1, v)	or Modifies (p/p1, _ )	proc
+		// Modifies (1, v)	=> true or Modifies (1, _ ) (under statement)
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Procedure));
 		PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Variable));
 		std::tuple<std::vector<int>, std::vector<int>> allProcVarInfos = Modifies::getAllProcVarInfo();
-		if (lhsRef.first == PqlReferenceType::ident) {
+		if (lhsRef.first == PqlReferenceType::synonym) {
 			for (size_t i = 0; i < (std::get<0>(allProcVarInfos).size()); i++) {
 				int lhs = std::get<0>(allProcVarInfos)[i];
 				PQLmap[lhsRef.second].push_back(lhs);
@@ -223,15 +225,14 @@ private:
 	}
 
 	EvaluatedTable handleUsesS() {
-		// Uses (a/r/s/a1, v) or Uses (a/r/s/a1, _ )
-		// Uses (p/p1, v)	or Uses (p/p1, _ )	proc
+		// Uses (a/r/s/a1, v) or Uses(a/r/s/a1, "x") or Uses (a/r/s/a1, _ )
 		// Uses (1, v)	=> true or Uses (1, _ ) (under statement)
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
 		PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Variable));
 		std::tuple<std::vector<int>, std::vector<int>>  allStmtVarInfos = Uses::getAllStmtVarInfo();
-		if (lhsRef.first == PqlReferenceType::ident) {
+		if (lhsRef.first == PqlReferenceType::synonym) {
 			for (size_t i = 0; i < (std::get<0>(allStmtVarInfos).size()); i++) {
 				int lhs = std::get<0>(allStmtVarInfos)[i];
 				PQLmap[lhsRef.second].push_back(lhs);
@@ -254,15 +255,13 @@ private:
 	}
 
 	EvaluatedTable handleUsesP() {
-		// Uses (a/r/s/a1, v) or Uses (a/r/s/a1, _ )
-		// Uses (p/p1, v)	or Uses (p/p1, _ )	proc
-		// Uses (1, v)	=> true or Uses (1, _ ) (under statement)
+		// Uses (p/p1, v) or Uses (p/p1, "x") or Uses (p/p1, _ )	proc
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
 		PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Variable));
 		std::tuple<std::vector<int>, std::vector<int>>  allStmtVarInfos = Uses::getAllStmtVarInfo();
-		if (lhsRef.first == PqlReferenceType::ident) {
+		if (lhsRef.first == PqlReferenceType::synonym) {
 			for (size_t i = 0; i < (std::get<0>(allStmtVarInfos).size()); i++) {
 				int lhs = std::get<0>(allStmtVarInfos)[i];
 				PQLmap[lhsRef.second].push_back(lhs);

@@ -93,10 +93,9 @@ EvaluatedTable PQLEvaluator::executeInstructions(std::vector<Instruction*> instr
 EvaluatedTable PQLEvaluator::innerJoinMerge(EvaluatedTable currentTable, EvaluatedTable newTable, std::unordered_set<std::string> currentTableColumns) {  // We assume the number of cols for currentTable is non-decreasing
     //EvaluatedTable mergedTable;
     // first check if newTable col has same as that of currentTable
-    std::unordered_map<std::string, std::vector<int>> currentTableHm = currentTable.getTableRef();
-    std::unordered_map<std::string, std::vector<int>> newTableHm = newTable.getTableRef();
-    std::unordered_map<std::string, std::vector<int>> mergedTableHm;
-
+    //std::unordered_map<std::string, std::vector<int>> currentTableHm = currentTable.getTableRef();
+    //std::unordered_map<std::string, std::vector<int>> newTableHm = newTable.getTableRef();
+    //std::unordered_map<std::string, std::vector<int>> mergedTableHm;
     //int numOfSameSynonymsInNewTable = 0;
     //std::vector<std::string> duplicateSynonyms;
     //for (auto& it : newTableHm) {
