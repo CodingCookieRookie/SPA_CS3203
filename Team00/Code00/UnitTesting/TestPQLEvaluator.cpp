@@ -526,5 +526,120 @@ namespace UnitTesting
             Parent::performCleanUp();
         }
 
+        TEST_METHOD(executeInstruction_parent_lhsWildcardhsConst)
+        {
+
+            // 1. Setup:
+            // Parent(_, 3) RelationshipInstruction
+            PqlReference lhsRef, rhsRef;
+            lhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
+            rhsRef = std::make_pair(PqlReferenceType::integer, "3");
+            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::Parent, lhsRef, rhsRef);
+
+            // PKB inserts 97614 statements
+            std::vector<StmtIndex> stmts;
+            for (int i = 0; i < 3; i++) {
+                stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+            }
+            for (int i = 0; i < 2; i++) {
+                Parent::insert(stmts[i], stmts[i + 1]);
+            }
+
+            // 2. Main test:
+            EvaluatedTable evTable = instruction->execute();
+
+            // Test numRow:
+            Assert::AreEqual(size_t(1), evTable.getNumRow()); // Only 1 parent of 3
+
+            // Test Table: std::unordered_map<std::string, std::vector<int>>
+            auto tableRef = evTable.getTableRef();
+            Assert::AreEqual(true, tableRef.find("_") != tableRef.end());
+            Assert::AreEqual(false, tableRef.find("23") != tableRef.end());
+
+            // Test Table size:
+            Assert::AreEqual(size_t(1), tableRef.size()); // RHS wildcard will still have column (innerJoinMerge() will drop it during merge)
+
+            // Test Entities: std::unordered_map<std::string, PqlEntityType>
+            std::vector<int> wildcardValues;
+            wildcardValues.emplace_back(2);
+            auto actualWildcardValues = tableRef.at("_");
+            std::sort(actualWildcardValues.begin(), actualWildcardValues.end());
+            bool areVecEqual = std::equal(wildcardValues.begin(), wildcardValues.end(), actualWildcardValues.begin());
+            Assert::AreEqual(true, areVecEqual); // wildcardValues == {2}
+
+            auto actualEntities = evTable.getEntities();
+            Assert::AreEqual(true, actualEntities.find("_") != actualEntities.end());
+            Assert::AreEqual(false, actualEntities.find("2") != actualEntities.end());
+            bool isPqlEntityType = PqlEntityType::Stmt == actualEntities.at("_");
+            Assert::AreEqual(true, isPqlEntityType);
+
+            // Test EvResult:
+            bool actualEvResult = evTable.getEvResult();
+            Assert::AreEqual(true, actualEvResult);
+
+            // 3. Clean-up:
+            Entity::performCleanUp();
+            Parent::performCleanUp();
+        }
+
+        TEST_METHOD(executeInstruction_parent_lhsWildcardhsConst_stress_nestingParents)
+        {
+
+            // 1. Setup:
+            // Parent(_, 2947) RelationshipInstruction
+            PqlReference lhsRef, rhsRef;
+            lhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
+            rhsRef = std::make_pair(PqlReferenceType::integer, "2947");
+            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::Parent, lhsRef, rhsRef);
+
+            // PKB inserts 97614 statements
+            std::vector<StmtIndex> stmts;
+            for (int i = 0; i < 97614; i++) {
+                stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+            }
+            for (int i = 0; i < 97614 - 1; i++) {
+                Parent::insert(stmts[i], stmts[i + 1]);
+            }
+
+            // 2. Main test:
+            EvaluatedTable evTable = instruction->execute();
+
+            // Test numRow:
+            Assert::AreEqual(size_t(1), evTable.getNumRow());
+
+            // Test Table: std::unordered_map<std::string, std::vector<int>>
+            auto tableRef = evTable.getTableRef();
+            Assert::AreEqual(true, tableRef.find("_") != tableRef.end());
+            Assert::AreEqual(false, tableRef.find("stress") != tableRef.end());
+
+            // Test Table size:
+            Assert::AreEqual(size_t(1), tableRef.size()); // RHS wildcard will still have column (innerJoinMerge() will drop it during merge)
+
+            // Test Entities: std::unordered_map<std::string, PqlEntityType>
+            std::vector<int> s1values, wildcardValues;
+            for (int i = 0; i < 97614 - 1; i++) {
+                wildcardValues.emplace_back(i + 1);
+            }
+            auto actualWildcardValues = tableRef.at("_");
+            std::sort(actualWildcardValues.begin(), actualWildcardValues.end());
+            bool areVecEqual = std::equal(wildcardValues.begin(), wildcardValues.end(), actualWildcardValues.begin());
+            Assert::AreEqual(true, areVecEqual); // s1values == {1}
+
+            auto actualEntities = evTable.getEntities();
+            Assert::AreEqual(true, actualEntities.find("_") != actualEntities.end());
+            Assert::AreEqual(false, actualEntities.find("29") != actualEntities.end());
+            Assert::AreEqual(false, actualEntities.find("stress") != actualEntities.end());
+            bool isPqlEntityType = PqlEntityType::Stmt == actualEntities.at("_");
+            Assert::AreEqual(true, isPqlEntityType);
+
+            // Test EvResult:
+            bool actualEvResult = evTable.getEvResult();
+            Assert::AreEqual(true, actualEvResult);
+
+            // 3. Clean-up:
+            Entity::performCleanUp();
+            Parent::performCleanUp();
+        }
+
     };
 }

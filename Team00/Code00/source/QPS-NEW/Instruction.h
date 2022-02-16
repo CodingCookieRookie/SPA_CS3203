@@ -296,8 +296,8 @@ private:
 			return EvaluatedTable(evResult); //e.g evResult == true, if 6 is followed by 7
 			
 		}
-		// e.g Follows(6, s2)
-		else if (lhsRef.first == PqlReferenceType::integer && rhsRef.first != PqlReferenceType::wildcard)
+		// e.g Follows(6, s2), Follows(6, _)
+		else if (lhsRef.first == PqlReferenceType::integer)
 		{
 			std::vector<int> results;
 			int lhsRefValue = stoi(lhsRef.second); // might throw error if string value can't be converted to int
@@ -316,8 +316,8 @@ private:
 			return EvaluatedTable(PQLentities, PQLmap);
 			
 		} 
-		// e.g. Follows(s1, 7)
-		else if (rhsRef.first == PqlReferenceType::integer && lhsRef.first != PqlReferenceType::wildcard)
+		// e.g. Follows(s1, 7), Follows(_, 7)
+		else if (rhsRef.first == PqlReferenceType::integer)
 		{
 			std::vector<int> results;
 			int rhsRefValue = stoi(rhsRef.second); //might throw error if string value can't be converted to int
@@ -353,29 +353,29 @@ private:
 			}
 			return EvaluatedTable(PQLentities, PQLmap);
 		}
-		// Follows(_, _), or Follows(6, _), or Follows(_, 7)
+		// Follows(_, _)
 		else {
 			bool isEmptyTable = true;
 			if (lhsRef.first == PqlReferenceType::wildcard && rhsRef.first == PqlReferenceType::wildcard) { // Follows(_, _)
 				isEmptyTable = std::get<0>(Follows::getAllPredecessorSuccessorInfo()).empty();
 			}
-			StmtIndex lhsStmtIndex, rhsStmtIndex;
-			if (lhsRef.first == PqlReferenceType::integer) { // e.g. Follows(6, _)
-				for (StmtIndex stmt : stmts) {
-					if (stmt.getIndex() == stoi(lhsRef.second)) {
-						lhsStmtIndex = stmt;
-						return EvaluatedTable(Follows::getSuccessorStmts(lhsStmtIndex).empty()); // False == Follows exists
-					}
-				}
-			}
-			else { // e.g. Follows(_, 7)
-				for (StmtIndex stmt : stmts) {
-					if (stmt.getIndex() == stoi(rhsRef.second)) {
-						rhsStmtIndex = stmt;
-						return EvaluatedTable(Follows::getSuccessorStmts(rhsStmtIndex).empty());
-					}
-				}
-			}
+			//StmtIndex lhsStmtIndex, rhsStmtIndex;
+			//if (lhsRef.first == PqlReferenceType::integer) { // e.g. Follows(6, _)
+			//	for (StmtIndex stmt : stmts) {
+			//		if (stmt.getIndex() == stoi(lhsRef.second)) {
+			//			lhsStmtIndex = stmt;
+			//			return EvaluatedTable(Follows::getSuccessorStmts(lhsStmtIndex).empty()); // False == Follows exists
+			//		}
+			//	}
+			//}
+			//else { // e.g. Follows(_, 7)
+			//	for (StmtIndex stmt : stmts) {
+			//		if (stmt.getIndex() == stoi(rhsRef.second)) {
+			//			rhsStmtIndex = stmt;
+			//			return EvaluatedTable(Follows::getSuccessorStmts(rhsStmtIndex).empty());
+			//		}
+			//	}
+			//}
 			return EvaluatedTable(isEmptyTable);
 		}
 	}
@@ -401,8 +401,8 @@ private:
 			return EvaluatedTable(evResult); //e.g evResult == true, if 6 is a parent of 7
 
 		}
-		// e.g Parent(6, s2)
-		else if (lhsRef.first == PqlReferenceType::integer && rhsRef.first != PqlReferenceType::wildcard)
+		// e.g Parent(6, s2), Parent(6, _)
+		else if (lhsRef.first == PqlReferenceType::integer)
 		{
 			std::vector<int> results;
 			int lhsRefValue = stoi(lhsRef.second); // might throw error if string value can't be converted to int
@@ -421,8 +421,8 @@ private:
 			return EvaluatedTable(PQLentities, PQLmap);
 
 		}
-		// e.g. Parent(s1, 7)
-		else if (rhsRef.first == PqlReferenceType::integer && lhsRef.first != PqlReferenceType::wildcard)
+		// e.g. Parent(s1, 7), Parent(_ 7)
+		else if (rhsRef.first == PqlReferenceType::integer)
 		{
 			std::vector<int> results;
 			int rhsRefValue = stoi(rhsRef.second); //might throw error if string value can't be converted to int
@@ -441,7 +441,7 @@ private:
 			return EvaluatedTable(PQLentities, PQLmap);
 		}
 		// Parent(s1, s2), Parent(s1, _), Parent(_, s2)
-		else if (!(lhsRef.first == PqlReferenceType::wildcard && rhsRef.first == PqlReferenceType::wildcard)) {
+		else if (!( lhsRef.first == PqlReferenceType::wildcard && rhsRef.first == PqlReferenceType::wildcard)) {
 			//Assumption: Different synonym names (i.e. Parent(s1, s2), not Parent(s1, s1))
 			std::tuple<std::vector<int>, std::vector<int>> results = Parent::getAllPredecessorSuccessorInfo();
 			//e.g. {1, 2}, {2, 3}, {3, 6}
@@ -458,29 +458,29 @@ private:
 			}
 			return EvaluatedTable(PQLentities, PQLmap);
 		}
-		// Parent(_, _), or Parent(6, _), or Parent(_, 7)
+		// Parent(_, _)
 		else {
 			bool isEmptyTable = true;
 			if (lhsRef.first == PqlReferenceType::wildcard && rhsRef.first == PqlReferenceType::wildcard) { // Parent(_, _)
 				isEmptyTable = std::get<0>(Parent::getAllPredecessorSuccessorInfo()).empty();
 			}
-			StmtIndex lhsStmtIndex, rhsStmtIndex;
-			if (lhsRef.first == PqlReferenceType::integer) { // e.g. Parent(6, _)
-				for (StmtIndex stmt : stmts) {
-					if (stmt.getIndex() == stoi(lhsRef.second)) {
-						lhsStmtIndex = stmt;
-						return EvaluatedTable(Parent::getSuccessorStmts(lhsStmtIndex).empty()); // False == Parent exists
-					}
-				}
-			}
-			else { // e.g. Parent(_, 7)
-				for (StmtIndex stmt : stmts) {
-					if (stmt.getIndex() == stoi(rhsRef.second)) {
-						rhsStmtIndex = stmt;
-						return EvaluatedTable(Parent::getSuccessorStmts(rhsStmtIndex).empty());
-					}
-				}
-			}
+			//StmtIndex lhsStmtIndex, rhsStmtIndex;
+			//if (lhsRef.first == PqlReferenceType::integer) { // e.g. Parent(6, _)
+			//	for (StmtIndex stmt : stmts) {
+			//		if (stmt.getIndex() == stoi(lhsRef.second)) {
+			//			lhsStmtIndex = stmt;
+			//			return EvaluatedTable(Parent::getSuccessorStmts(lhsStmtIndex).empty()); // False == Parent exists
+			//		}
+			//	}
+			//}
+			//else { // e.g. Parent(_, 7)
+			//	for (StmtIndex stmt : stmts) {
+			//		if (stmt.getIndex() == stoi(rhsRef.second)) {
+			//			rhsStmtIndex = stmt;
+			//			return EvaluatedTable(Parent::getSuccessorStmts(rhsStmtIndex).empty());
+			//		}
+			//	}
+			//}
 			return EvaluatedTable(isEmptyTable);
 		}
 	}
