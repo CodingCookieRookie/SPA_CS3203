@@ -19,8 +19,11 @@ public:
     /* E.g. of an EvalauatedTable:
     * {"s", "v"} = {{"1", "a"}, {"2", "b"}}
     * 
-    * EvalautedTable.entities == {"s", "v"} 
-    * EvalautedTable.*table == {
+    * EvalautedTable.entities == {
+        {"s", Stmt},
+        {"v", Variable} 
+      }
+    * EvalautedTable.table == {
         {"s", {"1", "2"}},
     *	{"v", {"a", "b"}}
     * }
@@ -30,27 +33,10 @@ public:
     /* Default constructor */
     EvaluatedTable();
 
-    /* Wrapper constructor */
-    //EvaluatedTable(EvaluatedTable anotherEvTable);
-
-    /** Wrapper constructor that constructs based on *table only 
-    * 
-    * e.g.
-    * Given this from the PKB:
-    * {"s", "v"} = {{"1", "a"}, {"2", "b"}}
-    * 
-    * We construct this:
-    * EvaluatedTable(new std::unordered_map<PqlEntityType, std::vector<VALUE>>({
-    *	{"s", {"1", "2"}},
-    *	{"v", {"a", "b"}}
-    * }))
-    */
-    EvaluatedTable(std::unordered_map<std::string, std::vector<int>> newTable) {
-        table = newTable;
-    }
+    EvaluatedTable(std::unordered_map<std::string, std::vector<int>> table);
 
     /* Wrapper constructor for all 3 fields */
-    EvaluatedTable::EvaluatedTable(std::unordered_map<std::string, PqlEntityType> newEntities,
+    EvaluatedTable(std::unordered_map<std::string, PqlEntityType> newEntities,
         std::unordered_map<std::string, std::vector<int>> newTable, int newNumRow);
 
     /* Getter for entities */
@@ -67,10 +53,11 @@ public:
         return numRows;
     }
 
-    /* Getter for *table */
+    /* Getter for table */
     std::unordered_map<std::string, std::vector<int>> getTableRef() {
         return table;
     }
+
 
     std::string getTableString() {
         std::string res = "Table String: size: " + std::to_string(table.size()) + "\n";
