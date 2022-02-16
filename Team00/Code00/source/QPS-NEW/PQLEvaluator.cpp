@@ -41,7 +41,10 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
 
     // TODO:
     // 3. Get all pattern results from pattern-clause
-
+    for (size_t i = 0; i < patterns.size(); i++) {
+        ParsedPattern parsedPattern = patterns.at(i);
+        instructions.push_back(new PatternInstruction(parsedPattern.getSynonym(), parsedPattern.getEntRef(), parsedPattern.getExpression()));
+    }
     // TODO: Optimisation: Sort instructions.
     return instructions;
 }
