@@ -17,10 +17,92 @@ public:
 	virtual EvaluatedTable execute() = 0;
 };
 
-class GetAllInstruction : public Instruction{
+class GetAllInstruction : public Instruction {
 private:
 	PqlEntityType pqlEntityType;
 	std::string synonym;
+
+	/* All handlers to set EvaluatedTable to results from PKB. Uses Pass by Reference on EvTable. */
+	EvaluatedTable handleGetAllStmt(std::string synonym) {
+		std::vector<StmtIndex> results = Entity::getAllStmts();
+
+		std::vector<int> resultsToInt;
+		for (StmtIndex result : results) {
+			resultsToInt.emplace_back(result.getIndex());
+		}
+
+		std::unordered_map<std::string, PqlEntityType> PQLentities;
+		PQLentities.insert(std::pair(synonym, PqlEntityType::Stmt));
+
+		std::unordered_map<std::string, std::vector<int>> PQLmap;
+		PQLmap[synonym] = resultsToInt;
+
+		return EvaluatedTable(PQLentities, PQLmap, results.size());
+	}
+
+	EvaluatedTable handleGetAllStmtByType(std::string synonym, StatementType stmtType) {
+		// TODO: PKB to change return type of getStmtIdxFromType()
+		std::vector<StmtIndex> results = Entity::getStmtIdxFromType(stmtType);
+
+		std::vector<int> resultsToInt;
+		for (StmtIndex result : results) {
+			resultsToInt.emplace_back(result.getIndex());
+		}
+
+		std::unordered_map<std::string, PqlEntityType> PQLentities;
+		PQLentities.insert(std::pair(synonym, PqlEntityType::Stmt));
+
+		std::unordered_map<std::string, std::vector<int>> PQLmap;
+		PQLmap[synonym] = resultsToInt;
+
+		return EvaluatedTable(PQLentities, PQLmap, results.size());
+	}
+
+	EvaluatedTable handleGetAllVar(std::string synonym) {
+		// TODO: PKB to change getAllVars() to return VarIndex.
+		std::vector<VarIndex> results = Entity::getAllVars();
+		std::vector<int> resultsToInt;
+		for (VarIndex result : results) {
+			resultsToInt.emplace_back(result.getIndex());
+		}
+
+		std::unordered_map<std::string, PqlEntityType> PQLentities;
+		PQLentities.insert(std::pair(synonym, PqlEntityType::Variable));
+
+		std::unordered_map<std::string, std::vector<int>> PQLmap;
+		PQLmap[synonym] = resultsToInt;
+
+		return EvaluatedTable(PQLentities, PQLmap, results.size());
+	}
+
+	EvaluatedTable handleGetAllProc(std::string synonym) {
+		// TODO: PKB to change getAllProcs() to return ProcIndex.
+		std::vector<ProcIndex> results = Entity::getAllProcs();
+		std::vector<int> resultsToInt;
+		for (ProcIndex result : results) {
+			resultsToInt.emplace_back(result.getIndex());
+		}
+
+		std::unordered_map<std::string, PqlEntityType> PQLentities;
+		PQLentities.insert(std::pair(synonym, PqlEntityType::Procedure));
+
+		std::unordered_map<std::string, std::vector<int>> PQLmap;
+		PQLmap[synonym] = resultsToInt;
+
+		return EvaluatedTable(PQLentities, PQLmap, results.size());
+	}
+
+	EvaluatedTable handleGetAllConst(std::string synonym) {
+		std::vector<int> results = Entity::getAllConsts();
+
+		std::unordered_map<std::string, PqlEntityType> PQLentities;
+		PQLentities.insert(std::pair(synonym, PqlEntityType::Constant));
+
+		std::unordered_map<std::string, std::vector<int>> PQLmap;
+		PQLmap[synonym] = results;
+
+		return EvaluatedTable(PQLentities, PQLmap, results.size());
+	}
 
 public:
 	/* Constructor for a GetAllInstruction object */
@@ -41,115 +123,40 @@ public:
 		EvaluatedTable evTable;
 		switch (pqlEntityType) {
 		case PqlEntityType::Stmt:
-			evTable = handleGetAllStmt(evTable, synonym);
+			evTable = handleGetAllStmt(synonym);
+			break;
+		case PqlEntityType::Read:
+			evTable = handleGetAllStmtByType(synonym, StatementType::readType);
 			break;
 		case PqlEntityType::Print:
-			//evTable = handleGetAllPrint(evTable, synonym);
+			evTable = handleGetAllStmtByType(synonym, StatementType::printType);
 			break;
 		case PqlEntityType::Call:
-			// TODO: PKB to add getAllCalls().
+			evTable = handleGetAllStmtByType(synonym, StatementType::callType);
 			break;
 		case PqlEntityType::While:
-			// TODO: PKB to add.
+			evTable = handleGetAllStmtByType(synonym, StatementType::whileType);
 			break;
 		case PqlEntityType::If:
-			// TODO: PKB to add.
+			evTable = handleGetAllStmtByType(synonym, StatementType::ifType);
 			break;
 		case PqlEntityType::Assign:
-			// TODO: PKB to add.
+			evTable = handleGetAllStmtByType(synonym, StatementType::assignType);
 			break;
 		case PqlEntityType::Variable:
-			//evTable = handleGetAllVar(evTable, synonym);
+			evTable = handleGetAllVar(synonym);
 			break;
 		case PqlEntityType::Constant:
-			evTable = handleGetAllConst(evTable, synonym);
+			evTable = handleGetAllProc(synonym);
 			break;
 		case PqlEntityType::Procedure:
-			//evTable = handleGetAllProc(evTable, synonym);
+			evTable = handleGetAllProc(synonym);
 			break;
 		}
 		return evTable;
 	}
-
-	/* All handlers to set EvaluatedTable to results from PKB. Uses Pass by Reference on EvTable. */
-	EvaluatedTable handleGetAllStmt(EvaluatedTable& evTable, std::string synonym) {
-		std::vector<StmtIndex> results = Entity::getAllStmts();
-		std::vector<int> resultsToInt;
-		for (StmtIndex result : results) {
-			resultsToInt.emplace_back(result.getIndex());
-		}
-
-		std::unordered_map<std::string, PqlEntityType> PQLentities;
-		PQLentities.insert(std::pair(synonym, PqlEntityType::Stmt));
-
-		std::unordered_map<std::string, std::vector<int>> PQLmap;
-		PQLmap[synonym] = resultsToInt;
-
-		return EvaluatedTable(PQLentities, PQLmap, results.size());
-	}
-
-	//EvaluatedTable handleGetAllPrint(EvaluatedTable& evTable, std::string synonym) {
-		// TODO: PKB to add getAllPrints().
-		/*std::vector<int> results = Entity::getAllPrints();
-
-		std::unordered_map<std::string, PqlEntityType> PQLentities;
-		PQLentities.insert(std::pair(synonym, PqlEntityType::Print));
-
-		std::unordered_map<std::string, std::vector<int>> PQLmap;
-		PQLmap[synonym] = resultsToInt;
-
-		evTable.setEntities(PQLentities);
-		evTable.setTable(PQLmap);
-		evTable.setNumRow(results.size());*/
-	//}
-	//EvaluatedTable handleGetAllVar(EvaluatedTable& evTable, std::string synonym) {
-		// TODO: PKB to change getAllVars() to return VarIndex.
-		/*std::vector<VarIndex> results = Entity::getAllVars();
-		std::vector<int> resultsToInt;
-		for (VarIndex result : results) {
-			resultsToInt.emplace_back(result.getIndex());
-		}
-
-		std::unordered_map<std::string, PqlEntityType> PQLentities;
-		PQLentities.insert(std::pair(synonym, PqlEntityType::Variable));
-
-		std::unordered_map<std::string, std::vector<int>> PQLmap;
-		PQLmap[synonym] = resultsToInt;
-
-		evTable.setEntities(PQLentities);
-		evTable.setTable(PQLmap);
-		evTable.setNumRow(results.size());*/
-	//}
-	//EvaluatedTable handleGetAllProc(EvaluatedTable& evTable, std::string synonym) {
-		// TODO: PKB to change getAllProcs() to return ProcIndex.
-		/*std::vector<VarIndex> results = Entity::getAllVars();
-		std::vector<int> resultsToInt;
-		for (VarIndex result : results) {
-			resultsToInt.emplace_back(result.getIndex());
-		}
-
-		std::unordered_map<std::string, PqlEntityType> PQLentities;
-		PQLentities.insert(std::pair(synonym, PqlEntityType::Procedure));
-
-		std::unordered_map<std::string, std::vector<int>> PQLmap;
-		PQLmap[synonym] = resultsToInt;
-
-		evTable.setEntities(PQLentities);
-		evTable.setTable(PQLmap);
-		evTable.setNumRow(results.size());*/
-	//}
-	EvaluatedTable handleGetAllConst(EvaluatedTable& evTable, std::string synonym) {
-		std::vector<int> results = Entity::getAllConsts();
-		
-		std::unordered_map<std::string, PqlEntityType> PQLentities;
-		PQLentities.insert(std::pair(synonym, PqlEntityType::Constant));
-
-		std::unordered_map<std::string, std::vector<int>> PQLmap;
-		PQLmap[synonym] = results;
-
-		return EvaluatedTable(PQLentities, PQLmap, results.size());
-	}
 };
+
 
 class RelationshipInstruction : public Instruction {
 	//enum class PqlReferenceType {
@@ -393,6 +400,7 @@ public:
 	//};
 
 };
+
 
 class PatternInstruction : public Instruction {
 private:
