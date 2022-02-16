@@ -10,6 +10,7 @@
 #include "../PKB/Modifies.h"
 #include "../PKB/Uses.h"
 #include "../PKB/Follows.h"
+#include "../PKB/Pattern.h"
 
 class Instruction {
 //protected:	//-> Use protected if need any shared fields
@@ -390,14 +391,8 @@ public:
 			evTable = handleFollows();
 			break;
 		}
-
-
 		return evTable;
 	}
-
-	//RelationshipInstructionType getType() {
-	//	return type;
-	//};
 
 };
 
@@ -409,41 +404,39 @@ private:
     PqlExpression expressionSpec;
 
 public:
-
 	PatternInstruction::PatternInstruction(std::string synonym, PqlReference entRef, PqlExpression expressionSpec) : synonym(synonym), entRef(entRef), expressionSpec(expressionSpec) {}
 
-	EvaluatedTable execute(Instruction* relationshipInstruction) {
-		EvaluatedTable evTable;
+	EvaluatedTable handlePatterns() {
+		// Patterns (v, "")
+		std::unordered_map<std::string, PqlEntityType> PQLentities;
+		std::unordered_map<std::string, std::vector<int>> PQLmap;
+		PQLentities.insert(std::pair(synonym, PqlEntityType::Assign));
+		PQLentities.insert(std::pair(entRef.second, PqlEntityType::Variable));
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo;
+		if (expressionSpec.first == PqlExpressionType::full) {
+			// getStmtsFromPattern(string expression, bool isSubExpression)
+			allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, false);
+		}
+		else if (expressionSpec.first == PqlExpressionType::partial) {
+			allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, true);
+		}
+		else if (expressionSpec.first == PqlExpressionType::wildcard) {
+			allPatternStmtInfo = Pattern::getAllAssignStmtVarsPatternInfo();
+		}
+		else {
+			std::cout << "Invalid expression type";
+		}
+		for (size_t i = 0; i < (std::get<0>(allPatternStmtInfo).size()); i++) {
+			int lhs = std::get<0>(allPatternStmtInfo)[i];
+			int rhs = std::get<1>(allPatternStmtInfo)[i];
+			PQLmap[synonym].push_back(lhs);
+			PQLmap[entRef.second].push_back(rhs);
+		}
+		return EvaluatedTable(PQLentities, PQLmap);
+	}
+
+	EvaluatedTable execute() override {
+		EvaluatedTable evTable = handlePatterns();
 		return evTable;
 	}
 };
-// For reference <To be removed after PatternInstruction done>
-//class ParsedRelationship {
-//private:
-//    PqlRelationshipType relationshipType;
-//    PqlReference lhsRef;
-//    PqlReference rhsRef;
-//public:
-//    ParsedRelationship(PqlRelationshipType relationshipType,
-//        PqlReference lhsRef, PqlReference rhsRef);
-//    ParsedRelationship();
-//    PqlRelationshipType getRelationshipType();
-//    PqlReference getLhs() const;
-//    PqlReference getRhs() const;
-//};
-//
-//class ParsedPattern {
-//private:
-//    std::string synonym;
-//    PqlReference entRef;
-//    PqlExpression expressionSpec;
-//public:
-//    ParsedPattern(std::string& synonym,
-//        PqlReference entRef, PqlExpression expressionSpec);
-//    ParsedPattern();
-//    std::string getSynonym() const;
-//    PqlReference getEntRef() const;
-//    PqlExpression getExpression() const;
-//};
-
-
