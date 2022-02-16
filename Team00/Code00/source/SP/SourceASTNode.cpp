@@ -190,6 +190,10 @@ std::vector<StmtLstNode*> WhileNode::getChildStmtLst() {
 	return { stmtLst };
 }
 
+std::vector<StmtLstNode*> WhileNode::getChildStmtLst() {
+	return { stmtLst };
+}
+
 /* StmtLstNode */
 StmtLstNode::StmtLstNode() : SourceASTNode() {}
 
