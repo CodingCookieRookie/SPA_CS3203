@@ -54,22 +54,6 @@ public:
         return table;
     }
 
-    /* Setter for entities */
-    void setEntities(std::unordered_map<std::string, PqlEntityType> newEntities) {
-        entities = newEntities;
-    }
-
-    /* Setter for numRow */
-    void setNumRow(int newNumRow) {
-        numRow = newNumRow;
-    }
-
-    /* Setter for table */
-    void setTable(std::unordered_map<std::string, std::vector<int>> newTable) {
-        table = newTable;
-    }
-
-
 
     std::string getTableString() {
         std::string res = "Table String: size: " + std::to_string(table.size()) + "\n";
