@@ -389,13 +389,13 @@ public:
 	//	Uses, Modifies
 	//};
 	RelationshipInstruction(PqlRelationshipType pqlRSType, PqlReference lhs, PqlReference rhs) :
-		pqlRelationshipType(pqlRSType),lhsRef(lhs), rhsRef(rhs) {}
+		pqlRelationshipType(pqlRSType), lhsRef(lhs), rhsRef(rhs) {}
 
 
 	EvaluatedTable execute() override {
 		EvaluatedTable evTable;
 		switch (pqlRelationshipType) {
-		case PqlRelationshipType::ModifiesS :
+		case PqlRelationshipType::ModifiesS:
 			evTable = handleModifiesS();
 			break;
 		case PqlRelationshipType::ModifiesP:
@@ -420,27 +420,46 @@ public:
 class PatternInstruction : public Instruction {
 private:
 	std::string synonym;
-    PqlReference entRef;
-    PqlExpression expressionSpec;
+	PqlReference entRef;
+	PqlExpression expressionSpec;
+
+	bool isNumber(const std::string& s)
+	{
+		for (char const& ch : s) {
+			if (std::isdigit(ch) == 0)
+				return false;
+		}
+		return true;
+	}
+
+	bool containsWildCard(const std::string s)
+	{
+		return s.find("*") != std::string::npos;
+	}
 
 public:
 	PatternInstruction::PatternInstruction(std::string synonym, PqlReference entRef, PqlExpression expressionSpec) : synonym(synonym), entRef(entRef), expressionSpec(expressionSpec) {}
 
 	EvaluatedTable handlePatterns() {
-		// Patterns a(v, "")
-		// Patterns *(v, "")
-		// Patterns a1(*, "")
-		
+		// Pattern a(v, "_x_") or Pattern a(v, "_123_") or Pattern a("x", "_x_")
+		// Pattern a(v, *) or Pattern a("x", *)
+		// Pattern a(*, "_x_") 
+		// Pattern a(*, *)		
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(synonym, PqlEntityType::Assign));
-		PQLentities.insert(std::pair(entRef.second, PqlEntityType::Variable));
+		if (isNumber(entRef.second)) {
+			PQLentities.insert(std::pair(entRef.second, PqlEntityType::Constant));
+		}
+		else {
+			PQLentities.insert(std::pair(entRef.second, PqlEntityType::Variable));
+		}
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo;
 		if (expressionSpec.first == PqlExpressionType::full) {
-			// getStmtsFromPattern(string expression, bool isSubExpression)
 			allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, false);
 		}
 		else if (expressionSpec.first == PqlExpressionType::partial) {
+			// currently only has this for iteration 1
 			allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, true);
 		}
 		else if (expressionSpec.first == PqlExpressionType::wildcard) {
@@ -449,7 +468,25 @@ public:
 		else {
 			std::cout << "Invalid expression type";
 		}
-		// Patterns("x", "x")
+
+		if ((entRef.first == PqlReferenceType::ident || entRef.first == PqlReferenceType::synonym) && !containsWildCard(expressionSpec.second)) {
+			VarIndex varIndex = Entity::getVarIdx(entRef.second);
+			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
+			std::vector<int> varIndices;
+			std::fill(varIndices.begin(), varIndices.end(), varIndex.getIndex());
+			PQLmap[synonym] = allStmts;
+			PQLmap[entRef.second] = varIndices;
+		} else if ((entRef.first == PqlReferenceType::ident || entRef.first == PqlReferenceType::synonym)
+			&& containsWildCard(expressionSpec.second)) {
+			VarIndex varIndex = Entity::getVarIdx(entRef.second);
+			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex);
+			std::vector<int> varIndices;
+			std::fill(varIndices.begin(), varIndices.end(), varIndex.getIndex());
+			PQLmap[synonym] = allStmts;
+			PQLmap[entRef.second] = varIndices;
+		}
+
+		
 
 		for (size_t i = 0; i < (std::get<0>(allPatternStmtInfo).size()); i++) {
 			int lhs = std::get<0>(allPatternStmtInfo)[i];
