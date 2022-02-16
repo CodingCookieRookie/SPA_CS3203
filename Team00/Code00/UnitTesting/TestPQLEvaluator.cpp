@@ -63,7 +63,7 @@ namespace UnitTesting
             PQLEvaluator pqlEvaluator(pq1);
             EvaluatedTable evTable = pqlEvaluator.evaluate();
 
-            Assert::AreEqual(0, evTable.getNumRow());
+            Assert::AreEqual(size_t(0), evTable.getNumRow());
             Assert::AreEqual(true, evTable.getEvResult());
         }
     };
