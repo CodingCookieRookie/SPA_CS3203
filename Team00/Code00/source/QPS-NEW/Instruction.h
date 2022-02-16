@@ -207,8 +207,8 @@ private:
 					rhsStmtIndex = stmt;
 				}
 			}
-			bool isEmptyTable = Follows::containsSuccessor(lhsStmtIndex, rhsStmtIndex);
-			return EvaluatedTable(isEmptyTable); //e.g isEmpty == True, if 6 is followed by 7
+			bool evResult = Follows::containsSuccessor(lhsStmtIndex, rhsStmtIndex);
+			return EvaluatedTable(evResult); //e.g evResult == true, if 6 is followed by 7
 			
 		}
 		// e.g Follows(6, s2)
