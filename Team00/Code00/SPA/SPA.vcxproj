@@ -21,6 +21,7 @@
     <ClCompile Include="..\source\PKB\Parent.cpp" />
     <ClCompile Include="..\source\PKB\ParentT.cpp" />
     <ClCompile Include="..\source\PKB\Pattern.cpp" />
+    <ClCompile Include="..\source\PKB\PKB.cpp" />
     <ClCompile Include="..\source\PKB\RS1.cpp" />
     <ClCompile Include="..\source\PKB\RS2.cpp" />
     <ClCompile Include="..\source\PKB\Uses.cpp" />
@@ -53,6 +54,7 @@
     <ClInclude Include="..\source\PKB\Parent.h" />
     <ClInclude Include="..\source\PKB\ParentT.h" />
     <ClInclude Include="..\source\PKB\Pattern.h" />
+    <ClInclude Include="..\source\PKB\PKB.h" />
     <ClInclude Include="..\source\PKB\RS1.h" />
     <ClInclude Include="..\source\PKB\RS2.h" />
     <ClInclude Include="..\source\PKB\RS2T.h" />
