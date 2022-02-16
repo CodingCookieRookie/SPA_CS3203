@@ -10,21 +10,6 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace UnitTesting {
     TEST_CLASS(TestEvaluatedTable) {
 public:
-    TEST_METHOD(innerJoinMerge_emptyLHS_RHSCopiedOver) {
-        EvaluatedTable leftEvTable;
-
-        std::unordered_map<std::string, PqlEntityType> rightEntities = { {"s", PqlEntityType::Stmt} };
-        std::unordered_map<std::string, std::vector<int>> rightTable = {
-            {"s", { 1, 3, 6, 7, 10 } } };
-        int rightNumRow = 5;
-        EvaluatedTable rightEvTable(rightEntities, rightTable, rightNumRow);
-
-        EvaluatedTable mergedTable = leftEvTable.innerJoinMerge(rightEvTable);
-        Assert::AreEqual(size_t(1), mergedTable.getEntities().size());
-        Assert::AreEqual(std::string("s"), (mergedTable.getEntities().begin())->first);
-        Assert::AreEqual(size_t(5), mergedTable.getNumRow());
-    }
-
     TEST_METHOD(innerJoinMerge_noCommonColumns_crossProduct) {
         std::unordered_map<std::string, PqlEntityType> leftEntities = {
             {"s1", PqlEntityType::Stmt},
@@ -34,8 +19,7 @@ public:
             {"s1", { 1, 3 } },
             {"v1", { 2, 4 } },
         };
-        int leftNumRow = 2;
-        EvaluatedTable leftEvTable(leftEntities, leftTable, leftNumRow);
+        EvaluatedTable leftEvTable(leftEntities, leftTable);
 
         std::unordered_map<std::string, PqlEntityType> rightEntities = {
             {"s2", PqlEntityType::Stmt},
@@ -45,8 +29,7 @@ public:
             {"s2", { 5, 7, 9} },
             {"v2", { 6, 8, 10} },
         };
-        int rightNumRow = 3;
-        EvaluatedTable rightEvTable(rightEntities, rightTable, rightNumRow);
+        EvaluatedTable rightEvTable(rightEntities, rightTable);
 
         EvaluatedTable mergedTable = leftEvTable.innerJoinMerge(rightEvTable);
         Assert::AreEqual(size_t(4), mergedTable.getEntities().size());
@@ -67,8 +50,7 @@ public:
             {"s", { 1, 3, 4} },
             {"v1", { 2, 4, 4} },
         };
-        int leftNumRow = 3;
-        EvaluatedTable leftEvTable(leftEntities, leftTable, leftNumRow);
+        EvaluatedTable leftEvTable(leftEntities, leftTable);
 
         std::unordered_map<std::string, PqlEntityType> rightEntities = {
             {"s", PqlEntityType::Stmt},
@@ -78,8 +60,7 @@ public:
             {"s", { 1, 3, 5} },
             {"v2", { 6, 8, 10} },
         };
-        int rightNumRow = 3;
-        EvaluatedTable rightEvTable(rightEntities, rightTable, rightNumRow);
+        EvaluatedTable rightEvTable(rightEntities, rightTable);
 
         EvaluatedTable mergedTable = leftEvTable.innerJoinMerge(rightEvTable);
         Assert::AreEqual(size_t(3), mergedTable.getEntities().size());
@@ -101,8 +82,7 @@ public:
             {"s", { 1, 3, 5} },
             {"v2", { 6, 8, 10} },
         };
-        int rightNumRow = 3;
-        EvaluatedTable rightEvTable(rightEntities, rightTable, rightNumRow);
+        EvaluatedTable rightEvTable(rightEntities, rightTable);
 
         EvaluatedTable mergedTable = leftEvTable.innerJoinMerge(rightEvTable);
         Assert::AreEqual(size_t(0), mergedTable.getEntities().size());
@@ -118,8 +98,7 @@ public:
             {"s", { 1, 3, 4} },
             {"v1", { 2, 4, 4} },
         };
-        int leftNumRow = 3;
-        EvaluatedTable leftEvTable(leftEntities, leftTable, leftNumRow);
+        EvaluatedTable leftEvTable(leftEntities, leftTable);
 
         EvaluatedTable rightEvTable(false);
 
@@ -139,8 +118,7 @@ public:
             {"s", { 1, 3, 5} },
             {"v2", { 6, 8, 10} },
         };
-        int rightNumRow = 3;
-        EvaluatedTable rightEvTable(rightEntities, rightTable, rightNumRow);
+        EvaluatedTable rightEvTable(rightEntities, rightTable);
 
         EvaluatedTable mergedTable = leftEvTable.innerJoinMerge(rightEvTable);
         Assert::AreEqual(size_t(3), mergedTable.getNumRow());
@@ -156,8 +134,7 @@ public:
             {"s", { 1, 3, 4} },
             {"v1", { 2, 4, 4} },
         };
-        int leftNumRow = 3;
-        EvaluatedTable leftEvTable(leftEntities, leftTable, leftNumRow);
+        EvaluatedTable leftEvTable(leftEntities, leftTable);
 
         EvaluatedTable rightEvTable(true);
 

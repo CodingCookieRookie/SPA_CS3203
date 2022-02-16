@@ -37,7 +37,7 @@ private:
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLmap[synonym] = resultsToInt;
 
-		return EvaluatedTable(PQLentities, PQLmap, resultsToInt.size());
+		return EvaluatedTable(PQLentities, PQLmap);
 	}
 
 	EvaluatedTable handleGetAllStmtByType(std::string synonym, StatementType stmtType) {
@@ -54,7 +54,7 @@ private:
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLmap[synonym] = resultsToInt;
 
-		return EvaluatedTable(PQLentities, PQLmap, resultsToInt.size());
+		return EvaluatedTable(PQLentities, PQLmap);
 	}
 
 	EvaluatedTable handleGetAllVar(std::string synonym) {
@@ -71,7 +71,7 @@ private:
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLmap[synonym] = resultsToInt;
 
-		return EvaluatedTable(PQLentities, PQLmap, resultsToInt.size());
+		return EvaluatedTable(PQLentities, PQLmap);
 	}
 
 	EvaluatedTable handleGetAllProc(std::string synonym) {
@@ -88,7 +88,7 @@ private:
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLmap[synonym] = resultsToInt;
 
-		return EvaluatedTable(PQLentities, PQLmap, resultsToInt.size());
+		return EvaluatedTable(PQLentities, PQLmap);
 	}
 
 	EvaluatedTable handleGetAllConst(std::string synonym) {
@@ -100,7 +100,7 @@ private:
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLmap[synonym] = results;
 
-		return EvaluatedTable(PQLentities, PQLmap, results.size());
+		return EvaluatedTable(PQLentities, PQLmap);
 	}
 
 public:
@@ -228,7 +228,7 @@ private:
 			std::unordered_map<std::string, std::vector<int>> PQLmap;
 			PQLmap[rhsRef.second] = results;
 
-			return EvaluatedTable(PQLentities, PQLmap, results.size());
+			return EvaluatedTable(PQLentities, PQLmap);
 			
 		} 
 		// e.g. Follows(s1, 7)
@@ -248,7 +248,7 @@ private:
 			std::unordered_map<std::string, std::vector<int>> PQLmap;
 			PQLmap[lhsRef.second] = results;
 
-			return EvaluatedTable(PQLentities, PQLmap, results.size());
+			return EvaluatedTable(PQLentities, PQLmap);
 		}
 		// Follows(s1, s2), Follows(s1, _), Follows(_, s2)
 		else if (lhsRef.first != PqlReferenceType::wildcard && rhsRef.first != PqlReferenceType::wildcard) {
@@ -266,7 +266,7 @@ private:
 				PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Stmt));
 				PQLmap[rhsRef.second] = std::get<1>(results); // if LHS is wildcard, RHS may have duplicate values
 			}
-			return EvaluatedTable(PQLentities, PQLmap, std::get<0>(results).size());
+			return EvaluatedTable(PQLentities, PQLmap);
 		}
 		// Follows(_, _), or Follows(6, _), or Follows(_, 7)
 		else {

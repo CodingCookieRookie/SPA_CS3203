@@ -20,8 +20,8 @@ EvaluatedTable EvaluatedTable::blockNestedJoin(EvaluatedTable& otherTable,
         }
     }
 
-    for (int i = 0; i < numRow; i++) {
-        for (int j = 0; j < otherTable.numRow; j++) {
+    for (size_t i = 0; i < getNumRow(); i++) {
+        for (size_t j = 0; j < otherTable.getNumRow(); j++) {
             /* Join two rows iff all their common columns have the same values */
             bool joinCondition = true;
             for (const std::string& entityName : commonEntities) {
@@ -36,7 +36,6 @@ EvaluatedTable EvaluatedTable::blockNestedJoin(EvaluatedTable& otherTable,
                 continue;
             }
 
-            nextNumRow++;
             /* Add all values from the left side table to the result table */
             for (const std::pair<std::string, PqlEntityType>& taggedEntity : entities) {
                 std::string entityName = taggedEntity.first;
@@ -52,7 +51,7 @@ EvaluatedTable EvaluatedTable::blockNestedJoin(EvaluatedTable& otherTable,
             }
         }
     }
-    return EvaluatedTable(nextEntities, nextTable, nextNumRow);
+    return EvaluatedTable(nextEntities, nextTable);
 }
 
 /* Joins the current table with otherTable, returning a new EvaluatedTable object */
@@ -63,12 +62,11 @@ EvaluatedTable EvaluatedTable::innerJoinMerge(EvaluatedTable& otherTable) {
     }
     /* If this table is "true", return the other table */
     if (entities.size() == 0) {
-        return EvaluatedTable(
-            otherTable.entities, otherTable.table, otherTable.numRow);
+        return EvaluatedTable(otherTable.entities, otherTable.table);
     }
     /* Likewise, if otherTable is "true", return this table */
     if (otherTable.entities.size() == 0) {
-        return EvaluatedTable(entities, table, numRow);
+        return EvaluatedTable(entities, table);
     }
     std::unordered_set<std::string> commonEntities;
     for (const std::pair<std::string, PqlEntityType>& taggedEntity : entities) {
@@ -85,17 +83,14 @@ EvaluatedTable::EvaluatedTable() : EvaluatedTable(true) { }
 
 EvaluatedTable::EvaluatedTable(
     std::unordered_map<std::string, PqlEntityType> newEntities,
-    std::unordered_map<std::string, std::vector<int>> newTable,
-    size_t numRow) :
+    std::unordered_map<std::string, std::vector<int>> newTable) :
     table(newTable),
     entities(newEntities),
-    evResult(true),
-    numRow(numRow)
+    evResult(true)
 {}
 
 EvaluatedTable::EvaluatedTable(bool evResult) :
     table(),
     entities(),
-    evResult(evResult),
-    numRow(0)
+    evResult(evResult)
 {}
