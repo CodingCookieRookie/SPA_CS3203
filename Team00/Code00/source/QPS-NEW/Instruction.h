@@ -359,23 +359,6 @@ private:
 			if (lhsRef.first == PqlReferenceType::wildcard && rhsRef.first == PqlReferenceType::wildcard) { // Follows(_, _)
 				isEmptyTable = std::get<0>(Follows::getAllPredecessorSuccessorInfo()).empty();
 			}
-			//StmtIndex lhsStmtIndex, rhsStmtIndex;
-			//if (lhsRef.first == PqlReferenceType::integer) { // e.g. Follows(6, _)
-			//	for (StmtIndex stmt : stmts) {
-			//		if (stmt.getIndex() == stoi(lhsRef.second)) {
-			//			lhsStmtIndex = stmt;
-			//			return EvaluatedTable(Follows::getSuccessorStmts(lhsStmtIndex).empty()); // False == Follows exists
-			//		}
-			//	}
-			//}
-			//else { // e.g. Follows(_, 7)
-			//	for (StmtIndex stmt : stmts) {
-			//		if (stmt.getIndex() == stoi(rhsRef.second)) {
-			//			rhsStmtIndex = stmt;
-			//			return EvaluatedTable(Follows::getSuccessorStmts(rhsStmtIndex).empty());
-			//		}
-			//	}
-			//}
 			return EvaluatedTable(isEmptyTable);
 		}
 	}
@@ -464,23 +447,6 @@ private:
 			if (lhsRef.first == PqlReferenceType::wildcard && rhsRef.first == PqlReferenceType::wildcard) { // Parent(_, _)
 				isEmptyTable = std::get<0>(Parent::getAllPredecessorSuccessorInfo()).empty();
 			}
-			//StmtIndex lhsStmtIndex, rhsStmtIndex;
-			//if (lhsRef.first == PqlReferenceType::integer) { // e.g. Parent(6, _)
-			//	for (StmtIndex stmt : stmts) {
-			//		if (stmt.getIndex() == stoi(lhsRef.second)) {
-			//			lhsStmtIndex = stmt;
-			//			return EvaluatedTable(Parent::getSuccessorStmts(lhsStmtIndex).empty()); // False == Parent exists
-			//		}
-			//	}
-			//}
-			//else { // e.g. Parent(_, 7)
-			//	for (StmtIndex stmt : stmts) {
-			//		if (stmt.getIndex() == stoi(rhsRef.second)) {
-			//			rhsStmtIndex = stmt;
-			//			return EvaluatedTable(Parent::getSuccessorStmts(rhsStmtIndex).empty());
-			//		}
-			//	}
-			//}
 			return EvaluatedTable(isEmptyTable);
 		}
 	}
