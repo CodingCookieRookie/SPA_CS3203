@@ -114,7 +114,6 @@ public:
 		Assert::AreEqual(size_t(1), std::get<0>(Uses::getAllStmtVarInfo()).size());
 
 		Assert::AreEqual(size_t(1), std::get<0>(Follows::getAllPredecessorSuccessorInfo()).size());
-		/* TODO: test transitive closures after they are implemented */
 		Assert::AreEqual(size_t(1), std::get<0>(FollowsT::getAllPredecessorSuccessorInfo()).size());
 	}
 
