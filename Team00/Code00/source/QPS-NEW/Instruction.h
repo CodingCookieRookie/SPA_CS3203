@@ -171,7 +171,6 @@ private:
 
 	EvaluatedTable handleModifiesS() {
 		// Modifies (a/r/s/a1, v) or Modifies (a/r/s/a1, _ )
-		// Modifies (p/p1, v)	or Modifies (p/p1, _ )	proc
 		// Modifies (1, v)	=> true or Modifies (1, _ ) (under statement)
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
@@ -201,9 +200,7 @@ private:
 	}
 
 	EvaluatedTable handleModifiesP() {
-		// Modifies (a/r/s/a1, v) or Modifies (a/r/s/a1, _ )
 		// Modifies (p/p1, v)	or Modifies (p/p1, _ )	proc
-		// Modifies (1, v)	=> true or Modifies (1, _ ) (under statement)
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Procedure));
@@ -430,7 +427,10 @@ public:
 	PatternInstruction::PatternInstruction(std::string synonym, PqlReference entRef, PqlExpression expressionSpec) : synonym(synonym), entRef(entRef), expressionSpec(expressionSpec) {}
 
 	EvaluatedTable handlePatterns() {
-		// Patterns (v, "")
+		// Patterns a(v, "")
+		// Patterns *(v, "")
+		// Patterns a1(*, "")
+		
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(synonym, PqlEntityType::Assign));
@@ -449,6 +449,8 @@ public:
 		else {
 			std::cout << "Invalid expression type";
 		}
+		// Patterns("x", "x")
+
 		for (size_t i = 0; i < (std::get<0>(allPatternStmtInfo).size()); i++) {
 			int lhs = std::get<0>(allPatternStmtInfo)[i];
 			int rhs = std::get<1>(allPatternStmtInfo)[i];
