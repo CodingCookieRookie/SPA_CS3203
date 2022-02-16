@@ -6,9 +6,12 @@
 #include "PKB.h"
 
 void PKB::populateRS1ContainerInfo() {
-	auto containerStmts = Entity::getStmtIdxFromType(StatementType::ifType);
-	for (auto& stmtIdx : Entity::getStmtIdxFromType(StatementType::whileType)) {
-		containerStmts.push_back(stmtIdx);
+	auto statements = Entity::getAllStmts();
+	std::vector<StmtIndex> containerStmts;
+	for (auto& stmt : statements) {
+		if (Entity::isContainerStmt(stmt)) {
+			containerStmts.push_back(stmt);
+		}
 	}
 
 	for (auto& containerStmt : containerStmts) {
