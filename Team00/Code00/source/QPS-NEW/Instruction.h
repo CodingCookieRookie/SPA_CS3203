@@ -270,7 +270,7 @@ private:
 		}
 		// Follows(_, _), or Follows(6, _), or Follows(_, 7)
 		else {
-			bool isEmptyTable;
+			bool isEmptyTable = true;
 			if (lhsRef.first == PqlReferenceType::wildcard && rhsRef.first == PqlReferenceType::wildcard) { // Follows(_, _)
 				isEmptyTable = std::get<0>(Follows::getAllPredecessorSuccessorInfo()).empty();
 			}
