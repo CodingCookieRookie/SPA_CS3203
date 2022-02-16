@@ -33,6 +33,8 @@ public:
 	static std::vector<int> getVariables(ProcIndex procIndex);
 	static std::tuple<std::vector<int>, std::vector<int>> getAllProcVarInfo();
 	static std::tuple<std::vector<int>, std::vector<int>> getAllStmtVarInfo();
+	static void populateForContainers(StmtIndex containerStmt,
+		std::unordered_set<StmtIndex, StmtIndex::HashFunction> subStmts);
 	static void performCleanUp();
 };
 
@@ -149,6 +151,15 @@ std::tuple<std::vector<int>, std::vector<int>> RS1<T>::getAllStmtVarInfo() {
 	}
 	return std::make_tuple(statements, variables);
 };
+
+template<class T>
+void RS1<T>::populateForContainers(StmtIndex containerStmt, std::unordered_set<StmtIndex, StmtIndex::HashFunction> subStmts) {
+	for (auto& stmt : subStmts) {
+		for (auto& var : stmtVarTable[stmt]) {
+			insert(containerStmt, var);
+		}
+	}
+}
 
 template<class T>
 void RS1<T>::performCleanUp() {
