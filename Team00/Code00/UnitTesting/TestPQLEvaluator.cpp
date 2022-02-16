@@ -7,6 +7,7 @@
 #include "../source/QPS-NEW/PQLParser.h"
 #include "../source/PKB/RS2.h"
 #include "../source/PKB/Follows.h"
+#include "../source/PKB/Parent.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -44,24 +45,25 @@ namespace UnitTesting
         TEST_METHOD(executeInstruction_follows_twoConstants)
         {
  
-            // Setup: Follows(1, 2) RelationshipInstruction
+            // 1. Setup:
+            // Follows(1, 2) RelationshipInstruction
             PqlReference lhsRef, rhsRef;
             lhsRef = std::make_pair(PqlReferenceType::integer, "1");
             rhsRef = std::make_pair(PqlReferenceType::integer, "2");
             Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::Follows, lhsRef, rhsRef);
 
-            // Setup: PKB insert statements
+            // PKB insert statements
             StmtIndex stmt1 = Entity::insertStmt(StatementType::assignType);
             StmtIndex stmt2 = Entity::insertStmt(StatementType::assignType);
             Follows::insert(stmt1, stmt2);
 
-            // Main test:
+            // 2. Main test:
             EvaluatedTable evTable = instruction->execute();
           
             Assert::AreEqual(size_t(0), evTable.getNumRow());
             Assert::AreEqual(true, evTable.getEvResult());
 
-            // Clean-up:
+            // 3. Clean-up:
             Entity::performCleanUp();
             Follows::performCleanUp();
         }
@@ -112,6 +114,32 @@ namespace UnitTesting
             Follows::performCleanUp();
         }
 
+        // Parent Relationship Tests
+
+        TEST_METHOD(executeInstruction_parent_twoConstants) {
+
+            // 1. Setup:
+            // Parent (1, 2) RelationshipInstruction
+            PqlReference lhsRef, rhsRef;
+            lhsRef = std::make_pair(PqlReferenceType::integer, "1");
+            rhsRef = std::make_pair(PqlReferenceType::integer, "2");
+            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::Parent, lhsRef, rhsRef);
+
+            // PKB insert statements
+            StmtIndex stmt1 = Entity::insertStmt(StatementType::assignType);
+            StmtIndex stmt2 = Entity::insertStmt(StatementType::assignType);
+            Parent::insert(stmt1, stmt2);
+
+            // 2. Main test:
+            EvaluatedTable evTable = instruction->execute();
+
+            Assert::AreEqual(size_t(0), evTable.getNumRow());
+            Assert::AreEqual(true, evTable.getEvResult());
+
+            // 3. Clean-up:
+            Entity::performCleanUp();
+            Parent::performCleanUp();
+        }
         TEST_METHOD(executeInstruction_parent_lhsConstrhsStmt)
         {
 
@@ -125,7 +153,7 @@ namespace UnitTesting
             // PKB insert statements
             StmtIndex stmt1 = Entity::insertStmt(StatementType::assignType);
             StmtIndex stmt2 = Entity::insertStmt(StatementType::assignType);
-            Follows::insert(stmt1, stmt2);
+            Parent::insert(stmt1, stmt2);
 
             // 2. Main test:
             EvaluatedTable evTable = instruction->execute();
@@ -155,7 +183,7 @@ namespace UnitTesting
 
             // 3. Clean-up:
             Entity::performCleanUp();
-            Follows::performCleanUp();
+            Parent::performCleanUp();
         }
     };
 }
