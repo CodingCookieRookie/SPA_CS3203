@@ -35,7 +35,6 @@ namespace UnitTesting
             ParsedQuery pq1 = ParsedQuery(declarations, columns, relationships, patterns);
 
             PQLEvaluator pqlEvaluator(pq1);
-            auto wrapperFunc = [&pqlEvaluator] { pqlEvaluator.evaluate(); };
             
             Assert::AreEqual(size_t(2), pq1.getDeclarations().size());
             Assert::IsFalse(pq1.getColumns().empty());
@@ -44,27 +43,29 @@ namespace UnitTesting
 
         TEST_METHOD(evaluateQuery_followsOnly_noMerge_designEntitiesExtracted)
         {
-            // Follows(1, 2)
-            std::vector<PQL_VARIABLE> declarations;
-            std::vector<std::string> columns;
-            std::vector<ParsedRelationship> relationships;
+ 
+            // Setup: Follows(1, 2) RelationshipInstruction
             PqlReference lhsRef, rhsRef;
             lhsRef = std::make_pair(PqlReferenceType::integer, "1");
             rhsRef = std::make_pair(PqlReferenceType::integer, "2");
-            relationships.push_back(ParsedRelationship(PqlRelationshipType::Follows, lhsRef, rhsRef));
-            std::vector<ParsedPattern> patterns;
-            ParsedQuery pq1 = ParsedQuery(declarations, columns, relationships, patterns);
+            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::Follows, lhsRef, rhsRef);
 
-            // PKB insert statements
+            // Setup: PKB insert statements
             StmtIndex s1 = Entity::insertStmt(StatementType::assignType);
             StmtIndex s2 = Entity::insertStmt(StatementType::assignType);
             Follows::insert(s1, s2);
 
-            PQLEvaluator pqlEvaluator(pq1);
-            EvaluatedTable evTable = pqlEvaluator.evaluate();
-
+            // Main test:
+            EvaluatedTable evTable = instruction->execute();
+          
             Assert::AreEqual(size_t(0), evTable.getNumRow());
             Assert::AreEqual(true, evTable.getEvResult());
+
+            // Clean-up:
+            Entity::performCleanUp();
+            Follows::performCleanUp();
         }
+
+        std::vector<Instruction*> instructions = std::vector<Instruction*>();
     };
 }
