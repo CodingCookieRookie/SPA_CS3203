@@ -3,7 +3,7 @@ procedure Example {
 	read yA123z  ; 
 read AbC1;
 		    print print;
-			
+			x1 = 2;
 	read	read  ;	
-			
+	x = 1;	
 			}

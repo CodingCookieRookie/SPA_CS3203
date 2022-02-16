@@ -58,14 +58,8 @@ EvaluatedTable EvaluatedTable::blockNestedJoin(EvaluatedTable& otherTable,
 EvaluatedTable::EvaluatedTable() {
     entities = std::unordered_map<std::string, PqlEntityType>(); 
     table = std::unordered_map<std::string, std::vector<int>>();
-    numRow = 0;
-}
-
-EvaluatedTable::EvaluatedTable(std::unordered_map<std::string, PqlEntityType> newEntities,
-    std::unordered_map<std::string, std::vector<int>> newTable, int newNumRow ) {
-    entities = newEntities;
-    table = newTable;
-    numRow = newNumRow;
+    evResult = true;
+    numRow = table.size();
 }
 
 /* Modifies the table in place, buy joining it with otherTable */
@@ -84,3 +78,21 @@ EvaluatedTable EvaluatedTable::innerJoinMerge(EvaluatedTable& otherTable) {
     /* Perform an block nested join -- To update to a inner hash join where possible */
     return blockNestedJoin(otherTable, commonEntities);
 }
+
+EvaluatedTable::EvaluatedTable(std::unordered_map<std::string, std::vector<int>> table) :
+    table(table),
+    numRow(table.size()),
+    evResult(false)
+    {}
+
+EvaluatedTable::EvaluatedTable(
+    std::unordered_map<std::string, PqlEntityType> newEntities,
+    std::unordered_map<std::string, std::vector<int>> newTable) :
+    entities(newEntities),
+    table(newTable),
+    numRow(newTable.size()),
+    evResult(false)
+    {}
+
+
+EvaluatedTable::EvaluatedTable(bool evResult) : evResult(evResult), numRow(0) {}

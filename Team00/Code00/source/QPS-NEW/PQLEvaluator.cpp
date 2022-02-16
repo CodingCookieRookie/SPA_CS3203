@@ -27,53 +27,20 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
     std::vector<ParsedPattern> patterns = pq.getPatterns();
 
     // Assumption: Semantically corrct ParsedQuery
-    // 1. Check if entitiy in Select clause is found in declarations
-   /* for (std::string entity : columns) {
-        PqlEntityType entityTypeRequired = declarations.at(entity);
-        switch (entityTypeRequired) {
-        case PqlEntityType::Stmt :
-            instructions.push_back(&GetAllInstruction(GetAllInstructionType::getAllStmt));
-            break;
-        case PqlEntityType::Print :
-            instructions.push_back(&GetAllInstruction(GetAllInstructionType::getAllPrint));
-            break;
-        case PqlEntityType::Call :
-            instructions.push_back(&GetAllInstruction(GetAllInstructionType::getAllCall));
-            break;
-        case PqlEntityType::While :
-            instructions.push_back(&GetAllInstruction(GetAllInstructionType::getAllWhile));
-            break;
-        case PqlEntityType::If :
-            instructions.push_back(&GetAllInstruction(GetAllInstructionType::getAllIf));
-            break;
-        case PqlEntityType::Assign :
-            instructions.push_back(&GetAllInstruction(GetAllInstructionType::getAllAsgn));
-            break;
-        case PqlEntityType::Variable :
-            instructions.push_back(&GetAllInstruction(GetAllInstructionType::getAllVar));
-            break;
-        case PqlEntityType::Constant:
-            instructions.push_back(&GetAllInstruction(GetAllInstructionType::getAllConst));
-            break;
-        case PqlEntityType::Procedure:
-            instructions.push_back(&GetAllInstruction(GetAllInstructionType::getAllProc));
-            break;
-        }
-    }*/
+    // 1. Get all entities from Select-clause
+    for (size_t i = 0; i < columns.size(); i++) {
+        instructions.push_back(new GetAllInstruction(declarations.at(columns[i]), columns[i]));
+    }
 
+    // 2. Get all relationship results from such-that-clause
     for (size_t i = 0; i < relationships.size(); i++) {
         ParsedRelationship parsedRelationship = relationships.at(i);
         PqlRelationshipType pqlRelationshipType =  parsedRelationship.getRelationshipType();
-        instructions.push_back(new RelationshipInstruction(pqlRelationshipType, parsedRelationship.getLhs().second, parsedRelationship.getRhs().second));
+        instructions.push_back(new RelationshipInstruction(pqlRelationshipType, parsedRelationship.getLhs(), parsedRelationship.getRhs()));
     }
 
     // TODO:
-    // 2. If there are relations
-    //		checks for what relations are included in the ParsedQuery
-    //		Add respective instructions
-    // 3. If there are patterns
-    //		checks for what patterns are included in the ParsedQuery
-    //		Add respective instructions
+    // 3. Get all pattern results from pattern-clause
 
     // TODO: Optimisation: Sort instructions.
     return instructions;
@@ -90,65 +57,7 @@ EvaluatedTable PQLEvaluator::executeInstructions(std::vector<Instruction*> instr
     return resultEvTable;
 }
 
-//EvaluatedTable PQLEvaluator::execute(Instruction instr) {
-//    //Instruction instrType = instr.getClassType();
-//
-//    EvaluatedTable currTable;
-//    std::unordered_set<PqlEntityType> PQLtypes;
-//    std::unordered_map<PqlEntityType, std::vector<VALUE>> PQLmap;
-//
-//    //switch (instrType) {
-//        //case GetAllInstructionType::getAllStmt: {
-//        //    std::vector<StmtIndex> results = Entity::getAllStmts();
-//        //    std::vector<VALUE> resultsToStr;
-//        //    PQLtypes.insert(PqlEntityType::Stmt);
-//        //    // Convert StmtIndex to string, e.g {1, 2, 3}  
-//        //    for (StmtIndex result : results) {
-//        //        resultsToStr.push_back((std::to_string(result.getIndex())));
-//        //    }
-//        //    PQLmap[PqlEntityType::Stmt] = resultsToStr;
-//        //    currTable = EvaluatedTable(PQLtypes, PQLmap, results.size());
-//        //    break;
-//        //}
-//        //case GetAllInstructionType::getAllPrint :
-//            //    std::vector<StmtIndex> results = Entity::getAllPrint();
-//            //    std::vector<VALUE> resultsToStr;
-//            //    PQLtypes.insert(PqlEntityType::Print);
-//            //    // Convert StmtIndex to string, e.g {1, 2, 3}  
-//            //    for (StmtIndex result : results) {
-//            //        resultsToStr.push_back((std::to_string(result.getIndex())));
-//            //    }
-//            //    PQLmap[PqlEntityType::Print] = resultsToStr;
-//            //    currTable = EvaluatedTable(PQLtypes, PQLmap, results.size());
-//            //    break;
-//        /*case GetAllInstructionType::getAllVar: {
-//            std::vector<std::string> results = Entity::getAllVars();
-//            PQLtypes.insert(PqlEntityType::Variable);
-//            PQLmap[PqlEntityType::Variable] = results;
-//            currTable = EvaluatedTable(PQLtypes, PQLmap, results.size());
-//            break;
-//        }
-//        case GetAllInstructionType::getAllProc: {
-//            std::vector<std::string> results = Entity::getAllProcs();
-//            PQLtypes.insert(PqlEntityType::Procedure);
-//            PQLmap[PqlEntityType::Procedure] = results;
-//            currTable = EvaluatedTable(PQLtypes, PQLmap, results.size());
-//            break;
-//        }
-//        case GetAllInstructionType::getAllConst: {
-//            std::vector<int> results = Entity::getAllConsts();
-//            std::vector<VALUE> resultsToStr;
-//            for (int result : results) {
-//                resultsToStr.emplace_back((std::to_string(result)));
-//            }
-//            PQLtypes.insert(PqlEntityType::Constant);
-//            PQLmap[PqlEntityType::Constant] = resultsToStr;
-//            currTable = EvaluatedTable(PQLtypes, PQLmap, results.size());
-//            break;
-//        }   */
-//   // }
-//    return currTable;
-//}
+
 
 // Select x such that pattern a1("x", _ ) => key = a1, entRef = ? or no entRef
 // new Table has at most two columns => Modifies(s, v1) / Uses(a, v2) / pattern a("x", _ ) / Modifies(s1, "x") => In all of this we know that there is definitely a stmt index (key/col)

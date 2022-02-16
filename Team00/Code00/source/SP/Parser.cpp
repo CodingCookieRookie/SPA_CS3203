@@ -4,8 +4,8 @@ Parser::Parser() {}
 
 Lexer Parser::lexer;
 
-std::vector<std::string> termOperands = { "*", "/", "%" };
-std::vector<std::string> exprOperands = { "+", "-" };
+std::vector<std::string> termOperators = { "*", "/", "%" };
+std::vector<std::string> exprOperators = { "+", "-" };
 
 SourceAST Parser::parse(const std::string& source) {
 	lexer = Lexer(source);
@@ -183,13 +183,13 @@ ExprNode* Parser::matchFactor() {
 			  | <empty>
 */
 ExprNode* Parser::matchTermTail(ExprNode* lvalue) {
-	for (const std::string op : termOperands) {
+	for (const std::string op : termOperators) {
 		if (lexer.match(op)) {
 			ExprNode* factor = matchFactor();
-			ExprNode* operand = new ExprNode(ExprNodeValueType::operand, op);
-			operand->addChild(lvalue);
-			operand->addChild(factor);
-			return matchTermTail(operand);
+			ExprNode* arithOp = new ExprNode(ExprNodeValueType::arithmeticOperator, op);
+			arithOp->addChild(lvalue);
+			arithOp->addChild(factor);
+			return matchTermTail(arithOp);
 		}
 	}
 
@@ -209,13 +209,13 @@ ExprNode* Parser::matchTerm() {
 
  */
 ExprNode* Parser::matchExprTail(ExprNode* lvalue) {
-	for (const std::string op : exprOperands) {
+	for (const std::string op : exprOperators) {
 		if (lexer.match(op)) {
 			ExprNode* term = matchTerm();
-			ExprNode* operand = new ExprNode(ExprNodeValueType::operand, op);
-			operand->addChild(lvalue);
-			operand->addChild(term);
-			return matchExprTail(operand);
+			ExprNode* arithOp = new ExprNode(ExprNodeValueType::arithmeticOperator, op);
+			arithOp->addChild(lvalue);
+			arithOp->addChild(term);
+			return matchExprTail(arithOp);
 		}
 	}
 
