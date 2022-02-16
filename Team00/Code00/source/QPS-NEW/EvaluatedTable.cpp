@@ -10,7 +10,7 @@ EvaluatedTable::EvaluatedTable() {
     entities = std::unordered_map<std::string, PqlEntityType>(); 
     table = std::unordered_map<std::string, std::vector<int>>();
     isEmpty = true;
-    numRow = 0;
+    numRow = table.size();
 }
 
 EvaluatedTable::EvaluatedTable(std::unordered_map<std::string, std::vector<int>> table) :
@@ -29,4 +29,4 @@ EvaluatedTable::EvaluatedTable(
     {}
 
 
-EvaluatedTable::EvaluatedTable(bool isEmpty) : isEmpty(isEmpty) {}
+EvaluatedTable::EvaluatedTable(bool isEmpty) : isEmpty(isEmpty), numRow(0) {}

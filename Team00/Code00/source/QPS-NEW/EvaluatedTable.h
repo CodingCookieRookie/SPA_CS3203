@@ -58,6 +58,11 @@ public:
         return table;
     }
 
+    /* Getter for table */
+    bool getIsEmpty() {
+        return isEmpty;
+    }
+
 
     std::string getTableString() {
         std::string res = "Table String: size: " + std::to_string(table.size()) + "\n";
