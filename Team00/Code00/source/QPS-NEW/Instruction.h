@@ -22,6 +22,87 @@ private:
 	PqlEntityType pqlEntityType;
 	std::string synonym;
 
+	/* All handlers to set EvaluatedTable to results from PKB. Uses Pass by Reference on EvTable. */
+	EvaluatedTable handleGetAllStmt(std::string synonym) {
+		std::vector<StmtIndex> results = Entity::getAllStmts();
+		
+		std::vector<int> resultsToInt;
+		for (StmtIndex result : results) {
+			resultsToInt.emplace_back(result.getIndex());
+		}
+
+		std::unordered_map<std::string, PqlEntityType> PQLentities;
+		PQLentities.insert(std::pair(synonym, PqlEntityType::Stmt));
+
+		std::unordered_map<std::string, std::vector<int>> PQLmap;
+		PQLmap[synonym] = resultsToInt;
+
+		return EvaluatedTable(PQLentities, PQLmap);
+	}
+
+	EvaluatedTable handleGetAllStmtByType(std::string synonym, StatementType stmtType) {
+		std::vector<StmtIndex> results = Entity::getStmtIdxFromType(stmtType);
+
+		std::vector<int> resultsToInt;
+		for (StmtIndex result : results) {
+			resultsToInt.emplace_back(result.getIndex());
+		}
+
+		std::unordered_map<std::string, PqlEntityType> PQLentities;
+		PQLentities.insert(std::pair(synonym, PqlEntityType::Stmt));
+
+		std::unordered_map<std::string, std::vector<int>> PQLmap;
+		PQLmap[synonym] = resultsToInt;
+
+		return EvaluatedTable(PQLentities, PQLmap);
+	}
+
+	EvaluatedTable handleGetAllVar(std::string synonym) {
+		// TODO: PKB to change getAllVars() to return VarIndex.
+		std::vector<VarIndex> results = Entity::getAllVars();
+		std::vector<int> resultsToInt;
+		for (VarIndex result : results) {
+			resultsToInt.emplace_back(result.getIndex());
+		}
+
+		std::unordered_map<std::string, PqlEntityType> PQLentities;
+		PQLentities.insert(std::pair(synonym, PqlEntityType::Variable));
+
+		std::unordered_map<std::string, std::vector<int>> PQLmap;
+		PQLmap[synonym] = resultsToInt;
+
+		return EvaluatedTable(PQLentities, PQLmap);
+	}
+
+	EvaluatedTable handleGetAllProc(std::string synonym) {
+		// TODO: PKB to change getAllProcs() to return ProcIndex.
+		std::vector<ProcIndex> results = Entity::getAllProcs();
+		std::vector<int> resultsToInt;
+		for (ProcIndex result : results) {
+			resultsToInt.emplace_back(result.getIndex());
+		}
+
+		std::unordered_map<std::string, PqlEntityType> PQLentities;
+		PQLentities.insert(std::pair(synonym, PqlEntityType::Procedure));
+
+		std::unordered_map<std::string, std::vector<int>> PQLmap;
+		PQLmap[synonym] = resultsToInt;
+
+		return EvaluatedTable(PQLentities, PQLmap);
+	}
+
+	EvaluatedTable handleGetAllConst(std::string synonym) {
+		std::vector<int> results = Entity::getAllConsts();
+
+		std::unordered_map<std::string, PqlEntityType> PQLentities;
+		PQLentities.insert(std::pair(synonym, PqlEntityType::Constant));
+
+		std::unordered_map<std::string, std::vector<int>> PQLmap;
+		PQLmap[synonym] = results;
+
+		return EvaluatedTable(PQLentities, PQLmap);
+	}
+
 public:
 	/* Constructor for a GetAllInstruction object */
 	GetAllInstruction(PqlEntityType type, std::string synonym) : pqlEntityType(type), synonym(synonym) {}
@@ -41,115 +122,40 @@ public:
 		EvaluatedTable evTable;
 		switch (pqlEntityType) {
 		case PqlEntityType::Stmt:
-			evTable = handleGetAllStmt(evTable, synonym);
+			evTable = handleGetAllStmt(synonym);
+			break;
+		case PqlEntityType::Read:
+			evTable = handleGetAllStmtByType(synonym, StatementType::readType);
 			break;
 		case PqlEntityType::Print:
-			//evTable = handleGetAllPrint(evTable, synonym);
+			evTable = handleGetAllStmtByType(synonym, StatementType::printType);
 			break;
 		case PqlEntityType::Call:
-			// TODO: PKB to add getAllCalls().
+			evTable = handleGetAllStmtByType(synonym, StatementType::callType);
 			break;
 		case PqlEntityType::While:
-			// TODO: PKB to add.
+			evTable = handleGetAllStmtByType(synonym, StatementType::whileType);
 			break;
 		case PqlEntityType::If:
-			// TODO: PKB to add.
+			evTable = handleGetAllStmtByType(synonym, StatementType::ifType);
 			break;
 		case PqlEntityType::Assign:
-			// TODO: PKB to add.
+			evTable = handleGetAllStmtByType(synonym, StatementType::assignType);
 			break;
 		case PqlEntityType::Variable:
-			//evTable = handleGetAllVar(evTable, synonym);
+			evTable = handleGetAllVar(synonym);
 			break;
 		case PqlEntityType::Constant:
-			evTable = handleGetAllConst(evTable, synonym);
+			evTable = handleGetAllProc(synonym);
 			break;
 		case PqlEntityType::Procedure:
-			//evTable = handleGetAllProc(evTable, synonym);
+			evTable = handleGetAllProc(synonym);
 			break;
 		}
 		return evTable;
 	}
-
-	/* All handlers to set EvaluatedTable to results from PKB. Uses Pass by Reference on EvTable. */
-	EvaluatedTable handleGetAllStmt(EvaluatedTable& evTable, std::string synonym) {
-		std::vector<StmtIndex> results = Entity::getAllStmts();
-		std::vector<int> resultsToInt;
-		for (StmtIndex result : results) {
-			resultsToInt.emplace_back(result.getIndex());
-		}
-
-		std::unordered_map<std::string, PqlEntityType> PQLentities;
-		PQLentities.insert(std::pair(synonym, PqlEntityType::Stmt));
-
-		std::unordered_map<std::string, std::vector<int>> PQLmap;
-		PQLmap[synonym] = resultsToInt;
-
-		return EvaluatedTable(PQLentities, PQLmap, results.size());
-	}
-
-	//EvaluatedTable handleGetAllPrint(EvaluatedTable& evTable, std::string synonym) {
-		// TODO: PKB to add getAllPrints().
-		/*std::vector<int> results = Entity::getAllPrints();
-
-		std::unordered_map<std::string, PqlEntityType> PQLentities;
-		PQLentities.insert(std::pair(synonym, PqlEntityType::Print));
-
-		std::unordered_map<std::string, std::vector<int>> PQLmap;
-		PQLmap[synonym] = resultsToInt;
-
-		evTable.setEntities(PQLentities);
-		evTable.setTable(PQLmap);
-		evTable.setNumRow(results.size());*/
-	//}
-	//EvaluatedTable handleGetAllVar(EvaluatedTable& evTable, std::string synonym) {
-		// TODO: PKB to change getAllVars() to return VarIndex.
-		/*std::vector<VarIndex> results = Entity::getAllVars();
-		std::vector<int> resultsToInt;
-		for (VarIndex result : results) {
-			resultsToInt.emplace_back(result.getIndex());
-		}
-
-		std::unordered_map<std::string, PqlEntityType> PQLentities;
-		PQLentities.insert(std::pair(synonym, PqlEntityType::Variable));
-
-		std::unordered_map<std::string, std::vector<int>> PQLmap;
-		PQLmap[synonym] = resultsToInt;
-
-		evTable.setEntities(PQLentities);
-		evTable.setTable(PQLmap);
-		evTable.setNumRow(results.size());*/
-	//}
-	//EvaluatedTable handleGetAllProc(EvaluatedTable& evTable, std::string synonym) {
-		// TODO: PKB to change getAllProcs() to return ProcIndex.
-		/*std::vector<VarIndex> results = Entity::getAllVars();
-		std::vector<int> resultsToInt;
-		for (VarIndex result : results) {
-			resultsToInt.emplace_back(result.getIndex());
-		}
-
-		std::unordered_map<std::string, PqlEntityType> PQLentities;
-		PQLentities.insert(std::pair(synonym, PqlEntityType::Procedure));
-
-		std::unordered_map<std::string, std::vector<int>> PQLmap;
-		PQLmap[synonym] = resultsToInt;
-
-		evTable.setEntities(PQLentities);
-		evTable.setTable(PQLmap);
-		evTable.setNumRow(results.size());*/
-	//}
-	EvaluatedTable handleGetAllConst(EvaluatedTable& evTable, std::string synonym) {
-		std::vector<int> results = Entity::getAllConsts();
-		
-		std::unordered_map<std::string, PqlEntityType> PQLentities;
-		PQLentities.insert(std::pair(synonym, PqlEntityType::Constant));
-
-		std::unordered_map<std::string, std::vector<int>> PQLmap;
-		PQLmap[synonym] = results;
-
-		return EvaluatedTable(PQLentities, PQLmap, results.size());
-	}
 };
+
 
 class RelationshipInstruction : public Instruction {
 	//enum class PqlReferenceType {
@@ -276,81 +282,105 @@ private:
 
 	EvaluatedTable handleFollows() {
 		EvaluatedTable evTable;
-		// Follows(s1, ?), or Follows(_, ?)
-		if (lhsRef.first == PqlReferenceType::synonym || lhsRef.first == PqlReferenceType::wildcard) {
-			std::vector<StmtIndex> stmts = Entity::getAllStmts();
-
-			// e.g. Follows(s1, 6), or Follows(_, 6)
-			if (rhsRef.first == PqlReferenceType::integer) { 
-				std::vector<int> results;
-				int rhsRefValue = stoi(rhsRef.second); //might throw error if string value can't be converted to int
-				StmtIndex rhsStmt = stmts[rhsRefValue - 1]; //check if off by 1
-				for (StmtIndex stmt : stmts) {
-					if (Follows::containsSuccessor(stmt, rhsStmt)) {
-						results.emplace_back(stmt.getIndex()); //e.g {3} because 3 is followed by 6
-					}
+		std::vector<StmtIndex> stmts = Entity::getAllStmts();
+		
+		// e.g Follows(6, 7)
+		if (lhsRef.first == PqlReferenceType::integer && rhsRef.first == PqlReferenceType::integer) {
+			
+			StmtIndex lhsStmtIndex, rhsStmtIndex;
+			for (StmtIndex stmt : stmts) {
+				if (stmt.getIndex() == stoi(lhsRef.second)) {
+					lhsStmtIndex = stmt;
 				}
-				std::unordered_map<std::string, PqlEntityType> PQLentities;
-				PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
-
-				std::unordered_map<std::string, std::vector<int>> PQLmap;
-				PQLmap[lhsRef.second] = results;
-
-				return EvaluatedTable(PQLentities, PQLmap, results.size());
+				if (stmt.getIndex() == stoi(rhsRef.second)) {
+					rhsStmtIndex = stmt;
+				}
 			}
-			// rhsRef is either a synonym or a wildcard (i.e. Follows(s1, s2), Follows(s1, _), Follows(_, s2), Follows(_, _))
-			else { 
-				//Assumption: Different synonym names (i.e. Follows(s1, s2), not Follows(s1, s1))
-				std::tuple<std::vector<int>, std::vector<int>> results = Follows::getAllPredecessorSuccessorInfo();
-			    //e.g. {1, 2}, {2, 3}, {3, 6}
-				std::unordered_map<std::string, PqlEntityType> PQLentities;
-				PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
-				PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Stmt));
-
-				std::unordered_map<std::string, std::vector<int>> PQLmap;
-				PQLmap[lhsRef.second] = std::get<0>(results);
-				PQLmap[rhsRef.second] = std::get<1>(results);
-
-				return EvaluatedTable(PQLentities, PQLmap, std::get<0>(results).size());
-			}
+			bool evResult = Follows::containsSuccessor(lhsStmtIndex, rhsStmtIndex);
+			return EvaluatedTable(evResult); //e.g evResult == true, if 6 is followed by 7
+			
 		}
+		// e.g Follows(6, s2)
+		else if (lhsRef.first == PqlReferenceType::integer && rhsRef.first != PqlReferenceType::wildcard)
+		{
+			std::vector<int> results;
+			int lhsRefValue = stoi(lhsRef.second); // might throw error if string value can't be converted to int
+			StmtIndex lhsStmt = stmts[lhsRefValue - 1];
+			for (StmtIndex stmt : stmts) {
+				if (Follows::containsSuccessor(lhsStmt, stmt)) {
+					results.emplace_back(stmt.getIndex()); // e.g {7} because 6 is followed by 7
+				}
+			}
+			std::unordered_map<std::string, PqlEntityType> PQLentities;
+			PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Stmt));
 
-		else { //lhsRef is an integer (e.g. Follows(6, ?))
-			std::vector<StmtIndex> stmts = Entity::getAllStmts();
+			std::unordered_map<std::string, std::vector<int>> PQLmap;
+			PQLmap[rhsRef.second] = results;
 
-			// e.g. Follows(6, 7)
-			if (rhsRef.first == PqlReferenceType::integer) { 
-				StmtIndex lhsStmtIndex, rhsStmtIndex;
+			return EvaluatedTable(PQLentities, PQLmap);
+			
+		} 
+		// e.g. Follows(s1, 7)
+		else if (rhsRef.first == PqlReferenceType::integer && lhsRef.first != PqlReferenceType::wildcard)
+		{
+			std::vector<int> results;
+			int rhsRefValue = stoi(rhsRef.second); //might throw error if string value can't be converted to int
+			StmtIndex rhsStmt = stmts[rhsRefValue - 1]; //check if off by 1
+			for (StmtIndex stmt : stmts) {
+				if (Follows::containsSuccessor(stmt, rhsStmt)) {
+					results.emplace_back(stmt.getIndex()); //e.g {3} because 3 is followed by 6
+				}
+			}
+			std::unordered_map<std::string, PqlEntityType> PQLentities;
+			PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
+
+			std::unordered_map<std::string, std::vector<int>> PQLmap;
+			PQLmap[lhsRef.second] = results;
+
+			return EvaluatedTable(PQLentities, PQLmap);
+		}
+		// Follows(s1, s2), Follows(s1, _), Follows(_, s2)
+		else if (lhsRef.first != PqlReferenceType::wildcard && rhsRef.first != PqlReferenceType::wildcard) {
+			//Assumption: Different synonym names (i.e. Follows(s1, s2), not Follows(s1, s1))
+			std::tuple<std::vector<int>, std::vector<int>> results = Follows::getAllPredecessorSuccessorInfo();
+			//e.g. {1, 2}, {2, 3}, {3, 6}
+			std::unordered_map<std::string, PqlEntityType> PQLentities;
+			std::unordered_map<std::string, std::vector<int>> PQLmap;
+
+			if (lhsRef.first == PqlReferenceType::synonym) {
+				PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
+				PQLmap[lhsRef.second] = std::get<0>(results); // if RHS is wildcard, LHS may have duplicate values
+			}
+			if (lhsRef.first == PqlReferenceType::synonym) {
+				PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Stmt));
+				PQLmap[rhsRef.second] = std::get<1>(results); // if LHS is wildcard, RHS may have duplicate values
+			}
+			return EvaluatedTable(PQLentities, PQLmap);
+		}
+		// Follows(_, _), or Follows(6, _), or Follows(_, 7)
+		else {
+			bool isEmptyTable = true;
+			if (lhsRef.first == PqlReferenceType::wildcard && rhsRef.first == PqlReferenceType::wildcard) { // Follows(_, _)
+				isEmptyTable = std::get<0>(Follows::getAllPredecessorSuccessorInfo()).empty();
+			}
+			StmtIndex lhsStmtIndex, rhsStmtIndex;
+			if (lhsRef.first == PqlReferenceType::integer) { // e.g. Follows(6, _)
 				for (StmtIndex stmt : stmts) {
 					if (stmt.getIndex() == stoi(lhsRef.second)) {
 						lhsStmtIndex = stmt;
-					}
-					if (stmt.getIndex() == stoi(rhsRef.second)) {
-						rhsStmtIndex = stmt;
-					}
-				} 
-				return EvaluatedTable(Follows::containsSuccessor(lhsStmtIndex, rhsStmtIndex));
-				//e.g True, if 6 is follwed by 7
-			}
-
-			//rhsRef is either a synonym or a wildcard (e.g. Follows(6, s2), or Follows(6, _))
-			else { 
-				std::vector<int> results;
-				int lhsRefValue = stoi(lhsRef.second); //might throw error if string value can't be converted to int
-				StmtIndex lhsStmt = stmts[lhsRefValue - 1];
-				for (StmtIndex stmt : stmts) {
-					if (Follows::containsSuccessor(lhsStmt, stmt)) {
-						results.emplace_back(stmt.getIndex()); //e.g {7} because 6 is followed by 7
+						return EvaluatedTable(Follows::getSuccessorStmts(lhsStmtIndex).empty()); // False == Follows exists
 					}
 				}
-				std::unordered_map<std::string, PqlEntityType> PQLentities;
-				PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Stmt));
-
-				std::unordered_map<std::string, std::vector<int>> PQLmap;
-				PQLmap[rhsRef.second] = results;
-
-				return EvaluatedTable(PQLentities, PQLmap, results.size());
 			}
+			else { // e.g. Follows(_, 7)
+				for (StmtIndex stmt : stmts) {
+					if (stmt.getIndex() == stoi(rhsRef.second)) {
+						rhsStmtIndex = stmt;
+						return EvaluatedTable(Follows::getSuccessorStmts(rhsStmtIndex).empty());
+					}
+				}
+			}
+			return EvaluatedTable(isEmptyTable);
 		}
 	}
 
@@ -393,6 +423,7 @@ public:
 	//};
 
 };
+
 
 class PatternInstruction : public Instruction {
 private:
