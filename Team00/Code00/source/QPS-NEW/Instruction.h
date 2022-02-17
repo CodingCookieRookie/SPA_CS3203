@@ -200,7 +200,9 @@ private:
 	}
 
 	EvaluatedTable handleModifiesP() {
-		// Modifies (p/p1, v) or Modifies (p/p1, "x") or Modifies (p/p1, _ )	proc
+		// Modifies (a/r/s/a1, v) or Modifies (a/r/s/a1, _ )
+		// Modifies (p/p1, v)	or Modifies (p/p1, _ )	proc
+		// Modifies (1, v)	=> true or Modifies (1, _ ) (under statement)
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Procedure));
@@ -270,7 +272,7 @@ private:
 			}
 		}
 		else {
-			std::cout << "Error in handleModifiesP\n";
+			std::cout << "Error in handleModifiesS\n";
 		}
 		return EvaluatedTable(PQLentities, PQLmap);
 	}
@@ -465,7 +467,6 @@ public:
 		else {
 			std::cout << "Invalid expression type";
 		}
-
 		if (entRef.first == PqlReferenceType::ident || entRef.first == PqlReferenceType::synonym) {
 			std::vector<int> allStmts;
 			std::vector<int> varIndices;
