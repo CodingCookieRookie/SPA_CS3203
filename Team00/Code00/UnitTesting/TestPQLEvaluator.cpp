@@ -282,6 +282,52 @@ namespace UnitTesting
             Follows::performCleanUp();
         }
 
+        TEST_METHOD(executeInstruction_follows_twoWildcards)
+        {
+
+            // 1. Setup:
+            // Parent(_, _) RelationshipInstruction
+            PqlReference lhsRef, rhsRef;
+            lhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
+            rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
+            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::Follows, lhsRef, rhsRef);
+
+            // PKB inserts 3 statements
+            std::vector<StmtIndex> stmts;
+            for (int i = 0; i < 3; i++) {
+                stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+            }
+            for (int i = 0; i < 2; i++) {
+                Follows::insert(stmts[i], stmts[i + 1]);
+            }
+
+            // 2. Main test:
+            EvaluatedTable evTable = instruction->execute();
+
+            // Test numRow:
+            Assert::AreEqual(size_t(0), evTable.getNumRow()); // 
+
+            // Test Table: std::unordered_map<std::string, std::vector<int>>
+            auto tableRef = evTable.getTableRef();
+            Assert::AreEqual(false, tableRef.find("_") != tableRef.end());
+            Assert::AreEqual(false, tableRef.find("s1") != tableRef.end());
+
+            // Test Table size:
+            Assert::AreEqual(size_t(0), tableRef.size()); // Two wildcards will have no columns => only have boolean
+
+            // Test Entities: std::unordered_map<std::string, PqlEntityType>
+            auto actualEntities = evTable.getEntities();
+            Assert::AreEqual(false, actualEntities.find("_") != actualEntities.end());
+            Assert::AreEqual(false, actualEntities.find("s2") != actualEntities.end());
+
+            // Test EvResult:
+            bool actualEvResult = evTable.getEvResult();
+            Assert::AreEqual(true, actualEvResult); // because Follows rs exist
+
+            // 3. Clean-up:
+            Entity::performCleanUp();
+            Follows::performCleanUp();
+        }
 
         // Parent Relationship Tests
 
@@ -458,11 +504,11 @@ namespace UnitTesting
             Parent::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_parent_lhsStmtrhsWildcard_stress)
+        TEST_METHOD(executeInstruction_parent_lhsStmtRhsWildcard_stress)
         {
 
             // 1. Setup:
-            // Follows(s1, _) RelationshipInstruction
+            // Parent(s1, _) RelationshipInstruction
             PqlReference lhsRef, rhsRef;
             lhsRef = std::make_pair(PqlReferenceType::synonym, "s1");
             rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
@@ -489,13 +535,12 @@ namespace UnitTesting
             Assert::AreEqual(false, tableRef.find("stress") != tableRef.end());
 
             // Test Table size:
-            Assert::AreEqual(size_t(2), tableRef.size()); // RHS wildcard will still have column (innerJoinMerge() will drop it during merge)
+            Assert::AreEqual(size_t(1), tableRef.size()); // RHS wildcard will still have column (innerJoinMerge() will drop it during merge)
 
             // Test Entities: std::unordered_map<std::string, PqlEntityType>
-            std::vector<int> s1values, wildcardValues;
+            std::vector<int> s1values;
             for (int i = 0; i < 37213 - 1; i++) {
                 s1values.emplace_back(i + 1);
-                wildcardValues.emplace_back(i + 2);
             }
             auto actuals1Values = tableRef.at("s1");
             // Cannot check equality due to misordering (actuals1Values is not {1, 2, ... 37212}), this is PKB's optimisation.
@@ -504,17 +549,11 @@ namespace UnitTesting
             bool areVecEqual = std::equal(s1values.begin(), s1values.end(), actuals1Values.begin());
             Assert::AreEqual(true, areVecEqual); // s1values == {1, 2, ... 37212}
 
-            auto actualWildcardValues = tableRef.at("_");
-            std::sort(actualWildcardValues.begin(), actualWildcardValues.end());
-            bool areVecEqual2 = std::equal(wildcardValues.begin(), wildcardValues.end(), actualWildcardValues.begin());
-            Assert::AreEqual(true, areVecEqual2); // wildcardValues == {2, 3, ... 37213}
-
-
             auto actualEntities = evTable.getEntities();
             Assert::AreEqual(true, actualEntities.find("s1") != actualEntities.end());
-            Assert::AreEqual(true, actualEntities.find("_") != actualEntities.end());
+            Assert::AreEqual(false, actualEntities.find("_") != actualEntities.end());
             Assert::AreEqual(false, actualEntities.find("stress") != actualEntities.end());
-            bool isPqlEntityType = PqlEntityType::Stmt == actualEntities.at("_");
+            bool isPqlEntityType = PqlEntityType::Stmt == actualEntities.at("s1");
             Assert::AreEqual(true, isPqlEntityType);
 
             // Test EvResult:
@@ -526,7 +565,7 @@ namespace UnitTesting
             Parent::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_parent_lhsWildcardhsConst)
+        TEST_METHOD(executeInstruction_parent_lhsWildcardRhsConst)
         {
 
             // 1. Setup:
@@ -536,7 +575,7 @@ namespace UnitTesting
             rhsRef = std::make_pair(PqlReferenceType::integer, "3");
             Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::Parent, lhsRef, rhsRef);
 
-            // PKB inserts 97614 statements
+            // PKB inserts 3 statements
             std::vector<StmtIndex> stmts;
             for (int i = 0; i < 3; i++) {
                 stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
@@ -643,7 +682,7 @@ namespace UnitTesting
         //    Parent::performCleanUp();
         //}
 
-        TEST_METHOD(executeInstruction_parent_twoWIldcards)
+        TEST_METHOD(executeInstruction_parent_twoWildcards)
         {
 
             // 1. Setup:
