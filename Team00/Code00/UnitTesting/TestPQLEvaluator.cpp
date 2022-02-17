@@ -8,6 +8,7 @@
 #include "../source/QPS-NEW/PQLParser.h"
 #include "../source/PKB/RS2.h"
 #include "../source/PKB/Follows.h"
+#include "../source/PKB/FollowsT.h"
 #include "../source/PKB/Parent.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -17,6 +18,7 @@ namespace UnitTesting
     TEST_CLASS(TestPQLEvaluator)
     {
     public:
+
         TEST_METHOD(evaluateQuery_declarationAndSelectOnly_designEntitiesExtracted)
         {
             // "stmt s; if ifs; Select s";
@@ -42,6 +44,9 @@ namespace UnitTesting
             Assert::IsFalse(pq1.getColumns().empty());
             Assert::AreEqual(std::string("s"), pq1.getColumns()[0]);
         }
+
+        // Follows Relationship Tests ====================================================================================================================
+
 
         TEST_METHOD(executeInstruction_follows_twoConstants)
         {
@@ -329,7 +334,41 @@ namespace UnitTesting
             Follows::performCleanUp();
         }
 
-        // Parent Relationship Tests
+        // Follows* Relationship Tests ====================================================================================================================
+
+        TEST_METHOD(executeInstruction_followsStar_twoConstants)
+        {
+
+            // 1. Setup:
+            // Follows*(1, 2) RelationshipInstruction
+            PqlReference lhsRef, rhsRef;
+            lhsRef = std::make_pair(PqlReferenceType::integer, "1");
+            rhsRef = std::make_pair(PqlReferenceType::integer, "4");
+            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::FollowsT, lhsRef, rhsRef);
+
+            // PKB inserts 4 statements, 3 Follows
+            std::vector<StmtIndex> stmts;
+            for (int i = 0; i < 4; i++) {
+                stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+            }
+            for (int i = 0; i < 2; i++) {
+                Follows::insert(stmts[i], stmts[i + 1]);
+            }
+            auto currPredSucTable = FollowsT::getPredSucTable();
+            FollowsT::populate(currPredSucTable);
+
+            // 2. Main test:
+            EvaluatedTable evTable = instruction->execute();
+
+            Assert::AreEqual(size_t(0), evTable.getNumRow());
+            Assert::AreEqual(true, evTable.getEvResult()); // Follows*(1, 4) should hold
+
+            // 3. Clean-up:
+            Entity::performCleanUp();
+            Follows::performCleanUp();
+        }
+
+        // Parent Relationship Tests ======================================================================================================================
 
         TEST_METHOD(executeInstruction_parent_twoConstants) {
 
@@ -355,6 +394,7 @@ namespace UnitTesting
             Entity::performCleanUp();
             Parent::performCleanUp();
         }
+
         TEST_METHOD(executeInstruction_parent_lhsConstrhsStmt)
         {
 

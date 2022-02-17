@@ -278,7 +278,7 @@ private:
 		return EvaluatedTable(PQLentities, PQLmap);
 	}
 
-	EvaluatedTable handleFollows() {
+	EvaluatedTable handleFollows(PqlReference lhsRef, PqlReference rhsRef) {
 		EvaluatedTable evTable;
 		std::vector<StmtIndex> stmts = Entity::getAllStmts();
 		
@@ -366,6 +366,25 @@ private:
 			return EvaluatedTable(!isEmptyTable);
 		}
 	}
+
+	EvaluatedTable handleFollowsT(PqlReference lhsRef, PqlReference rhs) {
+		EvaluatedTable evTable;
+		std::vector<StmtIndex> stmts = Entity::getAllStmts();
+
+		// base case, true or Follow holds
+		EvaluatedTable currResult = handleFollows();
+		std::unordered_map<std::string, std::vector<int>> currTable = currResult.getTableRef();
+		if (currResult.getEvResult() == true || !(currTable[lhsRef.second].empty()) || !(currTable[rhsRef.second].empty())) {
+			return currResult;
+		}
+
+		std::string newRefName = rhsRef.second + "A";
+		PqlReference newRef = std::make_pair(PqlReferenceType::synonym, newRefName);;
+
+		// recursively evaluate
+		return handleFollows(lhsRef, newRef).innerJoinMerge(handleFollowsT(newRef, rhsRef));
+	}
+
 
 
 	EvaluatedTable handleParent() {
@@ -483,7 +502,10 @@ public:
 			evTable = handleUsesP();
 			break;
 		case PqlRelationshipType::Follows:
-			evTable = handleFollows();
+			evTable = handleFollows(this->lhsRef, this->rhsRef);
+			break;
+		case PqlRelationshipType::FollowsT:
+			evTable = handleFollowsT(this->lhsRef, this->rhsRef);
 			break;
 		case PqlRelationshipType::Parent:
 			evTable = handleParent();
