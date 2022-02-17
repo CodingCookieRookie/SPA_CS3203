@@ -94,38 +94,5 @@ namespace UnitTesting
 				std::advance(expectedRes, 1);
 			}
 		}
-
-		//TEST_METHOD(resolveTableToResults_twoColumns_success)
-		//{
-		//	std::unordered_map<std::string, PqlEntityType> entities;
-		//	std::unordered_map<std::string, std::vector<int>> testTable;
-		//	std::vector<int> vec2;
-		//	vec2.push_back(4);
-		//	vec2.push_back(5);
-		//	vec2.push_back(9);
-		//	std::vector<int> vec3;
-		//	vec3.push_back(2);
-		//	vec3.push_back(2);
-		//	vec3.push_back(7);
-		//	entities["v"] = PqlEntityType::Variable;
-		//	testTable["v"] = vec2;
-		//	entities["s"] = PqlEntityType::Stmt;
-		//	testTable["s"] = vec3;
-		//	EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
-		//	PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable);
-		//	std::list<std::string> results = pqlResultProject.resolveTableToResults();
-		//	std::list<std::string> expected;
-		//	expected.push_back("4 2");
-		//	expected.push_back("5 2");
-		//	expected.push_back("9 7");
-		//	//Assert::AreEqual(expected.size(), results.size());
-		//	auto actualRes = results.begin();
-		//	auto expectedRes = expected.begin();
-		//	for (size_t i = 0; i < results.size(); i++) {
-		//		Assert::AreEqual(*expectedRes, *actualRes);
-		//		std::advance(actualRes, 1);
-		//		std::advance(expectedRes, 1);
-		//	}
-		//}
 	};
 }
