@@ -53,7 +53,6 @@ private:
 public:
     ParsedRelationship(PqlRelationshipType relationshipType,
         PqlReference lhsRef, PqlReference rhsRef);
-    ParsedRelationship();
     PqlRelationshipType getRelationshipType();
     PqlReference getLhs() const;
     PqlReference getRhs() const;

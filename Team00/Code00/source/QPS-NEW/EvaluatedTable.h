@@ -71,7 +71,7 @@ public:
         return evResult;
     }
 
-
+    /* Mentions all the relevant fields of the EvalautedTable */
     std::string getTableString() {
         std::string res = "Table String: size: " + std::to_string(table.size()) + "\n";
         for (auto& it : table) {
