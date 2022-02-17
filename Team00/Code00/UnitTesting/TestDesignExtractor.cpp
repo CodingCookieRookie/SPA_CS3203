@@ -141,7 +141,30 @@ public:
 		/* We expect (3 choose 2) = 3 relationships in Follows T */
 		Assert::AreEqual(size_t(3), std::get<0>(FollowsT::getAllPredecessorSuccessorInfo()).size());
 	}
+	TEST_METHOD(extract_singleWhileStatement_parentCaptured) {
+		PrintNode* printNode = new PrintNode("x");
+		StmtLstNode* thenStmtLstNode = new StmtLstNode();
+		thenStmtLstNode->addStmtNode(printNode);
+		ReadNode* readNode = new ReadNode("y");
+		StmtLstNode* elseStmtLstNode = new StmtLstNode();
+		elseStmtLstNode->addStmtNode(readNode);
+		ExprNode* rootExprNode = new ExprNode(ExprNodeValueType::relOperator, "==");
+		ExprNode* leftExprNode = new ExprNode(ExprNodeValueType::varName, "x");
+		ExprNode* rightExprNode = new ExprNode(ExprNodeValueType::varName, "y");
+		rootExprNode->addChild(leftExprNode);
+		rootExprNode->addChild(rightExprNode);
+		IfNode* ifNode = new IfNode(rootExprNode, thenStmtLstNode, elseStmtLstNode);
+		StmtLstNode* outerStmtLstNode = new StmtLstNode();
+		outerStmtLstNode->addStmtNode(ifNode);
+		ProcedureNode* procedureNode = new ProcedureNode("main");
+		procedureNode->addStmtLst(outerStmtLstNode);
+		ProgramNode* programNode = new ProgramNode();
+		programNode->addProcedure(procedureNode);
+		SourceAST ast(programNode);
+		DesignExtractor::Extract(ast);
 
+		Assert::AreEqual(size_t(1), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());
+	}
 	TEST_METHOD(extract_assign_postfixExpressionExtracted) {
 		std::string varNameX = "x";
 		std::string varNameY = "y";
