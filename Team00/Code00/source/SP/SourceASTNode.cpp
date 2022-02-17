@@ -186,10 +186,6 @@ std::unordered_set<std::string> ContainerNode::getConsts() {
 	return getConstsInExpr(condExpr);
 }
 
-std::vector<StmtLstNode*> ContainerNode::getChildStmtLst() {
-	return childStmtLst;
-}
-
 /* WhileNode */
 WhileNode::WhileNode(ExprNode* condExpr, StmtLstNode* stmtLst) : ContainerNode(condExpr, { stmtLst }) {}
 
