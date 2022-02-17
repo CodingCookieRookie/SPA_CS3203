@@ -1153,8 +1153,63 @@ namespace UnitTesting
 
             // 3. Clean-up:
             Entity::performCleanUp();
-            FollowsT::performCleanUp();
-            Follows::performCleanUp();
+            ParentT::performCleanUp();
+            Parent::performCleanUp();
+        }
+
+        TEST_METHOD(executeInstruction_parentStar_lhsStmtrhsConst)
+        {
+
+            // 1. Setup:
+            // Parent*(s1, 4) RelationshipInstruction
+            PqlReference lhsRef, rhsRef;
+            lhsRef = std::make_pair(PqlReferenceType::synonym, "s1");
+            rhsRef = std::make_pair(PqlReferenceType::integer, "4");
+            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ParentT, lhsRef, rhsRef);
+
+            // PKB inserts 4 statements
+            std::vector<StmtIndex> stmts;
+            for (int i = 0; i < 4; i++) {
+                stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+            }
+            std::unordered_map<StmtIndex,
+                std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> uPredSucTable;
+            uPredSucTable[stmts[0]] = { stmts[1] }; // 1 parents 2
+            uPredSucTable[stmts[1]] = { stmts[2], stmts[3] }; // 2 parents 3 and 4
+            uPredSucTable[stmts[2]] = { stmts[3] }; //  3 parents 4
+            ParentT::populate(uPredSucTable);
+
+
+            // 2. Main test:
+            EvaluatedTable evTable = instruction->execute();
+
+            // Test numRow:
+            Assert::AreEqual(size_t(3), evTable.getNumRow());
+
+            // Test Table: std::unordered_map<std::string, std::vector<int>>
+            auto tableRef = evTable.getTableRef();
+            Assert::AreEqual(true, tableRef.find("s1") != tableRef.end());
+            Assert::AreEqual(false, tableRef.find("s5") != tableRef.end());
+
+            // Test Entities: std::unordered_map<std::string, PqlEntityType>
+            std::vector<int> values{ 1, 2, 3 };
+            auto actualValues = tableRef.at("s1");
+            bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+            Assert::AreEqual(true, areVecEqual);
+            auto actualEntities = evTable.getEntities();
+            Assert::AreEqual(true, actualEntities.find("s1") != actualEntities.end());
+            Assert::AreEqual(false, actualEntities.find("s5") != actualEntities.end());
+            bool isPqlEntityType = PqlEntityType::Stmt == actualEntities.at("s1");
+            Assert::AreEqual(true, isPqlEntityType);
+
+            // Test EvResult:
+            bool actualEvResult = evTable.getEvResult();
+            Assert::AreEqual(true, actualEvResult);
+
+            // 3. Clean-up:
+            Entity::performCleanUp();
+            ParentT::performCleanUp();
+            Parent::performCleanUp();
         }
     };
 }
