@@ -3,7 +3,7 @@
 SPAException::SPAException(const std::string& reason) : reason(reason) {}
 
 const char* SPAException::what() const noexcept {
-	return reason.c_str();
+    return reason.c_str();
 }
 
 /* LexerException */
@@ -30,3 +30,9 @@ const std::string ParserException::MISSING_VAR_NAME = "Variable name is missing"
 const std::string ParserException::MISSING_WHITESPACE = "Whitespace is missing";
 
 ParserException::ParserException(const std::string& reason) : SPAException(reason) {}
+
+/* QPSException */
+const std::string QPSException::PARSER_ERROR = "Syntax error detected while parsing PQL query";
+const std::string QPSException::VALIDATOR_ERROR = "PQL query failed validator check";
+
+QPSException::QPSException(const std::string& reason) : SPAException(reason) {}
