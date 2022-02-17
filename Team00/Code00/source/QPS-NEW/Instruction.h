@@ -279,7 +279,7 @@ private:
 		return EvaluatedTable(PQLentities, PQLmap);
 	}
 
-	EvaluatedTable handleFollows(PqlReference lhsRef, PqlReference rhsRef) {
+	EvaluatedTable handleFollows() {
 		EvaluatedTable evTable;
 		std::vector<StmtIndex> stmts = Entity::getAllStmts();
 		
@@ -368,7 +368,7 @@ private:
 		}
 	}
 
-	EvaluatedTable handleFollowsT(PqlReference lhsRef, PqlReference rhs) {
+	EvaluatedTable handleFollowsT() {
 		EvaluatedTable evTable;
 		std::vector<StmtIndex> stmts = Entity::getAllStmts();
 
@@ -574,10 +574,10 @@ public:
 			evTable = handleUsesP();
 			break;
 		case PqlRelationshipType::Follows:
-			evTable = handleFollows(this->lhsRef, this->rhsRef);
+			evTable = handleFollows();
 			break;
 		case PqlRelationshipType::FollowsT:
-			evTable = handleFollowsT(this->lhsRef, this->rhsRef);
+			evTable = handleFollowsT();
 			break;
 		case PqlRelationshipType::Parent:
 			evTable = handleParent();
