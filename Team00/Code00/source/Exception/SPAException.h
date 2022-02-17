@@ -20,17 +20,22 @@ public:
 
 class ParserException : public SPAException {
 public:
-    static const std::string INVALID_EXPR;
-    static const std::string INVALID_PROG;
-    static const std::string INVALID_STMT;
-    static const std::string MISSING_LEFT_CURLY;
-    static const std::string MISSING_RIGHT_CURLY;
-    static const std::string MISSING_PROC_KEYWORD;
-    static const std::string MISSING_PROC_NAME;
-    static const std::string MISSING_SEMICOLON;
-    static const std::string MISSING_WHITESPACE;
-    static const std::string MISSING_VAR_NAME;
-
+	static const std::string INVALID_COND_EXPR;
+	static const std::string INVALID_REL_EXPR;
+	static const std::string INVALID_EXPR;
+	static const std::string INVALID_PROG;
+	static const std::string INVALID_STMT;
+	static const std::string MISSING_ELSE;
+	static const std::string MISSING_THEN;
+	static const std::string MISSING_LEFT_BRACKET;
+	static const std::string MISSING_RIGHT_BRACKET;
+	static const std::string MISSING_LEFT_CURLY;
+	static const std::string MISSING_RIGHT_CURLY;
+	static const std::string MISSING_PROC_KEYWORD;
+	static const std::string MISSING_PROC_NAME;
+	static const std::string MISSING_SEMICOLON;
+	static const std::string MISSING_WHITESPACE;
+	static const std::string MISSING_VAR_NAME;
     ParserException(const std::string& reason);
 };
 

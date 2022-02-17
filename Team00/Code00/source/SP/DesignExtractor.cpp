@@ -39,16 +39,18 @@ StmtIndex DesignExtractor::processStmtNode(StmtNode* stmtNode, StmtIndex prevInd
 		VarIndex varIndex = Entity::insertVar(varName);
 		Modifies::insert(stmtIndex, varIndex);
 	}
-	std::unordered_set<std::string> uses = stmtNode->getUsesVars();
-	for (const std::string& varName : uses) {
+
+	std::unordered_set<std::string> usesVars = stmtNode->getUsesVars();
+	for (const std::string& varName : usesVars) {
 		VarIndex varIndex = Entity::insertVar(varName);
 		Uses::insert(stmtIndex, varIndex);
 	}
-	std::unordered_set<std::string> consts = stmtNode->getUsesConsts();
+	std::unordered_set<std::string> consts = stmtNode->getConsts();
 	for (const std::string& constName : consts) {
 		int constVal = stoi(constName);
 		Entity::insertConst(constVal);
 	}
+
 	std::string pattern = stmtNode->getPattern();
 	if (!pattern.empty() && modifies.size() == 1) {
 		std::string varName = *(modifies.begin());
