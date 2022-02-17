@@ -1,14 +1,8 @@
 #pragma once
 #include "SourceAST.h"
 
-#include "../PKB/Entity.h"
-#include "../PKB/Modifies.h"
-#include "../PKB/Uses.h"
+#include "../PKB/PKB.h"
 #include "../PKB/Pattern.h"
-#include "../PKB/Follows.h"
-#include "../PKB/FollowsT.h"
-#include "../PKB/Parent.h"
-#include "../PKB/ParentT.h"
 
 class DesignExtractor {
 private:
