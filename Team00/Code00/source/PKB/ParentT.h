@@ -6,6 +6,6 @@
 #include "./RS2T.h"
 #include "./Parent.h"
 
-class ParentT : public RS2T<ParentT, Parent> {};
+class ParentT : public RS2T<ParentT> {};
 
 #endif
