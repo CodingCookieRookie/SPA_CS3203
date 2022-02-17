@@ -351,7 +351,7 @@ private:
 				PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
 				PQLmap[lhsRef.second] = std::get<0>(results); // if RHS is wildcard, LHS may have duplicate values
 			}
-			if (lhsRef.first == PqlReferenceType::synonym) {
+			if (rhsRef.first == PqlReferenceType::synonym) {
 				PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Stmt));
 				PQLmap[rhsRef.second] = std::get<1>(results); // if LHS is wildcard, RHS may have duplicate values
 			}
@@ -440,7 +440,7 @@ private:
 				PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
 				PQLmap[lhsRef.second] = std::get<0>(results); // if RHS is wildcard, LHS may have duplicate values
 			}
-			if (lhsRef.first == PqlReferenceType::synonym) {
+			if (rhsRef.first == PqlReferenceType::synonym) {
 				PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Stmt));
 				PQLmap[rhsRef.second] = std::get<1>(results); // if LHS is wildcard, RHS may have duplicate values
 			}
