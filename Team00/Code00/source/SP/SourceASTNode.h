@@ -1,15 +1,16 @@
 #pragma once
 
-#include <iostream>
+#include <queue>
 #include <string>
-#include <vector>
-#include <unordered_set>
 #include <stack>
+#include <unordered_set>
+#include <vector>
 
 #include "../common/Types.h"
 
 /* Forward definition of StmtLstNode for compatibility with StmtNode */
 class StmtLstNode;
+class ExprNode;
 
 class SourceASTNode {
 public:
@@ -17,14 +18,23 @@ public:
 };
 
 class StmtNode : public SourceASTNode {
+protected:
+	std::unordered_set<std::string> getUsesVarsInExpr(ExprNode* expr);
+	std::unordered_set<std::string> getConstsInExpr(ExprNode* expr);
 public:
 	StmtNode();
 	virtual StatementType getStmtType() = 0;
-	virtual std::unordered_set<std::string> getModifiesVars();
-	virtual std::unordered_set<std::string> getUsesVars();
-	virtual std::unordered_set<std::string> getUsesConsts();
 	virtual std::string getPattern();
 	virtual std::vector<StmtLstNode*> getChildStmtLst();
+
+	/* Returns an unordered set of vars used by the stmt node */
+	virtual std::unordered_set<std::string> getUsesVars();
+
+	/* Returns an unordered set of vars modified by the stmt node */
+	virtual std::unordered_set<std::string> getModifiesVars();
+
+	/* Returns an unordered set of consts in the stmt node */
+	virtual std::unordered_set<std::string> getConsts();
 
 	friend class SourceAST;
 };
@@ -78,7 +88,6 @@ private:
 	std::unordered_set<std::string> usesVars;
 	std::unordered_set<std::string> usesConsts;
 	std::string pattern;
-	void populateUsesSet();
 	void populatePattern();
 public:
 	AssignNode(std::string varName, ExprNode* expr);
@@ -86,8 +95,8 @@ public:
 	ExprNode* getExpr();
 	StatementType getStmtType();
 	std::unordered_set<std::string> getUsesVars();
-	std::unordered_set<std::string> getUsesConsts();
 	std::unordered_set<std::string> getModifiesVars();
+	std::unordered_set<std::string> getConsts();
 	std::string getPattern();
 
 	friend class SourceAST;
@@ -100,8 +109,10 @@ private:
 public:
 	WhileNode(ExprNode* condExpr, StmtLstNode* stmtLst);
 	ExprNode* getCondExpr();
-	StmtLstNode* getStmtLst();
 	StatementType getStmtType();
+	std::unordered_set<std::string> getUsesVars();
+	std::unordered_set<std::string> getConsts();
+	std::vector<StmtLstNode*> getChildStmtLst();
 
 	friend class SourceAST;
 };

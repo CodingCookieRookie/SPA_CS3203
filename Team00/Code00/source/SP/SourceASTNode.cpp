@@ -1,5 +1,3 @@
-#include <queue>
-
 #include "SourceASTNode.h"
 
 /* SourceASTNode */
@@ -16,7 +14,7 @@ std::unordered_set<std::string> StmtNode::getUsesVars() {
 	return std::unordered_set<std::string>();
 }
 
-std::unordered_set<std::string> StmtNode::getUsesConsts() {
+std::unordered_set<std::string> StmtNode::getConsts() {
 	return std::unordered_set<std::string>();
 }
 
@@ -26,6 +24,46 @@ std::string StmtNode::getPattern() {
 
 std::vector<StmtLstNode*> StmtNode::getChildStmtLst() {
 	return std::vector<StmtLstNode*>();
+}
+
+std::unordered_set<std::string> StmtNode::getUsesVarsInExpr(ExprNode* expr) {
+	std::unordered_set<std::string> usesVars;
+	std::queue<ExprNode*> queue;
+	queue.push(expr);
+
+	while (!queue.empty()) {
+		ExprNode* currNode = queue.front();
+		queue.pop();
+		if (currNode->getExprNodeValueType() == ExprNodeValueType::varName) {
+			usesVars.insert(currNode->getValue());
+		}
+
+		for (ExprNode* child : currNode->getChildren()) {
+			queue.push(child);
+		}
+	}
+
+	return usesVars;
+}
+
+std::unordered_set<std::string> StmtNode::getConstsInExpr(ExprNode* expr) {
+	std::unordered_set<std::string> consts;
+
+	std::queue<ExprNode*> queue;
+	queue.push(expr);
+	while (!queue.empty()) {
+		ExprNode* currNode = queue.front();
+		queue.pop();
+		if (currNode->getExprNodeValueType() == ExprNodeValueType::constValue) {
+			consts.insert(currNode->getValue());
+		}
+
+		for (ExprNode* child : currNode->getChildren()) {
+			queue.push(child);
+		}
+	}
+
+	return consts;
 }
 
 /* ReadNode */
@@ -85,7 +123,6 @@ void ExprNode::populatePattern(std::vector<std::string>& tokens) {
 
 /* AssignNode */
 AssignNode::AssignNode(std::string varName, ExprNode* expr) : StmtNode(), varName(varName), expr(expr) {
-	populateUsesSet();
 	populatePattern();
 }
 
@@ -103,24 +140,6 @@ ExprNode* AssignNode::getExpr() {
 
 std::unordered_set<std::string> AssignNode::getModifiesVars() {
 	return { varName };
-}
-
-void AssignNode::populateUsesSet() {
-	std::queue<ExprNode*> queue;
-	queue.push(this->getExpr());
-	while (!queue.empty()) {
-		ExprNode* currNode = queue.front();
-		queue.pop();
-		if (currNode->getExprNodeValueType() == ExprNodeValueType::varName) {
-			usesVars.insert(currNode->getValue());
-		} else if (currNode->getExprNodeValueType() == ExprNodeValueType::constValue) {
-			usesConsts.insert(currNode->getValue());
-		}
-
-		for (ExprNode* child : currNode->getChildren()) {
-			queue.push(child);
-		}
-	}
 }
 
 void AssignNode::populatePattern() {
@@ -141,11 +160,11 @@ std::string AssignNode::getPattern() {
 }
 
 std::unordered_set<std::string> AssignNode::getUsesVars() {
-	return usesVars;
+	return getUsesVarsInExpr(getExpr());
 }
 
-std::unordered_set<std::string> AssignNode::getUsesConsts() {
-	return usesConsts;
+std::unordered_set<std::string> AssignNode::getConsts() {
+	return getConstsInExpr(getExpr());
 }
 
 /* WhileNode */
@@ -155,12 +174,20 @@ ExprNode* WhileNode::getCondExpr() {
 	return condExpr;
 }
 
-StmtLstNode* WhileNode::getStmtLst() {
-	return stmtLst;
-}
-
 StatementType WhileNode::getStmtType() {
 	return StatementType::whileType;
+}
+
+std::unordered_set<std::string> WhileNode::getUsesVars() {
+	return getUsesVarsInExpr(condExpr);
+}
+
+std::unordered_set<std::string> WhileNode::getConsts() {
+	return getConstsInExpr(condExpr);
+}
+
+std::vector<StmtLstNode*> WhileNode::getChildStmtLst() {
+	return { stmtLst };
 }
 
 /* StmtLstNode */

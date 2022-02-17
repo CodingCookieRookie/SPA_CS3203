@@ -772,7 +772,7 @@ public:
 		}
 	}
 
-	TEST_METHOD(parse_matchWhile_oneRelExpr_success) {
+	TEST_METHOD(parse_matchWhile_oneRelExprCondExpr_success) {
 		const char* source = "   procedure procedure123name \n "
 			"{ while ( y + 2 > 5) "
 			"{ flag    = 123;   count =    someVar123	; "
@@ -794,7 +794,7 @@ public:
 		/* Test while stmt */
 		WhileNode* whileNode = (WhileNode*)statements[0];
 		ExprNode* gtOp = whileNode->getCondExpr();
-		StmtLstNode* stmtLstNodeWhile = whileNode->getStmtLst();
+		StmtLstNode* stmtLstNodeWhile = whileNode->getChildStmtLst()[0];
 
 		/* Test cond expr */
 		// y + 2 > 5
@@ -868,7 +868,7 @@ public:
 		/* Test while stmt */
 		WhileNode* whileNode = (WhileNode*)statements[0];
 		ExprNode* notOp = whileNode->getCondExpr();
-		StmtLstNode* stmtLstNodeWhile = whileNode->getStmtLst();
+		StmtLstNode* stmtLstNodeWhile = whileNode->getChildStmtLst()[0];
 
 		/* Test cond expr */
 		Assert::AreEqual(std::string("!"), notOp->getValue());
@@ -937,7 +937,7 @@ public:
 		/* Test while stmt */
 		WhileNode* whileNode = (WhileNode*)statements[0];
 		ExprNode* andOp = whileNode->getCondExpr();
-		StmtLstNode* stmtLstNodeWhile = whileNode->getStmtLst();
+		StmtLstNode* stmtLstNodeWhile = whileNode->getChildStmtLst()[0];
 
 		/* Test cond expr */
 		Assert::AreEqual(std::string("&&"), andOp->getValue());
@@ -1015,7 +1015,7 @@ public:
 		/* Test while stmt */
 		WhileNode* whileNode = (WhileNode*)statements[0];
 		ExprNode* orOp = whileNode->getCondExpr();
-		StmtLstNode* stmtLstNodeWhile = whileNode->getStmtLst();
+		StmtLstNode* stmtLstNodeWhile = whileNode->getChildStmtLst()[0];
 
 		/* Test cond expr */
 		Assert::AreEqual(std::string("||"), orOp->getValue());
@@ -1073,7 +1073,7 @@ public:
 		Assert::AreEqual(std::string("fl123ag"), readNode->getVarName());
 	}
 
-	TEST_METHOD(parse_matchWhile_OROpNestedInNOTOp_success) {
+	TEST_METHOD(parse_matchWhile_OROpNestedInNOTOpCondExpr_success) {
 		const char* source = "   procedure procedure123name \n "
 			"{ while ( !( (y * 1 == 5 - z) || (x != 0)  )    ) "
 			"{ read fl123ag 	; } "
@@ -1094,7 +1094,7 @@ public:
 		/* Test while stmt */
 		WhileNode* whileNode = (WhileNode*)statements[0];
 		ExprNode* notOp = whileNode->getCondExpr();
-		StmtLstNode* stmtLstNodeWhile = whileNode->getStmtLst();
+		StmtLstNode* stmtLstNodeWhile = whileNode->getChildStmtLst()[0];
 
 		/* Test cond expr */
 		// !( (y * 1 == 5 - z) || (x != 0)  )
