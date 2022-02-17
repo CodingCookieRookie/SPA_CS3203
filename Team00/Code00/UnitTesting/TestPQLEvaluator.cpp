@@ -1067,5 +1067,32 @@ namespace UnitTesting
             Entity::performCleanUp();
             Parent::performCleanUp();
         }
+
+        // Parent* Relationship Tests ======================================================================================================================
+
+        TEST_METHOD(executeInstruction_parentStar_twoConstants) {
+
+            // 1. Setup:
+            // Parent (1, 2) RelationshipInstruction
+            PqlReference lhsRef, rhsRef;
+            lhsRef = std::make_pair(PqlReferenceType::integer, "1");
+            rhsRef = std::make_pair(PqlReferenceType::integer, "2");
+            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::Parent, lhsRef, rhsRef);
+
+            // PKB inserts statements
+            StmtIndex stmt1 = Entity::insertStmt(StatementType::assignType);
+            StmtIndex stmt2 = Entity::insertStmt(StatementType::assignType);
+            Parent::insert(stmt1, stmt2);
+
+            // 2. Main test:
+            EvaluatedTable evTable = instruction->execute();
+
+            Assert::AreEqual(size_t(0), evTable.getNumRow());
+            Assert::AreEqual(true, evTable.getEvResult());
+
+            // 3. Clean-up:
+            Entity::performCleanUp();
+            Parent::performCleanUp();
+        }
     };
 }
