@@ -202,9 +202,7 @@ private:
 	}
 
 	EvaluatedTable handleModifiesP() {
-		// Modifies (a/r/s/a1, v) or Modifies (a/r/s/a1, _ )
 		// Modifies (p/p1, v)	or Modifies (p/p1, _ )	proc
-		// Modifies (1, v)	=> true or Modifies (1, _ ) (under statement)
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Procedure));
