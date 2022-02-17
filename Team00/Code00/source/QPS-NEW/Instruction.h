@@ -359,7 +359,9 @@ private:
 			if (lhsRef.first == PqlReferenceType::wildcard && rhsRef.first == PqlReferenceType::wildcard) { // Follows(_, _)
 				isEmptyTable = std::get<0>(Follows::getAllPredecessorSuccessorInfo()).empty();
 			}
-			return EvaluatedTable(isEmptyTable);
+			// No Follows rs exists => isEmptyTable == true => EvTable.evResult == false (innerJoinMerge() can drop table)
+			// Follows rs exists => isEmptyTable == false => EvTable.evResult == true (innerJoinMerge() can merge dummy table, preserving all rows)
+			return EvaluatedTable(!isEmptyTable);
 		}
 	}
 
@@ -435,7 +437,7 @@ private:
 				PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
 				PQLmap[lhsRef.second] = std::get<0>(results); // if RHS is wildcard, LHS may have duplicate values
 			}
-			if (lhsRef.first == PqlReferenceType::synonym) {
+			if (rhsRef.first == PqlReferenceType::synonym) {
 				PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Stmt));
 				PQLmap[rhsRef.second] = std::get<1>(results); // if LHS is wildcard, RHS may have duplicate values
 			}
@@ -444,10 +446,12 @@ private:
 		// Parent(_, _)
 		else {
 			bool isEmptyTable = true;
-			if (lhsRef.first == PqlReferenceType::wildcard && rhsRef.first == PqlReferenceType::wildcard) { // Parent(_, _)
+			if (lhsRef.first == PqlReferenceType::wildcard && rhsRef.first == PqlReferenceType::wildcard) {
 				isEmptyTable = std::get<0>(Parent::getAllPredecessorSuccessorInfo()).empty();
 			}
-			return EvaluatedTable(isEmptyTable);
+		    // No Parent rs exists => isEmptyTable == true => EvTable.evResult == false (innerJoinMerge() can drop table)
+			// Parent rs exists => isEmptyTable == false => EvTable.evResult == true (innerJoinMerge() can merge dummy table, preserving all rows)
+			return EvaluatedTable(!isEmptyTable);
 		}
 	}
 

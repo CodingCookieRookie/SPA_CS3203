@@ -643,5 +643,51 @@ namespace UnitTesting
         //    Parent::performCleanUp();
         //}
 
+        TEST_METHOD(executeInstruction_parent_twoWIldcards)
+        {
+
+            // 1. Setup:
+            // Parent(_, _) RelationshipInstruction
+            PqlReference lhsRef, rhsRef;
+            lhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
+            rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
+            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::Parent, lhsRef, rhsRef);
+
+            // PKB inserts 3 statements
+            std::vector<StmtIndex> stmts;
+            for (int i = 0; i < 3; i++) {
+                stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+            }
+            for (int i = 0; i < 2; i++) {
+                Parent::insert(stmts[i], stmts[i + 1]);
+            }
+
+            // 2. Main test:
+            EvaluatedTable evTable = instruction->execute();
+
+            // Test numRow:
+            Assert::AreEqual(size_t(0), evTable.getNumRow()); // 
+
+            // Test Table: std::unordered_map<std::string, std::vector<int>>
+            auto tableRef = evTable.getTableRef();
+            Assert::AreEqual(false, tableRef.find("_") != tableRef.end());
+            Assert::AreEqual(false, tableRef.find("s1") != tableRef.end());
+
+            // Test Table size:
+            Assert::AreEqual(size_t(0), tableRef.size()); // Two wildcards will have no columns => only have boolean
+
+            // Test Entities: std::unordered_map<std::string, PqlEntityType>
+            auto actualEntities = evTable.getEntities();
+            Assert::AreEqual(false, actualEntities.find("_") != actualEntities.end());
+            Assert::AreEqual(false, actualEntities.find("s2") != actualEntities.end());
+
+            // Test EvResult:
+            bool actualEvResult = evTable.getEvResult();
+            Assert::AreEqual(true, actualEvResult); // because Parent rs exist
+
+            // 3. Clean-up:
+            Entity::performCleanUp();
+            Parent::performCleanUp();
+        }
     };
 }
