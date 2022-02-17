@@ -1400,5 +1400,56 @@ namespace UnitTesting
             ParentT::performCleanUp();
             Parent::performCleanUp();
         }
+
+        TEST_METHOD(executeInstruction_parentStar_twoWildcards)
+        {
+
+            // 1. Setup:
+            // Parent*(_, _) RelationshipInstruction
+            PqlReference lhsRef, rhsRef;
+            lhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
+            rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
+            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ParentT, lhsRef, rhsRef);
+
+            // PKB inserts 3 statements
+            std::vector<StmtIndex> stmts;
+            for (int i = 0; i < 4; i++) {
+                stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+            }
+            std::unordered_map<StmtIndex,
+                std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> uPredSucTable;
+            uPredSucTable[stmts[0]] = { stmts[1], stmts[2] }; // 1 parents 2 and 3
+            uPredSucTable[stmts[1]] = { stmts[2], stmts[3] }; // 2 parents 3 and 4
+            uPredSucTable[stmts[2]] = { stmts[3] }; //  3 parents 4
+            ParentT::populate(uPredSucTable);
+
+            // 2. Main test:
+            EvaluatedTable evTable = instruction->execute();
+
+            // Test numRow:
+            Assert::AreEqual(size_t(0), evTable.getNumRow()); // Evaluating 2 wildcards will return a boolean with no table.
+
+            // Test Table: std::unordered_map<std::string, std::vector<int>>
+            auto tableRef = evTable.getTableRef();
+            Assert::AreEqual(false, tableRef.find("_") != tableRef.end());
+            Assert::AreEqual(false, tableRef.find("s1") != tableRef.end());
+
+            // Test Table size:
+            Assert::AreEqual(size_t(0), tableRef.size()); // Two wildcards will have no columns => only have boolean
+
+            // Test Entities: std::unordered_map<std::string, PqlEntityType>
+            auto actualEntities = evTable.getEntities();
+            Assert::AreEqual(false, actualEntities.find("_") != actualEntities.end());
+            Assert::AreEqual(false, actualEntities.find("s2") != actualEntities.end());
+
+            // Test EvResult:
+            bool actualEvResult = evTable.getEvResult();
+            Assert::AreEqual(true, actualEvResult); // because Follows* rs exist
+
+            // 3. Clean-up:
+            Entity::performCleanUp();
+            ParentT::performCleanUp();
+            Parent::performCleanUp();
+        }
     };
 }
