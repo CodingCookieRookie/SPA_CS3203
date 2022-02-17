@@ -72,6 +72,21 @@ void DesignExtractor::Extract(SourceAST& ast) {
 	stmtParentMap.clear();
 	stmtFollowsMap.clear();
 	processProgramNode(ast.getRoot());
+
+	/* Populate Parent and Follows Tables, and compute their transitive closures */
+	for (const std::pair<StmtIndex, std::vector<StmtIndex>> parentPair : stmtParentMap) {
+		StmtIndex predecessor = parentPair.first;
+		std::vector<StmtIndex> successors = parentPair.second;
+		for (const StmtIndex& successor : successors) {
+			Parent::insert(predecessor, successor);
+		}
+	}
+	for (const std::pair<StmtIndex, StmtIndex>& followsPair : stmtFollowsMap) {
+		StmtIndex predecessor = followsPair.first;
+		StmtIndex successor = followsPair.second;
+		Follows::insert(predecessor, successor);
+	}
+	PKB::populateRecursiveInfo();
 }
 
 std::unordered_map<ProcIndex, std::vector<StmtIndex>, ProcIndex::HashFunction> DesignExtractor::getProcStmtMap() {
