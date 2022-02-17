@@ -167,27 +167,37 @@ std::unordered_set<std::string> AssignNode::getConsts() {
 	return getConstsInExpr(getExpr());
 }
 
-/* WhileNode */
-WhileNode::WhileNode(ExprNode* condExpr, StmtLstNode* stmtLst) : StmtNode(), condExpr(condExpr), stmtLst(stmtLst) {}
+/* ContainerNode */
+ContainerNode::ContainerNode(ExprNode* condExpr, std::vector<StmtLstNode*> childStmtLst) : condExpr(condExpr), childStmtLst(childStmtLst) {}
 
-ExprNode* WhileNode::getCondExpr() {
+ExprNode* ContainerNode::getCondExpr() {
 	return condExpr;
 }
+
+std::vector<StmtLstNode*> ContainerNode::getChildStmtLst() {
+	return childStmtLst;
+}
+
+std::unordered_set<std::string> ContainerNode::getUsesVars() {
+	return getUsesVarsInExpr(condExpr);
+}
+
+std::unordered_set<std::string> ContainerNode::getConsts() {
+	return getConstsInExpr(condExpr);
+}
+
+/* WhileNode */
+WhileNode::WhileNode(ExprNode* condExpr, StmtLstNode* stmtLst) : ContainerNode(condExpr, { stmtLst }) {}
 
 StatementType WhileNode::getStmtType() {
 	return StatementType::whileType;
 }
 
-std::unordered_set<std::string> WhileNode::getUsesVars() {
-	return getUsesVarsInExpr(condExpr);
-}
+/* IfNode */
+IfNode::IfNode(ExprNode* condExpr, StmtLstNode* thenStmtLst, StmtLstNode* elseStmtLst) : ContainerNode(condExpr, { thenStmtLst, elseStmtLst }) {}
 
-std::unordered_set<std::string> WhileNode::getConsts() {
-	return getConstsInExpr(condExpr);
-}
-
-std::vector<StmtLstNode*> WhileNode::getChildStmtLst() {
-	return { stmtLst };
+StatementType IfNode::getStmtType() {
+	return StatementType::ifType;
 }
 
 /* StmtLstNode */
