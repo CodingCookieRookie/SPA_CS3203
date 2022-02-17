@@ -305,7 +305,7 @@ private:
 		{
 			std::vector<int> results;
 			int lhsRefValue = stoi(lhsRef.second); // might throw error if string value can't be converted to int
-			StmtIndex lhsStmt = stmts[lhsRefValue - 1];
+			StmtIndex lhsStmt = StmtIndex(lhsRefValue);
 			for (StmtIndex stmt : stmts) {
 				if (Follows::containsSuccessor(lhsStmt, stmt)) {
 					results.emplace_back(stmt.getIndex()); // e.g {7} because 6 is followed by 7
@@ -325,7 +325,7 @@ private:
 		{
 			std::vector<int> results;
 			int rhsRefValue = stoi(rhsRef.second); //might throw error if string value can't be converted to int
-			StmtIndex rhsStmt = stmts[rhsRefValue - 1]; //check if off by 1
+			StmtIndex rhsStmt = StmtIndex(rhsRefValue);
 			for (StmtIndex stmt : stmts) {
 				if (Follows::containsSuccessor(stmt, rhsStmt)) {
 					results.emplace_back(stmt.getIndex()); //e.g {3} because 3 is followed by 6
@@ -394,7 +394,7 @@ private:
 		{
 			std::vector<int> results;
 			int lhsRefValue = stoi(lhsRef.second); // might throw error if string value can't be converted to int
-			StmtIndex lhsStmt = stmts[lhsRefValue - 1];
+			StmtIndex lhsStmt = StmtIndex(lhsRefValue);
 			for (StmtIndex stmt : stmts) {
 				if (FollowsT::containsSuccessor(lhsStmt, stmt)) {
 					results.emplace_back(stmt.getIndex()); // e.g {7} because 6 is followed by 7
@@ -414,7 +414,7 @@ private:
 		{
 			std::vector<int> results;
 			int rhsRefValue = stoi(rhsRef.second); //might throw error if string value can't be converted to int
-			StmtIndex rhsStmt = stmts[rhsRefValue - 1]; //check if off by 1
+			StmtIndex rhsStmt = StmtIndex(rhsRefValue);
 			for (StmtIndex stmt : stmts) {
 				if (FollowsT::containsSuccessor(stmt, rhsStmt)) {
 					results.emplace_back(stmt.getIndex()); //e.g {3} because 3 is followed by 6
@@ -483,7 +483,7 @@ private:
 		{
 			std::vector<int> results;
 			int lhsRefValue = stoi(lhsRef.second); // might throw error if string value can't be converted to int
-			StmtIndex lhsStmt = stmts[lhsRefValue - 1];
+			StmtIndex lhsStmt = StmtIndex(lhsRefValue);
 			for (StmtIndex stmt : stmts) {
 				if (Parent::containsSuccessor(lhsStmt, stmt)) {
 					results.emplace_back(stmt.getIndex()); // e.g {6} because 6 is a parent of 7
@@ -502,8 +502,9 @@ private:
 		else if (rhsRef.first == PqlReferenceType::integer)
 		{
 			std::vector<int> results;
-			int rhsRefValue = stoi(rhsRef.second); //might throw error if string value can't be converted to int
-			StmtIndex rhsStmt = stmts[rhsRefValue - 1]; //check if off by 1
+			std::string value = rhsRef.second;
+			int rhsRefValue = std::stoi(value); //might throw error if string value can't be converted to int
+			StmtIndex rhsStmt = StmtIndex(rhsRefValue);
 			for (StmtIndex stmt : stmts) {
 				if (Parent::containsSuccessor(stmt, rhsStmt)) {
 					results.emplace_back(stmt.getIndex()); //e.g {6} because 6 is a parent of 7
@@ -572,7 +573,7 @@ private:
 		{
 			std::vector<int> results;
 			int lhsRefValue = stoi(lhsRef.second); // might throw error if string value can't be converted to int
-			StmtIndex lhsStmt = stmts[lhsRefValue - 1];
+			StmtIndex lhsStmt = StmtIndex(lhsRefValue);
 			for (StmtIndex stmt : stmts) {
 				if (ParentT::containsSuccessor(lhsStmt, stmt)) {
 					results.emplace_back(stmt.getIndex()); // e.g {6} because 6 is a parent of 7
@@ -592,7 +593,7 @@ private:
 		{
 			std::vector<int> results;
 			int rhsRefValue = stoi(rhsRef.second); //might throw error if string value can't be converted to int
-			StmtIndex rhsStmt = stmts[rhsRefValue - 1]; //check if off by 1
+			StmtIndex rhsStmt = StmtIndex(rhsRefValue);
 			for (StmtIndex stmt : stmts) {
 				if (ParentT::containsSuccessor(stmt, rhsStmt)) {
 					results.emplace_back(stmt.getIndex()); //e.g {6} because 6 is a parent of 7
