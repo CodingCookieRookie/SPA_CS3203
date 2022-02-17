@@ -351,11 +351,11 @@ namespace UnitTesting
             for (int i = 0; i < 4; i++) {
                 stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
             }
-            for (int i = 0; i < 2; i++) {
-                Follows::insert(stmts[i], stmts[i + 1]);
-            }
-            auto currPredSucTable = FollowsT::getPredSucTable();
-            FollowsT::populate(currPredSucTable);
+            std::unordered_map<StmtIndex,
+                std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> uPredSucTable;
+            uPredSucTable[stmts[0]] = { stmts[1] };
+            uPredSucTable[stmts[1]] = { stmts[2], stmts[3]};
+            FollowsT::populate(uPredSucTable);
 
             // 2. Main test:
             EvaluatedTable evTable = instruction->execute();
@@ -365,7 +365,9 @@ namespace UnitTesting
 
             // 3. Clean-up:
             Entity::performCleanUp();
+            FollowsT::performCleanUp();
             Follows::performCleanUp();
+
         }
 
         // Parent Relationship Tests ======================================================================================================================
