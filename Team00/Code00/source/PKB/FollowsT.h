@@ -6,6 +6,6 @@
 #include "./RS2T.h"
 #include "./Follows.h"
 
-class FollowsT : public RS2T<FollowsT, Follows> {};
+class FollowsT : public RS2T<FollowsT> {};
 
 #endif

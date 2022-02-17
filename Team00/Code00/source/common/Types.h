@@ -8,7 +8,7 @@ enum class StatementType {
 };
 
 enum class ExprNodeValueType {
-	varName, constValue, arithmeticOperator
+	varName, constValue, arithmeticOperator, logicalOperator, relOperator
 };
 
 struct VarIndex {
@@ -29,6 +29,10 @@ struct VarIndex {
 			return std::hash<int>()(k.index);
 		}
 	};
+
+	int getIndex() {
+		return index;
+	}
 };
 
 struct ProcIndex {
@@ -49,6 +53,10 @@ struct ProcIndex {
 			return std::hash<int>()(k.index);
 		}
 	};
+
+	int getIndex() {
+		return index;
+	}
 };
 
 struct StmtIndex {
@@ -71,7 +79,7 @@ struct StmtIndex {
 	};
 
 	int getIndex() {
-		return this->index;
+		return index;
 	}
 };
 

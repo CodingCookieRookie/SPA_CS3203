@@ -111,5 +111,17 @@ public:
 		auto stmtVarInfo = Modifies::getAllStmtVarInfo();
 		Assert::IsTrue(expectedAns == stmtVarInfo);
 	};
+
+	TEST_METHOD(populateForContainers) {
+		std::vector<int> expectedAns{ varIndex1.index, varIndex2.index };
+
+		std::unordered_set<StmtIndex, StmtIndex::HashFunction> subStmts{ stmtIndex1 };
+		Modifies::insert(stmtIndex1, varIndex1);
+		Modifies::insert(stmtIndex1, varIndex2);
+		Modifies::populateForContainers(stmtIndex2, subStmts);
+
+		auto variables = Modifies::getVariables(stmtIndex2);
+		Assert::IsTrue(expectedAns == variables);
+	};
 	};
 }

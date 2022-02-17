@@ -9,7 +9,7 @@ namespace UnitTesting {
 	TEST_CLASS(TestSourceASTNode) {
 public:
 
-	TEST_METHOD(assignNode_getUsesModifies_oneUsesVar_oneUsesConst_success) {
+	TEST_METHOD(assignNode_getUsesModifiesConsts_oneUsesVar_oneModifiesVar_oneConst_success) {
 		/* count = countA + 1
 					+
 			countA		1
@@ -19,25 +19,25 @@ public:
 		root->addChild(new ExprNode(ExprNodeValueType::constValue, "1"));
 		AssignNode* assignNode = new AssignNode("count", root);
 
-		/* getModifiesVars */
-		std::unordered_set<std::string> modifiesVars = assignNode->getModifiesVars();
-		Assert::AreEqual(size_t(1), modifiesVars.size());
-		Assert::IsTrue(modifiesVars.find("count") != modifiesVars.end());
-
 		/* getUsesVars */
 		std::unordered_set<std::string> usesVars = assignNode->getUsesVars();
 		Assert::AreEqual(size_t(1), usesVars.size());
 		Assert::IsTrue(usesVars.find("countA") != usesVars.end());
 
-		/* getUsesConsts */
-		std::unordered_set<std::string> usesConsts = assignNode->getUsesConsts();
-		Assert::AreEqual(size_t(1), usesConsts.size());
-		Assert::IsTrue(usesConsts.find("1") != usesConsts.end());
+		/* getModifiesVars */
+		std::unordered_set<std::string> modifiesVars = assignNode->getModifiesVars();
+		Assert::AreEqual(size_t(1), modifiesVars.size());
+		Assert::IsTrue(modifiesVars.find("count") != modifiesVars.end());
+
+		/* getConsts */
+		std::unordered_set<std::string> consts = assignNode->getConsts();
+		Assert::AreEqual(size_t(1), consts.size());
+		Assert::IsTrue(consts.find("1") != consts.end());
 
 		delete root;
 	}
 
-	TEST_METHOD(assignNode_getUsesModifies_multipleUsesVars_multipleUsesConsts_success) {
+	TEST_METHOD(assignNode_getUsesModifiesConsts_multipleUsesVars_oneModifiesVar_multipleConsts_success) {
 		/* z = (z + a123 * 2) % ((100 - b0b) / 3)
 							  %
 					+					/
@@ -68,11 +68,6 @@ public:
 
 		AssignNode* assignNode = new AssignNode("z", root);
 
-		/* getModifiesVars */
-		std::unordered_set<std::string> modifiesVars = assignNode->getModifiesVars();
-		Assert::AreEqual(size_t(1), modifiesVars.size());
-		Assert::IsTrue(modifiesVars.find("z") != modifiesVars.end());
-
 		/* getUsesVars */
 		std::unordered_set<std::string> usesVars = assignNode->getUsesVars();
 		Assert::AreEqual(size_t(3), usesVars.size());
@@ -80,14 +75,126 @@ public:
 		Assert::IsTrue(usesVars.find("a123") != usesVars.end());
 		Assert::IsTrue(usesVars.find("b0b") != usesVars.end());
 
-		/* getUsesConsts */
-		std::unordered_set<std::string> usesConsts = assignNode->getUsesConsts();
-		Assert::AreEqual(size_t(3), usesConsts.size());
-		Assert::IsTrue(usesConsts.find("2") != usesConsts.end());
-		Assert::IsTrue(usesConsts.find("100") != usesConsts.end());
-		Assert::IsTrue(usesConsts.find("3") != usesConsts.end());
+		/* getModifiesVars */
+		std::unordered_set<std::string> modifiesVars = assignNode->getModifiesVars();
+		Assert::AreEqual(size_t(1), modifiesVars.size());
+		Assert::IsTrue(modifiesVars.find("z") != modifiesVars.end());
+
+		/* getConsts */
+		std::unordered_set<std::string> consts = assignNode->getConsts();
+		Assert::AreEqual(size_t(3), consts.size());
+		Assert::IsTrue(consts.find("2") != consts.end());
+		Assert::IsTrue(consts.find("100") != consts.end());
+		Assert::IsTrue(consts.find("3") != consts.end());
 
 		delete root;
+	}
+
+	TEST_METHOD(whileNode_getUsesVarsAndConsts_oneUsesVar_oneConst_success) {
+		/*
+			while (cenX != 0) {
+				z = (z + a123 * 2) % ((100 - b0b) / 3);
+				read readVar;
+				print printVar;
+			}
+		*/
+
+		// z = (z + a123 * 2) % ((100 - b0b) / 3);
+		ExprNode* root = new ExprNode(ExprNodeValueType::arithmeticOperator, "%");
+		ExprNode* plus = new ExprNode(ExprNodeValueType::arithmeticOperator, "+");
+		ExprNode* divide = new ExprNode(ExprNodeValueType::arithmeticOperator, "/");
+		root->addChild(plus);
+		root->addChild(divide);
+
+		/* left subtree */
+		ExprNode* z = new ExprNode(ExprNodeValueType::varName, "z");
+		ExprNode* multiply = new ExprNode(ExprNodeValueType::arithmeticOperator, "*");
+		plus->addChild(z);
+		plus->addChild(multiply);
+		multiply->addChild(new ExprNode(ExprNodeValueType::varName, "a123"));
+		multiply->addChild(new ExprNode(ExprNodeValueType::constValue, "2"));
+
+		/* right subtree */
+		ExprNode* minus = new ExprNode(ExprNodeValueType::arithmeticOperator, "-");
+		ExprNode* three = new ExprNode(ExprNodeValueType::constValue, "3");
+		divide->addChild(minus);
+		divide->addChild(three);
+		minus->addChild(new ExprNode(ExprNodeValueType::constValue, "100"));
+		minus->addChild(new ExprNode(ExprNodeValueType::varName, "b0b"));
+
+		AssignNode* assignNode = new AssignNode("z", root);
+
+		StmtLstNode* stmtLstNode = new StmtLstNode();
+		stmtLstNode->addStmtNode(assignNode);
+		stmtLstNode->addStmtNode(new ReadNode("readVar"));
+		stmtLstNode->addStmtNode(new PrintNode("printVar"));
+
+		/* Cond expr */
+		// while (cenX != 0)
+		ExprNode* condExpr = new ExprNode(ExprNodeValueType::relOperator, "!=");
+		condExpr->addChild(new ExprNode(ExprNodeValueType::varName, "cenX"));
+		condExpr->addChild(new ExprNode(ExprNodeValueType::constValue, "0"));
+
+		WhileNode* whileNode = new WhileNode(condExpr, stmtLstNode);
+
+		/* getUsesVars */
+		std::unordered_set<std::string> usesVars = whileNode->getUsesVars();
+		Assert::AreEqual(size_t(1), usesVars.size());
+		Assert::IsTrue(usesVars.find("cenX") != usesVars.end());
+
+		/* getConsts */
+		std::unordered_set<std::string> consts = whileNode->getConsts();
+		Assert::AreEqual(size_t(1), consts.size());
+		Assert::IsTrue(consts.find("0") != consts.end());
+
+		delete root;
+	}
+
+	TEST_METHOD(whileNode_getUsesVarsAndConsts_multipleUsesVars_multipleConsts_success) {
+		/*
+			while ((cenX < 0) && (cenY + 15 >= 0)) {
+				print printVar;
+			}
+		*/
+
+		/* Cond expr */
+		// (cenX != 0)
+		ExprNode* ltOp = new ExprNode(ExprNodeValueType::relOperator, "<");
+		ltOp->addChild(new ExprNode(ExprNodeValueType::varName, "cenX"));
+		ltOp->addChild(new ExprNode(ExprNodeValueType::constValue, "0"));
+
+		// (cenY + 15 >= 0)
+		ExprNode* plusOp = new ExprNode(ExprNodeValueType::arithmeticOperator, "+");
+		plusOp->addChild(new ExprNode(ExprNodeValueType::varName, "cenY"));
+		plusOp->addChild(new ExprNode(ExprNodeValueType::constValue, "15"));
+
+		ExprNode* gteOp = new ExprNode(ExprNodeValueType::relOperator, ">=");
+		gteOp->addChild(plusOp);
+		gteOp->addChild(new ExprNode(ExprNodeValueType::constValue, "0"));
+
+		// while ((cenX < 0) && (cenY + 15 >= 0))
+		ExprNode* andOp = new ExprNode(ExprNodeValueType::logicalOperator, "&&");
+		andOp->addChild(ltOp);
+		andOp->addChild(gteOp);
+
+		/* StmtLstNode */
+		// print printVar;
+		StmtLstNode* stmtLstNode = new StmtLstNode();
+		stmtLstNode->addStmtNode(new PrintNode("printVar"));
+
+		WhileNode* whileNode = new WhileNode(andOp, stmtLstNode);
+
+		/* getUsesVars */
+		std::unordered_set<std::string> usesVars = whileNode->getUsesVars();
+		Assert::AreEqual(size_t(2), usesVars.size());
+		Assert::IsTrue(usesVars.find("cenX") != usesVars.end());
+		Assert::IsTrue(usesVars.find("cenY") != usesVars.end());
+
+		/* getConsts */
+		std::unordered_set<std::string> consts = whileNode->getConsts();
+		Assert::AreEqual(size_t(2), consts.size());
+		Assert::IsTrue(consts.find("0") != consts.end());
+		Assert::IsTrue(consts.find("15") != consts.end());
 	}
 
 	TEST_METHOD(assignNode_getPattern_differentExpressions_success) {

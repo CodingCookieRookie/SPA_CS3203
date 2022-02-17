@@ -18,12 +18,6 @@ private:
 	/* Helper method to execute all instructions */
 	EvaluatedTable executeInstructions(std::vector<Instruction*> instructions);
 
-	/* Helper method to execute one instruction */
-	EvaluatedTable execute(Instruction instr);
-
-	/* Helper method to inner join two EvaluatedTables together via a hash join algo */
-	// void innerJoinMerge(EvaluatedTable& currentTable, EvaluatedTable& newTable);
-
 public:
 
 	/* Instantiate of a PQLEvaluator */
@@ -31,9 +25,4 @@ public:
 
 	/* Main entry method for parsing the query */
 	EvaluatedTable evaluate();
-
-	/* Merges the current table with values from another EvaluatedTable
-	via an Inner Join, which can be implemented using Hash Join */
-	EvaluatedTable innerJoinMerge(EvaluatedTable evTable, EvaluatedTable newEvTable, std::string stmtRef, std::string entRef, std::unordered_set<std::string> currentTableColumns);
-
 };
