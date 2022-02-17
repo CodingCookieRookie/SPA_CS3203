@@ -5,6 +5,9 @@ Parser::Parser() {}
 Lexer Parser::lexer;
 
 const std::string Parser::WHILE = "while";
+const std::string Parser::IF = "if";
+const std::string Parser::THEN = "then";
+const std::string Parser::ELSE = "else";
 
 const std::string Parser::NOT = "!";
 const std::string Parser::LEFT_BRACKET = "(";
@@ -104,6 +107,8 @@ StmtNode* Parser::matchStmt() {
 		stmtNode = matchPrint();
 	} else if (lexer.match(WHILE)) {
 		stmtNode = matchWhile();
+	} else if (lexer.match(IF)) {
+		stmtNode = matchIf();
 	} else {
 		std::string varName = lexer.nextName();
 		if (!varName.empty() && lexer.match("=")) {
@@ -383,4 +388,47 @@ ExprNode* Parser::matchRelFactor() {
 	}
 
 	return expr;
+}
+
+/* if : ‘if’ ‘(’ cond_expr ‘)’ ‘then’ ‘{‘ stmtLst ‘}’ ‘else’ ‘{‘ stmtLst ‘}’ */
+IfNode* Parser::matchIf() {
+	if (!lexer.match(LEFT_BRACKET)) {
+		throw ParserException(ParserException::MISSING_LEFT_BRACKET);
+	}
+
+	ExprNode* condNode = matchCondExpr();
+
+	if (!lexer.match(RIGHT_BRACKET)) {
+		throw ParserException(ParserException::MISSING_RIGHT_BRACKET);
+	}
+
+	if (!lexer.match(THEN)) {
+		throw ParserException(ParserException::MISSING_THEN);
+	}
+
+	if (!lexer.match(LEFT_CURLY)) {
+		throw ParserException(ParserException::MISSING_LEFT_CURLY);
+	}
+
+	StmtLstNode* thenStmtLst = matchStmtLst();
+
+	if (!lexer.match(RIGHT_CURLY)) {
+		throw ParserException(ParserException::MISSING_RIGHT_CURLY);
+	}
+
+	if (!lexer.match(ELSE)) {
+		throw ParserException(ParserException::MISSING_ELSE);
+	}
+
+	if (!lexer.match(LEFT_CURLY)) {
+		throw ParserException(ParserException::MISSING_LEFT_CURLY);
+	}
+
+	StmtLstNode* elseStmtLst = matchStmtLst();
+
+	if (!lexer.match(RIGHT_CURLY)) {
+		throw ParserException(ParserException::MISSING_RIGHT_CURLY);
+	}
+
+	return new IfNode(condNode, thenStmtLst, elseStmtLst);
 }

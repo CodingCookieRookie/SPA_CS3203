@@ -26,8 +26,12 @@ private:
 	static ExprNode* matchCondExpr();
 	static ExprNode* matchRelExpr();
 	static ExprNode* matchRelFactor();
+	static IfNode* matchIf();
 
 	static const std::string WHILE;
+	static const std::string IF;
+	static const std::string THEN;
+	static const std::string ELSE;
 
 	static const std::string NOT;
 	static const std::string LEFT_BRACKET;

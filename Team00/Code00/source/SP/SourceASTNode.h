@@ -78,7 +78,7 @@ public:
 
 	friend class SourceAST;
 	friend class AssignNode;
-	friend class WhileNode;
+	friend class ContainerNode;
 };
 
 class AssignNode : public StmtNode {
@@ -102,19 +102,28 @@ public:
 	friend class SourceAST;
 };
 
-class WhileNode : public StmtNode {
-private:
+class ContainerNode : public StmtNode {
+protected:
 	ExprNode* condExpr;
-	StmtLstNode* stmtLst;
+	std::vector<StmtLstNode*> childStmtLst;
 public:
-	WhileNode(ExprNode* condExpr, StmtLstNode* stmtLst);
+	ContainerNode(ExprNode* condExpr, std::vector<StmtLstNode*> childStmtLst);
 	ExprNode* getCondExpr();
-	StatementType getStmtType();
 	std::unordered_set<std::string> getUsesVars();
 	std::unordered_set<std::string> getConsts();
 	std::vector<StmtLstNode*> getChildStmtLst();
+};
 
-	friend class SourceAST;
+class WhileNode : public ContainerNode {
+public:
+	WhileNode(ExprNode* condExpr, StmtLstNode* stmtLst);
+	StatementType getStmtType();
+};
+
+class IfNode : public ContainerNode {
+public:
+	IfNode(ExprNode* condExpr, StmtLstNode* thenStmtLst, StmtLstNode* elseStmtLst);
+	StatementType getStmtType();
 };
 
 class StmtLstNode : public SourceASTNode {
