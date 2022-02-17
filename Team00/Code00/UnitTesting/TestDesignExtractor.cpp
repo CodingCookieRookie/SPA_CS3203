@@ -177,6 +177,76 @@ public:
 		Assert::AreEqual(size_t(2), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());
 	}
 
+	TEST_METHOD(extract_singleWhileStatement_parentCaptured) {
+		/* AST is equivalent to the SIMPLE program
+		   procedure main {
+				while (x == y) {
+					read x; } }
+		*/
+		PrintNode* printNode = new PrintNode("x");
+		StmtLstNode* stmtLstNode = new StmtLstNode();
+		stmtLstNode->addStmtNode(printNode);
+		ExprNode* rootExprNode = new ExprNode(ExprNodeValueType::relOperator, "==");
+		ExprNode* leftExprNode = new ExprNode(ExprNodeValueType::varName, "x");
+		ExprNode* rightExprNode = new ExprNode(ExprNodeValueType::varName, "y");
+		rootExprNode->addChild(leftExprNode);
+		rootExprNode->addChild(rightExprNode);
+		WhileNode* whileNode = new WhileNode(rootExprNode, stmtLstNode);
+		StmtLstNode* outerStmtLstNode = new StmtLstNode();
+		outerStmtLstNode->addStmtNode(whileNode);
+		ProcedureNode* procedureNode = new ProcedureNode("main");
+		procedureNode->addStmtLst(outerStmtLstNode);
+		ProgramNode* programNode = new ProgramNode();
+		programNode->addProcedure(procedureNode);
+		SourceAST ast(programNode);
+		DesignExtractor::Extract(ast);
+
+		/* We expect one Parent relationships to be captured, from the read statement in the while-block */
+		Assert::AreEqual(size_t(1), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());
+	}
+	TEST_METHOD(extract_whileInWhile_parentAndParentTCaptured) {
+		/* AST is equivalent to the SIMPLE program
+		   procedure main {
+		       while (a <= b) {
+			       while (x == y) {
+				       print x; } } }
+		*/
+
+		PrintNode* printNode = new PrintNode("x");
+		StmtLstNode* innerStmtLstNode = new StmtLstNode();
+		innerStmtLstNode->addStmtNode(printNode);
+		ExprNode* innerRootExprNode = new ExprNode(ExprNodeValueType::relOperator, "==");
+		ExprNode* innerLeftExprNode = new ExprNode(ExprNodeValueType::varName, "x");
+		ExprNode* innerRightExprNode = new ExprNode(ExprNodeValueType::varName, "y");
+		innerRootExprNode->addChild(innerLeftExprNode);
+		innerRootExprNode->addChild(innerRightExprNode);
+		WhileNode* innerWhileNode = new WhileNode(innerRootExprNode, innerStmtLstNode);
+		StmtLstNode* stmtLstNode = new StmtLstNode();
+		stmtLstNode->addStmtNode(innerWhileNode);
+		ExprNode* rootExprNode = new ExprNode(ExprNodeValueType::relOperator, "<=");
+		ExprNode* leftExprNode = new ExprNode(ExprNodeValueType::varName, "a");
+		ExprNode* rightExprNode = new ExprNode(ExprNodeValueType::varName, "b");
+		rootExprNode->addChild(leftExprNode);
+		rootExprNode->addChild(rightExprNode);
+		WhileNode* whileNode = new WhileNode(rootExprNode, stmtLstNode);
+		StmtLstNode* outerStmtLstNode = new StmtLstNode();
+		outerStmtLstNode->addStmtNode(whileNode);
+		ProcedureNode* procedureNode = new ProcedureNode("main");
+		procedureNode->addStmtLst(outerStmtLstNode);
+		ProgramNode* programNode = new ProgramNode();
+		programNode->addProcedure(procedureNode);
+		SourceAST ast(programNode);
+		DesignExtractor::Extract(ast);
+
+		/* We expect two Parent relationships to be captured,
+		   one from the outer while to inner while, and one from the inner while to read x; */
+		Assert::AreEqual(size_t(2), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());
+		/* We expect three Parent relationships to be captured,
+		   one from the outer while to inner while, one from the inner while to read x;,
+		   and one from the outer while to read x; */
+		Assert::AreEqual(size_t(3), std::get<0>(ParentT::getAllPredecessorSuccessorInfo()).size());
+	}
+
 	TEST_METHOD(extract_whileAndIfInIf_parentAndParentTCaptured) {
 		/* AST is equivalent to the SIMPLE program
 		   procedure main {
@@ -184,7 +254,7 @@ public:
 				   2. while (x == y) {
 					   3. print x; } } else {
 				   4. if (hello != world) then {
-				       5. read y } else {
+					   5. read y; } else {
 					   6. a = b + c; } } }
 		*/
 
@@ -245,59 +315,40 @@ public:
 		Assert::AreEqual(size_t(8), std::get<0>(ParentT::getAllPredecessorSuccessorInfo()).size());
 	}
 
-	TEST_METHOD(extract_singleWhileStatement_parentCaptured) {
+	TEST_METHOD(extract_ifInWhile_parentAndParentTCaptured) {
 		/* AST is equivalent to the SIMPLE program
 		   procedure main {
-				while (x == y) {
-					read x; } }
-		*/
-		PrintNode* printNode = new PrintNode("x");
-		StmtLstNode* stmtLstNode = new StmtLstNode();
-		stmtLstNode->addStmtNode(printNode);
-		ExprNode* rootExprNode = new ExprNode(ExprNodeValueType::relOperator, "==");
-		ExprNode* leftExprNode = new ExprNode(ExprNodeValueType::varName, "x");
-		ExprNode* rightExprNode = new ExprNode(ExprNodeValueType::varName, "y");
-		rootExprNode->addChild(leftExprNode);
-		rootExprNode->addChild(rightExprNode);
-		WhileNode* whileNode = new WhileNode(rootExprNode, stmtLstNode);
-		StmtLstNode* outerStmtLstNode = new StmtLstNode();
-		outerStmtLstNode->addStmtNode(whileNode);
-		ProcedureNode* procedureNode = new ProcedureNode("main");
-		procedureNode->addStmtLst(outerStmtLstNode);
-		ProgramNode* programNode = new ProgramNode();
-		programNode->addProcedure(procedureNode);
-		SourceAST ast(programNode);
-		DesignExtractor::Extract(ast);
-
-		/* We expect one Parent relationships to be captured, from the read statement in the while-block */
-		Assert::AreEqual(size_t(1), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());
-	}
-
-	TEST_METHOD(extract_whileInWhile_parentAndParentTCaptured) {
-		/* AST is equivalent to the SIMPLE program
-		   procedure main {
-		       while (a <= b) {
-			       while (x == y) {
-				       read x; } } }
+		       1. while (x == y) {
+			       2. if (a <= b) then {
+				       3. print x; } else {
+					   4. read y; } } }
 		*/
 
+		/* Handle then-block */
 		PrintNode* printNode = new PrintNode("x");
+		StmtLstNode* thenStmtLstNode = new StmtLstNode();
+		thenStmtLstNode->addStmtNode(printNode);
+
+		/* Handle else-block */
+		ReadNode* readNode = new ReadNode("y");
+		StmtLstNode* elseStmtLstNode = new StmtLstNode();
+		thenStmtLstNode->addStmtNode(readNode);
+
+		ExprNode* ifRootExprNode = new ExprNode(ExprNodeValueType::relOperator, "<=");
+		ExprNode* ifLeftExprNode = new ExprNode(ExprNodeValueType::varName, "a");
+		ExprNode* ifRightExprNode = new ExprNode(ExprNodeValueType::varName, "b");
+		ifRootExprNode->addChild(ifLeftExprNode);
+		ifRootExprNode->addChild(ifRightExprNode);
+		IfNode* ifNode = new IfNode(ifRootExprNode, thenStmtLstNode, elseStmtLstNode);
 		StmtLstNode* innerStmtLstNode = new StmtLstNode();
-		innerStmtLstNode->addStmtNode(printNode);
-		ExprNode* innerRootExprNode = new ExprNode(ExprNodeValueType::relOperator, "==");
-		ExprNode* innerLeftExprNode = new ExprNode(ExprNodeValueType::varName, "x");
-		ExprNode* innerRightExprNode = new ExprNode(ExprNodeValueType::varName, "y");
-		innerRootExprNode->addChild(innerLeftExprNode);
-		innerRootExprNode->addChild(innerRightExprNode);
-		WhileNode* innerWhileNode = new WhileNode(innerRootExprNode, innerStmtLstNode);
-		StmtLstNode* stmtLstNode = new StmtLstNode();
-		stmtLstNode->addStmtNode(innerWhileNode);
-		ExprNode* rootExprNode = new ExprNode(ExprNodeValueType::relOperator, "<=");
-		ExprNode* leftExprNode = new ExprNode(ExprNodeValueType::varName, "a");
-		ExprNode* rightExprNode = new ExprNode(ExprNodeValueType::varName, "b");
-		rootExprNode->addChild(leftExprNode);
-		rootExprNode->addChild(rightExprNode);
-		WhileNode* whileNode = new WhileNode(rootExprNode, stmtLstNode);
+		innerStmtLstNode->addStmtNode(ifNode);
+
+		ExprNode* whileRootExprNode = new ExprNode(ExprNodeValueType::relOperator, "==");
+		ExprNode* whileLeftExprNode = new ExprNode(ExprNodeValueType::varName, "x");
+		ExprNode* whileRightExprNode = new ExprNode(ExprNodeValueType::varName, "y");
+		whileRootExprNode->addChild(whileLeftExprNode);
+		whileRootExprNode->addChild(whileRightExprNode);
+		WhileNode* whileNode = new WhileNode(whileRootExprNode, innerStmtLstNode);
 		StmtLstNode* outerStmtLstNode = new StmtLstNode();
 		outerStmtLstNode->addStmtNode(whileNode);
 		ProcedureNode* procedureNode = new ProcedureNode("main");
@@ -307,13 +358,12 @@ public:
 		SourceAST ast(programNode);
 		DesignExtractor::Extract(ast);
 
-		/* We expect two Parent relationships to be captured,
-		   one from the outer while to inner while, and one from the inner while to read x; */
-		Assert::AreEqual(size_t(2), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());
-		/* We expect two Parent relationships to be captured,
-		   one from the outer while to inner while, one from the inner while to read x;,
-		   and one from the outer while to read x; */
-		Assert::AreEqual(size_t(3), std::get<0>(ParentT::getAllPredecessorSuccessorInfo()).size());
+		/* We expect three Parent relationships to be captured: (1, 2), (2, 3), and (2, 4). */
+		Assert::AreEqual(size_t(3), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());
+
+		/* We expect five ParentT relationships to be captured:
+		   (1, 2), (1, 3), (1, 4), (2, 3), and (2, 4). */
+		Assert::AreEqual(size_t(5), std::get<0>(ParentT::getAllPredecessorSuccessorInfo()).size());
 	}
 
 	TEST_METHOD(extract_assign_postfixExpressionExtracted) {
