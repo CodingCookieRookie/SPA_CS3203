@@ -45,8 +45,7 @@ std::string TestWrapper::getFileContent(std::string& filename) {
 void TestWrapper::evaluate(std::string query, std::list<std::string>& results) {
 	// call your evaluator to evaluate the query here
 	  // ...code to evaluate query...
-	PQLParser pqlParser = PQLParser(query);
-	ParsedQuery parsedQuery = pqlParser.parseQuery();
+	ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 	PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
 	EvaluatedTable evTable = pqlEvaluator.evaluate();
 	PQLResultProjector resultProjector = PQLResultProjector(evTable);

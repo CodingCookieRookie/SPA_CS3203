@@ -3,7 +3,7 @@
 SPAException::SPAException(const std::string& reason) : reason(reason) {}
 
 const char* SPAException::what() const noexcept {
-	return reason.c_str();
+    return reason.c_str();
 }
 
 /* LexerException */
@@ -17,6 +17,8 @@ const std::string ParserException::INVALID_REL_EXPR = "Relational expression is 
 const std::string ParserException::INVALID_EXPR = "Expression is invalid";
 const std::string ParserException::INVALID_PROG = "A program must have at least 1 procedure";
 const std::string ParserException::INVALID_STMT = "Invalid statement (stmt : read | print | call | while | if | assign)";
+const std::string ParserException::MISSING_THEN = "Then keyword is missing";
+const std::string ParserException::MISSING_ELSE = "Else keyword is missing";
 const std::string ParserException::MISSING_LEFT_BRACKET = "Left bracket is missing";
 const std::string ParserException::MISSING_RIGHT_BRACKET = "Right bracket is missing";
 const std::string ParserException::MISSING_LEFT_CURLY = "Left curly bracket is missing";
@@ -28,3 +30,9 @@ const std::string ParserException::MISSING_VAR_NAME = "Variable name is missing"
 const std::string ParserException::MISSING_WHITESPACE = "Whitespace is missing";
 
 ParserException::ParserException(const std::string& reason) : SPAException(reason) {}
+
+/* QPSException */
+const std::string QPSException::PARSER_ERROR = "Syntax error detected while parsing PQL query";
+const std::string QPSException::VALIDATOR_ERROR = "PQL query failed validator check";
+
+QPSException::QPSException(const std::string& reason) : SPAException(reason) {}

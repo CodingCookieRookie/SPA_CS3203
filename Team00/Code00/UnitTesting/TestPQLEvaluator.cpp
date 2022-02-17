@@ -10,6 +10,7 @@
 #include "../source/PKB/Follows.h"
 #include "../source/PKB/FollowsT.h"
 #include "../source/PKB/Parent.h"
+#include "../source/PKB/ParentT.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -17,6 +18,14 @@ namespace UnitTesting
 {
     TEST_CLASS(TestPQLEvaluator)
     {
+    private:
+        TEST_METHOD_CLEANUP(cleanUpTables) {
+            Entity::performCleanUp();
+            FollowsT::performCleanUp();
+            Follows::performCleanUp();
+            ParentT::performCleanUp();
+            Parent::performCleanUp();
+        }
     public:
 
         TEST_METHOD(evaluateQuery_declarationAndSelectOnly_designEntitiesExtracted)
