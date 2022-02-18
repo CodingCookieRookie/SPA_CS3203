@@ -18,16 +18,21 @@ namespace UnitTesting
 
 		TEST_METHOD(resolveTableToResults_oneColumnStatement_success)
 		{
+			// 1. Set-up:
 			std::unordered_map<std::string, PqlEntityType> entities;
 			std::unordered_map<std::string, std::vector<int>> testTable;
+			std::vector<std::string> columnsProjected;
 			std::vector<int> vec;
 			vec.push_back(1);
 			vec.push_back(3);
 			vec.push_back(5);
 			entities["s"] = PqlEntityType::Stmt;
 			testTable["s"] = vec;
+			columnsProjected.push_back("s");
+
+			// 2. Main test:
 			EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
-			PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable);
+			PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable, columnsProjected);
 			std::list<std::string> expected;
 			expected.push_back("1");
 			expected.push_back("3");
@@ -42,10 +47,12 @@ namespace UnitTesting
 				std::advance(expectedRes, 1);
 			}
 		}
+
 		TEST_METHOD(resolveTableToResults_oneColumnVariable_success)
 		{
 			std::unordered_map<std::string, PqlEntityType> entities;
 			std::unordered_map<std::string, std::vector<int>> testTable;
+			std::vector<std::string> columnsProjected;
 			std::vector<int> vec;
 			vec.push_back(1);
 			vec.push_back(2);
@@ -55,8 +62,9 @@ namespace UnitTesting
 			Entity::insertVar("c");
 			entities["v"] = PqlEntityType::Variable;
 			testTable["v"] = vec;
+			columnsProjected.push_back("v");
 			EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
-			PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable);
+			PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable, columnsProjected);
 			std::list<std::string> expected;
 			expected.push_back("a");
 			expected.push_back("b");
@@ -77,6 +85,7 @@ namespace UnitTesting
 		{
 			std::unordered_map<std::string, PqlEntityType> entities;
 			std::unordered_map<std::string, std::vector<int>> testTable;
+			std::vector<std::string> columnsProjected;
 			std::vector<int> vec;
 			vec.push_back(1);
 			vec.push_back(2);
@@ -86,8 +95,9 @@ namespace UnitTesting
 			Entity::insertProc("proc3");
 			entities["p"] = PqlEntityType::Procedure;
 			testTable["p"] = vec;
+			columnsProjected.push_back("p");
 			EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
-			PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable);
+			PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable, columnsProjected);
 			std::list<std::string> expected;
 			expected.push_back("proc1");
 			expected.push_back("proc2");
