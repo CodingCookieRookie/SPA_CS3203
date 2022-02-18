@@ -1,0 +1,5 @@
+1 - comment
+stmt s;
+Select s
+1, 2
+5000
