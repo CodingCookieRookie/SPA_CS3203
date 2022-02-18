@@ -21,6 +21,11 @@ std::list<std::string> PQLResultProjector::resolveTableToResults() {
 		std::string res = "";
 		while (it != table.end()) {	// for each col
 			std::string entityName = it->first;
+			// if column is not selected, do not project
+			if (std::find(columnsProjected.begin(), columnsProjected.end(), entityName) == columnsProjected.end()) {
+				it++;
+				continue;
+			}
 			std::string value;
 			if (it->second.size() == 0) {
 				break;
@@ -42,9 +47,9 @@ std::list<std::string> PQLResultProjector::resolveTableToResults() {
 	return resList;
 }
 
-PQLResultProjector::PQLResultProjector(EvaluatedTable evTable) {
-    this->evaluatedTable = evTable;
-}
+PQLResultProjector::PQLResultProjector(EvaluatedTable evTable, std::vector<std::string> columns) :
+	evaluatedTable(evTable),
+	columnsProjected(columns) {}
 
 
 PQLResultProjector::PQLResultProjector() {
