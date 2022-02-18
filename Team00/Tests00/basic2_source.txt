@@ -1,4 +1,0 @@
-procedure main {
-read read; print print;
-test = i;
-}
