@@ -1,7 +1,4 @@
 #include "TestWrapper.h"
-#include "../source/QPS-NEW/PQLParser.h"
-#include "../source/QPS-NEW/PQLEvaluator.h"
-#include "../source/QPS-NEW/PQLResultProjector.h"
 
 // implementation code of WrapperFactory - do NOT modify the next 5 lines
 AbstractWrapper* WrapperFactory::wrapper = 0;
