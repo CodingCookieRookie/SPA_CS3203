@@ -25,7 +25,8 @@ void TestWrapper::parse(std::string filename) {
 	try {
 		SourceAST ast = Parser::parse(fileContent);
 		DesignExtractor::Extract(ast);
-	} catch (...) {
+	} catch (SPAException& ex) {
+		std::cerr << ex.what() << std::endl;
 		exit(EXIT_FAILURE);
 	}
 }
