@@ -16,7 +16,7 @@ namespace UnitTesting
 	{
 	public:
 
-		TEST_METHOD(resolveTableToResults_oneColumnStatement_success)
+		TEST_METHOD(resolveTableToResults_oneColumnStatement_projectOneColumn)
 		{
 			// 1. Set-up:
 			std::unordered_map<std::string, PqlEntityType> entities;
@@ -48,8 +48,9 @@ namespace UnitTesting
 			}
 		}
 
-		TEST_METHOD(resolveTableToResults_oneColumnVariable_success)
+		TEST_METHOD(resolveTableToResults_oneColumnVariable_projectOneColumn)
 		{
+			// 1. Set-up:
 			std::unordered_map<std::string, PqlEntityType> entities;
 			std::unordered_map<std::string, std::vector<int>> testTable;
 			std::vector<std::string> columnsProjected;
@@ -63,6 +64,8 @@ namespace UnitTesting
 			entities["v"] = PqlEntityType::Variable;
 			testTable["v"] = vec;
 			columnsProjected.push_back("v");
+
+			// 2. Main test:
 			EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
 			PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable, columnsProjected);
 			std::list<std::string> expected;
@@ -81,8 +84,9 @@ namespace UnitTesting
 			Entity::performCleanUp();
 		}
 
-		TEST_METHOD(resolveTableToResults_oneColumnProcedure_success)
+		TEST_METHOD(resolveTableToResults_oneColumnProcedure_projectOneColumn)
 		{
+			// 1. Set-up:
 			std::unordered_map<std::string, PqlEntityType> entities;
 			std::unordered_map<std::string, std::vector<int>> testTable;
 			std::vector<std::string> columnsProjected;
@@ -96,6 +100,8 @@ namespace UnitTesting
 			entities["p"] = PqlEntityType::Procedure;
 			testTable["p"] = vec;
 			columnsProjected.push_back("p");
+
+			// 2. Main test:
 			EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
 			PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable, columnsProjected);
 			std::list<std::string> expected;
@@ -114,7 +120,7 @@ namespace UnitTesting
 			Entity::performCleanUp();
 		}
 
-		TEST_METHOD(resolveTableToResults_twoColumnStatement_success)
+		TEST_METHOD(resolveTableToResults_twoColumnStatement_projectTwoColumns)
 		{
 			// 1. Set-up:
 			std::unordered_map<std::string, PqlEntityType> entities;
@@ -129,6 +135,32 @@ namespace UnitTesting
 			EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
 			PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable, columnsProjected);
 			std::list<std::string> expected{"1", "4", "2", "5", "3", "6"};
+			std::list<std::string> results = pqlResultProject.resolveTableToResults();
+			Assert::AreEqual(expected.size(), results.size());
+			auto actualRes = results.begin();
+			auto expectedRes = expected.begin();
+			for (size_t i = 0; i < results.size(); i++) {
+				Assert::AreEqual(*expectedRes, *actualRes);
+				std::advance(actualRes, 1);
+				std::advance(expectedRes, 1);
+			}
+		}
+
+		TEST_METHOD(resolveTableToResults_twoColumnStatement_projectOneColumn)
+		{
+			// 1. Set-up:
+			std::unordered_map<std::string, PqlEntityType> entities;
+			std::unordered_map<std::string, std::vector<int>> testTable;
+			std::vector<std::string> columnsProjected{ "s1" };
+			entities["s1"] = PqlEntityType::Stmt;
+			entities["s2"] = PqlEntityType::Stmt;
+			testTable["s1"] = std::vector<int>{ 1, 2, 3 };
+			testTable["s2"] = std::vector<int>{ 4, 5, 6 };
+
+			// 2. Main test:
+			EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
+			PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable, columnsProjected);
+			std::list<std::string> expected{ "1", "2", "3" };
 			std::list<std::string> results = pqlResultProject.resolveTableToResults();
 			Assert::AreEqual(expected.size(), results.size());
 			auto actualRes = results.begin();
