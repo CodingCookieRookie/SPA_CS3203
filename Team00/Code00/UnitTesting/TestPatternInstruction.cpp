@@ -2,15 +2,10 @@
 #include "CppUnitTest.h"
 
 #include <string>
-#include <algorithm>
 
 #include "../source/QPS-NEW/PQLEvaluator.h"
 #include "../source/QPS-NEW/PQLParser.h"
-#include "../source/PKB/RS2.h"
-#include "../source/PKB/Follows.h"
-#include "../source/PKB/FollowsT.h"
-#include "../source/PKB/Parent.h"
-#include "../source/PKB/ParentT.h"
+#include "../source/PKB/Pattern.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -31,29 +26,6 @@ namespace UnitTesting
         // Pattern a(v, *) or Pattern a("x", *)
         // Pattern a(*, "_x_") 
         // Pattern a(*, *)	
-        TEST_METHOD(execute_lhsSynonymRhsSynonymStmt)
-        {
-
-            // 1. Setup:
-            PqlReference lhsRef, rhsRef;
-            lhsRef = std::make_pair(PqlReferenceType::synonym, "a1");
-            rhsRef = std::make_pair(PqlReferenceType::synonym, "v");
-            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
-
-            // PKB inserts modifies
-            Entity::insertStmt(StatementType::printType);   // insert dummy stmt
-            StmtIndex stmt = Entity::insertStmt(StatementType::readType);
-            Entity::insertVar("randomVar"); // insert dummy var
-            VarIndex varIndex = Entity::insertVar("v");
-            Uses::insert(stmt, varIndex);
-
-            // 2. Main test:
-            EvaluatedTable evTable = instruction->execute();
-            Assert::AreEqual(size_t(1), evTable.getNumRow());
-            std::string expected = "Table String: size: 2\nSynonym: a1 Values: 2 \nSynonym: v Values: 2 \n";
-            Assert::AreEqual(expected, evTable.getTableString());
-        }
-
         TEST_METHOD(execute_lhsSynonymRhsIdentStmt)
         {
 
