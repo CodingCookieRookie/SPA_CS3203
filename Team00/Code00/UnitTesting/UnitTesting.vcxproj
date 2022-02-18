@@ -175,6 +175,7 @@
     <ClCompile Include="TestEvaluatedTable.cpp" />
     <ClCompile Include="TestContainer.cpp" />
     <ClCompile Include="TestModifiesInstruction.cpp" />
+    <ClCompile Include="TestPatternInstruction.cpp" />
     <ClCompile Include="TestPKB.cpp" />
     <ClCompile Include="TestPQLResultProjector.cpp" />
     <ClCompile Include="TestSourceASTNode.cpp" />

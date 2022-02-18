@@ -742,9 +742,11 @@ public:
 			else {
 				allStmts = Pattern::getStmtsFromVarPattern(varIndex);
 			}
-			std::fill(varIndices.begin(), varIndices.end(), varIndex.getIndex());	// vector filled with varIndex for rhs of row
 			PQLmap[synonym] = allStmts;
-			PQLmap[entRef.second] = varIndices;
+			if (entRef.first != PqlReferenceType::ident) {
+				std::fill(varIndices.begin(), varIndices.end(), varIndex.getIndex());	// vector filled with varIndex for rhs of row
+				PQLmap[entRef.second] = varIndices;
+			}
 		}
 		else if (entRef.first == PqlReferenceType::wildcard) {
 			if (containsWildCard(expressionSpec.second)) {
@@ -752,9 +754,7 @@ public:
 			}
 			for (size_t i = 0; i < (std::get<0>(allPatternStmtInfo).size()); i++) {
 				int lhs = std::get<0>(allPatternStmtInfo)[i];
-				int rhs = std::get<1>(allPatternStmtInfo)[i];
 				PQLmap[synonym].push_back(lhs);
-				PQLmap[entRef.second].push_back(rhs);
 			}
 		}
 		return EvaluatedTable(PQLentities, PQLmap);
