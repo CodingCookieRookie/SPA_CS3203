@@ -68,7 +68,7 @@ namespace IntegrationTesting
 
 
             // 4. Test QPS Result Projector:
-            PQLResultProjector resultProjector = PQLResultProjector(evTable);
+            PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns());
             std::list<std::string> results = resultProjector.resolveTableToResults();
             std::list<std::string> expectedRes{ "1", "2", "3", "4", "5", "6" };
             bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
@@ -114,7 +114,7 @@ namespace IntegrationTesting
 
 
             // 4. Test QPS Result Projector:
-            PQLResultProjector resultProjector = PQLResultProjector(evTable);
+            PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns());
             std::list<std::string> results = resultProjector.resolveTableToResults();
             std::list<std::string> expectedRes;
             for (int i = 0; i < 99; i++) {
@@ -172,10 +172,72 @@ namespace IntegrationTesting
 
 
             // 4. Test QPS Result Projector:
-            PQLResultProjector resultProjector = PQLResultProjector(evTable);
+            PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns());
             std::list<std::string> results = resultProjector.resolveTableToResults();
             std::list<std::string> expectedRes;
             for (int i = 0; i < 4; i++) {
+                int j = i + 1;
+                expectedRes.emplace_back(std::to_string(j));
+            }
+            bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+            Assert::AreEqual(true, areListsEqual);
+        }
+
+        TEST_METHOD(querying_selectStmtParentStarClauseLHSSynRHSWildcardStress_success)
+        {
+            // 1. Setup:
+            std::string query = "stmt s1; Select s1 such that Parent*(s1, 92)";
+            // PKB inserts 99 statements, 99 Parent relationships
+            std::vector<StmtIndex> stmts;
+            for (int i = 0; i < 99; i++) {
+                stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+            }
+            std::unordered_map<StmtIndex,
+                std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> uPredSucTable;
+            for (int i = 0; i < 99 - 1; i++) {
+                uPredSucTable[stmts[i]] = { stmts[i + 1] }; // i parents i + 1
+            }
+            ParentT::populate(uPredSucTable);
+
+            // 2. Test QPS Parser:
+            ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+            Assert::AreEqual(size_t(1), parsedQuery.getDeclarations().size());
+            Assert::IsFalse(parsedQuery.getColumns().empty());
+            Assert::AreEqual(std::string("s1"), parsedQuery.getColumns()[0]);
+            std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+            Assert::AreEqual(size_t(1), relationships.size());
+            Assert::IsTrue(PqlRelationshipType::ParentT == relationships[0].getRelationshipType());
+            Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getLhs().first);
+            Assert::AreEqual(std::string("s1"), relationships[0].getLhs().second);
+
+            // 3. Test QPS Evaluator:
+            PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
+            EvaluatedTable evTable = pqlEvaluator.evaluate();
+            // Test numRow:
+            Assert::AreEqual(size_t(91), evTable.getNumRow()); //91 statements are parent* to stmt-92
+            // Test Table:
+            auto tableRef = evTable.getTableRef();
+            Assert::AreEqual(true, tableRef.find("s1") != tableRef.end());
+            Assert::AreEqual(size_t(1), tableRef.size()); // should only contain s1 column
+            // Test Values:
+            std::vector<int> s1values;
+            for (int i = 0; i < 91; i++) {
+                s1values.emplace_back(i + 1);
+            }
+            auto actuals1Values = tableRef.at("s1");
+            std::sort(actuals1Values.begin(), actuals1Values.end());
+            bool areVecEqual = std::equal(s1values.begin(), s1values.end(), actuals1Values.begin());
+            Assert::AreEqual(true, areVecEqual); // actualWildcardValues == {1, 2, ..., 91}
+            // Test EvResult:
+            bool actualEvResult = evTable.getEvResult();
+            Assert::AreEqual(true, actualEvResult);
+
+
+            // 4. Test QPS Result Projector:
+            PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns());
+            std::list<std::string> results = resultProjector.resolveTableToResults();
+            std::list<std::string> expectedRes;
+            for (int i = 0; i < 91; i++) {
                 int j = i + 1;
                 expectedRes.emplace_back(std::to_string(j));
             }
