@@ -57,7 +57,7 @@ namespace IntegrationTesting
             // Test Table:
             auto tableRef = evTable.getTableRef();
             Assert::AreEqual(true, tableRef.find("s1") != tableRef.end());
-            // Test Entities: std::unordered_map<std::string, PqlEntityType>
+            // Test Values: std::unordered_map<std::string, PqlEntityType>
             std::vector<int> values{ 1, 2, 3, 4, 5, 6 };
             auto actualValues = tableRef.at("s1");
             bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -80,7 +80,7 @@ namespace IntegrationTesting
             // "stmt s; variable v1; Select s";
             // 1. Setup:
             std::string query = "stmt s1; if ifs; Select s1";
-            // PKB inserts 6 types of statements
+            // PKB inserts 99 statements
             std::vector<StmtIndex> stmts;
             for (int i = 0; i < 99; i++) {
                 stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
@@ -100,7 +100,7 @@ namespace IntegrationTesting
             // Test Table:
             auto tableRef = evTable.getTableRef();
             Assert::AreEqual(true, tableRef.find("s1") != tableRef.end());
-            // Test Entities: std::unordered_map<std::string, PqlEntityType>
+            // Test Values:
             std::vector<int> values;
             for (int i = 0; i < 99; i++) {
                 values.emplace_back(i + 1);
@@ -118,6 +118,64 @@ namespace IntegrationTesting
             std::list<std::string> results = resultProjector.resolveTableToResults();
             std::list<std::string> expectedRes;
             for (int i = 0; i < 99; i++) {
+                int j = i + 1;
+                expectedRes.emplace_back(std::to_string(j));
+            }
+            bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+            Assert::AreEqual(true, areListsEqual);
+        }
+
+        TEST_METHOD(querying_selectStmtFollowsClauseTwoSynonyms_success)
+        {
+            // 1. Setup:
+            std::string query = "stmt s1, s2; Select s1 such that Follows(s1, s2)";
+            // PKB inserts 5 statements
+            std::vector<StmtIndex> stmts;
+            for (int i = 0; i < 5; i++) {
+                stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+            }
+            for (int i = 0; i < 4; i++) {
+                Follows::insert(stmts[i], stmts[i + 1]);
+            }
+
+            // 2. Test QPS Parser:
+            ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+            Assert::AreEqual(size_t(2), parsedQuery.getDeclarations().size());
+            Assert::IsFalse(parsedQuery.getColumns().empty());
+            Assert::AreEqual(std::string("s1"), parsedQuery.getColumns()[0]);
+            std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+            Assert::AreEqual(size_t(1), relationships.size());
+            Assert::IsTrue(PqlRelationshipType::Follows == relationships[0].getRelationshipType());
+            Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getLhs().first);
+            Assert::AreEqual(std::string("s1"), relationships[0].getLhs().second);
+
+            // 3. Test QPS Evaluator:
+            PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
+            EvaluatedTable evTable = pqlEvaluator.evaluate();
+            // Test numRow:
+            Assert::AreEqual(size_t(4), evTable.getNumRow());
+            // Test Table:
+            auto tableRef = evTable.getTableRef();
+            Assert::AreEqual(true, tableRef.find("s1") != tableRef.end());
+            Assert::AreEqual(size_t(2), tableRef.size()); // should contain s1 and s2 first (result projector filters down)
+            // Test Values:
+            std::vector<int> values;
+            for (int i = 0; i < 4; i++) {
+                values.emplace_back(i + 1);
+            }
+            auto actualValues = tableRef.at("s1");
+            bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+            Assert::AreEqual(true, areVecEqual);
+            // Test EvResult:
+            bool actualEvResult = evTable.getEvResult();
+            Assert::AreEqual(true, actualEvResult);
+
+
+            // 4. Test QPS Result Projector:
+            PQLResultProjector resultProjector = PQLResultProjector(evTable);
+            std::list<std::string> results = resultProjector.resolveTableToResults();
+            std::list<std::string> expectedRes;
+            for (int i = 0; i < 4; i++) {
                 int j = i + 1;
                 expectedRes.emplace_back(std::to_string(j));
             }
