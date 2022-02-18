@@ -101,21 +101,19 @@ StmtNode* Parser::matchStmt() {
 	bool isValidStmt = false;
 	StmtNode* stmtNode{};
 
-	if (lexer.match(READ)) {
+	std::string name = lexer.nextName();
+	if (lexer.match(EQUAL)) {
+		stmtNode = matchAssign(name);
+	} else if (name == READ) {
 		stmtNode = matchRead();
-	} else if (lexer.match(PRINT)) {
+	} else if (name == PRINT) {
 		stmtNode = matchPrint();
-	} else if (lexer.match(WHILE)) {
+	} else if (name == WHILE) {
 		stmtNode = matchWhile();
-	} else if (lexer.match(IF)) {
+	} else if (name == IF) {
 		stmtNode = matchIf();
 	} else {
-		std::string varName = lexer.nextName();
-		if (!varName.empty() && lexer.match(EQUAL)) {
-			stmtNode = matchAssign(varName);
-		} else {
-			throw ParserException(ParserException::INVALID_STMT);
-		}
+		throw ParserException(ParserException::INVALID_STMT);
 	}
 
 	return stmtNode;
@@ -123,11 +121,6 @@ StmtNode* Parser::matchStmt() {
 
 /* read : ‘read’ var_name; */
 ReadNode* Parser::matchRead() {
-	std::string whitespace = lexer.nextWhitespace();
-	if (whitespace.empty()) {
-		throw ParserException(ParserException::MISSING_WHITESPACE);
-	}
-
 	std::string varName = lexer.nextName();
 	if (varName.empty()) {
 		throw ParserException(ParserException::MISSING_VAR_NAME);
@@ -142,11 +135,6 @@ ReadNode* Parser::matchRead() {
 
 /* print : ‘print’ var_name; */
 PrintNode* Parser::matchPrint() {
-	std::string whitespace = lexer.nextWhitespace();
-	if (whitespace.empty()) {
-		throw ParserException(ParserException::MISSING_WHITESPACE);
-	}
-
 	std::string varName = lexer.nextName();
 	if (varName.empty()) {
 		throw ParserException(ParserException::MISSING_VAR_NAME);

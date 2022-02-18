@@ -563,6 +563,101 @@ public:
 		Assert::AreEqual(std::string("c"), b0bMinusC[1]->getValue());
 	}
 
+	TEST_METHOD(parse_matchAssign_withReservedKeywords_success) {
+		const char* source = "   procedure procedure123name \n "
+			"{ if = 9 + read; read = print % 2   ;"
+			" while = x + z * 5 ; "
+			" print = y / w - 1; "
+			" then = z + a123 / b0b - c  ;}";
+		SourceAST ast = Parser::parse(source);
+		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
+
+		/* Test procedureNodes */
+		Assert::AreEqual(size_t(1), procNodes.size());
+		Assert::AreEqual(std::string("procedure123name"), procNodes[0]->getProcName());
+
+		/* Test statements */
+		StmtLstNode* stmtLstNode = procNodes[0]->getStmtLstNode();
+		std::vector<StmtNode*> statements = stmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(5), statements.size());
+
+		/* Test assign nodes*/
+		// if = 9 + read;
+		AssignNode* assignNode1 = (AssignNode*)statements[0];
+		Assert::AreEqual(std::string("if"), assignNode1->getVarName());
+
+		ExprNode* expr1 = assignNode1->getExpr();
+		Assert::AreEqual(std::string("+"), expr1->getValue());
+		std::vector<ExprNode*> children1 = expr1->getChildren();
+		Assert::AreEqual(size_t(2), children1.size());
+		Assert::AreEqual(std::string("9"), children1[0]->getValue());
+		Assert::AreEqual(std::string("read"), children1[1]->getValue());
+
+		// read = print % 2   ;
+		AssignNode* assignNode2 = (AssignNode*)statements[1];
+		Assert::AreEqual(std::string("read"), assignNode2->getVarName());
+
+		ExprNode* expr2 = assignNode2->getExpr();
+		Assert::AreEqual(std::string("%"), expr2->getValue());
+		std::vector<ExprNode*> children2 = expr2->getChildren();
+		Assert::AreEqual(size_t(2), children2.size());
+		Assert::AreEqual(std::string("print"), children2[0]->getValue());
+		Assert::AreEqual(std::string("2"), children2[1]->getValue());
+
+		// while = x + z * 5 ;
+		AssignNode* assignNode3 = (AssignNode*)statements[2];
+		Assert::AreEqual(std::string("while"), assignNode3->getVarName());
+
+		ExprNode* expr3 = assignNode3->getExpr();
+		Assert::AreEqual(std::string("+"), expr3->getValue());
+		std::vector<ExprNode*> children3 = expr3->getChildren();
+		Assert::AreEqual(size_t(2), children3.size());
+		Assert::AreEqual(std::string("x"), children3[0]->getValue());
+		Assert::AreEqual(std::string("*"), children3[1]->getValue());
+
+		std::vector<ExprNode*> zTimesFive = children3[1]->getChildren();
+		Assert::AreEqual(size_t(2), zTimesFive.size());
+		Assert::AreEqual(std::string("z"), zTimesFive[0]->getValue());
+		Assert::AreEqual(std::string("5"), zTimesFive[1]->getValue());
+
+		// print = y / w - 1;
+		AssignNode* assignNode4 = (AssignNode*)statements[3];
+		Assert::AreEqual(std::string("print"), assignNode4->getVarName());
+
+		ExprNode* expr4 = assignNode4->getExpr();
+		Assert::AreEqual(std::string("-"), expr4->getValue());
+		std::vector<ExprNode*> children4 = expr4->getChildren();
+		Assert::AreEqual(size_t(2), children4.size());
+		Assert::AreEqual(std::string("/"), children4[0]->getValue());
+		Assert::AreEqual(std::string("1"), children4[1]->getValue());
+
+		std::vector<ExprNode*> yDividedByW = children4[0]->getChildren();
+		Assert::AreEqual(size_t(2), yDividedByW.size());
+		Assert::AreEqual(std::string("y"), yDividedByW[0]->getValue());
+		Assert::AreEqual(std::string("w"), yDividedByW[1]->getValue());
+
+		// then = z + a123 / b0b - c  ;
+		AssignNode* assignNode5 = (AssignNode*)statements[4];
+		Assert::AreEqual(std::string("then"), assignNode5->getVarName());
+
+		ExprNode* expr5 = assignNode5->getExpr();
+		Assert::AreEqual(std::string("-"), expr5->getValue());
+		std::vector<ExprNode*> children5 = expr5->getChildren();
+		Assert::AreEqual(size_t(2), children5.size());
+		Assert::AreEqual(std::string("+"), children5[0]->getValue());
+		Assert::AreEqual(std::string("c"), children5[1]->getValue());
+
+		std::vector<ExprNode*> zPlusA123DividedByB0b = children5[0]->getChildren();
+		Assert::AreEqual(size_t(2), zPlusA123DividedByB0b.size());
+		Assert::AreEqual(std::string("z"), zPlusA123DividedByB0b[0]->getValue());
+		Assert::AreEqual(std::string("/"), zPlusA123DividedByB0b[1]->getValue());
+
+		std::vector<ExprNode*> a123DividedByB0b = zPlusA123DividedByB0b[1]->getChildren();
+		Assert::AreEqual(size_t(2), a123DividedByB0b.size());
+		Assert::AreEqual(std::string("a123"), a123DividedByB0b[0]->getValue());
+		Assert::AreEqual(std::string("b0b"), a123DividedByB0b[1]->getValue());
+	}
+
 	TEST_METHOD(parse_matchAssign_missingSemicolon_parserExceptionThrown) {
 		const char* source = "   procedure procedure123name \n "
 			"{ CenX = (9 + CenX); count = (COUNT % 2)   ;"
