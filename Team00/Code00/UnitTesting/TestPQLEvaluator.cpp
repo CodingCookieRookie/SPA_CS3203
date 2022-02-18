@@ -1423,7 +1423,7 @@ namespace UnitTesting
             std::unordered_map<StmtIndex,
                 std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> uPredSucTable;
             for (int i = 0; i < 99-1; i++) {
-                uPredSucTable[stmts[i]] = { stmts[i + 1] }; // i follows i + 1
+                uPredSucTable[stmts[i]] = { stmts[i + 1] }; // i parents i + 1
             }
             ParentT::populate(uPredSucTable);
 
@@ -1459,6 +1459,68 @@ namespace UnitTesting
             Assert::AreEqual(false, actualEntities.find("_") != actualEntities.end());
             Assert::AreEqual(false, actualEntities.find("s207") != actualEntities.end());
             bool isPqlEntityType = PqlEntityType::Stmt == actualEntities.at("s1");
+            Assert::AreEqual(true, isPqlEntityType);
+
+            // Test EvResult:
+            bool actualEvResult = evTable.getEvResult();
+            Assert::AreEqual(true, actualEvResult);
+
+            // 3. Clean-up:
+            Entity::performCleanUp();
+            ParentT::performCleanUp();
+            Parent::performCleanUp();
+        }
+
+        TEST_METHOD(executeInstruction_parenStar_lhsWildcardhsConst_stress_nestingParents)
+        {
+            // 1. Setup:
+            // Parent*(_, 87) RelationshipInstruction
+            PqlReference lhsRef, rhsRef;
+            lhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
+            rhsRef = std::make_pair(PqlReferenceType::integer, "87");
+            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ParentT, lhsRef, rhsRef);
+
+            // PKB inserts 99 statements
+            std::vector<StmtIndex> stmts;
+            for (int i = 0; i < 99; i++) {
+                stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+            }
+            std::unordered_map<StmtIndex,
+                std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> uPredSucTable;
+            for (int i = 0; i < 99 - 1; i++) {
+                uPredSucTable[stmts[i]] = { stmts[i + 1] }; // i parents i + 1
+            }
+            ParentT::populate(uPredSucTable);
+
+            // 2. Main test:
+            EvaluatedTable evTable = instruction->execute();
+
+            // Test numRow:
+            Assert::AreEqual(size_t(86), evTable.getNumRow());
+
+            // Test Table: std::unordered_map<std::string, std::vector<int>>
+            auto tableRef = evTable.getTableRef();
+            Assert::AreEqual(true, tableRef.find("_") != tableRef.end());
+            Assert::AreEqual(false, tableRef.find("stress") != tableRef.end());
+
+            // Test Table size:
+            Assert::AreEqual(size_t(1), tableRef.size()); // LHS wildcard will still have column (innerJoinMerge() will drop it during merge)
+
+            // Test Entities: std::unordered_map<std::string, PqlEntityType>
+            std::vector<int> s1values, wildcardValues;
+            for (int i = 0; i < 86; i++) {
+                wildcardValues.emplace_back(i + 1);
+            }
+            auto actualWildcardValues = tableRef.at("_");
+            std::sort(actualWildcardValues.begin(), actualWildcardValues.end());
+            bool areVecEqual = std::equal(wildcardValues.begin(), wildcardValues.end(), actualWildcardValues.begin());
+            Assert::AreEqual(true, areVecEqual); // actualWildcardValues == {1, 2, ..., 86}
+
+            auto actualEntities = evTable.getEntities();
+            Assert::AreEqual(true, actualEntities.find("_") != actualEntities.end());
+            Assert::AreEqual(false, actualEntities.find("87") != actualEntities.end());
+            Assert::AreEqual(false, actualEntities.find("stress") != actualEntities.end());
+            bool isPqlEntityType = PqlEntityType::Stmt == actualEntities.at("_");
             Assert::AreEqual(true, isPqlEntityType);
 
             // Test EvResult:
