@@ -1,0 +1,38 @@
+<?xml-stylesheet type="text/xsl" href="analysis.xsl"?>
+<test_results>
+<info>
+<name>Team00</name><parsing_time_taken>5.000000</parsing_time_taken>
+</info>
+<queries>
+<query>
+<id ReturnTuple="1" CondNum="1" RelNum="0" comment="comment">1</id><querystr><![CDATA[stmt s; Select s]]></querystr>
+<stuans>1,2,3</stuans>
+<correct>1,2,3</correct>
+<time_taken>13.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" CondNum="1" RelNum="0" comment="comment">2</id><querystr><![CDATA[read r; Select r]]></querystr>
+<stuans>1</stuans>
+<correct>1</correct>
+<time_taken>15.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" Modifies="1" SuchThat="1" CondNum="3" RelNum="1" comment="comment">3</id><querystr><![CDATA[stmt s; Select s such that Modifies(s, "i")]]></querystr>
+<stuans>1,1read,3,3test</stuans>
+<correct>3</correct>
+<time_taken>25.000000</time_taken>
+<failed>
+<missing></missing>
+<additional>1,1read,3test</additional>
+<summary>
+<expected>1</expected>
+<matched>1</matched>
+<missing>0</missing>
+<additional>3</additional>
+</summary>
+</failed>
+</query>
+</queries>
+</test_results>

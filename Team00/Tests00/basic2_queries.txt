@@ -1,0 +1,15 @@
+1 - comment
+stmt s;
+Select s
+1, 2, 3
+5000
+2 - comment
+read r;
+Select r
+1
+5000
+3 - comment
+stmt s;
+Select s such that Modifies(s, "i")
+3
+5000
