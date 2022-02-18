@@ -23,7 +23,7 @@ namespace UnitTesting
         }
     public:
 
-        TEST_METHOD(execute_twoConstants)
+        TEST_METHOD(executeFollowsStarInstruction_twoConstants_evaluatedTableTrue)
         {
 
             // 1. Setup:
