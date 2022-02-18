@@ -19,12 +19,12 @@ namespace UnitTesting
 	// Modifies (a/r/s/a1, v) or Modifies(a/r/s/a1, "x") or Modifies (a/r/s/a1, _ ) 
 	// Modifies (1, v)	=> true or Modifies (1, _ ) (under statement)
 	// Modifies (p/p1, v) or Modifies(p/p1, "x") or Modifies (p/p1, _ )	proc
-	TEST_CLASS(TestInstructionModifies)
+	TEST_CLASS(TestModifiesInstruction)
 	{
 	private:
 
 	public:
-        TEST_METHOD(executeInstruction_modifies_lhsSynonymRhsSynonym)
+        TEST_METHOD(execute_lhsSynonymRhsSynonym)
         {
 
             // 1. Setup:
@@ -51,7 +51,7 @@ namespace UnitTesting
             Modifies::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_modifies_lhsSynonymRhsIdent)
+        TEST_METHOD(execute_lhsSynonymRhsIdent)
         {
 
             // 1. Setup:
@@ -78,7 +78,7 @@ namespace UnitTesting
             Modifies::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_modifies_lhsSynonymRhsWildCard)
+        TEST_METHOD(execute_lhsSynonymRhsWildCard)
         {
 
             // 1. Setup:
@@ -107,7 +107,7 @@ namespace UnitTesting
             Modifies::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_modifiesEvTableTrue_lhsConstRhsSynonym)
+        TEST_METHOD(execute_lhsConstRhsSynonym)
         {
 
             // 1. Setup:
@@ -136,7 +136,7 @@ namespace UnitTesting
             Modifies::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_modifiesEvTableFalse_lhsConstRhsSynonym)
+        TEST_METHOD(execute_lhsConstRhsSynonym)
         {
 
             // 1. Setup:
@@ -163,7 +163,7 @@ namespace UnitTesting
             Modifies::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_modifiesEvTableTrue_lhsConstRhsWildcard)
+        TEST_METHOD(execute_lhsConstRhsWildcard)
         {
 
             // 1. Setup:
@@ -192,7 +192,7 @@ namespace UnitTesting
             Modifies::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_modifiesEvTableFalse_lhsConstRhsWildcard)
+        TEST_METHOD(execute_lhsConstRhsWildcard)
         {
 
             // 1. Setup:
