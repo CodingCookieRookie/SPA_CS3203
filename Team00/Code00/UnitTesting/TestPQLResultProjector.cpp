@@ -171,5 +171,45 @@ namespace UnitTesting
 				std::advance(expectedRes, 1);
 			}
 		}
+
+		TEST_METHOD(resolveTableToResults_sixColumnsMixed_projectFourColumns)
+		{
+			// 1. Set-up:
+			std::unordered_map<std::string, PqlEntityType> entities;
+			std::unordered_map<std::string, std::vector<int>> testTable;
+			std::vector<std::string> columnsProjected{ "s1", "v1", "a1", "p1"};
+			entities["s1"] = PqlEntityType::Stmt;
+			entities["s2"] = PqlEntityType::Stmt;
+			entities["v1"] = PqlEntityType::Variable;
+			entities["v2"] = PqlEntityType::Variable;
+			entities["a2"] = PqlEntityType::Stmt;
+			entities["p1"] = PqlEntityType::Procedure;
+			testTable["s1"] = std::vector<int>{ 1, 2, 3 };
+			testTable["s2"] = std::vector<int>{ 4, 5, 6 };
+			testTable["v1"] = std::vector<int>{ 1, 2, 3 };
+			testTable["v2"] = std::vector<int>{ 4, 5, 6 };
+			testTable["a1"] = std::vector<int>{ 13, 14, 15 };
+			testTable["p1"] = std::vector<int>{ 1, 2, 3 };
+			for (int i = 0; i < 6; i++) {
+				Entity::insertVar("var" + std::to_string(i+1));
+			}
+			for (int i = 0; i < 3; i++) {
+				Entity::insertProc("proc" + std::to_string(i + 1));
+			}
+
+			// 2. Main test:
+			EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
+			PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable, columnsProjected);
+			std::list<std::string> expected{ "1", "var1", "13", "proc1", "2", "var2", "14", "proc2", "3", "var3", "15", "proc3" };
+			std::list<std::string> results = pqlResultProject.resolveTableToResults();
+			Assert::AreEqual(expected.size(), results.size());
+			auto actualRes = results.begin();
+			auto expectedRes = expected.begin();
+			for (size_t i = 0; i < results.size(); i++) {
+				Assert::AreEqual(*expectedRes, *actualRes);
+				std::advance(actualRes, 1);
+				std::advance(expectedRes, 1);
+			}
+		}
 	};
 }
