@@ -1,6 +1,7 @@
 @ECHO OFF
 SET NUM_TESTS=1
-SET TEAM_NUMBER=13
+REM Set TEAM_NUMBER to 13 when we rename the folders
+SET TEAM_NUMBER=00
 FOR /l %%x IN (1, 1, %NUM_TESTS%) DO (
-    Code00\Debug\AutoTester.exe Tests00\basic%%x_source.txt Tests00\basic%%x_queries.txt Tests00\basic%%x_out.xml
+    Code%TEAM_NUMBER%\Debug\AutoTester.exe Tests%TEAM_NUMBER%\basic%%x_source.txt Tests%TEAM_NUMBER%\basic%%x_queries.txt Tests%TEAM_NUMBER%\basic%%x_out.xml
 )
