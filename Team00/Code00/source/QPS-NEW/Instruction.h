@@ -149,7 +149,7 @@ public:
 			evTable = handleGetAllVar(synonym);
 			break;
 		case PqlEntityType::Constant:
-			evTable = handleGetAllProc(synonym);
+			evTable = handleGetAllConst(synonym);
 			break;
 		case PqlEntityType::Procedure:
 			evTable = handleGetAllProc(synonym);
