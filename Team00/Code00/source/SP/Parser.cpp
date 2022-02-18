@@ -4,16 +4,21 @@ Parser::Parser() {}
 
 Lexer Parser::lexer;
 
+const std::string Parser::PROCEDURE = "procedure";
+const std::string Parser::READ = "read";
+const std::string Parser::PRINT = "print";
 const std::string Parser::WHILE = "while";
 const std::string Parser::IF = "if";
 const std::string Parser::THEN = "then";
 const std::string Parser::ELSE = "else";
 
+const std::string Parser::EQUAL = "=";
 const std::string Parser::NOT = "!";
 const std::string Parser::LEFT_BRACKET = "(";
 const std::string Parser::RIGHT_BRACKET = ")";
 const std::string Parser::LEFT_CURLY = "{";
 const std::string Parser::RIGHT_CURLY = "}";
+const std::string Parser::SEMICOLON = ";";
 
 const std::vector<std::string> Parser::termOperators = { "*", "/", "%" };
 const std::vector<std::string> Parser::exprOperators = { "+", "-" };
@@ -24,10 +29,6 @@ SourceAST Parser::parse(const std::string& source) {
 	lexer = Lexer(source);
 	ProgramNode* root = matchProgram();
 	return SourceAST(root);
-}
-
-bool Parser::isValidAST(const SourceAST& pqlAst) {
-	return true; // TODO: to change
 }
 
 /* program : procedure+ */
@@ -50,7 +51,7 @@ ProgramNode* Parser::matchProgram() {
 
 /* procedure : ‘procedure’ proc_name ‘{‘ stmtLst ‘}’ */
 ProcedureNode* Parser::matchProcedure() {
-	if (!lexer.match("procedure")) {
+	if (!lexer.match(PROCEDURE)) {
 		throw ParserException(ParserException::MISSING_PROC_KEYWORD);
 	}
 
@@ -64,13 +65,13 @@ ProcedureNode* Parser::matchProcedure() {
 		throw ParserException(ParserException::MISSING_PROC_NAME);
 	}
 
-	if (!lexer.match("{")) {
+	if (!lexer.match(LEFT_CURLY)) {
 		throw ParserException(ParserException::MISSING_LEFT_CURLY);
 	}
 
 	StmtLstNode* stmtLstNode = matchStmtLst();
 
-	if (!lexer.match("}")) {
+	if (!lexer.match(RIGHT_CURLY)) {
 		throw ParserException(ParserException::MISSING_RIGHT_CURLY);
 	}
 
@@ -88,7 +89,7 @@ StmtLstNode* Parser::matchStmtLst() {
 	StmtNode* stmtNode{};
 	while (stmtNode = matchStmt()) {
 		stmtLstNode->addStmtNode(stmtNode);
-		if (lexer.peek("}")) {
+		if (lexer.peek(RIGHT_CURLY)) {
 			break;
 		}
 	}
@@ -100,10 +101,9 @@ StmtNode* Parser::matchStmt() {
 	bool isValidStmt = false;
 	StmtNode* stmtNode{};
 
-	// TODO: make this more elegant. Add invalid statement handler.
-	if (lexer.match("read")) {
+	if (lexer.match(READ)) {
 		stmtNode = matchRead();
-	} else if (lexer.match("print")) {
+	} else if (lexer.match(PRINT)) {
 		stmtNode = matchPrint();
 	} else if (lexer.match(WHILE)) {
 		stmtNode = matchWhile();
@@ -111,7 +111,7 @@ StmtNode* Parser::matchStmt() {
 		stmtNode = matchIf();
 	} else {
 		std::string varName = lexer.nextName();
-		if (!varName.empty() && lexer.match("=")) {
+		if (!varName.empty() && lexer.match(EQUAL)) {
 			stmtNode = matchAssign(varName);
 		} else {
 			throw ParserException(ParserException::INVALID_STMT);
@@ -133,7 +133,7 @@ ReadNode* Parser::matchRead() {
 		throw ParserException(ParserException::MISSING_VAR_NAME);
 	}
 
-	if (!lexer.match(";")) {
+	if (!lexer.match(SEMICOLON)) {
 		throw ParserException(ParserException::MISSING_SEMICOLON);
 	}
 
@@ -152,7 +152,7 @@ PrintNode* Parser::matchPrint() {
 		throw ParserException(ParserException::MISSING_VAR_NAME);
 	}
 
-	if (!lexer.match(";")) {
+	if (!lexer.match(SEMICOLON)) {
 		throw ParserException(ParserException::MISSING_SEMICOLON);
 	}
 
@@ -165,7 +165,7 @@ ExprNode* matchExpr();
 AssignNode* Parser::matchAssign(std::string varName) {
 	ExprNode* expr = matchExpr();
 
-	if (!lexer.match(";")) {
+	if (!lexer.match(SEMICOLON)) {
 		throw ParserException(ParserException::MISSING_SEMICOLON);
 	}
 	return new AssignNode(varName, expr);
@@ -183,9 +183,9 @@ ExprNode* Parser::matchFactor() {
 		return new ExprNode(ExprNodeValueType::constValue, constVal);
 	}
 
-	if (lexer.match("(")) {
+	if (lexer.match(LEFT_BRACKET)) {
 		ExprNode* expr = matchExpr();
-		if (!lexer.match(")")) {
+		if (!lexer.match(RIGHT_BRACKET)) {
 			throw ParserException(ParserException::INVALID_EXPR);
 		}
 		return expr;
