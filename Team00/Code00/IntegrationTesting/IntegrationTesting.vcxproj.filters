@@ -29,5 +29,8 @@
     <ClCompile Include="TestFrontEnd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TestQuerying.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
