@@ -22,7 +22,10 @@ namespace UnitTesting
 	TEST_CLASS(TestModifiesInstruction)
 	{
 	private:
-
+        TEST_METHOD_CLEANUP(cleanUpTables) {
+            Entity::performCleanUp();
+            Modifies::performCleanUp();
+        }
 	public:
         TEST_METHOD(execute_lhsSynonymRhsSynonymStmt)
         {
@@ -45,10 +48,6 @@ namespace UnitTesting
             Assert::AreEqual(size_t(1), evTable.getNumRow());
             std::string expected = "Table String: size: 2\nSynonym: a1 Values: 2 \nSynonym: v Values: 2 \n";
             Assert::AreEqual(expected, evTable.getTableString());
-
-            // 3. Clean-up:
-            Entity::performCleanUp();
-            Modifies::performCleanUp();
         }
 
         TEST_METHOD(execute_lhsSynonymRhsIdentStmt)
@@ -70,12 +69,8 @@ namespace UnitTesting
             // 2. Main test:
             EvaluatedTable evTable = instruction->execute();
             Assert::AreEqual(size_t(1), evTable.getNumRow());
-            std::string expected = "Table String: size: 2\nSynonym: a1 Values: 2 \nSynonym: x Values: 2 \n";
+            std::string expected = "Table String: size: 1\nSynonym: a1 Values: 2 \n";
             Assert::AreEqual(expected, evTable.getTableString());
-
-            // 3. Clean-up:
-            Entity::performCleanUp();
-            Modifies::performCleanUp();
         }
 
         TEST_METHOD(execute_lhsSynonymRhsWildCardStmt)
@@ -101,10 +96,6 @@ namespace UnitTesting
             Assert::AreEqual(size_t(2), evTable.getNumRow());
             std::string expected = "Table String: size: 1\nSynonym: a1 Values: 2 2 \n";
             Assert::AreEqual(expected, evTable.getTableString());
-
-            // 3. Clean-up:
-            Entity::performCleanUp();
-            Modifies::performCleanUp();
         }
 
         // <-- Iteration 2 -->
@@ -129,10 +120,6 @@ namespace UnitTesting
         //    Assert::AreEqual(size_t(1), evTable.getNumRow());
         //    std::string expected = "Table String: size: 2\nSynonym: p Values: 2 \nSynonym: v Values: 2 \n";
         //    Assert::AreEqual(expected, evTable.getTableString());
-
-        //    // 3. Clean-up:
-        //    Entity::performCleanUp();
-        //    Modifies::performCleanUp();
         //}
 
         //TEST_METHOD(execute_lhsSynonymRhsIdentProc)
@@ -154,12 +141,9 @@ namespace UnitTesting
         //    // 2. Main test:
         //    EvaluatedTable evTable = instruction->execute();
         //    Assert::AreEqual(size_t(1), evTable.getNumRow());
-        //    std::string expected = "Table String: size: 2\nSynonym: p Values: 2 \nSynonym: x Values: 2 \n";
+        //    std::string expected = "Table String: size: 1\nSynonym: p Values: 2 \n";
         //    Assert::AreEqual(expected, evTable.getTableString());
 
-        //    // 3. Clean-up:
-        //    Entity::performCleanUp();
-        //    Modifies::performCleanUp();
         //}
 
         //TEST_METHOD(execute_lhsSynonymRhsWildCardProc)
@@ -185,10 +169,6 @@ namespace UnitTesting
         //    Assert::AreEqual(size_t(2), evTable.getNumRow());
         //    std::string expected = "Table String: size: 1\nSynonym: p Values: 2 2 \n";
         //    Assert::AreEqual(expected, evTable.getTableString());
-
-        //    // 3. Clean-up:
-        //    Entity::performCleanUp();
-        //    Modifies::performCleanUp();
         //}
 
         TEST_METHOD(execute_lhsConstRhsSynonym_EvTableTrue)
@@ -196,7 +176,7 @@ namespace UnitTesting
 
             // 1. Setup:
             PqlReference lhsRef, rhsRef;
-            lhsRef = std::make_pair(PqlReferenceType::integer, "1");
+            lhsRef = std::make_pair(PqlReferenceType::integer, "2");
             rhsRef = std::make_pair(PqlReferenceType::synonym, "a1");
             Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesS, lhsRef, rhsRef);
 
@@ -214,10 +194,6 @@ namespace UnitTesting
             Assert::AreEqual(size_t(0), evTable.getNumRow());
             std::string expected = "Table String: size: 0\n";
             Assert::AreEqual(expected, evTable.getTableString());
-
-            // 3. Clean-up:
-            Entity::performCleanUp();
-            Modifies::performCleanUp();
         }
 
         TEST_METHOD(execute_lhsConstRhsSynonym_EvTableFalse)
@@ -225,7 +201,7 @@ namespace UnitTesting
 
             // 1. Setup:
             PqlReference lhsRef, rhsRef;
-            lhsRef = std::make_pair(PqlReferenceType::integer, "1");
+            lhsRef = std::make_pair(PqlReferenceType::integer, "2");
             rhsRef = std::make_pair(PqlReferenceType::synonym, "a1");
             Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesS, lhsRef, rhsRef);
 
@@ -241,10 +217,6 @@ namespace UnitTesting
             Assert::AreEqual(size_t(0), evTable.getNumRow());
             std::string expected = "Table String: size: 0\n";
             Assert::AreEqual(expected, evTable.getTableString());
-
-            // 3. Clean-up:
-            Entity::performCleanUp();
-            Modifies::performCleanUp();
         }
 
         TEST_METHOD(execute_lhsConstRhsWildcard_EvTableTrue)
@@ -252,7 +224,7 @@ namespace UnitTesting
 
             // 1. Setup:
             PqlReference lhsRef, rhsRef;
-            lhsRef = std::make_pair(PqlReferenceType::integer, "1");
+            lhsRef = std::make_pair(PqlReferenceType::integer, "2");
             rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
             Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesS, lhsRef, rhsRef);
 
@@ -270,10 +242,6 @@ namespace UnitTesting
             Assert::AreEqual(size_t(0), evTable.getNumRow());
             std::string expected = "Table String: size: 0\n";
             Assert::AreEqual(expected, evTable.getTableString());
-
-            // 3. Clean-up:
-            Entity::performCleanUp();
-            Modifies::performCleanUp();
         }
 
         TEST_METHOD(execute_lhsConstRhsWildcard_EvTableFalse)
@@ -281,7 +249,7 @@ namespace UnitTesting
 
             // 1. Setup:
             PqlReference lhsRef, rhsRef;
-            lhsRef = std::make_pair(PqlReferenceType::integer, "1");
+            lhsRef = std::make_pair(PqlReferenceType::integer, "2");
             rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
             Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesS, lhsRef, rhsRef);
 
@@ -297,10 +265,6 @@ namespace UnitTesting
             Assert::AreEqual(size_t(0), evTable.getNumRow());
             std::string expected = "Table String: size: 0\n";
             Assert::AreEqual(expected, evTable.getTableString());
-
-            // 3. Clean-up:
-            Entity::performCleanUp();
-            Modifies::performCleanUp();
         }
 
 	};

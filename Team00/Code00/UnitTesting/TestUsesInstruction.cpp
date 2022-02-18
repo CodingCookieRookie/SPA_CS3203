@@ -70,7 +70,7 @@ namespace UnitTesting
             // 2. Main test:
             EvaluatedTable evTable = instruction->execute();
             Assert::AreEqual(size_t(1), evTable.getNumRow());
-            std::string expected = "Table String: size: 2\nSynonym: a1 Values: 2 \nSynonym: x Values: 2 \n";
+            std::string expected = "Table String: size: 1\nSynonym: a1 Values: 2 \n";
             Assert::AreEqual(expected, evTable.getTableString());
 
             // 3. Clean-up:
@@ -154,7 +154,7 @@ namespace UnitTesting
         //    // 2. Main test:
         //    EvaluatedTable evTable = instruction->execute();
         //    Assert::AreEqual(size_t(1), evTable.getNumRow());
-        //    std::string expected = "Table String: size: 2\nSynonym: p Values: 2 \nSynonym: x Values: 2 \n";
+        //    std::string expected = "Table String: size: 1\nSynonym: p Values: 2 \n";
         //    Assert::AreEqual(expected, evTable.getTableString());
 
         //    // 3. Clean-up:
@@ -196,7 +196,7 @@ namespace UnitTesting
 
             // 1. Setup:
             PqlReference lhsRef, rhsRef;
-            lhsRef = std::make_pair(PqlReferenceType::integer, "1");
+            lhsRef = std::make_pair(PqlReferenceType::integer, "2");
             rhsRef = std::make_pair(PqlReferenceType::synonym, "a1");
             Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
 
@@ -225,7 +225,7 @@ namespace UnitTesting
 
             // 1. Setup:
             PqlReference lhsRef, rhsRef;
-            lhsRef = std::make_pair(PqlReferenceType::integer, "1");
+            lhsRef = std::make_pair(PqlReferenceType::integer, "2");
             rhsRef = std::make_pair(PqlReferenceType::synonym, "a1");
             Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
 
@@ -252,7 +252,7 @@ namespace UnitTesting
 
             // 1. Setup:
             PqlReference lhsRef, rhsRef;
-            lhsRef = std::make_pair(PqlReferenceType::integer, "1");
+            lhsRef = std::make_pair(PqlReferenceType::integer, "2");
             rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
             Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
 
@@ -281,7 +281,7 @@ namespace UnitTesting
 
             // 1. Setup:
             PqlReference lhsRef, rhsRef;
-            lhsRef = std::make_pair(PqlReferenceType::integer, "1");
+            lhsRef = std::make_pair(PqlReferenceType::integer, "2");
             rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
             Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
 
