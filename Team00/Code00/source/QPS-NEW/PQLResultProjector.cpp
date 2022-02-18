@@ -18,7 +18,6 @@ std::list<std::string> PQLResultProjector::resolveTableToResults() {
 	// Forms {"1, 2", "3, 2", "4, 3"} or 1 2 3 2 4 3 according to AutoTester
 	for (int i = 0; i < numRow; i++) {	// for each row	
 		std::unordered_map<std::string, std::vector<int>>::iterator it = table.begin();
-		std::string res = "";
 		while (it != table.end()) {	// for each col
 			std::string entityName = it->first;
 			// if column is not selected, do not project
@@ -39,8 +38,7 @@ std::list<std::string> PQLResultProjector::resolveTableToResults() {
 			else { //PqlEntityType::Procedure
 				value = Entity::getProcName(it->second[i]);
 			}
-			res += value;
-			resList.push_back(res);
+			resList.push_back(value);
 			it++;
 		}
 	}
