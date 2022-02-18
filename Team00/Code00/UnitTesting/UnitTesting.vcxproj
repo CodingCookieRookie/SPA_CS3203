@@ -166,6 +166,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="TestGetAllInstruction.cpp" />
     <ClCompile Include="TestInstructionFollows.cpp" />
     <ClCompile Include="TestInstructionFollowsT.cpp" />
     <ClCompile Include="TestInstructionParent.cpp" />

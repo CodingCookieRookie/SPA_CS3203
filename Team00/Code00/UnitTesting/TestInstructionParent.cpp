@@ -6,7 +6,9 @@
 
 #include "../source/QPS-NEW/PQLEvaluator.h"
 #include "../source/PKB/RS2.h"
+#include "../source/PKB/Entity.h"
 #include "../source/PKB/Parent.h"
+
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
