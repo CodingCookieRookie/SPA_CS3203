@@ -7,18 +7,9 @@
 <query>
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="comment">1</id><querystr><![CDATA[stmt s; Select s]]></querystr>
 <stuans>1,2</stuans>
-<correct></correct>
-<time_taken>13.000000</time_taken>
-<failed>
-<missing></missing>
-<additional>1,2</additional>
-<summary>
-<expected>0</expected>
-<matched>0</matched>
-<missing>0</missing>
-<additional>2</additional>
-</summary>
-</failed>
+<correct>1,2</correct>
+<time_taken>4.000000</time_taken>
+<passed/>
 </query>
 </queries>
 </test_results>
