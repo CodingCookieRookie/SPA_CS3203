@@ -57,7 +57,7 @@ namespace UnitTesting
         // Follows Relationship Tests ====================================================================================================================
 
 
-        TEST_METHOD(executeInstruction_follows_twoConstants)
+        TEST_METHOD(executeFollowsInstruction_twoConstants_evaluatedTableFormed)
         {
  
             // 1. Setup:
@@ -83,7 +83,7 @@ namespace UnitTesting
             Follows::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_follows_lhsConstrhsStmt)
+        TEST_METHOD(executeFollowsInstruction_lhsConstantRhsStmt_evaluatedTableFormed)
         {
 
             // 1. Setup:
@@ -129,7 +129,7 @@ namespace UnitTesting
             Follows::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_follows_lhsStmtrhsConst)
+        TEST_METHOD(executeFollowsInstruction_lhsStmrRhsConst_evaluatedTableFormed)
         {
 
             // 1. Setup:
@@ -175,7 +175,7 @@ namespace UnitTesting
             Follows::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_follows_twoStmts)
+        TEST_METHOD(executeFollowsInstruction_twoStmts_evaluatedTableFormed)
         {
 
             // 1. Setup:
@@ -233,7 +233,7 @@ namespace UnitTesting
             Follows::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_follows_lhsStmtrhsWildcard_stress)
+        TEST_METHOD(executeFollowsInstruction_lhsStmtRhsWildcardStress_evaluatedTableFormed)
         {
 
             // 1. Setup:
@@ -291,7 +291,7 @@ namespace UnitTesting
             Follows::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_follows_twoWildcards)
+        TEST_METHOD(executeFollowsInstruction_twoWildcards_evaluatedTableFormed)
         {
 
             // 1. Setup:
@@ -340,7 +340,7 @@ namespace UnitTesting
 
         // Follows* Relationship Tests ====================================================================================================================
 
-        TEST_METHOD(executeInstruction_followsStar_twoConstants)
+        TEST_METHOD(executeFollowsStarInstruction_twoConstants_evaluatedTableFormed)
         {
 
             // 1. Setup:
@@ -374,7 +374,7 @@ namespace UnitTesting
 
         }
 
-        TEST_METHOD(executeInstruction_followsStar_lhsConstrhsStmt)
+        TEST_METHOD(executeFollowsStarInstruction_lhsConstRhsStmt_evaluatedTableFormed)
         {
 
             // 1. Setup:
@@ -427,7 +427,7 @@ namespace UnitTesting
             Follows::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_followsStar_lhsStmtrhsConst)
+        TEST_METHOD(executeFollowsStarInstruction_lhsStmtRhsConst_evaluatedTableFormed)
         {
 
             // 1. Setup:
@@ -482,7 +482,7 @@ namespace UnitTesting
             Follows::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_followsStar_twoStmts)
+        TEST_METHOD(executeFollowsStarInstruction_twoStmts_evaluatedTableFormed)
         {
 
             // 1. Setup:
@@ -544,7 +544,7 @@ namespace UnitTesting
             FollowsT::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_followsStar_twoStmt_stress)
+        TEST_METHOD(executeFollowsStarInstruction_twoStmtsStress_evaluatedTableFormed)
         {
 
             // 1. Setup:
@@ -619,7 +619,7 @@ namespace UnitTesting
             Follows::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_followsStar_lhsStmtrhsWildcard_stress)
+        TEST_METHOD(executeFollowsStarInstruction_lhsStmtRhsWildcardStress_evaluatedTableFormed)
         {
 
             // 1. Setup:
@@ -685,7 +685,7 @@ namespace UnitTesting
             Follows::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_followsStar_twoWildcards)
+        TEST_METHOD(executeFollowsStarInstruction_twoWildcards_evaluatedTableFormed)
         {
 
             // 1. Setup:
@@ -739,7 +739,7 @@ namespace UnitTesting
 
         // Parent Relationship Tests ======================================================================================================================
 
-        TEST_METHOD(executeInstruction_parent_twoConstants) {
+        TEST_METHOD(executeParentInstruction_twoConstants_evaluatedTableFormed) {
 
             // 1. Setup:
             // Parent (1, 2) RelationshipInstruction
@@ -764,7 +764,7 @@ namespace UnitTesting
             Parent::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_parent_lhsConstrhsStmt)
+        TEST_METHOD(executeParentInstruction_lhsConstRhsStmt_evaluatedTableFormed)
         {
 
             // 1. Setup:
@@ -810,7 +810,7 @@ namespace UnitTesting
             Parent::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_parent_lhsStmtrhsConst)
+        TEST_METHOD(executeParentInstruction_lhsStmtRhsConst_evaluatedTableFormed)
         {
             // 1. Setup:
             // Parent(s1, 2) RelationshipInstruction
@@ -855,7 +855,7 @@ namespace UnitTesting
             Parent::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_parent_twoStmts)
+        TEST_METHOD(executeParentInstruction_twoStmts_evaluatedTableFormed)
         {
 
             // 1. Setup:
@@ -913,7 +913,7 @@ namespace UnitTesting
             Parent::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_parent_lhsStmtRhsWildcard_stress)
+        TEST_METHOD(executeParentInstruction_lhsStmtRhsWildcardStress_evaluatedTableFormed)
         {
 
             // 1. Setup:
@@ -974,7 +974,7 @@ namespace UnitTesting
             Parent::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_parent_lhsWildcardRhsConst)
+        TEST_METHOD(executeParentInstruction_lhsWildcardRhsConst_evaluatedTableFormed)
         {
 
             // 1. Setup:
@@ -1030,7 +1030,7 @@ namespace UnitTesting
             Parent::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_parent_lhsWildcardhsConst_stress_nestingParents)
+        TEST_METHOD(executeParentInstruction_lhsWildcardRhsConstStress_evaluatedTableFormed)
         {
             // 1. Setup:
             // Parent(_, 28) RelationshipInstruction
@@ -1086,7 +1086,7 @@ namespace UnitTesting
             Parent::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_parent_twoWildcards)
+        TEST_METHOD(executeParentInstruction_twoWildcards_evaluatedTableFormed)
         {
 
             // 1. Setup:
@@ -1135,7 +1135,7 @@ namespace UnitTesting
 
         // Parent* Relationship Tests ======================================================================================================================
 
-        TEST_METHOD(executeInstruction_parentStar_twoConstants) {
+        TEST_METHOD(executeParentStarInstruction_twoConstants_evaluatedTableFormed) {
 
             // 1. Setup:
             // Parent (1, 2) RelationshipInstruction
@@ -1160,7 +1160,7 @@ namespace UnitTesting
             Parent::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_parentStar_lhsConstrhsStmt)
+        TEST_METHOD(executeParentStarInstruction_lhsConstRhsStmt_evaluatedTableFormed)
         {
 
             // 1. Setup:
@@ -1213,7 +1213,7 @@ namespace UnitTesting
             Parent::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_parentStar_lhsStmtrhsConst)
+        TEST_METHOD(executeParentStarInstruction_lhsStmtRhsConst_evaluatedTableFormed)
         {
 
             // 1. Setup:
@@ -1268,7 +1268,7 @@ namespace UnitTesting
             Parent::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_parentStar_twoStmts)
+        TEST_METHOD(executeParentStarInstruction_twoStmts_evaluatedTableFormed)
         {
 
             // 1. Setup:
@@ -1330,7 +1330,7 @@ namespace UnitTesting
             Parent::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_parentStar_twoStmt_stress)
+        TEST_METHOD(executeParentStarInstruction_twoStmtsStress_evaluatedTableFormed)
         {
 
             // 1. Setup:
@@ -1405,7 +1405,7 @@ namespace UnitTesting
             Parent::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_parentStar_lhsStmtrhsWildcard_stress)
+        TEST_METHOD(executeParentStarInstruction_lhsStmtRhsWildcardStress_evaluatedTableFormed)
         {
 
             // 1. Setup:
@@ -1471,7 +1471,7 @@ namespace UnitTesting
             Parent::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_parenStar_lhsWildcardhsConst_stress_nestingParents)
+        TEST_METHOD(executeParentStarInstruction_lhsWildcardRhsConstStress_evaluatedTableFormed)
         {
             // 1. Setup:
             // Parent*(_, 87) RelationshipInstruction
@@ -1533,7 +1533,7 @@ namespace UnitTesting
             Parent::performCleanUp();
         }
 
-        TEST_METHOD(executeInstruction_parentStar_twoWildcards)
+        TEST_METHOD(executeParentStarInstruction_twoWildcards_evaluatedTableFormed)
         {
 
             // 1. Setup:
