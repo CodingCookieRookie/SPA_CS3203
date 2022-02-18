@@ -166,6 +166,9 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="TestInstructionFollows.cpp" />
+    <ClCompile Include="TestInstructionFollowsT.cpp" />
+    <ClCompile Include="TestInstructionParent.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -174,6 +177,7 @@
     </ClCompile>
     <ClCompile Include="TestEvaluatedTable.cpp" />
     <ClCompile Include="TestContainer.cpp" />
+    <ClCompile Include="TestInstructionParentT.cpp" />
     <ClCompile Include="TestPKB.cpp" />
     <ClCompile Include="TestPQLResultProjector.cpp" />
     <ClCompile Include="TestSourceASTNode.cpp" />
