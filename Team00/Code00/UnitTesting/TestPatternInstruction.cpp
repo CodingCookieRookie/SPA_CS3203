@@ -6,15 +6,14 @@
 #include "../source/QPS-NEW/PQLEvaluator.h"
 #include "../source/QPS-NEW/PQLParser.h"
 #include "../source/PKB/Pattern.h"
+#include <PKB/ExpressionProcessor.h>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting
 {
-    // Uses (a/r/s/a1, v) or Uses(a/r/s/a1, "x") or Uses (a/r/s/a1, _ ) 
-    // Uses (1, v)	=> true or Uses (1, _ ) (under statement)
-    // Uses (p/p1, v) or Uses(p/p1, "x") or Uses (p/p1, _ )	proc
-    TEST_CLASS(TestUsesInstruction)
+
+    TEST_CLASS(TestPatternInstruction)
     {
     private:
         TEST_METHOD_CLEANUP(cleanUpTables) {
@@ -22,26 +21,76 @@ namespace UnitTesting
             Pattern::performCleanUp();
         }
     public:
-        // Pattern a(v, "_x_") or Pattern a(v, "_123_") or Pattern a("x", "_x_")
+        // Pattern a(v, "_x_") or Pattern a(v, "_123_") or Pattern a("x", "_x_") or Pattern a("x", "__")
         // Pattern a(v, *) or Pattern a("x", *)
         // Pattern a(*, "_x_") 
         // Pattern a(*, *)	
-        TEST_METHOD(execute_lhsSynonymRhsIdentStmt)
+        TEST_METHOD(execute_lhsSynonymRhsIdentVar)
         {
 
             // 1. Setup:
-            PqlReference lhsRef, rhsRef;
-            lhsRef = std::make_pair(PqlReferenceType::synonym, "a1");
-            rhsRef = std::make_pair(PqlReferenceType::ident, "x");
-            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
+            std::string synonym = "a1";
+            PqlReference entRef = std::make_pair(PqlReferenceType::synonym, "v");
+            PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, "x");
+            Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
 
-            // PKB inserts modifies
+            // PKB inserts pattern
             Entity::insertStmt(StatementType::printType);
-            StmtIndex stmt = Entity::insertStmt(StatementType::readType);
-            Entity::insertVar("randomVar");
+            StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+            Entity::insertVar("a");
             VarIndex varIndex = Entity::insertVar("x");
-            Uses::insert(stmt, varIndex);
+            std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("x");
+            Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
+            // 2. Main test:
+            EvaluatedTable evTable = instruction->execute();
+            Assert::AreEqual(size_t(1), evTable.getNumRow());
+            std::string expected = "Table String: size: 2\nSynonym: a1 Values: 2 \nSynonym: v Values: 2 \n";
+            Assert::AreEqual(expected, evTable.getTableString());
+        }
 
+        TEST_METHOD(execute_lhsSynonymRhsIdentConstant)
+        {   // assign1 = assign1 + 123
+            // Pattern a(v, "_123_")
+            // 1. Setup:
+            std::string synonym = "a1";
+            PqlReference entRef = std::make_pair(PqlReferenceType::synonym, "v");
+            PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, "123");
+            Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
+
+            // PKB inserts pattern
+            Entity::insertStmt(StatementType::printType);
+            StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+            VarIndex varIndex = Entity::insertVar("assign1");
+            Entity::insertConst(123);
+            std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("123");
+            Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
+            // 2. Main test:
+            EvaluatedTable evTable = instruction->execute();
+            Assert::AreEqual(size_t(1), evTable.getNumRow());
+            std::string expected = "Table String: size: 2\nSynonym: a1 Values: 2 \nSynonym: v Values: 1 \n";
+            Assert::AreEqual(expected, evTable.getTableString());
+        }
+
+        TEST_METHOD(execute_lhsIdentRhsIdentSynonym)
+        {
+            // assign1 = assign1 + x
+            // Pattern a("assign1", "_x_")
+            // 1. Setup:
+            std::string synonym = "a1";
+            PqlReference entRef = std::make_pair(PqlReferenceType::ident, "assign1");
+            PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, "x");
+            Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
+
+            // PKB inserts pattern
+            Entity::insertStmt(StatementType::printType);
+            StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+            Entity::insertVar("x");
+            VarIndex varIndex = Entity::insertVar("assign1");
+            std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("x");
+            Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
+
+            std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
+            Assert::AreEqual(size_t(1), allStmts.size());
             // 2. Main test:
             EvaluatedTable evTable = instruction->execute();
             Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -49,192 +98,131 @@ namespace UnitTesting
             Assert::AreEqual(expected, evTable.getTableString());
         }
 
-        TEST_METHOD(execute_lhsSynonymRhsWildCardStmt)
+        TEST_METHOD(execute_lhsIdentRhsIdentConstant)
         {
-
+            // assign1 = assign1 + x
+            // Pattern a("assign1", "_123_")
             // 1. Setup:
-            PqlReference lhsRef, rhsRef;
-            lhsRef = std::make_pair(PqlReferenceType::synonym, "a1");
-            rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
-            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
+            std::string synonym = "a1";
+            PqlReference entRef = std::make_pair(PqlReferenceType::ident, "assign1");
+            PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, "123");
+            Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
 
-            // PKB inserts modifies
+            // PKB inserts pattern
             Entity::insertStmt(StatementType::printType);
-            StmtIndex stmt = Entity::insertStmt(StatementType::printType);
-            Entity::insertVar("randomVar");
-            VarIndex varIndex = Entity::insertVar("x");
-            VarIndex varIndex2 = Entity::insertVar("y");
-            Uses::insert(stmt, varIndex);
-            Uses::insert(stmt, varIndex2);
+            StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+            Entity::insertVar("x");
+            Entity::insertConst(123);
+            VarIndex varIndex = Entity::insertVar("assign1");
+            std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("123");
+            Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
+            std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
+            Assert::AreEqual(size_t(1), allStmts.size());
             // 2. Main test:
             EvaluatedTable evTable = instruction->execute();
-            Assert::AreEqual(size_t(2), evTable.getNumRow());
-            std::string expected = "Table String: size: 1\nSynonym: a1 Values: 2 2 \n";
+            Assert::AreEqual(size_t(1), evTable.getNumRow());
+            std::string expected = "Table String: size: 1\nSynonym: a1 Values: 2 \n";
+            Assert::AreEqual(expected, evTable.getTableString());
+        }
+        
+        TEST_METHOD(execute_lhsSynonymRhsWildCard)
+        {
+            // assign1 = assign1 + x
+            // Pattern a(v, *)
+            // 1. Setup:
+            std::string synonym = "a1";
+            PqlReference entRef = std::make_pair(PqlReferenceType::synonym, "v");
+            PqlExpression expressionSpec = std::make_pair(PqlExpressionType::wildcard, "");
+            Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
+
+            // PKB inserts pattern
+            Entity::insertStmt(StatementType::printType);
+            StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+            VarIndex varIndex = Entity::insertVar("assign1");
+            std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("x");
+            Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
+
+            std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, true);
+            Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
+            // 2. Main test:
+            EvaluatedTable evTable = instruction->execute();
+            Assert::AreEqual(size_t(1), evTable.getNumRow());
+            std::string expected = "Table String: size: 2\nSynonym: a1 Values: 2 \nSynonym: v Values: 1 \n";
             Assert::AreEqual(expected, evTable.getTableString());
         }
 
-        // <-- Iteration 2 -->
-        //TEST_METHOD(execute_lhsSynonymRhsSynonymProc)
-        //{
-
-        //    // 1. Setup:
-        //    PqlReference lhsRef, rhsRef;
-        //    lhsRef = std::make_pair(PqlReferenceType::synonym, "p");
-        //    rhsRef = std::make_pair(PqlReferenceType::synonym, "v");
-        //    Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesP, lhsRef, rhsRef);
-
-        //    // PKB inserts modifies
-        //    Entity::insertProc("randomProc");
-        //    ProcIndex procIndex = Entity::insertProc("p");
-        //    Entity::insertVar("randomVar");
-        //    VarIndex varIndex = Entity::insertVar("x");
-        //    Uses::insert(procIndex, varIndex);
-        //    Assert::AreEqual(Uses::contains(procIndex, varIndex), true);
-        //    // 2. Main test:
-        //    EvaluatedTable evTable = instruction->execute();
-        //    Assert::AreEqual(size_t(1), evTable.getNumRow());
-        //    std::string expected = "Table String: size: 2\nSynonym: p Values: 2 \nSynonym: v Values: 2 \n";
-        //    Assert::AreEqual(expected, evTable.getTableString());
-        //}
-
-        //TEST_METHOD(execute_lhsSynonymRhsIdentProc)
-        //{
-
-        //    // 1. Setup:
-        //    PqlReference lhsRef, rhsRef;
-        //    lhsRef = std::make_pair(PqlReferenceType::synonym, "p");
-        //    rhsRef = std::make_pair(PqlReferenceType::ident, "x");
-        //    Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesP, lhsRef, rhsRef);
-
-        //    // PKB inserts modifies
-        //    Entity::insertProc("randomProc");
-        //    ProcIndex procIndex = Entity::insertProc("p");
-        //    Entity::insertVar("randomVar");
-        //    VarIndex varIndex = Entity::insertVar("x");
-        //    Uses::insert(procIndex, varIndex);
-
-        //    // 2. Main test:
-        //    EvaluatedTable evTable = instruction->execute();
-        //    Assert::AreEqual(size_t(1), evTable.getNumRow());
-        //    std::string expected = "Table String: size: 1\nSynonym: p Values: 2 \n";
-        //    Assert::AreEqual(expected, evTable.getTableString());
-        //}
-
-        //TEST_METHOD(execute_lhsSynonymRhsWildCardProc)
-        //{
-
-        //    // 1. Setup:
-        //    PqlReference lhsRef, rhsRef;
-        //    lhsRef = std::make_pair(PqlReferenceType::synonym, "p");
-        //    rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
-        //    Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesP, lhsRef, rhsRef);
-
-        //    // PKB inserts modifies
-        //    Entity::insertProc("randomProc");
-        //    ProcIndex procIndex = Entity::insertProc("p");
-        //    Entity::insertVar("randomVar");
-        //    VarIndex varIndex = Entity::insertVar("x");
-        //    VarIndex varIndex2 = Entity::insertVar("y");
-        //    Uses::insert(procIndex, varIndex);
-        //    Uses::insert(procIndex, varIndex2);
-
-        //    // 2. Main test:
-        //    EvaluatedTable evTable = instruction->execute();
-        //    Assert::AreEqual(size_t(2), evTable.getNumRow());
-        //    std::string expected = "Table String: size: 1\nSynonym: p Values: 2 2 \n";
-        //    Assert::AreEqual(expected, evTable.getTableString());
-        //}
-
-        TEST_METHOD(execute_lhsConstRhsSynonym_EvTableTrue)
+        TEST_METHOD(execute_lhsIdentRhsWildCard)
         {
-
+            // assign1 = assign1 + x
+            // Pattern a("x", *)
             // 1. Setup:
-            PqlReference lhsRef, rhsRef;
-            lhsRef = std::make_pair(PqlReferenceType::integer, "2");
-            rhsRef = std::make_pair(PqlReferenceType::synonym, "a1");
-            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
+            std::string synonym = "a1";
+            PqlReference entRef = std::make_pair(PqlReferenceType::ident, "assign1");
+            PqlExpression expressionSpec = std::make_pair(PqlExpressionType::wildcard, "");
+            Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
 
-            // PKB inserts modifies
+            // PKB inserts pattern
             Entity::insertStmt(StatementType::printType);
-            StmtIndex stmt = Entity::insertStmt(StatementType::readType);
-            Entity::insertVar("randomVar");
-            VarIndex varIndex = Entity::insertVar("x");
-            VarIndex varIndex2 = Entity::insertVar("y");
-            Uses::insert(stmt, varIndex);
-            Uses::insert(stmt, varIndex2);
+            StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+            VarIndex varIndex = Entity::insertVar("assign1");
+            std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("x");
+            Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
+            std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, true);
+            Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
             // 2. Main test:
             EvaluatedTable evTable = instruction->execute();
-            Assert::AreEqual(size_t(0), evTable.getNumRow());
-            std::string expected = "Table String: size: 0\n";
+            Assert::AreEqual(size_t(1), evTable.getNumRow());
+            std::string expected = "Table String: size: 1\nSynonym: a1 Values: 2 \n";
             Assert::AreEqual(expected, evTable.getTableString());
         }
 
-        TEST_METHOD(execute_lhsConstRhsSynonym_EvTableFalse)
+        TEST_METHOD(execute_lhsWildCardRhsIdent)
         {
-
+            // assign1 = assign1 + x
+            // Pattern a(*, "_x_") 
             // 1. Setup:
-            PqlReference lhsRef, rhsRef;
-            lhsRef = std::make_pair(PqlReferenceType::integer, "2");
-            rhsRef = std::make_pair(PqlReferenceType::synonym, "a1");
-            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
+            std::string synonym = "a1";
+            PqlReference entRef = std::make_pair(PqlReferenceType::wildcard, "");
+            PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, "x");
+            Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
 
-            // PKB inserts modifies
+            // PKB inserts pattern
             Entity::insertStmt(StatementType::printType);
-            StmtIndex stmt = Entity::insertStmt(StatementType::readType);
-            Entity::insertVar("randomVar");
-            VarIndex varIndex = Entity::insertVar("x");
-            VarIndex varIndex2 = Entity::insertVar("y");
+            StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+            VarIndex varIndex = Entity::insertVar("assign1");
+            std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("x");
+            Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
+            std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, true);
+            Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
             // 2. Main test:
             EvaluatedTable evTable = instruction->execute();
-            Assert::AreEqual(size_t(0), evTable.getNumRow());
-            std::string expected = "Table String: size: 0\n";
+            Assert::AreEqual(size_t(1), evTable.getNumRow());
+            std::string expected = "Table String: size: 1\nSynonym: a1 Values: 2 \n";
             Assert::AreEqual(expected, evTable.getTableString());
         }
-
-        TEST_METHOD(execute_lhsConstRhsWildcard_EvTableTrue)
+        
+        TEST_METHOD(execute_lhsWildCardRhsWildCard)
         {
-
+            // assign1 = assign1 + x
+            // Pattern a(*, *)	
             // 1. Setup:
-            PqlReference lhsRef, rhsRef;
-            lhsRef = std::make_pair(PqlReferenceType::integer, "2");
-            rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
-            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
+            std::string synonym = "a1";
+            PqlReference entRef = std::make_pair(PqlReferenceType::wildcard, "*");
+            PqlExpression expressionSpec = std::make_pair(PqlExpressionType::wildcard, "*");
+            Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
 
-            // PKB inserts modifies
+            // PKB inserts pattern
             Entity::insertStmt(StatementType::printType);
-            StmtIndex stmt = Entity::insertStmt(StatementType::readType);
-            Entity::insertVar("randomVar");
-            VarIndex varIndex = Entity::insertVar("x");
-            VarIndex varIndex2 = Entity::insertVar("y");
-            Uses::insert(stmt, varIndex);
-            Uses::insert(stmt, varIndex2);
+            StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+            VarIndex varIndex = Entity::insertVar("assign1");
+            std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("x");
+            Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
-            // 2. Main test:
-            EvaluatedTable evTable = instruction->execute();
-            Assert::AreEqual(size_t(0), evTable.getNumRow());
-            std::string expected = "Table String: size: 0\n";
-            Assert::AreEqual(expected, evTable.getTableString());
-        }
-
-        TEST_METHOD(execute_lhsConstRhsWildcard_EvTableFalse)
-        {
-
-            // 1. Setup:
-            PqlReference lhsRef, rhsRef;
-            lhsRef = std::make_pair(PqlReferenceType::integer, "2");
-            rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
-            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
-
-            // PKB inserts modifies
-            Entity::insertStmt(StatementType::printType);
-            StmtIndex stmt = Entity::insertStmt(StatementType::readType);
-            Entity::insertVar("randomVar");
-            VarIndex varIndex = Entity::insertVar("x");
-            VarIndex varIndex2 = Entity::insertVar("y");
-
+            std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, true);
+            Assert::AreEqual(size_t(0), std::get<0>(allPatternStmtInfo).size());
             // 2. Main test:
             EvaluatedTable evTable = instruction->execute();
             Assert::AreEqual(size_t(0), evTable.getNumRow());

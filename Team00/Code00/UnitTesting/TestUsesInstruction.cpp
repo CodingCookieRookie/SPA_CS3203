@@ -36,7 +36,7 @@ namespace UnitTesting
             rhsRef = std::make_pair(PqlReferenceType::synonym, "v");
             Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
 
-            // PKB inserts modifies
+            // PKB inserts uses
             Entity::insertStmt(StatementType::printType);   // insert dummy stmt
             StmtIndex stmt = Entity::insertStmt(StatementType::readType);
             Entity::insertVar("randomVar"); // insert dummy var
@@ -59,13 +59,13 @@ namespace UnitTesting
             rhsRef = std::make_pair(PqlReferenceType::ident, "x");
             Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
 
-            // PKB inserts modifies
-            Entity::insertStmt(StatementType::printType);
-            StmtIndex stmt = Entity::insertStmt(StatementType::readType);
+            // PKB inserts uses
+            Entity::insertStmt(StatementType::readType);
+            StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
             Entity::insertVar("randomVar");
             VarIndex varIndex = Entity::insertVar("x");
             Uses::insert(stmt, varIndex);
-
+            std::vector<int> allstmts = Uses::getStatements(varIndex);
             // 2. Main test:
             EvaluatedTable evTable = instruction->execute();
             Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -82,7 +82,7 @@ namespace UnitTesting
             rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
             Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
 
-            // PKB inserts modifies
+            // PKB inserts uses
             Entity::insertStmt(StatementType::printType);
             StmtIndex stmt = Entity::insertStmt(StatementType::printType);
             Entity::insertVar("randomVar");
@@ -108,7 +108,7 @@ namespace UnitTesting
         //    rhsRef = std::make_pair(PqlReferenceType::synonym, "v");
         //    Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesP, lhsRef, rhsRef);
 
-        //    // PKB inserts modifies
+        //    // PKB inserts uses
         //    Entity::insertProc("randomProc");
         //    ProcIndex procIndex = Entity::insertProc("p");
         //    Entity::insertVar("randomVar");
@@ -131,7 +131,7 @@ namespace UnitTesting
         //    rhsRef = std::make_pair(PqlReferenceType::ident, "x");
         //    Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesP, lhsRef, rhsRef);
 
-        //    // PKB inserts modifies
+        //    // PKB inserts uses
         //    Entity::insertProc("randomProc");
         //    ProcIndex procIndex = Entity::insertProc("p");
         //    Entity::insertVar("randomVar");
@@ -154,7 +154,7 @@ namespace UnitTesting
         //    rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
         //    Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesP, lhsRef, rhsRef);
 
-        //    // PKB inserts modifies
+        //    // PKB inserts uses
         //    Entity::insertProc("randomProc");
         //    ProcIndex procIndex = Entity::insertProc("p");
         //    Entity::insertVar("randomVar");
@@ -179,7 +179,7 @@ namespace UnitTesting
             rhsRef = std::make_pair(PqlReferenceType::synonym, "a1");
             Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
 
-            // PKB inserts modifies
+            // PKB inserts uses
             Entity::insertStmt(StatementType::printType);
             StmtIndex stmt = Entity::insertStmt(StatementType::readType);
             Entity::insertVar("randomVar");
@@ -204,7 +204,7 @@ namespace UnitTesting
             rhsRef = std::make_pair(PqlReferenceType::synonym, "a1");
             Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
 
-            // PKB inserts modifies
+            // PKB inserts uses
             Entity::insertStmt(StatementType::printType);
             StmtIndex stmt = Entity::insertStmt(StatementType::readType);
             Entity::insertVar("randomVar");
@@ -227,7 +227,7 @@ namespace UnitTesting
             rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
             Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
 
-            // PKB inserts modifies
+            // PKB inserts uses
             Entity::insertStmt(StatementType::printType);
             StmtIndex stmt = Entity::insertStmt(StatementType::readType);
             Entity::insertVar("randomVar");
@@ -252,7 +252,7 @@ namespace UnitTesting
             rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
             Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
 
-            // PKB inserts modifies
+            // PKB inserts uses
             Entity::insertStmt(StatementType::printType);
             StmtIndex stmt = Entity::insertStmt(StatementType::readType);
             Entity::insertVar("randomVar");
