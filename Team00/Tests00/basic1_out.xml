@@ -1,0 +1,15 @@
+<?xml-stylesheet type="text/xsl" href="analysis.xsl"?>
+<test_results>
+<info>
+<name>Team00</name><parsing_time_taken>1.000000</parsing_time_taken>
+</info>
+<queries>
+<query>
+<id ReturnTuple="1" CondNum="1" RelNum="0" comment="comment">1</id><querystr><![CDATA[stmt s; Select s]]></querystr>
+<stuans>1,2</stuans>
+<correct>1,2</correct>
+<time_taken>4.000000</time_taken>
+<passed/>
+</query>
+</queries>
+</test_results>
