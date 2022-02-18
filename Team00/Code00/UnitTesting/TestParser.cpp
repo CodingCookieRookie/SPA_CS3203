@@ -3,7 +3,6 @@
 
 #include "SP/Parser.h"
 
-#include <iostream>
 #include <vector>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;

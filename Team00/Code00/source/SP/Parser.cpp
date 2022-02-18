@@ -35,7 +35,6 @@ SourceAST Parser::parse(const std::string& source) {
 ProgramNode* Parser::matchProgram() {
 	ProgramNode* programNode = new ProgramNode();
 
-	// There must exist at least 1 procedure
 	ProcedureNode* procNode{};
 	while (!lexer.reachedEnd()) {
 		procNode = matchProcedure();
@@ -85,7 +84,6 @@ ProcedureNode* Parser::matchProcedure() {
 StmtLstNode* Parser::matchStmtLst() {
 	StmtLstNode* stmtLstNode = new StmtLstNode();
 
-	// There must exist at least 1 stmt.
 	StmtNode* stmtNode{};
 	while (stmtNode = matchStmt()) {
 		stmtLstNode->addStmtNode(stmtNode);
@@ -98,7 +96,6 @@ StmtLstNode* Parser::matchStmtLst() {
 
 /* stmt : read | print | call | while | if | assign */
 StmtNode* Parser::matchStmt() {
-	bool isValidStmt = false;
 	StmtNode* stmtNode{};
 
 	std::string name = lexer.nextName();
