@@ -13,7 +13,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting
 {
-    TEST_CLASS(TestInstructions)
+    TEST_CLASS(TestFollowsTInstructions)
     {
     private:
         TEST_METHOD_CLEANUP(cleanUpTables) {
@@ -23,7 +23,7 @@ namespace UnitTesting
         }
     public:
 
-        TEST_METHOD(executeFollowsStarInstruction_twoConstants_evaluatedTableFormed)
+        TEST_METHOD(execute_twoConstants)
         {
 
             // 1. Setup:

@@ -12,7 +12,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting
 {
-    TEST_CLASS(TestInstructions)
+    TEST_CLASS(TestFollowsInstructions)
     {
     private:
         TEST_METHOD_CLEANUP(cleanUpTables) {
