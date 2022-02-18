@@ -272,7 +272,7 @@ private:
 			}
 		}
 		else {
-			std::cout << "Error in handleModifiesS\n";
+			std::cout << "Error in handleModifiesP\n";
 		}
 		return EvaluatedTable(PQLentities, PQLmap);
 	}

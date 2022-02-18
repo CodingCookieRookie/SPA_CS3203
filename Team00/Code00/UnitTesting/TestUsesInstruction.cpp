@@ -16,14 +16,14 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting
 {
-	// Modifies (a/r/s/a1, v) or Modifies(a/r/s/a1, "x") or Modifies (a/r/s/a1, _ ) 
-	// Modifies (1, v)	=> true or Modifies (1, _ ) (under statement)
-	// Modifies (p/p1, v) or Modifies(p/p1, "x") or Modifies (p/p1, _ )	proc
-	TEST_CLASS(TestModifiesInstruction)
-	{
-	private:
+    // Uses (a/r/s/a1, v) or Uses(a/r/s/a1, "x") or Uses (a/r/s/a1, _ ) 
+    // Uses (1, v)	=> true or Uses (1, _ ) (under statement)
+    // Uses (p/p1, v) or Uses(p/p1, "x") or Uses (p/p1, _ )	proc
+    TEST_CLASS(TestUsesInstruction)
+    {
+    private:
 
-	public:
+    public:
         TEST_METHOD(execute_lhsSynonymRhsSynonymStmt)
         {
 
@@ -31,14 +31,14 @@ namespace UnitTesting
             PqlReference lhsRef, rhsRef;
             lhsRef = std::make_pair(PqlReferenceType::synonym, "a1");
             rhsRef = std::make_pair(PqlReferenceType::synonym, "v");
-            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesS, lhsRef, rhsRef);
+            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
 
             // PKB inserts modifies
             Entity::insertStmt(StatementType::printType);   // insert dummy stmt
-            StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+            StmtIndex stmt = Entity::insertStmt(StatementType::readType);
             Entity::insertVar("randomVar"); // insert dummy var
             VarIndex varIndex = Entity::insertVar("v");
-            Modifies::insert(stmt, varIndex);
+            Uses::insert(stmt, varIndex);
 
             // 2. Main test:
             EvaluatedTable evTable = instruction->execute();
@@ -48,7 +48,7 @@ namespace UnitTesting
 
             // 3. Clean-up:
             Entity::performCleanUp();
-            Modifies::performCleanUp();
+            Uses::performCleanUp();
         }
 
         TEST_METHOD(execute_lhsSynonymRhsIdentStmt)
@@ -58,14 +58,14 @@ namespace UnitTesting
             PqlReference lhsRef, rhsRef;
             lhsRef = std::make_pair(PqlReferenceType::synonym, "a1");
             rhsRef = std::make_pair(PqlReferenceType::ident, "x");
-            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesS, lhsRef, rhsRef);
+            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
 
             // PKB inserts modifies
             Entity::insertStmt(StatementType::printType);
-            StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+            StmtIndex stmt = Entity::insertStmt(StatementType::readType);
             Entity::insertVar("randomVar");
             VarIndex varIndex = Entity::insertVar("x");
-            Modifies::insert(stmt, varIndex);
+            Uses::insert(stmt, varIndex);
 
             // 2. Main test:
             EvaluatedTable evTable = instruction->execute();
@@ -75,7 +75,7 @@ namespace UnitTesting
 
             // 3. Clean-up:
             Entity::performCleanUp();
-            Modifies::performCleanUp();
+            Uses::performCleanUp();
         }
 
         TEST_METHOD(execute_lhsSynonymRhsWildCardStmt)
@@ -85,16 +85,16 @@ namespace UnitTesting
             PqlReference lhsRef, rhsRef;
             lhsRef = std::make_pair(PqlReferenceType::synonym, "a1");
             rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
-            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesS, lhsRef, rhsRef);
+            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
 
             // PKB inserts modifies
             Entity::insertStmt(StatementType::printType);
-            StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+            StmtIndex stmt = Entity::insertStmt(StatementType::printType);
             Entity::insertVar("randomVar");
             VarIndex varIndex = Entity::insertVar("x");
             VarIndex varIndex2 = Entity::insertVar("y");
-            Modifies::insert(stmt, varIndex);
-            Modifies::insert(stmt, varIndex2);
+            Uses::insert(stmt, varIndex);
+            Uses::insert(stmt, varIndex2);
 
             // 2. Main test:
             EvaluatedTable evTable = instruction->execute();
@@ -104,7 +104,7 @@ namespace UnitTesting
 
             // 3. Clean-up:
             Entity::performCleanUp();
-            Modifies::performCleanUp();
+            Uses::performCleanUp();
         }
 
         // <-- Iteration 2 -->
@@ -115,15 +115,15 @@ namespace UnitTesting
         //    PqlReference lhsRef, rhsRef;
         //    lhsRef = std::make_pair(PqlReferenceType::synonym, "p");
         //    rhsRef = std::make_pair(PqlReferenceType::synonym, "v");
-        //    Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesP, lhsRef, rhsRef);
+        //    Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesP, lhsRef, rhsRef);
 
         //    // PKB inserts modifies
         //    Entity::insertProc("randomProc");
         //    ProcIndex procIndex = Entity::insertProc("p");
         //    Entity::insertVar("randomVar");
         //    VarIndex varIndex = Entity::insertVar("x");
-        //    Modifies::insert(procIndex, varIndex);
-
+        //    Uses::insert(procIndex, varIndex);
+        //    Assert::AreEqual(Uses::contains(procIndex, varIndex), true);
         //    // 2. Main test:
         //    EvaluatedTable evTable = instruction->execute();
         //    Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -132,7 +132,7 @@ namespace UnitTesting
 
         //    // 3. Clean-up:
         //    Entity::performCleanUp();
-        //    Modifies::performCleanUp();
+        //    Uses::performCleanUp();
         //}
 
         //TEST_METHOD(execute_lhsSynonymRhsIdentProc)
@@ -142,14 +142,14 @@ namespace UnitTesting
         //    PqlReference lhsRef, rhsRef;
         //    lhsRef = std::make_pair(PqlReferenceType::synonym, "p");
         //    rhsRef = std::make_pair(PqlReferenceType::ident, "x");
-        //    Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesP, lhsRef, rhsRef);
+        //    Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesP, lhsRef, rhsRef);
 
         //    // PKB inserts modifies
         //    Entity::insertProc("randomProc");
         //    ProcIndex procIndex = Entity::insertProc("p");
         //    Entity::insertVar("randomVar");
         //    VarIndex varIndex = Entity::insertVar("x");
-        //    Modifies::insert(procIndex, varIndex);
+        //    Uses::insert(procIndex, varIndex);
 
         //    // 2. Main test:
         //    EvaluatedTable evTable = instruction->execute();
@@ -159,7 +159,7 @@ namespace UnitTesting
 
         //    // 3. Clean-up:
         //    Entity::performCleanUp();
-        //    Modifies::performCleanUp();
+        //    Uses::performCleanUp();
         //}
 
         //TEST_METHOD(execute_lhsSynonymRhsWildCardProc)
@@ -169,7 +169,7 @@ namespace UnitTesting
         //    PqlReference lhsRef, rhsRef;
         //    lhsRef = std::make_pair(PqlReferenceType::synonym, "p");
         //    rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
-        //    Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesP, lhsRef, rhsRef);
+        //    Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesP, lhsRef, rhsRef);
 
         //    // PKB inserts modifies
         //    Entity::insertProc("randomProc");
@@ -177,8 +177,8 @@ namespace UnitTesting
         //    Entity::insertVar("randomVar");
         //    VarIndex varIndex = Entity::insertVar("x");
         //    VarIndex varIndex2 = Entity::insertVar("y");
-        //    Modifies::insert(procIndex, varIndex);
-        //    Modifies::insert(procIndex, varIndex2);
+        //    Uses::insert(procIndex, varIndex);
+        //    Uses::insert(procIndex, varIndex2);
 
         //    // 2. Main test:
         //    EvaluatedTable evTable = instruction->execute();
@@ -188,7 +188,7 @@ namespace UnitTesting
 
         //    // 3. Clean-up:
         //    Entity::performCleanUp();
-        //    Modifies::performCleanUp();
+        //    Uses::performCleanUp();
         //}
 
         TEST_METHOD(execute_lhsConstRhsSynonym_EvTableTrue)
@@ -198,16 +198,16 @@ namespace UnitTesting
             PqlReference lhsRef, rhsRef;
             lhsRef = std::make_pair(PqlReferenceType::integer, "1");
             rhsRef = std::make_pair(PqlReferenceType::synonym, "a1");
-            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesS, lhsRef, rhsRef);
+            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
 
             // PKB inserts modifies
             Entity::insertStmt(StatementType::printType);
-            StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+            StmtIndex stmt = Entity::insertStmt(StatementType::readType);
             Entity::insertVar("randomVar");
             VarIndex varIndex = Entity::insertVar("x");
             VarIndex varIndex2 = Entity::insertVar("y");
-            Modifies::insert(stmt, varIndex);
-            Modifies::insert(stmt, varIndex2);
+            Uses::insert(stmt, varIndex);
+            Uses::insert(stmt, varIndex2);
 
             // 2. Main test:
             EvaluatedTable evTable = instruction->execute();
@@ -217,7 +217,7 @@ namespace UnitTesting
 
             // 3. Clean-up:
             Entity::performCleanUp();
-            Modifies::performCleanUp();
+            Uses::performCleanUp();
         }
 
         TEST_METHOD(execute_lhsConstRhsSynonym_EvTableFalse)
@@ -227,11 +227,11 @@ namespace UnitTesting
             PqlReference lhsRef, rhsRef;
             lhsRef = std::make_pair(PqlReferenceType::integer, "1");
             rhsRef = std::make_pair(PqlReferenceType::synonym, "a1");
-            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesS, lhsRef, rhsRef);
+            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
 
             // PKB inserts modifies
             Entity::insertStmt(StatementType::printType);
-            StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+            StmtIndex stmt = Entity::insertStmt(StatementType::readType);
             Entity::insertVar("randomVar");
             VarIndex varIndex = Entity::insertVar("x");
             VarIndex varIndex2 = Entity::insertVar("y");
@@ -244,7 +244,7 @@ namespace UnitTesting
 
             // 3. Clean-up:
             Entity::performCleanUp();
-            Modifies::performCleanUp();
+            Uses::performCleanUp();
         }
 
         TEST_METHOD(execute_lhsConstRhsWildcard_EvTableTrue)
@@ -254,16 +254,16 @@ namespace UnitTesting
             PqlReference lhsRef, rhsRef;
             lhsRef = std::make_pair(PqlReferenceType::integer, "1");
             rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
-            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesS, lhsRef, rhsRef);
+            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
 
             // PKB inserts modifies
             Entity::insertStmt(StatementType::printType);
-            StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+            StmtIndex stmt = Entity::insertStmt(StatementType::readType);
             Entity::insertVar("randomVar");
             VarIndex varIndex = Entity::insertVar("x");
             VarIndex varIndex2 = Entity::insertVar("y");
-            Modifies::insert(stmt, varIndex);
-            Modifies::insert(stmt, varIndex2);
+            Uses::insert(stmt, varIndex);
+            Uses::insert(stmt, varIndex2);
 
             // 2. Main test:
             EvaluatedTable evTable = instruction->execute();
@@ -273,7 +273,7 @@ namespace UnitTesting
 
             // 3. Clean-up:
             Entity::performCleanUp();
-            Modifies::performCleanUp();
+            Uses::performCleanUp();
         }
 
         TEST_METHOD(execute_lhsConstRhsWildcard_EvTableFalse)
@@ -283,11 +283,11 @@ namespace UnitTesting
             PqlReference lhsRef, rhsRef;
             lhsRef = std::make_pair(PqlReferenceType::integer, "1");
             rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
-            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesS, lhsRef, rhsRef);
+            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
 
             // PKB inserts modifies
             Entity::insertStmt(StatementType::printType);
-            StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+            StmtIndex stmt = Entity::insertStmt(StatementType::readType);
             Entity::insertVar("randomVar");
             VarIndex varIndex = Entity::insertVar("x");
             VarIndex varIndex2 = Entity::insertVar("y");
@@ -300,8 +300,8 @@ namespace UnitTesting
 
             // 3. Clean-up:
             Entity::performCleanUp();
-            Modifies::performCleanUp();
+            Uses::performCleanUp();
         }
 
-	};
+    };
 }
