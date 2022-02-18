@@ -11,6 +11,9 @@
 #include "AbstractWrapper.h"
 #include "SP/DesignExtractor.h"
 #include "SP/Parser.h"
+#include "QPS-NEW/PQLParser.h"
+#include "QPS-NEW/PQLEvaluator.h"
+#include "QPS-NEW/PQLResultProjector.h"
 
 class TestWrapper : public AbstractWrapper {
 private:
