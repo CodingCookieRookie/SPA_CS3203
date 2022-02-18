@@ -75,5 +75,54 @@ namespace IntegrationTesting
             Assert::AreEqual(true, areListsEqual);
         }
 
+        TEST_METHOD(querying_declarationAndSelectStmtsOnlyStress_success)
+        {
+            // "stmt s; variable v1; Select s";
+            // 1. Setup:
+            std::string query = "stmt s1; if ifs; Select s1";
+            // PKB inserts 6 types of statements
+            std::vector<StmtIndex> stmts;
+            for (int i = 0; i < 99; i++) {
+                stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+            }
+
+            // 2. Test QPS Parser:
+            ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+            Assert::AreEqual(size_t(2), parsedQuery.getDeclarations().size());
+            Assert::IsFalse(parsedQuery.getColumns().empty());
+            Assert::AreEqual(std::string("s1"), parsedQuery.getColumns()[0]);
+
+            // 3. Test QPS Evaluator:
+            PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
+            EvaluatedTable evTable = pqlEvaluator.evaluate();
+            // Test numRow:
+            Assert::AreEqual(size_t(99), evTable.getNumRow());
+            // Test Table:
+            auto tableRef = evTable.getTableRef();
+            Assert::AreEqual(true, tableRef.find("s1") != tableRef.end());
+            // Test Entities: std::unordered_map<std::string, PqlEntityType>
+            std::vector<int> values;
+            for (int i = 0; i < 99; i++) {
+                values.emplace_back(i + 1);
+            }
+            auto actualValues = tableRef.at("s1");
+            bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+            Assert::AreEqual(true, areVecEqual);
+            // Test EvResult:
+            bool actualEvResult = evTable.getEvResult();
+            Assert::AreEqual(true, actualEvResult);
+
+
+            // 4. Test QPS Result Projector:
+            PQLResultProjector resultProjector = PQLResultProjector(evTable);
+            std::list<std::string> results = resultProjector.resolveTableToResults();
+            std::list<std::string> expectedRes;
+            for (int i = 0; i < 99; i++) {
+                int j = i + 1;
+                expectedRes.emplace_back(std::to_string(j));
+            }
+            bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+            Assert::AreEqual(true, areListsEqual);
+        }
     };
 }
