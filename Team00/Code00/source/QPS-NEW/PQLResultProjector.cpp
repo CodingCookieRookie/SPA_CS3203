@@ -13,6 +13,7 @@ std::list<std::string> PQLResultProjector::resolveTableToResults() {
 	int numRow = evaluatedTable.getNumRow();
 	std::list<std::string> resList;
 
+	// 1. Projecting only selected columns
 	// E.g.
 	// { {STMT, {1, 3, 4}, {ASGN, {2, 2, 3}} },
 	// Forms {"1, 2", "3, 2", "4, 3"} or 1 2 3 2 4 3 according to AutoTester
@@ -22,6 +23,12 @@ std::list<std::string> PQLResultProjector::resolveTableToResults() {
 		while (it != table.end()) {	// for each col
 			std::string entityName = it->first;
 			std::string value;
+			// if column is not selected, do not project
+			if (std::find(columnsProjected.begin(), columnsProjected.end(), entityName) == columnsProjected.end()) {
+				it++;
+				continue;
+			}
+
 			if (it->second.size() == 0) {
 				break;
 			}
@@ -34,17 +41,28 @@ std::list<std::string> PQLResultProjector::resolveTableToResults() {
 			else { //PqlEntityType::Procedure
 				value = Entity::getProcName(it->second[i]);
 			}
-			res += value;
-			resList.push_back(res);
+
+			if (res == "") {
+				res = value;
+			}
+			else {
+				res += " " + value;
+			}
+			
 			it++;
 		}
+		resList.push_back(res);
 	}
+
+	// 2. Filter to unique values
+	resList.unique();
+
 	return resList;
 }
 
-PQLResultProjector::PQLResultProjector(EvaluatedTable evTable) {
-    this->evaluatedTable = evTable;
-}
+PQLResultProjector::PQLResultProjector(EvaluatedTable evTable, std::vector<std::string> columns) :
+	evaluatedTable(evTable),
+	columnsProjected(columns) {}
 
 
 PQLResultProjector::PQLResultProjector() {
