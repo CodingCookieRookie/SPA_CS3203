@@ -89,7 +89,8 @@ void ParsedQuery::populateRelationships(const std::vector<ParsedRelationship>& a
 				(isStmtRef(lhs) ? PqlRelationshipType::ModifiesS : PqlRelationshipType::ModifiesP);
 			relationships.push_back(
 				ParsedRelationship(relationshipType, lhs, rhs));
-		} else if (isUsesRelationship(relationship)) {
+		}
+		else if (isUsesRelationship(relationship)) {
 			/* Additional constraint for Modifies/Uses, to avoid ambiguity */
 			if (isWildcardRef(lhs)) {
 				throw QPSException(QPSException::VALIDATOR_ERROR);
@@ -105,7 +106,8 @@ void ParsedQuery::populateRelationships(const std::vector<ParsedRelationship>& a
 				(isStmtRef(lhs) ? PqlRelationshipType::UsesS : PqlRelationshipType::UsesP);
 			relationships.push_back(
 				ParsedRelationship(relationshipType, lhs, rhs));
-		} else {
+		}
+		else {
 			/* By default, else handles Parent/T and Follows/T */
 			if (!validateStmtRef(lhs)) {
 				throw QPSException(QPSException::VALIDATOR_ERROR);

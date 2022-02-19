@@ -235,7 +235,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_VAR_NAME.c_str(), ex.what());
 		}
 
@@ -245,7 +246,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
 	}
@@ -268,7 +270,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
 	}
@@ -291,7 +294,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 	}
@@ -327,7 +331,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_VAR_NAME.c_str(), ex.what());
 		}
 
@@ -337,7 +342,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
 	}
@@ -360,7 +366,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
 	}
@@ -383,7 +390,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 	}
@@ -408,7 +416,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 	}
@@ -540,7 +549,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 	}
@@ -1515,7 +1525,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_BRACKET.c_str(), ex.what());
 		}
 
@@ -1529,7 +1540,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_BRACKET.c_str(), ex.what());
 		}
 	}
@@ -1545,7 +1557,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_RIGHT_BRACKET.c_str(), ex.what());
 		}
 	}
@@ -1561,7 +1574,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_CURLY.c_str(), ex.what());
 		}
 	}
@@ -1577,7 +1591,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			// The last right curly (for procedure) is taken as the while's right curly
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
@@ -1593,7 +1608,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 	}
@@ -1608,7 +1624,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
 		}
 	}
@@ -1623,7 +1640,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
 		}
 
@@ -1636,7 +1654,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
 		}
 	}
@@ -1651,7 +1670,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_BRACKET.c_str(), ex.what());
 		}
 	}
@@ -1666,7 +1686,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
 		}
 	}
@@ -1681,7 +1702,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
 		}
 	}
@@ -1696,7 +1718,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_RIGHT_BRACKET.c_str(), ex.what());
 		}
 	}
@@ -1711,7 +1734,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
 		}
 	}
@@ -1726,7 +1750,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
 		}
 	}
@@ -1741,7 +1766,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_RIGHT_BRACKET.c_str(), ex.what());
 		}
 	}
@@ -1756,7 +1782,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_COND_EXPR.c_str(), ex.what());
 		}
 	}
@@ -1771,7 +1798,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_COND_EXPR.c_str(), ex.what());
 		}
 	}
@@ -1786,7 +1814,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_BRACKET.c_str(), ex.what());
 		}
 	}
@@ -1801,7 +1830,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
 		}
 	}
@@ -1816,7 +1846,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
 		}
 	}
@@ -1831,7 +1862,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_RIGHT_BRACKET.c_str(), ex.what());
 		}
 	}
