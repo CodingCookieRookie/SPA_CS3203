@@ -12,6 +12,7 @@
 #include "../source/PKB/FollowsT.h"
 #include "../source/PKB/Parent.h"
 #include "../source/PKB/ParentT.h"
+#include "../source/PKB/Pattern.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -145,23 +146,17 @@ namespace IntegrationTesting
 			// b = b + x
 			// 1. Setup:
 			std::string query = "assign a; variable v; Select a pattern a(v, _\"x\"_)";
-			// PKB inserts 6 types of statements
-			std::vector<StmtIndex> stmts;
-			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-			stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-			stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-			stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-			stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-			stmts.emplace_back(Entity::insertStmt(StatementType::readType));
 
 			// PKB inserts pattern
 			StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
 			Entity::insertVar("a");
 			VarIndex varIndex = Entity::insertVar("b");
-			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("b + x");
+			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix(" x ");
+			// "x" doesn't work, " x " works,
+			// this is because we want partial matching
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
-			// Check PBK populated
+			// Check PKB populated
 			std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern("x", true);
 			Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
@@ -169,34 +164,44 @@ namespace IntegrationTesting
 			ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 			Assert::AreEqual(size_t(2), parsedQuery.getDeclarations().size());
 			Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
+			Assert::AreEqual(size_t(1), parsedQuery.getPatterns().size());
 
 			// 3. Test QPS Evaluator:
-			//PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-			//EvaluatedTable evTable = pqlEvaluator.evaluate();
+			PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
+			EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 			//// Test numRow:
-			//Assert::AreEqual(size_t(1), evTable.getNumRow());
+			Assert::AreEqual(size_t(1), evTable.getNumRow());
 
 			//// Test Table:
-			//auto tableRef = evTable.getTableRef();
-			//Assert::AreEqual(true, tableRef.find("b") != tableRef.end());
+			auto tableRef = evTable.getTableRef();
+			Assert::AreEqual(true, tableRef.find("a") != tableRef.end()); // "a" exists
+			Assert::AreEqual(true, tableRef.find("v") != tableRef.end()); // "v" exists
 
 			//// Test Values: std::unordered_map<std::string, PqlEntityType>
-			//std::vector<int> values{ 7, 7 };
-			//auto actualValues = tableRef.at("b");
-			//bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
-			//Assert::AreEqual(true, areVecEqual);
+			std::vector<int> values{ 1 };
+			auto actualaValues = tableRef.at("a");
+			bool areVecEqual = std::equal(values.begin(), values.end(), actualaValues.begin());
+			Assert::AreEqual(true, areVecEqual);
+			std::vector<int> values2{ 2 };
+			auto actualvValues = tableRef.at("v");
+			bool areVecEqual2 = std::equal(values2.begin(), values2.end(), actualvValues.begin());
+			Assert::AreEqual(true, areVecEqual2);
 
 			// Test EvResult:
-			//bool actualEvResult = evTable.getEvResult();
-			//Assert::AreEqual(true, actualEvResult);
+			bool actualEvResult = evTable.getEvResult();
+			Assert::AreEqual(true, actualEvResult);
 
 			// 4. Test QPS Result Projector:
-			//PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns());
-			//std::list<std::string> results = resultProjector.resolveTableToResults();
-			//std::list<std::string> expectedRes{ "7" };
-			//bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
-			//Assert::AreEqual(true, areListsEqual);
+			PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns());
+			std::list<std::string> results = resultProjector.resolveTableToResults();
+			std::list<std::string> expectedRes{ "1" };
+			bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+			Assert::AreEqual(true, areListsEqual);
 		}
+
+		//TODO: 2-cl, relationship then pattern
+		//TODO: 2-cl, pattern then relationship
+		//TODO: 2-cl, stress
 	};
 }
