@@ -761,7 +761,7 @@ public:
 			if (Entity::containsVar(entRef.second)) {
 				VarIndex varIndex = Entity::getVarIdx(entRef.second);
 				std::vector<int> allStmts;
-				allStmts = Pattern::getStmtsFromVarPattern(varIndex, ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
+				allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
 				PQLmap[synonym] = allStmts;
 			}
 		}

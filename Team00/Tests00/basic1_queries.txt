@@ -418,3 +418,33 @@ assign a; variable v;
 Select a pattern a(_, _"2"_)
 3
 5000
+4 - comment
+assign a; variable v;
+Select a pattern a(v, _)
+3, 7, 10
+5000
+5 - comment
+assign a; variable v;
+Select a pattern a(v, _"V1"_)
+7, 10
+5000
+6 - comment
+assign a; variable v;
+Select a pattern a(v, _"99"_)
+7
+5000
+7 - comment
+assign a; variable v;
+Select a pattern a("x1", _)
+7
+5000
+8 - comment
+assign a; variable v;
+Select a pattern a("if", _"2"_)
+3
+5000
+9 - comment
+assign a; variable v;
+Select a pattern a("y", _"x1"_)
+10
+5000
