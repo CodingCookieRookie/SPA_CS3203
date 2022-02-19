@@ -27,7 +27,8 @@ namespace UnitTesting
         // Pattern a(*, *)	
         TEST_METHOD(execute_lhsSynonymRhsIdentVar)
         {
-
+            // assign1 = assign1 + x
+            // Pattern a(v, "x")
             // 1. Setup:
             std::string synonym = "a1";
             PqlReference entRef = std::make_pair(PqlReferenceType::synonym, "v");
@@ -39,7 +40,7 @@ namespace UnitTesting
             StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
             Entity::insertVar("a");
             VarIndex varIndex = Entity::insertVar("x");
-            std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("x");
+            std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1 + x");
             Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
             
             // Check PBK populated
@@ -67,7 +68,7 @@ namespace UnitTesting
             StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
             VarIndex varIndex = Entity::insertVar("assign1");
             Entity::insertConst(123);
-            std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("123");
+            std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1 + 123");
             Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
             
             // Check PBK populated
@@ -96,7 +97,7 @@ namespace UnitTesting
             StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
             Entity::insertVar("x");
             VarIndex varIndex = Entity::insertVar("assign1");
-            std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("x");
+            std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1 + x");
             Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
             // Check PBK populated
@@ -112,7 +113,7 @@ namespace UnitTesting
 
         TEST_METHOD(execute_lhsIdentRhsIdentConstant)
         {
-            // assign1 = assign1 + x
+            // assign1 = assign1 + 123
             // Pattern a("assign1", "_123_")
             // 1. Setup:
             std::string synonym = "a1";
@@ -126,7 +127,7 @@ namespace UnitTesting
             Entity::insertVar("x");
             Entity::insertConst(123);
             VarIndex varIndex = Entity::insertVar("assign1");
-            std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("123");
+            std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1 + 123");
             Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
             // Check PBK populated
@@ -154,7 +155,7 @@ namespace UnitTesting
             Entity::insertStmt(StatementType::printType);
             StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
             VarIndex varIndex = Entity::insertVar("assign1");
-            std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("x");
+            std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1 + x");
             Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
             // Check PBK populated
@@ -182,7 +183,7 @@ namespace UnitTesting
             Entity::insertStmt(StatementType::printType);
             StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
             VarIndex varIndex = Entity::insertVar("assign1");
-            std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("x");
+            std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1 + x");
             Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
             // Check PBK populated
@@ -210,7 +211,7 @@ namespace UnitTesting
             Entity::insertStmt(StatementType::printType);
             StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
             VarIndex varIndex = Entity::insertVar("assign1");
-            std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("x");
+            std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1 + x");
             Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
             // Check PBK populated
@@ -238,7 +239,7 @@ namespace UnitTesting
             Entity::insertStmt(StatementType::printType);
             StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
             VarIndex varIndex = Entity::insertVar("assign1");
-            std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("x");
+            std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1 + x");
             Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
             // Check PBK populated
