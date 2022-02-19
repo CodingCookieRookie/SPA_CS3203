@@ -91,6 +91,9 @@
     <ClCompile Include="TestInstructionParentT.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TestPatternInstruction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
