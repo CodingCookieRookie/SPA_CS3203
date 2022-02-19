@@ -870,6 +870,53 @@ public:
 		Assert::AreEqual(std::string("b0b"), a123DividedByB0b[1]->getValue());
 	}
 
+	TEST_METHOD(parse_matchAssign_missingVarname_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{    = (x + z) * 5  }";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchAssign_invalidVarname_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{  !invalid_var_name  = (x + z) * 5 ; }";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchAssign_missingEqualSign_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{  x   (x + z) * 5 ; }";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchAssign_missingExpr_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{  x  =  ; }";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
+		}
+	}
 	TEST_METHOD(parse_matchAssign_missingSemicolon_parserExceptionThrown) {
 		const char* source = "   procedure procedure123name \n "
 			"{ CenX = (9 + CenX); count = (COUNT % 2)   ;"
@@ -925,7 +972,7 @@ public:
 		}
 	}
 
-	TEST_METHOD(parse_matchAssign_incompleteExpr_parserExceptionThrown) {
+	TEST_METHOD(parse_matchAssign_missingFactor_parserExceptionThrown) {
 		const char* source = "   procedure procedure123name \n "
 			" {  x = (x + 1) *  ; }";
 		auto wrapperFunc = [&source] { Parser::parse(source); };
@@ -937,7 +984,7 @@ public:
 		}
 
 		const char* source1 = "   procedure procedure123name \n "
-			" {  x = (x  1) * 5 ; }";
+			" {  x =  * 5 ; }";
 		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
@@ -945,22 +992,11 @@ public:
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
-
-		const char* source2 = "   procedure procedure123name \n "
-			" {  x =  * 5 ; }";
-		auto wrapperFunc2 = [&source2] { Parser::parse(source2); };
-		Assert::ExpectException<ParserException>(wrapperFunc2);
-		try {
-			Parser::parse(source2);
-		} catch (ParserException& ex) {
-			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
-		}
 	}
 
 	TEST_METHOD(parse_matchAssign_invalidFactor_parserExceptionThrown) {
-		/* '1' will be taken as a valid const_value, but "a" will be taken as invalid right bracket */
 		const char* source = "   procedure procedure123name \n "
-			" {  x = (x + 1a) * 5 ; }";
+			" {  x = (x + 1) * ! ; }";
 		auto wrapperFunc = [&source] { Parser::parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
@@ -970,7 +1006,88 @@ public:
 		}
 
 		const char* source1 = "   procedure procedure123name \n "
+			" {  x = ^ * 5 ; }";
+		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		Assert::ExpectException<ParserException>(wrapperFunc1);
+		try {
+			Parser::parse(source1);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
+		}
+
+		const char* source2 = "   procedure procedure123name \n "
+			" {  x = (x + 1a) * 5 ; }";
+		auto wrapperFunc2 = [&source2] { Parser::parse(source2); };
+		Assert::ExpectException<ParserException>(wrapperFunc2);
+		try {
+			Parser::parse(source2);
+		} catch (ParserException& ex) {
+			/* '1' will be taken as a valid const_value, but "a" will be taken as invalid right bracket */
+			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
+		}
+
+		const char* source3 = "   procedure procedure123name \n "
 			"{  y = !y / (w - 1); "
+			" z = (z + a123) / (b0b - c)  ;}";
+		auto wrapperFunc3 = [&source3] { Parser::parse(source3); };
+		Assert::ExpectException<ParserException>(wrapperFunc3);
+		try {
+			Parser::parse(source3);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
+		}
+
+		const char* source4 = "   procedure procedure123name \n "
+			"{  z = (z + 0a123) / (b0b - c)  ;}";
+		auto wrapperFunc4 = [&source4] { Parser::parse(source4); };
+		Assert::ExpectException<ParserException>(wrapperFunc4);
+		try {
+			Parser::parse(source4);
+		} catch (ParserException& ex) {
+			/* '0' will be taken as a valid const_value, but "a" will be taken as invalid right bracket */
+			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchAssign_missingOp_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			" {  x = (x  1) * 5 ; }";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
+		}
+
+		const char* source1 = "   procedure procedure123name \n "
+			" {  x = (x + 1)  5 ; }";
+		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		Assert::ExpectException<ParserException>(wrapperFunc1);
+		try {
+			Parser::parse(source1);
+		} catch (ParserException& ex) {
+			/* Since '5' is not a term or expr operator, "x = (x + 1)" is regarded as a valid stmt.
+			Thus, the parser is expecting a semicolon next. */
+			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchAssign_invalidOp_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			" {  x = (x + 1) ? 4 ; }";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			/* Since '?' is not a term or expr operator, "x = (x + 1)" is regarded as a valid stmt.
+			Thus, the parser is expecting a semicolon next. */
+			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
+		}
+
+		const char* source1 = "   procedure procedure123name \n "
+			"{  y = y / (w ( 1); "
 			" z = (z + a123) / (b0b - c)  ;}";
 		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
@@ -980,15 +1097,26 @@ public:
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 
-		// '0' will be taken as a valid const_value, but "a" will be taken as invalid right bracket
 		const char* source2 = "   procedure procedure123name \n "
-			"{  z = (z + 0a123) / (b0b - c)  ;}";
+			"{  z = (z + a123) / (b0b & c)  ;}";
 		auto wrapperFunc2 = [&source2] { Parser::parse(source2); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
+		}
+
+		const char* source3 = "   procedure procedure123name \n "
+			" {  x = 2 @ 5 ; }";
+		auto wrapperFunc3 = [&source3] { Parser::parse(source3); };
+		Assert::ExpectException<ParserException>(wrapperFunc3);
+		try {
+			Parser::parse(source3);
+		} catch (ParserException& ex) {
+			/* Since '&' is not a term or expr operator, "x = 2" is regarded as a valid stmt.
+				Thus, the parser is expecting a semicolon next. */
+			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
 	}
 
@@ -1043,39 +1171,6 @@ public:
 			Parser::parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
-		}
-	}
-
-	TEST_METHOD(parse_matchAssign_invalidOperand_parserExceptionThrown) {
-		const char* source = "   procedure procedure123name \n "
-			" {  x = (x + 1) ! 5 ; }";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
-		Assert::ExpectException<ParserException>(wrapperFunc);
-		try {
-			Parser::parse(source);
-		} catch (ParserException& ex) {
-			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
-		}
-
-		const char* source1 = "   procedure procedure123name \n "
-			"{  y = y / (w ( 1); "
-			" z = (z + a123) / (b0b - c)  ;}";
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
-		Assert::ExpectException<ParserException>(wrapperFunc1);
-		try {
-			Parser::parse(source1);
-		} catch (ParserException& ex) {
-			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
-		}
-
-		const char* source2 = "   procedure procedure123name \n "
-			"{  z = (z + a123) / (b0b & c)  ;}";
-		auto wrapperFunc2 = [&source2] { Parser::parse(source2); };
-		Assert::ExpectException<ParserException>(wrapperFunc1);
-		try {
-			Parser::parse(source1);
-		} catch (ParserException& ex) {
-			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 	}
 
