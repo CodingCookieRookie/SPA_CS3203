@@ -1,0 +1,530 @@
+1 - 1.1 - Wrong design-entity name for stmt
+stmts s;
+Select s
+none
+5000
+1 - 1.2 - Wrong design-entity name for read
+rad r;
+Select r
+none
+5000
+1 - 1.3 - Wrong design-entity name for print
+prnt p;
+Select p
+none
+5000
+1 - 1.4 - Wrong design-entity name for call
+cal c;
+Select c
+none
+5000
+1 - 1.5 - Wrong design-entity name for while
+wile w;
+Select w
+none
+5000
+1 - 1.6 - Wrong design-entity name for if
+ifs if;
+Select if
+none
+5000
+1 - 1.7 - Wrong design-entity name for assign
+asign a;
+Select a
+none
+5000
+1 - 1.8 - Wrong design-entity name for variable
+var v;
+Select v
+none
+5000
+1 - 1.9 - Wrong design-entity name for constant
+const c;
+Select c
+none 
+5000
+1 - 1.10 - Wrong design-entity name for procedure
+proc p;
+Select p
+none
+5000
+1 - 2.1 - Wrong capitalization in Select clause (lowercase)
+stmt s;
+select s
+none
+5000
+1 - 2.2 - Wrong capitalization in Select clause (uppercase)
+stmt s;
+SELECT s
+none
+5000
+1 - 2.3 - Wrong capitalization in Select clause (toggle case)
+stmt s;
+sElEcT s
+none
+5000
+1 - 3 - Typo in Select clause
+stmt s;
+Slect s
+none
+5000
+1 - 4 - Missing semicolon in declaration
+stmt s
+Select s
+none
+5000
+1 - 5 - Extra semicolon in declaration
+stmt s;;
+Select s
+none
+5000
+1 - 6 - Semicolon in select clause
+stmt s;
+Select s;
+none
+5000
+1 - 7.1 - Incorrect delimiter between multiple declaration of the same type (space)
+stmt s var v;
+Select v
+none
+5000
+1 - 7.2 - Incorrect delimiter between multiple declaration of the same type (comma)
+stmt s, var v;
+Select v
+none
+5000
+1 - 8.1 - Incorrect delimiter between multiple declations of different types (space)
+stmt s1 stmt s2;
+Select s1
+none
+5000
+1 - 8.2 - Incorrect delimiter between multiple declations of different types (comma)
+stmt s1, stmt s2;
+Select s1
+none
+5000
+1 - 9.1 - Incorrect delimiter between Select and synonym
+stmt s;
+Select ; s
+none
+5000
+1 - 9.2 - Incorrect delimiter between Select and synonym
+stmt s;
+Select;s
+none
+5000
+1 - 10.1 - Incorrect synonym declaration (Contains _)
+stmt _s;
+Select _s
+none
+5000
+1 - 10.2 - Incorrect synonym declaration (starts with a digit)
+stmt 1s;
+Select 1s
+none
+5000
+1 - 11.1 - Missing declaration
+
+Select s
+none
+5000
+1 - 11.2 - Missing declaration
+;
+Select s
+none
+5000
+1 - 12 Missing select-cl
+stmt s;
+
+none
+5000
+2 - 1.1 - Incorrect delimiter between synonym and suchthat-cl (Comma)
+stmt s; variable v;
+Select s,such that Modifies(s, v)
+none
+5000
+2 - 1.2 - Incorrect delimiter between synonym and suchthat-cl (Semicolon)
+stmt s; variable v;
+Select s;such that Modifies(s, v)
+none
+5000
+2 - 2.1 - Typo in such that
+stmt s; variable v;
+Select s suchthat Modifies(s, v)
+none
+5000
+2 - 2.2 - Typo in such that
+stmt s; variable v;
+Select s suh that Modifies(s, v)
+none
+5000
+2 - 2.3 - Typo in such that (Incorrect case)
+stmt s; variable v;
+Select s Such That Modifies(s, v)
+none
+5000
+2 - 3 - Missing "such that" when relRef is present
+stmt s; variable v;
+Select s Modifies(s, v)
+none
+5000
+2 - 4 - "such that" present when relRef is absent
+stmt s; variable v;
+Select s such that
+none
+5000
+2 - 5.1 - Wrong relRef name - Follows
+stmt s1, s2;
+Select s1 such that Follow(s1, s2)
+none
+5000
+2 - 5.2 - Wrong relRef name - Follows*
+stmt s1, s2;
+Select s1 such that Follow*(s1, s2)
+none
+5000
+2 - 5.3 - Wrong relRef name - Parent
+stmt s1, s2;
+Select s1 such that Parents(s1, s2)
+none
+5000
+2 - 5.3 - Wrong relRef name - Parent*
+stmt s1, s2;
+Select s1 such that Parents*(s1, s2)
+none
+5000
+2 - 5.4 - Wrong relRef name - Uses
+stmt s; variable v;
+Select s such that Use(s, v)
+none
+5000
+2 - 5.5 - Incorrect relRef casing - Modifies
+stmt s; variable v;
+Select s such that Modifie(s, v)
+none
+5000
+2 - 6.1 - Incorrect relRef casing - Follows
+stmt s1, s2;
+Select s1 such that follows(s1, s2)
+none
+5000
+2 - 6.2 - Incorrect relRef casing - Follows*
+stmt s1, s2;
+Select s1 such that FOllows*(s1, s2)
+none
+5000
+2 - 6.3 - Incorrect relRef casing - Parent
+stmt s1, s2;
+Select s1 such that paRent(s1, s2)
+none
+5000
+2 - 6.3 - Incorrect relRef casing - Parent*
+stmt s1, s2;
+Select s1 such that ParEnt*(s1, s2)
+none
+5000
+2 - 6.4 - Incorrect relRef casing - Uses
+stmt s; variable v;
+Select s such that UseS(s, v)
+none
+5000
+2 - 6.5 - Incorrect relRef casing - Modifies
+stmt s; variable v;
+Select s such that ModIfIes(s, v)
+none
+5000
+2 - 7.1 - Extra bracket in relRef - Opening
+stmt s1, s2;
+Select s1 such that Follows((s1, s2)
+none
+5000
+2 - 7.2 - Extra bracket in relRef - Closing
+stmt s1, s2;
+Select s1 such that Parent(s1, s2))
+none
+5000
+2 - 7.3 - Extra bracket in relRef - Opening and closing
+stmt s; variable v;
+Select s such that Uses((s, v))
+none
+5000
+2 - 8.1 - Wrong bracket in relRef - []
+stmt s1, s2;
+Select s1 such that Parent[s1, s2]
+none
+5000
+2 - 8.2 - Wrong bracket in relRef - {}
+stmt s1, s2;
+Select s1 such that Follows{s1, s2}
+none
+5000
+2 - 9.1 - Missing bracket in relRef - Opening
+stmt s1, s2;
+Select s1 such that Parent s1,s2)
+none
+5000
+2 - 9.2 - Missing bracket in relRef - Closing
+stmt s1, s2;
+Select s1 such that Parent(s1, s2
+none
+5000
+2 - 9.3 - Missing bracket in relRef - Opening and closing
+stmt s1, s2;
+Select s1 such that Parent s1, s2
+none
+5000
+2 - 10 - Missing comma in relRef
+stmt s1, s2;
+Select s1 such that Follows(s1 s2)
+none
+5000
+2 - 11 - Wrong delimiter in relRef
+stmt s1, s2;
+Select s1 such that Follows(s1; s2)
+none
+5000
+2 - 12 - Semicolon after relRef
+stmt s1, s2;
+Select s1 such that Follows(s1, s2);
+none
+5000
+2 - 13.1 - Incorrect stmtRef - Contains _ in synonym
+stmt s1, s2;
+Select s2 such that Follows(_s1, s2)
+none
+5000
+2 - 13.2 - Incorrect stmtRef - IDENT enclosed in ""
+stmt s1, s2;
+Select s1 such that Follows(s1, "2")
+none
+5000
+2 - 14.1 - Incorrect entRef - Contains _ in synonym
+stmt s; variable v;
+Select s such that Uses(s, _v)
+none
+5000
+2 - 14.2 - Incorrect entRef - Contains #
+stmt s; variable v;
+Select s such that Modifies(s, "#")
+none
+5000
+2 - 15 - pattern used instead of such that
+stmt s1, s2;
+Select s1 pattern Parent(s1, s2)
+none
+5000
+2 - 16 - Select is after such that
+stmt s1, s2;
+such that Parent*(s1, s2) Select s1
+none
+5000
+2 - 17 - Missing synonym between Select and such that
+stmt s1, s2;
+Select such that Follows*(s1, s2)
+none
+5000
+3 - 18.1 - Missing stmtRef - Modifies
+variable v;
+Select v such that Modifies(, v);
+none
+5000
+3 - 18.2 - Missing stmtRef - Uses
+variable v;
+Select v such that Uses(, v);
+none
+5000
+3 - 18.3 - Missing stmtRef - Follows (First arg)
+stmt s;
+Select v such that Follows(, s);
+none
+5000
+3 - 18.4 - Missing stmtRef - Follows (Second arg)
+stmt s;
+Select v such that Follows(s, );
+none
+5000
+3 - 18.5 - Missing stmtRef - Follows* (First arg)
+stmt s;
+Select v such that Follows*(, s);
+none
+5000
+3 - 18.6 - Missing stmtRef - Follows* (Second arg)
+stmt s;
+Select v such that Follows*(s, );
+none
+5000
+3 - 18.7 - Missing stmtRef - Parent (First arg)
+stmt s;
+Select v such that Parent(, s);
+none
+5000
+3 - 18.8 - Missing stmtRef - Parent (Second arg)
+stmt s;
+Select v such that Parent(s, );
+none
+5000
+3 - 18.9 - Missing stmtRef - Parent* (First arg)
+stmt s;
+Select v such that Parent*(, s);
+none
+5000
+3 - 18.10 - Missing stmtRef - Parent* (Second arg)
+stmt s;
+Select v such that Parent*(s, );
+none
+5000
+3 - 19.1 - Missing entRef - Modifies
+stmt s;
+Select s such that Modifies(s, )
+none
+5000
+3 - 19.2 - Missing entRef - Uses
+stmt s;
+Select s such that Uses(s, )
+none
+5000
+3 - 1 - Incorrect delimiter between synonym and pattern clause
+assign a; variable v;
+Select a;pattern a(v, _)
+none
+5000
+3 - 2 - Typo in pattern
+assign a; variable v;
+Select a patern a(v, _)
+none
+5000
+3 - 3.1 - Incorrect pattern casing - Title case
+assign a; variable v;
+Select a Pattern a(v, _)
+none
+5000
+3 - 3.2 - Incorrect pattern casing - Upper case
+assign a; variable v;
+Select a PATTERN a(v, _)
+none
+5000
+3 - 3.3 - Incorrect pattern casing - Toggle case
+assign a; variable v;
+Select a pAaTteRn a(v, _)
+none
+5000
+3 - 4 - Missing syn-assign
+assign a; variable v;
+Select a pattern (v, _)
+none
+5000
+3 - 5.1 - Extra brackets after syn-assign - Opening
+assign a; variable v;
+Select a pattern a((v, _)
+none
+5000
+3 - 5.2 - Extra brackets after syn-assign - Closing
+assign a; variable v;
+Select a pattern a(v, _))
+none
+5000
+3 - 5.3 - Extra brackets after syn-assign - Opening and Closing
+assign a; variable v;
+Select a pattern a((v, _))
+none
+5000
+3 - 6.1 - Missing brackets after syn-assign - Opening
+assign a; variable v;
+Select a pattern a v, _)
+none
+5000
+3 - 6.2 - Missing brackets after syn-assign - Closing
+assign a; variable v;
+Select a pattern a(v, _
+none
+5000
+3 - 6.3 - Missing brackets after syn-assign - Opening and Closing
+assign a; variable v;
+Select a pattern a v, _
+none
+5000
+3 - 7.1 - Incorrect brackets in syn-assing - []
+assign a; variable v;
+Select a pattern a[v, _]
+none
+5000
+3 - 7.2 - Incorrect brackets in syn-assing - {}
+assign a; variable v;
+Select a pattern a{v, _}
+none
+5000
+3 - 8.1 - Incorrect entRef - Contains _
+assign a; variable v;
+Select a pattern a(_v, _)
+none
+5000
+3 - 8.2 - Incorrect entRef - Contains special characters
+assign a; variable v;
+Select a pattern a(v, "#")
+none
+5000
+3 - 9.1 - Incorrect expression-spec - _ inside expr
+assign a; variable v;
+Select a pattern a(v, "_x_")
+none
+5000
+3 - 9.2 - Incorrect expression-spec - _ _
+assign a; variable v;
+Select a pattern a(v, __)
+none
+5000
+3 - 9.3 - Incorrect expression-spec - Missing " "
+assign a; variable v;
+Select a pattern a(v, x)
+none
+5000
+3 - 10 - Missing expression-spec
+assign a; variable v;
+Select a pattern a(v, )
+none
+5000
+3 - 11.1 - Missing entRef
+assign a; variable v;
+Select a pattern a( , "x")
+none
+5000
+3 - 12.1 - Incorrect delimiter between entRef and expression-spec - Semicolon
+assign a; variable v;
+Select a pattern a(v; "x")
+none
+5000
+3 - 12.2 - Incorrect delimiter between entRef and expression-spec - Space
+assign a; variable v;
+Select a pattern a(v "x")
+none
+5000
+3 - 13 - such that used instead of pattern
+assign a; variable v;
+Select a such that a(v, "x")
+none
+5000
+3 - 14 - Select is after pattern
+assign a; variable v;
+pattern a(v, "x") Select a
+none
+5000
+3 - 15 - Semicolon after pattern-cl
+assign a; variable v;
+Select a pattern a(v, "x");
+none
+5000
+3 - 16 - Missing synonym between Select and pattern
+assign a; variable v;
+Select pattern a(v, "x")
+none
+5000
+4 - 1 - Incorrect delimiter between synonym, suchthat-cl, pattern-cl
+assign a; stmt s; variable v;
+Select s, such that Modifies(s, v); pattern a(v, _)
+none
+5000
+4 - 2 - such that in place of pattern and pattern in place of such that
+assign a; stmt s; variable v;
+Select s pattern Modifies(s, v) such that a(v, _)
+none
+5000
