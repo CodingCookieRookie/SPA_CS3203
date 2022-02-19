@@ -172,7 +172,7 @@ private:
 	PqlReference rhsRef;
 
 	EvaluatedTable handleModifiesS() {
-		// Modifies (a/r/s/a1, v) or Modifies(a/r/s/a1, "x) or Modifies (a/r/s/a1, _ ) 
+		// Modifies (a/r/s/a1, v) or Modifies(a/r/s/a1, "x") or Modifies (a/r/s/a1, _ ) 
 		// Modifies (1, v)	=> true or Modifies (1, _ ) (under statement)
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
@@ -183,7 +183,7 @@ private:
 			for (size_t i = 0; i < (std::get<0>(allStmtVarInfos).size()); i++) {
 				int lhs = std::get<0>(allStmtVarInfos)[i];
 				PQLmap[lhsRef.second].push_back(lhs);
-				if (rhsRef.first != PqlReferenceType::wildcard) {
+				if (rhsRef.first != PqlReferenceType::wildcard && rhsRef.first != PqlReferenceType::ident) {
 					int rhs = std::get<1>(allStmtVarInfos)[i];
 					PQLmap[rhsRef.second].push_back(rhs);
 				}
@@ -202,9 +202,7 @@ private:
 	}
 
 	EvaluatedTable handleModifiesP() {
-		// Modifies (a/r/s/a1, v) or Modifies (a/r/s/a1, _ )
 		// Modifies (p/p1, v)	or Modifies (p/p1, _ )	proc
-		// Modifies (1, v)	=> true or Modifies (1, _ ) (under statement)
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Procedure));
@@ -214,7 +212,7 @@ private:
 			for (size_t i = 0; i < (std::get<0>(allProcVarInfos).size()); i++) {
 				int lhs = std::get<0>(allProcVarInfos)[i];
 				PQLmap[lhsRef.second].push_back(lhs);
-				if (rhsRef.first != PqlReferenceType::wildcard) {
+				if (rhsRef.first != PqlReferenceType::wildcard && rhsRef.first != PqlReferenceType::ident) {
 					int rhs = std::get<1>(allProcVarInfos)[i];
 					PQLmap[rhsRef.second].push_back(rhs);
 				}
@@ -238,7 +236,7 @@ private:
 			for (size_t i = 0; i < (std::get<0>(allStmtVarInfos).size()); i++) {
 				int lhs = std::get<0>(allStmtVarInfos)[i];
 				PQLmap[lhsRef.second].push_back(lhs);
-				if (rhsRef.first != PqlReferenceType::wildcard) {
+				if (rhsRef.first != PqlReferenceType::wildcard && rhsRef.first != PqlReferenceType::ident) {
 					int rhs = std::get<1>(allStmtVarInfos)[i];
 					PQLmap[rhsRef.second].push_back(rhs);
 				}
@@ -267,14 +265,14 @@ private:
 			for (size_t i = 0; i < (std::get<0>(allStmtVarInfos).size()); i++) {
 				int lhs = std::get<0>(allStmtVarInfos)[i];
 				PQLmap[lhsRef.second].push_back(lhs);
-				if (rhsRef.first != PqlReferenceType::wildcard) {
+				if (rhsRef.first != PqlReferenceType::wildcard && rhsRef.first != PqlReferenceType::ident) {
 					int rhs = std::get<1>(allStmtVarInfos)[i];
 					PQLmap[rhsRef.second].push_back(rhs);
 				}
 			}
 		}
 		else {
-			std::cout << "Error in handleModifiesS\n";
+			std::cout << "Error in handleModifiesP\n";
 		}
 		return EvaluatedTable(PQLentities, PQLmap);
 	}

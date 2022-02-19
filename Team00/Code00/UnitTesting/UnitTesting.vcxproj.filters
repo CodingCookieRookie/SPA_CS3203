@@ -88,6 +88,12 @@
     <ClCompile Include="TestGetAllInstruction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TestModifiesInstruction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestUsesInstruction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

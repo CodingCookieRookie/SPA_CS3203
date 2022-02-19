@@ -178,7 +178,7 @@
     </ClCompile>
     <ClCompile Include="TestEvaluatedTable.cpp" />
     <ClCompile Include="TestContainer.cpp" />
-    <ClCompile Include="TestInstructionParentT.cpp" />
+    <ClCompile Include="TestModifiesInstruction.cpp" />
     <ClCompile Include="TestPKB.cpp" />
     <ClCompile Include="TestPQLResultProjector.cpp" />
     <ClCompile Include="TestSourceASTNode.cpp" />
@@ -200,6 +200,7 @@
     <ClCompile Include="TestTypes.cpp" />
     <ClCompile Include="TestUses.cpp" />
     <ClCompile Include="TestPQLParser.cpp" />
+    <ClCompile Include="TestUsesInstruction.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

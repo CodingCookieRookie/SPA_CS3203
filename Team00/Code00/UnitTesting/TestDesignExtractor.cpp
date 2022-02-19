@@ -19,6 +19,7 @@ private:
 		ParentT::performCleanUp();
 		Follows::performCleanUp();
 		FollowsT::performCleanUp();
+		Container::performCleanUp();
 	}
 
 public:
