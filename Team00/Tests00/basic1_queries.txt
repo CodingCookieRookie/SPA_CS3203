@@ -1,10 +1,75 @@
 1 - comment
 stmt s;
 Select s
-1, 2
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10
 5000
 2 - comment
 read r;
 Select r
-1
+4, 5
+5000
+3 - comment
+print pn;
+Select pn
+2, 9
+5000
+4 - comment
+while w;
+Select w
+6
+5000
+5 - comment
+if ifs;
+Select ifs
+1, 8
+5000
+6 - comment
+assign a;
+Select a
+3, 7, 10
+5000
+7 - comment
+variable v;
+Select v
+if, V1, V2, x1, while, x, y
+5000
+8 - comment
+constant c;
+Select c
+10, 35, 2, 1, 0, 99, 12
+5000
+9 - comment
+procedure p;
+Select p
+aRelativelyLongProcedureNameThatIHopeIsLongEnough
+5000
+1 - comment
+assign a; variable v;
+Select a pattern a(_, _)
+3, 7, 10
+5000
+2 - comment
+assign a; variable v;
+Select a pattern a(_, _"V1"_)
+7, 10
+5000
+3 - comment
+assign a; variable v;
+Select a pattern a(_, _"2"_)
+3
+5000
+4 - comment
+assign a; variable v;
+Select a pattern a(v, _)
+3, 7, 10
+5000
+5 - comment
+assign a; variable v;
+Select a pattern a(v, _"x1"_)
+10
+5000
+6 - comment
+assign a; variable v;
+Select a pattern a(v, _"0"_)
+7
 5000
