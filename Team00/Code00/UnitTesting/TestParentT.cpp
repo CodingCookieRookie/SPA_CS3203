@@ -68,7 +68,7 @@ public:
 	};
 
 	TEST_METHOD(populate_getPredecessorStmts_branched) {
-		std::vector<int> parentTExpAns{ stmt1.index, stmt2.index, stmt4.index };
+		std::vector<int> parentTExpAns{ stmt4.index, stmt2.index, stmt1.index };
 
 		std::unordered_map<StmtIndex,
 			std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> uPredSucTable;
@@ -91,7 +91,7 @@ public:
 	};
 
 	TEST_METHOD(populate_getPredecessorStmts_linear) {
-		std::vector<int> parentTExpAns{ stmt1.index, stmt2.index, stmt3.index, stmt5.index };
+		std::vector<int> parentTExpAns{ stmt3.index, stmt2.index, stmt1.index, stmt5.index };
 
 		std::unordered_map<StmtIndex,
 			std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> uPredSucTable;
@@ -141,8 +141,8 @@ public:
 	};
 
 	TEST_METHOD(getAllPredecessorSuccessorInfo) {
-		std::vector<int> parentTpredecessors{ stmt1.index, stmt1.index, stmt2.index };
-		std::vector<int> parentTsuccessors{ stmt2.index, stmt3.index, stmt3.index };
+		std::vector<int> parentTpredecessors{ stmt2.index, stmt1.index, stmt1.index };
+		std::vector<int> parentTsuccessors{ stmt3.index, stmt2.index, stmt3.index };
 		std::tuple<std::vector<int>, std::vector<int>> parentTExpAns =
 			std::make_tuple(parentTpredecessors, parentTsuccessors);
 

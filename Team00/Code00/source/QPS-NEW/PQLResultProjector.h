@@ -5,11 +5,12 @@ class PQLResultProjector
 {
 private:
     EvaluatedTable evaluatedTable;
+    std::vector<std::string> columnsProjected;
 
 public:
 
     /* Instantiate of a PQLResultProjector */
-    PQLResultProjector(EvaluatedTable evTable);
+    PQLResultProjector(EvaluatedTable evTable, std::vector<std::string> columnsProjected);
 
     /* Todelete: Instantiate of a PQLResultProjector */
     PQLResultProjector();

@@ -79,7 +79,16 @@
     <ClCompile Include="TestUsesInstruction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestPatternInstruction.cpp">
+    <ClCompile Include="TestInstructionFollows.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestInstructionFollowsT.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestInstructionParent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestInstructionParentT.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
