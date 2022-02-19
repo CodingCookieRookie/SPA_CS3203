@@ -2,7 +2,6 @@
 #include <vector>
 #include <unordered_map>
 
-#include <iostream>
 #include "QPSCommons.h"
 #include "../Exception/SPAException.h"
 #include "EvaluatedTable.h"
@@ -201,7 +200,9 @@ private:
 					return EvaluatedTable(Modifies::contains(stmtIndex, varIndex));
 				}
 				else {
-					return EvaluatedTable(true);
+					// check for Modifies(2, v), if stmt with index 2 modifies any variable
+					std::vector<int> variables = Modifies::getVariables(stmtIndex);
+					return EvaluatedTable(variables.size() > 0);
 				}
 			}
 			else {
@@ -209,7 +210,7 @@ private:
 			}
 		}
 		else {
-			std::cout << "Error in handleModifiesS\n";
+			throw EvaluatorException(EvaluatorException::MODIFIES_S_ERROR);
 		}
 		return EvaluatedTable(PQLentities, PQLmap);
 	}
@@ -240,7 +241,7 @@ private:
 			}
 		}
 		else {
-			std::cout << "Error in handleModifiesP\n";
+			throw EvaluatorException(EvaluatorException::MODIFIES_P_ERROR);
 		}
 		return EvaluatedTable(PQLentities, PQLmap);
 	}
@@ -280,7 +281,9 @@ private:
 					return EvaluatedTable(Uses::contains(stmtIndex, varIndex));
 				}
 				else {
-					return EvaluatedTable(true);
+					// check for Uses(2, v), if stmt with index 2 modifies any variable
+					std::vector<int> variables = Uses::getVariables(stmtIndex);
+					return EvaluatedTable(variables.size() > 0);
 				}
 			}
 			else {
@@ -288,7 +291,7 @@ private:
 			}
 		}
 		else {
-			std::cout << "Error in handleModifiesS\n";
+			throw EvaluatorException(EvaluatorException::USES_S_ERROR);
 		}
 		return EvaluatedTable(PQLentities, PQLmap);
 	}
@@ -319,7 +322,7 @@ private:
 			}
 		}
 		else {
-			std::cout << "Error in handleModifiesP\n";
+			throw EvaluatorException(EvaluatorException::USES_P_ERROR);
 		}
 		return EvaluatedTable(PQLentities, PQLmap);
 	}
@@ -746,7 +749,7 @@ public:
 			allPatternStmtInfo = Pattern::getAllAssignStmtVarsPatternInfo();
 		}
 		else {
-			std::cout << "Invalid expression type";
+			throw EvaluatorException(EvaluatorException::PATTERN_ERROR);
 		}
 		if (entRef.first == PqlReferenceType::synonym) {
 			std::vector<int> allStmts;
@@ -764,6 +767,7 @@ public:
 				allStmts = Pattern::getStmtsFromVarPattern(varIndex, ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
 				PQLmap[synonym] = allStmts;
 			}
+			// should not return Evaluated(False)
 		}
 		else if (entRef.first == PqlReferenceType::wildcard) {
 			if (expressionSpec.first == PqlExpressionType::wildcard) {

@@ -22,12 +22,6 @@
     <ClCompile Include="..\source\QPS-NEW\Instruction.cpp">
       <Filter>QPS-new</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\QPS-NEW\PQLTokeniser.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS-NEW\QPS.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\PKB\Container.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -138,9 +132,6 @@
     <ClInclude Include="..\source\PKB\Modifies.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\QPS-NEW\DesignEntity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\PKB\Parent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -154,15 +145,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\PKB\PKB.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS-NEW\PQLDEToken.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS-NEW\PQLTokeniser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS-NEW\QPS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\PKB\RS1.h">

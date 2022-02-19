@@ -36,6 +36,7 @@ public:
 	static const std::string MISSING_SEMICOLON;
 	static const std::string MISSING_WHITESPACE;
 	static const std::string MISSING_VAR_NAME;
+
 	ParserException(const std::string& reason);
 };
 
@@ -45,4 +46,15 @@ public:
 	static const std::string VALIDATOR_ERROR;
 
 	QPSException(const std::string& reason);
+};
+
+class EvaluatorException : public SPAException {
+public:
+	static const std::string PATTERN_ERROR;
+	static const std::string MODIFIES_S_ERROR;
+	static const std::string MODIFIES_P_ERROR;
+	static const std::string USES_S_ERROR;
+	static const std::string USES_P_ERROR;
+
+	EvaluatorException(const std::string& reason);
 };

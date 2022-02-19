@@ -26,8 +26,6 @@
     <ClCompile Include="..\source\PKB\RS2.cpp" />
     <ClCompile Include="..\source\PKB\Uses.cpp" />
     <ClCompile Include="..\source\QPS-NEW\PQLLexer.cpp" />
-    <ClCompile Include="..\source\QPS-NEW\PQLTokeniser.cpp" />
-    <ClCompile Include="..\source\QPS-NEW\QPS.cpp" />
     <ClCompile Include="..\source\QPS-NEW\ParsedQuery.cpp" />
     <ClCompile Include="..\source\QPS-NEW\PQLEvaluator.cpp" />
     <ClCompile Include="..\source\QPS-NEW\PQLParser.cpp" />
@@ -58,11 +56,7 @@
     <ClInclude Include="..\source\PKB\RS2.h" />
     <ClInclude Include="..\source\PKB\RS2T.h" />
     <ClInclude Include="..\source\PKB\Uses.h" />
-    <ClInclude Include="..\source\QPS-NEW\DesignEntity.h" />
     <ClInclude Include="..\source\QPS-NEW\PQLLexer.h" />
-    <ClInclude Include="..\source\QPS-NEW\PQLDEToken.h" />
-    <ClInclude Include="..\source\QPS-NEW\PQLTokeniser.h" />
-    <ClInclude Include="..\source\QPS-NEW\QPS.h" />
     <ClInclude Include="..\source\QPS-NEW\EvaluatedTable.h" />
     <ClInclude Include="..\source\QPS-NEW\Instruction.h" />
     <ClInclude Include="..\source\QPS-NEW\ParsedQuery.h" />
