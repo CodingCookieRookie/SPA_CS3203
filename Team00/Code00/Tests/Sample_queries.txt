@@ -43,4 +43,9 @@ assign a; variable v;
 Select a
 5, 7
 5000
+8 - Get All Assigments statements
+assign a; variable v;
+Select a such that Modifies(a, v)
+5, 7
+5000
 

@@ -14,6 +14,8 @@
 #include "../PKB/Pattern.h"
 #include "../PKB/Parent.h"
 #include "../PKB/ParentT.h"
+#include "../PKB/Pattern.h"
+#include "../PKB/ExpressionProcessor.h"
 
 class Instruction {
 //protected:	//-> Use protected if need any shared fields
@@ -174,27 +176,45 @@ private:
 
 	EvaluatedTable handleModifiesS() {
 		// Modifies (a/r/s/a1, v) or Modifies(a/r/s/a1, "x") or Modifies (a/r/s/a1, _ ) 
-		// Modifies (1, v)	=> true or Modifies (1, _ ) (under statement)
+		// Modifies (1, v)	or Modifies(1, "x")  => true or Modifies (1, _ ) (under statement)
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
 		PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Variable));
 		std::tuple<std::vector<int>, std::vector<int>> allStmtVarInfos = Modifies::getAllStmtVarInfo();
+		std::vector<int> allStmts;
+		std::vector<int> varIndices;
 		if (lhsRef.first == PqlReferenceType::synonym) {
-			for (size_t i = 0; i < (std::get<0>(allStmtVarInfos).size()); i++) {
-				int lhs = std::get<0>(allStmtVarInfos)[i];
-				PQLmap[lhsRef.second].push_back(lhs);
-				if (rhsRef.first != PqlReferenceType::wildcard && rhsRef.first != PqlReferenceType::ident) {
-					int rhs = std::get<1>(allStmtVarInfos)[i];
-					PQLmap[rhsRef.second].push_back(rhs);
+			if (rhsRef.first == PqlReferenceType::ident) {
+				if (Entity::containsVar(rhsRef.second)) {
+					VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
+					allStmts = Modifies::getStatements(varIndex);
 				}
+			}
+			else {
+				allStmts = std::get<0>(allStmtVarInfos);
+			}
+			PQLmap[lhsRef.second] = allStmts;
+			if (rhsRef.first != PqlReferenceType::wildcard && rhsRef.first != PqlReferenceType::ident) {
+				varIndices = std::get<1>(allStmtVarInfos);
+				PQLmap[rhsRef.second] = varIndices;
 			}
 		}
 		else if (lhsRef.first == PqlReferenceType::integer) {
 			int lhsRefValue = stoi(lhsRef.second);
-			StmtIndex stmtIndex = { lhsRefValue };
-			VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
-			return EvaluatedTable(Modifies::contains(stmtIndex, varIndex));
+			if (Entity::containsStmt(lhsRefValue)) {
+				StmtIndex stmtIndex = { lhsRefValue };
+				if (rhsRef.first == PqlReferenceType::ident) {
+					VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
+					return EvaluatedTable(Modifies::contains(stmtIndex, varIndex));
+				}
+				else {
+					return EvaluatedTable(true);
+				}
+			}
+			else {
+				return EvaluatedTable(false);
+			}
 		}
 		else {
 			std::cout << "Error in handleModifiesS\n";
@@ -203,20 +223,28 @@ private:
 	}
 
 	EvaluatedTable handleModifiesP() {
-		// Modifies (p/p1, v)	or Modifies (p/p1, _ )	proc
+		// Modifies (p/p1, v)	or Modifies (p/p1, _ )	Modifies (p/p1, "x" )
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Procedure));
 		PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Variable));
 		std::tuple<std::vector<int>, std::vector<int>> allProcVarInfos = Modifies::getAllProcVarInfo();
+		std::vector<int> allStmts;
+		std::vector<int> varIndices;
 		if (lhsRef.first == PqlReferenceType::synonym) {
-			for (size_t i = 0; i < (std::get<0>(allProcVarInfos).size()); i++) {
-				int lhs = std::get<0>(allProcVarInfos)[i];
-				PQLmap[lhsRef.second].push_back(lhs);
-				if (rhsRef.first != PqlReferenceType::wildcard && rhsRef.first != PqlReferenceType::ident) {
-					int rhs = std::get<1>(allProcVarInfos)[i];
-					PQLmap[rhsRef.second].push_back(rhs);
+			if (rhsRef.first == PqlReferenceType::ident) {
+				if (Entity::containsVar(rhsRef.second)) {
+					VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
+					allStmts = Modifies::getProcedures(varIndex);
 				}
+			}
+			else {
+				allStmts = std::get<0>(allProcVarInfos);
+			}
+			PQLmap[lhsRef.second] = allStmts;
+			if (rhsRef.first != PqlReferenceType::wildcard && rhsRef.first != PqlReferenceType::ident) {
+				varIndices = std::get<1>(allProcVarInfos);
+				PQLmap[rhsRef.second] = varIndices;
 			}
 		}
 		else {
@@ -233,21 +261,39 @@ private:
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
 		PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Variable));
 		std::tuple<std::vector<int>, std::vector<int>>  allStmtVarInfos = Uses::getAllStmtVarInfo();
+		std::vector<int> allStmts;
+		std::vector<int> varIndices;
 		if (lhsRef.first == PqlReferenceType::synonym) {
-			for (size_t i = 0; i < (std::get<0>(allStmtVarInfos).size()); i++) {
-				int lhs = std::get<0>(allStmtVarInfos)[i];
-				PQLmap[lhsRef.second].push_back(lhs);
-				if (rhsRef.first != PqlReferenceType::wildcard && rhsRef.first != PqlReferenceType::ident) {
-					int rhs = std::get<1>(allStmtVarInfos)[i];
-					PQLmap[rhsRef.second].push_back(rhs);
+			if (rhsRef.first == PqlReferenceType::ident) {
+				if (Entity::containsVar(rhsRef.second)) {
+					VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
+					allStmts = Uses::getStatements(varIndex);
 				}
+			}
+			else {
+				allStmts = std::get<0>(allStmtVarInfos);
+			}
+			PQLmap[lhsRef.second] = allStmts;
+			if (rhsRef.first != PqlReferenceType::wildcard && rhsRef.first != PqlReferenceType::ident) {
+				varIndices = std::get<1>(allStmtVarInfos);
+				PQLmap[rhsRef.second] = varIndices;
 			}
 		}
 		else if (lhsRef.first == PqlReferenceType::integer) {
 			int lhsRefValue = stoi(lhsRef.second);
-			StmtIndex stmtIndex = { lhsRefValue };
-			VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
-			return EvaluatedTable(Modifies::contains(stmtIndex, varIndex));
+			if (Entity::containsStmt(lhsRefValue)) {
+				StmtIndex stmtIndex = { lhsRefValue };
+				if (rhsRef.first == PqlReferenceType::ident) {
+					VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
+					return EvaluatedTable(Uses::contains(stmtIndex, varIndex));
+				}
+				else {
+					return EvaluatedTable(true);
+				}
+			}
+			else {
+				return EvaluatedTable(false);
+			}
 		}
 		else {
 			std::cout << "Error in handleModifiesS\n";
@@ -261,15 +307,23 @@ private:
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
 		PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Variable));
-		std::tuple<std::vector<int>, std::vector<int>>  allStmtVarInfos = Uses::getAllStmtVarInfo();
+		std::tuple<std::vector<int>, std::vector<int>>  allProcVarInfos = Uses::getAllProcVarInfo();
+		std::vector<int> allStmts;
+		std::vector<int> varIndices;
 		if (lhsRef.first == PqlReferenceType::synonym) {
-			for (size_t i = 0; i < (std::get<0>(allStmtVarInfos).size()); i++) {
-				int lhs = std::get<0>(allStmtVarInfos)[i];
-				PQLmap[lhsRef.second].push_back(lhs);
-				if (rhsRef.first != PqlReferenceType::wildcard && rhsRef.first != PqlReferenceType::ident) {
-					int rhs = std::get<1>(allStmtVarInfos)[i];
-					PQLmap[rhsRef.second].push_back(rhs);
+			if (rhsRef.first == PqlReferenceType::ident) {
+				if (Entity::containsVar(rhsRef.second)) {
+					VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
+					allStmts = Uses::getProcedures(varIndex);
 				}
+			}
+			else {
+				allStmts = std::get<0>(allProcVarInfos);
+			}
+			PQLmap[lhsRef.second] = allStmts;
+			if (rhsRef.first != PqlReferenceType::wildcard && rhsRef.first != PqlReferenceType::ident) {
+				varIndices = std::get<1>(allProcVarInfos);
+				PQLmap[rhsRef.second] = varIndices;
 			}
 		}
 		else {
@@ -687,44 +741,33 @@ private:
 	PqlReference entRef;
 	PqlExpression expressionSpec;
 
-	bool isNumber(const std::string& s)
-	{
-		for (char const& ch : s) {
-			if (std::isdigit(ch) == 0)
-				return false;
-		}
-		return true;
-	}
-
-	bool containsWildCard(const std::string s)
-	{
-		return s.find("*") != std::string::npos;
-	}
+	//bool isNumber(const std::string& s)
+	//{
+	//	for (char const& ch : s) {
+	//		if (std::isdigit(ch) == 0)
+	//			return false;
+	//	}
+	//	return true;
+	//}
 
 public:
 	PatternInstruction::PatternInstruction(std::string synonym, PqlReference entRef, PqlExpression expressionSpec) : synonym(synonym), entRef(entRef), expressionSpec(expressionSpec) {}
 
 	EvaluatedTable handlePatterns() {
-		// Pattern a(v, "_x_") or Pattern a(v, "_123_") or Pattern a("x", "_x_")
-		// Pattern a(v, *) or Pattern a("x", *)
-		// Pattern a(*, "_x_") 
-		// Pattern a(*, *)		
+		// Pattern a(v, "_x_") or Pattern a(v, "_123_") or Pattern a(v, *)
+		// Pattern a("x", "_x_") or Pattern a("x", *)
+		// Pattern a(*, "_x_") or Pattern a(*, *)
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(synonym, PqlEntityType::Assign));
-		if (isNumber(entRef.second)) {
-			PQLentities.insert(std::pair(entRef.second, PqlEntityType::Constant));
-		}
-		else {
-			PQLentities.insert(std::pair(entRef.second, PqlEntityType::Variable));
-		}
+		PQLentities.insert(std::pair(entRef.second, PqlEntityType::Variable));
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo;
 		if (expressionSpec.first == PqlExpressionType::full) {
-			allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, false);
+			allPatternStmtInfo = Pattern::getStmtsFromPattern(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), false);
 		}
 		else if (expressionSpec.first == PqlExpressionType::partial) {
 			// currently only has this for iteration 1
-			allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, true);
+			allPatternStmtInfo = Pattern::getStmtsFromPattern(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
 		}
 		else if (expressionSpec.first == PqlExpressionType::wildcard) {
 			allPatternStmtInfo = Pattern::getAllAssignStmtVarsPatternInfo();
@@ -732,30 +775,30 @@ public:
 		else {
 			std::cout << "Invalid expression type";
 		}
-		if (entRef.first == PqlReferenceType::ident || entRef.first == PqlReferenceType::synonym) {
+		if (entRef.first == PqlReferenceType::synonym) {
 			std::vector<int> allStmts;
 			std::vector<int> varIndices;
-			VarIndex varIndex = Entity::getVarIdx(entRef.second);
-			if (!containsWildCard(expressionSpec.second)) {
-				allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
-			}
-			else {
-				allStmts = Pattern::getStmtsFromVarPattern(varIndex);
-			}
-			std::fill(varIndices.begin(), varIndices.end(), varIndex.getIndex());	// vector filled with varIndex for rhs of row
+			allStmts = std::get<0>(allPatternStmtInfo);
+			varIndices = std::get<1>(allPatternStmtInfo);
 			PQLmap[synonym] = allStmts;
 			PQLmap[entRef.second] = varIndices;
 		}
+		else if (entRef.first == PqlReferenceType::ident) {
+			// Pattern a("x", "_x_")
+			if (Entity::containsVar(entRef.second)) {
+				VarIndex varIndex = Entity::getVarIdx(entRef.second);
+				std::vector<int> allStmts;
+				allStmts = Pattern::getStmtsFromVarPattern(varIndex, ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
+				PQLmap[synonym] = allStmts;
+			} 
+		}
 		else if (entRef.first == PqlReferenceType::wildcard) {
-			if (containsWildCard(expressionSpec.second)) {
+			if (expressionSpec.first == PqlExpressionType::wildcard) {
 				return EvaluatedTable(true);
 			}
-			for (size_t i = 0; i < (std::get<0>(allPatternStmtInfo).size()); i++) {
-				int lhs = std::get<0>(allPatternStmtInfo)[i];
-				int rhs = std::get<1>(allPatternStmtInfo)[i];
-				PQLmap[synonym].push_back(lhs);
-				PQLmap[entRef.second].push_back(rhs);
-			}
+			std::vector<int> allStmts;
+			allStmts = std::get<0>(allPatternStmtInfo);
+			PQLmap[synonym] = allStmts;
 		}
 		return EvaluatedTable(PQLentities, PQLmap);
 	}
