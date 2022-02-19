@@ -3,7 +3,7 @@
 #include <string>
 #include <unordered_set>
 #include <unordered_map>
-
+#include <map>
 #include "QPSCommons.h"
 
 /* Defining different strings */
@@ -73,8 +73,9 @@ public:
 
     /* Mentions all the relevant fields of the EvalautedTable */
     std::string getTableString() {
-        std::string res = "Table String: size: " + std::to_string(table.size()) + "\n";
-        for (auto& it : table) {
+        std::map<std::string, std::vector<int>> ordered(table.begin(), table.end());    // order it so when printing it does not give random behaviour during test
+        std::string res = "Table String: size: " + std::to_string(ordered.size()) + "\n";
+        for (auto& it : ordered) {
             res += "Synonym: " + it.first + " ";
             res += "Values: ";
             std::vector<int> values = it.second;

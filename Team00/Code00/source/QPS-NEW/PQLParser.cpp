@@ -195,7 +195,11 @@ PqlExpression PQLParser::parseExpression() {
     if (!lexer.match("_")) {
         throw QPSException(QPSException::PARSER_ERROR);
     }
-    return PqlExpression(PqlExpressionType::partial, factor);
+    /* Surround pattern with spaces on both sides */
+    std::string pattern = " ";
+    pattern += factor;
+    pattern += " ";
+    return PqlExpression(PqlExpressionType::partial, pattern);
 }
 
 ParsedQuery PQLParser::parseQuery(const std::string& query) {

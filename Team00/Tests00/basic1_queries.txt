@@ -3,3 +3,8 @@ stmt s;
 Select s
 1, 2
 5000
+2 - comment
+read r;
+Select r
+1
+5000
