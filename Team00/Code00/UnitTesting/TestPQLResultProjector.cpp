@@ -134,7 +134,7 @@ namespace UnitTesting
 			// 2. Main test:
 			EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
 			PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable, columnsProjected);
-			std::list<std::string> expected{"1", "4", "2", "5", "3", "6"};
+			std::list<std::string> expected{"1 4", "2 5", "3 6"};
 			std::list<std::string> results = pqlResultProject.resolveTableToResults();
 			Assert::AreEqual(expected.size(), results.size());
 			auto actualRes = results.begin();
@@ -200,7 +200,7 @@ namespace UnitTesting
 			// 2. Main test:
 			EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
 			PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable, columnsProjected);
-			std::list<std::string> expected{ "1", "var1", "13", "proc1", "2", "var2", "14", "proc2", "3", "var3", "15", "proc3" };
+			std::list<std::string> expected{ "1 var1 13 proc1", "2 var2 14 proc2", "3 var3 15 proc3" };
 			std::list<std::string> results = pqlResultProject.resolveTableToResults();
 			Assert::AreEqual(expected.size(), results.size());
 			auto actualRes = results.begin();
