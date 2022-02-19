@@ -1,0 +1,45 @@
+1 - comment
+stmt s;
+Select s
+none
+5000
+2 - comment
+read r;
+Select r
+none
+5000
+3 - comment
+print pn;
+Select pn
+none
+5000
+4 - comment
+while w;
+Select w
+none
+5000
+5 - comment
+if ifs;
+Select ifs
+none
+5000
+6 - comment
+assign a;
+Select a
+none
+5000
+7 - comment
+variable v;
+Select v
+none
+5000
+8 - comment
+constant c;
+Select c
+none
+5000
+9 - comment
+procedure p;
+Select p
+none
+5000
