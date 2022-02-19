@@ -286,14 +286,14 @@ private:
 		if (lhsRef.first == PqlReferenceType::integer && rhsRef.first == PqlReferenceType::integer) {
 			
 			StmtIndex lhsStmtIndex, rhsStmtIndex;
+			bool evResult = false;
 			int lhsRefValue = stoi(lhsRef.second);
 			int rhsRefValue = stoi(rhsRef.second);
 			if (Entity::containsStmt(lhsRefValue) && Entity::containsStmt(rhsRefValue)) {
 				lhsStmtIndex = StmtIndex(lhsRefValue);
 				rhsStmtIndex = StmtIndex(rhsRefValue);
+				evResult = Follows::containsSuccessor(lhsStmtIndex, rhsStmtIndex);
 			}
-
-			bool evResult = Follows::containsSuccessor(lhsStmtIndex, rhsStmtIndex);
 			return EvaluatedTable(evResult); //e.g evResult == true, if 6 is followed by 7
 			
 		}
@@ -378,15 +378,14 @@ private:
 		if (lhsRef.first == PqlReferenceType::integer && rhsRef.first == PqlReferenceType::integer) {
 
 			StmtIndex lhsStmtIndex, rhsStmtIndex;
-			for (StmtIndex stmt : stmts) {
-				if (stmt.getIndex() == stoi(lhsRef.second)) {
-					lhsStmtIndex = stmt;
-				}
-				if (stmt.getIndex() == stoi(rhsRef.second)) {
-					rhsStmtIndex = stmt;
-				}
+			bool evResult = false;
+			int lhsRefValue = stoi(lhsRef.second);
+			int rhsRefValue = stoi(rhsRef.second);
+			if (Entity::containsStmt(lhsRefValue) && Entity::containsStmt(rhsRefValue)) {
+				lhsStmtIndex = StmtIndex(lhsRefValue);
+				rhsStmtIndex = StmtIndex(rhsRefValue);
+				evResult = FollowsT::containsSuccessor(lhsStmtIndex, rhsStmtIndex);
 			}
-			bool evResult = FollowsT::containsSuccessor(lhsStmtIndex, rhsStmtIndex);
 			return EvaluatedTable(evResult); //e.g evResult == true, if 6 is followed* by 7
 
 		}
