@@ -37,7 +37,7 @@ public:
 		auto followsTEmptyStmts = FollowsT::getSuccessorStmts(stmt5);
 		Assert::IsTrue(0 == followsTEmptyStmts.size());
 
-		/*Check ParentT data does not get affected*/
+		/* Check ParentT data does not get affected */
 		auto parentTStmts = ParentT::getSuccessorStmts(stmt1);
 		Assert::IsTrue(0 == parentTStmts.size());
 		ParentT::performCleanUp();
@@ -61,7 +61,7 @@ public:
 		auto followsTEmptyStmts = FollowsT::getSuccessorStmts(stmt4);
 		Assert::IsTrue(0 == followsTEmptyStmts.size());
 
-		/*Check ParentT data does not get affected*/
+		/* Check ParentT data does not get affected */
 		auto parentTStmts = ParentT::getSuccessorStmts(stmt5);
 		Assert::IsTrue(0 == parentTStmts.size());
 		ParentT::performCleanUp();
@@ -84,7 +84,7 @@ public:
 		auto followsTEmptyStmts = FollowsT::getPredecessorStmts(stmt1);
 		Assert::IsTrue(0 == followsTEmptyStmts.size());
 
-		/*Check ParentTs data does not get affected*/
+		/* Check ParentTs data does not get affected */
 		auto parentTStmts = ParentT::getPredecessorStmts(stmt5);
 		Assert::IsTrue(0 == parentTStmts.size());
 		ParentT::performCleanUp();
@@ -108,7 +108,7 @@ public:
 		auto followsTEmptyStmts = FollowsT::getPredecessorStmts(stmt5);
 		Assert::IsTrue(0 == followsTEmptyStmts.size());
 
-		/*Check ParentTs data does not get affected*/
+		/* Check ParentTs data does not get affected */
 		auto parentTStmts = ParentT::getPredecessorStmts(stmt4);
 		Assert::IsTrue(0 == parentTStmts.size());
 		ParentT::performCleanUp();
@@ -124,7 +124,7 @@ public:
 
 		Assert::IsTrue(FollowsT::containsSuccessor(stmt1, stmt4));
 		Assert::IsFalse(FollowsT::containsSuccessor(stmt4, stmt1));
-		Assert::IsFalse(FollowsT::containsSuccessor(stmt3, stmt4)); /*siblings*/
+		Assert::IsFalse(FollowsT::containsSuccessor(stmt3, stmt4)); /* siblings */
 	};
 
 	TEST_METHOD(containsPredecessor) {
@@ -137,7 +137,7 @@ public:
 
 		Assert::IsTrue(FollowsT::containsPredecessor(stmt1, stmt4));
 		Assert::IsFalse(FollowsT::containsPredecessor(stmt4, stmt1));
-		Assert::IsFalse(FollowsT::containsPredecessor(stmt3, stmt4)); /*siblings*/
+		Assert::IsFalse(FollowsT::containsPredecessor(stmt3, stmt4)); /* siblings */
 	};
 
 	TEST_METHOD(getAllPredecessorSuccessorInfo) {

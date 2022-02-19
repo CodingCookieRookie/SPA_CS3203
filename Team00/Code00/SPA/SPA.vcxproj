@@ -40,7 +40,6 @@
     <ClCompile Include="..\source\SP\SourceAST.cpp" />
     <ClCompile Include="..\source\SP\SourceASTNode.cpp" />
     <ClCompile Include="..\source\Exception\SPAException.cpp" />
-    <ClCompile Include="..\source\TNode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\common\Lexer.h" />
@@ -76,7 +75,6 @@
     <ClInclude Include="..\source\SP\SourceAST.h" />
     <ClInclude Include="..\source\SP\SourceASTNode.h" />
     <ClInclude Include="..\source\Exception\SPAException.h" />
-    <ClInclude Include="..\source\TNode.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{DC21A1EA-D2C6-4D14-A2B4-E025B64BDE81}</ProjectGuid>

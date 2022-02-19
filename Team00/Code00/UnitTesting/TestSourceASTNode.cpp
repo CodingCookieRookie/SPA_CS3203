@@ -130,7 +130,7 @@ public:
 		stmtLstNode->addStmtNode(new PrintNode("printVar"));
 
 		/* Cond expr */
-		// while (cenX != 0)
+		/* while (cenX != 0) */
 		ExprNode* condExpr = new ExprNode(ExprNodeValueType::relOperator, "!=");
 		condExpr->addChild(new ExprNode(ExprNodeValueType::varName, "cenX"));
 		condExpr->addChild(new ExprNode(ExprNodeValueType::constValue, "0"));
@@ -158,12 +158,12 @@ public:
 		*/
 
 		/* Cond expr */
-		// (cenX != 0)
+		/* (cenX != 0) */
 		ExprNode* ltOp = new ExprNode(ExprNodeValueType::relOperator, "<");
 		ltOp->addChild(new ExprNode(ExprNodeValueType::varName, "cenX"));
 		ltOp->addChild(new ExprNode(ExprNodeValueType::constValue, "0"));
 
-		// (cenY + 15 >= 0)
+		/* (cenY + 15 >= 0)*/
 		ExprNode* plusOp = new ExprNode(ExprNodeValueType::arithmeticOperator, "+");
 		plusOp->addChild(new ExprNode(ExprNodeValueType::varName, "cenY"));
 		plusOp->addChild(new ExprNode(ExprNodeValueType::constValue, "15"));
@@ -172,13 +172,13 @@ public:
 		gteOp->addChild(plusOp);
 		gteOp->addChild(new ExprNode(ExprNodeValueType::constValue, "0"));
 
-		// while ((cenX < 0) && (cenY + 15 >= 0))
+		/* while ((cenX < 0) && (cenY + 15 >= 0)) */
 		ExprNode* andOp = new ExprNode(ExprNodeValueType::logicalOperator, "&&");
 		andOp->addChild(ltOp);
 		andOp->addChild(gteOp);
 
 		/* StmtLstNode */
-		// print printVar;
+		/* print printVar; */
 		StmtLstNode* stmtLstNode = new StmtLstNode();
 		stmtLstNode->addStmtNode(new PrintNode("printVar"));
 
