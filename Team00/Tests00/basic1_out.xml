@@ -1,11 +1,16 @@
 <?xml-stylesheet type="text/xsl" href="analysis.xsl"?>
 <test_results>
 <info>
+<<<<<<< HEAD
 <name>Team00</name><parsing_time_taken>4.000000</parsing_time_taken>
+=======
+<name>Team00</name><parsing_time_taken>1.000000</parsing_time_taken>
+>>>>>>> master
 </info>
 <queries>
 <query>
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="comment">1</id><querystr><![CDATA[stmt s; Select s]]></querystr>
+<<<<<<< HEAD
 <stuans>1,2,3,4,5,6,7,8,9,10</stuans>
 <correct>1,2,3,4,5,6,7,8,9,10</correct>
 <time_taken>5.000000</time_taken>
@@ -172,5 +177,12 @@
 </summary>
 </failed>
 </query>
+=======
+<stuans>1,2</stuans>
+<correct>1,2</correct>
+<time_taken>17.000000</time_taken>
+<passed/>
+</query>
+>>>>>>> master
 </queries>
 </test_results>
