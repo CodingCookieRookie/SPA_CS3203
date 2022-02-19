@@ -2,15 +2,10 @@
 #include "CppUnitTest.h"
 
 #include <string>
-#include <algorithm>
 
 #include "../source/QPS-NEW/PQLEvaluator.h"
 #include "../source/QPS-NEW/PQLParser.h"
-#include "../source/PKB/RS2.h"
-#include "../source/PKB/Follows.h"
-#include "../source/PKB/FollowsT.h"
-#include "../source/PKB/Parent.h"
-#include "../source/PKB/ParentT.h"
+#include "../source/PKB/Uses.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

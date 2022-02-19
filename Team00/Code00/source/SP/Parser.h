@@ -28,16 +28,21 @@ private:
 	static ExprNode* matchRelFactor();
 	static IfNode* matchIf();
 
+	static const std::string PROCEDURE;
+	static const std::string READ;
+	static const std::string PRINT;
 	static const std::string WHILE;
 	static const std::string IF;
 	static const std::string THEN;
 	static const std::string ELSE;
 
+	static const std::string EQUAL;
 	static const std::string NOT;
 	static const std::string LEFT_BRACKET;
 	static const std::string RIGHT_BRACKET;
 	static const std::string LEFT_CURLY;
 	static const std::string RIGHT_CURLY;
+	static const std::string SEMICOLON;
 
 	static const std::vector<std::string> termOperators;
 	static const std::vector<std::string> exprOperators;
