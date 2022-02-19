@@ -61,13 +61,10 @@
     <ClCompile Include="TestPKB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestPQLResultProjector.cpp">
+    <ClCompile Include="TestInstructionParent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestModifiesInstruction.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestUsesInstruction.cpp">
+    <ClCompile Include="TestInstructionParentT.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestInstructionFollows.cpp">
@@ -81,12 +78,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestModifiesInstruction.cpp">
-=======
-    <ClCompile Include="TestInstructionParent.cpp">
->>>>>>> master
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestInstructionParentT.cpp">
+    <ClCompile Include="TestUsesInstruction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestPatternInstruction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestPatternInstruction.cpp">

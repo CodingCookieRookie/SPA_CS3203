@@ -172,6 +172,7 @@
     </ClCompile>
     <ClCompile Include="TestFrontEnd.cpp" />
     <ClCompile Include="TestQuerying.cpp" />
+    <ClCompile Include="TestQuerying2.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
