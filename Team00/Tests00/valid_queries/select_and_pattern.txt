@@ -1,0 +1,105 @@
+1 - comment
+assign a; variable v;
+Select a pattern a(_, _)
+none
+5000
+2 - comment
+assign a; variable v;
+Select a pattern a(_, _"x"_)
+none
+5000
+3 - comment
+assign a; variable v;
+Select a pattern a(_, _"0"_)
+none
+5000
+4 - comment
+assign a; variable v;
+Select a pattern a(v, _)
+none
+5000
+5 - comment
+assign a; variable v;
+Select a pattern a(v, _"x"_)
+none
+5000
+6 - comment
+assign a; variable v;
+Select a pattern a(v, _"0"_)
+none
+5000
+7 - comment
+assign a; variable v;
+Select a pattern a("x", _)
+none
+5000
+8 - comment
+assign a; variable v;
+Select a pattern a("x", _"x"_)
+none
+5000
+9 - comment
+assign a; variable v;
+Select a pattern a("x", _"0"_)
+none
+5000
+10 - comment
+assign a; variable v;
+Select v pattern a(v, _)
+none
+5000
+11 - comment
+assign a; variable v;
+Select v pattern a(v, _"x"_)
+none
+5000
+12 - comment
+assign a; variable v;
+Select v pattern a(v, _"0"_)
+none
+5000
+13 - comment
+assign a, a1; variable v, v1; stmt s; read r; print pn; while w; if ifs; constant c; procedure p;
+Select a1 pattern a(_, _)
+none
+5000
+14 - comment
+assign a, a1; variable v, v1; stmt s; read r; print pn; while w; if ifs; constant c; procedure p;
+Select v pattern a(_, _"x"_)
+none
+5000
+15 - comment
+assign a, a1; variable v, v1; stmt s; read r; print pn; while w; if ifs; constant c; procedure p;
+Select s pattern a(_, _"0"_)
+none
+5000
+16 - comment
+assign a, a1; variable v, v1; stmt s; read r; print pn; while w; if ifs; constant c; procedure p;
+Select r pattern a(v, _)
+none
+5000
+17 - comment
+assign a, a1; variable v, v1; stmt s; read r; print pn; while w; if ifs; constant c; procedure p;
+Select pn pattern a(v, _"x"_)
+none
+5000
+18 - comment
+assign a, a1; variable v, v1; stmt s; read r; print pn; while w; if ifs; constant c; procedure p;
+Select w pattern a(v, _"0"_)
+none
+5000
+19 - comment
+assign a, a1; variable v, v1; stmt s; read r; print pn; while w; if ifs; constant c; procedure p;
+Select ifs pattern a("x", _)
+none
+5000
+20 - comment
+assign a, a1; variable v, v1; stmt s; read r; print pn; while w; if ifs; constant c; procedure p;
+Select c pattern a("x", _"x"_)
+none
+5000
+21 - comment
+assign a, a1; variable v, v1; stmt s; read r; print pn; while w; if ifs; constant c; procedure p;
+Select p pattern a("x", _"0"_)
+none
+5000

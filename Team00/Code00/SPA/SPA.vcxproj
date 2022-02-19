@@ -26,8 +26,6 @@
     <ClCompile Include="..\source\PKB\RS2.cpp" />
     <ClCompile Include="..\source\PKB\Uses.cpp" />
     <ClCompile Include="..\source\QPS-NEW\PQLLexer.cpp" />
-    <ClCompile Include="..\source\QPS-NEW\PQLTokeniser.cpp" />
-    <ClCompile Include="..\source\QPS-NEW\QPS.cpp" />
     <ClCompile Include="..\source\QPS-NEW\ParsedQuery.cpp" />
     <ClCompile Include="..\source\QPS-NEW\PQLEvaluator.cpp" />
     <ClCompile Include="..\source\QPS-NEW\PQLParser.cpp" />
@@ -40,7 +38,6 @@
     <ClCompile Include="..\source\SP\SourceAST.cpp" />
     <ClCompile Include="..\source\SP\SourceASTNode.cpp" />
     <ClCompile Include="..\source\Exception\SPAException.cpp" />
-    <ClCompile Include="..\source\TNode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\common\Lexer.h" />
@@ -59,11 +56,7 @@
     <ClInclude Include="..\source\PKB\RS2.h" />
     <ClInclude Include="..\source\PKB\RS2T.h" />
     <ClInclude Include="..\source\PKB\Uses.h" />
-    <ClInclude Include="..\source\QPS-NEW\DesignEntity.h" />
     <ClInclude Include="..\source\QPS-NEW\PQLLexer.h" />
-    <ClInclude Include="..\source\QPS-NEW\PQLDEToken.h" />
-    <ClInclude Include="..\source\QPS-NEW\PQLTokeniser.h" />
-    <ClInclude Include="..\source\QPS-NEW\QPS.h" />
     <ClInclude Include="..\source\QPS-NEW\EvaluatedTable.h" />
     <ClInclude Include="..\source\QPS-NEW\Instruction.h" />
     <ClInclude Include="..\source\QPS-NEW\ParsedQuery.h" />
@@ -76,7 +69,6 @@
     <ClInclude Include="..\source\SP\SourceAST.h" />
     <ClInclude Include="..\source\SP\SourceASTNode.h" />
     <ClInclude Include="..\source\Exception\SPAException.h" />
-    <ClInclude Include="..\source\TNode.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{DC21A1EA-D2C6-4D14-A2B4-E025B64BDE81}</ProjectGuid>

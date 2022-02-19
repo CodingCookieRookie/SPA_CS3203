@@ -16,14 +16,14 @@ private:
 
 public:
 	TEST_METHOD(isOperand_digit) {
-		// Boundary value analysis
+		/* Boundary value analysis */
 		Assert::IsTrue(ExpressionProcessor::isOperand('0'));
 		Assert::IsTrue(ExpressionProcessor::isOperand('5'));
 		Assert::IsTrue(ExpressionProcessor::isOperand('9'));
 	}
 
 	TEST_METHOD(isOperand_letter) {
-		// Boundary value analysis
+		/* Boundary value analysis */
 		Assert::IsTrue(ExpressionProcessor::isOperand('a'));
 		Assert::IsTrue(ExpressionProcessor::isOperand('m'));
 		Assert::IsTrue(ExpressionProcessor::isOperand('z'));
@@ -85,7 +85,8 @@ public:
 	TEST_METHOD(convertInfixToPostFix_oneOperator_complexOperandNames) {
 		std::string input1 = "ab+b0";
 		std::string input2 = "a+bb0";
-		// Ensures unique infix expressions remain unique after postfix conversion (with complex operand names)
+		/* Ensures unique infix expressions remain unique after postfix conversion
+		(with complex operand names)*/
 		std::string expectedRes1 = " ab b0 + ";
 		std::string expectedRes2 = " a bb0 + ";
 		std::string res1 = ExpressionProcessor::convertInfixToPostFix(input1);
@@ -97,7 +98,8 @@ public:
 	TEST_METHOD(convertInfixToPostFix_oneOperator_complexOperandNames_mixOperandTypes) {
 		std::string input1 = "ab+93238";
 		std::string input2 = "a+b93238";
-		// Ensures unique infix expressions remain unique after postfix conversion (with complex operand names)
+		/* Ensures unique infix expressions remain unique after postfix conversion
+		(with complex operand names) */
 		std::string expectedRes1 = " ab 93238 + ";
 		std::string expectedRes2 = " a b93238 + ";
 		std::string res1 = ExpressionProcessor::convertInfixToPostFix(input1);
@@ -113,7 +115,7 @@ public:
 		Assert::AreEqual(expectedRes, res);
 	}
 
-	// Tests uniqueness of expressions despite associativity
+	/* Tests uniqueness of expressions despite associativity */
 	TEST_METHOD(convertInfixToPostFix_twoOperators_samePrecedence_associativity) {
 		std::string input1 = "a+b-c";
 		std::string input2 = "b-c+a";
@@ -147,7 +149,7 @@ public:
 		Assert::AreEqual(expectedRes, res);
 	}
 
-	// Tests uniqueness of expressions despite associativity
+	/* Tests uniqueness of expressions despite associativity */
 	TEST_METHOD(convertInfixToPostFix_manyOperators_samePrecedence_associativity) {
 		std::string input1 = "a*b*c/deab";
 		std::string input2 = "b*c*a/deab";

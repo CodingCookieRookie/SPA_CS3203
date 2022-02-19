@@ -25,7 +25,8 @@ void TestWrapper::parse(std::string filename) {
 	try {
 		SourceAST ast = Parser::parse(fileContent);
 		DesignExtractor::Extract(ast);
-	} catch (SPAException& ex) {
+	}
+	catch (SPAException& ex) {
 		std::cerr << ex.what() << std::endl;
 		exit(EXIT_FAILURE);
 	}
@@ -49,9 +50,11 @@ void TestWrapper::evaluate(std::string query, std::list<std::string>& results) {
 		EvaluatedTable evTable = pqlEvaluator.evaluate();
 		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns());
 		results = resultProjector.resolveTableToResults();
-	} catch (QPSException& ex) {
+	}
+	catch (QPSException& ex) {
 		return;
-	} catch (LexerException& ex) {
+	}
+	catch (LexerException& ex) {
 		return;
 	}
 	// store the answers to the query in the results list (it is initially empty)

@@ -31,19 +31,19 @@ public:
 		Assert::AreEqual(size_t(5), statements.size());
 
 		/* Test read stmt */
-		// read read;
+		/* read read; */
 		ReadNode* readNode = (ReadNode*)statements[0];
 		Assert::IsTrue(StatementType::readType == readNode->getStmtType());
 		Assert::AreEqual(std::string("read"), readNode->getVarName());
 
 		/* Test print stmt */
-		// print y123;
+		/* print y123; */
 		PrintNode* printNode = (PrintNode*)statements[1];
 		Assert::IsTrue(StatementType::printType == printNode->getStmtType());
 		Assert::AreEqual(std::string("y123"), printNode->getVarName());
 
 		/* Test assign stmt */
-		// x = (y + 1) * 3
+		/* x = (y + 1) * 3 */
 		AssignNode* assignNode = (AssignNode*)statements[2];
 		Assert::IsTrue(StatementType::assignType == assignNode->getStmtType());
 		Assert::AreEqual(std::string("x"), assignNode->getVarName());
@@ -51,7 +51,7 @@ public:
 		Assert::AreEqual(std::string("*"), multOp->getValue());
 		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == multOp->getExprNodeValueType());
 
-		// (y + 1)
+		/* (y + 1) */
 		std::vector<ExprNode*> multOpChildren = multOp->getChildren();
 		Assert::AreEqual(size_t(2), multOpChildren.size());
 		ExprNode* plusOp = multOpChildren[0];
@@ -66,14 +66,14 @@ public:
 		Assert::IsTrue(ExprNodeValueType::constValue == plusOpChildren[1]->getExprNodeValueType());
 		Assert::IsTrue(plusOpChildren[1]->getChildren().empty());
 
-		// 3
+		/* 3 */
 		ExprNode* three = multOpChildren[1];
 		Assert::AreEqual(std::string("3"), three->getValue());
 		Assert::IsTrue(ExprNodeValueType::constValue == three->getExprNodeValueType());
 		Assert::IsTrue(three->getChildren().empty());
 
 		/* Test while stmt */
-		// while ( (1 >= x ) || (! (while == 2147483647	)) ){ read print	; }
+		/* while ( (1 >= x ) || (! (while == 2147483647	)) ){ read print	; } */
 		WhileNode* whileNode = (WhileNode*)statements[3];
 		Assert::IsTrue(StatementType::whileType == whileNode->getStmtType());
 		ExprNode* orOp = whileNode->getCondExpr();
@@ -85,7 +85,7 @@ public:
 		std::vector<ExprNode*> orOpChildren = orOp->getChildren();
 		Assert::AreEqual(size_t(2), orOpChildren.size());
 
-		// (1 >= x)
+		/* (1 >= x) */
 		ExprNode* gteOp = orOpChildren[0];
 		Assert::AreEqual(std::string(">="), gteOp->getValue());
 		Assert::IsTrue(ExprNodeValueType::relOperator == gteOp->getExprNodeValueType());
@@ -96,14 +96,14 @@ public:
 		Assert::AreEqual(std::string("x"), childrenGteOp[1]->getValue());
 		Assert::IsTrue(ExprNodeValueType::varName == childrenGteOp[1]->getExprNodeValueType());
 
-		// (! (while == 2147483647	))
+		/* (! (while == 2147483647	)) */
 		ExprNode* notOp = orOpChildren[1];
 		Assert::AreEqual(std::string("!"), notOp->getValue());
 		Assert::IsTrue(ExprNodeValueType::logicalOperator == notOp->getExprNodeValueType());
 		std::vector<ExprNode*> notOpChildren = notOp->getChildren();
 		Assert::AreEqual(size_t(1), notOpChildren.size());
 
-		// (while == 2147483647	)
+		/* (while == 2147483647	) */
 		ExprNode* eqOp = notOpChildren[0];
 		Assert::AreEqual(std::string("=="), eqOp->getValue());
 		Assert::IsTrue(ExprNodeValueType::relOperator == eqOp->getExprNodeValueType());
@@ -116,7 +116,7 @@ public:
 		Assert::IsTrue(ExprNodeValueType::constValue == eqOpChildren[1]->getExprNodeValueType());
 
 		/* Test stmtLst in while container */
-		// read print	;
+		/* read print	; */
 		std::vector<StmtNode*> stmtsInWhile = whileStmtLstNode->getStmtNodes();
 		Assert::AreEqual(size_t(1), stmtsInWhile.size());
 		ReadNode* whileReadNode = (ReadNode*)stmtsInWhile[0];
@@ -132,7 +132,7 @@ public:
 		Assert::AreEqual(size_t(2), childStmtLst.size());
 
 		/* Test cond expr */
-		// ( 2 > 2147483648)
+		/* ( 2 > 2147483648) */
 		ExprNode* gtOp = ifNode->getCondExpr();
 		Assert::AreEqual(std::string(">"), gtOp->getValue());
 		Assert::IsTrue(ExprNodeValueType::relOperator == gtOp->getExprNodeValueType());
@@ -144,7 +144,7 @@ public:
 		Assert::IsTrue(ExprNodeValueType::constValue == gtOpChildren[1]->getExprNodeValueType());
 
 		/* Test then clause */
-		// Re123ad = ALLUPPERCASE;
+		/* Re123ad = ALLUPPERCASE; */
 		StmtLstNode* thenStmtLstNode = childStmtLst[0];
 		std::vector<StmtNode*> thenStmts = thenStmtLstNode->getStmtNodes();
 		Assert::AreEqual(size_t(1), thenStmts.size());
@@ -157,7 +157,7 @@ public:
 		Assert::IsTrue(allUpperCase->getChildren().empty());
 
 		/* Test else clause */
-		// if = 5
+		/* if = 5 */
 		StmtLstNode* elseStmtLstNode = childStmtLst[1];
 		std::vector<StmtNode*> elseStmts = elseStmtLstNode->getStmtNodes();
 		Assert::AreEqual(size_t(1), elseStmts.size());
@@ -211,7 +211,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_VAR_NAME.c_str(), ex.what());
 		}
 
@@ -221,7 +222,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_VAR_NAME.c_str(), ex.what());
 		}
 	}
@@ -255,7 +257,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
 
@@ -277,7 +280,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 
@@ -299,7 +303,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_VAR_NAME.c_str(), ex.what());
 		}
 
@@ -309,7 +314,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_VAR_NAME.c_str(), ex.what());
 		}
 	}
@@ -343,7 +349,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
 
@@ -365,7 +372,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 
@@ -387,7 +395,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 	}
@@ -411,7 +420,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_PROC_KEYWORD.c_str(), ex.what());
 		}
 
@@ -421,7 +431,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_PROC_KEYWORD.c_str(), ex.what());
 		}
 	}
@@ -433,7 +444,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_PROC_NAME.c_str(), ex.what());
 		}
 
@@ -443,7 +455,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_PROC_NAME.c_str(), ex.what());
 		}
 
@@ -452,7 +465,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc3);
 		try {
 			Parser::parse(source3);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_PROC_NAME.c_str(), ex.what());
 		}
 	}
@@ -464,7 +478,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_CURLY.c_str(), ex.what());
 		}
 
@@ -473,7 +488,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_CURLY.c_str(), ex.what());
 		}
 	}
@@ -485,7 +501,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 	}
@@ -497,7 +514,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 	}
@@ -509,7 +527,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_PROC_KEYWORD.c_str(), ex.what());
 		}
 	}
@@ -532,7 +551,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_PROG.c_str(), ex.what());
 		}
 	}
@@ -547,7 +567,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_CURLY.c_str(), ex.what());
 		}
 	}
@@ -568,7 +589,7 @@ public:
 		Assert::AreEqual(size_t(2), statements.size());
 
 		/* Test assign nodes*/
-		// flag    = 123;
+		/* flag    = 123; */
 		AssignNode* assignNode1 = (AssignNode*)statements[0];
 		Assert::AreEqual(std::string("flag"), assignNode1->getVarName());
 
@@ -576,7 +597,7 @@ public:
 		Assert::AreEqual(std::string("123"), expr1->getValue());
 		Assert::IsTrue(expr1->getChildren().empty());
 
-		// count =    someVar123	;
+		/* count =    someVar123	; */
 		AssignNode* assignNode2 = (AssignNode*)statements[1];
 		Assert::AreEqual(std::string("count"), assignNode2->getVarName());
 
@@ -604,7 +625,7 @@ public:
 		Assert::AreEqual(size_t(5), statements.size());
 
 		/* Test assign nodes*/
-		// CenX = 9 + CenX;
+		/* CenX = 9 + CenX; */
 		AssignNode* assignNode1 = (AssignNode*)statements[0];
 		Assert::AreEqual(std::string("CenX"), assignNode1->getVarName());
 
@@ -615,7 +636,7 @@ public:
 		Assert::AreEqual(std::string("9"), children1[0]->getValue());
 		Assert::AreEqual(std::string("CenX"), children1[1]->getValue());
 
-		// count = COUNT % 2   ;
+		/* count = COUNT % 2   ; */
 		AssignNode* assignNode2 = (AssignNode*)statements[1];
 		Assert::AreEqual(std::string("count"), assignNode2->getVarName());
 
@@ -626,7 +647,7 @@ public:
 		Assert::AreEqual(std::string("COUNT"), children2[0]->getValue());
 		Assert::AreEqual(std::string("2"), children2[1]->getValue());
 
-		// x = x + z * 5 ;
+		/* x = x + z * 5 ; */
 		AssignNode* assignNode3 = (AssignNode*)statements[2];
 		Assert::AreEqual(std::string("x"), assignNode3->getVarName());
 
@@ -642,7 +663,7 @@ public:
 		Assert::AreEqual(std::string("z"), zTimesFive[0]->getValue());
 		Assert::AreEqual(std::string("5"), zTimesFive[1]->getValue());
 
-		// y = y / w - 1;
+		/* y = y / w - 1; */
 		AssignNode* assignNode4 = (AssignNode*)statements[3];
 		Assert::AreEqual(std::string("y"), assignNode4->getVarName());
 
@@ -658,7 +679,7 @@ public:
 		Assert::AreEqual(std::string("y"), yDividedByW[0]->getValue());
 		Assert::AreEqual(std::string("w"), yDividedByW[1]->getValue());
 
-		// z = z + a123 / b0b - c  ;
+		/* z = z + a123 / b0b - c  ; */
 		AssignNode* assignNode5 = (AssignNode*)statements[4];
 		Assert::AreEqual(std::string("z"), assignNode5->getVarName());
 
@@ -699,7 +720,7 @@ public:
 		Assert::AreEqual(size_t(5), statements.size());
 
 		/* Test assign nodes*/
-		// CenX = (9 + CenX);
+		/* CenX = (9 + CenX); */
 		AssignNode* assignNode1 = (AssignNode*)statements[0];
 		Assert::AreEqual(std::string("CenX"), assignNode1->getVarName());
 
@@ -710,7 +731,7 @@ public:
 		Assert::AreEqual(std::string("9"), children1[0]->getValue());
 		Assert::AreEqual(std::string("CenX"), children1[1]->getValue());
 
-		// count = (COUNT % 2)   ;
+		/* count = (COUNT % 2)   ; */
 		AssignNode* assignNode2 = (AssignNode*)statements[1];
 		Assert::AreEqual(std::string("count"), assignNode2->getVarName());
 
@@ -721,7 +742,7 @@ public:
 		Assert::AreEqual(std::string("COUNT"), children2[0]->getValue());
 		Assert::AreEqual(std::string("2"), children2[1]->getValue());
 
-		// x = (x + z) * 5 ;
+		/* x = (x + z) * 5 ; */
 		AssignNode* assignNode3 = (AssignNode*)statements[2];
 		Assert::AreEqual(std::string("x"), assignNode3->getVarName());
 
@@ -737,7 +758,7 @@ public:
 		Assert::AreEqual(std::string("x"), xPlusZ[0]->getValue());
 		Assert::AreEqual(std::string("z"), xPlusZ[1]->getValue());
 
-		// y = y / (w - 1);
+		/* y = y / (w - 1); */
 		AssignNode* assignNode4 = (AssignNode*)statements[3];
 		Assert::AreEqual(std::string("y"), assignNode4->getVarName());
 
@@ -753,7 +774,7 @@ public:
 		Assert::AreEqual(std::string("w"), wMinusOne[0]->getValue());
 		Assert::AreEqual(std::string("1"), wMinusOne[1]->getValue());
 
-		// z = (z + a123) / (b0b - c)  ;
+		/* z = (z + a123) / (b0b - c)  ; */
 		AssignNode* assignNode5 = (AssignNode*)statements[4];
 		Assert::AreEqual(std::string("z"), assignNode5->getVarName());
 
@@ -794,7 +815,7 @@ public:
 		Assert::AreEqual(size_t(5), statements.size());
 
 		/* Test assign nodes*/
-		// if = 9 + read;
+		/* if = 9 + read; */
 		AssignNode* assignNode1 = (AssignNode*)statements[0];
 		Assert::AreEqual(std::string("if"), assignNode1->getVarName());
 
@@ -805,7 +826,7 @@ public:
 		Assert::AreEqual(std::string("9"), children1[0]->getValue());
 		Assert::AreEqual(std::string("read"), children1[1]->getValue());
 
-		// read = print % 2   ;
+		/* read = print % 2   ; */
 		AssignNode* assignNode2 = (AssignNode*)statements[1];
 		Assert::AreEqual(std::string("read"), assignNode2->getVarName());
 
@@ -816,7 +837,7 @@ public:
 		Assert::AreEqual(std::string("print"), children2[0]->getValue());
 		Assert::AreEqual(std::string("2"), children2[1]->getValue());
 
-		// while = x + z * 5 ;
+		/* while = x + z * 5 ; */
 		AssignNode* assignNode3 = (AssignNode*)statements[2];
 		Assert::AreEqual(std::string("while"), assignNode3->getVarName());
 
@@ -832,7 +853,7 @@ public:
 		Assert::AreEqual(std::string("z"), zTimesFive[0]->getValue());
 		Assert::AreEqual(std::string("5"), zTimesFive[1]->getValue());
 
-		// print = y / w - 1;
+		/* print = y / w - 1; */
 		AssignNode* assignNode4 = (AssignNode*)statements[3];
 		Assert::AreEqual(std::string("print"), assignNode4->getVarName());
 
@@ -848,7 +869,7 @@ public:
 		Assert::AreEqual(std::string("y"), yDividedByW[0]->getValue());
 		Assert::AreEqual(std::string("w"), yDividedByW[1]->getValue());
 
-		// then = z + a123 / b0b - c  ;
+		/* then = z + a123 / b0b - c  ; */
 		AssignNode* assignNode5 = (AssignNode*)statements[4];
 		Assert::AreEqual(std::string("then"), assignNode5->getVarName());
 
@@ -880,7 +901,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
 	}
@@ -895,7 +917,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 
@@ -908,7 +931,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 	}
@@ -920,7 +944,8 @@ public:
 		Assert::ExpectException<LexerException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (LexerException& ex) {
+		}
+		catch (LexerException& ex) {
 			Assert::AreEqual(LexerException::INVALID_INT.c_str(), ex.what());
 		}
 	}
@@ -932,7 +957,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 
@@ -942,7 +968,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 
@@ -952,20 +979,22 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc2);
 		try {
 			Parser::parse(source2);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 	}
 
 	TEST_METHOD(parse_matchAssign_invalidFactor_parserExceptionThrown) {
-		// '1' will be taken as a valid const_value, but "a" will be taken as invalid right bracket
+		/* '1' will be taken as a valid const_value, but "a" will be taken as invalid right bracket */
 		const char* source = "   procedure procedure123name \n "
 			" {  x = (x + 1a) * 5 ; }";
 		auto wrapperFunc = [&source] { Parser::parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 
@@ -976,7 +1005,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 
@@ -987,7 +1017,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 	}
@@ -1002,7 +1033,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 
@@ -1014,7 +1046,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 	}
@@ -1029,7 +1062,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
 
@@ -1041,7 +1075,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
 	}
@@ -1053,7 +1088,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
 
@@ -1064,7 +1100,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 
@@ -1074,7 +1111,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 	}
@@ -1104,13 +1142,13 @@ public:
 		StmtLstNode* stmtLstNodeWhile = whileNode->getChildStmtLst()[0];
 
 		/* Test cond expr */
-		// y + 2 > 5
+		/* y + 2 > 5 */
 		Assert::AreEqual(std::string(">"), gtOp->getValue());
 		Assert::IsTrue(ExprNodeValueType::relOperator == gtOp->getExprNodeValueType());
 		std::vector<ExprNode*> childrenGtOp = gtOp->getChildren();
 		Assert::AreEqual(size_t(2), childrenGtOp.size());
 
-		// y + 2
+		/* y + 2 */
 		ExprNode* plusOp = childrenGtOp[0];
 		Assert::AreEqual(std::string("+"), plusOp->getValue());
 		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == plusOp->getExprNodeValueType());
@@ -1121,7 +1159,7 @@ public:
 		Assert::AreEqual(std::string("2"), childrenPlusOp[1]->getValue());
 		Assert::IsTrue(ExprNodeValueType::constValue == childrenPlusOp[1]->getExprNodeValueType());
 
-		// 5
+		/* 5 */
 		Assert::AreEqual(std::string("5"), childrenGtOp[1]->getValue());
 		Assert::IsTrue(ExprNodeValueType::constValue == childrenGtOp[1]->getExprNodeValueType());
 
@@ -1129,7 +1167,7 @@ public:
 		std::vector<StmtNode*> stmtsInWhile = stmtLstNodeWhile->getStmtNodes();
 		Assert::AreEqual(size_t(4), stmtsInWhile.size());
 
-		// flag    = 123;
+		/* flag    = 123; */
 		AssignNode* assignNode1 = (AssignNode*)stmtsInWhile[0];
 		Assert::AreEqual(std::string("flag"), assignNode1->getVarName());
 
@@ -1137,7 +1175,7 @@ public:
 		Assert::AreEqual(std::string("123"), expr1->getValue());
 		Assert::IsTrue(expr1->getChildren().empty());
 
-		// count =  ((  someVar123 )  )	;
+		/* count =  ((  someVar123 )  )	; */
 		AssignNode* assignNode2 = (AssignNode*)stmtsInWhile[1];
 		Assert::AreEqual(std::string("count"), assignNode2->getVarName());
 
@@ -1145,11 +1183,11 @@ public:
 		Assert::AreEqual(std::string("someVar123"), expr2->getValue());
 		Assert::IsTrue(expr2->getChildren().empty());
 
-		// read flag ;
+		/* read flag ; */
 		ReadNode* readNode = (ReadNode*)stmtsInWhile[2];
 		Assert::AreEqual(std::string("flag"), readNode->getVarName());
 
-		// print COUNT	;
+		/* print COUNT	; */
 		PrintNode* printNode = (PrintNode*)stmtsInWhile[3];
 		Assert::AreEqual(std::string("COUNT"), printNode->getVarName());
 	}
@@ -1198,7 +1236,7 @@ public:
 		std::vector<StmtNode*> stmtsInWhile = stmtLstNodeWhile->getStmtNodes();
 		Assert::AreEqual(size_t(4), stmtsInWhile.size());
 
-		// flag    = 123;
+		/* flag    = 123; */
 		AssignNode* assignNode1 = (AssignNode*)stmtsInWhile[0];
 		Assert::AreEqual(std::string("flag"), assignNode1->getVarName());
 
@@ -1206,7 +1244,7 @@ public:
 		Assert::AreEqual(std::string("123"), expr1->getValue());
 		Assert::IsTrue(expr1->getChildren().empty());
 
-		// count =  ((  someVar123 )  )	;
+		/* count =  ((  someVar123 )  )	; */
 		AssignNode* assignNode2 = (AssignNode*)stmtsInWhile[1];
 		Assert::AreEqual(std::string("count"), assignNode2->getVarName());
 
@@ -1214,11 +1252,11 @@ public:
 		Assert::AreEqual(std::string("someVar123"), expr2->getValue());
 		Assert::IsTrue(expr2->getChildren().empty());
 
-		// read flag ;
+		/* read flag ; */
 		ReadNode* readNode = (ReadNode*)stmtsInWhile[2];
 		Assert::AreEqual(std::string("flag"), readNode->getVarName());
 
-		// print COUNT	;
+		/* print COUNT	; */
 		PrintNode* printNode = (PrintNode*)stmtsInWhile[3];
 		Assert::AreEqual(std::string("COUNT"), printNode->getVarName());
 	}
@@ -1252,7 +1290,7 @@ public:
 		std::vector<ExprNode*> childrenAndOp = andOp->getChildren();
 		Assert::AreEqual(size_t(2), childrenAndOp.size());
 
-		// !(x >= 0)
+		/* !(x >= 0)*/
 		ExprNode* notOp = childrenAndOp[0];
 		Assert::AreEqual(std::string("!"), notOp->getValue());
 		Assert::IsTrue(ExprNodeValueType::logicalOperator == notOp->getExprNodeValueType());
@@ -1270,7 +1308,7 @@ public:
 		Assert::AreEqual(std::string("0"), childrenGteOp[1]->getValue());
 		Assert::IsTrue(ExprNodeValueType::constValue == childrenGteOp[1]->getExprNodeValueType());
 
-		// ( y < 5 - z )
+		/* ( y < 5 - z ) */
 		ExprNode* ltOp = childrenAndOp[1];
 		Assert::AreEqual(std::string("<"), ltOp->getValue());
 		Assert::IsTrue(ExprNodeValueType::relOperator == ltOp->getExprNodeValueType());
@@ -1295,7 +1333,7 @@ public:
 		std::vector<StmtNode*> stmtsInWhile = stmtLstNodeWhile->getStmtNodes();
 		Assert::AreEqual(size_t(1), stmtsInWhile.size());
 
-		// read fl123ag ;
+		/* read fl123ag ; */
 		ReadNode* readNode = (ReadNode*)stmtsInWhile[0];
 		Assert::AreEqual(std::string("fl123ag"), readNode->getVarName());
 	}
@@ -1330,7 +1368,7 @@ public:
 		std::vector<ExprNode*> childrenOrOp = orOp->getChildren();
 		Assert::AreEqual(size_t(2), childrenOrOp.size());
 
-		// (x <= 0)
+		/* (x <= 0) */
 		ExprNode* lteOp = childrenOrOp[0];
 		Assert::AreEqual(std::string("<="), lteOp->getValue());
 		Assert::IsTrue(ExprNodeValueType::relOperator == lteOp->getExprNodeValueType());
@@ -1342,7 +1380,7 @@ public:
 		Assert::AreEqual(std::string("0"), childrenLteOp[1]->getValue());
 		Assert::IsTrue(ExprNodeValueType::constValue == childrenLteOp[1]->getExprNodeValueType());
 
-		// ( y * 1 == 5 - z )
+		/* ( y * 1 == 5 - z )*/
 		ExprNode* eqOp = childrenOrOp[1];
 		Assert::AreEqual(std::string("=="), eqOp->getValue());
 		Assert::IsTrue(ExprNodeValueType::relOperator == eqOp->getExprNodeValueType());
@@ -1375,7 +1413,7 @@ public:
 		std::vector<StmtNode*> stmtsInWhile = stmtLstNodeWhile->getStmtNodes();
 		Assert::AreEqual(size_t(1), stmtsInWhile.size());
 
-		// read fl123ag ;
+		/* read fl123ag ; */
 		ReadNode* readNode = (ReadNode*)stmtsInWhile[0];
 		Assert::AreEqual(std::string("fl123ag"), readNode->getVarName());
 	}
@@ -1404,7 +1442,7 @@ public:
 		StmtLstNode* stmtLstNodeWhile = whileNode->getChildStmtLst()[0];
 
 		/* Test cond expr */
-		// !( (y * 1 == 5 - z) || (x != 0)  )
+		/* !( (y * 1 == 5 - z) || (x != 0)  )*/
 		Assert::AreEqual(std::string("!"), notOp->getValue());
 		Assert::IsTrue(ExprNodeValueType::logicalOperator == notOp->getExprNodeValueType());
 		std::vector<ExprNode*> childrenNotOp = notOp->getChildren();
@@ -1416,7 +1454,7 @@ public:
 		std::vector<ExprNode*> childrenOrOp = orOp->getChildren();
 		Assert::AreEqual(size_t(2), childrenOrOp.size());
 
-		// (y * 1 == 5 - z)
+		/* (y * 1 == 5 - z)*/
 		ExprNode* eqOp = childrenOrOp[0];
 		Assert::AreEqual(std::string("=="), eqOp->getValue());
 		Assert::IsTrue(ExprNodeValueType::relOperator == eqOp->getExprNodeValueType());
@@ -1461,9 +1499,341 @@ public:
 		std::vector<StmtNode*> stmtsInWhile = stmtLstNodeWhile->getStmtNodes();
 		Assert::AreEqual(size_t(1), stmtsInWhile.size());
 
-		// read fl123ag ;
+		/* read fl123ag ; */
 		ReadNode* readNode = (ReadNode*)stmtsInWhile[0];
 		Assert::AreEqual(std::string("fl123ag"), readNode->getVarName());
+	}
+
+	TEST_METHOD(parse_matchWhile_condExprMissingLeftBracket_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  y + 2 > 5) "
+			"{ flag    = 123;   count =    someVar123	; "
+			" read flag ; print COUNT	; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_LEFT_BRACKET.c_str(), ex.what());
+		}
+
+		const char* source1 = "   procedure procedure123name \n "
+			"{ while  !(y + 2 > 5)) "
+			"{ flag    = 123;   count =    someVar123	; "
+			" read flag ; print COUNT	; } "
+			"} \n ";
+
+		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		Assert::ExpectException<ParserException>(wrapperFunc1);
+		try {
+			Parser::parse(source1);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_LEFT_BRACKET.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_condExprMissingRightBracket_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  (y + 2 > 5 "
+			"{ flag    = 123;   count =    someVar123	; "
+			" read flag ; print COUNT	; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_RIGHT_BRACKET.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_stmtLstMissingLeftCurly_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  (y + 2 > 5 )"
+			" flag    = 123;   count =    someVar123	; "
+			" read flag ; print COUNT	; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_LEFT_CURLY.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_stmtLstMissingRightCurly_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  (y + 2 > 5 )"
+			"{ flag    = 123;   count =    someVar123	; "
+			" read flag ; print COUNT	;  "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			// The last right curly (for procedure) is taken as the while's right curly
+			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_missingStmtLst_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  (y + 2 > 5 )"
+			"{  } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_invalidRelOp_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  (y + 2 & 5 )"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_invalidRelFactor_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  (y + 2 > ! )"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
+		}
+
+		const char* source1 = "   procedure procedure123name \n "
+			"{ while  (y + ! > 5 )"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		Assert::ExpectException<ParserException>(wrapperFunc1);
+		try {
+			Parser::parse(source1);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_missingLeftBracketAfterNotOp_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  (!y + 2 > 5) )"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_LEFT_BRACKET.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_missingCondExprAfterNotOp_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  (!( ) )"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_invalidCondExprAfterNotOp_parserExceptionThrown) {
+		const char* source1 = "   procedure procedure123name \n "
+			"{ while  (!( invalidCond ) )"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		Assert::ExpectException<ParserException>(wrapperFunc1);
+		try {
+			Parser::parse(source1);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_missingRightBracketAfterNotOpCondExpr_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  (!( x==1 )"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_RIGHT_BRACKET.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_invalidFirstCondExpr_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  (( x+1 ) && (y==0))"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_missingFirstCondExpr_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  ((  ) && (y==0))"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_firstCondExprMissingRightBracket_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  ((x==1   && (y==0))"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_RIGHT_BRACKET.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_missingLogOp_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  ((x==1)    (y==0))"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_COND_EXPR.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_invalidLogOp_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  ((x==1)  $  (y==0))"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_COND_EXPR.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_secondCondExprMissingLeftBracket_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  ((x==1)   || y==0))"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_LEFT_BRACKET.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_invalidSecondCondExpr_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  (( x==1 ) && (y*0))"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_missingSecondCondExpr_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  (( y==0 ) && ())"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_secondCondExprMissingRightBracket_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  ((x==1 )  && (y==0	)"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_RIGHT_BRACKET.c_str(), ex.what());
+		}
 	}
 
 	TEST_METHOD(parse_matchIf_oneRelExprCondExpr_success) {
@@ -1492,18 +1862,18 @@ public:
 		Assert::AreEqual(size_t(2), childStmtLst.size());
 
 		/* Test cond expr */
-		// ( y == 5 * 2)
+		/* ( y == 5 * 2)*/
 		ExprNode* eqOp = ifNode->getCondExpr();
 		Assert::AreEqual(std::string("=="), eqOp->getValue());
 		Assert::IsTrue(ExprNodeValueType::relOperator == eqOp->getExprNodeValueType());
 		std::vector<ExprNode*> childrenEqOp = eqOp->getChildren();
 		Assert::AreEqual(size_t(2), childrenEqOp.size());
 
-		// y
+		/* y */
 		Assert::AreEqual(std::string("y"), childrenEqOp[0]->getValue());
 		Assert::IsTrue(ExprNodeValueType::varName == childrenEqOp[0]->getExprNodeValueType());
 
-		// 5 * 2
+		/* 5 * 2*/
 		ExprNode* multOp = childrenEqOp[1];
 		Assert::AreEqual(std::string("*"), multOp->getValue());
 		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == multOp->getExprNodeValueType());
@@ -1515,8 +1885,8 @@ public:
 		Assert::IsTrue(ExprNodeValueType::constValue == childrenMultOp[1]->getExprNodeValueType());
 
 		/* Test then clause */
-		// read fl123ag
-		// cenX = 99
+		/* read fl123ag
+		 cenX = 99*/
 		StmtLstNode* stmtLstNodeThen = childStmtLst[0];
 		std::vector<StmtNode*> stmtsThen = stmtLstNodeThen->getStmtNodes();
 		Assert::AreEqual(size_t(2), stmtsThen.size());
@@ -1532,7 +1902,7 @@ public:
 		Assert::IsTrue(expr->getChildren().empty());
 
 		/* Test else clause */
-		// print COUNT
+		/* print COUNT*/
 		StmtLstNode* stmtLstNodeElse = childStmtLst[1];
 		std::vector<StmtNode*> stmtsElse = stmtLstNodeElse->getStmtNodes();
 		Assert::AreEqual(size_t(1), stmtsElse.size());

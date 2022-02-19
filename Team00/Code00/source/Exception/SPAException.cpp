@@ -3,7 +3,7 @@
 SPAException::SPAException(const std::string& reason) : reason(reason) {}
 
 const char* SPAException::what() const noexcept {
-    return reason.c_str();
+	return reason.c_str();
 }
 
 /* LexerException */
@@ -36,3 +36,13 @@ const std::string QPSException::PARSER_ERROR = "Syntax error detected while pars
 const std::string QPSException::VALIDATOR_ERROR = "PQL query failed validator check";
 
 QPSException::QPSException(const std::string& reason) : SPAException(reason) {}
+
+/* EvaluatorException */
+
+const std::string EvaluatorException::PATTERN_ERROR = "Invalid expression type for Pattern";
+const std::string EvaluatorException::MODIFIES_S_ERROR = "Invalid handling of ModifiesS query";
+const std::string EvaluatorException::MODIFIES_P_ERROR = "Invalid handling of ModifiesP query";
+const std::string EvaluatorException::USES_S_ERROR = "Invalid handling of UsesS query";
+const std::string EvaluatorException::USES_P_ERROR = "Invalid handling of UsesP query";
+
+EvaluatorException::EvaluatorException(const std::string& reason) : SPAException(reason) {}
