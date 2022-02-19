@@ -478,7 +478,7 @@ private:
 				rhsStmtIndex = StmtIndex(rhsRefValue);
 				evResult = Parent::containsSuccessor(lhsStmtIndex, rhsStmtIndex);
 			}
-			return EvaluatedTable(evResult); //e.g evResult == true, if 6 is followed* by 7
+			return EvaluatedTable(evResult); //e.g evResult == true, if 6 parents 7
 
 		}
 		// e.g Parent(6, s2), Parent(6, _)
@@ -490,7 +490,7 @@ private:
 				StmtIndex lhsStmt = StmtIndex(lhsRefValue);
 				for (StmtIndex stmt : stmts) {
 					if (Parent::containsSuccessor(lhsStmt, stmt)) {
-						results.emplace_back(stmt.getIndex()); // e.g {7} because 6 is followed by 7
+						results.emplace_back(stmt.getIndex()); // e.g {7} because 6 parents 7
 					}
 				}
 			}
@@ -512,7 +512,7 @@ private:
 				StmtIndex rhsStmt = StmtIndex(rhsRefValue);
 				for (StmtIndex stmt : stmts) {
 					if (Parent::containsSuccessor(stmt, rhsStmt)) {
-						results.emplace_back(stmt.getIndex()); //e.g {3} because 3 is followed by 6
+						results.emplace_back(stmt.getIndex()); //e.g {3} because 3 is a parent of 7
 					}
 				}
 			}
@@ -562,16 +562,15 @@ private:
 		if (lhsRef.first == PqlReferenceType::integer && rhsRef.first == PqlReferenceType::integer) {
 
 			StmtIndex lhsStmtIndex, rhsStmtIndex;
-			for (StmtIndex stmt : stmts) {
-				if (stmt.getIndex() == stoi(lhsRef.second)) {
-					lhsStmtIndex = stmt;
-				}
-				if (stmt.getIndex() == stoi(rhsRef.second)) {
-					rhsStmtIndex = stmt;
-				}
+			bool evResult = false;
+			int lhsRefValue = stoi(lhsRef.second);
+			int rhsRefValue = stoi(rhsRef.second);
+			if (Entity::containsStmt(lhsRefValue) && Entity::containsStmt(rhsRefValue)) {
+				lhsStmtIndex = StmtIndex(lhsRefValue);
+				rhsStmtIndex = StmtIndex(rhsRefValue);
+				evResult = ParentT::containsSuccessor(lhsStmtIndex, rhsStmtIndex);
 			}
-			bool evResult = ParentT::containsPredecessor(lhsStmtIndex, rhsStmtIndex);
-			return EvaluatedTable(evResult); //e.g evResult == true, if 6 is a parent of 7
+			return EvaluatedTable(evResult); //e.g evResult == true, if 6 is a parent* of 7
 
 		}
 		// e.g Parent*(6, s2), Parent*(6, _)
@@ -579,10 +578,12 @@ private:
 		{
 			std::vector<int> results;
 			int lhsRefValue = stoi(lhsRef.second); // might throw error if string value can't be converted to int
-			StmtIndex lhsStmt = StmtIndex(lhsRefValue);
-			for (StmtIndex stmt : stmts) {
-				if (ParentT::containsSuccessor(lhsStmt, stmt)) {
-					results.emplace_back(stmt.getIndex()); // e.g {6} because 6 is a parent of 7
+			if (Entity::containsStmt(lhsRefValue)) { // checks if stmt 6 exists, if not, return empty results
+				StmtIndex lhsStmt = StmtIndex(lhsRefValue);
+				for (StmtIndex stmt : stmts) {
+					if (ParentT::containsSuccessor(lhsStmt, stmt)) {
+						results.emplace_back(stmt.getIndex()); // e.g {7} because 6 is a parent* of 7
+					}
 				}
 			}
 			std::unordered_map<std::string, PqlEntityType> PQLentities;
@@ -599,10 +600,12 @@ private:
 		{
 			std::vector<int> results;
 			int rhsRefValue = stoi(rhsRef.second); //might throw error if string value can't be converted to int
-			StmtIndex rhsStmt = StmtIndex(rhsRefValue);
-			for (StmtIndex stmt : stmts) {
-				if (ParentT::containsSuccessor(stmt, rhsStmt)) {
-					results.emplace_back(stmt.getIndex()); //e.g {6} because 6 is a parent of 7
+			if (Entity::containsStmt(rhsRefValue)) { // checks if stmt 7 exists, if not, return empty results
+				StmtIndex rhsStmt = StmtIndex(rhsRefValue);
+				for (StmtIndex stmt : stmts) {
+					if (ParentT::containsSuccessor(stmt, rhsStmt)) {
+						results.emplace_back(stmt.getIndex()); //e.g {3} because 3 is a parent* of 7
+					}
 				}
 			}
 			std::unordered_map<std::string, PqlEntityType> PQLentities;
