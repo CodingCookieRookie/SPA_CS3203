@@ -7,7 +7,6 @@
 #include "EvaluatedTable.h"
 #include "Instruction.h"
 
-
 class PQLEvaluator {
 private:
 	ParsedQuery parsedQuery;

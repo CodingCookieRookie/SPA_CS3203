@@ -70,10 +70,13 @@
     <ClCompile Include="TestPKB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestInstructionParent.cpp">
+    <ClCompile Include="TestPQLResultProjector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestInstructionParentT.cpp">
+    <ClCompile Include="TestModifiesInstruction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestUsesInstruction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestInstructionFollows.cpp">
@@ -82,16 +85,17 @@
     <ClCompile Include="TestInstructionFollowsT.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestPQLResultProjector.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="TestGetAllInstruction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestModifiesInstruction.cpp">
+=======
+    <ClCompile Include="TestInstructionParent.cpp">
+>>>>>>> master
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestUsesInstruction.cpp">
+    <ClCompile Include="TestInstructionParentT.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
