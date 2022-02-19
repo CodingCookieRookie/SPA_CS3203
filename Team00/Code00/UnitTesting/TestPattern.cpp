@@ -13,10 +13,10 @@ private:
 	std::string varName2 = "present";
 	std::string varName3 = "past";
 
-	std::string postFix1 = "a b +";
-	std::string postFix2 = "5 b *c %d /deab %";
-	std::string postFix3 = "a b *";
-	std::string postFix4 = "c a b * +";
+	std::string postFix1 = " a b + ";
+	std::string postFix2 = " 5 b * c % d / deab % ";
+	std::string postFix3 = " a b * ";
+	std::string postFix4 = " c a b * + ";
 
 	VarIndex varIdx1 = VarIndex(1);
 	VarIndex varIdx2 = VarIndex(2);
