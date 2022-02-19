@@ -135,9 +135,6 @@
     <ClInclude Include="..\source\PKB\Modifies.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\QPS-NEW\DesignEntity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\PKB\Parent.h">
       <Filter>Header Files</Filter>
     </ClInclude>

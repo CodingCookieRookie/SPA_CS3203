@@ -184,7 +184,6 @@
     <ClCompile Include="TestPQLResultProjector.cpp" />
     <ClCompile Include="TestSourceASTNode.cpp" />
     <ClCompile Include="TestDesignExtractor.cpp" />
-    <ClCompile Include="TestDesignEntity.cpp" />
     <ClCompile Include="TestEntity.cpp" />
     <ClCompile Include="TestExpressionProcessor.cpp" />
     <ClCompile Include="TestFollows.cpp" />

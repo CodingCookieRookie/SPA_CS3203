@@ -57,7 +57,6 @@
     <ClInclude Include="..\source\PKB\RS2.h" />
     <ClInclude Include="..\source\PKB\RS2T.h" />
     <ClInclude Include="..\source\PKB\Uses.h" />
-    <ClInclude Include="..\source\QPS-NEW\DesignEntity.h" />
     <ClInclude Include="..\source\QPS-NEW\PQLLexer.h" />
     <ClInclude Include="..\source\QPS-NEW\EvaluatedTable.h" />
     <ClInclude Include="..\source\QPS-NEW\Instruction.h" />
