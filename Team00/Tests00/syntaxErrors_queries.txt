@@ -163,12 +163,12 @@ stmt s; variable v;
 Select s Such That Modifies(s, v)
 none
 5000
-2 - 3 - Missing "such that" when relRef is present
+2 - 3 - Missing such that when relRef is present
 stmt s; variable v;
 Select s Modifies(s, v)
 none
 5000
-2 - 4 - "such that" present when relRef is absent
+2 - 4 - such that present when relRef is absent
 stmt s; variable v;
 Select s such that
 none
@@ -293,7 +293,7 @@ stmt s1, s2;
 Select s2 such that Follows(_s1, s2)
 none
 5000
-2 - 13.2 - Incorrect stmtRef - IDENT enclosed in ""
+2 - 13.2 - Incorrect stmtRef - IDENT enclosed in inverted commas
 stmt s1, s2;
 Select s1 such that Follows(s1, "2")
 none
@@ -473,7 +473,7 @@ assign a; variable v;
 Select a pattern a(v, __)
 none
 5000
-3 - 9.3 - Incorrect expression-spec - Missing " "
+3 - 9.3 - Incorrect expression-spec - Missing inverted commas
 assign a; variable v;
 Select a pattern a(v, x)
 none
