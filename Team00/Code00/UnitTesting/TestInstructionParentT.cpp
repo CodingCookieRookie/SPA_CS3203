@@ -187,10 +187,12 @@ namespace UnitTesting
 			// Test Entities: std::unordered_map<std::string, PqlEntityType>
 			std::vector<int> s1values{ 1, 1, 1, 2, 2, 3 };
 			auto actuals1Values = tableRef.at("s1");
+			std::sort(actuals1Values.begin(), actuals1Values.end());
 			bool areVecEqual = std::equal(s1values.begin(), s1values.end(), actuals1Values.begin());
 			Assert::AreEqual(true, areVecEqual);
-			std::vector<int> s2values{ 2, 3, 4, 3, 4, 4 };
+			std::vector<int> s2values{ 2, 3, 3, 4, 4, 4 };
 			auto actuals2Values = tableRef.at("s2");
+			std::sort(actuals2Values.begin(), actuals2Values.end());
 			bool areVecEqual2 = std::equal(s2values.begin(), s2values.end(), actuals2Values.begin());
 			Assert::AreEqual(true, areVecEqual2);
 
@@ -263,9 +265,12 @@ namespace UnitTesting
 			}
 
 			auto actuals1Values = tableRef.at("s1");
+			std::sort(actuals1Values.begin(), actuals1Values.end());
 			bool areVecEqual = std::equal(s1values.begin(), s1values.end(), actuals1Values.begin());
 			Assert::AreEqual(true, areVecEqual); // s1values == {19 1s, 18 2s, ... 1 19}
 			auto actuals2Values = tableRef.at("s2");
+			std::sort(actuals2Values.begin(), actuals2Values.end());
+			std::sort(wildcardValues.begin(), wildcardValues.end());
 			bool areVecEqual2 = std::equal(wildcardValues.begin(), wildcardValues.end(), actuals2Values.begin());
 			Assert::AreEqual(true, areVecEqual2); // wildcardValues == {2-19, 3-19, ..., 18, 19, 19}
 
@@ -331,8 +336,10 @@ namespace UnitTesting
 			}
 
 			auto actuals1Values = tableRef.at("s1");
+			std::sort(actuals1Values.begin(), actuals1Values.end());
+			std::sort(s1values.begin(), s1values.end());
 			bool areVecEqual = std::equal(s1values.begin(), s1values.end(), actuals1Values.begin());
-			Assert::AreEqual(true, areVecEqual); // s1values == {2371 1s, 2370 2s, ... 1 2371}
+			Assert::AreEqual(true, areVecEqual); // s1values == {99 1s, 98 2s, ... 1 99}
 
 			auto actualEntities = evTable.getEntities();
 			Assert::AreEqual(true, actualEntities.find("s1") != actualEntities.end());

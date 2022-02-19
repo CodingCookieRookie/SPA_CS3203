@@ -128,14 +128,8 @@ void ParsedQuery::populatePatterns(const std::vector<ParsedPattern>& allPatterns
             throw QPSException(QPSException::VALIDATOR_ERROR);
         }
         PqlReference ref = pattern.getEntRef();
-        PqlReferenceType refType = ref.first;
-        if (!isEntRef(ref)) {
+        if (!validatateEntRef(ref)) {
             throw QPSException(QPSException::VALIDATOR_ERROR);
-        }
-        if (isSynonymRef(ref)) {
-            if (!isVarSynonym(ref)) {
-                throw QPSException(QPSException::VALIDATOR_ERROR);
-            }
         }
         patterns.push_back(pattern);
     }
