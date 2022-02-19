@@ -51,5 +51,39 @@ public:
 			Assert::AreEqual(LexerException::INVALID_INT.c_str(), ex.what());
 		}
 	}
+
+	TEST_METHOD(nextName_allLowerCase_mixedWithInt_stringReturned) {
+		const char* source = " str123ess hola ";
+		Lexer lexer(source);
+		Assert::AreEqual(std::string("str123ess"), lexer.nextName());
+	}
+
+	TEST_METHOD(nextName_allUpperCase_mixedWithInt_stringReturned) {
+		const char* source = " STRESS123 hola ";
+		Lexer lexer(source);
+		Assert::AreEqual(std::string("STRESS123"), lexer.nextName());
+	}
+
+	TEST_METHOD(nextName_mixedCase_mixedWithInt_stringReturned) {
+		const char* source = " s1Tr3s5 hola ";
+		Lexer lexer(source);
+		Assert::AreEqual(std::string("s1Tr3s5"), lexer.nextName());
+	}
+
+	TEST_METHOD(nextName_mixedCase_hasNonAlphaNumInMiddle_stringBeforeNonAlphaNumReturned) {
+		const char* source = " sTr!Ess hola ";
+		Lexer lexer(source);
+		Assert::AreEqual(std::string("sTr"), lexer.nextName());
+	}
+
+	TEST_METHOD(nextName_invalidName_startWithNonAlpha_emptyStringReturned) {
+		const char* source = "   0meString   hola ";
+		Lexer lexer(source);
+		Assert::AreEqual(std::string(), lexer.nextName());
+
+		const char* source = "   @meString   hola ";
+		Lexer lexer(source);
+		Assert::AreEqual(std::string(), lexer.nextName());
+	}
 	};
 }
