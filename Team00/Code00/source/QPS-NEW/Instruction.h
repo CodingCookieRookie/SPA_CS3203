@@ -63,7 +63,6 @@ private:
 	}
 
 	EvaluatedTable handleGetAllVar(std::string synonym) {
-		// TODO: PKB to change getAllVars() to return VarIndex.
 		std::vector<VarIndex> results = Entity::getAllVars();
 		std::vector<int> resultsToInt;
 		for (VarIndex result : results) {
@@ -80,7 +79,6 @@ private:
 	}
 
 	EvaluatedTable handleGetAllProc(std::string synonym) {
-		// TODO: PKB to change getAllProcs() to return ProcIndex.
 		std::vector<ProcIndex> results = Entity::getAllProcs();
 		std::vector<int> resultsToInt;
 		for (ProcIndex result : results) {
@@ -162,10 +160,6 @@ public:
 };
 
 class RelationshipInstruction : public Instruction {
-	//enum class PqlReferenceType {
-	//	synonym, wildcard, integer, ident
-	//};
-
 private:
 	//RelationshipInstructionType type;
 	PqlRelationshipType pqlRelationshipType;
@@ -173,8 +167,8 @@ private:
 	PqlReference rhsRef;
 
 	EvaluatedTable handleModifiesS() {
-		// Modifies (a/r/s/a1, v) or Modifies(a/r/s/a1, "x") or Modifies (a/r/s/a1, _ )
-		// Modifies (1, v)	or Modifies(1, "x")  => true or Modifies (1, _ ) (under statement)
+		/* Modifies (a/r/s/a1, v) or Modifies(a/r/s/a1, "x") or Modifies (a/r/s/a1, _ ) */
+		/* Modifies(1, v) or Modifies(1, "x") = > true or Modifies(1, _) (under statement) */
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
@@ -221,7 +215,7 @@ private:
 	}
 
 	EvaluatedTable handleModifiesP() {
-		// Modifies (p/p1, v)	or Modifies (p/p1, _ )	Modifies (p/p1, "x" )
+		/* Modifies(p / p1, v) or Modifies(p / p1, _)	Modifies(p / p1, "x") */
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Procedure));
@@ -252,8 +246,8 @@ private:
 	}
 
 	EvaluatedTable handleUsesS() {
-		// Uses (a/r/s/a1, v) or Uses(a/r/s/a1, "x") or Uses (a/r/s/a1, _ )
-		// Uses (1, v)	=> true or Uses (1, _ ) (under statement)
+		/* Uses (a/r/s/a1, v) or Uses(a/r/s/a1, "x") or Uses (a/r/s/a1, _ )
+		 Uses (1, v)	=> true or Uses (1, _ ) (under statement) */
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
@@ -300,7 +294,7 @@ private:
 	}
 
 	EvaluatedTable handleUsesP() {
-		// Uses (p/p1, v) or Uses (p/p1, "x") or Uses (p/p1, _ )	proc
+		/* Uses (p/p1, v) or Uses (p/p1, "x") or Uses (p/p1, _ ) */
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
@@ -687,11 +681,6 @@ private:
 	}
 
 public:
-	//enum class PqlRelationshipType {
-	//	Follows, FollowsT, Parent, ParentT,
-	//	UsesS, UsesP, ModifiesS, ModifiesP,
-	//	Uses, Modifies
-	//};
 	RelationshipInstruction(PqlRelationshipType pqlRSType, PqlReference lhs, PqlReference rhs) :
 		pqlRelationshipType(pqlRSType), lhsRef(lhs), rhsRef(rhs) {}
 
@@ -733,15 +722,6 @@ private:
 	std::string synonym;
 	PqlReference entRef;
 	PqlExpression expressionSpec;
-
-	//bool isNumber(const std::string& s)
-	//{
-	//	for (char const& ch : s) {
-	//		if (std::isdigit(ch) == 0)
-	//			return false;
-	//	}
-	//	return true;
-	//}
 
 public:
 	PatternInstruction::PatternInstruction(std::string synonym, PqlReference entRef, PqlExpression expressionSpec) : synonym(synonym), entRef(entRef), expressionSpec(expressionSpec) {}
