@@ -113,11 +113,35 @@ namespace UnitTesting
 			auto actualRes = results.begin();
 			auto expectedRes = expected.begin();
 			for (size_t i = 0; i < results.size(); i++) {
-				Assert::AreEqual(*expectedRes , *actualRes);
+				Assert::AreEqual(*expectedRes, *actualRes);
 				std::advance(actualRes, 1);
 				std::advance(expectedRes, 1);
 			}
 			Entity::performCleanUp();
+		}
+
+		TEST_METHOD(resolveTableToResults_oneColumnConstantRepeated_projectOneColumnUnique)
+		{
+			// 1. Set-up:
+			std::unordered_map<std::string, PqlEntityType> entities;
+			std::unordered_map<std::string, std::vector<int>> testTable;
+			std::vector<std::string> columnsProjected{ "c1" };
+			entities["c1"] = PqlEntityType::Constant;
+			testTable["c1"] = std::vector<int>{ 1, 1, 1, 2, 2, 3, 3, 4 };
+
+			// 2. Main test:
+			EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
+			PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable, columnsProjected);
+			std::list<std::string> expected{ "1", "2", "3", "4" };
+			std::list<std::string> results = pqlResultProject.resolveTableToResults();
+			Assert::AreEqual(expected.size(), results.size());
+			auto actualRes = results.begin();
+			auto expectedRes = expected.begin();
+			for (size_t i = 0; i < results.size(); i++) {
+				Assert::AreEqual(*expectedRes, *actualRes);
+				std::advance(actualRes, 1);
+				std::advance(expectedRes, 1);
+			}
 		}
 
 		TEST_METHOD(resolveTableToResults_oneColumnStatementRepeated_projectOneColumnUnique)
@@ -132,7 +156,7 @@ namespace UnitTesting
 			// 2. Main test:
 			EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
 			PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable, columnsProjected);
-			std::list<std::string> expected{ "1", "2", "3", "4"};
+			std::list<std::string> expected{ "1", "2", "3", "4" };
 			std::list<std::string> results = pqlResultProject.resolveTableToResults();
 			Assert::AreEqual(expected.size(), results.size());
 			auto actualRes = results.begin();
@@ -149,7 +173,7 @@ namespace UnitTesting
 			// 1. Set-up:
 			std::unordered_map<std::string, PqlEntityType> entities;
 			std::unordered_map<std::string, std::vector<int>> testTable;
-			std::vector<std::string> columnsProjected{"s1", "s2"};
+			std::vector<std::string> columnsProjected{ "s1", "s2" };
 			entities["s1"] = PqlEntityType::Stmt;
 			entities["s2"] = PqlEntityType::Stmt;
 			testTable["s1"] = std::vector<int>{ 1, 2, 3 };
@@ -158,7 +182,7 @@ namespace UnitTesting
 			// 2. Main test:
 			EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
 			PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable, columnsProjected);
-			std::list<std::string> expected{"1 4", "2 5", "3 6"};
+			std::list<std::string> expected{ "1 4", "2 5", "3 6" };
 			std::list<std::string> results = pqlResultProject.resolveTableToResults();
 			Assert::AreEqual(expected.size(), results.size());
 			auto actualRes = results.begin();
@@ -210,7 +234,7 @@ namespace UnitTesting
 			// 2. Main test:
 			EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
 			PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable, columnsProjected);
-			std::list<std::string> expected{ "1 4", "1 5", "2 5", "2 6", "3 6", "4 7"};
+			std::list<std::string> expected{ "1 4", "1 5", "2 5", "2 6", "3 6", "4 7" };
 			std::list<std::string> results = pqlResultProject.resolveTableToResults();
 			Assert::AreEqual(expected.size(), results.size());
 			auto actualRes = results.begin();
@@ -253,7 +277,7 @@ namespace UnitTesting
 			// 1. Set-up:
 			std::unordered_map<std::string, PqlEntityType> entities;
 			std::unordered_map<std::string, std::vector<int>> testTable;
-			std::vector<std::string> columnsProjected{ "s1", "v1", "a1", "p1"};
+			std::vector<std::string> columnsProjected{ "s1", "v1", "a1", "p1" };
 			entities["s1"] = PqlEntityType::Stmt;
 			entities["s2"] = PqlEntityType::Stmt;
 			entities["v1"] = PqlEntityType::Variable;
@@ -267,7 +291,7 @@ namespace UnitTesting
 			testTable["a1"] = std::vector<int>{ 13, 14, 15 };
 			testTable["p1"] = std::vector<int>{ 1, 2, 3 };
 			for (int i = 0; i < 6; i++) {
-				Entity::insertVar("var" + std::to_string(i+1));
+				Entity::insertVar("var" + std::to_string(i + 1));
 			}
 			for (int i = 0; i < 3; i++) {
 				Entity::insertProc("proc" + std::to_string(i + 1));
