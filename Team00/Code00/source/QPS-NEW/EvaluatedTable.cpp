@@ -7,16 +7,16 @@ EvaluatedTable EvaluatedTable::blockNestedJoin(EvaluatedTable& otherTable,
 	std::unordered_map<std::string, PqlEntityType> nextEntities;
 	int nextNumRow = 0;
 	/* Populate the columns of the new table */
-	for (const std::pair<std::string, PqlEntityType>& taggedEntity : entities) {
-		std::string entityName = taggedEntity.first;
+	for (const std::pair<std::string, std::vector<int>>& column : table) {
+		std::string entityName = column.first;
 		nextTable[entityName] = std::vector<int>();
-		nextEntities.insert(taggedEntity);
+		nextEntities[entityName] = entities[entityName];
 	}
-	for (const std::pair<std::string, PqlEntityType>& taggedEntity : otherTable.entities) {
-		std::string entityName = taggedEntity.first;
+	for (const std::pair<std::string, std::vector<int>>& column : otherTable.table) {
+		std::string entityName = column.first;
 		if (nextTable.find(entityName) == nextTable.end()) {
 			nextTable[entityName] = std::vector<int>();
-			nextEntities.insert(taggedEntity);
+			nextEntities[entityName] = otherTable.entities[entityName];
 		}
 	}
 
@@ -37,13 +37,13 @@ EvaluatedTable EvaluatedTable::blockNestedJoin(EvaluatedTable& otherTable,
 			}
 
 			/* Add all values from the left side table to the result table */
-			for (const std::pair<std::string, PqlEntityType>& taggedEntity : entities) {
-				std::string entityName = taggedEntity.first;
+			for (const std::pair<std::string, std::vector<int>>& column : table) {
+				std::string entityName = column.first;
 				nextTable[entityName].push_back(table[entityName][i]);
 			}
 			/* Add all values (except those in the common columns) from the right side table to the result table */
-			for (const std::pair<std::string, PqlEntityType>& taggedEntity : otherTable.entities) {
-				std::string entityName = taggedEntity.first;
+			for (const std::pair<std::string, std::vector<int>>& column : otherTable.table) {
+				std::string entityName = column.first;
 				if (commonEntities.find(entityName) != commonEntities.end()) {
 					continue;
 				}
