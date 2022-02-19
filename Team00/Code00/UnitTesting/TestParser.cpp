@@ -211,8 +211,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_VAR_NAME.c_str(), ex.what());
 		}
 
@@ -222,8 +221,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_VAR_NAME.c_str(), ex.what());
 		}
 	}
@@ -257,8 +255,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
 
@@ -280,8 +277,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 
@@ -303,8 +299,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_VAR_NAME.c_str(), ex.what());
 		}
 
@@ -314,8 +309,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_VAR_NAME.c_str(), ex.what());
 		}
 	}
@@ -349,8 +343,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
 
@@ -372,8 +365,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 
@@ -395,8 +387,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 	}
@@ -420,8 +411,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_PROC_KEYWORD.c_str(), ex.what());
 		}
 
@@ -431,8 +421,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_PROC_KEYWORD.c_str(), ex.what());
 		}
 	}
@@ -444,8 +433,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_PROC_NAME.c_str(), ex.what());
 		}
 
@@ -455,8 +443,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_PROC_NAME.c_str(), ex.what());
 		}
 
@@ -465,8 +452,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc3);
 		try {
 			Parser::parse(source3);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_PROC_NAME.c_str(), ex.what());
 		}
 	}
@@ -478,8 +464,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_CURLY.c_str(), ex.what());
 		}
 
@@ -488,8 +473,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_CURLY.c_str(), ex.what());
 		}
 	}
@@ -501,8 +485,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 	}
@@ -514,8 +497,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 	}
@@ -527,8 +509,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_PROC_KEYWORD.c_str(), ex.what());
 		}
 	}
@@ -551,8 +532,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_PROG.c_str(), ex.what());
 		}
 	}
@@ -567,8 +547,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_CURLY.c_str(), ex.what());
 		}
 	}
@@ -901,8 +880,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
 	}
@@ -917,8 +895,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 
@@ -931,8 +908,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 	}
@@ -944,8 +920,7 @@ public:
 		Assert::ExpectException<LexerException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		}
-		catch (LexerException& ex) {
+		} catch (LexerException& ex) {
 			Assert::AreEqual(LexerException::INVALID_INT.c_str(), ex.what());
 		}
 	}
@@ -957,8 +932,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 
@@ -968,8 +942,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 
@@ -979,8 +952,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc2);
 		try {
 			Parser::parse(source2);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 	}
@@ -993,8 +965,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 
@@ -1005,8 +976,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 
@@ -1017,8 +987,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 	}
@@ -1033,8 +1002,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 
@@ -1046,8 +1014,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 	}
@@ -1062,8 +1029,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
 
@@ -1075,8 +1041,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
 	}
@@ -1088,8 +1053,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
 
@@ -1100,8 +1064,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 
@@ -1111,8 +1074,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		}
-		catch (ParserException& ex) {
+		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 	}
@@ -1909,6 +1871,322 @@ public:
 
 		PrintNode* printNode = (PrintNode*)stmtsElse[0];
 		Assert::AreEqual(std::string("COUNT"), printNode->getVarName());
+	}
+
+	TEST_METHOD(parse_matchIf_invalidCond_condExprMissingLeftBracket_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ if  y == 5 * 2)  then "
+			"{ read fl123ag \n	; cenX = 99 ; } "
+			" else { print COUNT; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_LEFT_BRACKET.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchIf_invalidCond_condExprMissingRightBracket_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ if  (y == 5 * 2  then "
+			"{ read fl123ag \n	; cenX = 99 ; } "
+			" else { print COUNT; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_RIGHT_BRACKET.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchIf_missingThenKeyword_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ if  (y == 5 * 2)   "
+			"{ read fl123ag \n	; cenX = 99 ; } "
+			" else { print COUNT; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_THEN.c_str(), ex.what());
+		}
+
+		const char* source1 = "   procedure procedure123name \n "
+			"{ if  (y == 5 * 2)   "
+			"} \n ";
+
+		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		Assert::ExpectException<ParserException>(wrapperFunc1);
+		try {
+			Parser::parse(source1);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_THEN.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchIf_invalidThenKeyword_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ if  (y == 5 * 2) tHeN  "
+			"{ read fl123ag \n	; cenX = 99 ; } "
+			" else { print COUNT; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_THEN.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchIf_thenStmtLstMissingLeftCurly_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ if  (y == 5 * 2) then  "
+			" read fl123ag \n	; cenX = 99 ; } "
+			" else { print COUNT; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_LEFT_CURLY.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchIf_missingThenStmtLst_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ if  (y == 5 * 2) then  "
+			" {  } "
+			" else { print COUNT; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
+		}
+
+		const char* source1 = "   procedure procedure123name \n "
+			"{ if  (y == 5 * 2) then  "
+			" else { print COUNT; } "
+			"} \n ";
+
+		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		Assert::ExpectException<ParserException>(wrapperFunc1);
+		try {
+			Parser::parse(source1);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_LEFT_CURLY.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchIf_invalidThenStmtLst_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ if  (y == 5 * 2) then  "
+			" { x = x & 1; } "
+			" else { print COUNT; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			/* Since '&' is not a term or expr operator, "x = x" is regarded as a valid stmt.
+				Thus, the parser is expecting a semicolon next. */
+			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
+		}
+
+		const char* source1 = "   procedure procedure123name \n "
+			"{ if  (y == 5 * 2) then  "
+			" { wh1le  123; } "
+			" else { print COUNT; } "
+			"} \n ";
+
+		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		Assert::ExpectException<ParserException>(wrapperFunc1);
+		try {
+			Parser::parse(source1);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchIf_thenStmtLstMissingRightCurly_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ if  (y == 5 * 2) then  "
+			"{	"
+			" read fl123ag \n	; cenX = 99 ;  "
+			" else { print COUNT; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			/* Since the parser hasn't encountered a right curly,
+				it would assume that "else ..." is the next stmt. */
+			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchIf_missingElseKeyword_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ if  (y == 5 * 2) then  "
+			"{	"
+			" read fl123ag \n	; cenX = 99 ;  }"
+			"  { print COUNT; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_ELSE.c_str(), ex.what());
+		}
+
+		const char* source1 = "   procedure procedure123name \n "
+			"{ if  (y == 5 * 2) then  "
+			"{	"
+			" read fl123ag \n	; cenX = 99 ;  }"
+			"} \n ";
+
+		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		Assert::ExpectException<ParserException>(wrapperFunc1);
+		try {
+			Parser::parse(source1);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_ELSE.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchIf_invalidElseKeyword_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ if  (y == 5 * 2) then  "
+			"{ read fl123ag \n	; cenX = 99 ; } "
+			" ELSE { print COUNT; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_ELSE.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchIf_elseStmtLstMissingLeftCurly_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ if  (y == 5 * 2) then  "
+			"{ read fl123ag \n	; cenX = 99 ; } "
+			" else  print COUNT; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_LEFT_CURLY.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchIf_missingElseStmtLst_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ if  (y == 5 * 2) then  "
+			" { print COUNT; } "
+			" else {  } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
+		}
+
+		const char* source1 = "   procedure procedure123name \n "
+			"{ if  (y == 5 * 2) then { print COUNT; } "
+			" else  "
+			"} \n ";
+
+		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		Assert::ExpectException<ParserException>(wrapperFunc1);
+		try {
+			Parser::parse(source1);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_LEFT_CURLY.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchIf_invalidElseStmtLst_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ if  (y == 5 * 2) then  "
+			" { print COUNT; } "
+			" else {  x = x & 1; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			/* Since '&' is not a term or expr operator, "x = x" is regarded as a valid stmt.
+				Thus, the parser is expecting a semicolon next. */
+			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
+		}
+
+		const char* source1 = "   procedure procedure123name \n "
+			"{ if  (y == 5 * 2) then  "
+			" {  print COUNT;} "
+			" else {  wh1le  123;} "
+			"} \n ";
+
+		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		Assert::ExpectException<ParserException>(wrapperFunc1);
+		try {
+			Parser::parse(source1);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchIf_elseStmtLstMissingRightCurly_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ if  (y == 5 * 2) then  "
+			"{	"
+			" read fl123ag \n	; cenX = 99 ;  "
+			" else { print COUNT;  "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			/* The if stmt is parsed successfully,
+				but since the parser has not found a right curly to close off the procedure,
+				it would still be expecting a stmt. */
+			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
+		}
 	}
 	};
 }
