@@ -9,23 +9,23 @@
 <stuans>1,2,3,4,5,6,7</stuans>
 <correct>1,2,3,4,5,6,7</correct>
 <time_taken>17.000000</time_taken>
-<passed/>
+<passed />
 </query>
 <query>
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="Get All Procedures">2</id><querystr><![CDATA[stmt stmt; variable v; procedure p; Select p]]></querystr>
-<stuans>Example</stuans>
+<stuans>Example1</stuans>
 <correct>Example</correct>
 <time_taken>11.000000</time_taken>
-<passed/>
+<passed />
 </query>
 <query>
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="Get All Constants">3</id><querystr><![CDATA[stmt stmt; variable v; procedure p; constant c; Select c]]></querystr>
-<stuans>Example</stuans>
+<stuans>Example1</stuans>
 <correct></correct>
 <time_taken>8.000000</time_taken>
 <failed>
 <missing></missing>
-<additional>Example</additional>
+<additional>Example1</additional>
 <summary>
 <expected>0</expected>
 <matched>0</matched>
@@ -55,35 +55,35 @@
 <stuans>1,4</stuans>
 <correct>1,4</correct>
 <time_taken>34.000000</time_taken>
-<passed/>
+<passed />
 </query>
 <query>
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="Get All If statements">6</id><querystr><![CDATA[if ifs; variable v; Select ifs]]></querystr>
 <stuans></stuans>
 <correct></correct>
 <time_taken>35.000000</time_taken>
-<passed/>
+<passed />
 </query>
 <query>
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="Get All While statements">7</id><querystr><![CDATA[while w; variable v; Select w]]></querystr>
 <stuans></stuans>
 <correct></correct>
 <time_taken>28.000000</time_taken>
-<passed/>
+<passed />
 </query>
 <query>
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="Get All Read statements">8</id><querystr><![CDATA[read r; variable v; Select r]]></querystr>
 <stuans>2,3,6</stuans>
 <correct>2,3,6</correct>
 <time_taken>46.000000</time_taken>
-<passed/>
+<passed />
 </query>
 <query>
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="Get All Assigments statements">8</id><querystr><![CDATA[assign a; variable v; Select a]]></querystr>
 <stuans>5,7</stuans>
 <correct>5,7</correct>
 <time_taken>30.000000</time_taken>
-<passed/>
+<passed />
 </query>
 <query>
 <id ReturnTuple="1" Modifies="1" SuchThat="1" CondNum="3" RelNum="1" comment="Get All Assigments statements">8</id><querystr><![CDATA[assign a; variable v; Select a such that Modifies(a, v)]]></querystr>

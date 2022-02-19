@@ -8,7 +8,7 @@ PqlEntityType ParsedQuery::getType(std::string& synonym) {
     return declarations.at(synonym);
 }
 
-bool ParsedQuery::validatateStmtRef(PqlReference ref) {
+bool ParsedQuery::validateStmtRef(PqlReference ref) {
     /* Check grammar rule - stmtRef : synonym | '_' | INTEGER */
     if (!isStmtRef(ref)) {
         return false;
@@ -27,7 +27,7 @@ bool ParsedQuery::validatateStmtRef(PqlReference ref) {
     return true;
 }
 
-bool ParsedQuery::validatateEntRef(PqlReference ref) {
+bool ParsedQuery::validateEntRef(PqlReference ref) {
     /* Check grammar rule - entRef : synonym | '_' | '"' IDENT '"' */
     if (!isEntRef(ref)) {
         return false;
@@ -79,10 +79,10 @@ void ParsedQuery::populateRelationships(const std::vector<ParsedRelationship>& a
                 throw QPSException(QPSException::VALIDATOR_ERROR);
             }
             /* Note: Add the case for ModifiesP in iteration 2 */
-            if (!validatateStmtRef(lhs)) {
+            if (!validateStmtRef(lhs)) {
                 throw QPSException(QPSException::VALIDATOR_ERROR);
             }
-            if (!validatateEntRef(rhs)) {
+            if (!validateEntRef(rhs)) {
                 throw QPSException(QPSException::VALIDATOR_ERROR);
             }
             PqlRelationshipType relationshipType =
@@ -95,10 +95,10 @@ void ParsedQuery::populateRelationships(const std::vector<ParsedRelationship>& a
                 throw QPSException(QPSException::VALIDATOR_ERROR);
             }
             /* Note: Add the case for UsesP in iteration 2 */
-            if (!validatateStmtRef(lhs)) {
+            if (!validateStmtRef(lhs)) {
                 throw QPSException(QPSException::VALIDATOR_ERROR);
             }
-            if (!validatateEntRef(rhs)) {
+            if (!validateEntRef(rhs)) {
                 throw QPSException(QPSException::VALIDATOR_ERROR);
             }
             PqlRelationshipType relationshipType =
@@ -107,10 +107,10 @@ void ParsedQuery::populateRelationships(const std::vector<ParsedRelationship>& a
                 ParsedRelationship(relationshipType, lhs, rhs));
         } else {
             /* By default, else handles Parent/T and Follows/T */
-            if (!validatateStmtRef(lhs)) {
+            if (!validateStmtRef(lhs)) {
                 throw QPSException(QPSException::VALIDATOR_ERROR);
             }
-            if (!validatateStmtRef(rhs)) {
+            if (!validateStmtRef(rhs)) {
                 throw QPSException(QPSException::VALIDATOR_ERROR);
             }
             relationships.push_back(relationship);
@@ -128,7 +128,7 @@ void ParsedQuery::populatePatterns(const std::vector<ParsedPattern>& allPatterns
             throw QPSException(QPSException::VALIDATOR_ERROR);
         }
         PqlReference ref = pattern.getEntRef();
-        if (!validatateEntRef(ref)) {
+        if (!validateEntRef(ref)) {
             throw QPSException(QPSException::VALIDATOR_ERROR);
         }
         patterns.push_back(pattern);

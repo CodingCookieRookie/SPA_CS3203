@@ -449,5 +449,21 @@ namespace UnitTesting
                 == patterns[0].getExpression().first);
             Assert::AreEqual(std::string(" x "), patterns[0].getExpression().second);
         }
+
+        TEST_METHOD(parseQuery_leadingZeroInSuchThat_lexerExceptionThrown) {
+            std::string query =
+                "variable v;"
+                "Select v such that Uses(001, v)";
+            auto wrapperFunc = [&query] { PQLParser::parseQuery(query); };
+            Assert::ExpectException<LexerException>(wrapperFunc);
+        }
+
+        TEST_METHOD(parseQuery_leadingZeroInPattern_lexerExceptionThrown) {
+            std::string query =
+                "assign a;"
+                "Select a pattern a (_, _\"02\"_)";
+            auto wrapperFunc = [&query] { PQLParser::parseQuery(query); };
+            Assert::ExpectException<LexerException>(wrapperFunc);
+        }
     };
 }
