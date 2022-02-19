@@ -722,11 +722,6 @@ private:
 		return true;
 	}
 
-	bool containsWildCard(const std::string s)
-	{
-		return s.find("*") != std::string::npos;
-	}
-
 public:
 	PatternInstruction::PatternInstruction(std::string synonym, PqlReference entRef, PqlExpression expressionSpec) : synonym(synonym), entRef(entRef), expressionSpec(expressionSpec) {}
 
@@ -776,7 +771,7 @@ public:
 			} 
 		}
 		else if (entRef.first == PqlReferenceType::wildcard) {
-			if (containsWildCard(expressionSpec.second)) {
+			if (expressionSpec.first == PqlExpressionType::wildcard) {
 				return EvaluatedTable(true);
 			}
 			std::vector<int> allStmts;

@@ -41,6 +41,11 @@ namespace UnitTesting
             VarIndex varIndex = Entity::insertVar("x");
             std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("x");
             Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
+            
+            // Check PBK populated
+            std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
+            Assert::AreEqual(size_t(1), allStmts.size());
+
             // 2. Main test:
             EvaluatedTable evTable = instruction->execute();
             Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -64,6 +69,11 @@ namespace UnitTesting
             Entity::insertConst(123);
             std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("123");
             Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
+            
+            // Check PBK populated
+            std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
+            Assert::AreEqual(size_t(1), allStmts.size());
+
             // 2. Main test:
             EvaluatedTable evTable = instruction->execute();
             Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -89,8 +99,10 @@ namespace UnitTesting
             std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("x");
             Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
+            // Check PBK populated
             std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
             Assert::AreEqual(size_t(1), allStmts.size());
+            
             // 2. Main test:
             EvaluatedTable evTable = instruction->execute();
             Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -117,8 +129,10 @@ namespace UnitTesting
             std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("123");
             Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
+            // Check PBK populated
             std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
             Assert::AreEqual(size_t(1), allStmts.size());
+            
             // 2. Main test:
             EvaluatedTable evTable = instruction->execute();
             Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -143,8 +157,10 @@ namespace UnitTesting
             std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("x");
             Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
+            // Check PBK populated
             std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, true);
             Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
+            
             // 2. Main test:
             EvaluatedTable evTable = instruction->execute();
             Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -169,8 +185,10 @@ namespace UnitTesting
             std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("x");
             Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
+            // Check PBK populated
             std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, true);
             Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
+            
             // 2. Main test:
             EvaluatedTable evTable = instruction->execute();
             Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -195,8 +213,10 @@ namespace UnitTesting
             std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("x");
             Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
+            // Check PBK populated
             std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, true);
             Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
+            
             // 2. Main test:
             EvaluatedTable evTable = instruction->execute();
             Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -210,8 +230,8 @@ namespace UnitTesting
             // Pattern a(*, *)	
             // 1. Setup:
             std::string synonym = "a1";
-            PqlReference entRef = std::make_pair(PqlReferenceType::wildcard, "*");
-            PqlExpression expressionSpec = std::make_pair(PqlExpressionType::wildcard, "*");
+            PqlReference entRef = std::make_pair(PqlReferenceType::wildcard, "");
+            PqlExpression expressionSpec = std::make_pair(PqlExpressionType::wildcard, "");
             Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
 
             // PKB inserts pattern
@@ -221,8 +241,10 @@ namespace UnitTesting
             std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("x");
             Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
+            // Check PBK populated
             std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, true);
-            Assert::AreEqual(size_t(0), std::get<0>(allPatternStmtInfo).size());
+            Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
+            
             // 2. Main test:
             EvaluatedTable evTable = instruction->execute();
             Assert::AreEqual(size_t(0), evTable.getNumRow());
