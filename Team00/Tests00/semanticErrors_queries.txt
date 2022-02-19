@@ -1,5 +1,5 @@
 5 - 1 - Undeclared synonym used in Select clause
-stmts s;
+stmt s;
 Select s1
 none
 5000
@@ -23,24 +23,14 @@ stmt s; variable v;
 Select v such that Parent(s, v)
 none
 5000
-6 - 2.1 - Incorrect use of entRef - ModifiesS
+6 - 2.1 - entRef and stmtRef are switched - ModifiesS
 stmt s; variable v;
 Select v such that Modifies(v, s)
 none
 5000
-6 - 2.2 - Incorrect use of entRef - UsesS
+6 - 2.2 - entRef and stmtRef are switched - UsesS
 stmt s; variable v;
 Select v such that Uses(v, s)
-none
-5000
-6 - 2.1 - Incorrect use of entRef - ModifiesP
-procedure p; variable v;
-Select v such that Modifies(v, p)
-none
-5000
-6 - 2.2 - Incorrect use of entRef - UsesP
-procedure p; variable v;
-Select v such that Uses(v, p)
 none
 5000
 6 - 3 - Undeclared synonym in such that clause
@@ -63,32 +53,27 @@ print p; variable v;
 Select p such that p(v, _)
 none
 5000
-7 - 1.4 - Incorrect syn-assign - call
-call c; variable v;
-Select c such that c(v, _)
-none
-5000
-7 - 1.5 - Incorrect syn-assign - while
+7 - 1.4 - Incorrect syn-assign - while
 while w; variable v;
 Select w such that w(v, _)
 none
 5000
-7 - 1.6 - Incorrect syn-assign - if
+7 - 1.5 - Incorrect syn-assign - if
 if ifs; variable v;
 Select ifs such that ifs(v, _)
 none
 5000
-7 - 1.7 - Incorrect syn-assign - variable
+7 - 1.6 - Incorrect syn-assign - variable
 assign a; variable v;
 Select a such that v(v, _)
 none
 5000
-7 - 1.8 - Incorrect syn-assign - constant
+7 - 1.7 - Incorrect syn-assign - constant
 constant c; variable v;
 Select v such that c(v, _)
 none
 5000
-7 - 1.9 - Incorrect syn-assign - procedure
+7 - 1.8 - Incorrect syn-assign - procedure
 procedure p; variable v;
 Select v such that p(v, _)
 none
