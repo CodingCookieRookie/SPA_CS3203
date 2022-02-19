@@ -25,7 +25,7 @@ namespace UnitTesting
         // Pattern a(v, *) or Pattern a("x", *)
         // Pattern a(*, "_x_") 
         // Pattern a(*, *)	
-        TEST_METHOD(execute_lhsSynonymRhsIdentVarPartialPqlinsertPostFixInfoTest)
+        TEST_METHOD(execute_lhsSynonymRhsIdentVarPartialPqlinsertPostFixInfoTest1)
         {
             // assign1 = assign1 + x
             // Pattern a(v, "_xx_")
@@ -54,7 +54,7 @@ namespace UnitTesting
             Assert::AreEqual(expected, evTable.getTableString());
         }
 
-        TEST_METHOD(execute_lhsSynonymRhsIdentVarPartialPqlExpressionTypeTest)
+        TEST_METHOD(execute_lhsSynonymRhsIdentVarPartialPqlinsertPostFixInfoTest2)
         {
             // assign1 = assign1 + xx
             // Pattern a(v, "_x_")
@@ -73,14 +73,15 @@ namespace UnitTesting
             Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
             // Check PBK populated
-            std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
+
+            std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, ExpressionProcessor::convertInfixToPostFix("x"), true);
             Assert::AreEqual(size_t(0), allStmts.size());
 
             // 2. Main test:
- /*           EvaluatedTable evTable = instruction->execute();
-            Assert::AreEqual(size_t(0), evTable.getNumRow());*/
-            //std::string expected = "Table String: size: 0\n";
-            //Assert::AreEqual(expected, evTable.getTableString());
+            EvaluatedTable evTable = instruction->execute();
+            Assert::AreEqual(size_t(0), evTable.getNumRow());
+            std::string expected = "Table String: size: 2\nSynonym: a1 Values: \nSynonym: v Values: \n";
+            Assert::AreEqual(expected, evTable.getTableString());
         }
 
         TEST_METHOD(execute_lhsSynonymRhsIdentVar)
