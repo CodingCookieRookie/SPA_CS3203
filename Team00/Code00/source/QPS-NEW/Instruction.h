@@ -64,7 +64,6 @@ private:
 	}
 
 	EvaluatedTable handleGetAllVar(std::string synonym) {
-		// TODO: PKB to change getAllVars() to return VarIndex.
 		std::vector<VarIndex> results = Entity::getAllVars();
 		std::vector<int> resultsToInt;
 		for (VarIndex result : results) {
@@ -152,7 +151,7 @@ public:
 			evTable = handleGetAllVar(synonym);
 			break;
 		case PqlEntityType::Constant:
-			evTable = handleGetAllProc(synonym);
+			evTable = handleGetAllConst(synonym);
 			break;
 		case PqlEntityType::Procedure:
 			evTable = handleGetAllProc(synonym);
