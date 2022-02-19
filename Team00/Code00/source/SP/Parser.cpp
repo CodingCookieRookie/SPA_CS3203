@@ -99,22 +99,17 @@ StmtNode* Parser::matchStmt() {
 	StmtNode* stmtNode{};
 
 	std::string name = lexer.nextName();
-	if (lexer.match(EQUAL)) {
+	if (!name.empty() && lexer.match(EQUAL)) {
 		stmtNode = matchAssign(name);
-	}
-	else if (name == READ) {
+	} else if (name == READ) {
 		stmtNode = matchRead();
-	}
-	else if (name == PRINT) {
+	} else if (name == PRINT) {
 		stmtNode = matchPrint();
-	}
-	else if (name == WHILE) {
+	} else if (name == WHILE) {
 		stmtNode = matchWhile();
-	}
-	else if (name == IF) {
+	} else if (name == IF) {
 		stmtNode = matchIf();
-	}
-	else {
+	} else {
 		throw ParserException(ParserException::INVALID_STMT);
 	}
 
@@ -361,8 +356,7 @@ ExprNode* Parser::matchRelFactor() {
 	ExprNode* expr{};
 	try {
 		expr = matchExpr();
-	}
-	catch (ParserException& ex) {
+	} catch (ParserException& ex) {
 		std::string varName = lexer.nextName();
 		if (!varName.empty()) {
 			return new ExprNode(ExprNodeValueType::varName, varName);
