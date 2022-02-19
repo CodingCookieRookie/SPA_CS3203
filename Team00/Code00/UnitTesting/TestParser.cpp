@@ -1466,6 +1466,338 @@ public:
 		Assert::AreEqual(std::string("fl123ag"), readNode->getVarName());
 	}
 
+	TEST_METHOD(parse_matchWhile_condExprMissingLeftBracket_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  y + 2 > 5) "
+			"{ flag    = 123;   count =    someVar123	; "
+			" read flag ; print COUNT	; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_LEFT_BRACKET.c_str(), ex.what());
+		}
+
+		const char* source1 = "   procedure procedure123name \n "
+			"{ while  !(y + 2 > 5)) "
+			"{ flag    = 123;   count =    someVar123	; "
+			" read flag ; print COUNT	; } "
+			"} \n ";
+
+		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		Assert::ExpectException<ParserException>(wrapperFunc1);
+		try {
+			Parser::parse(source1);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_LEFT_BRACKET.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_condExprMissingRightBracket_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  (y + 2 > 5 "
+			"{ flag    = 123;   count =    someVar123	; "
+			" read flag ; print COUNT	; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_RIGHT_BRACKET.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_stmtLstMissingLeftCurly_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  (y + 2 > 5 )"
+			" flag    = 123;   count =    someVar123	; "
+			" read flag ; print COUNT	; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_LEFT_CURLY.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_stmtLstMissingRightCurly_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  (y + 2 > 5 )"
+			"{ flag    = 123;   count =    someVar123	; "
+			" read flag ; print COUNT	;  "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			// The last right curly (for procedure) is taken as the while's right curly
+			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_missingStmtLst_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  (y + 2 > 5 )"
+			"{  } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_invalidRelOp_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  (y + 2 & 5 )"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_invalidRelFactor_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  (y + 2 > ! )"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
+		}
+
+		const char* source1 = "   procedure procedure123name \n "
+			"{ while  (y + ! > 5 )"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		Assert::ExpectException<ParserException>(wrapperFunc1);
+		try {
+			Parser::parse(source1);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_missingLeftBracketAfterNotOp_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  (!y + 2 > 5) )"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_LEFT_BRACKET.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_missingCondExprAfterNotOp_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  (!( ) )"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_invalidCondExprAfterNotOp_parserExceptionThrown) {
+		const char* source1 = "   procedure procedure123name \n "
+			"{ while  (!( invalidCond ) )"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		Assert::ExpectException<ParserException>(wrapperFunc1);
+		try {
+			Parser::parse(source1);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_missingRightBracketAfterNotOpCondExpr_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  (!( x==1 )"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_RIGHT_BRACKET.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_invalidFirstCondExpr_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  (( x+1 ) && (y==0))"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_missingFirstCondExpr_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  ((  ) && (y==0))"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_firstCondExprMissingRightBracket_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  ((x==1   && (y==0))"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_RIGHT_BRACKET.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_missingLogOp_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  ((x==1)    (y==0))"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_COND_EXPR.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_invalidLogOp_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  ((x==1)  $  (y==0))"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_COND_EXPR.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_secondCondExprMissingLeftBracket_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  ((x==1)   || y==0))"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_LEFT_BRACKET.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_invalidSecondCondExpr_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  (( x==1 ) && (y*0))"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_missingSecondCondExpr_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  (( y==0 ) && ())"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchWhile_invalidCond_secondCondExprMissingRightBracket_parserExceptionThrown) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while  ((x==1 )  && (y==0	)"
+			"{ print x; } "
+			"} \n ";
+
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_RIGHT_BRACKET.c_str(), ex.what());
+		}
+	}
+
 	TEST_METHOD(parse_matchIf_oneRelExprCondExpr_success) {
 		const char* source = "   procedure procedure123name \n "
 			"{ if ( y == 5 * 2)  then "
