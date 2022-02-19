@@ -176,7 +176,7 @@ private:
 
 	EvaluatedTable handleModifiesS() {
 		// Modifies (a/r/s/a1, v) or Modifies(a/r/s/a1, "x") or Modifies (a/r/s/a1, _ ) 
-		// Modifies (1, v)	=> true or Modifies (1, _ ) (under statement)
+		// Modifies (1, v)	or Modifies(1, "x")  => true or Modifies (1, _ ) (under statement)
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
@@ -186,8 +186,10 @@ private:
 		std::vector<int> varIndices;
 		if (lhsRef.first == PqlReferenceType::synonym) {
 			if (rhsRef.first == PqlReferenceType::ident) {
-				VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
-				allStmts = Modifies::getStatements(varIndex);
+				if (Entity::containsVar(rhsRef.second)) {
+					VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
+					allStmts = Modifies::getStatements(varIndex);
+				}
 			}
 			else {
 				allStmts = std::get<0>(allStmtVarInfos);
@@ -200,9 +202,19 @@ private:
 		}
 		else if (lhsRef.first == PqlReferenceType::integer) {
 			int lhsRefValue = stoi(lhsRef.second);
-			StmtIndex stmtIndex = { lhsRefValue };
-			VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
-			return EvaluatedTable(Modifies::contains(stmtIndex, varIndex));
+			if (Entity::containsStmt(lhsRefValue)) {
+				StmtIndex stmtIndex = { lhsRefValue };
+				if (rhsRef.first == PqlReferenceType::ident) {
+					VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
+					return EvaluatedTable(Modifies::contains(stmtIndex, varIndex));
+				}
+				else {
+					return EvaluatedTable(true);
+				}
+			}
+			else {
+				return EvaluatedTable(false);
+			}
 		}
 		else {
 			std::cout << "Error in handleModifiesS\n";
@@ -221,8 +233,10 @@ private:
 		std::vector<int> varIndices;
 		if (lhsRef.first == PqlReferenceType::synonym) {
 			if (rhsRef.first == PqlReferenceType::ident) {
-				VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
-				allStmts = Modifies::getStatements(varIndex);
+				if (Entity::containsVar(rhsRef.second)) {
+					VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
+					allStmts = Modifies::getProcedures(varIndex);
+				}
 			}
 			else {
 				allStmts = std::get<0>(allProcVarInfos);
@@ -251,8 +265,10 @@ private:
 		std::vector<int> varIndices;
 		if (lhsRef.first == PqlReferenceType::synonym) {
 			if (rhsRef.first == PqlReferenceType::ident) {
-				VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
-				allStmts = Uses::getStatements(varIndex);
+				if (Entity::containsVar(rhsRef.second)) {
+					VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
+					allStmts = Uses::getStatements(varIndex);
+				}
 			}
 			else {
 				allStmts = std::get<0>(allStmtVarInfos);
@@ -265,9 +281,19 @@ private:
 		}
 		else if (lhsRef.first == PqlReferenceType::integer) {
 			int lhsRefValue = stoi(lhsRef.second);
-			StmtIndex stmtIndex = { lhsRefValue };
-			VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
-			return EvaluatedTable(Uses::contains(stmtIndex, varIndex));
+			if (Entity::containsStmt(lhsRefValue)) {
+				StmtIndex stmtIndex = { lhsRefValue };
+				if (rhsRef.first == PqlReferenceType::ident) {
+					VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
+					return EvaluatedTable(Uses::contains(stmtIndex, varIndex));
+				}
+				else {
+					return EvaluatedTable(true);
+				}
+			}
+			else {
+				return EvaluatedTable(false);
+			}
 		}
 		else {
 			std::cout << "Error in handleModifiesS\n";
@@ -286,8 +312,10 @@ private:
 		std::vector<int> varIndices;
 		if (lhsRef.first == PqlReferenceType::synonym) {
 			if (rhsRef.first == PqlReferenceType::ident) {
-				VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
-				allStmts = Uses::getStatements(varIndex);
+				if (Entity::containsVar(rhsRef.second)) {
+					VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
+					allStmts = Uses::getProcedures(varIndex);
+				}
 			}
 			else {
 				allStmts = std::get<0>(allProcVarInfos);
@@ -713,35 +741,29 @@ private:
 	PqlReference entRef;
 	PqlExpression expressionSpec;
 
-	bool isNumber(const std::string& s)
-	{
-		for (char const& ch : s) {
-			if (std::isdigit(ch) == 0)
-				return false;
-		}
-		return true;
-	}
+	//bool isNumber(const std::string& s)
+	//{
+	//	for (char const& ch : s) {
+	//		if (std::isdigit(ch) == 0)
+	//			return false;
+	//	}
+	//	return true;
+	//}
 
 public:
 	PatternInstruction::PatternInstruction(std::string synonym, PqlReference entRef, PqlExpression expressionSpec) : synonym(synonym), entRef(entRef), expressionSpec(expressionSpec) {}
 
 	EvaluatedTable handlePatterns() {
-		// Pattern a(v, "_x_") or Pattern a(v, "_123_") or Pattern a("x", "_x_")
-		// Pattern a(v, *) or Pattern a("x", *)
-		// Pattern a(*, "_x_") 
-		// Pattern a(*, *)		
+		// Pattern a(v, "_x_") or Pattern a(v, "_123_") or Pattern a(v, *)
+		// Pattern a("x", "_x_") or Pattern a("x", *)
+		// Pattern a(*, "_x_") or Pattern a(*, *)
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(synonym, PqlEntityType::Assign));
-		if (isNumber(entRef.second)) {
-			PQLentities.insert(std::pair(entRef.second, PqlEntityType::Constant));
-		}
-		else {
-			PQLentities.insert(std::pair(entRef.second, PqlEntityType::Variable));
-		}
+		PQLentities.insert(std::pair(entRef.second, PqlEntityType::Variable));
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo;
 		if (expressionSpec.first == PqlExpressionType::full) {
-			allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, false);
+			allPatternStmtInfo = Pattern::getStmtsFromPattern(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), false);
 		}
 		else if (expressionSpec.first == PqlExpressionType::partial) {
 			// currently only has this for iteration 1
