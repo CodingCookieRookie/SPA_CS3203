@@ -323,6 +323,66 @@ stmt s1, s2;
 Select such that Follows*(s1, s2)
 none
 5000
+3 - 18.1 - Missing stmtRef - Modifies
+variable v;
+Select v such that Modifies(, v);
+none
+5000
+3 - 18.2 - Missing stmtRef - Uses
+variable v;
+Select v such that Uses(, v);
+none
+5000
+3 - 18.3 - Missing stmtRef - Follows (First arg)
+stmt s;
+Select v such that Follows(, s);
+none
+5000
+3 - 18.4 - Missing stmtRef - Follows (Second arg)
+stmt s;
+Select v such that Follows(s, );
+none
+5000
+3 - 18.5 - Missing stmtRef - Follows* (First arg)
+stmt s;
+Select v such that Follows*(, s);
+none
+5000
+3 - 18.6 - Missing stmtRef - Follows* (Second arg)
+stmt s;
+Select v such that Follows*(s, );
+none
+5000
+3 - 18.7 - Missing stmtRef - Parent (First arg)
+stmt s;
+Select v such that Parent(, s);
+none
+5000
+3 - 18.8 - Missing stmtRef - Parent (Second arg)
+stmt s;
+Select v such that Parent(s, );
+none
+5000
+3 - 18.9 - Missing stmtRef - Parent* (First arg)
+stmt s;
+Select v such that Parent*(, s);
+none
+5000
+3 - 18.10 - Missing stmtRef - Parent* (Second arg)
+stmt s;
+Select v such that Parent*(s, );
+none
+5000
+3 - 19.1 - Missing entRef - Modifies
+stmt s;
+Select s such that Modifies(s, )
+none
+5000
+3 - 19.2 - Missing entRef - Uses
+stmt s;
+Select s such that Uses(s, )
+none
+5000
 3 - 1 - Incorrect delimiter between synonym and pattern clause
 assign a; variable v;
 Select a;pattern a(v, _)
