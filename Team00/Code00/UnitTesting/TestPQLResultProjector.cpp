@@ -8,7 +8,6 @@
 #include <PKB/Entity.h>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-using namespace std;
 
 namespace UnitTesting
 {

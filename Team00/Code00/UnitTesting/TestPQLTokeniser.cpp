@@ -6,7 +6,6 @@
 #include "QPS-NEW/PQLDEToken.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-using namespace std;
 
 namespace UnitTesting
 {
@@ -34,7 +33,6 @@ namespace UnitTesting
 			expectedTokens.push_back(token1);
 			expectedTokens.push_back(token2);
 			for (size_t i = 0; i < actualTokens.size(); i++) {
-				
 				Assert::AreEqual(expectedTokens.at(i).getPQLDETokenString(), actualTokens.at(i).getPQLDETokenString());
 			}
 			clearPQLDETokens();
@@ -61,7 +59,6 @@ namespace UnitTesting
 			expectedTokens.push_back(token1);
 			expectedTokens.push_back(token2);
 			for (size_t i = 0; i < actualTokens.size(); i++) {
-
 				Assert::AreEqual(expectedTokens.at(i).getPQLDETokenString(), actualTokens.at(i).getPQLDETokenString());
 			}
 			clearPQLDETokens();
@@ -87,7 +84,6 @@ namespace UnitTesting
 			expectedTokens.push_back(token1);
 			expectedTokens.push_back(token2);
 			for (size_t i = 0; i < actualTokens.size(); i++) {
-
 				Assert::AreEqual(expectedTokens.at(i).getPQLDETokenString(), actualTokens.at(i).getPQLDETokenString());
 			}
 			clearPQLDETokens();
@@ -109,6 +105,5 @@ namespace UnitTesting
 			clearPQLDETokens();
 			clearSynonyms();
 		}*/
-
 	};
 }
