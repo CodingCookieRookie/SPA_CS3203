@@ -7,40 +7,40 @@
 
 class ParsedQuery {
 private:
-	std::unordered_map<std::string, PqlEntityType> declarations;
-	std::vector<std::string> columns;
-	std::vector<ParsedRelationship> relationships;
-	std::vector<ParsedPattern> patterns;
+    std::unordered_map<std::string, PqlEntityType> declarations;
+    std::vector<std::string> columns;
+    std::vector<ParsedRelationship> relationships;
+    std::vector<ParsedPattern> patterns;
 
-	bool isDeclared(const std::string& synonym);
-	PqlEntityType getType(std::string& synonym);
+    bool isDeclared(const std::string& synonym);
+    PqlEntityType getType(std::string& synonym);
 
-	bool validatateStmtRef(PqlReference ref);
-	bool validatateEntRef(PqlReference ref);
+    bool validateStmtRef(PqlReference ref);
+    bool validateEntRef(PqlReference ref);
 
-	void populateDeclarations(
-		const std::vector<PQL_VARIABLE>& allDeclarations);
-	void populateColumns(
-		const std::vector<std::string>& allColumns);
-	void populateRelationships(
-		const std::vector<ParsedRelationship>& allRelationships);
-	void populatePatterns(
-		const std::vector<ParsedPattern>& allPatterns);
+    void populateDeclarations(
+        const std::vector<PQL_VARIABLE>& allDeclarations);
+    void populateColumns(
+        const std::vector<std::string>& allColumns);
+    void populateRelationships(
+        const std::vector<ParsedRelationship>& allRelationships);
+    void populatePatterns(
+        const std::vector<ParsedPattern>& allPatterns);
 
-	bool isStmtSynonym(PqlReference ref);
-	bool isVarSynonym(PqlReference ref);
-	bool isProcSynonym(PqlReference ref);
+    bool isStmtSynonym(PqlReference ref);
+    bool isVarSynonym(PqlReference ref);
+    bool isProcSynonym(PqlReference ref);
 public:
 
-	/* Constructor for a ParsedQuery object */
-	ParsedQuery(const std::vector<PQL_VARIABLE>& allDeclarations,
-		const std::vector<std::string>& allColumns,
-		const std::vector<ParsedRelationship>& allRelationships,
-		const std::vector<ParsedPattern>& allPatterns);
+    /* Constructor for a ParsedQuery object */
+    ParsedQuery(const std::vector<PQL_VARIABLE>& allDeclarations,
+        const std::vector<std::string>& allColumns,
+        const std::vector<ParsedRelationship>& allRelationships,
+        const std::vector<ParsedPattern>& allPatterns);
 
 
-	std::unordered_map<std::string, PqlEntityType> getDeclarations();
-	std::vector<std::string> getColumns();
-	std::vector<ParsedRelationship> getRelationships();
-	std::vector<ParsedPattern> getPatterns();
+    std::unordered_map<std::string, PqlEntityType> getDeclarations();
+    std::vector<std::string> getColumns();
+    std::vector<ParsedRelationship> getRelationships();
+    std::vector<ParsedPattern> getPatterns();
 };

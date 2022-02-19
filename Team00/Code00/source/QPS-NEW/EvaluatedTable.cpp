@@ -2,7 +2,6 @@
 
 EvaluatedTable EvaluatedTable::blockNestedJoin(EvaluatedTable& otherTable,
 	std::unordered_set<std::string>& commonEntities) {
-
 	std::unordered_map<std::string, std::vector<int>> nextTable;
 	std::unordered_map<std::string, PqlEntityType> nextEntities;
 	int nextNumRow = 0;

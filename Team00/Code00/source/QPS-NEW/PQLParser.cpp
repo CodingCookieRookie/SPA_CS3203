@@ -187,6 +187,9 @@ PqlExpression PQLParser::parseExpression() {
 	}
 	std::string factor = lexer.nextName();
 	if (factor.empty()) {
+		factor = lexer.nextInteger();
+	}
+	if (factor.empty()) {
 		throw QPSException(QPSException::PARSER_ERROR);
 	}
 	if (!lexer.match("\"")) {
