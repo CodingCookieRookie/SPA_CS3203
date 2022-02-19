@@ -736,11 +736,11 @@ public:
 		PQLentities.insert(std::pair(entRef.second, PqlEntityType::Variable));
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo;
 		if (expressionSpec.first == PqlExpressionType::full) {
-			allPatternStmtInfo = Pattern::getStmtsFromPattern(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), false);
+			allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, false);
 		}
 		else if (expressionSpec.first == PqlExpressionType::partial) {
 			// currently only has this for iteration 1
-			allPatternStmtInfo = Pattern::getStmtsFromPattern(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
+			allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, true);
 		}
 		else if (expressionSpec.first == PqlExpressionType::wildcard) {
 			allPatternStmtInfo = Pattern::getAllAssignStmtVarsPatternInfo();
