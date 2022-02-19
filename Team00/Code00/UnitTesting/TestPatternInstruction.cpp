@@ -25,10 +25,69 @@ namespace UnitTesting
         // Pattern a(v, *) or Pattern a("x", *)
         // Pattern a(*, "_x_") 
         // Pattern a(*, *)	
+        TEST_METHOD(execute_lhsSynonymRhsConst_ConstOutOfBoundsEvTableFalse)
+        {
+
+            // assign1 = assign1 + 234
+            // Pattern a1(v, "_12345_")
+            // 1. Setup:
+            std::string synonym = "a1";
+            PqlReference entRef = std::make_pair(PqlReferenceType::synonym, "v");
+            PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, "12345");
+            Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
+
+            // PKB inserts pattern
+            Entity::insertStmt(StatementType::printType);
+            StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+            Entity::insertVar("a");
+            VarIndex varIndex = Entity::insertVar("assign1");
+            std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1 + 234");
+            Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
+
+            //// Check PBK populated
+            std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
+            Assert::AreEqual(size_t(0), allStmts.size());
+
+            // 2. Main test:
+            EvaluatedTable evTable = instruction->execute();
+            Assert::AreEqual(size_t(0), evTable.getNumRow());
+            std::string expected = "Table String: size: 2\nSynonym: a1 Values: \nSynonym: v Values: \n";   // for this iteration we leave empty vectors still (does not affect end res)
+            Assert::AreEqual(expected, evTable.getTableString());
+        }
+
+        TEST_METHOD(execute_lhsIdentRhsIdent_LeftIdentOutOfBoundsEvTableFalse)
+        {
+
+            // assign1 = assign1 + x
+            // Pattern a1("v", "_xx_")
+            // 1. Setup:
+            std::string synonym = "a1";
+            PqlReference entRef = std::make_pair(PqlReferenceType::ident, "v");
+            PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, "xx");
+            Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
+
+            // PKB inserts pattern
+            Entity::insertStmt(StatementType::printType);
+            StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+            Entity::insertVar("a");
+            VarIndex varIndex = Entity::insertVar("assign1");
+            std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1 + x");
+            Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
+
+            // Check PBK populated
+            std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
+            Assert::AreEqual(size_t(0), allStmts.size());
+
+            // 2. Main test:
+            EvaluatedTable evTable = instruction->execute();
+            Assert::AreEqual(size_t(0), evTable.getNumRow());
+            std::string expected = "Table String: size: 0\n";   // for this iteration we leave empty vectors still (does not affect end res)
+            Assert::AreEqual(expected, evTable.getTableString());
+        }
         TEST_METHOD(execute_lhsSynonymRhsIdentVarPartialPqlinsertPostFixInfoTest1)
         {
             // assign1 = assign1 + x
-            // Pattern a(v, "_xx_")
+            // Pattern a1(v, "_xx_")
             // 1. Setup:
             std::string synonym = "a1";
             PqlReference entRef = std::make_pair(PqlReferenceType::synonym, "v");
@@ -44,7 +103,7 @@ namespace UnitTesting
             Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
             // Check PBK populated
-            std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
+            std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
             Assert::AreEqual(size_t(0), allStmts.size());
 
             // 2. Main test:
@@ -57,7 +116,7 @@ namespace UnitTesting
         TEST_METHOD(execute_lhsSynonymRhsIdentVarPartialPqlinsertPostFixInfoTest2)
         {
             // assign1 = assign1 + xx
-            // Pattern a(v, "_x_")
+            // Pattern a1(v, "_x_")
             // 1. Setup:
             std::string synonym = "a1";
             PqlReference entRef = std::make_pair(PqlReferenceType::synonym, "v");
@@ -87,7 +146,7 @@ namespace UnitTesting
         TEST_METHOD(execute_lhsSynonymRhsIdentVar)
         {
             // assign1 = assign1 + x
-            // Pattern a(v, "_x_")
+            // Pattern a1(v, "_x_")
             // 1. Setup:
             std::string synonym = "a1";
             PqlReference entRef = std::make_pair(PqlReferenceType::synonym, "v");
@@ -103,7 +162,7 @@ namespace UnitTesting
             Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
             
             // Check PBK populated
-            std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
+            std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
             Assert::AreEqual(size_t(1), allStmts.size());
 
             // 2. Main test:
@@ -115,7 +174,7 @@ namespace UnitTesting
 
         TEST_METHOD(execute_lhsSynonymRhsIdentConstant)
         {   // assign1 = assign1 + 123
-            // Pattern a(v, "_123_")
+            // Pattern a1(v, "_123_")
             // 1. Setup:
             std::string synonym = "a1";
             PqlReference entRef = std::make_pair(PqlReferenceType::synonym, "v");
@@ -131,7 +190,7 @@ namespace UnitTesting
             Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
             
             // Check PBK populated
-            std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
+            std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
             Assert::AreEqual(size_t(1), allStmts.size());
 
             // 2. Main test:
@@ -144,7 +203,7 @@ namespace UnitTesting
         TEST_METHOD(execute_lhsIdentRhsIdentSynonym)
         {
             // assign1 = assign1 + x
-            // Pattern a("assign1", "_x_")
+            // Pattern a1("assign1", "_x_")
             // 1. Setup:
             std::string synonym = "a1";
             PqlReference entRef = std::make_pair(PqlReferenceType::ident, "assign1");
@@ -160,7 +219,7 @@ namespace UnitTesting
             Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
             // Check PBK populated
-            std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
+            std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
             Assert::AreEqual(size_t(1), allStmts.size());
             
             // 2. Main test:
@@ -173,7 +232,7 @@ namespace UnitTesting
         TEST_METHOD(execute_lhsIdentRhsIdentConstant)
         {
             // assign1 = assign1 + 123
-            // Pattern a("assign1", "_123_")
+            // Pattern a1("assign1", "_123_")
             // 1. Setup:
             std::string synonym = "a1";
             PqlReference entRef = std::make_pair(PqlReferenceType::ident, "assign1");
@@ -190,7 +249,7 @@ namespace UnitTesting
             Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
             // Check PBK populated
-            std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
+            std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
             Assert::AreEqual(size_t(1), allStmts.size());
             
             // 2. Main test:
@@ -203,7 +262,7 @@ namespace UnitTesting
         TEST_METHOD(execute_lhsSynonymRhsWildCard)
         {
             // assign1 = assign1 + x
-            // Pattern a(v, *)
+            // Pattern a1(v, *)
             // 1. Setup:
             std::string synonym = "a1";
             PqlReference entRef = std::make_pair(PqlReferenceType::synonym, "v");
@@ -218,7 +277,7 @@ namespace UnitTesting
             Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
             // Check PBK populated
-            std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, true);
+            std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
             Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
             
             // 2. Main test:
@@ -231,7 +290,7 @@ namespace UnitTesting
         TEST_METHOD(execute_lhsIdentRhsWildCard)
         {
             // assign1 = assign1 + x
-            // Pattern a("x", *)
+            // Pattern a1("x", *)
             // 1. Setup:
             std::string synonym = "a1";
             PqlReference entRef = std::make_pair(PqlReferenceType::ident, "assign1");
@@ -246,7 +305,7 @@ namespace UnitTesting
             Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
             // Check PBK populated
-            std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, true);
+            std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
             Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
             
             // 2. Main test:
@@ -259,7 +318,7 @@ namespace UnitTesting
         TEST_METHOD(execute_lhsWildCardRhsIdent)
         {
             // assign1 = assign1 + x
-            // Pattern a(*, "_x_") 
+            // Pattern a1(*, "_x_") 
             // 1. Setup:
             std::string synonym = "a1";
             PqlReference entRef = std::make_pair(PqlReferenceType::wildcard, "");
@@ -274,7 +333,7 @@ namespace UnitTesting
             Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
             // Check PBK populated
-            std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, true);
+            std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
             Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
             
             // 2. Main test:
@@ -287,7 +346,7 @@ namespace UnitTesting
         TEST_METHOD(execute_lhsWildCardRhsWildCard)
         {
             // assign1 = assign1 + x
-            // Pattern a(*, *)	
+            // Pattern a1(*, *)	
             // 1. Setup:
             std::string synonym = "a1";
             PqlReference entRef = std::make_pair(PqlReferenceType::wildcard, "");
@@ -302,7 +361,7 @@ namespace UnitTesting
             Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
             // Check PBK populated
-            std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, true);
+            std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
             Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
             
             // 2. Main test:

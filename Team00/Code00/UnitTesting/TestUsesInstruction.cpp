@@ -213,6 +213,58 @@ namespace UnitTesting
             Assert::AreEqual(expected, evTable.getTableString());
         }
 
+        TEST_METHOD(execute_lhsConstRhsSynonym_ConstOutOfBoundsEvTableFalse)
+        {
+
+            // 1. Setup:
+            PqlReference lhsRef, rhsRef;
+            lhsRef = std::make_pair(PqlReferenceType::integer, "50");
+            rhsRef = std::make_pair(PqlReferenceType::synonym, "a1");
+            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
+
+            // PKB inserts modifies
+            Entity::insertStmt(StatementType::printType);
+            StmtIndex stmt = Entity::insertStmt(StatementType::readType);
+            Entity::insertVar("randomVar");
+            VarIndex varIndex = Entity::insertVar("x");
+            VarIndex varIndex2 = Entity::insertVar("y");
+            Uses::insert(stmt, varIndex);
+            Uses::insert(stmt, varIndex2);
+
+            // 2. Main test:
+            EvaluatedTable evTable = instruction->execute();
+            Assert::AreEqual(false, evTable.getEvResult());
+            Assert::AreEqual(size_t(0), evTable.getNumRow());
+            std::string expected = "Table String: size: 0\n";
+            Assert::AreEqual(expected, evTable.getTableString());
+        }
+
+        TEST_METHOD(execute_lhsConstRhsSynonym_VarOutOfBoundsEvTableFalse)
+        {
+
+            // 1. Setup:
+            PqlReference lhsRef, rhsRef;
+            lhsRef = std::make_pair(PqlReferenceType::integer, "2");
+            rhsRef = std::make_pair(PqlReferenceType::ident, "fhg");
+            Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
+
+            // PKB inserts modifies
+            Entity::insertStmt(StatementType::printType);
+            StmtIndex stmt = Entity::insertStmt(StatementType::readType);
+            Entity::insertVar("randomVar");
+            VarIndex varIndex = Entity::insertVar("x");
+            VarIndex varIndex2 = Entity::insertVar("y");
+            Uses::insert(stmt, varIndex);
+            Uses::insert(stmt, varIndex2);
+
+            // 2. Main test:
+            EvaluatedTable evTable = instruction->execute();
+            Assert::AreEqual(false, evTable.getEvResult());
+            Assert::AreEqual(size_t(0), evTable.getNumRow());
+            std::string expected = "Table String: size: 0\n";
+            Assert::AreEqual(expected, evTable.getTableString());
+        }
+
         TEST_METHOD(execute_lhsConstRhsWildcard_EvTableTrue)
         {
 
@@ -233,6 +285,7 @@ namespace UnitTesting
 
             // 2. Main test:
             EvaluatedTable evTable = instruction->execute();
+            Assert::AreEqual(true, evTable.getEvResult());
             Assert::AreEqual(size_t(0), evTable.getNumRow());
             std::string expected = "Table String: size: 0\n";
             Assert::AreEqual(expected, evTable.getTableString());
@@ -256,6 +309,7 @@ namespace UnitTesting
 
             // 2. Main test:
             EvaluatedTable evTable = instruction->execute();
+            Assert::AreEqual(false, evTable.getEvResult());
             Assert::AreEqual(size_t(0), evTable.getNumRow());
             std::string expected = "Table String: size: 0\n";
             Assert::AreEqual(expected, evTable.getTableString());

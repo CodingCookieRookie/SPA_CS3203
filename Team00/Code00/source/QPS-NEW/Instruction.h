@@ -209,7 +209,9 @@ private:
 					return EvaluatedTable(Modifies::contains(stmtIndex, varIndex));
 				}
 				else {
-					return EvaluatedTable(true);
+					// check for Modifies(2, v), if stmt with index 2 modifies any variable 
+					std::vector<int> variables = Modifies::getVariables(stmtIndex);
+					return EvaluatedTable(variables.size() > 0);
 				}
 			}
 			else {
@@ -288,7 +290,9 @@ private:
 					return EvaluatedTable(Uses::contains(stmtIndex, varIndex));
 				}
 				else {
-					return EvaluatedTable(true);
+					// check for Uses(2, v), if stmt with index 2 modifies any variable 
+					std::vector<int> variables = Uses::getVariables(stmtIndex);
+					return EvaluatedTable(variables.size() > 0);
 				}
 			}
 			else {
@@ -791,6 +795,7 @@ public:
 				allStmts = Pattern::getStmtsFromVarPattern(varIndex, ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
 				PQLmap[synonym] = allStmts;
 			} 
+			// should not return Evaluated(False)
 		}
 		else if (entRef.first == PqlReferenceType::wildcard) {
 			if (expressionSpec.first == PqlExpressionType::wildcard) {
