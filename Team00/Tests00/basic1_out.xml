@@ -1,68 +1,63 @@
 <?xml-stylesheet type="text/xsl" href="analysis.xsl"?>
 <test_results>
 <info>
-<<<<<<< HEAD
 <name>Team00</name><parsing_time_taken>4.000000</parsing_time_taken>
-=======
-<name>Team00</name><parsing_time_taken>1.000000</parsing_time_taken>
->>>>>>> master
 </info>
 <queries>
 <query>
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="comment">1</id><querystr><![CDATA[stmt s; Select s]]></querystr>
-<<<<<<< HEAD
 <stuans>1,2,3,4,5,6,7,8,9,10</stuans>
 <correct>1,2,3,4,5,6,7,8,9,10</correct>
-<time_taken>5.000000</time_taken>
+<time_taken>4.000000</time_taken>
 <passed/>
 </query>
 <query>
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="comment">2</id><querystr><![CDATA[read r; Select r]]></querystr>
 <stuans>4,5</stuans>
 <correct>4,5</correct>
-<time_taken>4.000000</time_taken>
+<time_taken>8.000000</time_taken>
 <passed/>
 </query>
 <query>
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="comment">3</id><querystr><![CDATA[print pn; Select pn]]></querystr>
 <stuans>2,9</stuans>
 <correct>2,9</correct>
-<time_taken>6.000000</time_taken>
+<time_taken>4.000000</time_taken>
 <passed/>
 </query>
 <query>
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="comment">4</id><querystr><![CDATA[while w; Select w]]></querystr>
 <stuans>6</stuans>
 <correct>6</correct>
-<time_taken>3.000000</time_taken>
+<time_taken>5.000000</time_taken>
 <passed/>
 </query>
 <query>
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="comment">5</id><querystr><![CDATA[if ifs; Select ifs]]></querystr>
 <stuans>1,8</stuans>
 <correct>1,8</correct>
-<time_taken>9.000000</time_taken>
+<time_taken>4.000000</time_taken>
 <passed/>
 </query>
 <query>
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="comment">6</id><querystr><![CDATA[assign a; Select a]]></querystr>
 <stuans>3,7,10</stuans>
 <correct>3,7,10</correct>
-<time_taken>4.000000</time_taken>
+<time_taken>5.000000</time_taken>
 <passed/>
 </query>
 <query>
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="comment">7</id><querystr><![CDATA[variable v; Select v]]></querystr>
 <stuans>x1,if,V1,V2,x,while,y</stuans>
 <correct>if,V1,V2,x1,while,x,y</correct>
-<time_taken>5.000000</time_taken>
+<time_taken>4.000000</time_taken>
 <passed/>
 </query>
 <query>
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="comment">8</id><querystr><![CDATA[constant c; Select c]]></querystr>
 <stuans>aRelativelyLongProcedureNameThatIHopeIsLongEnough</stuans>
 <correct>10,35,2,1,0,99,12</correct>
-<time_taken>4.000000</time_taken>
+<time_taken>6.000000</time_taken>
 <failed>
 <missing>0,1,10,12,2,35,99</missing>
 <additional>aRelativelyLongProcedureNameThatIHopeIsLongEnough</additional>
@@ -78,38 +73,29 @@
 <id ReturnTuple="1" CondNum="1" RelNum="0" comment="comment">9</id><querystr><![CDATA[procedure p; Select p]]></querystr>
 <stuans>aRelativelyLongProcedureNameThatIHopeIsLongEnough</stuans>
 <correct>aRelativelyLongProcedureNameThatIHopeIsLongEnough</correct>
-<time_taken>3.000000</time_taken>
+<time_taken>4.000000</time_taken>
 <passed/>
 </query>
 <query>
 <id ReturnTuple="1" UnnamedVar="2" Pattern="1" CondNum="4" RelNum="0" comment="comment">1</id><querystr><![CDATA[assign a; variable v; Select a pattern a(_, _)]]></querystr>
-<stuans>3,3,7,7aRelativelyLongProcedureNameThatIHopeIsLongEnough,10,10</stuans>
+<stuans>3,7,10</stuans>
 <correct>3,7,10</correct>
-<time_taken>5.000000</time_taken>
-<failed>
-<missing></missing>
-<additional>7aRelativelyLongProcedureNameThatIHopeIsLongEnough</additional>
-<summary>
-<expected>3</expected>
-<matched>3</matched>
-<missing>0</missing>
-<additional>1</additional>
-</summary>
-</failed>
+<time_taken>7.000000</time_taken>
+<passed/>
 </query>
 <query>
 <id ReturnTuple="1" UnnamedVar="2" Pattern="1" CondNum="4" RelNum="0" comment="comment">2</id><querystr><![CDATA[assign a; variable v; Select a pattern a(_, _"V1"_)]]></querystr>
-<stuans>7,7aRelativelyLongProcedureNameThatIHopeIsLongEnough,10,10</stuans>
+<stuans></stuans>
 <correct>7,10</correct>
-<time_taken>5.000000</time_taken>
+<time_taken>6.000000</time_taken>
 <failed>
-<missing></missing>
-<additional>7aRelativelyLongProcedureNameThatIHopeIsLongEnough</additional>
+<missing>10,7</missing>
+<additional></additional>
 <summary>
 <expected>2</expected>
-<matched>2</matched>
-<missing>0</missing>
-<additional>1</additional>
+<matched>0</matched>
+<missing>2</missing>
+<additional>0</additional>
 </summary>
 </failed>
 </query>
@@ -117,7 +103,7 @@
 <id ReturnTuple="1" UnnamedVar="2" Pattern="1" CondNum="4" RelNum="0" comment="comment">3</id><querystr><![CDATA[assign a; variable v; Select a pattern a(_, _"2"_)]]></querystr>
 <stuans></stuans>
 <correct>3</correct>
-<time_taken>4.000000</time_taken>
+<time_taken>5.000000</time_taken>
 <failed>
 <missing>3</missing>
 <additional></additional>
@@ -131,25 +117,16 @@
 </query>
 <query>
 <id ReturnTuple="1" UnnamedVar="1" Pattern="1" CondNum="3" RelNum="0" comment="comment">4</id><querystr><![CDATA[assign a; variable v; Select a pattern a(v, _)]]></querystr>
-<stuans></stuans>
+<stuans>3,7,10</stuans>
 <correct>3,7,10</correct>
-<time_taken>4.000000</time_taken>
-<failed>
-<missing>10,3,7</missing>
-<additional></additional>
-<summary>
-<expected>3</expected>
-<matched>0</matched>
-<missing>3</missing>
-<additional>0</additional>
-</summary>
-</failed>
+<time_taken>5.000000</time_taken>
+<passed/>
 </query>
 <query>
 <id ReturnTuple="1" UnnamedVar="1" Pattern="1" CondNum="3" RelNum="0" comment="comment">5</id><querystr><![CDATA[assign a; variable v; Select a pattern a(v, _"x1"_)]]></querystr>
 <stuans></stuans>
 <correct>10</correct>
-<time_taken>11.000000</time_taken>
+<time_taken>5.000000</time_taken>
 <failed>
 <missing>10</missing>
 <additional></additional>
@@ -165,7 +142,7 @@
 <id ReturnTuple="1" UnnamedVar="1" Pattern="1" CondNum="3" RelNum="0" comment="comment">6</id><querystr><![CDATA[assign a; variable v; Select a pattern a(v, _"0"_)]]></querystr>
 <stuans></stuans>
 <correct>7</correct>
-<time_taken>4.000000</time_taken>
+<time_taken>5.000000</time_taken>
 <failed>
 <missing>7</missing>
 <additional></additional>
@@ -177,12 +154,5 @@
 </summary>
 </failed>
 </query>
-=======
-<stuans>1,2</stuans>
-<correct>1,2</correct>
-<time_taken>17.000000</time_taken>
-<passed/>
-</query>
->>>>>>> master
 </queries>
 </test_results>
