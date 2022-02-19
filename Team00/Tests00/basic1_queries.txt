@@ -403,3 +403,18 @@ assign a, a1; variable v, v1; stmt s, s1, s2; read r; print pn; while w; if ifs;
 Select p such that Parent*(ifs, 10)
 aRelativelyLongProcedureNameThatIHopeIsLongEnough
 5000
+1 - comment
+assign a; variable v;
+Select a pattern a(_, _)
+3, 7, 10
+5000
+2 - comment
+assign a; variable v;
+Select a pattern a(_, _"x1"_)
+10
+5000
+3 - comment
+assign a; variable v;
+Select a pattern a(_, _"2"_)
+3
+5000
