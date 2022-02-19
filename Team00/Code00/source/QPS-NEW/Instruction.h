@@ -2,7 +2,6 @@
 #include <vector>
 #include <unordered_map>
 
-#include <iostream>
 #include "QPSCommons.h"
 #include "../Exception/SPAException.h"
 #include "EvaluatedTable.h"

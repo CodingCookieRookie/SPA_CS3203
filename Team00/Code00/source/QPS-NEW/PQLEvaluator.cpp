@@ -6,7 +6,6 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
-#include <iostream>
 
 PQLEvaluator::PQLEvaluator(ParsedQuery parsedQuery) :
 	parsedQuery(parsedQuery) {};

@@ -6,6 +6,7 @@
 #include "ParsedQuery.h"
 #include "EvaluatedTable.h"
 #include "Instruction.h"
+#include "../Exception/SPAException.h"
 
 class PQLEvaluator {
 private:

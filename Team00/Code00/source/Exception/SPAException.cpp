@@ -39,10 +39,10 @@ QPSException::QPSException(const std::string& reason) : SPAException(reason) {}
 
 /* EvaluatorException */
 
-const std::string PATTERN_ERROR = "Invalid expression type for Pattern";
-const std::string MODIFIES_S_ERROR = "Invalid handling of ModifiesS query";
-const std::string MODIFIES_P_ERROR = "Invalid handling of ModifiesP query";
-const std::string USES_S_ERROR = "Invalid handling of UsesS query";
-const std::string USES_P_ERROR = "Invalid handling of UsesP query";
+const std::string EvaluatorException::PATTERN_ERROR = "Invalid expression type for Pattern";
+const std::string EvaluatorException::MODIFIES_S_ERROR = "Invalid handling of ModifiesS query";
+const std::string EvaluatorException::MODIFIES_P_ERROR = "Invalid handling of ModifiesP query";
+const std::string EvaluatorException::USES_S_ERROR = "Invalid handling of UsesS query";
+const std::string EvaluatorException::USES_P_ERROR = "Invalid handling of UsesP query";
 
 EvaluatorException::EvaluatorException(const std::string& reason) : SPAException(reason) {}

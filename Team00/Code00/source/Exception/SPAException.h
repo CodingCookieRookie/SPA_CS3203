@@ -36,6 +36,7 @@ public:
 	static const std::string MISSING_SEMICOLON;
 	static const std::string MISSING_WHITESPACE;
 	static const std::string MISSING_VAR_NAME;
+
 	ParserException(const std::string& reason);
 };
 
