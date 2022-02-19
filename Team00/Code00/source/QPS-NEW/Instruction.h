@@ -286,14 +286,13 @@ private:
 		if (lhsRef.first == PqlReferenceType::integer && rhsRef.first == PqlReferenceType::integer) {
 			
 			StmtIndex lhsStmtIndex, rhsStmtIndex;
-			for (StmtIndex stmt : stmts) {
-				if (stmt.getIndex() == stoi(lhsRef.second)) {
-					lhsStmtIndex = stmt;
-				}
-				if (stmt.getIndex() == stoi(rhsRef.second)) {
-					rhsStmtIndex = stmt;
-				}
+			int lhsRefValue = stoi(lhsRef.second);
+			int rhsRefValue = stoi(rhsRef.second);
+			if (Entity::containsStmt(lhsRefValue) && Entity::containsStmt(rhsRefValue)) {
+				lhsStmtIndex = StmtIndex(lhsRefValue);
+				rhsStmtIndex = StmtIndex(rhsRefValue);
 			}
+
 			bool evResult = Follows::containsSuccessor(lhsStmtIndex, rhsStmtIndex);
 			return EvaluatedTable(evResult); //e.g evResult == true, if 6 is followed by 7
 			
@@ -303,10 +302,12 @@ private:
 		{
 			std::vector<int> results;
 			int lhsRefValue = stoi(lhsRef.second); // might throw error if string value can't be converted to int
-			StmtIndex lhsStmt = StmtIndex(lhsRefValue);
-			for (StmtIndex stmt : stmts) {
-				if (Follows::containsSuccessor(lhsStmt, stmt)) {
-					results.emplace_back(stmt.getIndex()); // e.g {7} because 6 is followed by 7
+			if (Entity::containsStmt(lhsRefValue)) { // checks if stmt 6 exists, if not, return empty results
+				StmtIndex lhsStmt = StmtIndex(lhsRefValue);
+				for (StmtIndex stmt : stmts) {
+					if (Follows::containsSuccessor(lhsStmt, stmt)) {
+						results.emplace_back(stmt.getIndex()); // e.g {7} because 6 is followed by 7
+					}
 				}
 			}
 			std::unordered_map<std::string, PqlEntityType> PQLentities;
@@ -323,10 +324,12 @@ private:
 		{
 			std::vector<int> results;
 			int rhsRefValue = stoi(rhsRef.second); //might throw error if string value can't be converted to int
-			StmtIndex rhsStmt = StmtIndex(rhsRefValue);
-			for (StmtIndex stmt : stmts) {
-				if (Follows::containsSuccessor(stmt, rhsStmt)) {
-					results.emplace_back(stmt.getIndex()); //e.g {3} because 3 is followed by 6
+			if (Entity::containsStmt(rhsRefValue)) { // checks if stmt 7 exists, if not, return empty results
+				StmtIndex rhsStmt = StmtIndex(rhsRefValue);
+				for (StmtIndex stmt : stmts) {
+					if (Follows::containsSuccessor(stmt, rhsStmt)) {
+						results.emplace_back(stmt.getIndex()); //e.g {3} because 3 is followed by 6
+					}
 				}
 			}
 			std::unordered_map<std::string, PqlEntityType> PQLentities;
