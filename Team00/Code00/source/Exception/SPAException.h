@@ -2,7 +2,7 @@
 #include <exception>
 #include <string>
 
-// Base class that we inherit for all SPA-related exceptions
+/* Base class that we inherit for all SPA - related exceptions */
 class SPAException : std::exception {
 private:
 	const std::string reason;
