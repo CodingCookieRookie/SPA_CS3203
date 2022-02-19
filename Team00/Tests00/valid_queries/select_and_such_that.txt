@@ -318,8 +318,6 @@ assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; con
 Select ifs such that Parent*(_, ifs)
 none
 5000
-
-
 65 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select a such that Uses(s1, v1)
