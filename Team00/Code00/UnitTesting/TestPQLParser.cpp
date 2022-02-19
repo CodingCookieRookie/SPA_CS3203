@@ -425,7 +425,7 @@ namespace UnitTesting
             Assert::IsTrue(
                 PqlExpressionType::partial
                 == patterns[0].getExpression().first);
-            Assert::AreEqual(std::string("x"), patterns[0].getExpression().second);
+            Assert::AreEqual(std::string(" x "), patterns[0].getExpression().second);
         }
 
         TEST_METHOD(parseQuery_suchThatAndPatternClauses_bothExtracted) {
@@ -447,7 +447,7 @@ namespace UnitTesting
             Assert::IsTrue(
                 PqlExpressionType::partial
                 == patterns[0].getExpression().first);
-            Assert::AreEqual(std::string("x"), patterns[0].getExpression().second);
+            Assert::AreEqual(std::string(" x "), patterns[0].getExpression().second);
         }
     };
 }

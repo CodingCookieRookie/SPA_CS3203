@@ -79,6 +79,7 @@ void DesignExtractor::Extract(SourceAST& ast) {
 		std::vector<StmtIndex> successors = parentPair.second;
 		for (const StmtIndex& successor : successors) {
 			Parent::insert(predecessor, successor);
+			Container::insertStmtInContainer(predecessor, successor);
 		}
 	}
 	for (const std::pair<StmtIndex, StmtIndex>& followsPair : stmtFollowsMap) {

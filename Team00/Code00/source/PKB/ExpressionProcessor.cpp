@@ -37,10 +37,6 @@ std::string ExpressionProcessor::convertInfixToPostFix(std::string s) {
 				res += ' ';
 			}
 			res += currentChar;
-			// All variable names and constants are appended by a space
-			if ((i < s.length() - 1 && !isOperand(s[i + 1])) || i == s.length() - 1) {
-				res += ' ';
-			}
 		}
 
 		// '(': Push to stack
@@ -52,6 +48,7 @@ std::string ExpressionProcessor::convertInfixToPostFix(std::string s) {
 		else if (currentChar == ')') {
 			while (stk.top() != '(')
 			{
+				res += ' ';
 				res += stk.top();
 				stk.pop();
 			}
@@ -64,6 +61,7 @@ std::string ExpressionProcessor::convertInfixToPostFix(std::string s) {
 			// then pop operator from stack and add to res.
 			// Ensure check is done only when stack is not empty.
 			while (!stk.empty() && evaluateOperatorPrecedence(s[i]) <= evaluateOperatorPrecedence(stk.top())) {
+				res += ' ';
 				res += stk.top();
 				stk.pop();
 			}
@@ -73,9 +71,10 @@ std::string ExpressionProcessor::convertInfixToPostFix(std::string s) {
 
 	// Pop remaining items from stack
 	while (!stk.empty()) {
+		res += ' ';
 		res += stk.top();
 		stk.pop();
 	}
 
-	return res;
+	return res + ' ';
 }
