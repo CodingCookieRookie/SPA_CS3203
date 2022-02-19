@@ -81,9 +81,74 @@ public:
 		Lexer lexer(source);
 		Assert::AreEqual(std::string(), lexer.nextName());
 
-		const char* source = "   @meString   hola ";
+		const char* source1 = "   @meString   hola ";
+		Lexer lexer1(source1);
+		Assert::AreEqual(std::string(), lexer1.nextName());
+	}
+
+	TEST_METHOD(nextWhitespace_oneSpace_whitespaceReturned) {
+		const char* source = " ";
 		Lexer lexer(source);
-		Assert::AreEqual(std::string(), lexer.nextName());
+		Assert::AreEqual(std::string(source), lexer.nextWhitespace());
+	}
+
+	TEST_METHOD(nextWhitespace_multipleSpace_whitespaceReturned) {
+		const char* source = "   ";
+		Lexer lexer(source);
+		Assert::AreEqual(std::string(source), lexer.nextWhitespace());
+	}
+
+	TEST_METHOD(nextWhitespace_tab_whitespaceReturned) {
+		const char* source = "	";
+		Lexer lexer(source);
+		Assert::AreEqual(std::string(source), lexer.nextWhitespace());
+
+		const char* source1 = "\t ";
+		Lexer lexer1(source1);
+		Assert::AreEqual(std::string(source1), lexer1.nextWhitespace());
+	}
+
+	TEST_METHOD(nextWhitespace_newline_whitespaceReturned) {
+		const char* source = " \n";
+		Lexer lexer(source);
+		Assert::AreEqual(std::string(source), lexer.nextWhitespace());
+	}
+
+	TEST_METHOD(nextWhitespace_verticalTab_whitespaceReturned) {
+		const char* source = " \n";
+		Lexer lexer(source);
+		Assert::AreEqual(std::string(source), lexer.nextWhitespace());
+	}
+
+	TEST_METHOD(nextWhitespace_feed_whitespaceReturned) {
+		const char* source = " \f   ";
+		Lexer lexer(source);
+		Assert::AreEqual(std::string(source), lexer.nextWhitespace());
+	}
+
+	TEST_METHOD(nextWhitespace_carriageReturn_whitespaceReturned) {
+		const char* source = " \r	";
+		Lexer lexer(source);
+		Assert::AreEqual(std::string(source), lexer.nextWhitespace());
+	}
+
+	TEST_METHOD(nextWhitespace_mixed_whitespaceReturned) {
+		const char* source = "  \n	\t \v\f"
+			"	\r";
+		Lexer lexer(source);
+		Assert::AreEqual(std::string(source), lexer.nextWhitespace());
+	}
+
+	TEST_METHOD(nextWhitespace_emptyString_emptyStringReturned) {
+		const char* source = "";
+		Lexer lexer(source);
+		Assert::AreEqual(std::string(), lexer.nextWhitespace());
+	}
+
+	TEST_METHOD(nextWhitespace_noWhitespaceInFront_emptyStringReturned) {
+		const char* source = "abc \n";
+		Lexer lexer(source);
+		Assert::AreEqual(std::string(), lexer.nextWhitespace());
 	}
 	};
 }
