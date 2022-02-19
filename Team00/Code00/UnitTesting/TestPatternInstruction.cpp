@@ -25,10 +25,68 @@ namespace UnitTesting
         // Pattern a(v, *) or Pattern a("x", *)
         // Pattern a(*, "_x_") 
         // Pattern a(*, *)	
+        TEST_METHOD(execute_lhsSynonymRhsIdentVarPartialPqlinsertPostFixInfoTest)
+        {
+            // assign1 = assign1 + x
+            // Pattern a(v, "_xx_")
+            // 1. Setup:
+            std::string synonym = "a1";
+            PqlReference entRef = std::make_pair(PqlReferenceType::synonym, "v");
+            PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, "xx");
+            Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
+
+            // PKB inserts pattern
+            Entity::insertStmt(StatementType::printType);
+            StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+            Entity::insertVar("a");
+            VarIndex varIndex = Entity::insertVar("assign1");
+            std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1 + x");
+            Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
+
+            // Check PBK populated
+            std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
+            Assert::AreEqual(size_t(0), allStmts.size());
+
+            // 2. Main test:
+            EvaluatedTable evTable = instruction->execute();
+            Assert::AreEqual(size_t(0), evTable.getNumRow());
+            std::string expected = "Table String: size: 2\nSynonym: a1 Values: \nSynonym: v Values: \n";   // for this iteration we leave empty vectors still (does not affect end res)
+            Assert::AreEqual(expected, evTable.getTableString());
+        }
+
+        TEST_METHOD(execute_lhsSynonymRhsIdentVarPartialPqlExpressionTypeTest)
+        {
+            // assign1 = assign1 + xx
+            // Pattern a(v, "_x_")
+            // 1. Setup:
+            std::string synonym = "a1";
+            PqlReference entRef = std::make_pair(PqlReferenceType::synonym, "v");
+            PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, "x");
+            Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
+
+            // PKB inserts pattern
+            Entity::insertStmt(StatementType::printType);
+            StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+            Entity::insertVar("a");
+            VarIndex varIndex = Entity::insertVar("assign1");
+            std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1 + xx");
+            Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
+
+            // Check PBK populated
+            std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
+            Assert::AreEqual(size_t(0), allStmts.size());
+
+            // 2. Main test:
+ /*           EvaluatedTable evTable = instruction->execute();
+            Assert::AreEqual(size_t(0), evTable.getNumRow());*/
+            //std::string expected = "Table String: size: 0\n";
+            //Assert::AreEqual(expected, evTable.getTableString());
+        }
+
         TEST_METHOD(execute_lhsSynonymRhsIdentVar)
         {
             // assign1 = assign1 + x
-            // Pattern a(v, "x")
+            // Pattern a(v, "_x_")
             // 1. Setup:
             std::string synonym = "a1";
             PqlReference entRef = std::make_pair(PqlReferenceType::synonym, "v");
