@@ -34,6 +34,7 @@ std::unordered_set<StmtIndex, StmtIndex::HashFunction> RS2T<T>::getAllSuccessors
 		std::unordered_set<StmtIndex, StmtIndex::HashFunction> grandSuccessors = getAllSuccessors(successor, uPredSucTable);
 		for (auto& grandSuccessor : grandSuccessors) {
 			successors.insert(grandSuccessor);
+			insert(successor, grandSuccessor);
 		}
 	}
 
@@ -45,6 +46,10 @@ void RS2T<T>::populate(std::unordered_map<StmtIndex, std::unordered_set<StmtInde
 	StmtIndex::HashFunction> uPredSucTable) {
 	for (auto& uPredSucEntry : uPredSucTable) {
 		StmtIndex predecessor = uPredSucEntry.first;
+		if (predSucTable.find(predecessor) != predSucTable.end()) {
+			continue;
+		}
+
 		std::unordered_set<StmtIndex, StmtIndex::HashFunction> successors = getAllSuccessors(predecessor, uPredSucTable);
 		for (auto& successor : successors) {
 			insert(predecessor, successor);
