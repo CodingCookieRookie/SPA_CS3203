@@ -170,6 +170,32 @@ namespace UnitTesting
 			}
 		}
 
+		TEST_METHOD(resolveTableToResults_twoColumnStatementEachColWithRepeats_projectTwoColumns)
+		{
+			// 1. Set-up:
+			std::unordered_map<std::string, PqlEntityType> entities;
+			std::unordered_map<std::string, std::vector<int>> testTable;
+			std::vector<std::string> columnsProjected{ "s1", "s2" };
+			entities["s1"] = PqlEntityType::Stmt;
+			entities["s2"] = PqlEntityType::Stmt;
+			testTable["s1"] = std::vector<int>{ 1, 1, 2, 2, 3 };
+			testTable["s2"] = std::vector<int>{ 4, 5, 5, 6, 6 };
+
+			// 2. Main test:
+			EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
+			PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable, columnsProjected);
+			std::list<std::string> expected{ "1 4", "1 5", "2 5", "2 6", "3 6" };
+			std::list<std::string> results = pqlResultProject.resolveTableToResults();
+			Assert::AreEqual(expected.size(), results.size());
+			auto actualRes = results.begin();
+			auto expectedRes = expected.begin();
+			for (size_t i = 0; i < results.size(); i++) {
+				Assert::AreEqual(*expectedRes, *actualRes);
+				std::advance(actualRes, 1);
+				std::advance(expectedRes, 1);
+			}
+		}
+
 		TEST_METHOD(resolveTableToResults_twoColumnStatement_projectOneColumn)
 		{
 			// 1. Set-up:
