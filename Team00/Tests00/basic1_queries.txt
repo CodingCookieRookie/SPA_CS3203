@@ -448,3 +448,248 @@ assign a; variable v;
 Select a pattern a("y", _"x1"_)
 10
 5000
+10 - comment
+assign a; variable v;
+Select v pattern a(v, _)
+if, x1, y
+5000
+11 - comment
+assign a; variable v;
+Select v pattern a(v, _"V1"_)
+x1, y
+5000
+12 - comment
+assign a; variable v;
+Select v pattern a(v, _"2"_)
+if
+5000
+13 - comment
+assign a, a1; variable v, v1; stmt s; read r; print pn; while w; if ifs; constant c; procedure p;
+Select a1 pattern a(_, _)
+3, 7, 10
+5000
+14 - comment
+assign a, a1; variable v, v1; stmt s; read r; print pn; while w; if ifs; constant c; procedure p;
+Select v pattern a(_, _"x1"_)
+x1, if, V1, V2, x, y, while
+5000
+15 - comment
+assign a, a1; variable v, v1; stmt s; read r; print pn; while w; if ifs; constant c; procedure p;
+Select s pattern a(_, _"9"_)
+none
+5000
+16 - comment
+assign a, a1; variable v, v1; stmt s; read r; print pn; while w; if ifs; constant c; procedure p;
+Select r pattern a(v, _)
+4, 5
+5000
+17 - comment
+assign a, a1; variable v, v1; stmt s; read r; print pn; while w; if ifs; constant c; procedure p;
+Select pn pattern a(v, _"if"_)
+2, 9
+5000
+18 - comment
+assign a, a1; variable v, v1; stmt s; read r; print pn; while w; if ifs; constant c; procedure p;
+Select w pattern a(v, _"0"_)
+6
+5000
+19 - comment
+assign a, a1; variable v, v1; stmt s; read r; print pn; while w; if ifs; constant c; procedure p;
+Select ifs pattern a("x", _)
+none
+5000
+20 - comment
+assign a, a1; variable v, v1; stmt s; read r; print pn; while w; if ifs; constant c; procedure p;
+Select c pattern a("x1", _"V1"_)
+10, 35, 2, 0, 99, 12, 1
+5000
+21 - comment
+assign a, a1; variable v, v1; stmt s; read r; print pn; while w; if ifs; constant c; procedure p;
+Select p pattern a("if", _"2"_)
+aRelativelyLongProcedureNameThatIHopeIsLongEnough
+5000
+1 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select a such that Uses(s1, _) pattern a1(_, _)
+3, 7, 10
+5000
+2 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select v such that Modifies(s1, v1) pattern a1("x1", _)
+x1, if, V1, V2, x, y, while
+5000
+3 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select s such that Follows(s1, _) pattern a1(v1, _)
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+5000
+4 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select r such that Follows*(1, _) pattern a1(_, _"x1"_)
+4, 5
+5000
+5 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select pn such that Parent(_, _) pattern a1("if", _"if"_)
+2, 9
+5000
+6 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select w such that Parent*(s1, _) pattern a1(v1, _"x1"_)
+6
+5000
+7 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select ifs such that Uses(1, _) pattern a1(_, _"0"_)
+1, 8
+5000
+8 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select c such that Modifies(1, v1) pattern a1(v1, _"0"_)
+10, 35, 2, 1, 0, 99, 12
+5000
+9 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select p such that Follows(_, s1) pattern a1("x1", _"0"_)
+aRelativelyLongProcedureNameThatIHopeIsLongEnough
+5000
+10 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select a such that Uses(a1, _) pattern a1("if", _"2"_)
+3, 7, 10
+5000
+11 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select v such that Modifies(a1, "x1") pattern a1("x1", _)
+x1, if, V1, V2, x, y, while
+5000
+12 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select s such that Follows(a1, _) pattern a1(_, _"x1"_)
+none
+5000
+13 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select r such that Follows*(_, a1) pattern a1("if", _"if"_)
+4, 5
+5000
+14 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select pn such that Parent(1, a1) pattern a1(v1, _"if"_)
+2, 9
+5000
+15 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select w such that Parent*(a1, _) pattern a1(v1, _"0"_)
+none
+5000
+16 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select ifs such that Follows(a1, 3) pattern a1(_, _"x"_)
+none
+5000
+17 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select c such that Follows*(2, a1) pattern a1(_, _)
+10, 35, 2, 1, 0, 99, 12
+5000
+18 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select p such that Parent(1, a1) pattern a1(_, _"2"_)
+aRelativelyLongProcedureNameThatIHopeIsLongEnough
+5000
+19 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select a such that Uses(s1, v1) pattern a1(v1, _"V1"_)
+3, 7, 10
+5000
+20 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select p such that Modifies(_, v1) pattern a1(v1, _)
+aRelativelyLongProcedureNameThatIHopeIsLongEnough
+5000
+21 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select a such that Uses(a1, v1) pattern a1(v1, _)
+3, 7, 10
+5000
+22 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select p such that Modifies(a1, v1) pattern a1(v1, _"x1"_)
+aRelativelyLongProcedureNameThatIHopeIsLongEnough
+5000
+23 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select a such that Modifies(a, _) pattern a1(_, _)
+3, 7, 10
+5000
+24 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select v such that Uses(_, v) pattern a1(v1, _)
+x1, if, x, V1, while, x
+5000
+25 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select s such that Follows(a, s) pattern a1("x", _)
+none
+5000
+26 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select r such that Follows*(a, r) pattern a1(_, _"x"_)
+none
+5000
+27 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select pn such that Parent(_, pn) pattern a1(v1, _"x1"_)
+2, 9
+5000
+28 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select w such that Parent*(w, _) pattern a1("if", _"if"_)
+6
+5000
+29 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select ifs such that Parent*(ifs, 2) pattern a1(_, _"0"_)
+1
+5000
+30 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select a such that Uses(s1, "x1") pattern a(v1, _"0"_)
+7
+5000
+31 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select v such that Modifies(s1, v) pattern a1(v, _"2"_)
+if
+5000
+32 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select s such that Parent(s, v) pattern a1(v, _"2"_)
+1
+5000
+33 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select r such that Follows(r, a) pattern a(v1, _)
+none
+5000
+34 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select a such that Uses(s1, v) pattern a(v, _"V1"_)
+7
+5000
+35 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select v such that Parent*(s1, a) pattern a(v, _)
+if, x1, y
+5000
+36 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select a such that Uses(a, v) pattern a(v, _"2"_)
+3
+5000
+37 - comment
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select v such that Uses(a, v) pattern a(v, _)
+if
+5000
