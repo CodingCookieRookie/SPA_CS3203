@@ -34,16 +34,10 @@
     <ClCompile Include="TestPattern.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestPQLDEToken.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TestPQLEvaluator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestPQLParser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestPQLTokeniser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestTypes.cpp">
