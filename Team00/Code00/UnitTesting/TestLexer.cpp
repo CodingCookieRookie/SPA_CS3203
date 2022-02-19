@@ -150,5 +150,29 @@ public:
 		Lexer lexer(source);
 		Assert::AreEqual(std::string(), lexer.nextWhitespace());
 	}
+
+	TEST_METHOD(match_exactMatch_success) {
+		const char* source = "	\taGaGaGaA";
+		Lexer lexer(source);
+		Assert::IsTrue(lexer.match("aGaGaGaA"));
+	}
+
+	TEST_METHOD(match_differentCase_fail) {
+		const char* source = "	\vaGaGaGaA";
+		Lexer lexer(source);
+		Assert::IsFalse(lexer.match("AGAGAGAA"));
+	}
+
+	TEST_METHOD(match_endOfLine_fail) {
+		const char* source = "	\naGaGa";
+		Lexer lexer(source);
+		Assert::IsFalse(lexer.match("aGaGaGaA"));
+	}
+
+	TEST_METHOD(match_spaceInBetweenTokens_fail) {
+		const char* source = "	\raGaGa GaA";
+		Lexer lexer(source);
+		Assert::IsFalse(lexer.match("aGaGaGaA"));
+	}
 	};
 }
