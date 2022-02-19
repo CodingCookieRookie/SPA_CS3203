@@ -201,7 +201,7 @@ private:
 					return EvaluatedTable(Modifies::contains(stmtIndex, varIndex));
 				}
 				else {
-					// check for Modifies(2, v), if stmt with index 2 modifies any variable 
+					// check for Modifies(2, v), if stmt with index 2 modifies any variable
 					std::vector<int> variables = Modifies::getVariables(stmtIndex);
 					return EvaluatedTable(variables.size() > 0);
 				}
@@ -211,7 +211,7 @@ private:
 			}
 		}
 		else {
-			std::cout << "Error in handleModifiesS\n";
+			throw EvaluatorException(EvaluatorException::MODIFIES_S_ERROR);
 		}
 		return EvaluatedTable(PQLentities, PQLmap);
 	}
@@ -242,7 +242,7 @@ private:
 			}
 		}
 		else {
-			std::cout << "Error in handleModifiesP\n";
+			throw EvaluatorException(EvaluatorException::MODIFIES_P_ERROR);
 		}
 		return EvaluatedTable(PQLentities, PQLmap);
 	}
@@ -282,7 +282,7 @@ private:
 					return EvaluatedTable(Uses::contains(stmtIndex, varIndex));
 				}
 				else {
-					// check for Uses(2, v), if stmt with index 2 modifies any variable 
+					// check for Uses(2, v), if stmt with index 2 modifies any variable
 					std::vector<int> variables = Uses::getVariables(stmtIndex);
 					return EvaluatedTable(variables.size() > 0);
 				}
@@ -292,7 +292,7 @@ private:
 			}
 		}
 		else {
-			std::cout << "Error in handleModifiesS\n";
+			throw EvaluatorException(EvaluatorException::USES_S_ERROR);
 		}
 		return EvaluatedTable(PQLentities, PQLmap);
 	}
@@ -323,7 +323,7 @@ private:
 			}
 		}
 		else {
-			std::cout << "Error in handleModifiesP\n";
+			throw EvaluatorException(EvaluatorException::USES_P_ERROR);
 		}
 		return EvaluatedTable(PQLentities, PQLmap);
 	}
@@ -750,7 +750,7 @@ public:
 			allPatternStmtInfo = Pattern::getAllAssignStmtVarsPatternInfo();
 		}
 		else {
-			std::cout << "Invalid expression type";
+			throw EvaluatorException(EvaluatorException::PATTERN_ERROR);
 		}
 		if (entRef.first == PqlReferenceType::synonym) {
 			std::vector<int> allStmts;
@@ -767,7 +767,7 @@ public:
 				std::vector<int> allStmts;
 				allStmts = Pattern::getStmtsFromVarPattern(varIndex, ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
 				PQLmap[synonym] = allStmts;
-			} 
+			}
 			// should not return Evaluated(False)
 		}
 		else if (entRef.first == PqlReferenceType::wildcard) {
