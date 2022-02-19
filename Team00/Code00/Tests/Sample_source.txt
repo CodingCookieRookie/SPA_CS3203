@@ -1,4 +1,4 @@
-procedure Example1 {
+procedure Example {
   print x1; 
 	read yA123z  ; 
 read AbC1;
