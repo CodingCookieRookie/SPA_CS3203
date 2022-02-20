@@ -1,9 +1,0 @@
-procedure Example {
-  print x1; 
-	read yA123z  ; 
-read AbC1;
-		    print print;
-			x1 = 2;
-	read	read  ;	
-	x = 1;	
-			}
