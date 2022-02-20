@@ -17,7 +17,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace IntegrationTesting
 {
-	TEST_CLASS(TestQPSPKB)
+	TEST_CLASS(TestQPSPKB2)
 	{
 	private:
 		TEST_METHOD_CLEANUP(cleanUpTables) {
