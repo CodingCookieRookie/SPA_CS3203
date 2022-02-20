@@ -33,8 +33,6 @@ public:
 		std::unordered_set<std::string> consts = assignNode->getConsts();
 		Assert::AreEqual(size_t(1), consts.size());
 		Assert::IsTrue(consts.find("1") != consts.end());
-
-		delete root;
 	}
 
 	TEST_METHOD(assignNode_getUsesModifiesConsts_multipleUsesVars_oneModifiesVar_multipleConsts_success) {
@@ -86,8 +84,6 @@ public:
 		Assert::IsTrue(consts.find("2") != consts.end());
 		Assert::IsTrue(consts.find("100") != consts.end());
 		Assert::IsTrue(consts.find("3") != consts.end());
-
-		delete root;
 	}
 
 	TEST_METHOD(whileNode_getUsesVarsAndConsts_oneUsesVar_oneConst_success) {
@@ -146,8 +142,6 @@ public:
 		std::unordered_set<std::string> consts = whileNode->getConsts();
 		Assert::AreEqual(size_t(1), consts.size());
 		Assert::IsTrue(consts.find("0") != consts.end());
-
-		delete root;
 	}
 
 	TEST_METHOD(whileNode_getUsesVarsAndConsts_multipleUsesVars_multipleConsts_success) {
