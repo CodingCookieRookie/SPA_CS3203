@@ -4,9 +4,6 @@
     <ClCompile Include="..\source\QPS-NEW\PQLEvaluator.cpp">
       <Filter>QPS-new</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\QPS-NEW\PQLLexer.cpp">
-      <Filter>QPS-new</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\QPS-NEW\PQLParser.cpp">
       <Filter>QPS-new</Filter>
     </ClCompile>
@@ -91,9 +88,6 @@
       <Filter>QPS-new</Filter>
     </ClInclude>
     <ClInclude Include="..\source\QPS-NEW\PQLEvaluator.h">
-      <Filter>QPS-new</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS-NEW\PQLLexer.h">
       <Filter>QPS-new</Filter>
     </ClInclude>
     <ClInclude Include="..\source\QPS-NEW\ParsedQuery.h">
