@@ -160,14 +160,11 @@ public:
 
 class RelationshipInstruction : public Instruction {
 private:
-	//RelationshipInstructionType type;
 	PqlRelationshipType pqlRelationshipType;
 	PqlReference lhsRef;
 	PqlReference rhsRef;
 
 	EvaluatedTable handleModifiesS() {
-		/* Modifies (a/r/s/a1, v) or Modifies(a/r/s/a1, "x") or Modifies (a/r/s/a1, _ ) */
-		/* Modifies(1, v) or Modifies(1, "x") = > true or Modifies(1, _) (under statement) */
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
@@ -195,14 +192,16 @@ private:
 			int lhsRefValue = stoi(lhsRef.second);
 			if (Entity::containsStmt(lhsRefValue)) {
 				StmtIndex stmtIndex = { lhsRefValue };
-				if (rhsRef.first == PqlReferenceType::ident) {
+				if (rhsRef.first == PqlReferenceType::synonym) {
+					varIndices = Modifies::getVariables(stmtIndex);
+					PQLmap[rhsRef.second] = varIndices;
+				}
+				else if (rhsRef.first == PqlReferenceType::ident) {
 					VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
 					return EvaluatedTable(Modifies::contains(stmtIndex, varIndex));
 				}
 				else {
-					// check for Modifies(2, v), if stmt with index 2 modifies any variable
-					std::vector<int> variables = Modifies::getVariables(stmtIndex);
-					return EvaluatedTable(variables.size() > 0);
+					return EvaluatedTable(Modifies::getVariables(stmtIndex).size() > 0);
 				}
 			}
 			else {
@@ -276,14 +275,16 @@ private:
 			int lhsRefValue = stoi(lhsRef.second);
 			if (Entity::containsStmt(lhsRefValue)) {
 				StmtIndex stmtIndex = { lhsRefValue };
-				if (rhsRef.first == PqlReferenceType::ident) {
+				if (rhsRef.first == PqlReferenceType::synonym) {
+					varIndices = Uses::getVariables(stmtIndex);
+					PQLmap[rhsRef.second] = varIndices;
+				}
+				else if (rhsRef.first == PqlReferenceType::ident) {
 					VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
 					return EvaluatedTable(Uses::contains(stmtIndex, varIndex));
 				}
 				else {
-					// check for Uses(2, v), if stmt with index 2 modifies any variable
-					std::vector<int> variables = Uses::getVariables(stmtIndex);
-					return EvaluatedTable(variables.size() > 0);
+					return EvaluatedTable(Uses::getVariables(stmtIndex).size() > 0);
 				}
 			}
 			else {
