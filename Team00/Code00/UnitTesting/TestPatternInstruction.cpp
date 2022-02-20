@@ -159,7 +159,7 @@ namespace UnitTesting
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 			// Check PKB populated
-			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
+			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
 			Assert::AreEqual(size_t(1), allStmts.size());
 
 			// 2. Main test:
@@ -187,7 +187,7 @@ namespace UnitTesting
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 			// Check PKB populated
-			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
+			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
 			Assert::AreEqual(size_t(1), allStmts.size());
 
 			// 2. Main test:
@@ -216,7 +216,7 @@ namespace UnitTesting
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 			// Check PKB populated
-			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
+			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
 			Assert::AreEqual(size_t(1), allStmts.size());
 
 			// 2. Main test:
@@ -246,7 +246,7 @@ namespace UnitTesting
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 			// Check PKB populated
-			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
+			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
 			Assert::AreEqual(size_t(1), allStmts.size());
 
 			// 2. Main test:
@@ -330,7 +330,7 @@ namespace UnitTesting
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 			// Check PKB populated
-			std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
+			std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, true);
 			Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 			// 2. Main test:
