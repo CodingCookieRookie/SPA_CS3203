@@ -166,8 +166,6 @@ private:
 
 	EvaluatedTable handleModifiesS() {
 		// Modifies (1, v)	or Modifies(1, "x")  => true or Modifies (1, _ ) (under statement)
-=========
->>>>>>>>> Temporary merge branch 2
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
@@ -808,15 +806,11 @@ public:
 			std::vector<int> varIndices = std::get<1>(allPatternStmtInfo);
 			PQLmap[entRef.second] = varIndices;
 			PQLentities.insert(std::pair(entRef.second, PqlEntityType::Variable));
-			}
-			std::vector<int> allStmts;
-			allStmts = std::get<0>(allPatternStmtInfo);
-			PQLmap[synonym] = allStmts;
 		}
 		return EvaluatedTable(PQLentities, PQLmap);
 	}
 
-	EvaluatedTable execute() override {
+	EvaluatedTable execute() {
 		EvaluatedTable evTable = handlePatterns();
 		return evTable;
 	}

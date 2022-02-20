@@ -843,7 +843,7 @@ namespace IntegrationTesting
 			Assert::AreEqual(true, actualEvResult);
 
 			// 4. Test QPS Result Projector:
-			PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns());
+			PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 			std::list<std::string> results = resultProjector.resolveTableToResults();
 			std::list<std::string> expectedRes{ "7" };
 			bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
@@ -990,7 +990,7 @@ namespace IntegrationTesting
 			Assert::AreEqual(true, actualEvResult);
 
 			// 4. Test QPS Result Projector:
-			PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns());
+			PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 			std::list<std::string> results = resultProjector.resolveTableToResults();
 			std::list<std::string> expectedRes{ "99" };
 			bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
