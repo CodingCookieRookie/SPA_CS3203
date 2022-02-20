@@ -774,7 +774,8 @@ public:
 				VarIndex varIndex = Entity::getVarIdx(entRef.second);
 				if (expressionSpec.first == PqlExpressionType::partial) {
 					allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
-				} else if (expressionSpec.first == PqlExpressionType::wildcard) {
+				}
+				else if (expressionSpec.first == PqlExpressionType::wildcard) {
 					allStmts = Pattern::getStmtsFromVarPattern(varIndex);
 				}
 			}

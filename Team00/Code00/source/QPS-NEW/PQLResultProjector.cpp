@@ -28,10 +28,10 @@ std::list<std::string> PQLResultProjector::resolveTableToResults() {
 		|| (table.size() > 0 && evaluatedTable.getNumRow() == 0)) {
 		resultEvTable = EvaluatedTable(false);
 	}
-	
+
 	for (std::string& column : columnsProjected) {
 		if (table.find(column) == table.end()) {
-			/* For each column that does not exist in the final EvTable, get it via an instruction 
+			/* For each column that does not exist in the final EvTable, get it via an instruction
 			   and then perform a cross product. */
 			PqlEntityType columnType = declarations.at(column);
 			Instruction* getAll = new GetAllInstruction(columnType, column);
@@ -55,9 +55,11 @@ std::list<std::string> PQLResultProjector::resolveTableToResults() {
 			if (isStatementEntity(declarations[entityName])
 				|| declarations[entityName] == PqlEntityType::Constant) {
 				value = std::to_string(resultTable[entityName][i]);
-			} else if ((declarations[entityName] == PqlEntityType::Variable)) {
+			}
+			else if ((declarations[entityName] == PqlEntityType::Variable)) {
 				value = Entity::getVarName(resultTable[entityName][i]);
-			} else { //PqlEntityType::Procedure
+			}
+			else { //PqlEntityType::Procedure
 				value = Entity::getProcName(resultTable[entityName][i]);
 			}
 			if (!firstCol) {
