@@ -11,7 +11,7 @@ Example
 3 - Get All Constants
 stmt stmt; variable v; procedure p; constant c;
 Select c
-
+1, 2
 5000
 4 - Get All Varirables
 stmt stmt; variable v;
@@ -41,11 +41,6 @@ Select r
 8 - Get All Assigments statements
 assign a; variable v;
 Select a
-5, 7
-5000
-8 - Get All Assigments statements
-assign a; variable v;
-Select a such that Modifies(a, v)
 5, 7
 5000
 

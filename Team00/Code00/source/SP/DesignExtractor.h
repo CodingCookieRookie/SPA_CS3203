@@ -1,4 +1,5 @@
 #pragma once
+
 #include "SourceAST.h"
 
 #include "../PKB/PKB.h"
@@ -12,7 +13,7 @@ private:
 	/* Maps a StmtIndex to a vector of the StmtIndices contained in it, if applicable */
 	static std::unordered_map<StmtIndex, std::vector<StmtIndex>, StmtIndex::HashFunction> stmtParentMap;
 
-	/* Maps a StmtIndex to the StmtIndex that follows it, if applicable*/
+	/* Maps a StmtIndex to the StmtIndex that follows it, if applicable */
 	static std::unordered_map<StmtIndex, StmtIndex, StmtIndex::HashFunction> stmtFollowsMap;
 
 	DesignExtractor() {}
