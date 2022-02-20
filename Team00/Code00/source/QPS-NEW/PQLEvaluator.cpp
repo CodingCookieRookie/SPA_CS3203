@@ -27,12 +27,25 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
 	// 1. Get all entities from Select-clause
 	for (size_t i = 0; i < columns.size(); i++) {
 		instructions.push_back(new GetAllInstruction(declarations.at(columns[i]), columns[i]));
+		
 	}
 
 	// 2. Get all relationship results from such-that-clause
 	for (size_t i = 0; i < relationships.size(); i++) {
 		ParsedRelationship parsedRelationship = relationships.at(i);
-		instructions.push_back(new RelationshipInstruction(parsedRelationship.getRelationshipType(), parsedRelationship.getLhs(), parsedRelationship.getRhs()));
+		PqlReference lhsRef = parsedRelationship.getLhs();
+		PqlReference rhsRef = parsedRelationship.getRhs();
+		instructions.push_back(new RelationshipInstruction(parsedRelationship.getRelationshipType(), lhsRef, rhsRef));
+		if (isSynonymRef(lhsRef) && parsedQuery.isStmtSubtype(lhsRef)) {
+			std::string lhsVal = lhsRef.second;
+			PqlEntityType lhsType = declarations.at(lhsVal);
+			instructions.push_back(new GetAllInstruction(lhsType, lhsVal));
+		}
+		if (isSynonymRef(rhsRef) && parsedQuery.isStmtSubtype(rhsRef)) {
+			std::string rhsVal = rhsRef.second;
+			PqlEntityType rhsType = declarations.at(rhsVal);
+			instructions.push_back(new GetAllInstruction(rhsType, rhsVal));
+		}
 	}
 
 	// TODO:
