@@ -775,6 +775,105 @@ public:
 		Assert::AreEqual(std::string("c"), b0bMinusC[1]->getValue());
 	}
 
+	TEST_METHOD(parse_matchAssign_withVeryNestedExpr_success) {
+		const char* source = "   procedure procedure123name \n "
+			"{ z = (( (z + a123) / (b0b - (c * 10 - ALLUPPERCASE %( Z + (1*0)) )	) )) ;}";
+		SourceAST ast = Parser::parse(source);
+		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
+
+		/* Test procedureNodes */
+		Assert::AreEqual(size_t(1), procNodes.size());
+		Assert::AreEqual(std::string("procedure123name"), procNodes[0]->getProcName());
+
+		/* Test statements */
+		StmtLstNode* stmtLstNode = procNodes[0]->getStmtLstNode();
+		std::vector<StmtNode*> statements = stmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), statements.size());
+
+		/* Test assign nodes*/
+		/* z = (( (z + a123) / (b0b - (c * 10 - ALLUPPERCASE %( Z + (1*0)) )	) )) ; */
+		AssignNode* assignNode = (AssignNode*)statements[0];
+		Assert::IsTrue(StatementType::assignType == assignNode->getStmtType());
+		Assert::AreEqual(std::string("z"), assignNode->getVarName());
+
+		ExprNode* divideOp = assignNode->getExpr();
+		Assert::AreEqual(std::string("/"), divideOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == divideOp->getExprNodeValueType());
+		std::vector<ExprNode*> divideOpchildren = divideOp->getChildren();
+		Assert::AreEqual(size_t(2), divideOpchildren.size());
+
+		/* (z + a123) */
+		ExprNode* plusOp = divideOpchildren[0];
+		Assert::AreEqual(std::string("+"), plusOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == plusOp->getExprNodeValueType());
+		std::vector<ExprNode*> plusOpChildren = plusOp->getChildren();
+		Assert::AreEqual(size_t(2), plusOpChildren.size());
+		Assert::AreEqual(std::string("z"), plusOpChildren[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == plusOpChildren[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("a123"), plusOpChildren[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == plusOpChildren[1]->getExprNodeValueType());
+
+		/* (b0b - (c * 10 - ALLUPPERCASE %( Z + (1*0)) ) */
+		ExprNode* minusOp = divideOpchildren[1];
+		Assert::AreEqual(std::string("-"), minusOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == minusOp->getExprNodeValueType());
+		std::vector<ExprNode*> minusOpChildren = minusOp->getChildren();
+		Assert::AreEqual(size_t(2), minusOpChildren.size());
+
+		/* b0b */
+		Assert::AreEqual(std::string("b0b"), minusOpChildren[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == minusOpChildren[0]->getExprNodeValueType());
+
+		/* (c * 10 - ALLUPPERCASE %( Z + (1*0)) ) */
+		ExprNode* minusOp2 = minusOpChildren[1];
+		Assert::AreEqual(std::string("-"), minusOp2->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == minusOp2->getExprNodeValueType());
+		std::vector<ExprNode*> minusOp2Children = minusOp2->getChildren();
+		Assert::AreEqual(size_t(2), minusOp2Children.size());
+
+		/* c * 10 */
+		ExprNode* multOp = minusOp2Children[0];
+		Assert::AreEqual(std::string("*"), multOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == multOp->getExprNodeValueType());
+		std::vector<ExprNode*> multOpChildren = multOp->getChildren();
+		Assert::AreEqual(size_t(2), multOpChildren.size());
+		Assert::AreEqual(std::string("c"), multOpChildren[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == multOpChildren[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("10"), multOpChildren[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == multOpChildren[1]->getExprNodeValueType());
+
+		/* ALLUPPERCASE %( Z + (1*0) ) */
+		ExprNode* modOp = minusOp2Children[1];
+		Assert::AreEqual(std::string("%"), modOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == modOp->getExprNodeValueType());
+		std::vector<ExprNode*> modOpChildren = modOp->getChildren();
+		Assert::AreEqual(size_t(2), modOpChildren.size());
+		Assert::AreEqual(std::string("ALLUPPERCASE"), modOpChildren[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == modOpChildren[0]->getExprNodeValueType());
+
+		/* ( Z + (1*0) ) */
+		ExprNode* plusOp2 = modOpChildren[1];
+		Assert::AreEqual(std::string("+"), plusOp2->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == plusOp2->getExprNodeValueType());
+		std::vector<ExprNode*> plusOp2Children = plusOp2->getChildren();
+		Assert::AreEqual(size_t(2), plusOp2Children.size());
+
+		/* Z */
+		Assert::AreEqual(std::string("Z"), plusOp2Children[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == plusOp2Children[0]->getExprNodeValueType());
+
+		/* (1*0) */
+		ExprNode* multOp2 = plusOp2Children[1];
+		Assert::AreEqual(std::string("*"), multOp2->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == multOp2->getExprNodeValueType());
+		std::vector<ExprNode*> multOp2Children = multOp2->getChildren();
+		Assert::AreEqual(size_t(2), multOp2Children.size());
+		Assert::AreEqual(std::string("1"), multOp2Children[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == multOp2Children[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("0"), multOp2Children[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == multOp2Children[1]->getExprNodeValueType());
+	}
+
 	TEST_METHOD(parse_matchAssign_withReservedKeywords_success) {
 		const char* source = "   procedure procedure123name \n "
 			"{ if = 9 + read; read = print % 2   ;"
