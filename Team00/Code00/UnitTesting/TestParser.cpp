@@ -776,8 +776,17 @@ public:
 	}
 
 	TEST_METHOD(parse_matchAssign_withVeryNestedExpr_success) {
+		/*
+									/
+							+				-
+						z		a123	b0b		-
+											*		%
+										  c   10 ALL  +
+													 z  *
+													   1 0
+		*/
 		const char* source = "   procedure procedure123name \n "
-			"{ z = (( (z + a123) / (b0b - (c * 10 - ALLUPPERCASE %( Z + (1*0)) )	) )) ;}";
+			"{ z = (( (z + a123) / (b0b - (c * 10 - ALL %( Z + (1*0)) )	) )) ;}";
 		SourceAST ast = Parser::parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
@@ -791,7 +800,7 @@ public:
 		Assert::AreEqual(size_t(1), statements.size());
 
 		/* Test assign nodes*/
-		/* z = (( (z + a123) / (b0b - (c * 10 - ALLUPPERCASE %( Z + (1*0)) )	) )) ; */
+		/* z = (( (z + a123) / (b0b - (c * 10 - ALL %( Z + (1*0)) )	) )) ; */
 		AssignNode* assignNode = (AssignNode*)statements[0];
 		Assert::IsTrue(StatementType::assignType == assignNode->getStmtType());
 		Assert::AreEqual(std::string("z"), assignNode->getVarName());
@@ -813,7 +822,7 @@ public:
 		Assert::AreEqual(std::string("a123"), plusOpChildren[1]->getValue());
 		Assert::IsTrue(ExprNodeValueType::varName == plusOpChildren[1]->getExprNodeValueType());
 
-		/* (b0b - (c * 10 - ALLUPPERCASE %( Z + (1*0)) ) */
+		/* (b0b - (c * 10 - ALL %( Z + (1*0)) ) */
 		ExprNode* minusOp = divideOpchildren[1];
 		Assert::AreEqual(std::string("-"), minusOp->getValue());
 		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == minusOp->getExprNodeValueType());
@@ -824,7 +833,7 @@ public:
 		Assert::AreEqual(std::string("b0b"), minusOpChildren[0]->getValue());
 		Assert::IsTrue(ExprNodeValueType::varName == minusOpChildren[0]->getExprNodeValueType());
 
-		/* (c * 10 - ALLUPPERCASE %( Z + (1*0)) ) */
+		/* (c * 10 - ALL %( Z + (1*0)) ) */
 		ExprNode* minusOp2 = minusOpChildren[1];
 		Assert::AreEqual(std::string("-"), minusOp2->getValue());
 		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == minusOp2->getExprNodeValueType());
@@ -842,13 +851,15 @@ public:
 		Assert::AreEqual(std::string("10"), multOpChildren[1]->getValue());
 		Assert::IsTrue(ExprNodeValueType::constValue == multOpChildren[1]->getExprNodeValueType());
 
-		/* ALLUPPERCASE %( Z + (1*0) ) */
+		/* ALL %( Z + (1*0) ) */
 		ExprNode* modOp = minusOp2Children[1];
 		Assert::AreEqual(std::string("%"), modOp->getValue());
 		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == modOp->getExprNodeValueType());
 		std::vector<ExprNode*> modOpChildren = modOp->getChildren();
 		Assert::AreEqual(size_t(2), modOpChildren.size());
-		Assert::AreEqual(std::string("ALLUPPERCASE"), modOpChildren[0]->getValue());
+
+		/* ALL */
+		Assert::AreEqual(std::string("ALL"), modOpChildren[0]->getValue());
 		Assert::IsTrue(ExprNodeValueType::varName == modOpChildren[0]->getExprNodeValueType());
 
 		/* ( Z + (1*0) ) */
