@@ -78,7 +78,7 @@ namespace UnitTesting
 			// 2. Main test:
 			EvaluatedTable evTable = instruction->execute();
 			Assert::AreEqual(size_t(0), evTable.getNumRow());
-			std::string expected = "Table String: size: 0\n";   // for this iteration we leave empty vectors still (does not affect end res)
+			std::string expected = "Table String: size: 1\nSynonym: a1 Values: \n";   // for this iteration we leave empty vectors still (does not affect end res)
 			Assert::AreEqual(expected, evTable.getTableString());
 		}
 		TEST_METHOD(execute_lhsSynonymRhsIdentVarPartialPqlinsertPostFixInfoTest1)
@@ -363,8 +363,8 @@ namespace UnitTesting
 
 			// 2. Main test:
 			EvaluatedTable evTable = instruction->execute();
-			Assert::AreEqual(size_t(0), evTable.getNumRow());
-			std::string expected = "Table String: size: 0\n";
+			Assert::AreEqual(size_t(1), evTable.getNumRow());
+			std::string expected = "Table String: size: 1\nSynonym: a1 Values: 2 \n";
 			Assert::AreEqual(expected, evTable.getTableString());
 		}
 	};
