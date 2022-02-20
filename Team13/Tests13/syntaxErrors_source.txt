@@ -1,0 +1,21 @@
+procedure aRelativelyLongProcedureNameThatIHopeIsLongEnough {
+  if (x1 <= (10 / 35)) then {
+	  print if;if = 2 % if;
+  } else {
+	  read V1;
+	  read V2;
+  }
+
+  while (x==1) {
+	  x1 = 0 * V1 + (99- 12);
+  }
+
+  if (while < 1 + 2) then {
+	  print x;
+  } else {
+y = x1 
+*
+
+			 V1;
+  }
+}
