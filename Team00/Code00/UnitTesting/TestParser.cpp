@@ -2527,6 +2527,164 @@ public:
 		Assert::AreEqual(std::string("COUNT"), printNode->getVarName());
 	}
 
+	TEST_METHOD(parse_matchIf_nestedIf_success) {
+		const char* source = "   procedure procedure123name \n "
+			"{ if ( x==1	 ) then\n { "
+			"   if (y != 2) then {\t"
+			"		print print;}else{ print p;}"
+			" }else{  \n"
+			" read fl123ag 	; } "
+			"} \n ";
+
+		SourceAST ast = Parser::parse(source);
+		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
+
+		/* Test procedureNodes */
+		Assert::AreEqual(size_t(1), procNodes.size());
+		Assert::AreEqual(std::string("procedure123name"), procNodes[0]->getProcName());
+
+		/* Test statements */
+		StmtLstNode* stmtLstNode = procNodes[0]->getStmtLstNode();
+		std::vector<StmtNode*> statements = stmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), statements.size());
+
+		/* Test OUTER if-else-then clause */
+		IfNode* outerIfNode = (IfNode*)statements[0];
+		Assert::IsTrue(StatementType::ifType == outerIfNode->getStmtType());
+		std::vector<StmtLstNode*> outerChildStmtLst = outerIfNode->getChildStmtLst();
+		Assert::AreEqual(size_t(2), outerChildStmtLst.size());
+
+		/* Test OUTER cond expr */
+		/* ( x==1	 ) */
+		ExprNode* eqOp = outerIfNode->getCondExpr();
+		Assert::AreEqual(std::string("=="), eqOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::relOperator == eqOp->getExprNodeValueType());
+		std::vector<ExprNode*> eqOpChildren = eqOp->getChildren();
+		Assert::AreEqual(size_t(2), eqOpChildren.size());
+		Assert::AreEqual(std::string("x"), eqOpChildren[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == eqOpChildren[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("1"), eqOpChildren[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == eqOpChildren[1]->getExprNodeValueType());
+
+		/* Test OUTER then clause */
+		/*  if (y != 2) then {\t"
+				print print;}else{ print p;} */
+		StmtLstNode* outerThenStmtLstNode = outerChildStmtLst[0];
+		std::vector<StmtNode*> outerThenStmts = outerThenStmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), outerThenStmts.size());
+
+		/* Test INNER if-else-then clause */
+		/* if (y != 2) then {\t
+			print print;}else{ print p;} */
+		IfNode* innerIfNode = (IfNode*)outerThenStmts[0];
+		Assert::IsTrue(StatementType::ifType == innerIfNode->getStmtType());
+		std::vector<StmtLstNode*> innerChildStmtLst = innerIfNode->getChildStmtLst();
+		Assert::AreEqual(size_t(2), innerChildStmtLst.size());
+
+		/* Test INNER cond expr */
+		/* (y != 2) */
+		ExprNode* neqOp = innerIfNode->getCondExpr();
+		Assert::AreEqual(std::string("!="), neqOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::relOperator == neqOp->getExprNodeValueType());
+		std::vector<ExprNode*> neqOpChildren = neqOp->getChildren();
+		Assert::AreEqual(size_t(2), neqOpChildren.size());
+		Assert::AreEqual(std::string("y"), neqOpChildren[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == neqOpChildren[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("2"), neqOpChildren[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == neqOpChildren[1]->getExprNodeValueType());
+
+		/* Test INNER then clause */
+		/* print print; */
+		StmtLstNode* innerThenStmtLstNode = innerChildStmtLst[0];
+		std::vector<StmtNode*> innerThenStmts = innerThenStmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), innerThenStmts.size());
+		PrintNode* thenPrintNode = (PrintNode*)innerThenStmts[0];
+		Assert::IsTrue(StatementType::printType == thenPrintNode->getStmtType());
+		Assert::AreEqual(std::string("print"), thenPrintNode->getVarName());
+
+		/* Test INNER else clause */
+		/* print p; */
+		StmtLstNode* innerElseStmtLstNode = innerChildStmtLst[1];
+		std::vector<StmtNode*> innerElseStmts = innerElseStmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), innerElseStmts.size());
+
+		PrintNode* elsePrintNode = (PrintNode*)innerElseStmts[0];
+		Assert::IsTrue(StatementType::printType == elsePrintNode->getStmtType());
+		Assert::AreEqual(std::string("p"), elsePrintNode->getVarName());
+
+		/* Test OUTER else clause */
+		/* read fl123ag 	; */
+		StmtLstNode* outerElseStmtLstNode = outerChildStmtLst[1];
+		std::vector<StmtNode*> outerElseStmts = outerElseStmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), outerElseStmts.size());
+		ReadNode* readNode = (ReadNode*)outerElseStmts[0];
+		Assert::IsTrue(StatementType::readType == readNode->getStmtType());
+		Assert::AreEqual(std::string("fl123ag"), readNode->getVarName());
+	}
+
+	TEST_METHOD(parse_matchIf_containsWhileStmt_success) {
+		const char* source = "   procedure procedure123name \n "
+			"{   if (y == 2) then {\t"
+			"		print print;}"
+			" else {"
+			" while ( x==1	 )\n { "
+			" read r; }"
+			" read fl123ag	;}"
+			"} \n ";
+
+		SourceAST ast = Parser::parse(source);
+		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
+
+		/* Test procedureNodes */
+		Assert::AreEqual(size_t(1), procNodes.size());
+		Assert::AreEqual(std::string("procedure123name"), procNodes[0]->getProcName());
+
+		/* Test statements */
+		StmtLstNode* stmtLstNode = procNodes[0]->getStmtLstNode();
+		std::vector<StmtNode*> statements = stmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), statements.size());
+
+		IfNode* ifNode = (IfNode*)statements[0];
+		Assert::IsTrue(StatementType::ifType == ifNode->getStmtType());
+		std::vector<StmtLstNode*> ifChildStmtLst = ifNode->getChildStmtLst();
+		Assert::AreEqual(size_t(2), ifChildStmtLst.size());
+
+		/* Test then clause */
+		/* print print; */
+		StmtLstNode* thenStmtLstNode = ifChildStmtLst[0];
+		std::vector<StmtNode*> thenStmts = thenStmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), thenStmts.size());
+
+		PrintNode* printNode = (PrintNode*)thenStmts[0];
+		Assert::IsTrue(StatementType::printType == printNode->getStmtType());
+		Assert::AreEqual(std::string("print"), printNode->getVarName());
+
+		/* Test else clause */
+		/*  while ( x==1	 )\n {
+			 read r; }"
+			 read fl123ag	; */
+		StmtLstNode* elseStmtLstNode = ifChildStmtLst[1];
+		std::vector<StmtNode*> elseStmts = elseStmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(2), elseStmts.size());
+
+		/* Test while stmt */
+		WhileNode* whileNode = (WhileNode*)elseStmts[0];
+		Assert::IsTrue(StatementType::whileType == whileNode->getStmtType());
+		StmtLstNode* whileStmtLstNode = whileNode->getChildStmtLst()[0];
+
+		/* Test stmtLst in while container */
+		std::vector<StmtNode*> stmtsInWhile = whileStmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), stmtsInWhile.size());
+
+		ReadNode* readNode1 = (ReadNode*)stmtsInWhile[0];
+		Assert::IsTrue(StatementType::readType == readNode1->getStmtType());
+		Assert::AreEqual(std::string("r"), readNode1->getVarName());
+
+		/* read fl123ag ; */
+		ReadNode* readNode2 = (ReadNode*)elseStmts[1];
+		Assert::IsTrue(StatementType::readType == readNode2->getStmtType());
+		Assert::AreEqual(std::string("fl123ag"), readNode2->getVarName());
+	}
 	TEST_METHOD(parse_matchIf_invalidCond_condExprMissingLeftBracket_parserExceptionThrown) {
 		const char* source = "   procedure procedure123name \n "
 			"{ if  y == 5 * 2)  then "
