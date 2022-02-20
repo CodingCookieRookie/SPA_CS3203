@@ -158,7 +158,7 @@ namespace IntegrationTesting
 			StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
 			Entity::insertVar("a");
 			VarIndex varIndex = Entity::insertVar("b");
-			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("b + x");
+			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix(" b + x ");
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 			// Check PBK populated
@@ -171,32 +171,32 @@ namespace IntegrationTesting
 			Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
 
 			// 3. Test QPS Evaluator:
-			//PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-			//EvaluatedTable evTable = pqlEvaluator.evaluate();
+			PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
+			EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 			//// Test numRow:
-			//Assert::AreEqual(size_t(1), evTable.getNumRow());
+			Assert::AreEqual(size_t(1), evTable.getNumRow());
 
 			//// Test Table:
-			//auto tableRef = evTable.getTableRef();
-			//Assert::AreEqual(true, tableRef.find("b") != tableRef.end());
+			auto tableRef = evTable.getTableRef();
+			Assert::AreEqual(true, tableRef.find("a") != tableRef.end());
 
 			//// Test Values: std::unordered_map<std::string, PqlEntityType>
-			//std::vector<int> values{ 7, 7 };
-			//auto actualValues = tableRef.at("b");
-			//bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
-			//Assert::AreEqual(true, areVecEqual);
+			std::vector<int> values{ 7 };
+			auto actualValues = tableRef.at("a");
+			bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+			Assert::AreEqual(true, areVecEqual);
 
 			// Test EvResult:
 			//bool actualEvResult = evTable.getEvResult();
 			//Assert::AreEqual(true, actualEvResult);
 
 			// 4. Test QPS Result Projector:
-			//PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns());
-			//std::list<std::string> results = resultProjector.resolveTableToResults();
-			//std::list<std::string> expectedRes{ "7" };
-			//bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
-			//Assert::AreEqual(true, areListsEqual);
+			PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns());
+			std::list<std::string> results = resultProjector.resolveTableToResults();
+			std::list<std::string> expectedRes{ "7" };
+			bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+			Assert::AreEqual(true, areListsEqual);
 		}
 	};
 }
