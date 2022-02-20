@@ -233,7 +233,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_VAR_NAME.c_str(), ex.what());
 		}
 
@@ -243,7 +244,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
 	}
@@ -265,7 +267,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
 	}
@@ -287,7 +290,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 	}
@@ -321,7 +325,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_VAR_NAME.c_str(), ex.what());
 		}
 
@@ -331,7 +336,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
 	}
@@ -353,7 +359,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
 	}
@@ -375,7 +382,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 	}
@@ -399,7 +407,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 	}
@@ -521,7 +530,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 	}
@@ -1312,23 +1322,23 @@ public:
 		/* y + 2 > 5 */
 		Assert::AreEqual(std::string(">"), gtOp->getValue());
 		Assert::IsTrue(ExprNodeValueType::relOperator == gtOp->getExprNodeValueType());
-		std::vector<ExprNode*> childrenGtOp = gtOp->getChildren();
-		Assert::AreEqual(size_t(2), childrenGtOp.size());
+		std::vector<ExprNode*> gtOpChildren = gtOp->getChildren();
+		Assert::AreEqual(size_t(2), gtOpChildren.size());
 
 		/* y + 2 */
-		ExprNode* plusOp = childrenGtOp[0];
+		ExprNode* plusOp = gtOpChildren[0];
 		Assert::AreEqual(std::string("+"), plusOp->getValue());
 		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == plusOp->getExprNodeValueType());
-		std::vector<ExprNode*> childrenPlusOp = plusOp->getChildren();
-		Assert::AreEqual(size_t(2), childrenPlusOp.size());
-		Assert::AreEqual(std::string("y"), childrenPlusOp[0]->getValue());
-		Assert::IsTrue(ExprNodeValueType::varName == childrenPlusOp[0]->getExprNodeValueType());
-		Assert::AreEqual(std::string("2"), childrenPlusOp[1]->getValue());
-		Assert::IsTrue(ExprNodeValueType::constValue == childrenPlusOp[1]->getExprNodeValueType());
+		std::vector<ExprNode*> plusOpChildren = plusOp->getChildren();
+		Assert::AreEqual(size_t(2), plusOpChildren.size());
+		Assert::AreEqual(std::string("y"), plusOpChildren[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == plusOpChildren[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("2"), plusOpChildren[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == plusOpChildren[1]->getExprNodeValueType());
 
 		/* 5 */
-		Assert::AreEqual(std::string("5"), childrenGtOp[1]->getValue());
-		Assert::IsTrue(ExprNodeValueType::constValue == childrenGtOp[1]->getExprNodeValueType());
+		Assert::AreEqual(std::string("5"), gtOpChildren[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == gtOpChildren[1]->getExprNodeValueType());
 
 		/* Test stmtLst in while container */
 		std::vector<StmtNode*> stmtsInWhile = stmtLstNodeWhile->getStmtNodes();
@@ -1357,6 +1367,124 @@ public:
 		/* print COUNT	; */
 		PrintNode* printNode = (PrintNode*)stmtsInWhile[3];
 		Assert::AreEqual(std::string("COUNT"), printNode->getVarName());
+	}
+
+	TEST_METHOD(parse_matchWhile_oneRelExprCondExpr_veryNestedExpr_success) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while ( y + 2 > (b0b - (c * 10 - ALL %( Z + (1*0)) )	)) "
+			"{ flag    = 123;   } "
+			"} \n ";
+
+		SourceAST ast = Parser::parse(source);
+		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
+
+		/* Test procedureNodes */
+		Assert::AreEqual(size_t(1), procNodes.size());
+		Assert::AreEqual(std::string("procedure123name"), procNodes[0]->getProcName());
+
+		/* Test statements */
+		StmtLstNode* stmtLstNode = procNodes[0]->getStmtLstNode();
+		std::vector<StmtNode*> statements = stmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), statements.size());
+
+		/* Test while stmt */
+		WhileNode* whileNode = (WhileNode*)statements[0];
+		Assert::IsTrue(StatementType::whileType == whileNode->getStmtType());
+		ExprNode* gtOp = whileNode->getCondExpr();
+		StmtLstNode* stmtLstNodeWhile = whileNode->getChildStmtLst()[0];
+
+		/* Test cond expr */
+		/* ( y + 2 > (b0b - (c * 10 - ALL %( Z + (1*0)) )	))  */
+		Assert::AreEqual(std::string(">"), gtOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::relOperator == gtOp->getExprNodeValueType());
+		std::vector<ExprNode*> gtOpChildren = gtOp->getChildren();
+		Assert::AreEqual(size_t(2), gtOpChildren.size());
+
+		/* y + 2 */
+		ExprNode* plusOp = gtOpChildren[0];
+		Assert::AreEqual(std::string("+"), plusOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == plusOp->getExprNodeValueType());
+		std::vector<ExprNode*> plusOpChildren = plusOp->getChildren();
+		Assert::AreEqual(size_t(2), plusOpChildren.size());
+		Assert::AreEqual(std::string("y"), plusOpChildren[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == plusOpChildren[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("2"), plusOpChildren[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == plusOpChildren[1]->getExprNodeValueType());
+
+		/* (b0b - (c * 10 - ALL %( Z + (1*0)) ) */
+		ExprNode* minusOp = gtOpChildren[1];
+		Assert::AreEqual(std::string("-"), minusOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == minusOp->getExprNodeValueType());
+		std::vector<ExprNode*> minusOpChildren = minusOp->getChildren();
+		Assert::AreEqual(size_t(2), minusOpChildren.size());
+
+		/* b0b */
+		Assert::AreEqual(std::string("b0b"), minusOpChildren[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == minusOpChildren[0]->getExprNodeValueType());
+
+		/* (c * 10 - ALL %( Z + (1*0)) ) */
+		ExprNode* minusOp2 = minusOpChildren[1];
+		Assert::AreEqual(std::string("-"), minusOp2->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == minusOp2->getExprNodeValueType());
+		std::vector<ExprNode*> minusOp2Children = minusOp2->getChildren();
+		Assert::AreEqual(size_t(2), minusOp2Children.size());
+
+		/* c * 10 */
+		ExprNode* multOp = minusOp2Children[0];
+		Assert::AreEqual(std::string("*"), multOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == multOp->getExprNodeValueType());
+		std::vector<ExprNode*> multOpChildren = multOp->getChildren();
+		Assert::AreEqual(size_t(2), multOpChildren.size());
+		Assert::AreEqual(std::string("c"), multOpChildren[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == multOpChildren[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("10"), multOpChildren[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == multOpChildren[1]->getExprNodeValueType());
+
+		/* ALL %( Z + (1*0) ) */
+		ExprNode* modOp = minusOp2Children[1];
+		Assert::AreEqual(std::string("%"), modOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == modOp->getExprNodeValueType());
+		std::vector<ExprNode*> modOpChildren = modOp->getChildren();
+		Assert::AreEqual(size_t(2), modOpChildren.size());
+
+		/* ALL */
+		Assert::AreEqual(std::string("ALL"), modOpChildren[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == modOpChildren[0]->getExprNodeValueType());
+
+		/* ( Z + (1*0) ) */
+		ExprNode* plusOp2 = modOpChildren[1];
+		Assert::AreEqual(std::string("+"), plusOp2->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == plusOp2->getExprNodeValueType());
+		std::vector<ExprNode*> plusOp2Children = plusOp2->getChildren();
+		Assert::AreEqual(size_t(2), plusOp2Children.size());
+
+		/* Z */
+		Assert::AreEqual(std::string("Z"), plusOp2Children[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == plusOp2Children[0]->getExprNodeValueType());
+
+		/* (1*0) */
+		ExprNode* multOp2 = plusOp2Children[1];
+		Assert::AreEqual(std::string("*"), multOp2->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == multOp2->getExprNodeValueType());
+		std::vector<ExprNode*> multOp2Children = multOp2->getChildren();
+		Assert::AreEqual(size_t(2), multOp2Children.size());
+		Assert::AreEqual(std::string("1"), multOp2Children[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == multOp2Children[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("0"), multOp2Children[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == multOp2Children[1]->getExprNodeValueType());
+
+		/* Test stmtLst in while container */
+		std::vector<StmtNode*> stmtsInWhile = stmtLstNodeWhile->getStmtNodes();
+		Assert::AreEqual(size_t(1), stmtsInWhile.size());
+
+		/* flag    = 123; */
+		AssignNode* assignNode = (AssignNode*)stmtsInWhile[0];
+		Assert::IsTrue(StatementType::assignType == assignNode->getStmtType());
+		Assert::AreEqual(std::string("flag"), assignNode->getVarName());
+
+		ExprNode* expr = assignNode->getExpr();
+		Assert::AreEqual(std::string("123"), expr->getValue());
+		Assert::IsTrue(expr->getChildren().empty());
 	}
 
 	TEST_METHOD(parse_matchWhile_NOTOpCondExpr_success) {
@@ -1426,6 +1554,67 @@ public:
 		/* print COUNT	; */
 		PrintNode* printNode = (PrintNode*)stmtsInWhile[3];
 		Assert::AreEqual(std::string("COUNT"), printNode->getVarName());
+	}
+
+	TEST_METHOD(parse_matchWhile_nestedNOTOpCondExpr_success) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while (!(	!(x >= 0)	)	) "
+			"{ flag    = 123;  } "
+			"} \n ";
+		SourceAST ast = Parser::parse(source);
+		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
+
+		/* Test procedureNodes */
+		Assert::AreEqual(size_t(1), procNodes.size());
+		Assert::AreEqual(std::string("procedure123name"), procNodes[0]->getProcName());
+
+		/* Test statements */
+		StmtLstNode* stmtLstNode = procNodes[0]->getStmtLstNode();
+		std::vector<StmtNode*> statements = stmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), statements.size());
+
+		/* Test while stmt */
+		WhileNode* whileNode = (WhileNode*)statements[0];
+		Assert::IsTrue(StatementType::whileType == whileNode->getStmtType());
+		StmtLstNode* stmtLstNodeWhile = whileNode->getChildStmtLst()[0];
+
+		/* Test cond expr */
+		/* Outer NOT cond */
+		ExprNode* outerNotOp = whileNode->getCondExpr();
+		Assert::AreEqual(std::string("!"), outerNotOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::logicalOperator == outerNotOp->getExprNodeValueType());
+		std::vector<ExprNode*> outerNotOpChildren = outerNotOp->getChildren();
+		Assert::AreEqual(size_t(1), outerNotOpChildren.size());
+
+		/* Inner NOT cond */
+		ExprNode* innerNotOp = outerNotOpChildren[0];
+		Assert::AreEqual(std::string("!"), innerNotOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::logicalOperator == innerNotOp->getExprNodeValueType());
+		std::vector<ExprNode*> innerNotOpChildren = innerNotOp->getChildren();
+		Assert::AreEqual(size_t(1), innerNotOpChildren.size());
+
+		/* (x >= 0) */
+		ExprNode* gteOp = innerNotOpChildren[0];
+		Assert::AreEqual(std::string(">="), gteOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::relOperator == gteOp->getExprNodeValueType());
+		std::vector<ExprNode*> gteOpChildren = gteOp->getChildren();
+		Assert::AreEqual(size_t(2), gteOpChildren.size());
+		Assert::AreEqual(std::string("x"), gteOpChildren[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == gteOpChildren[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("0"), gteOpChildren[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == gteOpChildren[1]->getExprNodeValueType());
+
+		/* Test stmtLst in while container */
+		std::vector<StmtNode*> stmtsInWhile = stmtLstNodeWhile->getStmtNodes();
+		Assert::AreEqual(size_t(1), stmtsInWhile.size());
+
+		/* flag    = 123; */
+		AssignNode* assignNode = (AssignNode*)stmtsInWhile[0];
+		Assert::IsTrue(StatementType::assignType == assignNode->getStmtType());
+		Assert::AreEqual(std::string("flag"), assignNode->getVarName());
+		ExprNode* expr = assignNode->getExpr();
+		Assert::AreEqual(std::string("123"), expr->getValue());
+		Assert::IsTrue(expr->getChildren().empty());
 	}
 
 	TEST_METHOD(parse_matchWhile_ANDOpCondExpr_success) {
@@ -1671,6 +1860,276 @@ public:
 		Assert::AreEqual(std::string("fl123ag"), readNode->getVarName());
 	}
 
+	TEST_METHOD(parse_matchWhile_veryNestedCondExpr_success) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while ( !(   ((ALLUPPERCASE > 123 + (4567*0)) && (!(1-2147483647 % 3 != MiXeDcAsE)) ) ||   (1<999 / 888)	 )    ) "
+			"{ read fl123ag 	; } "
+			"} \n ";
+
+		SourceAST ast = Parser::parse(source);
+		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
+
+		/* Test procedureNodes */
+		Assert::AreEqual(size_t(1), procNodes.size());
+		Assert::AreEqual(std::string("procedure123name"), procNodes[0]->getProcName());
+
+		/* Test statements */
+		StmtLstNode* stmtLstNode = procNodes[0]->getStmtLstNode();
+		std::vector<StmtNode*> statements = stmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), statements.size());
+
+		/* Test while stmt */
+		WhileNode* whileNode = (WhileNode*)statements[0];
+		Assert::IsTrue(StatementType::whileType == whileNode->getStmtType());
+		ExprNode* notOp = whileNode->getCondExpr();
+		StmtLstNode* stmtLstNodeWhile = whileNode->getChildStmtLst()[0];
+
+		/* Test cond expr */
+		/*  !(   ((ALLUPPERCASE > 123 + (4567*0)) && (!(1-2147483647 % 3 != MiXeDcAsE)) ) ||   (1<999 / 888)	 ) */
+		Assert::AreEqual(std::string("!"), notOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::logicalOperator == notOp->getExprNodeValueType());
+		std::vector<ExprNode*> notOpChildren = notOp->getChildren();
+		Assert::AreEqual(size_t(1), notOpChildren.size());
+
+		/* ((ALLUPPERCASE > 123 + (4567*0)) && (!(1-2147483647 % 3 != MiXeDcAsE)) ) ||   (1<999 / 888) */
+		ExprNode* orOp = notOpChildren[0];
+		Assert::AreEqual(std::string("||"), orOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::logicalOperator == orOp->getExprNodeValueType());
+		std::vector<ExprNode*> orOpChildren = orOp->getChildren();
+		Assert::AreEqual(size_t(2), orOpChildren.size());
+
+		/* ((ALLUPPERCASE > 123 + (4567*0)) && (!(1-2147483647 % 3 != MiXeDcAsE)) ) */
+		ExprNode* andOp = orOpChildren[0];
+		Assert::AreEqual(std::string("&&"), andOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::logicalOperator == andOp->getExprNodeValueType());
+		std::vector<ExprNode*> andOpChildren = andOp->getChildren();
+		Assert::AreEqual(size_t(2), andOpChildren.size());
+
+		/* (ALLUPPERCASE > 123 + (4567*0))*/
+		ExprNode* gtOp = andOpChildren[0];
+		Assert::AreEqual(std::string(">"), gtOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::relOperator == gtOp->getExprNodeValueType());
+		std::vector<ExprNode*> gtOpChildren = gtOp->getChildren();
+		Assert::AreEqual(size_t(2), gtOpChildren.size());
+
+		/* ALLUPPERCASE */
+		Assert::AreEqual(std::string("ALLUPPERCASE"), gtOpChildren[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == gtOpChildren[0]->getExprNodeValueType());
+
+		/* 123 + (4567*0) */
+		ExprNode* plusOp = gtOpChildren[1];
+		Assert::AreEqual(std::string("+"), plusOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == plusOp->getExprNodeValueType());
+		std::vector<ExprNode*> plusOpChildren = plusOp->getChildren();
+		Assert::AreEqual(size_t(2), plusOpChildren.size());
+
+		/* 123 */
+		Assert::AreEqual(std::string("123"), plusOpChildren[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == plusOpChildren[0]->getExprNodeValueType());
+
+		/* (4567*0) */
+		ExprNode* multOp = plusOpChildren[1];
+		Assert::AreEqual(std::string("*"), multOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == multOp->getExprNodeValueType());
+		std::vector<ExprNode*> multOpChildren = multOp->getChildren();
+		Assert::AreEqual(size_t(2), multOpChildren.size());
+		Assert::AreEqual(std::string("4567"), multOpChildren[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == multOpChildren[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("0"), multOpChildren[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == multOpChildren[1]->getExprNodeValueType());
+
+		/* (!(1-2147483647 % 3 != MiXeDcAsE)) */
+		ExprNode* notOp2 = andOpChildren[1];
+		Assert::AreEqual(std::string("!"), notOp2->getValue());
+		Assert::IsTrue(ExprNodeValueType::logicalOperator == notOp2->getExprNodeValueType());
+		std::vector<ExprNode*> notOp2Children = notOp2->getChildren();
+		Assert::AreEqual(size_t(1), notOp2Children.size());
+
+		/* (1-2147483647 % 3 != MiXeDcAsE) */
+		ExprNode* notEqOp = notOp2Children[0];
+		Assert::AreEqual(std::string("!="), notEqOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::relOperator == notEqOp->getExprNodeValueType());
+		std::vector<ExprNode*> notEqOpChildren = notEqOp->getChildren();
+		Assert::AreEqual(size_t(2), notEqOpChildren.size());
+
+		/* 1-2147483647 % 3 */
+		ExprNode* minusOp = notEqOpChildren[0];
+		Assert::AreEqual(std::string("-"), minusOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == minusOp->getExprNodeValueType());
+		std::vector<ExprNode*> minusOpChildren = minusOp->getChildren();
+		Assert::AreEqual(size_t(2), minusOpChildren.size());
+
+		/* 1 */
+		Assert::AreEqual(std::string("1"), minusOpChildren[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == minusOpChildren[0]->getExprNodeValueType());
+
+		/* 2147483647 % 3 */
+		ExprNode* modOp = minusOpChildren[1];
+		Assert::AreEqual(std::string("%"), modOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == modOp->getExprNodeValueType());
+		std::vector<ExprNode*> modOpChildren = modOp->getChildren();
+		Assert::AreEqual(size_t(2), modOpChildren.size());
+		Assert::AreEqual(std::string("2147483647"), modOpChildren[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == modOpChildren[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("3"), modOpChildren[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == modOpChildren[1]->getExprNodeValueType());
+
+		/* MiXeDcAsE */
+		Assert::AreEqual(std::string("MiXeDcAsE"), notEqOpChildren[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == notEqOpChildren[1]->getExprNodeValueType());
+
+		/* (1<999 / 888) */
+		ExprNode* ltOp = orOpChildren[1];
+		Assert::AreEqual(std::string("<"), ltOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::relOperator == ltOp->getExprNodeValueType());
+		std::vector<ExprNode*> ltOpChildren = ltOp->getChildren();
+		Assert::AreEqual(size_t(2), ltOpChildren.size());
+
+		/* 1 */
+		Assert::AreEqual(std::string("1"), ltOpChildren[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == ltOpChildren[0]->getExprNodeValueType());
+
+		/* 999 / 888 */
+		ExprNode* divideOp = ltOpChildren[1];
+		Assert::AreEqual(std::string("/"), divideOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == divideOp->getExprNodeValueType());
+		std::vector<ExprNode*> divideOpChildren = divideOp->getChildren();
+		Assert::AreEqual(size_t(2), divideOpChildren.size());
+		Assert::AreEqual(std::string("999"), divideOpChildren[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == divideOpChildren[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("888"), divideOpChildren[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == divideOpChildren[1]->getExprNodeValueType());
+
+		/* Test stmtLst in while container */
+		std::vector<StmtNode*> stmtsInWhile = stmtLstNodeWhile->getStmtNodes();
+		Assert::AreEqual(size_t(1), stmtsInWhile.size());
+
+		/* read fl123ag ; */
+		ReadNode* readNode = (ReadNode*)stmtsInWhile[0];
+		Assert::IsTrue(StatementType::readType == readNode->getStmtType());
+		Assert::AreEqual(std::string("fl123ag"), readNode->getVarName());
+	}
+
+	TEST_METHOD(parse_matchWhile_nestedWhile_success) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while ( x==1	 )\n { "
+			" read r;"
+			"   while (y == 2) {\t"
+			"		print print;}"
+			" }  \n"
+			" read fl123ag 	;  "
+			"} \n ";
+
+		SourceAST ast = Parser::parse(source);
+		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
+
+		/* Test procedureNodes */
+		Assert::AreEqual(size_t(1), procNodes.size());
+		Assert::AreEqual(std::string("procedure123name"), procNodes[0]->getProcName());
+
+		/* Test statements */
+		StmtLstNode* stmtLstNode = procNodes[0]->getStmtLstNode();
+		std::vector<StmtNode*> statements = stmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(2), statements.size());
+
+		/* Test while stmt */
+		WhileNode* outerWhileNode = (WhileNode*)statements[0];
+		Assert::IsTrue(StatementType::whileType == outerWhileNode->getStmtType());
+		StmtLstNode* outerWhileStmtLstNode = outerWhileNode->getChildStmtLst()[0];
+
+		/* Test stmtLst in OUTER while container */
+		std::vector<StmtNode*> stmtsInOuterWhile = outerWhileStmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(2), stmtsInOuterWhile.size());
+
+		ReadNode* readNode1 = (ReadNode*)stmtsInOuterWhile[0];
+		Assert::IsTrue(StatementType::readType == readNode1->getStmtType());
+		Assert::AreEqual(std::string("r"), readNode1->getVarName());
+
+		WhileNode* innerWhileNode = (WhileNode*)stmtsInOuterWhile[1];
+		Assert::IsTrue(StatementType::whileType == innerWhileNode->getStmtType());
+		StmtLstNode* innerWhileStmtLstNode = innerWhileNode->getChildStmtLst()[0];
+
+		/* Test stmtLst in INNER while container */
+		std::vector<StmtNode*> stmtsInInnerWhile = innerWhileStmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), stmtsInInnerWhile.size());
+
+		PrintNode* printNode = (PrintNode*)stmtsInInnerWhile[0];
+		Assert::IsTrue(StatementType::printType == printNode->getStmtType());
+		Assert::AreEqual(std::string("print"), printNode->getVarName());
+
+		/* read fl123ag ; */
+		ReadNode* readNode2 = (ReadNode*)statements[1];
+		Assert::IsTrue(StatementType::readType == readNode2->getStmtType());
+		Assert::AreEqual(std::string("fl123ag"), readNode2->getVarName());
+	}
+
+	TEST_METHOD(parse_matchWhile_containsIfStmt_success) {
+		const char* source = "   procedure procedure123name \n "
+			"{ while ( x==1	 )\n { "
+			" read r;"
+			"   if (y == 2) then {\t"
+			"		print print;}"
+			" else { print pretty	;}"
+			" }  \n"
+			" read fl123ag 	;  "
+			"} \n ";
+
+		SourceAST ast = Parser::parse(source);
+		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
+
+		/* Test procedureNodes */
+		Assert::AreEqual(size_t(1), procNodes.size());
+		Assert::AreEqual(std::string("procedure123name"), procNodes[0]->getProcName());
+
+		/* Test statements */
+		StmtLstNode* stmtLstNode = procNodes[0]->getStmtLstNode();
+		std::vector<StmtNode*> statements = stmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(2), statements.size());
+
+		/* Test while stmt */
+		WhileNode* whileNode = (WhileNode*)statements[0];
+		Assert::IsTrue(StatementType::whileType == whileNode->getStmtType());
+		StmtLstNode* whileStmtLstNode = whileNode->getChildStmtLst()[0];
+
+		/* Test stmtLst in while container */
+		std::vector<StmtNode*> stmtsInWhile = whileStmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(2), stmtsInWhile.size());
+
+		ReadNode* readNode1 = (ReadNode*)stmtsInWhile[0];
+		Assert::IsTrue(StatementType::readType == readNode1->getStmtType());
+		Assert::AreEqual(std::string("r"), readNode1->getVarName());
+
+		IfNode* ifNode = (IfNode*)stmtsInWhile[1];
+		Assert::IsTrue(StatementType::ifType == ifNode->getStmtType());
+		std::vector<StmtLstNode*> ifStmtLstNode = ifNode->getChildStmtLst();
+		Assert::AreEqual(size_t(2), ifStmtLstNode.size());
+
+		/* Test then clause */
+		/* print print; */
+		StmtLstNode* thenStmtLstNode = ifStmtLstNode[0];
+		std::vector<StmtNode*> thenStmts = thenStmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), thenStmts.size());
+
+		PrintNode* printNode1 = (PrintNode*)thenStmts[0];
+		Assert::IsTrue(StatementType::printType == printNode1->getStmtType());
+		Assert::AreEqual(std::string("print"), printNode1->getVarName());
+
+		/* Test else clause */
+		/*  print pretty	; */
+		StmtLstNode* elseStmtLstNode = ifStmtLstNode[1];
+		std::vector<StmtNode*> elseStmts = elseStmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), elseStmts.size());
+
+		PrintNode* printNode2 = (PrintNode*)elseStmts[0];
+		Assert::IsTrue(StatementType::printType == printNode2->getStmtType());
+		Assert::AreEqual(std::string("pretty"), printNode2->getVarName());
+
+		/* read fl123ag ; */
+		ReadNode* readNode2 = (ReadNode*)statements[1];
+		Assert::IsTrue(StatementType::readType == readNode2->getStmtType());
+		Assert::AreEqual(std::string("fl123ag"), readNode2->getVarName());
+	}
+
 	TEST_METHOD(parse_matchWhile_condExprMissingLeftBracket_parserExceptionThrown) {
 		const char* source = "   procedure procedure123name \n "
 			"{ while  y + 2 > 5) "
@@ -1682,7 +2141,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_BRACKET.c_str(), ex.what());
 		}
 
@@ -1696,7 +2156,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_BRACKET.c_str(), ex.what());
 		}
 	}
@@ -1712,7 +2173,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_RIGHT_BRACKET.c_str(), ex.what());
 		}
 	}
@@ -1728,7 +2190,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_CURLY.c_str(), ex.what());
 		}
 	}
@@ -1744,7 +2207,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			// The last right curly (for procedure) is taken as the while's right curly
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
@@ -1760,7 +2224,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 	}
@@ -1775,7 +2240,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
 		}
 	}
@@ -1790,7 +2256,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
 		}
 
@@ -1803,7 +2270,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
 		}
 	}
@@ -1818,7 +2286,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_BRACKET.c_str(), ex.what());
 		}
 	}
@@ -1833,7 +2302,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
 		}
 	}
@@ -1848,7 +2318,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
 			Parser::parse(source1);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
 		}
 	}
@@ -1863,7 +2334,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_RIGHT_BRACKET.c_str(), ex.what());
 		}
 	}
@@ -1878,7 +2350,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
 		}
 	}
@@ -1893,7 +2366,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
 		}
 	}
@@ -1908,7 +2382,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_RIGHT_BRACKET.c_str(), ex.what());
 		}
 	}
@@ -1923,7 +2398,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_COND_EXPR.c_str(), ex.what());
 		}
 	}
@@ -1938,7 +2414,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_COND_EXPR.c_str(), ex.what());
 		}
 	}
@@ -1953,7 +2430,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_BRACKET.c_str(), ex.what());
 		}
 	}
@@ -1968,7 +2446,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
 		}
 	}
@@ -1983,7 +2462,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
 		}
 	}
@@ -1998,7 +2478,8 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			Parser::parse(source);
-		} catch (ParserException& ex) {
+		}
+		catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_RIGHT_BRACKET.c_str(), ex.what());
 		}
 	}
@@ -2078,6 +2559,164 @@ public:
 		Assert::AreEqual(std::string("COUNT"), printNode->getVarName());
 	}
 
+	TEST_METHOD(parse_matchIf_nestedIf_success) {
+		const char* source = "   procedure procedure123name \n "
+			"{ if ( x==1	 ) then\n { "
+			"   if (y != 2) then {\t"
+			"		print print;}else{ print p;}"
+			" }else{  \n"
+			" read fl123ag 	; } "
+			"} \n ";
+
+		SourceAST ast = Parser::parse(source);
+		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
+
+		/* Test procedureNodes */
+		Assert::AreEqual(size_t(1), procNodes.size());
+		Assert::AreEqual(std::string("procedure123name"), procNodes[0]->getProcName());
+
+		/* Test statements */
+		StmtLstNode* stmtLstNode = procNodes[0]->getStmtLstNode();
+		std::vector<StmtNode*> statements = stmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), statements.size());
+
+		/* Test OUTER if-else-then clause */
+		IfNode* outerIfNode = (IfNode*)statements[0];
+		Assert::IsTrue(StatementType::ifType == outerIfNode->getStmtType());
+		std::vector<StmtLstNode*> outerChildStmtLst = outerIfNode->getChildStmtLst();
+		Assert::AreEqual(size_t(2), outerChildStmtLst.size());
+
+		/* Test OUTER cond expr */
+		/* ( x==1	 ) */
+		ExprNode* eqOp = outerIfNode->getCondExpr();
+		Assert::AreEqual(std::string("=="), eqOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::relOperator == eqOp->getExprNodeValueType());
+		std::vector<ExprNode*> eqOpChildren = eqOp->getChildren();
+		Assert::AreEqual(size_t(2), eqOpChildren.size());
+		Assert::AreEqual(std::string("x"), eqOpChildren[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == eqOpChildren[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("1"), eqOpChildren[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == eqOpChildren[1]->getExprNodeValueType());
+
+		/* Test OUTER then clause */
+		/*  if (y != 2) then {\t"
+				print print;}else{ print p;} */
+		StmtLstNode* outerThenStmtLstNode = outerChildStmtLst[0];
+		std::vector<StmtNode*> outerThenStmts = outerThenStmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), outerThenStmts.size());
+
+		/* Test INNER if-else-then clause */
+		/* if (y != 2) then {\t
+			print print;}else{ print p;} */
+		IfNode* innerIfNode = (IfNode*)outerThenStmts[0];
+		Assert::IsTrue(StatementType::ifType == innerIfNode->getStmtType());
+		std::vector<StmtLstNode*> innerChildStmtLst = innerIfNode->getChildStmtLst();
+		Assert::AreEqual(size_t(2), innerChildStmtLst.size());
+
+		/* Test INNER cond expr */
+		/* (y != 2) */
+		ExprNode* neqOp = innerIfNode->getCondExpr();
+		Assert::AreEqual(std::string("!="), neqOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::relOperator == neqOp->getExprNodeValueType());
+		std::vector<ExprNode*> neqOpChildren = neqOp->getChildren();
+		Assert::AreEqual(size_t(2), neqOpChildren.size());
+		Assert::AreEqual(std::string("y"), neqOpChildren[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == neqOpChildren[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("2"), neqOpChildren[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == neqOpChildren[1]->getExprNodeValueType());
+
+		/* Test INNER then clause */
+		/* print print; */
+		StmtLstNode* innerThenStmtLstNode = innerChildStmtLst[0];
+		std::vector<StmtNode*> innerThenStmts = innerThenStmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), innerThenStmts.size());
+		PrintNode* thenPrintNode = (PrintNode*)innerThenStmts[0];
+		Assert::IsTrue(StatementType::printType == thenPrintNode->getStmtType());
+		Assert::AreEqual(std::string("print"), thenPrintNode->getVarName());
+
+		/* Test INNER else clause */
+		/* print p; */
+		StmtLstNode* innerElseStmtLstNode = innerChildStmtLst[1];
+		std::vector<StmtNode*> innerElseStmts = innerElseStmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), innerElseStmts.size());
+
+		PrintNode* elsePrintNode = (PrintNode*)innerElseStmts[0];
+		Assert::IsTrue(StatementType::printType == elsePrintNode->getStmtType());
+		Assert::AreEqual(std::string("p"), elsePrintNode->getVarName());
+
+		/* Test OUTER else clause */
+		/* read fl123ag 	; */
+		StmtLstNode* outerElseStmtLstNode = outerChildStmtLst[1];
+		std::vector<StmtNode*> outerElseStmts = outerElseStmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), outerElseStmts.size());
+		ReadNode* readNode = (ReadNode*)outerElseStmts[0];
+		Assert::IsTrue(StatementType::readType == readNode->getStmtType());
+		Assert::AreEqual(std::string("fl123ag"), readNode->getVarName());
+	}
+
+	TEST_METHOD(parse_matchIf_containsWhileStmt_success) {
+		const char* source = "   procedure procedure123name \n "
+			"{   if (y == 2) then {\t"
+			"		print print;}"
+			" else {"
+			" while ( x==1	 )\n { "
+			" read r; }"
+			" read fl123ag	;}"
+			"} \n ";
+
+		SourceAST ast = Parser::parse(source);
+		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
+
+		/* Test procedureNodes */
+		Assert::AreEqual(size_t(1), procNodes.size());
+		Assert::AreEqual(std::string("procedure123name"), procNodes[0]->getProcName());
+
+		/* Test statements */
+		StmtLstNode* stmtLstNode = procNodes[0]->getStmtLstNode();
+		std::vector<StmtNode*> statements = stmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), statements.size());
+
+		IfNode* ifNode = (IfNode*)statements[0];
+		Assert::IsTrue(StatementType::ifType == ifNode->getStmtType());
+		std::vector<StmtLstNode*> ifChildStmtLst = ifNode->getChildStmtLst();
+		Assert::AreEqual(size_t(2), ifChildStmtLst.size());
+
+		/* Test then clause */
+		/* print print; */
+		StmtLstNode* thenStmtLstNode = ifChildStmtLst[0];
+		std::vector<StmtNode*> thenStmts = thenStmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), thenStmts.size());
+
+		PrintNode* printNode = (PrintNode*)thenStmts[0];
+		Assert::IsTrue(StatementType::printType == printNode->getStmtType());
+		Assert::AreEqual(std::string("print"), printNode->getVarName());
+
+		/* Test else clause */
+		/*  while ( x==1	 )\n {
+			 read r; }"
+			 read fl123ag	; */
+		StmtLstNode* elseStmtLstNode = ifChildStmtLst[1];
+		std::vector<StmtNode*> elseStmts = elseStmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(2), elseStmts.size());
+
+		/* Test while stmt */
+		WhileNode* whileNode = (WhileNode*)elseStmts[0];
+		Assert::IsTrue(StatementType::whileType == whileNode->getStmtType());
+		StmtLstNode* whileStmtLstNode = whileNode->getChildStmtLst()[0];
+
+		/* Test stmtLst in while container */
+		std::vector<StmtNode*> stmtsInWhile = whileStmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), stmtsInWhile.size());
+
+		ReadNode* readNode1 = (ReadNode*)stmtsInWhile[0];
+		Assert::IsTrue(StatementType::readType == readNode1->getStmtType());
+		Assert::AreEqual(std::string("r"), readNode1->getVarName());
+
+		/* read fl123ag ; */
+		ReadNode* readNode2 = (ReadNode*)elseStmts[1];
+		Assert::IsTrue(StatementType::readType == readNode2->getStmtType());
+		Assert::AreEqual(std::string("fl123ag"), readNode2->getVarName());
+	}
 	TEST_METHOD(parse_matchIf_invalidCond_condExprMissingLeftBracket_parserExceptionThrown) {
 		const char* source = "   procedure procedure123name \n "
 			"{ if  y == 5 * 2)  then "

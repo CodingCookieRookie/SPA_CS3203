@@ -286,13 +286,15 @@ namespace UnitTesting
 			Assert::AreEqual(size_t(0), tableRef.size()); // RHS wildcard will still have column (innerJoinMerge() will drop it during merge)
 
 			// Test Entities: std::unordered_map<std::string, PqlEntityType>
+			// No entities to test
+
 			auto actualEntities = evTable.getEntities();
 			Assert::AreEqual(false, actualEntities.find("_") != actualEntities.end());
 			Assert::AreEqual(false, actualEntities.find("2") != actualEntities.end());
 
 			// Test EvResult:
 			bool actualEvResult = evTable.getEvResult();
-			Assert::AreEqual(true, actualEvResult);
+			Assert::AreEqual(true, actualEvResult); // there exists some statement that is a parent of 3
 
 			// 3. Clean-up:
 			Entity::performCleanUp();
@@ -332,6 +334,8 @@ namespace UnitTesting
 			Assert::AreEqual(size_t(0), tableRef.size()); // RHS wildcard will still have column (innerJoinMerge() will drop it during merge)
 
 			// Test Entities: std::unordered_map<std::string, PqlEntityType>
+			// No Entities populated
+
 			auto actualEntities = evTable.getEntities();
 			Assert::AreEqual(false, actualEntities.find("_") != actualEntities.end());
 			Assert::AreEqual(false, actualEntities.find("28") != actualEntities.end());
@@ -339,7 +343,7 @@ namespace UnitTesting
 
 			// Test EvResult:
 			bool actualEvResult = evTable.getEvResult();
-			Assert::AreEqual(true, actualEvResult);
+			Assert::AreEqual(true, actualEvResult); // there exists a statment that is a parent of 28
 
 			// 3. Clean-up:
 			Entity::performCleanUp();

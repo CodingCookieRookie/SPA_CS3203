@@ -384,7 +384,7 @@ namespace UnitTesting
 			EvaluatedTable evTable = instruction->execute();
 
 			// Test numRow:
-			Assert::AreEqual(size_t(0), evTable.getNumRow());
+			Assert::AreEqual(size_t(0), evTable.getNumRow()); // not 86, wildcard has no column and row
 
 			// Test Table: std::unordered_map<std::string, std::vector<int>>
 			auto tableRef = evTable.getTableRef();
@@ -395,6 +395,8 @@ namespace UnitTesting
 			Assert::AreEqual(size_t(0), tableRef.size()); // LHS wildcard will still have column (innerJoinMerge() will drop it during merge)
 
 			// Test Entities: std::unordered_map<std::string, PqlEntityType>
+			// No entities
+
 			auto actualEntities = evTable.getEntities();
 			Assert::AreEqual(false, actualEntities.find("_") != actualEntities.end());
 			Assert::AreEqual(false, actualEntities.find("87") != actualEntities.end());
@@ -402,7 +404,7 @@ namespace UnitTesting
 
 			// Test EvResult:
 			bool actualEvResult = evTable.getEvResult();
-			Assert::AreEqual(true, actualEvResult);
+			Assert::AreEqual(true, actualEvResult); // there exists a parent* of 87
 
 			// 3. Clean-up:
 			Entity::performCleanUp();

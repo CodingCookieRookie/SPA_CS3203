@@ -29,10 +29,10 @@
     <ClCompile Include="TestFrontEnd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestQuerying.cpp">
+    <ClCompile Include="TestSPPKB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestQuerying2.cpp">
+    <ClCompile Include="TestQuerying.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

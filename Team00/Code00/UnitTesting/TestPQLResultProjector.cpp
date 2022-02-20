@@ -4,7 +4,6 @@
 #include "CppUnitTest.h"
 #include "../source/QPS-NEW/EvaluatedTable.h"
 #include "../source/QPS-NEW/PQLResultProjector.h"
-#include <iostream>
 #include <PKB/Entity.h>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
