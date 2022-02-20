@@ -27,6 +27,13 @@ namespace IntegrationTesting
 			ParentT::performCleanUp();
 			Parent::performCleanUp();
 		}
+
+		TEST_METHOD_INITIALIZE(initTables) {
+			Entity::performCleanUp();
+			Modifies::performCleanUp();
+			Uses::performCleanUp();
+			Pattern::performCleanUp();
+		}
 	public:
 
 		TEST_METHOD(querying_declarationAndSelectStmtsOnly_success)
