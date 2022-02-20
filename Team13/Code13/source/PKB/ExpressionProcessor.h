@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef EXPRESSIONPROCESSOR_H
-#define EXPRESSIONPROCESSOR_H
-
 #include <string>
 
 #include "../common/Types.h"
@@ -13,5 +10,3 @@ public:
 	static int evaluateOperatorPrecedence(char currentChar);
 	static std::string convertInfixToPostFix(std::string s);
 };
-
-#endif

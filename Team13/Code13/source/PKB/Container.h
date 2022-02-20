@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef CONTAINER_H
-#define CONTAINER_H
-
 #include <string>
 #include <unordered_set>
 #include <unordered_map>
@@ -23,5 +20,3 @@ public:
 	static void populate();
 	static void performCleanUp();
 };
-
-#endif

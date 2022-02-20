@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef LEXER_H
-#define LEXER_H
-
 #include <string>
 
 #include "../Exception/SPAException.h"
@@ -23,5 +20,3 @@ public:
 	bool match(const std::string& pattern);
 	bool reachedEnd();
 };
-
-#endif

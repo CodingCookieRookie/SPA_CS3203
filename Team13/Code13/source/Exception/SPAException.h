@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef SPAEXCEPTION_H
-#define SPAEXCEPTION_H
-
 #include <exception>
 #include <string>
 
@@ -62,5 +59,3 @@ public:
 
 	EvaluatorException(const std::string& reason);
 };
-
-#endif

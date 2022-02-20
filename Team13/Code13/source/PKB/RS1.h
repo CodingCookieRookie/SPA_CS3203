@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef RS1_H
-#define RS1_H
-
 #include <unordered_set>
 #include <unordered_map>
 #include <vector>
@@ -168,5 +165,3 @@ void RS1<T>::performCleanUp() {
 	varProcTable = {};
 	procVarTable = {};
 }
-
-#endif

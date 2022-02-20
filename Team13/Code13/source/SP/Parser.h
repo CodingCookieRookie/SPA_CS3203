@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef PARSER_H
-#define PARSER_H
-
 #include <string>
 #include <vector>
 
@@ -57,5 +54,3 @@ public:
 	Parser();
 	static SourceAST parse(const std::string& source);
 };
-
-#endif

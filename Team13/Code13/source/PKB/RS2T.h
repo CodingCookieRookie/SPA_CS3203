@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef RS2T_H
-#define RS2T_H
-
 #include "./RS2.h"
 
 template<class T>
@@ -56,5 +53,3 @@ void RS2T<T>::populate(std::unordered_map<StmtIndex, std::unordered_set<StmtInde
 		}
 	}
 };
-
-#endif
