@@ -165,8 +165,9 @@ private:
 	PqlReference rhsRef;
 
 	EvaluatedTable handleModifiesS() {
-		// Modifies (a/r/s/a1, v) or Modifies(a/r/s/a1, "x") or Modifies (a/r/s/a1, _ )
 		// Modifies (1, v)	or Modifies(1, "x")  => true or Modifies (1, _ ) (under statement)
+=========
+>>>>>>>>> Temporary merge branch 2
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
@@ -765,19 +766,34 @@ public:
 	PatternInstruction::PatternInstruction(std::string synonym, PqlReference entRef, PqlExpression expressionSpec) : synonym(synonym), entRef(entRef), expressionSpec(expressionSpec) {}
 
 	EvaluatedTable handlePatterns() {
-		// Pattern a(v, "_x_") or Pattern a(v, "_123_") or Pattern a(v, *)
-		// Pattern a("x", "_x_") or Pattern a("x", *)
-		// Pattern a(*, "_x_") or Pattern a(*, *)
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(synonym, PqlEntityType::Assign));
-		PQLentities.insert(std::pair(entRef.second, PqlEntityType::Variable));
+		if (entRef.first == PqlReferenceType::ident) {
+			/* Pattern a("x", _"x"_) or a("x", _"123"_) or Pattern a("x", _) */
+			/* TODO: Add support for full pattern match in iteraton 2 */
+			std::vector<int> allStmts;
+			if (Entity::containsVar(entRef.second)) {
+				VarIndex varIndex = Entity::getVarIdx(entRef.second);
+				if (expressionSpec.first == PqlExpressionType::partial) {
+					allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
+				}
+				else if (expressionSpec.first == PqlExpressionType::wildcard) {
+					allStmts = Pattern::getStmtsFromVarPattern(varIndex);
+				}
+			}
+			PQLmap[synonym] = allStmts;
+			return EvaluatedTable(PQLentities, PQLmap);
+		}
+
+		/* Pattern a(v, _"x"_) or a(v, _"123"_) or Pattern a(v, _) */
+		/* Pattern a(_, _"x"_) or a(_, _"123"_) or Pattern a(_, _) */
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo;
 		if (expressionSpec.first == PqlExpressionType::full) {
 			allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, false);
 		}
 		else if (expressionSpec.first == PqlExpressionType::partial) {
-			// currently only has this for iteration 1
+			/* currently only has this for iteration 1 */
 			allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, true);
 		}
 		else if (expressionSpec.first == PqlExpressionType::wildcard) {
@@ -786,26 +802,12 @@ public:
 		else {
 			throw EvaluatorException(EvaluatorException::PATTERN_ERROR);
 		}
+		std::vector<int> allStmts = std::get<0>(allPatternStmtInfo);
+		PQLmap[synonym] = allStmts;
 		if (entRef.first == PqlReferenceType::synonym) {
-			std::vector<int> allStmts;
-			std::vector<int> varIndices;
-			allStmts = std::get<0>(allPatternStmtInfo);
-			varIndices = std::get<1>(allPatternStmtInfo);
-			PQLmap[synonym] = allStmts;
+			std::vector<int> varIndices = std::get<1>(allPatternStmtInfo);
 			PQLmap[entRef.second] = varIndices;
-		}
-		else if (entRef.first == PqlReferenceType::ident) {
-			// Pattern a("x", "_x_")
-			if (Entity::containsVar(entRef.second)) {
-				VarIndex varIndex = Entity::getVarIdx(entRef.second);
-				std::vector<int> allStmts;
-				allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
-				PQLmap[synonym] = allStmts;
-			}
-		}
-		else if (entRef.first == PqlReferenceType::wildcard) {
-			if (expressionSpec.first == PqlExpressionType::wildcard) {
-				return EvaluatedTable(true);
+			PQLentities.insert(std::pair(entRef.second, PqlEntityType::Variable));
 			}
 			std::vector<int> allStmts;
 			allStmts = std::get<0>(allPatternStmtInfo);

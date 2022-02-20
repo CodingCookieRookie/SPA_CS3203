@@ -24,13 +24,7 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
 	std::vector<ParsedPattern> patterns = pq.getPatterns();
 
 	// Assumption: Semantically corrct ParsedQuery
-	// 1. Get all entities from Select-clause
-	for (size_t i = 0; i < columns.size(); i++) {
-		instructions.push_back(new GetAllInstruction(declarations.at(columns[i]), columns[i]));
-		
-	}
-
-	// 2. Get all relationship results from such-that-clause
+	// 1. Get all relationship results from such-that-clause
 	for (size_t i = 0; i < relationships.size(); i++) {
 		ParsedRelationship parsedRelationship = relationships.at(i);
 		PqlReference lhsRef = parsedRelationship.getLhs();
@@ -48,11 +42,11 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
 		}
 	}
 
-    // 3. Get all pattern results from pattern-clause
-    for (size_t i = 0; i < patterns.size(); i++) {
-        ParsedPattern parsedPattern = patterns.at(i);
-        instructions.push_back(new PatternInstruction(parsedPattern.getSynonym(), parsedPattern.getEntRef(), parsedPattern.getExpression()));
-    }
+	// 2. Get all pattern results from pattern-clause
+	for (size_t i = 0; i < patterns.size(); i++) {
+		ParsedPattern parsedPattern = patterns.at(i);
+		instructions.push_back(new PatternInstruction(parsedPattern.getSynonym(), parsedPattern.getEntRef(), parsedPattern.getExpression()));
+	}
 
 	// TODO: Optimisation: Sort instructions.
 	return instructions;
