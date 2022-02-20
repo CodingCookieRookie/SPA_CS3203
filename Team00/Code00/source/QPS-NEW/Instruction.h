@@ -382,6 +382,10 @@ private:
 					}
 				}
 			}
+			if (lhsRef.first == PqlReferenceType::wildcard) {
+				bool evTable = !results.empty();
+				return EvaluatedTable(evTable);
+			}
 			std::unordered_map<std::string, PqlEntityType> PQLentities;
 			PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
 
@@ -474,6 +478,10 @@ private:
 						results.emplace_back(stmt.getIndex()); //e.g {3} because 3 is followed by 6
 					}
 				}
+			}
+			if (lhsRef.first == PqlReferenceType::wildcard) {
+				bool evTable = !results.empty();
+				return EvaluatedTable(evTable);
 			}
 			std::unordered_map<std::string, PqlEntityType> PQLentities;
 			PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
@@ -568,6 +576,10 @@ private:
 					}
 				}
 			}
+			if (lhsRef.first == PqlReferenceType::wildcard) {
+				bool evTable = !results.empty();
+				return EvaluatedTable(evTable);
+			}
 			std::unordered_map<std::string, PqlEntityType> PQLentities;
 			PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
 
@@ -660,6 +672,10 @@ private:
 						results.emplace_back(stmt.getIndex()); //e.g {3} because 3 is a parent* of 7
 					}
 				}
+			}
+			if (lhsRef.first == PqlReferenceType::wildcard) {
+				bool evTable = !results.empty();
+				return EvaluatedTable(evTable);
 			}
 			std::unordered_map<std::string, PqlEntityType> PQLentities;
 			PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
