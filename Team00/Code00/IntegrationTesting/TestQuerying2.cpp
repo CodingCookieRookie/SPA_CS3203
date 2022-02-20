@@ -354,7 +354,6 @@ namespace IntegrationTesting
 			VarIndex varIndex = Entity::insertVar("abc");
 			VarIndex varIndex2 = Entity::insertVar("d");
 			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix(" abc + d ");
-			Uses::insert(stmt, varIndex);
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 			Pattern::insertPostFixInfo(varIndex2, postFixExpression, stmt);
 			Follows::insert(readStmt, stmt);
@@ -399,6 +398,83 @@ namespace IntegrationTesting
 			Assert::AreEqual(true, areListsEqual);
 		}
 
+		TEST_METHOD(querying_ParentStarAndPatternOnlyStress99_success)
+		{
+			// stmt 99. abc = abc + d;
+			// 6 is followed by 7 (read follows assign), but 7 is not followed by 8
+			// Results: {"a", {6}}
+			// 1. Setup:
+			std::string query = "while w; assign a; variable v; Select a such that Parent*(w, a) pattern a(v, _\"d\"_)";
+			// PKB inserts 99 statements and 98 Parent* relationships
+			std::vector<StmtIndex> stmts;
+			for (int i = 0; i < 98; i++) {
+				stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
+			}
+			stmts.emplace_back(Entity::insertStmt(StatementType::assignType)); // 99th stmt is assignment
+			std::unordered_map<StmtIndex,
+				std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> uPredSucTable;
+			for (int i = 0; i < 98; i++) {
+				uPredSucTable[stmts[i]] = { stmts[i + 1] }; // i parents i + 1, up till 97 parents 98th stmt
+			}
+			ParentT::populate(uPredSucTable);
+
+			// PKB inserts pattern
+			Entity::insertVar("def");
+			VarIndex varIndex = Entity::insertVar("abc");
+			VarIndex varIndex2 = Entity::insertVar("d");
+			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix(" abc + d ");
+			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmts[98]); //stmt 99
+
+			// Check PKB populated
+			std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern("d", true);
+			Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
+
+			// 2. Test QPS Parser:
+			ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+			Assert::AreEqual(size_t(3), parsedQuery.getDeclarations().size());
+			Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
+			Assert::AreEqual(size_t(1), parsedQuery.getRelationships().size());
+			Assert::AreEqual(size_t(1), parsedQuery.getPatterns().size());
+
+			// 3. Test QPS Evaluator:
+			PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
+			EvaluatedTable evTable = pqlEvaluator.evaluate();
+
+			// Test numRow:
+			Assert::AreEqual(size_t(98), evTable.getNumRow()); // { {"w", { 1, 2,..., 98 }}, {"a", { Ninety-eight 99s }} , {"v", {Ninety-eight 2s }}  }}
+
+			// Test Table:
+			auto tableRef = evTable.getTableRef();
+			Assert::AreEqual(true, tableRef.find("a") != tableRef.end());
+			Assert::AreEqual(true, tableRef.find("w") != tableRef.end());
+			Assert::AreEqual(true, tableRef.find("v") != tableRef.end());
+
+			// Test Values: std::unordered_map<std::string, PqlEntityType>
+			std::vector<int> wValues, aValues;
+			for (int i = 0; i < 98; i++) {
+				wValues.emplace_back(i + 1);
+				aValues.emplace_back(99);
+			}
+			auto actualwValues = tableRef.at("w");
+			std::sort(actualwValues.begin(), actualwValues.end());
+			bool areVecEqual = std::equal(wValues.begin(), wValues.end(), actualwValues.begin());
+			Assert::AreEqual(true, areVecEqual);
+			auto actualaValues = tableRef.at("a");
+			std::sort(actualaValues.begin(), actualaValues.end());
+			bool areVecEqual2 = std::equal(aValues.begin(), aValues.end(), actualaValues.begin());
+			Assert::AreEqual(true, areVecEqual2);
+
+			// Test EvResult:
+			bool actualEvResult = evTable.getEvResult();
+			Assert::AreEqual(true, actualEvResult);
+
+			// 4. Test QPS Result Projector:
+			PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns());
+			std::list<std::string> results = resultProjector.resolveTableToResults();
+			std::list<std::string> expectedRes{ "99" };
+			bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+			Assert::AreEqual(true, areListsEqual);
+		}
 		//TODO: 2-cl, stress
 	};
 }
