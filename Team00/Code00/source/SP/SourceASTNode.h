@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef SOURCEASTNODE_H
+#define SOURCEASTNODE_H
+
 #include <queue>
 #include <string>
 #include <stack>
@@ -160,3 +163,5 @@ public:
 
 	friend class SourceAST;
 };
+
+#endif

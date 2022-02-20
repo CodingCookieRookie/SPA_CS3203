@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef DESIGNEXTRACTOR_H
+#define DESIGNEXTRACTOR_H
+
 #include "SourceAST.h"
 
 #include "../PKB/PKB.h"
@@ -31,3 +34,5 @@ public:
 	static std::unordered_map<StmtIndex, StmtIndex, StmtIndex::HashFunction>
 		getStmtFollowsMap();
 };
+
+#endif

@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef PKB_H
+#define PKB_H
+
 #include <string>
 #include <vector>
 
@@ -21,3 +24,5 @@ private:
 public:
 	static void populateRecursiveInfo();
 };
+
+#endif

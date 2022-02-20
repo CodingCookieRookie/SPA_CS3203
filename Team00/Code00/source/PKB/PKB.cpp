@@ -6,6 +6,7 @@
 void PKB::populateRS1ContainerInfo() {
 	auto statements = Entity::getAllStmts();
 	std::vector<StmtIndex> containerStmts;
+
 	for (auto& stmt : statements) {
 		if (Entity::isContainerStmt(stmt)) {
 			containerStmts.push_back(stmt);

@@ -10,8 +10,7 @@ void Pattern::insertPostFixInfo(VarIndex varIdx, std::string postFixExpression, 
 		std::vector<std::tuple<StmtIndex, std::string>> value;
 		value.push_back(varPostFixTuple);
 		varPostFixTable[varIdx] = value;
-	}
-	else {
+	} else {
 		varPostFixTable[varIdx].push_back(varPostFixTuple);
 	}
 
@@ -19,8 +18,7 @@ void Pattern::insertPostFixInfo(VarIndex varIdx, std::string postFixExpression, 
 		std::vector<std::tuple<StmtIndex, VarIndex>> value;
 		value.push_back(postFixVarTuple);
 		postFixVarTable[postFixExpression] = value;
-	}
-	else {
+	} else {
 		postFixVarTable[postFixExpression].push_back(postFixVarTuple);
 	}
 }
@@ -37,8 +35,7 @@ std::vector<int> Pattern::getStmtsFromVarPattern(VarIndex varIdx, std::string ex
 				StmtIndex stmtIdx = std::get<0>(varPostFixTuple);
 				stmtSet.insert(stmtIdx);
 			}
-		}
-		else {
+		} else {
 			if (storedExpression == expression) {
 				StmtIndex stmtIdx = std::get<0>(varPostFixTuple);
 				stmtSet.insert(stmtIdx);
@@ -63,8 +60,7 @@ std::tuple<std::vector<int>, std::vector<int>> Pattern::getStmtsFromPattern(std:
 			stmtIndices.push_back(std::get<0>(postFixVarTuple).index);
 			varIndices.push_back(std::get<1>(postFixVarTuple).index);
 		}
-	}
-	else {
+	} else {
 		for (auto& postFixVarInfo : postFixVarTable) {
 			std::string postFixExpression = postFixVarInfo.first;
 			if (postFixExpression.find(expression) == std::string::npos) {

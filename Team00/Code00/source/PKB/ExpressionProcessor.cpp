@@ -8,15 +8,11 @@ bool ExpressionProcessor::isOperand(char currentChar) {
 }
 
 int ExpressionProcessor::evaluateOperatorPrecedence(char currentChar) {
-	/* Multiplication, division and modulus */
 	if (currentChar == '*' || currentChar == '/' || currentChar == '%') {
 		return 2;
-	}
-	/* Addition and subtraction */
-	else if (currentChar == '+' || currentChar == '-') {
+	} else if (currentChar == '+' || currentChar == '-') {
 		return 1;
-	}
-	else {
+	} else {
 		return -1;
 	}
 }
@@ -37,26 +33,16 @@ std::string ExpressionProcessor::convertInfixToPostFix(std::string s) {
 				res += ' ';
 			}
 			res += currentChar;
-		}
-
-		/* '(': Push to stack */
-		else if (currentChar == '(')
+		} else if (currentChar == '(') {
 			stk.push('(');
-
-		/* ')': Pop from stack and add to res, until '(' is found.
-		i.e. Pop all operators until opening parenthesis is found. */
-		else if (currentChar == ')') {
-			while (stk.top() != '(')
-			{
+		} else if (currentChar == ')') {
+			while (stk.top() != '(') {
 				res += ' ';
 				res += stk.top();
 				stk.pop();
 			}
 			stk.pop();
-		}
-
-		/* Operator */
-		else {
+		} else {
 			/* If current operator is of lower/equal precedence than operator from stack top,
 			then pop operator from stack and add to res.
 			Ensure check is done only when stack is not empty. */
