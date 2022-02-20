@@ -545,7 +545,7 @@ Select ifs such that Uses(1, _) pattern a1(_, _"0"_)
 5000
 8 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
-Select c such that Modifies(12, v1) pattern a1(v1, _"2"_)
+Select c such that Modifies(1, v1) pattern a1(v1, _"2"_)
 10, 35, 2, 1, 0, 99, 12
 5000
 9 - comment
