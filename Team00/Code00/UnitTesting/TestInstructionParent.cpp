@@ -9,7 +9,6 @@
 #include "../source/PKB/Entity.h"
 #include "../source/PKB/Parent.h"
 
-
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting
@@ -276,7 +275,7 @@ namespace UnitTesting
 			EvaluatedTable evTable = instruction->execute();
 
 			// Test numRow:
-			Assert::AreEqual(size_t(0), evTable.getNumRow()); // No rows
+			Assert::AreEqual(size_t(0), evTable.getNumRow()); // Only 1 parent of 3
 
 			// Test Table: std::unordered_map<std::string, std::vector<int>>
 			auto tableRef = evTable.getTableRef();
@@ -284,7 +283,7 @@ namespace UnitTesting
 			Assert::AreEqual(false, tableRef.find("23") != tableRef.end());
 
 			// Test Table size:
-			Assert::AreEqual(size_t(0), tableRef.size()); // RHS wildcard will have no columns
+			Assert::AreEqual(size_t(0), tableRef.size()); // RHS wildcard will still have column (innerJoinMerge() will drop it during merge)
 
 			// Test Entities: std::unordered_map<std::string, PqlEntityType>
 			// No entities to test
@@ -332,7 +331,7 @@ namespace UnitTesting
 			Assert::AreEqual(false, tableRef.find("stress") != tableRef.end());
 
 			// Test Table size:
-			Assert::AreEqual(size_t(0), tableRef.size()); // RHS wildcard will still not have a column
+			Assert::AreEqual(size_t(0), tableRef.size()); // RHS wildcard will still have column (innerJoinMerge() will drop it during merge)
 
 			// Test Entities: std::unordered_map<std::string, PqlEntityType>
 			// No Entities populated

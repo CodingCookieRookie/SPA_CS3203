@@ -66,10 +66,10 @@ namespace IntegrationTesting
 			// Test numRow:
 			Assert::AreEqual(size_t(0), evTable.getNumRow());
 			// Test Table:
-			auto tableRef = evTable.getTableRef();
-			Assert::AreEqual(false, tableRef.find("s1") != tableRef.end());
+			// No table
+
 			// Test Values: std::unordered_map<std::string, PqlEntityType>
-			// No Test Values, empty table (merged in ResultProjector)
+			// No values
 
 			// Test EvResult:
 			bool actualEvResult = evTable.getEvResult();
@@ -106,11 +106,9 @@ namespace IntegrationTesting
 			// Test numRow:
 			Assert::AreEqual(size_t(0), evTable.getNumRow());
 			// Test Table:
-			auto tableRef = evTable.getTableRef();
-			Assert::AreEqual(false, tableRef.find("s1") != tableRef.end());
+			// No table
 			// Test Values:
-			// No values, empty table, populated in ResultProjector only
-
+			// No values
 			// Test EvResult:
 			bool actualEvResult = evTable.getEvResult();
 			Assert::AreEqual(true, actualEvResult);
