@@ -165,6 +165,8 @@ private:
 	PqlReference rhsRef;
 
 	EvaluatedTable handleModifiesS() {
+		// Modifies (a/r/s/a1, v) or Modifies(a/r/s/a1, "x") or Modifies (a/r/s/a1, _ )
+		// Modifies (1, v)	or Modifies(1, "x")  => true or Modifies (1, _ ) (under statement)
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
@@ -800,7 +802,6 @@ public:
 				allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
 				PQLmap[synonym] = allStmts;
 			}
-			// should not return Evaluated(False)
 		}
 		else if (entRef.first == PqlReferenceType::wildcard) {
 			if (expressionSpec.first == PqlExpressionType::wildcard) {
