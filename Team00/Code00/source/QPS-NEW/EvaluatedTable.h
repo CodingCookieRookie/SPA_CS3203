@@ -73,7 +73,7 @@ public:
 
 	/* Mentions all the relevant fields of the EvalautedTable */
 	std::string getTableString() {
-		std::map<std::string, std::vector<int>> ordered(table.begin(), table.end());    // order it so when printing it does not give random behaviour during test
+		std::map<std::string, std::vector<int>> ordered(table.begin(), table.end());
 		std::string res = "Table String: size: " + std::to_string(ordered.size()) + "\n";
 		for (auto& it : ordered) {
 			res += "Synonym: " + it.first + " ";
