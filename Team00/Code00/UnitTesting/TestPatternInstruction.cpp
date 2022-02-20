@@ -31,7 +31,7 @@ namespace UnitTesting
 			// 1. Setup:
 			std::string synonym = "a1";
 			PqlReference entRef = std::make_pair(PqlReferenceType::synonym, "v");
-			PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, "12345");
+			PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, " 12345 ");
 			Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
 
 			// PKB inserts pattern
@@ -39,7 +39,7 @@ namespace UnitTesting
 			StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
 			Entity::insertVar("a");
 			VarIndex varIndex = Entity::insertVar("assign1");
-			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1 + 234");
+			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+234");
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 			// Check PKB populated
@@ -60,7 +60,7 @@ namespace UnitTesting
 			// 1. Setup:
 			std::string synonym = "a1";
 			PqlReference entRef = std::make_pair(PqlReferenceType::ident, "v");
-			PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, "xx");
+			PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, " xx ");
 			Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
 
 			// PKB inserts pattern
@@ -68,17 +68,17 @@ namespace UnitTesting
 			StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
 			Entity::insertVar("a");
 			VarIndex varIndex = Entity::insertVar("assign1");
-			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1 + x");
+			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x");
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 			// Check PKB populated
-			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
+			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
 			Assert::AreEqual(size_t(0), allStmts.size());
 
 			// 2. Main test:
 			EvaluatedTable evTable = instruction->execute();
 			Assert::AreEqual(size_t(0), evTable.getNumRow());
-			std::string expected = "Table String: size: 0\n";   // for this iteration we leave empty vectors still (does not affect end res)
+			std::string expected = "Table String: size: 1\nSynonym: a1 Values: \n";   // for this iteration we leave empty vectors still (does not affect end res)
 			Assert::AreEqual(expected, evTable.getTableString());
 		}
 		TEST_METHOD(execute_lhsSynonymRhsIdentVarPartialPqlinsertPostFixInfoTest1)
@@ -88,7 +88,7 @@ namespace UnitTesting
 			// 1. Setup:
 			std::string synonym = "a1";
 			PqlReference entRef = std::make_pair(PqlReferenceType::synonym, "v");
-			PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, "xx");
+			PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, " xx ");
 			Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
 
 			// PKB inserts pattern
@@ -96,11 +96,11 @@ namespace UnitTesting
 			StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
 			Entity::insertVar("a");
 			VarIndex varIndex = Entity::insertVar("assign1");
-			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1 + x");
+			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x");
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 			// Check PKB populated
-			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
+			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
 			Assert::AreEqual(size_t(0), allStmts.size());
 
 			// 2. Main test:
@@ -117,7 +117,7 @@ namespace UnitTesting
 			// 1. Setup:
 			std::string synonym = "a1";
 			PqlReference entRef = std::make_pair(PqlReferenceType::synonym, "v");
-			PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, "x");
+			PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, " x ");
 			Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
 
 			// PKB inserts pattern
@@ -125,13 +125,13 @@ namespace UnitTesting
 			StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
 			Entity::insertVar("a");
 			VarIndex varIndex = Entity::insertVar("assign1");
-			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1 + xx");
+			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+xx");
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 			// Check PBK populated
 
-			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, ExpressionProcessor::convertInfixToPostFix("x"), true);
-			Assert::AreEqual(size_t(0), allStmts.size());
+			std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(" x ", true);
+			Assert::AreEqual(size_t(0), std::get<0>(allPatternStmtInfo).size());
 
 			// 2. Main test:
 			EvaluatedTable evTable = instruction->execute();
@@ -147,7 +147,7 @@ namespace UnitTesting
 			// 1. Setup:
 			std::string synonym = "a1";
 			PqlReference entRef = std::make_pair(PqlReferenceType::synonym, "v");
-			PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, "x");
+			PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, " x ");
 			Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
 
 			// PKB inserts pattern
@@ -155,11 +155,11 @@ namespace UnitTesting
 			StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
 			Entity::insertVar("a");
 			VarIndex varIndex = Entity::insertVar("x");
-			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1 + x");
+			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x");
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 			// Check PBK populated
-			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
+			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
 			Assert::AreEqual(size_t(1), allStmts.size());
 
 			// 2. Main test:
@@ -175,7 +175,7 @@ namespace UnitTesting
 			// 1. Setup:
 			std::string synonym = "a1";
 			PqlReference entRef = std::make_pair(PqlReferenceType::synonym, "v");
-			PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, "123");
+			PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, " 123 ");
 			Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
 
 			// PKB inserts pattern
@@ -183,11 +183,11 @@ namespace UnitTesting
 			StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
 			VarIndex varIndex = Entity::insertVar("assign1");
 			Entity::insertConst(123);
-			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1 + 123");
+			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+123");
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 			// Check PBK populated
-			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
+			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
 			Assert::AreEqual(size_t(1), allStmts.size());
 
 			// 2. Main test:
@@ -204,7 +204,7 @@ namespace UnitTesting
 			// 1. Setup:
 			std::string synonym = "a1";
 			PqlReference entRef = std::make_pair(PqlReferenceType::ident, "assign1");
-			PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, "x");
+			PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, " x ");
 			Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
 
 			// PKB inserts pattern
@@ -212,11 +212,11 @@ namespace UnitTesting
 			StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
 			Entity::insertVar("x");
 			VarIndex varIndex = Entity::insertVar("assign1");
-			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1 + x");
+			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x");
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 			// Check PBK populated
-			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
+			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
 			Assert::AreEqual(size_t(1), allStmts.size());
 
 			// 2. Main test:
@@ -233,7 +233,7 @@ namespace UnitTesting
 			// 1. Setup:
 			std::string synonym = "a1";
 			PqlReference entRef = std::make_pair(PqlReferenceType::ident, "assign1");
-			PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, "123");
+			PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, " 123 ");
 			Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
 
 			// PKB inserts pattern
@@ -242,11 +242,11 @@ namespace UnitTesting
 			Entity::insertVar("x");
 			Entity::insertConst(123);
 			VarIndex varIndex = Entity::insertVar("assign1");
-			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1 + 123");
+			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+123");
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 			// Check PBK populated
-			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
+			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
 			Assert::AreEqual(size_t(1), allStmts.size());
 
 			// 2. Main test:
@@ -270,11 +270,11 @@ namespace UnitTesting
 			Entity::insertStmt(StatementType::printType);
 			StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
 			VarIndex varIndex = Entity::insertVar("assign1");
-			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1 + x");
+			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x");
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 			// Check PBK populated
-			std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
+			std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, true);
 			Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 			// 2. Main test:
@@ -298,11 +298,11 @@ namespace UnitTesting
 			Entity::insertStmt(StatementType::printType);
 			StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
 			VarIndex varIndex = Entity::insertVar("assign1");
-			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1 + x");
+			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x");
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 			// Check PBK populated
-			std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
+			std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, true);
 			Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 			// 2. Main test:
@@ -319,18 +319,18 @@ namespace UnitTesting
 			// 1. Setup:
 			std::string synonym = "a1";
 			PqlReference entRef = std::make_pair(PqlReferenceType::wildcard, "");
-			PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, "x");
+			PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, " x ");
 			Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
 
 			// PKB inserts pattern
 			Entity::insertStmt(StatementType::printType);
 			StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
 			VarIndex varIndex = Entity::insertVar("assign1");
-			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1 + x");
+			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x");
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 			// Check PBK populated
-			std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
+			std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, true);
 			Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 			// 2. Main test:
@@ -354,17 +354,17 @@ namespace UnitTesting
 			Entity::insertStmt(StatementType::printType);
 			StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
 			VarIndex varIndex = Entity::insertVar("assign1");
-			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1 + x");
+			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x");
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 			// Check PBK populated
-			std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
+			std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, true);
 			Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 			// 2. Main test:
 			EvaluatedTable evTable = instruction->execute();
-			Assert::AreEqual(size_t(0), evTable.getNumRow());
-			std::string expected = "Table String: size: 0\n";
+			Assert::AreEqual(size_t(1), evTable.getNumRow());
+			std::string expected = "Table String: size: 1\nSynonym: a1 Values: 2 \n";
 			Assert::AreEqual(expected, evTable.getTableString());
 		}
 	};
