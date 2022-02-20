@@ -2,7 +2,6 @@
 #include <vector>
 #include <unordered_map>
 
-#include <iostream>
 #include "QPSCommons.h"
 #include "../Exception/SPAException.h"
 #include "EvaluatedTable.h"
@@ -18,7 +17,6 @@
 #include "../PKB/ExpressionProcessor.h"
 
 class Instruction {
-	//protected:	//-> Use protected if need any shared fields
 public:
 	virtual EvaluatedTable execute() = 0;
 };
@@ -64,7 +62,6 @@ private:
 	}
 
 	EvaluatedTable handleGetAllVar(std::string synonym) {
-		// TODO: PKB to change getAllVars() to return VarIndex.
 		std::vector<VarIndex> results = Entity::getAllVars();
 		std::vector<int> resultsToInt;
 		for (VarIndex result : results) {
@@ -81,7 +78,6 @@ private:
 	}
 
 	EvaluatedTable handleGetAllProc(std::string synonym) {
-		// TODO: PKB to change getAllProcs() to return ProcIndex.
 		std::vector<ProcIndex> results = Entity::getAllProcs();
 		std::vector<int> resultsToInt;
 		for (ProcIndex result : results) {
@@ -152,7 +148,7 @@ public:
 			evTable = handleGetAllVar(synonym);
 			break;
 		case PqlEntityType::Constant:
-			evTable = handleGetAllProc(synonym);
+			evTable = handleGetAllConst(synonym);
 			break;
 		case PqlEntityType::Procedure:
 			evTable = handleGetAllProc(synonym);
@@ -169,8 +165,6 @@ private:
 	PqlReference rhsRef;
 
 	EvaluatedTable handleModifiesS() {
-		// Modifies (a/r/s/a1, v) or Modifies(a/r/s/a1, "x") or Modifies (a/r/s/a1, _ )
-		// Modifies (1, v)	or Modifies(1, "x")  => true or Modifies (1, _ ) (under statement)
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
@@ -198,13 +192,13 @@ private:
 			int lhsRefValue = stoi(lhsRef.second);
 			if (Entity::containsStmt(lhsRefValue)) {
 				StmtIndex stmtIndex = { lhsRefValue };
-				if (rhsRef.first == PqlReferenceType::ident) {
-					VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
-					return EvaluatedTable(Modifies::contains(stmtIndex, varIndex));
-				}
-				else if (rhsRef.first == PqlReferenceType::synonym) {
+				if (rhsRef.first == PqlReferenceType::synonym) {
 					varIndices = Modifies::getVariables(stmtIndex);
 					PQLmap[rhsRef.second] = varIndices;
+				}
+				else if (rhsRef.first == PqlReferenceType::ident) {
+					VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
+					return EvaluatedTable(Modifies::contains(stmtIndex, varIndex));
 				}
 				else {
 					return EvaluatedTable(Modifies::getVariables(stmtIndex).size() > 0);
@@ -215,13 +209,13 @@ private:
 			}
 		}
 		else {
-			std::cout << "Error in handleModifiesS\n";
+			throw EvaluatorException(EvaluatorException::MODIFIES_S_ERROR);
 		}
 		return EvaluatedTable(PQLentities, PQLmap);
 	}
 
 	EvaluatedTable handleModifiesP() {
-		// Modifies (p/p1, v)	or Modifies (p/p1, _ )	Modifies (p/p1, "x" )
+		/* Modifies(p / p1, v) or Modifies(p / p1, _)	Modifies(p / p1, "x") */
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Procedure));
@@ -246,14 +240,14 @@ private:
 			}
 		}
 		else {
-			std::cout << "Error in handleModifiesP\n";
+			throw EvaluatorException(EvaluatorException::MODIFIES_P_ERROR);
 		}
 		return EvaluatedTable(PQLentities, PQLmap);
 	}
 
 	EvaluatedTable handleUsesS() {
-		// Uses (a/r/s/a1, v) or Uses(a/r/s/a1, "x") or Uses (a/r/s/a1, _ )
-		// Uses (1, v)	=> true or Uses (1, _ ) (under statement)
+		/* Uses (a/r/s/a1, v) or Uses(a/r/s/a1, "x") or Uses (a/r/s/a1, _ )
+		 Uses (1, v)	=> true or Uses (1, _ ) (under statement) */
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
@@ -281,13 +275,13 @@ private:
 			int lhsRefValue = stoi(lhsRef.second);
 			if (Entity::containsStmt(lhsRefValue)) {
 				StmtIndex stmtIndex = { lhsRefValue };
-				if (rhsRef.first == PqlReferenceType::ident) {
-					VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
-					return EvaluatedTable(Uses::contains(stmtIndex, varIndex));
-				}
-				else if (rhsRef.first == PqlReferenceType::synonym) {
+				if (rhsRef.first == PqlReferenceType::synonym) {
 					varIndices = Uses::getVariables(stmtIndex);
 					PQLmap[rhsRef.second] = varIndices;
+				}
+				else if (rhsRef.first == PqlReferenceType::ident) {
+					VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
+					return EvaluatedTable(Uses::contains(stmtIndex, varIndex));
 				}
 				else {
 					return EvaluatedTable(Uses::getVariables(stmtIndex).size() > 0);
@@ -298,13 +292,13 @@ private:
 			}
 		}
 		else {
-			std::cout << "Error in handleModifiesS\n";
+			throw EvaluatorException(EvaluatorException::USES_S_ERROR);
 		}
 		return EvaluatedTable(PQLentities, PQLmap);
 	}
 
 	EvaluatedTable handleUsesP() {
-		// Uses (p/p1, v) or Uses (p/p1, "x") or Uses (p/p1, _ )	proc
+		/* Uses (p/p1, v) or Uses (p/p1, "x") or Uses (p/p1, _ ) */
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
@@ -329,7 +323,7 @@ private:
 			}
 		}
 		else {
-			std::cout << "Error in handleModifiesP\n";
+			throw EvaluatorException(EvaluatorException::USES_P_ERROR);
 		}
 		return EvaluatedTable(PQLentities, PQLmap);
 	}
@@ -341,15 +335,14 @@ private:
 		// e.g Follows(6, 7)
 		if (lhsRef.first == PqlReferenceType::integer && rhsRef.first == PqlReferenceType::integer) {
 			StmtIndex lhsStmtIndex, rhsStmtIndex;
-			for (StmtIndex stmt : stmts) {
-				if (stmt.getIndex() == stoi(lhsRef.second)) {
-					lhsStmtIndex = stmt;
-				}
-				if (stmt.getIndex() == stoi(rhsRef.second)) {
-					rhsStmtIndex = stmt;
-				}
+			bool evResult = false;
+			int lhsRefValue = stoi(lhsRef.second);
+			int rhsRefValue = stoi(rhsRef.second);
+			if (Entity::containsStmt(lhsRefValue) && Entity::containsStmt(rhsRefValue)) {
+				lhsStmtIndex = StmtIndex(lhsRefValue);
+				rhsStmtIndex = StmtIndex(rhsRefValue);
+				evResult = Follows::containsSuccessor(lhsStmtIndex, rhsStmtIndex);
 			}
-			bool evResult = Follows::containsSuccessor(lhsStmtIndex, rhsStmtIndex);
 			return EvaluatedTable(evResult); //e.g evResult == true, if 6 is followed by 7
 		}
 		// e.g Follows(6, s2), Follows(6, _)
@@ -357,10 +350,12 @@ private:
 		{
 			std::vector<int> results;
 			int lhsRefValue = stoi(lhsRef.second); // might throw error if string value can't be converted to int
-			StmtIndex lhsStmt = StmtIndex(lhsRefValue);
-			for (StmtIndex stmt : stmts) {
-				if (Follows::containsSuccessor(lhsStmt, stmt)) {
-					results.emplace_back(stmt.getIndex()); // e.g {7} because 6 is followed by 7
+			if (Entity::containsStmt(lhsRefValue)) { // checks if stmt 6 exists, if not, return empty results
+				StmtIndex lhsStmt = StmtIndex(lhsRefValue);
+				for (StmtIndex stmt : stmts) {
+					if (Follows::containsSuccessor(lhsStmt, stmt)) {
+						results.emplace_back(stmt.getIndex()); // e.g {7} because 6 is followed by 7
+					}
 				}
 			}
 			std::unordered_map<std::string, PqlEntityType> PQLentities;
@@ -376,10 +371,12 @@ private:
 		{
 			std::vector<int> results;
 			int rhsRefValue = stoi(rhsRef.second); //might throw error if string value can't be converted to int
-			StmtIndex rhsStmt = StmtIndex(rhsRefValue);
-			for (StmtIndex stmt : stmts) {
-				if (Follows::containsSuccessor(stmt, rhsStmt)) {
-					results.emplace_back(stmt.getIndex()); //e.g {3} because 3 is followed by 6
+			if (Entity::containsStmt(rhsRefValue)) { // checks if stmt 7 exists, if not, return empty results
+				StmtIndex rhsStmt = StmtIndex(rhsRefValue);
+				for (StmtIndex stmt : stmts) {
+					if (Follows::containsSuccessor(stmt, rhsStmt)) {
+						results.emplace_back(stmt.getIndex()); //e.g {3} because 3 is followed by 6
+					}
 				}
 			}
 			std::unordered_map<std::string, PqlEntityType> PQLentities;
@@ -427,15 +424,14 @@ private:
 		// e.g Follows*(6, 7)
 		if (lhsRef.first == PqlReferenceType::integer && rhsRef.first == PqlReferenceType::integer) {
 			StmtIndex lhsStmtIndex, rhsStmtIndex;
-			for (StmtIndex stmt : stmts) {
-				if (stmt.getIndex() == stoi(lhsRef.second)) {
-					lhsStmtIndex = stmt;
-				}
-				if (stmt.getIndex() == stoi(rhsRef.second)) {
-					rhsStmtIndex = stmt;
-				}
+			bool evResult = false;
+			int lhsRefValue = stoi(lhsRef.second);
+			int rhsRefValue = stoi(rhsRef.second);
+			if (Entity::containsStmt(lhsRefValue) && Entity::containsStmt(rhsRefValue)) {
+				lhsStmtIndex = StmtIndex(lhsRefValue);
+				rhsStmtIndex = StmtIndex(rhsRefValue);
+				evResult = FollowsT::containsSuccessor(lhsStmtIndex, rhsStmtIndex);
 			}
-			bool evResult = FollowsT::containsSuccessor(lhsStmtIndex, rhsStmtIndex);
 			return EvaluatedTable(evResult); //e.g evResult == true, if 6 is followed* by 7
 		}
 		// e.g Follows*(6, s2), Follows*(6, _)
@@ -443,10 +439,12 @@ private:
 		{
 			std::vector<int> results;
 			int lhsRefValue = stoi(lhsRef.second); // might throw error if string value can't be converted to int
-			StmtIndex lhsStmt = StmtIndex(lhsRefValue);
-			for (StmtIndex stmt : stmts) {
-				if (FollowsT::containsSuccessor(lhsStmt, stmt)) {
-					results.emplace_back(stmt.getIndex()); // e.g {7} because 6 is followed by 7
+			if (Entity::containsStmt(lhsRefValue)) { // checks if stmt 6 exists, if not, return empty results
+				StmtIndex lhsStmt = StmtIndex(lhsRefValue);
+				for (StmtIndex stmt : stmts) {
+					if (FollowsT::containsSuccessor(lhsStmt, stmt)) {
+						results.emplace_back(stmt.getIndex()); // e.g {7} because 6 is followed by 7
+					}
 				}
 			}
 			std::unordered_map<std::string, PqlEntityType> PQLentities;
@@ -462,10 +460,12 @@ private:
 		{
 			std::vector<int> results;
 			int rhsRefValue = stoi(rhsRef.second); //might throw error if string value can't be converted to int
-			StmtIndex rhsStmt = StmtIndex(rhsRefValue);
-			for (StmtIndex stmt : stmts) {
-				if (FollowsT::containsSuccessor(stmt, rhsStmt)) {
-					results.emplace_back(stmt.getIndex()); //e.g {3} because 3 is followed by 6
+			if (Entity::containsStmt(rhsRefValue)) { // checks if stmt 7 exists, if not, return empty results
+				StmtIndex rhsStmt = StmtIndex(rhsRefValue);
+				for (StmtIndex stmt : stmts) {
+					if (FollowsT::containsSuccessor(stmt, rhsStmt)) {
+						results.emplace_back(stmt.getIndex()); //e.g {3} because 3 is followed by 6
+					}
 				}
 			}
 			std::unordered_map<std::string, PqlEntityType> PQLentities;
@@ -513,26 +513,27 @@ private:
 		// e.g Parent(6, 7)
 		if (lhsRef.first == PqlReferenceType::integer && rhsRef.first == PqlReferenceType::integer) {
 			StmtIndex lhsStmtIndex, rhsStmtIndex;
-			for (StmtIndex stmt : stmts) {
-				if (stmt.getIndex() == stoi(lhsRef.second)) {
-					lhsStmtIndex = stmt;
-				}
-				if (stmt.getIndex() == stoi(rhsRef.second)) {
-					rhsStmtIndex = stmt;
-				}
+			bool evResult = false;
+			int lhsRefValue = stoi(lhsRef.second);
+			int rhsRefValue = stoi(rhsRef.second);
+			if (Entity::containsStmt(lhsRefValue) && Entity::containsStmt(rhsRefValue)) {
+				lhsStmtIndex = StmtIndex(lhsRefValue);
+				rhsStmtIndex = StmtIndex(rhsRefValue);
+				evResult = Parent::containsSuccessor(lhsStmtIndex, rhsStmtIndex);
 			}
-			bool evResult = Parent::containsPredecessor(lhsStmtIndex, rhsStmtIndex);
-			return EvaluatedTable(evResult); //e.g evResult == true, if 6 is a parent of 7
+			return EvaluatedTable(evResult); //e.g evResult == true, if 6 parents 7
 		}
 		// e.g Parent(6, s2), Parent(6, _)
 		else if (lhsRef.first == PqlReferenceType::integer)
 		{
 			std::vector<int> results;
 			int lhsRefValue = stoi(lhsRef.second); // might throw error if string value can't be converted to int
-			StmtIndex lhsStmt = StmtIndex(lhsRefValue);
-			for (StmtIndex stmt : stmts) {
-				if (Parent::containsSuccessor(lhsStmt, stmt)) {
-					results.emplace_back(stmt.getIndex()); // e.g {6} because 6 is a parent of 7
+			if (Entity::containsStmt(lhsRefValue)) { // checks if stmt 6 exists, if not, return empty results
+				StmtIndex lhsStmt = StmtIndex(lhsRefValue);
+				for (StmtIndex stmt : stmts) {
+					if (Parent::containsSuccessor(lhsStmt, stmt)) {
+						results.emplace_back(stmt.getIndex()); // e.g {7} because 6 parents 7
+					}
 				}
 			}
 			std::unordered_map<std::string, PqlEntityType> PQLentities;
@@ -547,12 +548,13 @@ private:
 		else if (rhsRef.first == PqlReferenceType::integer)
 		{
 			std::vector<int> results;
-			std::string value = rhsRef.second;
-			int rhsRefValue = std::stoi(value); //might throw error if string value can't be converted to int
-			StmtIndex rhsStmt = StmtIndex(rhsRefValue);
-			for (StmtIndex stmt : stmts) {
-				if (Parent::containsSuccessor(stmt, rhsStmt)) {
-					results.emplace_back(stmt.getIndex()); //e.g {6} because 6 is a parent of 7
+			int rhsRefValue = stoi(rhsRef.second); //might throw error if string value can't be converted to int
+			if (Entity::containsStmt(rhsRefValue)) { // checks if stmt 7 exists, if not, return empty results
+				StmtIndex rhsStmt = StmtIndex(rhsRefValue);
+				for (StmtIndex stmt : stmts) {
+					if (Parent::containsSuccessor(stmt, rhsStmt)) {
+						results.emplace_back(stmt.getIndex()); //e.g {3} because 3 is a parent of 7
+					}
 				}
 			}
 			std::unordered_map<std::string, PqlEntityType> PQLentities;
@@ -600,26 +602,27 @@ private:
 		// e.g Parent*(6, 7)
 		if (lhsRef.first == PqlReferenceType::integer && rhsRef.first == PqlReferenceType::integer) {
 			StmtIndex lhsStmtIndex, rhsStmtIndex;
-			for (StmtIndex stmt : stmts) {
-				if (stmt.getIndex() == stoi(lhsRef.second)) {
-					lhsStmtIndex = stmt;
-				}
-				if (stmt.getIndex() == stoi(rhsRef.second)) {
-					rhsStmtIndex = stmt;
-				}
+			bool evResult = false;
+			int lhsRefValue = stoi(lhsRef.second);
+			int rhsRefValue = stoi(rhsRef.second);
+			if (Entity::containsStmt(lhsRefValue) && Entity::containsStmt(rhsRefValue)) {
+				lhsStmtIndex = StmtIndex(lhsRefValue);
+				rhsStmtIndex = StmtIndex(rhsRefValue);
+				evResult = ParentT::containsSuccessor(lhsStmtIndex, rhsStmtIndex);
 			}
-			bool evResult = ParentT::containsPredecessor(lhsStmtIndex, rhsStmtIndex);
-			return EvaluatedTable(evResult); //e.g evResult == true, if 6 is a parent of 7
+			return EvaluatedTable(evResult); //e.g evResult == true, if 6 is a parent* of 7
 		}
 		// e.g Parent*(6, s2), Parent*(6, _)
 		else if (lhsRef.first == PqlReferenceType::integer)
 		{
 			std::vector<int> results;
 			int lhsRefValue = stoi(lhsRef.second); // might throw error if string value can't be converted to int
-			StmtIndex lhsStmt = StmtIndex(lhsRefValue);
-			for (StmtIndex stmt : stmts) {
-				if (ParentT::containsSuccessor(lhsStmt, stmt)) {
-					results.emplace_back(stmt.getIndex()); // e.g {6} because 6 is a parent of 7
+			if (Entity::containsStmt(lhsRefValue)) { // checks if stmt 6 exists, if not, return empty results
+				StmtIndex lhsStmt = StmtIndex(lhsRefValue);
+				for (StmtIndex stmt : stmts) {
+					if (ParentT::containsSuccessor(lhsStmt, stmt)) {
+						results.emplace_back(stmt.getIndex()); // e.g {7} because 6 is a parent* of 7
+					}
 				}
 			}
 			std::unordered_map<std::string, PqlEntityType> PQLentities;
@@ -635,10 +638,12 @@ private:
 		{
 			std::vector<int> results;
 			int rhsRefValue = stoi(rhsRef.second); //might throw error if string value can't be converted to int
-			StmtIndex rhsStmt = StmtIndex(rhsRefValue);
-			for (StmtIndex stmt : stmts) {
-				if (ParentT::containsSuccessor(stmt, rhsStmt)) {
-					results.emplace_back(stmt.getIndex()); //e.g {6} because 6 is a parent of 7
+			if (Entity::containsStmt(rhsRefValue)) { // checks if stmt 7 exists, if not, return empty results
+				StmtIndex rhsStmt = StmtIndex(rhsRefValue);
+				for (StmtIndex stmt : stmts) {
+					if (ParentT::containsSuccessor(stmt, rhsStmt)) {
+						results.emplace_back(stmt.getIndex()); //e.g {3} because 3 is a parent* of 7
+					}
 				}
 			}
 			std::unordered_map<std::string, PqlEntityType> PQLentities;
@@ -680,11 +685,6 @@ private:
 	}
 
 public:
-	//enum class PqlRelationshipType {
-	//	Follows, FollowsT, Parent, ParentT,
-	//	UsesS, UsesP, ModifiesS, ModifiesP,
-	//	Uses, Modifies
-	//};
 	RelationshipInstruction(PqlRelationshipType pqlRSType, PqlReference lhs, PqlReference rhs) :
 		pqlRelationshipType(pqlRSType), lhsRef(lhs), rhsRef(rhs) {}
 
@@ -727,15 +727,6 @@ private:
 	PqlReference entRef;
 	PqlExpression expressionSpec;
 
-	//bool isNumber(const std::string& s)
-	//{
-	//	for (char const& ch : s) {
-	//		if (std::isdigit(ch) == 0)
-	//			return false;
-	//	}
-	//	return true;
-	//}
-
 public:
 	PatternInstruction::PatternInstruction(std::string synonym, PqlReference entRef, PqlExpression expressionSpec) : synonym(synonym), entRef(entRef), expressionSpec(expressionSpec) {}
 
@@ -759,7 +750,7 @@ public:
 			allPatternStmtInfo = Pattern::getAllAssignStmtVarsPatternInfo();
 		}
 		else {
-			std::cout << "Invalid expression type";
+			throw EvaluatorException(EvaluatorException::PATTERN_ERROR);
 		}
 		if (entRef.first == PqlReferenceType::synonym) {
 			std::vector<int> allStmts;

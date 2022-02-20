@@ -184,7 +184,6 @@
     <ClCompile Include="TestPQLResultProjector.cpp" />
     <ClCompile Include="TestSourceASTNode.cpp" />
     <ClCompile Include="TestDesignExtractor.cpp" />
-    <ClCompile Include="TestDesignEntity.cpp" />
     <ClCompile Include="TestEntity.cpp" />
     <ClCompile Include="TestExpressionProcessor.cpp" />
     <ClCompile Include="TestFollows.cpp" />
@@ -195,9 +194,7 @@
     <ClCompile Include="TestParentT.cpp" />
     <ClCompile Include="TestParser.cpp" />
     <ClCompile Include="TestPattern.cpp" />
-    <ClCompile Include="TestPQLDEToken.cpp" />
     <ClCompile Include="TestPQLEvaluator.cpp" />
-    <ClCompile Include="TestPQLTokeniser.cpp" />
     <ClCompile Include="TestTypes.cpp" />
     <ClCompile Include="TestUses.cpp" />
     <ClCompile Include="TestPQLParser.cpp" />

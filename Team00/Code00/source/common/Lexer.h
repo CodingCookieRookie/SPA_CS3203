@@ -1,4 +1,5 @@
 #pragma once
+
 #include <string>
 
 #include "../Exception/SPAException.h"

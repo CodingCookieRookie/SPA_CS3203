@@ -31,7 +31,7 @@ public:
 		auto statements = Modifies::getStatements(varIndex1);
 		Assert::IsTrue(expectedAns == statements);
 
-		/*Check if other relationship gets affected*/
+		/* Check if other relationship gets affected */
 		auto statements2 = Uses::getStatements(varIndex1);
 		Assert::IsTrue(0 == statements2.size());
 		Uses::performCleanUp();
@@ -44,7 +44,7 @@ public:
 		auto procedures = Modifies::getProcedures(varIndex1);
 		Assert::IsTrue(expectedAns == procedures);
 
-		/*Check if other relationship gets affected*/
+		/* Check if other relationship gets affected */
 		auto procedures2 = Uses::getProcedures(varIndex1);
 		Assert::IsTrue(0 == procedures2.size());
 		Uses::performCleanUp();
