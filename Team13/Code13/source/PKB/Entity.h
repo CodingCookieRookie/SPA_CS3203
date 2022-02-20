@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef ENTITY_H
-#define ENTITY_H
-
 #include <string>
 #include <unordered_set>
 #include <unordered_map>
@@ -47,5 +44,3 @@ public:
 	static std::unordered_set<StmtIndex, StmtIndex::HashFunction> getStmtsFromProc(ProcIndex procIdx);
 	static void performCleanUp();
 };
-
-#endif

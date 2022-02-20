@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef TYPES_H
-#define TYPES_H
-
 enum class StatementType {
 	assignType, whileType, ifType, readType, printType, callType
 };
@@ -82,5 +79,3 @@ struct StmtIndex {
 		return index;
 	}
 };
-
-#endif

@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef RS2_H
-#define RS2_H
-
 #include <unordered_set>
 #include <unordered_map>
 #include <vector>
@@ -126,5 +123,3 @@ void RS2<T>::performCleanUp() {
 	predSucTable = {};
 	sucPredTable = {};
 };
-
-#endif

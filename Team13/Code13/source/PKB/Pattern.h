@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef PATTERN_H
-#define PATTERN_H
-
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -24,5 +21,3 @@ public:
 	static std::tuple<std::vector<int>, std::vector<int>> getAllAssignStmtVarsPatternInfo();
 	static void performCleanUp();
 };
-
-#endif

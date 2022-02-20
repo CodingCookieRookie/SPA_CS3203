@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef SOURCEAST_H
-#define SOURCEAST_H
-
 #include "SourceASTNode.h"
 
 class SourceAST {
@@ -14,5 +11,3 @@ public:
 
 	ProgramNode* getRoot();
 };
-
-#endif
