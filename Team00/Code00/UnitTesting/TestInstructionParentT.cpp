@@ -384,32 +384,21 @@ namespace UnitTesting
 			EvaluatedTable evTable = instruction->execute();
 
 			// Test numRow:
-			Assert::AreEqual(size_t(86), evTable.getNumRow());
+			Assert::AreEqual(size_t(0), evTable.getNumRow());
 
 			// Test Table: std::unordered_map<std::string, std::vector<int>>
 			auto tableRef = evTable.getTableRef();
-			Assert::AreEqual(true, tableRef.find("_") != tableRef.end());
+			Assert::AreEqual(false, tableRef.find("_") != tableRef.end());
 			Assert::AreEqual(false, tableRef.find("stress") != tableRef.end());
 
 			// Test Table size:
-			Assert::AreEqual(size_t(1), tableRef.size()); // LHS wildcard will still have column (innerJoinMerge() will drop it during merge)
+			Assert::AreEqual(size_t(0), tableRef.size()); // LHS wildcard will still have column (innerJoinMerge() will drop it during merge)
 
 			// Test Entities: std::unordered_map<std::string, PqlEntityType>
-			std::vector<int> s1values, wildcardValues;
-			for (int i = 0; i < 86; i++) {
-				wildcardValues.emplace_back(i + 1);
-			}
-			auto actualWildcardValues = tableRef.at("_");
-			std::sort(actualWildcardValues.begin(), actualWildcardValues.end());
-			bool areVecEqual = std::equal(wildcardValues.begin(), wildcardValues.end(), actualWildcardValues.begin());
-			Assert::AreEqual(true, areVecEqual); // actualWildcardValues == {1, 2, ..., 86}
-
 			auto actualEntities = evTable.getEntities();
-			Assert::AreEqual(true, actualEntities.find("_") != actualEntities.end());
+			Assert::AreEqual(false, actualEntities.find("_") != actualEntities.end());
 			Assert::AreEqual(false, actualEntities.find("87") != actualEntities.end());
 			Assert::AreEqual(false, actualEntities.find("stress") != actualEntities.end());
-			bool isPqlEntityType = PqlEntityType::Stmt == actualEntities.at("_");
-			Assert::AreEqual(true, isPqlEntityType);
 
 			// Test EvResult:
 			bool actualEvResult = evTable.getEvResult();

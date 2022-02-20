@@ -60,15 +60,13 @@ namespace IntegrationTesting
 			PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
 			EvaluatedTable evTable = pqlEvaluator.evaluate();
 			// Test numRow:
-			Assert::AreEqual(size_t(6), evTable.getNumRow());
+			Assert::AreEqual(size_t(0), evTable.getNumRow());
 			// Test Table:
-			auto tableRef = evTable.getTableRef();
-			Assert::AreEqual(true, tableRef.find("s1") != tableRef.end());
+			// No table
+
 			// Test Values: std::unordered_map<std::string, PqlEntityType>
-			std::vector<int> values{ 1, 2, 3, 4, 5, 6 };
-			auto actualValues = tableRef.at("s1");
-			bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
-			Assert::AreEqual(true, areVecEqual);
+			// No values
+
 			// Test EvResult:
 			bool actualEvResult = evTable.getEvResult();
 			Assert::AreEqual(true, actualEvResult);
@@ -102,18 +100,11 @@ namespace IntegrationTesting
 			PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
 			EvaluatedTable evTable = pqlEvaluator.evaluate();
 			// Test numRow:
-			Assert::AreEqual(size_t(99), evTable.getNumRow());
+			Assert::AreEqual(size_t(0), evTable.getNumRow());
 			// Test Table:
-			auto tableRef = evTable.getTableRef();
-			Assert::AreEqual(true, tableRef.find("s1") != tableRef.end());
+			// No table
 			// Test Values:
-			std::vector<int> values;
-			for (int i = 0; i < 99; i++) {
-				values.emplace_back(i + 1);
-			}
-			auto actualValues = tableRef.at("s1");
-			bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
-			Assert::AreEqual(true, areVecEqual);
+			// No values
 			// Test EvResult:
 			bool actualEvResult = evTable.getEvResult();
 			Assert::AreEqual(true, actualEvResult);
