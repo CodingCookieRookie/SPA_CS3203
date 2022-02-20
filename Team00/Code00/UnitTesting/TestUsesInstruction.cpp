@@ -109,8 +109,8 @@ namespace UnitTesting
 
 			// 2. Main test:
 			EvaluatedTable evTable = instruction->execute();
-			Assert::AreEqual(size_t(0), evTable.getNumRow());
-			std::string expected = "Table String: size: 0\n";
+			Assert::AreEqual(size_t(2), evTable.getNumRow());
+			std::string expected = "Table String: size: 1\nSynonym: a1 Values: 2 3 \n";
 			Assert::AreEqual(expected, evTable.getTableString());
 		}
 
@@ -132,7 +132,7 @@ namespace UnitTesting
 			// 2. Main test:
 			EvaluatedTable evTable = instruction->execute();
 			Assert::AreEqual(size_t(0), evTable.getNumRow());
-			std::string expected = "Table String: size: 0\n";
+			std::string expected = "Table String: size: 1\nSynonym: a1 Values: \n";
 			Assert::AreEqual(expected, evTable.getTableString());
 		}
 

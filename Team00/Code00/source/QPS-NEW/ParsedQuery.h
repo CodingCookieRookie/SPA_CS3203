@@ -38,6 +38,7 @@ public:
         const std::vector<ParsedRelationship>& allRelationships,
         const std::vector<ParsedPattern>& allPatterns);
 
+    bool isStmtSubtype(PqlReference ref);
 
     std::unordered_map<std::string, PqlEntityType> getDeclarations();
     std::vector<std::string> getColumns();
