@@ -2567,6 +2567,8 @@ public:
 		Assert::IsTrue(ExprNodeValueType::constValue == eqOpChildren[1]->getExprNodeValueType());
 
 		/* Test OUTER then clause */
+		/*  if (y != 2) then {\t"
+				print print;}else{ print p;} */
 		StmtLstNode* outerThenStmtLstNode = outerChildStmtLst[0];
 		std::vector<StmtNode*> outerThenStmts = outerThenStmtLstNode->getStmtNodes();
 		Assert::AreEqual(size_t(1), outerThenStmts.size());
