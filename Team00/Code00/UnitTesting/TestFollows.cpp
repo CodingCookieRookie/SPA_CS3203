@@ -31,7 +31,7 @@ public:
 		statements = Follows::getSuccessorStmts(successor1);
 		Assert::IsTrue(0 == statements.size());
 
-		/*Check Parents data does not get affected*/
+		/* Check Parents data does not get affected */
 		auto parentStmts = Parent::getSuccessorStmts(predecessor1);
 		Assert::IsTrue(0 == parentStmts.size());
 		Parent::performCleanUp();
@@ -51,7 +51,7 @@ public:
 		statements = Follows::getPredecessorStmts(predecessor1);
 		Assert::IsTrue(0 == statements.size());
 
-		/*Check Parents data does not get affected*/
+		/* Check Parents data does not get affected */
 		auto parentStmts = Parent::getPredecessorStmts(predecessor1);
 		Assert::IsTrue(0 == parentStmts.size());
 		Parent::performCleanUp();

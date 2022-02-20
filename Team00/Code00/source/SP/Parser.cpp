@@ -99,7 +99,7 @@ StmtNode* Parser::matchStmt() {
 	StmtNode* stmtNode{};
 
 	std::string name = lexer.nextName();
-	if (lexer.match(EQUAL)) {
+	if (!name.empty() && lexer.match(EQUAL)) {
 		stmtNode = matchAssign(name);
 	} else if (name == READ) {
 		stmtNode = matchRead();
@@ -142,18 +142,6 @@ PrintNode* Parser::matchPrint() {
 	}
 
 	return new PrintNode(varName);
-}
-
-ExprNode* matchExpr();
-
-/* assign: var_name '=' expr ';' */
-AssignNode* Parser::matchAssign(std::string varName) {
-	ExprNode* expr = matchExpr();
-
-	if (!lexer.match(SEMICOLON)) {
-		throw ParserException(ParserException::MISSING_SEMICOLON);
-	}
-	return new AssignNode(varName, expr);
 }
 
 /* <factor> ::= var_name | const_value | '(' expr ')' */
@@ -228,6 +216,16 @@ ExprNode* Parser::matchExprTail(ExprNode* lvalue) {
 ExprNode* Parser::matchExpr() {
 	ExprNode* lvalue = matchTerm();
 	return matchExprTail(lvalue);
+}
+
+/* assign: var_name '=' expr ';' */
+AssignNode* Parser::matchAssign(std::string varName) {
+	ExprNode* expr = matchExpr();
+
+	if (!lexer.match(SEMICOLON)) {
+		throw ParserException(ParserException::MISSING_SEMICOLON);
+	}
+	return new AssignNode(varName, expr);
 }
 
 /* while : ‘while’ ‘(’ cond_expr ‘)’ ‘{‘ stmtLst ‘}’ */

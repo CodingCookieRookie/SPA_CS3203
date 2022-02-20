@@ -1,4 +1,5 @@
 #pragma once
+
 #include <string>
 #include <vector>
 
@@ -52,5 +53,4 @@ private:
 public:
 	Parser();
 	static SourceAST parse(const std::string& source);
-	static bool isValidAST(const SourceAST& ast);
 };

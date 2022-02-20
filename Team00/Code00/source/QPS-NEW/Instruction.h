@@ -2,7 +2,6 @@
 #include <vector>
 #include <unordered_map>
 
-#include <iostream>
 #include "QPSCommons.h"
 #include "../Exception/SPAException.h"
 #include "EvaluatedTable.h"
@@ -18,7 +17,6 @@
 #include "../PKB/ExpressionProcessor.h"
 
 class Instruction {
-	//protected:	//-> Use protected if need any shared fields
 public:
 	virtual EvaluatedTable execute() = 0;
 };
@@ -80,7 +78,6 @@ private:
 	}
 
 	EvaluatedTable handleGetAllProc(std::string synonym) {
-		// TODO: PKB to change getAllProcs() to return ProcIndex.
 		std::vector<ProcIndex> results = Entity::getAllProcs();
 		std::vector<int> resultsToInt;
 		for (ProcIndex result : results) {
@@ -162,19 +159,12 @@ public:
 };
 
 class RelationshipInstruction : public Instruction {
-	//enum class PqlReferenceType {
-	//	synonym, wildcard, integer, ident
-	//};
-
 private:
-	//RelationshipInstructionType type;
 	PqlRelationshipType pqlRelationshipType;
 	PqlReference lhsRef;
 	PqlReference rhsRef;
 
 	EvaluatedTable handleModifiesS() {
-		// Modifies (a/r/s/a1, v) or Modifies(a/r/s/a1, "x") or Modifies (a/r/s/a1, _ )
-		// Modifies (1, v)	or Modifies(1, "x")  => true or Modifies (1, _ ) (under statement)
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
@@ -202,12 +192,16 @@ private:
 			int lhsRefValue = stoi(lhsRef.second);
 			if (Entity::containsStmt(lhsRefValue)) {
 				StmtIndex stmtIndex = { lhsRefValue };
-				if (rhsRef.first == PqlReferenceType::ident) {
+				if (rhsRef.first == PqlReferenceType::synonym) {
+					varIndices = Modifies::getVariables(stmtIndex);
+					PQLmap[rhsRef.second] = varIndices;
+				}
+				else if (rhsRef.first == PqlReferenceType::ident) {
 					VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
 					return EvaluatedTable(Modifies::contains(stmtIndex, varIndex));
 				}
 				else {
-					return EvaluatedTable(true);
+					return EvaluatedTable(Modifies::getVariables(stmtIndex).size() > 0);
 				}
 			}
 			else {
@@ -215,13 +209,13 @@ private:
 			}
 		}
 		else {
-			std::cout << "Error in handleModifiesS\n";
+			throw EvaluatorException(EvaluatorException::MODIFIES_S_ERROR);
 		}
 		return EvaluatedTable(PQLentities, PQLmap);
 	}
 
 	EvaluatedTable handleModifiesP() {
-		// Modifies (p/p1, v)	or Modifies (p/p1, _ )	Modifies (p/p1, "x" )
+		/* Modifies(p / p1, v) or Modifies(p / p1, _)	Modifies(p / p1, "x") */
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Procedure));
@@ -246,14 +240,14 @@ private:
 			}
 		}
 		else {
-			std::cout << "Error in handleModifiesP\n";
+			throw EvaluatorException(EvaluatorException::MODIFIES_P_ERROR);
 		}
 		return EvaluatedTable(PQLentities, PQLmap);
 	}
 
 	EvaluatedTable handleUsesS() {
-		// Uses (a/r/s/a1, v) or Uses(a/r/s/a1, "x") or Uses (a/r/s/a1, _ )
-		// Uses (1, v)	=> true or Uses (1, _ ) (under statement)
+		/* Uses (a/r/s/a1, v) or Uses(a/r/s/a1, "x") or Uses (a/r/s/a1, _ )
+		 Uses (1, v)	=> true or Uses (1, _ ) (under statement) */
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
@@ -281,12 +275,16 @@ private:
 			int lhsRefValue = stoi(lhsRef.second);
 			if (Entity::containsStmt(lhsRefValue)) {
 				StmtIndex stmtIndex = { lhsRefValue };
-				if (rhsRef.first == PqlReferenceType::ident) {
+				if (rhsRef.first == PqlReferenceType::synonym) {
+					varIndices = Uses::getVariables(stmtIndex);
+					PQLmap[rhsRef.second] = varIndices;
+				}
+				else if (rhsRef.first == PqlReferenceType::ident) {
 					VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
 					return EvaluatedTable(Uses::contains(stmtIndex, varIndex));
 				}
 				else {
-					return EvaluatedTable(true);
+					return EvaluatedTable(Uses::getVariables(stmtIndex).size() > 0);
 				}
 			}
 			else {
@@ -294,13 +292,13 @@ private:
 			}
 		}
 		else {
-			std::cout << "Error in handleModifiesS\n";
+			throw EvaluatorException(EvaluatorException::USES_S_ERROR);
 		}
 		return EvaluatedTable(PQLentities, PQLmap);
 	}
 
 	EvaluatedTable handleUsesP() {
-		// Uses (p/p1, v) or Uses (p/p1, "x") or Uses (p/p1, _ )	proc
+		/* Uses (p/p1, v) or Uses (p/p1, "x") or Uses (p/p1, _ ) */
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
@@ -325,7 +323,7 @@ private:
 			}
 		}
 		else {
-			std::cout << "Error in handleModifiesP\n";
+			throw EvaluatorException(EvaluatorException::USES_P_ERROR);
 		}
 		return EvaluatedTable(PQLentities, PQLmap);
 	}
@@ -687,11 +685,6 @@ private:
 	}
 
 public:
-	//enum class PqlRelationshipType {
-	//	Follows, FollowsT, Parent, ParentT,
-	//	UsesS, UsesP, ModifiesS, ModifiesP,
-	//	Uses, Modifies
-	//};
 	RelationshipInstruction(PqlRelationshipType pqlRSType, PqlReference lhs, PqlReference rhs) :
 		pqlRelationshipType(pqlRSType), lhsRef(lhs), rhsRef(rhs) {}
 
@@ -734,15 +727,6 @@ private:
 	PqlReference entRef;
 	PqlExpression expressionSpec;
 
-	//bool isNumber(const std::string& s)
-	//{
-	//	for (char const& ch : s) {
-	//		if (std::isdigit(ch) == 0)
-	//			return false;
-	//	}
-	//	return true;
-	//}
-
 public:
 	PatternInstruction::PatternInstruction(std::string synonym, PqlReference entRef, PqlExpression expressionSpec) : synonym(synonym), entRef(entRef), expressionSpec(expressionSpec) {}
 
@@ -766,7 +750,7 @@ public:
 			allPatternStmtInfo = Pattern::getAllAssignStmtVarsPatternInfo();
 		}
 		else {
-			std::cout << "Invalid expression type";
+			throw EvaluatorException(EvaluatorException::PATTERN_ERROR);
 		}
 		if (entRef.first == PqlReferenceType::synonym) {
 			std::vector<int> allStmts;
@@ -784,6 +768,7 @@ public:
 				allStmts = Pattern::getStmtsFromVarPattern(varIndex, ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
 				PQLmap[synonym] = allStmts;
 			}
+			// should not return Evaluated(False)
 		}
 		else if (entRef.first == PqlReferenceType::wildcard) {
 			if (expressionSpec.first == PqlExpressionType::wildcard) {

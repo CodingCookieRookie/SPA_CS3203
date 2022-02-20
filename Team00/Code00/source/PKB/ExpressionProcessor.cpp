@@ -3,16 +3,16 @@
 #include "./ExpressionProcessor.h"
 
 bool ExpressionProcessor::isOperand(char currentChar) {
-	// var_name and const_value consists of letters and digits.
+	/* var_name and const_value consists of letters and digits. */
 	return std::isalpha(currentChar) || std::isdigit(currentChar);
 }
 
 int ExpressionProcessor::evaluateOperatorPrecedence(char currentChar) {
-	// Multiplication, division and modulus
+	/* Multiplication, division and modulus */
 	if (currentChar == '*' || currentChar == '/' || currentChar == '%') {
 		return 2;
 	}
-	// Addition and subtraction
+	/* Addition and subtraction */
 	else if (currentChar == '+' || currentChar == '-') {
 		return 1;
 	}
@@ -21,30 +21,30 @@ int ExpressionProcessor::evaluateOperatorPrecedence(char currentChar) {
 	}
 }
 
-// Shunting yard algorithm
+/* Shunting yard algorithm */
 std::string ExpressionProcessor::convertInfixToPostFix(std::string s) {
-	// To track non-operands
+	/* To track non-operands */
 	std::stack<char> stk;
 	std::string res;
 
 	for (size_t i = 0; i < s.length(); i++) {
 		char currentChar = s[i];
 
-		// Operand: Add to res
+		/* Operand: Add to res */
 		if (isOperand(currentChar)) {
-			// All variable names and constants are prepended by a space
+			/* All variable names and constants are prepended by a space */
 			if ((i > 0 && !isOperand(s[i - 1])) || i == 0) {
 				res += ' ';
 			}
 			res += currentChar;
 		}
 
-		// '(': Push to stack
+		/* '(': Push to stack */
 		else if (currentChar == '(')
 			stk.push('(');
 
-		// ')': Pop from stack and add to res, until '(' is found.
-		// i.e. Pop all operators until opening parenthesis is found.
+		/* ')': Pop from stack and add to res, until '(' is found.
+		i.e. Pop all operators until opening parenthesis is found. */
 		else if (currentChar == ')') {
 			while (stk.top() != '(')
 			{
@@ -55,11 +55,11 @@ std::string ExpressionProcessor::convertInfixToPostFix(std::string s) {
 			stk.pop();
 		}
 
-		// Operator
+		/* Operator */
 		else {
-			// If current operator is of lower/equal precedence than operator from stack top,
-			// then pop operator from stack and add to res.
-			// Ensure check is done only when stack is not empty.
+			/* If current operator is of lower/equal precedence than operator from stack top,
+			then pop operator from stack and add to res.
+			Ensure check is done only when stack is not empty. */
 			while (!stk.empty() && evaluateOperatorPrecedence(s[i]) <= evaluateOperatorPrecedence(stk.top())) {
 				res += ' ';
 				res += stk.top();
@@ -69,7 +69,7 @@ std::string ExpressionProcessor::convertInfixToPostFix(std::string s) {
 		}
 	}
 
-	// Pop remaining items from stack
+	/* Pop remaining items from stack */
 	while (!stk.empty()) {
 		res += ' ';
 		res += stk.top();

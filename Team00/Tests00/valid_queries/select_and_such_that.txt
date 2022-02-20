@@ -1,92 +1,47 @@
 1 - comment
-stmt s;
-Select s
-1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
+Select a such that Uses(a, "x")
+none
 5000
 2 - comment
-read r;
-Select r
-4, 5
-5000
-3 - comment
-print pn;
-Select pn
-2, 9
-5000
-4 - comment
-while w;
-Select w
-6
-5000
-5 - comment
-if ifs;
-Select ifs
-1, 8
-5000
-6 - comment
-assign a;
-Select a
-3, 7, 10
-5000
-7 - comment
-variable v;
-Select v
-if, V1, V2, x1, while, x, y
-5000
-8 - comment
-constant c;
-Select c
-10, 35, 2, 1, 0, 99, 12
-5000
-9 - comment
-procedure p;
-Select p
-aRelativelyLongProcedureNameThatIHopeIsLongEnough
-5000
-10 - comment
-assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
-Select a such that Uses(a, "V1")
-7, 10
-5000
-11 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select s such that Uses(s, _)
-1, 2, 3, 6, 7, 8, 9, 10
+none
 5000
-12 - comment
+3 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select r such that Uses(r, v)
 none
 5000
-13 - comment
+4 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select pn such that Uses(pn, "x")
-9
+none
 5000
-14 - comment
+5 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select w such that Uses(w, v)
-6
+none
 5000
-15 - comment
+6 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select ifs such that Uses(ifs, "x")
-8
+none
 5000
 7 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
-Select a such that Modifies(a, "x1")
-7
+Select a such that Modifies(a, "x")
+none
 5000
 8 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select s such that Modifies(s, _)
-1, 3, 4, 5, 6, 7, 8, 10
+none
 5000
 9 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select r such that Modifies(r, v)
-4, 5
+none
 5000
 10 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
@@ -96,12 +51,12 @@ none
 11 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select w such that Modifies(w, v)
-6
+none
 5000
 12 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
-Select ifs such that Modifies(ifs, "y")
-8
+Select ifs such that Modifies(ifs, "x")
+none
 5000
 13 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
@@ -111,12 +66,12 @@ none
 14 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select s such that Follows(s, _)
-1, 2, 4, 6
+none
 5000
 15 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select r such that Follows(r, s1)
-4
+none
 5000
 16 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
@@ -126,12 +81,12 @@ none
 17 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select w such that Follows(w, _)
-6
+none
 5000
 18 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select ifs such that Follows(ifs, s1)
-1
+none
 5000
 19 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
@@ -141,22 +96,22 @@ none
 20 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select s such that Follows*(s, s1)
-1, 2, 4, 6
+none
 5000
 21 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
-Select r such that Follows*(r, 5)
-4
+Select r such that Follows*(r, 1)
+none
 5000
 22 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select pn such that Follows*(pn, _)
-2
+none
 5000
 23 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select w such that Follows*(w, s1)
-6
+none
 5000
 24 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
@@ -170,8 +125,8 @@ none
 5000
 26 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
-Select s such that Parent(s, 4)
-1
+Select s such that Parent(s, 1)
+none
 5000
 27 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
@@ -185,13 +140,13 @@ none
 5000
 29 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
-Select w such that Parent(w, 7)
-6
+Select w such that Parent(w, 1)
+none
 5000
 30 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select ifs such that Parent(ifs, _)
-1, 8
+none
 5000
 31 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
@@ -215,33 +170,33 @@ none
 5000
 35 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
-Select w such that Parent*(w, 6)
+Select w such that Parent*(w, 1)
 none
 5000
 36 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select ifs such that Parent*(ifs, _)
-1, 8
+none
 5000
 37 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select v such that Uses(s1, v)
-x1, if, x, V1, while
+none
 5000
 38 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select v such that Uses(1, v)
-x1, if
+none
 5000
 39 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select v such that Modifies(s1, v)
-if, V1, V2, x1, y
+none
 5000
 40 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select v such that Modifies(1, v)
-V1, V2
+none
 5000
 41 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
@@ -251,12 +206,12 @@ none
 42 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select s such that Follows(_, s)
-3, 5, 6, 8
+none
 5000
 43 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select r such that Follows(s1, r)
-5
+none
 5000
 44 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
@@ -266,22 +221,22 @@ none
 45 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select w such that Follows(_, w)
-6
+none
 5000
 46 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select ifs such that Follows(s1, ifs)
-8
+none
 5000
 47 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select a such that Follows*(_, a)
-3
+none
 5000
 48 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select s such that Follows*(s1, s)
-3, 5, 6, 8
+none
 5000
 49 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
@@ -296,32 +251,32 @@ none
 51 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select w such that Follows*(s1, w)
-6
+none
 5000
 52 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select ifs such that Follows*(1, ifs)
-8
+none
 5000
 53 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select a such that Parent(s1, a)
-3, 7, 10
+none
 5000
 54 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select s such that Parent(1, s)
-2, 3, 4, 5
+none
 5000
 55 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select r such that Parent(_, r)
-4, 5
+none
 5000
 56 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select pn such that Parent(s1, pn)
-2, 9
+none
 5000
 57 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
@@ -336,22 +291,22 @@ none
 59 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select a such that Parent*(s1, a)
-3, 7, 10
+none
 5000
 60 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select s such that Parent*(1, s)
-2, 3, 4, 5
+none
 5000
 61 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select r such that Parent*(_, r)
-4, 5
+none
 5000
 62 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select pn such that Parent*(s1, pn)
-2, 9
+none
 5000
 63 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
@@ -366,7 +321,7 @@ none
 65 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select a such that Uses(s1, v1)
-3, 7, 10
+none
 5000
 66 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
@@ -376,17 +331,17 @@ none
 67 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select s such that Modifies(r, _)
-1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+none
 5000
 68 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select r such that Follows(w, ifs)
-4, 5
+none
 5000
 69 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select pn such that Follows*(s1, _)
-2, 9
+none
 5000
 70 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
@@ -396,10 +351,10 @@ none
 71 - comment
 assign a, a1; variable v, v1; stmt s, s1; read r; print pn; while w; if ifs; constant c; procedure p;
 Select c such that Parent*(w, s1)
-10, 35, 2, 0, 99, 12, 1
+none
 5000
 72 - comment
 assign a, a1; variable v, v1; stmt s, s1, s2; read r; print pn; while w; if ifs; constant c; procedure p;
 Select p such that Parent*(ifs, 10)
-aRelativelyLongProcedureNameThatIHopeIsLongEnough
+none
 5000
