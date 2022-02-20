@@ -128,7 +128,7 @@ namespace UnitTesting
 			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+xx");
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
-			// Check PBK populated
+			// Check PKB populated
 
 			std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(" x ", true);
 			Assert::AreEqual(size_t(0), std::get<0>(allPatternStmtInfo).size());
@@ -158,7 +158,7 @@ namespace UnitTesting
 			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x");
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
-			// Check PBK populated
+			// Check PKB populated
 			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
 			Assert::AreEqual(size_t(1), allStmts.size());
 
@@ -186,7 +186,7 @@ namespace UnitTesting
 			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+123");
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
-			// Check PBK populated
+			// Check PKB populated
 			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
 			Assert::AreEqual(size_t(1), allStmts.size());
 
@@ -215,7 +215,7 @@ namespace UnitTesting
 			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x");
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
-			// Check PBK populated
+			// Check PKB populated
 			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
 			Assert::AreEqual(size_t(1), allStmts.size());
 
@@ -245,7 +245,7 @@ namespace UnitTesting
 			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+123");
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
-			// Check PBK populated
+			// Check PKB populated
 			std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
 			Assert::AreEqual(size_t(1), allStmts.size());
 
@@ -273,8 +273,8 @@ namespace UnitTesting
 			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x");
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
-			// Check PBK populated
-			std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, true);
+			// Check PKB populated
+			std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
 			Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 			// 2. Main test:
@@ -301,8 +301,8 @@ namespace UnitTesting
 			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x");
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
-			// Check PBK populated
-			std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, true);
+			// Check PKB populated
+			std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
 			Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 			// 2. Main test:
@@ -329,7 +329,7 @@ namespace UnitTesting
 			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x");
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
-			// Check PBK populated
+			// Check PKB populated
 			std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, true);
 			Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
@@ -357,8 +357,8 @@ namespace UnitTesting
 			std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x");
 			Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
-			// Check PBK populated
-			std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, true);
+			// Check PKB populated
+			std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
 			Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 			// 2. Main test:

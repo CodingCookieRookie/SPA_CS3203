@@ -47,7 +47,8 @@ public:
 		Lexer lexer1(source);
 		try {
 			lexer1.nextInteger();
-		} catch (LexerException& ex) {
+		}
+		catch (LexerException& ex) {
 			Assert::AreEqual(LexerException::INVALID_INT.c_str(), ex.what());
 		}
 	}
