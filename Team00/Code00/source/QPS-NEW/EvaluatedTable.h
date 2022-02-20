@@ -15,6 +15,7 @@ private:
 	std::unordered_map<std::string, std::vector<int>> table;
 	bool evResult; //if evaluated to false
 
+	void removeDuplicates();
 	EvaluatedTable blockNestedJoin(EvaluatedTable& otherTable,
 		std::unordered_set<std::string>& commonEntities);
 

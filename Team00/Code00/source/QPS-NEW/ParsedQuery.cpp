@@ -163,6 +163,10 @@ ParsedQuery::ParsedQuery(const std::vector<PQL_VARIABLE>& allDeclarations,
 	populatePatterns(allPatterns);
 }
 
+bool ParsedQuery::isStmtSubtype(PqlReference ref) {
+	return isStmtSynonym(ref);
+}
+
 std::unordered_map<std::string, PqlEntityType> ParsedQuery::getDeclarations() {
 	return declarations;
 }

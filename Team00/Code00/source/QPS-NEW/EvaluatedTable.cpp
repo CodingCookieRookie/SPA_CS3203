@@ -1,10 +1,31 @@
 #include "EvaluatedTable.h"
 
+void EvaluatedTable::removeDuplicates() {
+	/* If the table contains only one column, this function removes all duplicates in that column.
+	   Otherwise, the table is left unmodified */
+	if (table.size() > 1) {
+		return;
+	}
+	std::unordered_set<int> uniqueVals;
+	std::unordered_map<std::string, std::vector<int>> uniqueTable;
+	for (const std::pair<std::string, std::vector<int>>& column : table) {
+		const std::string& columnName = column.first;
+		const std::vector<int>& columnVals = column.second;
+		for (int columnVal : columnVals) {
+			uniqueVals.insert(columnVal);
+		}
+		uniqueTable[columnName] = std::vector<int>();
+		for (const int& uniqueVal : uniqueVals) {
+			uniqueTable[columnName].push_back(uniqueVal);
+		}
+	}
+	table = uniqueTable;
+}
+
 EvaluatedTable EvaluatedTable::blockNestedJoin(EvaluatedTable& otherTable,
 	std::unordered_set<std::string>& commonEntities) {
 	std::unordered_map<std::string, std::vector<int>> nextTable;
 	std::unordered_map<std::string, PqlEntityType> nextEntities;
-	int nextNumRow = 0;
 	/* Populate the columns of the new table */
 	for (const std::pair<std::string, std::vector<int>>& column : table) {
 		std::string entityName = column.first;
