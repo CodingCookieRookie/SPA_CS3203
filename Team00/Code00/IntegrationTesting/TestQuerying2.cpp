@@ -196,10 +196,14 @@ namespace IntegrationTesting
 			Assert::AreEqual(true, areListsEqual);
 		}
 
-		TEST_METHOD(querying_ModifiesAndPatternOnly_success)
+		TEST_METHOD(querying_ModifiesAndPatternOnly1_success)
 		{
-			// b = b + x
+			/*
+			Modifies(a / r / s / a1, v) or Modifies(a / r / s / a1, "x") or Modifies(a / r / s / a1, _)
+			Modifies (1, v)	or Modifies(1, "x")  => true or Modifies (1, _ ) (under statement)
+			*/
 
+			// b = b + x
 			// 1. Setup:
 			std::string query = "assign a; variable v; Select a such that Modifies(a, v) pattern a(v, _\"x\"_)";
 			// PKB inserts 6 types of statements
@@ -255,7 +259,7 @@ namespace IntegrationTesting
 			Assert::AreEqual(true, areListsEqual);
 		}
 
-		TEST_METHOD(querying_ModifiesAndPatternOnlyLhsSy_success)
+		TEST_METHOD(querying_ModifiesAndPatternOnlyLhsSynonym_success)
 		{
 			// b = b + x
 
