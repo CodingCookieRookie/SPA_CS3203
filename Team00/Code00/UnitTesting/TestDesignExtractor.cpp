@@ -149,7 +149,7 @@ public:
 		/* AST is equivalent to the SIMPLE program
 		   procedure main {
 			   if (x == y) then {
-			       print x; } else {
+				   print x; } else {
 				   read y; } }
 		*/
 		PrintNode* printNode = new PrintNode("x");
@@ -208,9 +208,9 @@ public:
 	TEST_METHOD(extract_whileInWhile_parentAndParentTCaptured) {
 		/* AST is equivalent to the SIMPLE program
 		   procedure main {
-		       while (a <= b) {
-			       while (x == y) {
-				       print x; } } }
+			   while (a <= b) {
+				   while (x == y) {
+					   print x; } } }
 		*/
 
 		PrintNode* printNode = new PrintNode("x");
@@ -319,9 +319,9 @@ public:
 	TEST_METHOD(extract_ifInWhile_parentAndParentTCaptured) {
 		/* AST is equivalent to the SIMPLE program
 		   procedure main {
-		       1. while (x == y) {
-			       2. if (a <= b) then {
-				       3. print x; } else {
+			   1. while (x == y) {
+				   2. if (a <= b) then {
+					   3. print x; } else {
 					   4. read y; } } }
 		*/
 

@@ -52,9 +52,11 @@ void TestWrapper::evaluate(std::string query, std::list<std::string>& results) {
 		EvaluatedTable evTable = pqlEvaluator.evaluate();
 		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		results = resultProjector.resolveTableToResults();
-	} catch (QPSException& ex) {
+	}
+	catch (QPSException& ex) {
 		return;
-	} catch (LexerException& ex) {
+	}
+	catch (LexerException& ex) {
 		return;
 	}
 	// store the answers to the query in the results list (it is initially empty)

@@ -165,6 +165,7 @@ private:
 	PqlReference rhsRef;
 
 	EvaluatedTable handleModifiesS() {
+		// Modifies (1, v)	or Modifies(1, "x")  => true or Modifies (1, _ ) (under statement)
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
@@ -809,7 +810,7 @@ public:
 		return EvaluatedTable(PQLentities, PQLmap);
 	}
 
-	EvaluatedTable execute() override {
+	EvaluatedTable execute() {
 		EvaluatedTable evTable = handlePatterns();
 		return evTable;
 	}
