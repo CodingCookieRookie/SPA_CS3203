@@ -31,7 +31,6 @@ SourceAST Parser::parse(const std::string& source) {
 	return SourceAST(root);
 }
 
-/* program : procedure+ */
 ProgramNode* Parser::matchProgram() {
 	ProgramNode* programNode = new ProgramNode();
 
@@ -48,7 +47,6 @@ ProgramNode* Parser::matchProgram() {
 	return programNode;
 }
 
-/* procedure : ‘procedure’ proc_name ‘{‘ stmtLst ‘}’ */
 ProcedureNode* Parser::matchProcedure() {
 	if (!lexer.match(PROCEDURE)) {
 		throw ParserException(ParserException::MISSING_PROC_KEYWORD);
@@ -80,7 +78,6 @@ ProcedureNode* Parser::matchProcedure() {
 	return procNode;
 }
 
-/* stmtLst : stmt+ */
 StmtLstNode* Parser::matchStmtLst() {
 	StmtLstNode* stmtLstNode = new StmtLstNode();
 
@@ -94,7 +91,6 @@ StmtLstNode* Parser::matchStmtLst() {
 	return stmtLstNode;
 }
 
-/* stmt : read | print | call | while | if | assign */
 StmtNode* Parser::matchStmt() {
 	StmtNode* stmtNode{};
 
@@ -116,7 +112,6 @@ StmtNode* Parser::matchStmt() {
 	return stmtNode;
 }
 
-/* read : ‘read’ var_name; */
 ReadNode* Parser::matchRead() {
 	std::string varName = lexer.nextName();
 	if (varName.empty()) {
@@ -130,7 +125,6 @@ ReadNode* Parser::matchRead() {
 	return new ReadNode(varName);
 }
 
-/* print : ‘print’ var_name; */
 PrintNode* Parser::matchPrint() {
 	std::string varName = lexer.nextName();
 	if (varName.empty()) {
@@ -144,7 +138,6 @@ PrintNode* Parser::matchPrint() {
 	return new PrintNode(varName);
 }
 
-/* <factor> ::= var_name | const_value | '(' expr ')' */
 ExprNode* Parser::matchFactor() {
 	std::string varName = lexer.nextName();
 	if (!varName.empty()) {
@@ -167,11 +160,6 @@ ExprNode* Parser::matchFactor() {
 	throw ParserException(ParserException::INVALID_EXPR);
 }
 
-/* <term_tail> ::= * <factor> <term_tail>
-			  | / <factor> <term_tail>
-			  | % <factor> <term_tail>
-			  | <empty>
-*/
 ExprNode* Parser::matchTermTail(ExprNode* lvalue) {
 	for (const std::string op : termOperators) {
 		if (lexer.match(op)) {
@@ -186,18 +174,11 @@ ExprNode* Parser::matchTermTail(ExprNode* lvalue) {
 	return lvalue;
 }
 
-/* <term> ::= <factor> <term_tail> */
 ExprNode* Parser::matchTerm() {
 	ExprNode* lvalue = matchFactor();
 	return matchTermTail(lvalue);
 }
 
-/*
-<expr_tail> ::= + <term> <expr_tail>
-			  | - <term> <expr_tail>
-			  | <empty>
-
- */
 ExprNode* Parser::matchExprTail(ExprNode* lvalue) {
 	for (const std::string op : exprOperators) {
 		if (lexer.match(op)) {
@@ -212,13 +193,11 @@ ExprNode* Parser::matchExprTail(ExprNode* lvalue) {
 	return lvalue;
 }
 
-/* <expr> ::= <term> <expr_tail> */
 ExprNode* Parser::matchExpr() {
 	ExprNode* lvalue = matchTerm();
 	return matchExprTail(lvalue);
 }
 
-/* assign: var_name '=' expr ';' */
 AssignNode* Parser::matchAssign(std::string varName) {
 	ExprNode* expr = matchExpr();
 
@@ -228,7 +207,6 @@ AssignNode* Parser::matchAssign(std::string varName) {
 	return new AssignNode(varName, expr);
 }
 
-/* while : ‘while’ ‘(’ cond_expr ‘)’ ‘{‘ stmtLst ‘}’ */
 WhileNode* Parser::matchWhile() {
 	if (!lexer.match(LEFT_BRACKET)) {
 		throw ParserException(ParserException::MISSING_LEFT_BRACKET);
@@ -253,13 +231,7 @@ WhileNode* Parser::matchWhile() {
 	return new WhileNode(condNode, stmtLstNode);
 }
 
-/* cond_expr : rel_expr
-			| ‘!’ ‘(’ cond_expr ‘)’
-			| ‘(’ cond_expr ‘)’ ‘&&’ ‘(’ cond_expr ‘)’
-			| ‘(’ cond_expr ‘)’ ‘||’ ‘(’ cond_expr ‘)’
-*/
 ExprNode* Parser::matchCondExpr() {
-	/* ‘!’ ‘(’ cond_expr ‘)’*/
 	if (lexer.match(NOT)) {
 		if (!lexer.match(LEFT_BRACKET)) {
 			throw ParserException(ParserException::MISSING_LEFT_BRACKET);
@@ -277,8 +249,6 @@ ExprNode* Parser::matchCondExpr() {
 		return notNode;
 	}
 
-	/* ‘(’ cond_expr ‘)’ ‘&&’ ‘(’ cond_expr ‘)’
-		| ‘(’ cond_expr ‘)’ ‘||’ ‘(’ cond_expr ‘)’ */
 	if (lexer.match(LEFT_BRACKET)) {
 		ExprNode* leftCondExpr = matchCondExpr();
 
@@ -314,19 +284,11 @@ ExprNode* Parser::matchCondExpr() {
 		return logOpNode;
 	}
 
-	/* rel_expr */
 	ExprNode* relExprNode = matchRelExpr();
 
 	return relExprNode;
 }
 
-/* rel_expr: rel_factor ‘ > ’ rel_factor
-			| rel_factor ‘ >= ’ rel_factor
-			| rel_factor ‘ < ’ rel_factor
-			| rel_factor ‘ <= ’ rel_factor
-			| rel_factor ‘ == ’ rel_factor
-			| rel_factor ‘ != ’ rel_factor
-*/
 ExprNode* Parser::matchRelExpr() {
 	ExprNode* leftRelFactor = matchRelFactor();
 
@@ -348,10 +310,6 @@ ExprNode* Parser::matchRelExpr() {
 	return relOpNode;
 }
 
-/* rel_factor : var_name
-				| const_value
-				| expr
-*/
 ExprNode* Parser::matchRelFactor() {
 	ExprNode* expr{};
 	try {
@@ -373,7 +331,6 @@ ExprNode* Parser::matchRelFactor() {
 	return expr;
 }
 
-/* if : ‘if’ ‘(’ cond_expr ‘)’ ‘then’ ‘{‘ stmtLst ‘}’ ‘else’ ‘{‘ stmtLst ‘}’ */
 IfNode* Parser::matchIf() {
 	if (!lexer.match(LEFT_BRACKET)) {
 		throw ParserException(ParserException::MISSING_LEFT_BRACKET);
