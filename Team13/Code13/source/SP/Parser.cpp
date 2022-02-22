@@ -48,7 +48,7 @@ ProgramNode* Parser::matchProgram() {
 	return programNode;
 }
 
-/* procedure : ‘procedure’ proc_name ‘{‘ stmtLst ‘}’ */
+/* procedure : â€˜procedureâ€™ proc_name â€˜{â€˜ stmtLst â€˜}â€™ */
 ProcedureNode* Parser::matchProcedure() {
 	if (!lexer.match(PROCEDURE)) {
 		throw ParserException(ParserException::MISSING_PROC_KEYWORD);
@@ -116,7 +116,7 @@ StmtNode* Parser::matchStmt() {
 	return stmtNode;
 }
 
-/* read : ‘read’ var_name; */
+/* read : â€˜readâ€™ var_name; */
 ReadNode* Parser::matchRead() {
 	std::string varName = lexer.nextName();
 	if (varName.empty()) {
@@ -130,7 +130,7 @@ ReadNode* Parser::matchRead() {
 	return new ReadNode(varName);
 }
 
-/* print : ‘print’ var_name; */
+/* print : â€˜printâ€™ var_name; */
 PrintNode* Parser::matchPrint() {
 	std::string varName = lexer.nextName();
 	if (varName.empty()) {
@@ -228,7 +228,7 @@ AssignNode* Parser::matchAssign(std::string varName) {
 	return new AssignNode(varName, expr);
 }
 
-/* while : ‘while’ ‘(’ cond_expr ‘)’ ‘{‘ stmtLst ‘}’ */
+/* while : â€˜whileâ€™ â€˜(â€™ cond_expr â€˜)â€™ â€˜{â€˜ stmtLst â€˜}â€™ */
 WhileNode* Parser::matchWhile() {
 	if (!lexer.match(LEFT_BRACKET)) {
 		throw ParserException(ParserException::MISSING_LEFT_BRACKET);
@@ -254,12 +254,12 @@ WhileNode* Parser::matchWhile() {
 }
 
 /* cond_expr : rel_expr
-			| ‘!’ ‘(’ cond_expr ‘)’
-			| ‘(’ cond_expr ‘)’ ‘&&’ ‘(’ cond_expr ‘)’
-			| ‘(’ cond_expr ‘)’ ‘||’ ‘(’ cond_expr ‘)’
+			| â€˜!â€™ â€˜(â€™ cond_expr â€˜)â€™
+			| â€˜(â€™ cond_expr â€˜)â€™ â€˜&&â€™ â€˜(â€™ cond_expr â€˜)â€™
+			| â€˜(â€™ cond_expr â€˜)â€™ â€˜||â€™ â€˜(â€™ cond_expr â€˜)â€™
 */
 ExprNode* Parser::matchCondExpr() {
-	/* ‘!’ ‘(’ cond_expr ‘)’*/
+	/* â€˜!â€™ â€˜(â€™ cond_expr â€˜)â€™*/
 	if (lexer.match(NOT)) {
 		if (!lexer.match(LEFT_BRACKET)) {
 			throw ParserException(ParserException::MISSING_LEFT_BRACKET);
@@ -277,8 +277,8 @@ ExprNode* Parser::matchCondExpr() {
 		return notNode;
 	}
 
-	/* ‘(’ cond_expr ‘)’ ‘&&’ ‘(’ cond_expr ‘)’
-		| ‘(’ cond_expr ‘)’ ‘||’ ‘(’ cond_expr ‘)’ */
+	/* â€˜(â€™ cond_expr â€˜)â€™ â€˜&&â€™ â€˜(â€™ cond_expr â€˜)â€™
+		| â€˜(â€™ cond_expr â€˜)â€™ â€˜||â€™ â€˜(â€™ cond_expr â€˜)â€™ */
 	if (lexer.match(LEFT_BRACKET)) {
 		ExprNode* leftCondExpr = matchCondExpr();
 
@@ -320,12 +320,12 @@ ExprNode* Parser::matchCondExpr() {
 	return relExprNode;
 }
 
-/* rel_expr: rel_factor ‘ > ’ rel_factor
-			| rel_factor ‘ >= ’ rel_factor
-			| rel_factor ‘ < ’ rel_factor
-			| rel_factor ‘ <= ’ rel_factor
-			| rel_factor ‘ == ’ rel_factor
-			| rel_factor ‘ != ’ rel_factor
+/* rel_expr: rel_factor â€˜ > â€™ rel_factor
+			| rel_factor â€˜ >= â€™ rel_factor
+			| rel_factor â€˜ < â€™ rel_factor
+			| rel_factor â€˜ <= â€™ rel_factor
+			| rel_factor â€˜ == â€™ rel_factor
+			| rel_factor â€˜ != â€™ rel_factor
 */
 ExprNode* Parser::matchRelExpr() {
 	ExprNode* leftRelFactor = matchRelFactor();
@@ -373,7 +373,7 @@ ExprNode* Parser::matchRelFactor() {
 	return expr;
 }
 
-/* if : ‘if’ ‘(’ cond_expr ‘)’ ‘then’ ‘{‘ stmtLst ‘}’ ‘else’ ‘{‘ stmtLst ‘}’ */
+/* if : â€˜ifâ€™ â€˜(â€™ cond_expr â€˜)â€™ â€˜thenâ€™ â€˜{â€˜ stmtLst â€˜}â€™ â€˜elseâ€™ â€˜{â€˜ stmtLst â€˜}â€™ */
 IfNode* Parser::matchIf() {
 	if (!lexer.match(LEFT_BRACKET)) {
 		throw ParserException(ParserException::MISSING_LEFT_BRACKET);
