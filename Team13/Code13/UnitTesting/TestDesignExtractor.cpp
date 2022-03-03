@@ -35,7 +35,7 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
 		Assert::AreEqual(size_t(1), Entity::getAllStmts().size());
@@ -63,7 +63,7 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
 		Assert::AreEqual(size_t(1), Entity::getAllStmts().size());
@@ -94,7 +94,7 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
 		Assert::AreEqual(size_t(2), Entity::getAllStmts().size());
@@ -138,7 +138,7 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(size_t(2), std::get<0>(Follows::getAllPredecessorSuccessorInfo()).size());
 		/* We expect (3 choose 2) = 3 relationships in Follows T */
@@ -171,7 +171,7 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		/* We expect two Parent relationships to be captured, one from the print statement in the then-block,
 		   and one from the read statement in the else-block. */
@@ -200,7 +200,7 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		/* We expect one Parent relationships to be captured, from the read statement in the while-block */
 		Assert::AreEqual(size_t(1), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());
@@ -237,7 +237,7 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		/* We expect two Parent relationships to be captured,
 		   one from the outer while to inner while, and one from the inner while to read x; */
@@ -306,7 +306,7 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		/* We expect five Parent relationships to be captured: (1, 2), (1, 4), (2, 3), (4, 5) and (4, 6). */
 		Assert::AreEqual(size_t(5), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());
@@ -357,7 +357,7 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		/* We expect three Parent relationships to be captured: (1, 2), (2, 3), and (2, 4). */
 		Assert::AreEqual(size_t(3), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());
@@ -406,7 +406,7 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(size_t(2), Entity::getAllVars().size());
 		Assert::AreEqual(size_t(3), Entity::getAllConsts().size());

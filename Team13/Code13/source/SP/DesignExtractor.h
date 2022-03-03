@@ -23,7 +23,7 @@ private:
 	static StmtIndex
 		processStmtNode(StmtNode* stmtNode, StmtIndex prevIndex);
 public:
-	static void Extract(SourceAST& ast);
+	static void extract(SourceAST& ast);
 	static std::unordered_map<ProcIndex, std::vector<StmtIndex>, ProcIndex::HashFunction>
 		getProcStmtMap();
 	static std::unordered_map<StmtIndex, std::vector<StmtIndex>, StmtIndex::HashFunction>

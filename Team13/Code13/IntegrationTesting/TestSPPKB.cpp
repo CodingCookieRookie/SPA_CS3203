@@ -192,7 +192,7 @@ public:
 		std::string procName = "computeAverage";
 
 		SourceAST ast = Parser::parse(sampleSource1);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
@@ -222,7 +222,7 @@ public:
 		StmtIndex stmtIdx3 = StmtIndex(5);
 
 		SourceAST ast = Parser::parse(sampleSource1);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(size_t(5), std::get<0>(Modifies::getAllStmtVarInfo()).size());
 		Assert::IsTrue(Modifies::contains(stmtIdx1, Entity::getVarIdx(varName1)));
@@ -248,7 +248,7 @@ public:
 		std::string procName = "printAscending";
 
 		SourceAST ast = Parser::parse(sampleSource2);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
@@ -283,7 +283,7 @@ public:
 		StmtIndex stmtIdx7 = StmtIndex(9);
 
 		SourceAST ast = Parser::parse(sampleSource2);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(size_t(11), std::get<0>(Modifies::getAllStmtVarInfo()).size());
 		Assert::IsTrue(Modifies::contains(stmtIdx1, Entity::getVarIdx(varName1)));
@@ -323,7 +323,7 @@ public:
 		std::string procName = "sumDigits";
 
 		SourceAST ast = Parser::parse(sampleSource3);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
@@ -355,7 +355,7 @@ public:
 		StmtIndex stmtIdx6 = StmtIndex(7);
 
 		SourceAST ast = Parser::parse(sampleSource3);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(size_t(8), std::get<0>(Modifies::getAllStmtVarInfo()).size());
 		Assert::IsTrue(Modifies::contains(stmtIdx1, Entity::getVarIdx(varName1)));
@@ -396,7 +396,7 @@ public:
 		std::string procName = "computeCentroid";
 
 		SourceAST ast = Parser::parse(mixedStmtsSource);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
@@ -431,7 +431,7 @@ public:
 		StmtIndex stmtIdx8 = StmtIndex(14);
 
 		SourceAST ast = Parser::parse(mixedStmtsSource);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(size_t(16), std::get<0>(Modifies::getAllStmtVarInfo()).size());
 		Assert::IsTrue(Modifies::contains(stmtIdx1, Entity::getVarIdx(varName1)));
@@ -474,7 +474,7 @@ public:
 		std::string procName = "Peter";
 
 		SourceAST ast = Parser::parse(nestedWhileIfSource);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
@@ -509,7 +509,7 @@ public:
 		StmtIndex stmtIdx9 = StmtIndex(11);
 
 		SourceAST ast = Parser::parse(nestedWhileIfSource);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(size_t(14), std::get<0>(Modifies::getAllStmtVarInfo()).size());
 		Assert::IsTrue(Modifies::contains(stmtIdx2, Entity::getVarIdx(varName2)));
@@ -558,7 +558,7 @@ public:
 		std::string procName = "sumDigits";
 
 		SourceAST ast = Parser::parse(multipleBracketsSource);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
@@ -589,7 +589,7 @@ public:
 		StmtIndex stmtIdx5 = StmtIndex(6);
 
 		SourceAST ast = Parser::parse(multipleBracketsSource);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(size_t(8), std::get<0>(Modifies::getAllStmtVarInfo()).size());
 		Assert::IsTrue(Modifies::contains(stmtIdx1, Entity::getVarIdx(varName1)));
@@ -627,7 +627,7 @@ public:
 		std::string procName = "procedure";
 
 		SourceAST ast = Parser::parse(sameKeywordNameSource);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
@@ -658,7 +658,7 @@ public:
 		StmtIndex stmtIdx3 = StmtIndex(7);
 
 		SourceAST ast = Parser::parse(sameKeywordNameSource);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(size_t(6), std::get<0>(Modifies::getAllStmtVarInfo()).size());
 		Assert::IsTrue(Modifies::contains(stmtIdx1, Entity::getVarIdx(varName1)));
@@ -691,7 +691,7 @@ public:
 		std::string procName = "main";
 
 		SourceAST ast = Parser::parse(longAssignmentExprSource);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
@@ -718,7 +718,7 @@ public:
 		StmtIndex stmtIdx = StmtIndex(1);
 
 		SourceAST ast = Parser::parse(longAssignmentExprSource);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(size_t(1), std::get<0>(Modifies::getAllStmtVarInfo()).size());
 		Assert::IsTrue(Modifies::contains(stmtIdx, Entity::getVarIdx(varName1)));
@@ -746,7 +746,7 @@ public:
 		std::string procName = "main";
 
 		SourceAST ast = Parser::parse(longVarNameSource);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
@@ -766,7 +766,7 @@ public:
 		StmtIndex stmtIdx = StmtIndex(1);
 
 		SourceAST ast = Parser::parse(longVarNameSource);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(size_t(1), std::get<0>(Modifies::getAllStmtVarInfo()).size());
 		Assert::IsTrue(Modifies::contains(stmtIdx, Entity::getVarIdx(varName)));
@@ -792,7 +792,7 @@ public:
 		std::string procName = "Peter";
 
 		SourceAST ast = Parser::parse(multipleNestingSource);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
@@ -829,7 +829,7 @@ public:
 		StmtIndex stmtIdx10 = StmtIndex(10);
 
 		SourceAST ast = Parser::parse(multipleNestingSource);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(size_t(17), std::get<0>(Modifies::getAllStmtVarInfo()).size());
 		Assert::IsTrue(Modifies::contains(stmtIdx1, Entity::getVarIdx(varName1)));
@@ -919,7 +919,7 @@ public:
 		std::string procName = "mAin";
 
 		SourceAST ast = Parser::parse(differentCasingNamesSource);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
@@ -949,7 +949,7 @@ public:
 		StmtIndex stmtIdx4 = StmtIndex(4);
 
 		SourceAST ast = Parser::parse(differentCasingNamesSource);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(size_t(4), std::get<0>(Modifies::getAllStmtVarInfo()).size());
 		Assert::IsTrue(Modifies::contains(stmtIdx1, Entity::getVarIdx(varName)));
@@ -976,7 +976,7 @@ public:
 		std::string procName = "main";
 
 		SourceAST ast = Parser::parse(multipleWhitespacesSource);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
@@ -1000,7 +1000,7 @@ public:
 		StmtIndex stmtIdx3 = StmtIndex(3);
 
 		SourceAST ast = Parser::parse(multipleWhitespacesSource);
-		DesignExtractor::Extract(ast);
+		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(size_t(2), std::get<0>(Modifies::getAllStmtVarInfo()).size());
 		Assert::IsTrue(Modifies::contains(stmtIdx1, Entity::getVarIdx(varName)));
@@ -1031,7 +1031,7 @@ public:
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
 			SourceAST ast = Parser::parse(source);
-			DesignExtractor::Extract(ast);
+			DesignExtractor::extract(ast);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}

@@ -12,6 +12,7 @@ private:
 	PQLParser();
 
 	const static std::vector<std::pair<std::string, PqlEntityType>> designEntityMap;
+	const static std::vector<std::pair<std::string, PqlRelationshipType>> suchThatRelationshipMap;
 	static Lexer lexer;
 
 	static std::vector<PQL_VARIABLE> parseSingleDeclaration();

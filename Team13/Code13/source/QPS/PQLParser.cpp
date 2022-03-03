@@ -1,6 +1,5 @@
 #include "PQLParser.h"
 
-// TODO: Make this a static member of PQLParser
 const std::vector<std::pair<std::string, PqlEntityType>> PQLParser::designEntityMap = {
 	{"stmt",		PqlEntityType::Stmt},
 	{"read",		PqlEntityType::Read},
@@ -12,6 +11,15 @@ const std::vector<std::pair<std::string, PqlEntityType>> PQLParser::designEntity
 	{"variable",	PqlEntityType::Variable},
 	{"constant",	PqlEntityType::Constant},
 	{"procedure",	PqlEntityType::Procedure}
+};
+
+const std::vector<std::pair<std::string, PqlRelationshipType>> PQLParser::suchThatRelationshipMap = {
+	{"Follows*",	PqlRelationshipType::FollowsT},
+	{"Follows",		PqlRelationshipType::Follows},
+	{"Parent*",		PqlRelationshipType::ParentT},
+	{"Parent",		PqlRelationshipType::Parent},
+	{"Modifies",	PqlRelationshipType::Modifies},
+	{"Uses",		PqlRelationshipType::Uses}
 };
 
 Lexer PQLParser::lexer = Lexer();
@@ -89,26 +97,22 @@ std::vector<ParsedRelationship> PQLParser::parseSuchThat() {
 	}
 	std::string whitespace = lexer.nextWhitespace();
 	if (whitespace.empty()) {
-		// These should throw exceptions
 		throw QPSException(QPSException::PARSER_ERROR);
 	}
 	if (!lexer.match("that")) {
 		throw QPSException(QPSException::PARSER_ERROR);
 	}
 	PqlRelationshipType relationshipType;
-	if (lexer.match("Follows*")) {
-		relationshipType = PqlRelationshipType::FollowsT;
-	} else if (lexer.match("Follows")) {
-		relationshipType = PqlRelationshipType::Follows;
-	} else if (lexer.match("Parent*")) {
-		relationshipType = PqlRelationshipType::ParentT;
-	} else if (lexer.match("Parent")) {
-		relationshipType = PqlRelationshipType::Parent;
-	} else if (lexer.match("Modifies")) {
-		relationshipType = PqlRelationshipType::Modifies;
-	} else if (lexer.match("Uses")) {
-		relationshipType = PqlRelationshipType::Uses;
-	} else {
+	bool matchedRelationship = false;
+	for (const std::pair<std::string, PqlRelationshipType>& relationship : suchThatRelationshipMap) {
+		std::string relationshipString = relationship.first;
+		if (lexer.match(relationshipString)) {
+			relationshipType = relationship.second;
+			matchedRelationship = true;
+			break;
+		}
+	}
+	if (!matchedRelationship) {
 		throw QPSException(QPSException::PARSER_ERROR);
 	}
 	if (!lexer.match("(")) {
