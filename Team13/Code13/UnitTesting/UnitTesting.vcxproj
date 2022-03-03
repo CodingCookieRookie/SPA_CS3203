@@ -201,6 +201,7 @@
     <ClCompile Include="TestUses.cpp" />
     <ClCompile Include="TestPQLParser.cpp" />
     <ClCompile Include="TestUsesInstruction.cpp" />
+    <ClCompile Include="TestUsesPInstruction.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

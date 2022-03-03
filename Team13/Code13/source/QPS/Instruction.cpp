@@ -658,7 +658,8 @@ EvaluatedTable RelationshipInstruction::handleParentT() {
 }
 
 RelationshipInstruction::RelationshipInstruction(PqlRelationshipType pqlRSType, PqlReference lhs, PqlReference rhs) :
-	pqlRelationshipType(pqlRSType), lhsRef(lhs), rhsRef(rhs) {}
+	pqlRelationshipType(pqlRSType), lhsRef(lhs), rhsRef(rhs) {
+}
 
 EvaluatedTable RelationshipInstruction::execute() {
 	EvaluatedTable evTable;
