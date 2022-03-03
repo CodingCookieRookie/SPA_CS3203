@@ -7,6 +7,7 @@
 #include "../Exception/SPAException.h"
 #include "SourceAST.h"
 #include "SourceASTNode.h"
+#include "../Common/ExpressionParser.h"
 
 class Parser {
 private:
@@ -17,12 +18,7 @@ private:
 	static StmtNode* matchStmt();
 	static ReadNode* matchRead();
 	static PrintNode* matchPrint();
-	static ExprNode* matchExpr();
 	static AssignNode* matchAssign(std::string varName);
-	static ExprNode* matchFactor();
-	static ExprNode* matchTermTail(ExprNode* lvalue);
-	static ExprNode* matchTerm();
-	static ExprNode* matchExprTail(ExprNode* lvalue);
 	static WhileNode* matchWhile();
 	static ExprNode* matchCondExpr();
 	static ExprNode* matchRelExpr();
@@ -45,8 +41,6 @@ private:
 	static const std::string RIGHT_CURLY;
 	static const std::string SEMICOLON;
 
-	static const std::vector<std::string> termOperators;
-	static const std::vector<std::string> exprOperators;
 	static const std::vector<std::string> relOperators;
 	static const std::vector<std::string> logicalOperators;
 

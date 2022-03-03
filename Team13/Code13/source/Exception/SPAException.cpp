@@ -46,3 +46,7 @@ const std::string EvaluatorException::USES_S_ERROR = "Invalid handling of UsesS 
 const std::string EvaluatorException::USES_P_ERROR = "Invalid handling of UsesP query";
 
 EvaluatorException::EvaluatorException(const std::string& reason) : SPAException(reason) {}
+
+/* ExpressionException */
+const std::string ExpressionException::INVALID_EXPR = "Expression is invalid";
+ExpressionException::ExpressionException(const std::string& reason) : SPAException(reason) {}

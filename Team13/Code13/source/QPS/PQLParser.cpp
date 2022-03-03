@@ -182,31 +182,32 @@ PqlReference PQLParser::parseRef() {
 }
 
 PqlExpression PQLParser::parseExpression() {
-	/* Note: Basic PQL only allows subexpression match, in advanced PQL, we can start with either a _ or " */
-	if (!lexer.match("_")) {
-		throw QPSException(QPSException::PARSER_ERROR);
+	if (lexer.match("_")) {
+		if (!lexer.match("\"")) {
+			return PqlExpression(PqlExpressionType::wildcard, std::string());
+		}
+		ExprNode* expr = ExpressionParser::matchExpr(lexer);
+		std::string pattern = expr->getPattern();
+		delete expr;
+		if (!lexer.match("\"")) {
+			throw QPSException(QPSException::PARSER_ERROR);
+		}
+		if (!lexer.match("_")) {
+			throw QPSException(QPSException::PARSER_ERROR);
+		}
+		return PqlExpression(PqlExpressionType::partial, pattern);
 	}
+	/* If the next token is not an _ or ", there is a syntax error */
 	if (!lexer.match("\"")) {
-		return PqlExpression(PqlExpressionType::wildcard, std::string());
-	}
-	std::string factor = lexer.nextName();
-	if (factor.empty()) {
-		factor = lexer.nextInteger();
-	}
-	if (factor.empty()) {
 		throw QPSException(QPSException::PARSER_ERROR);
 	}
+	ExprNode* expr = ExpressionParser::matchExpr(lexer);
+	std::string pattern = expr->getPattern();
+	delete expr;
 	if (!lexer.match("\"")) {
 		throw QPSException(QPSException::PARSER_ERROR);
 	}
-	if (!lexer.match("_")) {
-		throw QPSException(QPSException::PARSER_ERROR);
-	}
-	/* Surround pattern with spaces on both sides */
-	std::string pattern = " ";
-	pattern += factor;
-	pattern += " ";
-	return PqlExpression(PqlExpressionType::partial, pattern);
+	return PqlExpression(PqlExpressionType::full, pattern);
 }
 
 ParsedQuery PQLParser::parseQuery(const std::string& query) {

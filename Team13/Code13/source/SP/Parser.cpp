@@ -20,8 +20,6 @@ const std::string Parser::LEFT_CURLY = "{";
 const std::string Parser::RIGHT_CURLY = "}";
 const std::string Parser::SEMICOLON = ";";
 
-const std::vector<std::string> Parser::termOperators = { "*", "/", "%" };
-const std::vector<std::string> Parser::exprOperators = { "+", "-" };
 const std::vector<std::string> Parser::relOperators = { ">=", ">", "<=", "<", "!=", "==" };
 const std::vector<std::string> Parser::logicalOperators = { "&&", "||" };
 
@@ -138,68 +136,13 @@ PrintNode* Parser::matchPrint() {
 	return new PrintNode(varName);
 }
 
-ExprNode* Parser::matchFactor() {
-	std::string varName = lexer.nextName();
-	if (!varName.empty()) {
-		return new ExprNode(ExprNodeValueType::varName, varName);
-	}
-
-	std::string constVal = lexer.nextInteger();
-	if (!constVal.empty()) {
-		return new ExprNode(ExprNodeValueType::constValue, constVal);
-	}
-
-	if (lexer.match(LEFT_BRACKET)) {
-		ExprNode* expr = matchExpr();
-		if (!lexer.match(RIGHT_BRACKET)) {
-			throw ParserException(ParserException::INVALID_EXPR);
-		}
-		return expr;
-	}
-
-	throw ParserException(ParserException::INVALID_EXPR);
-}
-
-ExprNode* Parser::matchTermTail(ExprNode* lvalue) {
-	for (const std::string op : termOperators) {
-		if (lexer.match(op)) {
-			ExprNode* factor = matchFactor();
-			ExprNode* arithOp = new ExprNode(ExprNodeValueType::arithmeticOperator, op);
-			arithOp->addChild(lvalue);
-			arithOp->addChild(factor);
-			return matchTermTail(arithOp);
-		}
-	}
-
-	return lvalue;
-}
-
-ExprNode* Parser::matchTerm() {
-	ExprNode* lvalue = matchFactor();
-	return matchTermTail(lvalue);
-}
-
-ExprNode* Parser::matchExprTail(ExprNode* lvalue) {
-	for (const std::string op : exprOperators) {
-		if (lexer.match(op)) {
-			ExprNode* term = matchTerm();
-			ExprNode* arithOp = new ExprNode(ExprNodeValueType::arithmeticOperator, op);
-			arithOp->addChild(lvalue);
-			arithOp->addChild(term);
-			return matchExprTail(arithOp);
-		}
-	}
-
-	return lvalue;
-}
-
-ExprNode* Parser::matchExpr() {
-	ExprNode* lvalue = matchTerm();
-	return matchExprTail(lvalue);
-}
-
 AssignNode* Parser::matchAssign(std::string varName) {
-	ExprNode* expr = matchExpr();
+	ExprNode* expr = nullptr;
+	try {
+		expr = ExpressionParser::matchExpr(lexer);
+	} catch (ExpressionException& ex) {
+		throw ParserException(ParserException::INVALID_EXPR);
+	}
 
 	if (!lexer.match(SEMICOLON)) {
 		throw ParserException(ParserException::MISSING_SEMICOLON);
@@ -313,8 +256,8 @@ ExprNode* Parser::matchRelExpr() {
 ExprNode* Parser::matchRelFactor() {
 	ExprNode* expr{};
 	try {
-		expr = matchExpr();
-	} catch (ParserException& ex) {
+		expr = ExpressionParser::matchExpr(lexer);
+	} catch (ExpressionException& ex) {
 		std::string varName = lexer.nextName();
 		if (!varName.empty()) {
 			return new ExprNode(ExprNodeValueType::varName, varName);

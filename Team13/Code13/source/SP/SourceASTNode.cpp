@@ -95,36 +95,8 @@ std::unordered_set<std::string> PrintNode::getUsesVars() {
 	return { varName };
 }
 
-/* ExprNode */
-ExprNode::ExprNode(ExprNodeValueType valueType, std::string value) : SourceASTNode(), valueType(valueType), value(value) {}
-
-void ExprNode::addChild(ExprNode* child) {
-	children.push_back(child);
-}
-
-std::vector<ExprNode*> ExprNode::getChildren() {
-	return children;
-}
-
-std::string ExprNode::getValue() {
-	return value;
-}
-
-ExprNodeValueType ExprNode::getExprNodeValueType() {
-	return valueType;
-}
-
-void ExprNode::populatePattern(std::vector<std::string>& tokens) {
-	for (ExprNode* child : children) {
-		child->populatePattern(tokens);
-	}
-	tokens.push_back(value);
-}
-
 /* AssignNode */
-AssignNode::AssignNode(std::string varName, ExprNode* expr) : StmtNode(), varName(varName), expr(expr) {
-	populatePattern();
-}
+AssignNode::AssignNode(std::string varName, ExprNode* expr) : StmtNode(), varName(varName), expr(expr) {}
 
 std::string AssignNode::getVarName() {
 	return varName;
@@ -142,21 +114,8 @@ std::unordered_set<std::string> AssignNode::getModifiesVars() {
 	return { varName };
 }
 
-void AssignNode::populatePattern() {
-	pattern.clear();
-	std::vector<std::string> tokens;
-	expr->populatePattern(tokens);
-	pattern.push_back(' ');
-	for (std::string& token : tokens) {
-		for (char c : token) {
-			pattern.push_back(c);
-		}
-		pattern.push_back(' ');
-	}
-}
-
 std::string AssignNode::getPattern() {
-	return pattern;
+	return expr->getPattern();
 }
 
 std::unordered_set<std::string> AssignNode::getUsesVars() {

@@ -59,3 +59,10 @@ public:
 
 	EvaluatorException(const std::string& reason);
 };
+
+class ExpressionException : public SPAException {
+public:
+	static const std::string INVALID_EXPR;
+
+	ExpressionException(const std::string& reason);
+};

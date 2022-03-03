@@ -445,6 +445,68 @@ public:
 		Assert::AreEqual(std::string(" x "), patterns[0].getExpression().second);
 	}
 
+	TEST_METHOD(parseQuery_patternClausePartialExpr_exprExtracted) {
+		std::string query = "assign a; Select a pattern a(_, _\"(x + 1)       * 2 / 3		-4 %\n (5)\"_)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedPattern> patterns =
+			parsedQuery.getPatterns();
+		Assert::AreEqual(size_t(1), patterns.size());
+		Assert::IsTrue(PqlExpressionType::partial == patterns[0].getExpression().first);
+		Assert::AreEqual(std::string(" x 1 + 2 * 3 / 4 5 % - "), patterns[0].getExpression().second);
+	}
+
+	TEST_METHOD(parseQuery_patternClauseFullExpr_exprExtracted) {
+		std::string query = "assign a; Select a pattern a(_, \"(x + 1)       * 2 / 3		-4 %\n (5)\")";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedPattern> patterns =
+			parsedQuery.getPatterns();
+		Assert::AreEqual(size_t(1), patterns.size());
+		Assert::IsTrue(PqlExpressionType::full == patterns[0].getExpression().first);
+		Assert::AreEqual(std::string(" x 1 + 2 * 3 / 4 5 % - "), patterns[0].getExpression().second);
+	}
+
+	TEST_METHOD(parseQuery_patternClausePartialExprMissingOpeningQuotation_exceptionThrown) {
+		std::string query = "assign a; Select a pattern a(_, _(x + 1)       * 2 / 3		-4 %\n (5)\"_)";
+		auto wrapperFunc = [&query] { PQLParser::parseQuery(query); };
+		Assert::ExpectException<QPSException>(wrapperFunc);
+	}
+
+	TEST_METHOD(parseQuery_patternClausePartialExprMissingClosingQuotation_exceptionThrown) {
+		std::string query = "assign a; Select a pattern a(_, _\"(x + 1)       * 2 / 3		-4 %\n (5)_)";
+		auto wrapperFunc = [&query] { PQLParser::parseQuery(query); };
+		Assert::ExpectException<QPSException>(wrapperFunc);
+	}
+
+	TEST_METHOD(parseQuery_patternClausePartialExprMissingOpeningUnderscore_exceptionThrown) {
+		std::string query = "assign a; Select a pattern a(_, \"(x + 1)       * 2 / 3		-4 %\n (5)\"_)";
+		auto wrapperFunc = [&query] { PQLParser::parseQuery(query); };
+		Assert::ExpectException<QPSException>(wrapperFunc);
+	}
+
+	TEST_METHOD(parseQuery_patternClausePartialExprMissingClosingUnderscore_exceptionThrown) {
+		std::string query = "assign a; Select a pattern a(_, _\"(x + 1)       * 2 / 3		-4 %\n (5)\")";
+		auto wrapperFunc = [&query] { PQLParser::parseQuery(query); };
+		Assert::ExpectException<QPSException>(wrapperFunc);
+	}
+
+	TEST_METHOD(parseQuery_patternClauseFullExprMissingOpeningQuotation_exceptionThrown) {
+		std::string query = "assign a; Select a pattern a(_, (x + 1)       * 2 / 3		-4 %\n (5)\")";
+		auto wrapperFunc = [&query] { PQLParser::parseQuery(query); };
+		Assert::ExpectException<QPSException>(wrapperFunc);
+	}
+
+	TEST_METHOD(parseQuery_patternClauseFullExprMissingClosingQuotation_exceptionThrown) {
+		std::string query = "assign a; Select a pattern a(_, \"(x + 1)       * 2 / 3		-4 %\n (5))";
+		auto wrapperFunc = [&query] { PQLParser::parseQuery(query); };
+		Assert::ExpectException<QPSException>(wrapperFunc);
+	}
+
+	TEST_METHOD(parseQuery_invalidExpression_exceptionThrown) {
+		std::string query = "assign a; Select a pattern a(_, \"\")";
+		auto wrapperFunc = [&query] { PQLParser::parseQuery(query); };
+		Assert::ExpectException<ExpressionException>(wrapperFunc);
+	}
+
 	TEST_METHOD(parseQuery_leadingZeroInSuchThat_lexerExceptionThrown) {
 		std::string query =
 			"variable v;"

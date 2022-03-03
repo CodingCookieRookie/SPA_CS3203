@@ -2,9 +2,10 @@
 #include <string>
 #include <vector>
 
-#include "../common/Lexer.h"
 #include "QPSCommons.h"
 #include "ParsedQuery.h"
+#include "../Common/Lexer.h"
+#include "../Common/ExpressionParser.h"
 
 class PQLParser {
 private:

@@ -6,7 +6,8 @@
 #include <unordered_set>
 #include <vector>
 
-#include "../common/Types.h"
+#include "../Common/Types.h"
+#include "../Common/ExprNode.h"
 
 /* Forward definition of StmtLstNode for compatibility with StmtNode */
 class StmtLstNode;
@@ -63,24 +64,6 @@ public:
 	friend class SourceAST;
 };
 
-class ExprNode : public SourceASTNode {
-private:
-	std::string value;
-	ExprNodeValueType valueType;
-	std::vector<ExprNode*> children;
-	void populatePattern(std::vector<std::string>& tokens);
-public:
-	ExprNode(ExprNodeValueType valueType, std::string value);
-	void addChild(ExprNode* child);
-	std::vector<ExprNode*> getChildren();
-	std::string getValue();
-	ExprNodeValueType getExprNodeValueType();
-
-	friend class SourceAST;
-	friend class AssignNode;
-	friend class ContainerNode;
-};
-
 class AssignNode : public StmtNode {
 private:
 	std::string varName;
@@ -88,7 +71,6 @@ private:
 	std::unordered_set<std::string> usesVars;
 	std::unordered_set<std::string> usesConsts;
 	std::string pattern;
-	void populatePattern();
 public:
 	AssignNode(std::string varName, ExprNode* expr);
 	std::string getVarName();
