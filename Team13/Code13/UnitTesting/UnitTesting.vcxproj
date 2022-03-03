@@ -180,6 +180,7 @@
     <ClCompile Include="TestInstructionParent.cpp" />
     <ClCompile Include="TestInstructionParentT.cpp" />
     <ClCompile Include="TestModifiesInstruction.cpp" />
+    <ClCompile Include="TestModifiesPInstruction.cpp" />
     <ClCompile Include="TestPatternInstruction.cpp" />
     <ClCompile Include="TestPKB.cpp" />
     <ClCompile Include="TestPQLResultProjector.cpp" />
