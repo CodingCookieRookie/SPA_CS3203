@@ -198,18 +198,15 @@ EvaluatedTable RelationshipInstruction::handleModifiesP() {
 		if (rhsRef.first == PqlReferenceType::ident) {
 			if (Entity::containsProc(lhsRef.second)) {
 				ProcIndex procIndex = Entity::getProcIdx(lhsRef.second);
-				if (Modifies::getVariables(procIndex).size() > 0) {
-					std::vector<int> varIndices = Modifies::getVariables(procIndex);
-					if (Entity::containsVar(lhsRef.second)) {
-						VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
-						if (std::find(varIndices.begin(), varIndices.end(), varIndex) != varIndices.end()) {
-							return EvaluatedTable(true);
-						} else {
-							return EvaluatedTable(false);
-						}
+				if (Entity::containsVar(rhsRef.second)) {
+					VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
+					if (Modifies::contains(procIndex, varIndex)) {
+						return EvaluatedTable(true);
 					} else {
 						return EvaluatedTable(false);
 					}
+				} else {
+					return EvaluatedTable(false);
 				}
 			}
 		} else {
@@ -229,7 +226,6 @@ EvaluatedTable RelationshipInstruction::handleModifiesP() {
 				}
 			}
 		}
-		PQLmap[lhsRef.second] = allStmts;
 	} else {
 		throw EvaluatorException(EvaluatorException::MODIFIES_P_ERROR);
 	}
