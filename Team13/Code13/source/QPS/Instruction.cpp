@@ -172,6 +172,7 @@ EvaluatedTable RelationshipInstruction::handleModifiesS() {
 
 EvaluatedTable RelationshipInstruction::handleModifiesP() {
 	/* Modifies(p / p1, v) or Modifies(p / p1, _)	Modifies(p / p1, "x") */
+	/* Modifies("p", v) or Modifies("p" , _)	Modifies("p", "x") */
 	std::unordered_map<std::string, PqlEntityType> PQLentities;
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
 	PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Procedure));
@@ -193,6 +194,42 @@ EvaluatedTable RelationshipInstruction::handleModifiesP() {
 			varIndices = std::get<1>(allProcVarInfos);
 			PQLmap[rhsRef.second] = varIndices;
 		}
+	} else if (lhsRef.first == PqlReferenceType::ident) {
+		if (rhsRef.first == PqlReferenceType::ident) {
+			if (Entity::containsProc(lhsRef.second)) {
+				ProcIndex procIndex = Entity::getProcIdx(lhsRef.second);
+				if (Modifies::getVariables(procIndex).size() > 0) {
+					std::vector<int> varIndices = Modifies::getVariables(procIndex);
+					if (Entity::containsVar(lhsRef.second)) {
+						VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
+						if (std::find(varIndices.begin(), varIndices.end(), varIndex) != varIndices.end()) {
+							return EvaluatedTable(true);
+						} else {
+							return EvaluatedTable(false);
+						}
+					} else {
+						return EvaluatedTable(false);
+					}
+				}
+			}
+		} else {
+			if (Entity::containsProc(lhsRef.second)) {
+				ProcIndex procIndex = Entity::getProcIdx(lhsRef.second);
+				if (rhsRef.first == PqlReferenceType::synonym) {
+					varIndices = Modifies::getVariables(procIndex);
+					PQLmap[rhsRef.second] = varIndices;
+				} else if (rhsRef.first == PqlReferenceType::wildcard) {
+					if (Modifies::getVariables(procIndex).size() > 0) {
+						return EvaluatedTable(true);
+					} else {
+						return EvaluatedTable(false);
+					}
+				} else {
+					throw EvaluatorException(EvaluatorException::MODIFIES_P_ERROR);
+				}
+			}
+		}
+		PQLmap[lhsRef.second] = allStmts;
 	} else {
 		throw EvaluatorException(EvaluatorException::MODIFIES_P_ERROR);
 	}
