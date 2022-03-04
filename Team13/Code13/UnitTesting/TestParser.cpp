@@ -170,38 +170,412 @@ public:
 		Assert::IsTrue(five->getChildren().empty());
 	}
 
-	TEST_METHOD(parse_multipleProceduresReadPrint_success) {
-		const char* source = "   procedure proc1  "
-			"{ read x1; } "
-			" \n procedure proc2 { \n"
-			" print y123;  \n "
-			" read Y1Yy ; } ";
+	TEST_METHOD(parse_multipleProcedures_syntacticallyValid_semanticallyValid_success) {
+		const char* source =
+			" procedure proc1 {read proc1;}"
+			"   procedure aRelativelyLongProcedureName \n "
+			"{ read read; print y123;  \n "
+			" x = (y + 1) * 3	; "
+			" while ( (1 >= x ) || (! (while == 2147483647	)) ){ read print	; } "
+			"if ( 2 > 2147483648) \n then \n"
+			" { Re123ad = ALLUPPERCASE;}else{ if = 5; }"
+			" } "
+			" procedure proc3 {read=read;}";
 		SourceAST ast = Parser::parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
 		/* Test procedureNodes */
-		Assert::AreEqual(size_t(2), procNodes.size());
+		Assert::AreEqual(size_t(3), procNodes.size());
+
+		/* 1st procedure */
+		/* procedure proc1 {read proc1;} */
 		Assert::AreEqual(std::string("proc1"), procNodes[0]->getProcName());
-		Assert::AreEqual(std::string("proc2"), procNodes[1]->getProcName());
+		StmtLstNode* proc1StmtLstNode = procNodes[0]->getStmtLstNode();
+		std::vector<StmtNode*> proc1Stmts = proc1StmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), proc1Stmts.size());
+		ReadNode* proc1ReadNode = (ReadNode*)proc1Stmts[0];
+		Assert::IsTrue(StatementType::readType == proc1ReadNode->getStmtType());
+		Assert::AreEqual(std::string("proc1"), proc1ReadNode->getVarName());
 
-		/* Test statements in stmtLstNode1 */
-		StmtLstNode* stmtLstNode1 = procNodes[0]->getStmtLstNode();
-		std::vector<StmtNode*> statements1 = stmtLstNode1->getStmtNodes();
-		Assert::AreEqual(size_t(1), statements1.size());
+		/* 2nd procedure */
+		/* procedure aRelativelyLongProcedureName ... */
+		Assert::AreEqual(std::string("aRelativelyLongProcedureName"), procNodes[1]->getProcName());
 
-		ReadNode* readNode1 = (ReadNode*)statements1[0];
-		Assert::AreEqual(std::string("x1"), readNode1->getVarName());
+		/* Test statements in 2nd procedure */
+		StmtLstNode* proc2StmtLstNode = procNodes[1]->getStmtLstNode();
+		std::vector<StmtNode*> proc2Stmts = proc2StmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(5), proc2Stmts.size());
 
-		/* Test statements in stmtLstNode2 */
-		StmtLstNode* stmtLstNode2 = procNodes[1]->getStmtLstNode();
-		std::vector<StmtNode*> statements2 = stmtLstNode2->getStmtNodes();
-		Assert::AreEqual(size_t(2), statements2.size());
+		/* Test read stmt */
+		/* read read; */
+		ReadNode* readNode = (ReadNode*)proc2Stmts[0];
+		Assert::IsTrue(StatementType::readType == readNode->getStmtType());
+		Assert::AreEqual(std::string("read"), readNode->getVarName());
 
-		PrintNode* printNode = (PrintNode*)statements2[0];
+		/* Test print stmt */
+		/* print y123; */
+		PrintNode* printNode = (PrintNode*)proc2Stmts[1];
+		Assert::IsTrue(StatementType::printType == printNode->getStmtType());
 		Assert::AreEqual(std::string("y123"), printNode->getVarName());
 
-		ReadNode* readNode2 = (ReadNode*)statements2[1];
-		Assert::AreEqual(std::string("Y1Yy"), readNode2->getVarName());
+		/* Test assign stmt */
+		/* x = (y + 1) * 3 */
+		AssignNode* assignNode = (AssignNode*)proc2Stmts[2];
+		Assert::IsTrue(StatementType::assignType == assignNode->getStmtType());
+		Assert::AreEqual(std::string("x"), assignNode->getVarName());
+		ExprNode* multOp = assignNode->getExpr();
+		Assert::AreEqual(std::string("*"), multOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == multOp->getExprNodeValueType());
+
+		/* (y + 1) */
+		std::vector<ExprNode*> multOpChildren = multOp->getChildren();
+		Assert::AreEqual(size_t(2), multOpChildren.size());
+		ExprNode* plusOp = multOpChildren[0];
+		Assert::AreEqual(std::string("+"), plusOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == plusOp->getExprNodeValueType());
+		std::vector<ExprNode*> plusOpChildren = plusOp->getChildren();
+		Assert::AreEqual(size_t(2), plusOpChildren.size());
+		Assert::AreEqual(std::string("y"), plusOpChildren[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == plusOpChildren[0]->getExprNodeValueType());
+		Assert::IsTrue(plusOpChildren[0]->getChildren().empty());
+		Assert::AreEqual(std::string("1"), plusOpChildren[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == plusOpChildren[1]->getExprNodeValueType());
+		Assert::IsTrue(plusOpChildren[1]->getChildren().empty());
+
+		/* 3 */
+		ExprNode* three = multOpChildren[1];
+		Assert::AreEqual(std::string("3"), three->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == three->getExprNodeValueType());
+		Assert::IsTrue(three->getChildren().empty());
+
+		/* Test while stmt */
+		/* while ( (1 >= x ) || (! (while == 2147483647	)) ){ read print	; } */
+		WhileNode* whileNode = (WhileNode*)proc2Stmts[3];
+		Assert::IsTrue(StatementType::whileType == whileNode->getStmtType());
+		ExprNode* orOp = whileNode->getCondExpr();
+		StmtLstNode* whileStmtLstNode = whileNode->getChildStmtLst()[0];
+
+		/* Test while cond expr */
+		Assert::AreEqual(std::string("||"), orOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::logicalOperator == orOp->getExprNodeValueType());
+		std::vector<ExprNode*> orOpChildren = orOp->getChildren();
+		Assert::AreEqual(size_t(2), orOpChildren.size());
+
+		/* (1 >= x) */
+		ExprNode* gteOp = orOpChildren[0];
+		Assert::AreEqual(std::string(">="), gteOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::relOperator == gteOp->getExprNodeValueType());
+		std::vector<ExprNode*> childrenGteOp = gteOp->getChildren();
+		Assert::AreEqual(size_t(2), childrenGteOp.size());
+		Assert::AreEqual(std::string("1"), childrenGteOp[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == childrenGteOp[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("x"), childrenGteOp[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == childrenGteOp[1]->getExprNodeValueType());
+
+		/* (! (while == 2147483647	)) */
+		ExprNode* notOp = orOpChildren[1];
+		Assert::AreEqual(std::string("!"), notOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::logicalOperator == notOp->getExprNodeValueType());
+		std::vector<ExprNode*> notOpChildren = notOp->getChildren();
+		Assert::AreEqual(size_t(1), notOpChildren.size());
+
+		/* (while == 2147483647	) */
+		ExprNode* eqOp = notOpChildren[0];
+		Assert::AreEqual(std::string("=="), eqOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::relOperator == eqOp->getExprNodeValueType());
+		std::vector<ExprNode*> eqOpChildren = eqOp->getChildren();
+		Assert::AreEqual(size_t(2), eqOpChildren.size());
+
+		Assert::AreEqual(std::string("while"), eqOpChildren[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == eqOpChildren[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("2147483647"), eqOpChildren[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == eqOpChildren[1]->getExprNodeValueType());
+
+		/* Test stmtLst in while container */
+		/* read print	; */
+		std::vector<StmtNode*> stmtsInWhile = whileStmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), stmtsInWhile.size());
+		ReadNode* whileReadNode = (ReadNode*)stmtsInWhile[0];
+		Assert::IsTrue(StatementType::readType == whileReadNode->getStmtType());
+		Assert::AreEqual(std::string("print"), whileReadNode->getVarName());
+
+		/* Test if stmt */
+		/*if ( 2 > 2147483648) \n then \n
+			 { Re123ad = ALLUPPERCASE;}else{ if = 5; }*/
+		IfNode* ifNode = (IfNode*)proc2Stmts[4];
+		Assert::IsTrue(StatementType::ifType == ifNode->getStmtType());
+		std::vector<StmtLstNode*> childStmtLst = ifNode->getChildStmtLst();
+		Assert::AreEqual(size_t(2), childStmtLst.size());
+
+		/* Test cond expr */
+		/* ( 2 > 2147483648) */
+		ExprNode* gtOp = ifNode->getCondExpr();
+		Assert::AreEqual(std::string(">"), gtOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::relOperator == gtOp->getExprNodeValueType());
+		std::vector<ExprNode*> gtOpChildren = gtOp->getChildren();
+		Assert::AreEqual(size_t(2), gtOpChildren.size());
+		Assert::AreEqual(std::string("2"), gtOpChildren[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == gtOpChildren[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("2147483648"), gtOpChildren[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == gtOpChildren[1]->getExprNodeValueType());
+
+		/* Test then clause */
+		/* Re123ad = ALLUPPERCASE; */
+		StmtLstNode* thenStmtLstNode = childStmtLst[0];
+		std::vector<StmtNode*> thenStmts = thenStmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), thenStmts.size());
+		AssignNode* thenAssignNode = (AssignNode*)thenStmts[0];
+		Assert::IsTrue(StatementType::assignType == thenAssignNode->getStmtType());
+		Assert::AreEqual(std::string("Re123ad"), thenAssignNode->getVarName());
+		ExprNode* allUpperCase = thenAssignNode->getExpr();
+		Assert::AreEqual(std::string("ALLUPPERCASE"), allUpperCase->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == allUpperCase->getExprNodeValueType());
+		Assert::IsTrue(allUpperCase->getChildren().empty());
+
+		/* Test else clause */
+		/* if = 5 */
+		StmtLstNode* elseStmtLstNode = childStmtLst[1];
+		std::vector<StmtNode*> elseStmts = elseStmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), elseStmts.size());
+		AssignNode* elseAssignNode = (AssignNode*)elseStmts[0];
+		Assert::IsTrue(StatementType::assignType == elseAssignNode->getStmtType());
+		Assert::AreEqual(std::string("if"), elseAssignNode->getVarName());
+		ExprNode* five = elseAssignNode->getExpr();
+		Assert::AreEqual(std::string("5"), five->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == five->getExprNodeValueType());
+		Assert::IsTrue(five->getChildren().empty());
+
+		/* 3rd procedure */
+		/* procedure proc3 {read=read;} */
+		Assert::AreEqual(std::string("proc3"), procNodes[2]->getProcName());
+		StmtLstNode* proc3StmtLstNode = procNodes[2]->getStmtLstNode();
+		std::vector<StmtNode*> proc3Stmts = proc3StmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), proc3Stmts.size());
+		AssignNode* proc3AssignNode = (AssignNode*)proc3Stmts[0];
+		Assert::IsTrue(StatementType::assignType == proc3AssignNode->getStmtType());
+		Assert::AreEqual(std::string("read"), proc3AssignNode->getVarName());
+		ExprNode* proc3Expr = proc3AssignNode->getExpr();
+		Assert::AreEqual(std::string("read"), proc3Expr->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == proc3Expr->getExprNodeValueType());
+		Assert::IsTrue(proc3Expr->getChildren().empty());
+	}
+
+	TEST_METHOD(parse_multipleProcedures_syntacticallyValid_semanticallyInvalid_success) {
+		/* Note that the parser doesn't do any semantic check, thus the duplicated proc name is allowed. */
+		const char* source =
+			" procedure proc1 {read proc1;}"
+			"   procedure aRelativelyLongProcedureName \n "
+			"{ read read; print y123;  \n "
+			" x = (y + 1) * 3	; "
+			" while ( (1 >= x ) || (! (while == 2147483647	)) ){ read print	; } "
+			"if ( 2 > 2147483648) \n then \n"
+			" { Re123ad = ALLUPPERCASE;}else{ if = 5; }"
+			" } "
+			" procedure proc1 {read=read;}";
+		SourceAST ast = Parser::parse(source);
+		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
+
+		/* Test procedureNodes */
+		Assert::AreEqual(size_t(3), procNodes.size());
+
+		/* 1st procedure */
+		/* procedure proc1 {read proc1;} */
+		Assert::AreEqual(std::string("proc1"), procNodes[0]->getProcName());
+		StmtLstNode* proc1StmtLstNode = procNodes[0]->getStmtLstNode();
+		std::vector<StmtNode*> proc1Stmts = proc1StmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), proc1Stmts.size());
+		ReadNode* proc1ReadNode = (ReadNode*)proc1Stmts[0];
+		Assert::IsTrue(StatementType::readType == proc1ReadNode->getStmtType());
+		Assert::AreEqual(std::string("proc1"), proc1ReadNode->getVarName());
+
+		/* 2nd procedure */
+		/* procedure aRelativelyLongProcedureName ... */
+		Assert::AreEqual(std::string("aRelativelyLongProcedureName"), procNodes[1]->getProcName());
+
+		/* Test statements in 2nd procedure */
+		StmtLstNode* proc2StmtLstNode = procNodes[1]->getStmtLstNode();
+		std::vector<StmtNode*> proc2Stmts = proc2StmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(5), proc2Stmts.size());
+
+		/* Test read stmt */
+		/* read read; */
+		ReadNode* readNode = (ReadNode*)proc2Stmts[0];
+		Assert::IsTrue(StatementType::readType == readNode->getStmtType());
+		Assert::AreEqual(std::string("read"), readNode->getVarName());
+
+		/* Test print stmt */
+		/* print y123; */
+		PrintNode* printNode = (PrintNode*)proc2Stmts[1];
+		Assert::IsTrue(StatementType::printType == printNode->getStmtType());
+		Assert::AreEqual(std::string("y123"), printNode->getVarName());
+
+		/* Test assign stmt */
+		/* x = (y + 1) * 3 */
+		AssignNode* assignNode = (AssignNode*)proc2Stmts[2];
+		Assert::IsTrue(StatementType::assignType == assignNode->getStmtType());
+		Assert::AreEqual(std::string("x"), assignNode->getVarName());
+		ExprNode* multOp = assignNode->getExpr();
+		Assert::AreEqual(std::string("*"), multOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == multOp->getExprNodeValueType());
+
+		/* (y + 1) */
+		std::vector<ExprNode*> multOpChildren = multOp->getChildren();
+		Assert::AreEqual(size_t(2), multOpChildren.size());
+		ExprNode* plusOp = multOpChildren[0];
+		Assert::AreEqual(std::string("+"), plusOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::arithmeticOperator == plusOp->getExprNodeValueType());
+		std::vector<ExprNode*> plusOpChildren = plusOp->getChildren();
+		Assert::AreEqual(size_t(2), plusOpChildren.size());
+		Assert::AreEqual(std::string("y"), plusOpChildren[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == plusOpChildren[0]->getExprNodeValueType());
+		Assert::IsTrue(plusOpChildren[0]->getChildren().empty());
+		Assert::AreEqual(std::string("1"), plusOpChildren[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == plusOpChildren[1]->getExprNodeValueType());
+		Assert::IsTrue(plusOpChildren[1]->getChildren().empty());
+
+		/* 3 */
+		ExprNode* three = multOpChildren[1];
+		Assert::AreEqual(std::string("3"), three->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == three->getExprNodeValueType());
+		Assert::IsTrue(three->getChildren().empty());
+
+		/* Test while stmt */
+		/* while ( (1 >= x ) || (! (while == 2147483647	)) ){ read print	; } */
+		WhileNode* whileNode = (WhileNode*)proc2Stmts[3];
+		Assert::IsTrue(StatementType::whileType == whileNode->getStmtType());
+		ExprNode* orOp = whileNode->getCondExpr();
+		StmtLstNode* whileStmtLstNode = whileNode->getChildStmtLst()[0];
+
+		/* Test while cond expr */
+		Assert::AreEqual(std::string("||"), orOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::logicalOperator == orOp->getExprNodeValueType());
+		std::vector<ExprNode*> orOpChildren = orOp->getChildren();
+		Assert::AreEqual(size_t(2), orOpChildren.size());
+
+		/* (1 >= x) */
+		ExprNode* gteOp = orOpChildren[0];
+		Assert::AreEqual(std::string(">="), gteOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::relOperator == gteOp->getExprNodeValueType());
+		std::vector<ExprNode*> childrenGteOp = gteOp->getChildren();
+		Assert::AreEqual(size_t(2), childrenGteOp.size());
+		Assert::AreEqual(std::string("1"), childrenGteOp[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == childrenGteOp[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("x"), childrenGteOp[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == childrenGteOp[1]->getExprNodeValueType());
+
+		/* (! (while == 2147483647	)) */
+		ExprNode* notOp = orOpChildren[1];
+		Assert::AreEqual(std::string("!"), notOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::logicalOperator == notOp->getExprNodeValueType());
+		std::vector<ExprNode*> notOpChildren = notOp->getChildren();
+		Assert::AreEqual(size_t(1), notOpChildren.size());
+
+		/* (while == 2147483647	) */
+		ExprNode* eqOp = notOpChildren[0];
+		Assert::AreEqual(std::string("=="), eqOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::relOperator == eqOp->getExprNodeValueType());
+		std::vector<ExprNode*> eqOpChildren = eqOp->getChildren();
+		Assert::AreEqual(size_t(2), eqOpChildren.size());
+
+		Assert::AreEqual(std::string("while"), eqOpChildren[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == eqOpChildren[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("2147483647"), eqOpChildren[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == eqOpChildren[1]->getExprNodeValueType());
+
+		/* Test stmtLst in while container */
+		/* read print	; */
+		std::vector<StmtNode*> stmtsInWhile = whileStmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), stmtsInWhile.size());
+		ReadNode* whileReadNode = (ReadNode*)stmtsInWhile[0];
+		Assert::IsTrue(StatementType::readType == whileReadNode->getStmtType());
+		Assert::AreEqual(std::string("print"), whileReadNode->getVarName());
+
+		/* Test if stmt */
+		/*if ( 2 > 2147483648) \n then \n
+			 { Re123ad = ALLUPPERCASE;}else{ if = 5; }*/
+		IfNode* ifNode = (IfNode*)proc2Stmts[4];
+		Assert::IsTrue(StatementType::ifType == ifNode->getStmtType());
+		std::vector<StmtLstNode*> childStmtLst = ifNode->getChildStmtLst();
+		Assert::AreEqual(size_t(2), childStmtLst.size());
+
+		/* Test cond expr */
+		/* ( 2 > 2147483648) */
+		ExprNode* gtOp = ifNode->getCondExpr();
+		Assert::AreEqual(std::string(">"), gtOp->getValue());
+		Assert::IsTrue(ExprNodeValueType::relOperator == gtOp->getExprNodeValueType());
+		std::vector<ExprNode*> gtOpChildren = gtOp->getChildren();
+		Assert::AreEqual(size_t(2), gtOpChildren.size());
+		Assert::AreEqual(std::string("2"), gtOpChildren[0]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == gtOpChildren[0]->getExprNodeValueType());
+		Assert::AreEqual(std::string("2147483648"), gtOpChildren[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == gtOpChildren[1]->getExprNodeValueType());
+
+		/* Test then clause */
+		/* Re123ad = ALLUPPERCASE; */
+		StmtLstNode* thenStmtLstNode = childStmtLst[0];
+		std::vector<StmtNode*> thenStmts = thenStmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), thenStmts.size());
+		AssignNode* thenAssignNode = (AssignNode*)thenStmts[0];
+		Assert::IsTrue(StatementType::assignType == thenAssignNode->getStmtType());
+		Assert::AreEqual(std::string("Re123ad"), thenAssignNode->getVarName());
+		ExprNode* allUpperCase = thenAssignNode->getExpr();
+		Assert::AreEqual(std::string("ALLUPPERCASE"), allUpperCase->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == allUpperCase->getExprNodeValueType());
+		Assert::IsTrue(allUpperCase->getChildren().empty());
+
+		/* Test else clause */
+		/* if = 5 */
+		StmtLstNode* elseStmtLstNode = childStmtLst[1];
+		std::vector<StmtNode*> elseStmts = elseStmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), elseStmts.size());
+		AssignNode* elseAssignNode = (AssignNode*)elseStmts[0];
+		Assert::IsTrue(StatementType::assignType == elseAssignNode->getStmtType());
+		Assert::AreEqual(std::string("if"), elseAssignNode->getVarName());
+		ExprNode* five = elseAssignNode->getExpr();
+		Assert::AreEqual(std::string("5"), five->getValue());
+		Assert::IsTrue(ExprNodeValueType::constValue == five->getExprNodeValueType());
+		Assert::IsTrue(five->getChildren().empty());
+
+		/* 3rd procedure */
+		/* procedure proc1 {read=read;} */
+		/* Note that the parser doesn't do any semantic check, thus the duplicated proc name is allowed. */
+		Assert::AreEqual(std::string("proc1"), procNodes[2]->getProcName());
+		StmtLstNode* proc3StmtLstNode = procNodes[2]->getStmtLstNode();
+		std::vector<StmtNode*> proc3Stmts = proc3StmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), proc3Stmts.size());
+		AssignNode* proc3AssignNode = (AssignNode*)proc3Stmts[0];
+		Assert::IsTrue(StatementType::assignType == proc3AssignNode->getStmtType());
+		Assert::AreEqual(std::string("read"), proc3AssignNode->getVarName());
+		ExprNode* proc3Expr = proc3AssignNode->getExpr();
+		Assert::AreEqual(std::string("read"), proc3Expr->getValue());
+		Assert::IsTrue(ExprNodeValueType::varName == proc3Expr->getExprNodeValueType());
+		Assert::IsTrue(proc3Expr->getChildren().empty());
+	}
+
+	TEST_METHOD(parse_multipleProcedures_syntacticallyInvalid_parserExceptionThrown) {
+		const char* source = "procedure proc {read=read;}"
+			"   procedure 1procName  "
+			"{ read x1; print y  ; } ";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_PROC_NAME.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_multipleProcedures_missingProcKeyword_parserExceptionThrown) {
+		const char* source = "procedure proc {read=read;}"
+			"   proc procName  "
+			"{ read x1; print y  ; } ";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_PROC_KEYWORD.c_str(), ex.what());
+		}
 	}
 
 	TEST_METHOD(parse_matchRead_missingReadVarName_parserExceptionThrown) {
