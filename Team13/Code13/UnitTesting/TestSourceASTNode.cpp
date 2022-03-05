@@ -191,6 +191,171 @@ public:
 		Assert::IsTrue(consts.find("15") != consts.end());
 	}
 
+	TEST_METHOD(whileNode_getUsesVars_oneRelExpr_twoOperands_success) {
+		/* Note that the semantic check for (empty) stmtLstNode is not done in SourceASTNode.
+		Thus, assigning an empty stmtLstNode to a whileNode's condExpr will not raise any error here. */
+
+		/* No variable */
+		/* while (1!=0) */
+		ExprNode* neqOp = new ExprNode(ExprNodeValueType::relOperator, "!=");
+		neqOp->addChild(new ExprNode(ExprNodeValueType::constValue, "1"));
+		neqOp->addChild(new ExprNode(ExprNodeValueType::constValue, "0"));
+
+		WhileNode* whileNode1 = new WhileNode(neqOp, new StmtLstNode());
+		Assert::AreEqual(size_t(0), whileNode1->getUsesVars().size());
+
+		/* One variable */
+		/* while (i==0) */
+		ExprNode* eqOp = new ExprNode(ExprNodeValueType::relOperator, "==");
+		eqOp->addChild(new ExprNode(ExprNodeValueType::varName, "i"));
+		eqOp->addChild(new ExprNode(ExprNodeValueType::constValue, "0"));
+
+		WhileNode* whileNode2 = new WhileNode(eqOp, new StmtLstNode());
+		std::unordered_set<std::string> usesVars2 = whileNode2->getUsesVars();
+		Assert::AreEqual(size_t(1), usesVars2.size());
+		Assert::IsTrue(usesVars2.find("i") != usesVars2.end());
+
+		/* >1 variables, but duplicate */
+		/* while (i>i) */
+		ExprNode* gtOp = new ExprNode(ExprNodeValueType::relOperator, ">");
+		gtOp->addChild(new ExprNode(ExprNodeValueType::varName, "i"));
+		gtOp->addChild(new ExprNode(ExprNodeValueType::varName, "i"));
+
+		WhileNode* whileNode3 = new WhileNode(gtOp, new StmtLstNode());
+		std::unordered_set<std::string> usesVars3 = whileNode3->getUsesVars();
+		Assert::AreEqual(size_t(1), usesVars3.size());
+		Assert::IsTrue(usesVars3.find("i") != usesVars3.end());
+
+		/* >1 variables */
+		/* while (i<j) */
+		ExprNode* ltOp = new ExprNode(ExprNodeValueType::relOperator, "<");
+		ltOp->addChild(new ExprNode(ExprNodeValueType::varName, "i"));
+		ltOp->addChild(new ExprNode(ExprNodeValueType::varName, "j"));
+
+		WhileNode* whileNode4 = new WhileNode(ltOp, new StmtLstNode());
+		std::unordered_set<std::string> usesVars4 = whileNode4->getUsesVars();
+		Assert::AreEqual(size_t(2), usesVars4.size());
+		Assert::IsTrue(usesVars4.find("i") != usesVars4.end());
+		Assert::IsTrue(usesVars4.find("j") != usesVars4.end());
+	}
+
+	TEST_METHOD(containerNode_getUsesVars_oneRelExpr_success) {
+		/* while ( y + 2 > 5 * z) */
+		ExprNode* neqOp = new ExprNode(ExprNodeValueType::relOperator, ">");
+		neqOp->addChild(new ExprNode(ExprNodeValueType::arithmeticOperator, "+"));
+		neqOp->addChild(new ExprNode(ExprNodeValueType::arithmeticOperator, "*"));
+		neqOp->getChildren()[0]->addChild(new ExprNode(ExprNodeValueType::varName, "y"));
+		neqOp->getChildren()[0]->addChild(new ExprNode(ExprNodeValueType::constValue, "2"));
+		neqOp->getChildren()[1]->addChild(new ExprNode(ExprNodeValueType::constValue, "5"));
+		neqOp->getChildren()[1]->addChild(new ExprNode(ExprNodeValueType::varName, "z"));
+
+		/* Note that the semantic check for (empty) stmtLstNode is not done in SourceASTNode.
+		Thus, assigning an empty stmtLstNode to a whileNode's condExpr will not raise any error here. */
+		WhileNode* whileNode = new WhileNode(neqOp, new StmtLstNode());
+		std::unordered_set<std::string> usesVars = whileNode->getUsesVars();
+		Assert::AreEqual(size_t(2), usesVars.size());
+		Assert::IsTrue(usesVars.find("y") != usesVars.end());
+		Assert::IsTrue(usesVars.find("z") != usesVars.end());
+	}
+
+	TEST_METHOD(containerNode_getUsesVars_oneRelExpr_veryNestedExpr_success) {
+		/*  if ( y + 2 > (b0b - (c * 10 - ALL %( Z + (1*0)) )	)) */
+		ExprNode* gtOp = new ExprNode(ExprNodeValueType::relOperator, ">");
+		gtOp->addChild(new ExprNode(ExprNodeValueType::arithmeticOperator, "+"));
+		gtOp->addChild(new ExprNode(ExprNodeValueType::arithmeticOperator, "-"));
+
+		/* y + 2 */
+		ExprNode* plusOp1 = gtOp->getChildren()[0];
+		plusOp1->addChild(new ExprNode(ExprNodeValueType::varName, "y"));
+		plusOp1->addChild(new ExprNode(ExprNodeValueType::constValue, "2"));
+
+		/* (b0b - (c * 10 - ALL %( Z + (1*0)) )	) */
+		ExprNode* minusOp1 = gtOp->getChildren()[1];
+		minusOp1->addChild(new ExprNode(ExprNodeValueType::varName, "b0b"));
+		minusOp1->addChild(new ExprNode(ExprNodeValueType::arithmeticOperator, "-"));
+
+		/* (c * 10 - ALL %( Z + (1*0)) ) */
+		ExprNode* minusOp2 = plusOp1->getChildren()[1];
+		minusOp2->addChild(new ExprNode(ExprNodeValueType::arithmeticOperator, "*"));
+		minusOp2->addChild(new ExprNode(ExprNodeValueType::arithmeticOperator, "%"));
+
+		/* c * 10 */
+		minusOp2->getChildren()[0]->addChild(new ExprNode(ExprNodeValueType::varName, "c"));
+		minusOp2->getChildren()[0]->addChild(new ExprNode(ExprNodeValueType::constValue, "10"));
+
+		/* ALL %( Z + (1*0)) */
+		ExprNode* modOp = minusOp2->getChildren()[1];
+		modOp->addChild(new ExprNode(ExprNodeValueType::varName, "ALL"));
+		modOp->addChild(new ExprNode(ExprNodeValueType::arithmeticOperator, "+"));
+
+		/* Z + (1*0) */
+		ExprNode* plusOp2 = modOp->getChildren()[1];
+		plusOp2->addChild(new ExprNode(ExprNodeValueType::varName, "Z"));
+		plusOp2->addChild(new ExprNode(ExprNodeValueType::arithmeticOperator, "*"));
+
+		/* 1*0 */
+		plusOp2->getChildren()[1]->addChild(new ExprNode(ExprNodeValueType::constValue, "1"));
+		plusOp2->getChildren()[1]->addChild(new ExprNode(ExprNodeValueType::constValue, "0"));
+
+		/* Note that the semantic check for (empty) stmtLstNode is not done in SourceASTNode.
+		Thus, assigning an empty stmtLstNode to an ifNode's condExpr will not raise any error here. */
+		IfNode* ifNode = new IfNode(gtOp, new StmtLstNode(), new StmtLstNode());
+		std::unordered_set<std::string> usesVars = ifNode->getUsesVars();
+		Assert::AreEqual(size_t(5), usesVars.size());
+		Assert::IsTrue(usesVars.find("y") != usesVars.end());
+		Assert::IsTrue(usesVars.find("b0b") != usesVars.end());
+		Assert::IsTrue(usesVars.find("c") != usesVars.end());
+		Assert::IsTrue(usesVars.find("ALL") != usesVars.end());
+		Assert::IsTrue(usesVars.find("Z") != usesVars.end());
+	}
+
+	TEST_METHOD(containerNode_getUsesVars_nestedNOTOp_success) {
+		/* while (!(	!(x >= 0)	)	) */
+		ExprNode* outerNotOp = new ExprNode(ExprNodeValueType::logicalOperator, "!");
+		ExprNode* innerNotOp = new ExprNode(ExprNodeValueType::logicalOperator, "!");
+		outerNotOp->addChild(innerNotOp);
+		innerNotOp->addChild(new ExprNode(ExprNodeValueType::relOperator, ">="));
+		innerNotOp->getChildren()[0]->addChild(new ExprNode(ExprNodeValueType::varName, "x"));
+		innerNotOp->getChildren()[0]->addChild(new ExprNode(ExprNodeValueType::constValue, "0"));
+
+		WhileNode* whileNode = new WhileNode(outerNotOp, new StmtLstNode());
+		std::unordered_set<std::string> usesVars = whileNode->getUsesVars();
+		Assert::AreEqual(size_t(1), usesVars.size());
+		Assert::IsTrue(usesVars.find("x") != usesVars.end());
+	}
+
+	TEST_METHOD(containerNode_getUsesVars_OROpNestedInNOTOpCondExpr_success) {
+		/* if ( !( (y * 1 == 5 - z) || (x != 0)  )    ) */
+		ExprNode* notOp = new ExprNode(ExprNodeValueType::logicalOperator, "!");
+		ExprNode* orOp = new ExprNode(ExprNodeValueType::logicalOperator, "||");
+		notOp->addChild(orOp);
+		orOp->addChild(new ExprNode(ExprNodeValueType::relOperator, "=="));
+		orOp->addChild(new ExprNode(ExprNodeValueType::relOperator, "!="));
+
+		/* (y * 1 == 5 - z) */
+		ExprNode* eqOp = orOp->getChildren()[0];
+		eqOp->addChild(new ExprNode(ExprNodeValueType::arithmeticOperator, "*"));
+		eqOp->getChildren()[0]->addChild(new ExprNode(ExprNodeValueType::varName, "y"));
+		eqOp->getChildren()[0]->addChild(new ExprNode(ExprNodeValueType::constValue, "1"));
+		eqOp->addChild(new ExprNode(ExprNodeValueType::arithmeticOperator, "-"));
+		eqOp->getChildren()[1]->addChild(new ExprNode(ExprNodeValueType::constValue, "5"));
+		eqOp->getChildren()[1]->addChild(new ExprNode(ExprNodeValueType::varName, "z"));
+
+		/* (x != 0) */
+		ExprNode* neqOp = orOp->getChildren()[1];
+		neqOp->addChild(new ExprNode(ExprNodeValueType::varName, "x"));
+		neqOp->addChild(new ExprNode(ExprNodeValueType::constValue, "0"));
+
+		/* Note that the semantic check for (empty) stmtLstNode is not done in SourceASTNode.
+		Thus, assigning an empty stmtLstNode to an ifNode's condExpr will not raise any error here. */
+		IfNode* ifNode = new IfNode(notOp, new StmtLstNode(), new StmtLstNode());
+		std::unordered_set<std::string> usesVars = ifNode->getUsesVars();
+		Assert::AreEqual(size_t(3), usesVars.size());
+		Assert::IsTrue(usesVars.find("y") != usesVars.end());
+		Assert::IsTrue(usesVars.find("z") != usesVars.end());
+		Assert::IsTrue(usesVars.find("x") != usesVars.end());
+	}
+
 	TEST_METHOD(assignNode_getPattern_differentExpressions_success) {
 		/* Test expression tree containing a single node */
 		ExprNode* leafNode1 = new ExprNode(ExprNodeValueType::constValue, "1");
