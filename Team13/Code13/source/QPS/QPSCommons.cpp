@@ -17,12 +17,18 @@ PqlReference ParsedRelationship::getRhs() const {
 }
 
 ParsedPattern::ParsedPattern(std::string& synonym, PqlReference entRef, PqlExpression expressionSpec)
-	: synonym(synonym), entRef(entRef), expressionSpec(expressionSpec) {}
+	: ParsedPattern(synonym, PqlPatternType::Pattern, entRef, expressionSpec) {}
 
-ParsedPattern::ParsedPattern() {}
+ParsedPattern::ParsedPattern(std::string& synonym, PqlPatternType patternType,
+	PqlReference entRef, PqlExpression expressionSpec)
+	: synonym(synonym), patternType(patternType), entRef(entRef), expressionSpec(expressionSpec) {}
 
 std::string ParsedPattern::getSynonym() const {
 	return synonym;
+}
+
+PqlPatternType ParsedPattern::getPatternType() const {
+	return patternType;
 }
 
 PqlReference ParsedPattern::getEntRef() const {

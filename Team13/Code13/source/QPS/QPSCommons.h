@@ -20,15 +20,16 @@ enum class PatternInstructionType {
 	getPattern
 };
 
-/* The Usesand Modifies are generic Uses / Modifies,
-since we cannot disambiguate while parsing.
-Hence, we re-assign the S and P relationships
-when populating the ParsedQuery Object
-To note for iter 2 and beyond */
 enum class PqlRelationshipType {
 	Follows, FollowsT, Parent, ParentT,
 	UsesS, UsesP, ModifiesS, ModifiesP,
+	Calls, CallsT, Next, NextT,
+	Affects, AffectsT,
 	Uses, Modifies
+};
+
+enum class PqlPatternType {
+	Pattern, PatternA, PatternI, PatternW
 };
 
 enum class PqlReferenceType {
@@ -61,13 +62,16 @@ public:
 class ParsedPattern {
 private:
 	std::string synonym;
+	PqlPatternType patternType;
 	PqlReference entRef;
 	PqlExpression expressionSpec;
 public:
 	ParsedPattern(std::string& synonym,
 		PqlReference entRef, PqlExpression expressionSpec);
-	ParsedPattern();
+	ParsedPattern(std::string& synonym, PqlPatternType patternType,
+		PqlReference entRef, PqlExpression expressionSpec);
 	std::string getSynonym() const;
+	PqlPatternType getPatternType() const;
 	PqlReference getEntRef() const;
 	PqlExpression getExpression() const;
 };
