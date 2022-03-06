@@ -1,10 +1,9 @@
-#pragma once
-
 #include "stdafx.h"
 #include "CppUnitTest.h"
+
 #include "../source/QPS/EvaluatedTable.h"
 #include "../source/QPS/PQLResultProjector.h"
-#include <PKB/Entity.h>
+#include "PKB/Entity.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

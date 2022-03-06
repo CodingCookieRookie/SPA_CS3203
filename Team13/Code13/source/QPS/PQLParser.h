@@ -1,11 +1,12 @@
 #pragma once
+
 #include <string>
 #include <vector>
 
-#include "QPSCommons.h"
-#include "ParsedQuery.h"
-#include "../Common/Lexer.h"
 #include "../Common/ExpressionParser.h"
+#include "../Common/Lexer.h"
+#include "ParsedQuery.h"
+#include "QPSCommons.h"
 
 class PQLParser {
 private:

@@ -1,10 +1,10 @@
 #pragma once
 
-#include <unordered_set>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
-#include "../common/Types.h"
+#include "../Common/Types.h"
 
 template<class T>
 class RS2 {
@@ -17,10 +17,10 @@ protected:
 
 public:
 	static void insert(StmtIndex predecessor, StmtIndex successors);
-	static bool containsSuccessor(StmtIndex predecessor, StmtIndex successor);
-	static bool containsPredecessor(StmtIndex predecessor, StmtIndex successor);
-	static std::vector<int> getSuccessorStmts(StmtIndex predecessor);
-	static std::vector<int> getPredecessorStmts(StmtIndex successor);
+	static bool containsSuccessor(StmtIndex& predecessor, StmtIndex& successor);
+	static bool containsPredecessor(StmtIndex& predecessor, StmtIndex& successor);
+	static std::vector<int> getSuccessorStmts(StmtIndex& predecessor);
+	static std::vector<int> getPredecessorStmts(StmtIndex& successor);
 	static std::tuple<std::vector<int>, std::vector<int>> getAllPredecessorSuccessorInfo();
 	static std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>,
 		StmtIndex::HashFunction> getPredSucTable();
@@ -44,7 +44,7 @@ void RS2<T>::insert(StmtIndex predecessor, StmtIndex successor) {
 }
 
 template<class T>
-bool RS2<T>::containsPredecessor(StmtIndex predecessor, StmtIndex successor) {
+bool RS2<T>::containsPredecessor(StmtIndex& predecessor, StmtIndex& successor) {
 	if (sucPredTable.find(successor) == sucPredTable.end()) {
 		return false;
 	}
@@ -54,7 +54,7 @@ bool RS2<T>::containsPredecessor(StmtIndex predecessor, StmtIndex successor) {
 };
 
 template<class T>
-bool RS2<T>::containsSuccessor(StmtIndex predecessor, StmtIndex successor) {
+bool RS2<T>::containsSuccessor(StmtIndex& predecessor, StmtIndex& successor) {
 	if (predSucTable.find(predecessor) == predSucTable.end()) {
 		return false;
 	}
@@ -64,7 +64,7 @@ bool RS2<T>::containsSuccessor(StmtIndex predecessor, StmtIndex successor) {
 };
 
 template<class T>
-std::vector<int> RS2<T>::getSuccessorStmts(StmtIndex predecessor) {
+std::vector<int> RS2<T>::getSuccessorStmts(StmtIndex& predecessor) {
 	std::vector<int> successors;
 	for (auto& successor : predSucTable[predecessor]) {
 		successors.push_back(successor.index);
@@ -73,7 +73,7 @@ std::vector<int> RS2<T>::getSuccessorStmts(StmtIndex predecessor) {
 };
 
 template<class T>
-std::vector<int> RS2<T>::getPredecessorStmts(StmtIndex successor) {
+std::vector<int> RS2<T>::getPredecessorStmts(StmtIndex& successor) {
 	std::vector<int> predecessors;
 	for (auto& predecessor : sucPredTable[successor]) {
 		predecessors.push_back(predecessor.index);

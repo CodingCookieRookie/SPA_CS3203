@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include "../Common/Types.h"
 #include "./Container.h"
 #include "./Entity.h"
 #include "./Follows.h"
@@ -11,7 +12,6 @@
 #include "./Parent.h"
 #include "./ParentT.h"
 #include "./Uses.h"
-#include "../common/Types.h"
 
 class PKB {
 private:

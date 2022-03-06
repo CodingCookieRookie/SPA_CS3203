@@ -8,11 +8,11 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace UnitTesting {
 	TEST_CLASS(TestExpressionProcessor) {
 private:
-	int mulRes = ExpressionProcessor::evaluateOperatorPrecedence('*');
-	int divRes = ExpressionProcessor::evaluateOperatorPrecedence('/');
-	int modRes = ExpressionProcessor::evaluateOperatorPrecedence('%');
-	int addRes = ExpressionProcessor::evaluateOperatorPrecedence('+');
-	int subRes = ExpressionProcessor::evaluateOperatorPrecedence('-');
+	OperatorPriority mulRes = ExpressionProcessor::evaluateOperatorPrecedence('*');
+	OperatorPriority divRes = ExpressionProcessor::evaluateOperatorPrecedence('/');
+	OperatorPriority modRes = ExpressionProcessor::evaluateOperatorPrecedence('%');
+	OperatorPriority addRes = ExpressionProcessor::evaluateOperatorPrecedence('+');
+	OperatorPriority subRes = ExpressionProcessor::evaluateOperatorPrecedence('-');
 
 public:
 	TEST_METHOD(isOperand_digit) {
@@ -33,15 +33,15 @@ public:
 	}
 
 	TEST_METHOD(evaluateOperatorPrecedence_validOperator) {
-		Assert::AreEqual(2, mulRes);
-		Assert::AreEqual(2, divRes);
-		Assert::AreEqual(2, modRes);
-		Assert::AreEqual(1, addRes);
-		Assert::AreEqual(1, subRes);
+		Assert::IsTrue(OperatorPriority::high == mulRes);
+		Assert::IsTrue(OperatorPriority::high == divRes);
+		Assert::IsTrue(OperatorPriority::high == modRes);
+		Assert::IsTrue(OperatorPriority::medium == addRes);
+		Assert::IsTrue(OperatorPriority::medium == subRes);
 	}
 	TEST_METHOD(evaluateOperatorPrecedence_invalidOperator) {
-		int res = ExpressionProcessor::evaluateOperatorPrecedence('^');
-		Assert::AreEqual(-1, res);
+		OperatorPriority res = ExpressionProcessor::evaluateOperatorPrecedence('^');
+		Assert::IsTrue(OperatorPriority::low == res);
 	}
 
 	TEST_METHOD(evaluateOperatorPrecedence_comparePrecedence_differentOperator) {
@@ -54,10 +54,10 @@ public:
 	}
 
 	TEST_METHOD(evaluateOperatorPrecedence_comparePrecedence_sameOperator) {
-		Assert::AreEqual(mulRes, divRes);
-		Assert::AreEqual(mulRes, modRes);
-		Assert::AreEqual(divRes, modRes);
-		Assert::AreEqual(addRes, subRes);
+		Assert::IsTrue(mulRes == divRes);
+		Assert::IsTrue(mulRes == modRes);
+		Assert::IsTrue(divRes == modRes);
+		Assert::IsTrue(addRes == subRes);
 	}
 
 	TEST_METHOD(convertInfixToPostFix_emptyString) {

@@ -3,9 +3,9 @@
 
 #include <string>
 
+#include "../source/PKB/Modifies.h"
 #include "../source/QPS/PQLEvaluator.h"
 #include "../source/QPS/PQLParser.h"
-#include "../source/PKB/Modifies.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

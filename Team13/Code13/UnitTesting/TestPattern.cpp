@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-#include "../source/common/Types.h"
+#include "../source/Common/Types.h"
 #include "../source/PKB/Pattern.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -264,7 +264,7 @@ public:
 		Assert::IsTrue(expectedRes == res);
 	}
 
-	TEST_METHOD(performCleanUp_VarMap) {
+	TEST_METHOD(performCleanUp) {
 		Pattern::insertPostFixInfo(varIdx1, postFix4, stmtIdx1);
 		Pattern::insertPostFixInfo(varIdx2, postFix1, stmtIdx2);
 		Pattern::insertPostFixInfo(varIdx1, postFix2, stmtIdx3);

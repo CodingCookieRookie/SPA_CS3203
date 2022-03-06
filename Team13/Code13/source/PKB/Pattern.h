@@ -6,7 +6,7 @@
 #include <unordered_set>
 #include <vector>
 
-#include "../common/Types.h"
+#include "../Common/Types.h"
 
 class Pattern {
 protected:

@@ -1,9 +1,8 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-#include "SP/DesignExtractor.h"
-
 #include "PKB/Entity.h"
+#include "SP/DesignExtractor.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-#include "../source/common/Types.h"
-#include "../source/PKB/Uses.h"
+#include "../source/Common/Types.h"
 #include "../source/PKB/Modifies.h"
+#include "../source/PKB/Uses.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

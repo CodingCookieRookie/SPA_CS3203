@@ -1,9 +1,11 @@
 #pragma once
-#include <vector>
-#include <string>
-#include <unordered_set>
-#include <unordered_map>
+
 #include <map>
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
+
 #include "QPSCommons.h"
 
 class EvaluatedTable {

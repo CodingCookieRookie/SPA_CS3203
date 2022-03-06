@@ -1,9 +1,8 @@
 #pragma once
 
-#include "SourceAST.h"
-
 #include "../PKB/PKB.h"
 #include "../PKB/Pattern.h"
+#include "SourceAST.h"
 
 class DesignExtractor {
 private:

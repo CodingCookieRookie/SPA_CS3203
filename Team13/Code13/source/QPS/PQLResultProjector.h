@@ -1,4 +1,5 @@
 #pragma once
+
 #include "EvaluatedTable.h"
 #include "QPSCommons.h"
 

@@ -2,10 +2,10 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "../PKB/Entity.h"
 #include "Instruction.h"
 #include "PQLEvaluator.h"
 #include "QPSCommons.h"
-#include "../PKB/Entity.h"
 
 PQLEvaluator::PQLEvaluator(ParsedQuery parsedQuery) :
 	parsedQuery(parsedQuery) {};

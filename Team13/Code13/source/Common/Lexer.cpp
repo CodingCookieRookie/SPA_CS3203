@@ -1,4 +1,4 @@
-#include "../common/Lexer.h"
+#include "../Common/Lexer.h"
 
 Lexer::Lexer() : source(), index(0), length(0) {}
 

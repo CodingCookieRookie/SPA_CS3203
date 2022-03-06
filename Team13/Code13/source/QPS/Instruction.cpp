@@ -1,6 +1,6 @@
 #include "./Instruction.h"
 
-EvaluatedTable GetAllInstruction::handleGetAllStmt(std::string synonym) {
+EvaluatedTable GetAllInstruction::handleGetAllStmt(std::string& synonym) {
 	std::vector<StmtIndex> results = Entity::getAllStmts();
 
 	std::vector<int> resultsToInt;
@@ -17,7 +17,7 @@ EvaluatedTable GetAllInstruction::handleGetAllStmt(std::string synonym) {
 	return EvaluatedTable(PQLentities, PQLmap);
 }
 
-EvaluatedTable GetAllInstruction::handleGetAllStmtByType(std::string synonym, StatementType stmtType) {
+EvaluatedTable GetAllInstruction::handleGetAllStmtByType(std::string& synonym, StatementType stmtType) {
 	std::vector<StmtIndex> results = Entity::getStmtIdxFromType(stmtType);
 
 	std::vector<int> resultsToInt;
@@ -34,7 +34,7 @@ EvaluatedTable GetAllInstruction::handleGetAllStmtByType(std::string synonym, St
 	return EvaluatedTable(PQLentities, PQLmap);
 }
 
-EvaluatedTable GetAllInstruction::handleGetAllVar(std::string synonym) {
+EvaluatedTable GetAllInstruction::handleGetAllVar(std::string& synonym) {
 	std::vector<VarIndex> results = Entity::getAllVars();
 	std::vector<int> resultsToInt;
 	for (VarIndex result : results) {
@@ -50,7 +50,7 @@ EvaluatedTable GetAllInstruction::handleGetAllVar(std::string synonym) {
 	return EvaluatedTable(PQLentities, PQLmap);
 }
 
-EvaluatedTable GetAllInstruction::handleGetAllProc(std::string synonym) {
+EvaluatedTable GetAllInstruction::handleGetAllProc(std::string& synonym) {
 	std::vector<ProcIndex> results = Entity::getAllProcs();
 	std::vector<int> resultsToInt;
 	for (ProcIndex result : results) {
@@ -66,7 +66,7 @@ EvaluatedTable GetAllInstruction::handleGetAllProc(std::string synonym) {
 	return EvaluatedTable(PQLentities, PQLmap);
 }
 
-EvaluatedTable GetAllInstruction::handleGetAllConst(std::string synonym) {
+EvaluatedTable GetAllInstruction::handleGetAllConst(std::string& synonym) {
 	std::vector<int> results = Entity::getAllConsts();
 
 	std::unordered_map<std::string, PqlEntityType> PQLentities;

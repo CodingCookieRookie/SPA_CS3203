@@ -1,9 +1,9 @@
 #include "CppUnitTest.h"
 #include "stdafx.h"
 
-#include "SP/Parser.h"
-
 #include <vector>
+
+#include "SP/Parser.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

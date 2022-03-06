@@ -1,7 +1,7 @@
 #include "CppUnitTest.h"
 #include "stdafx.h"
 
-#include "common/Lexer.h"
+#include "Common/Lexer.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

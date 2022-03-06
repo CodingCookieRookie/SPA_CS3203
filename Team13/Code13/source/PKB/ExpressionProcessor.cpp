@@ -7,13 +7,13 @@ bool ExpressionProcessor::isOperand(char currentChar) {
 	return std::isalpha(currentChar) || std::isdigit(currentChar);
 }
 
-int ExpressionProcessor::evaluateOperatorPrecedence(char currentChar) {
+OperatorPriority ExpressionProcessor::evaluateOperatorPrecedence(char currentChar) {
 	if (currentChar == '*' || currentChar == '/' || currentChar == '%') {
-		return 2;
+		return OperatorPriority::high;
 	} else if (currentChar == '+' || currentChar == '-') {
-		return 1;
+		return OperatorPriority::medium;
 	} else {
-		return -1;
+		return OperatorPriority::low;
 	}
 }
 

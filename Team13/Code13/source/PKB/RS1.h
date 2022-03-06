@@ -1,10 +1,10 @@
 #pragma once
 
-#include <unordered_set>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
-#include "../common/Types.h"
+#include "../Common/Types.h"
 
 template<class T>
 class RS1 {
@@ -20,18 +20,18 @@ protected:
 		ProcIndex::HashFunction> procVarTable;
 
 public:
-	static void insert(StmtIndex  stmtIndex, VarIndex varIndex);
+	static void insert(StmtIndex stmtIndex, VarIndex varIndex);
 	static void insert(ProcIndex procIndex, VarIndex varIndex);
-	static bool contains(StmtIndex  stmtIndex, VarIndex varIndex);
-	static bool contains(ProcIndex procIndex, VarIndex varIndex);
-	static std::vector<int> getStatements(VarIndex varIndex);
-	static std::vector<int> getProcedures(VarIndex varIndex);
-	static std::vector<int> getVariables(StmtIndex  stmtIndex);
-	static std::vector<int> getVariables(ProcIndex procIndex);
+	static bool contains(StmtIndex& stmtIndex, VarIndex& varIndex);
+	static bool contains(ProcIndex& procIndex, VarIndex& varIndex);
+	static std::vector<int> getStatements(VarIndex& varIndex);
+	static std::vector<int> getProcedures(VarIndex& varIndex);
+	static std::vector<int> getVariables(StmtIndex& stmtIndex);
+	static std::vector<int> getVariables(ProcIndex& procIndex);
 	static std::tuple<std::vector<int>, std::vector<int>> getAllProcVarInfo();
 	static std::tuple<std::vector<int>, std::vector<int>> getAllStmtVarInfo();
-	static void populateForContainers(StmtIndex containerStmt,
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> subStmts);
+	static void populateForContainers(StmtIndex& containerStmt,
+		std::unordered_set<StmtIndex, StmtIndex::HashFunction>& subStmts);
 	static void performCleanUp();
 };
 
@@ -48,7 +48,7 @@ template<class T>
 RS1<T>::RS1() {};
 
 template<class T>
-void RS1<T>::insert(StmtIndex  stmtIndex, VarIndex varIndex) {
+void RS1<T>::insert(StmtIndex stmtIndex, VarIndex varIndex) {
 	varStmtTable[varIndex].insert(stmtIndex);
 	stmtVarTable[stmtIndex].insert(varIndex);
 };
@@ -60,7 +60,7 @@ void RS1<T>::insert(ProcIndex procIndex, VarIndex varIndex) {
 };
 
 template<class T>
-bool RS1<T>::contains(StmtIndex  stmtIndex, VarIndex varIndex) {
+bool RS1<T>::contains(StmtIndex& stmtIndex, VarIndex& varIndex) {
 	if (stmtVarTable.find(stmtIndex) == stmtVarTable.end()) {
 		return false;
 	}
@@ -74,7 +74,7 @@ bool RS1<T>::contains(StmtIndex  stmtIndex, VarIndex varIndex) {
 };
 
 template<class T>
-bool RS1<T>::contains(ProcIndex procIndex, VarIndex varIndex) {
+bool RS1<T>::contains(ProcIndex& procIndex, VarIndex& varIndex) {
 	if (procVarTable.find(procIndex) == procVarTable.end()) {
 		return false;
 	}
@@ -88,7 +88,7 @@ bool RS1<T>::contains(ProcIndex procIndex, VarIndex varIndex) {
 };
 
 template<class T>
-std::vector<int> RS1<T>::getStatements(VarIndex varIndex) {
+std::vector<int> RS1<T>::getStatements(VarIndex& varIndex) {
 	std::vector<int> statements;
 	for (auto& statement : varStmtTable[varIndex]) {
 		statements.push_back(statement.index);
@@ -97,7 +97,7 @@ std::vector<int> RS1<T>::getStatements(VarIndex varIndex) {
 };
 
 template<class T>
-std::vector<int> RS1<T>::getProcedures(VarIndex varIndex) {
+std::vector<int> RS1<T>::getProcedures(VarIndex& varIndex) {
 	std::vector<int> procedures;
 	for (auto& procedure : varProcTable[varIndex]) {
 		procedures.push_back(procedure.index);
@@ -106,7 +106,7 @@ std::vector<int> RS1<T>::getProcedures(VarIndex varIndex) {
 };
 
 template<class T>
-std::vector<int> RS1<T>::getVariables(StmtIndex  stmtIndex) {
+std::vector<int> RS1<T>::getVariables(StmtIndex& stmtIndex) {
 	std::vector<int> variables;
 	for (auto& variable : stmtVarTable[stmtIndex]) {
 		variables.push_back(variable.index);
@@ -115,7 +115,7 @@ std::vector<int> RS1<T>::getVariables(StmtIndex  stmtIndex) {
 };
 
 template<class T>
-std::vector<int> RS1<T>::getVariables(ProcIndex procIndex) {
+std::vector<int> RS1<T>::getVariables(ProcIndex& procIndex) {
 	std::vector<int> variables;
 	for (auto& variable : procVarTable[procIndex]) {
 		variables.push_back(variable.index);
@@ -150,7 +150,7 @@ std::tuple<std::vector<int>, std::vector<int>> RS1<T>::getAllStmtVarInfo() {
 };
 
 template<class T>
-void RS1<T>::populateForContainers(StmtIndex containerStmt, std::unordered_set<StmtIndex, StmtIndex::HashFunction> subStmts) {
+void RS1<T>::populateForContainers(StmtIndex& containerStmt, std::unordered_set<StmtIndex, StmtIndex::HashFunction>& subStmts) {
 	for (auto& stmt : subStmts) {
 		for (auto& var : stmtVarTable[stmt]) {
 			insert(containerStmt, var);

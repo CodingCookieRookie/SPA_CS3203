@@ -1,16 +1,16 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-#include <string>
 #include <algorithm>
+#include <string>
 
-#include "../source/QPS/PQLEvaluator.h"
-#include "../source/QPS/PQLParser.h"
-#include "../source/PKB/RS2.h"
 #include "../source/PKB/Follows.h"
 #include "../source/PKB/FollowsT.h"
 #include "../source/PKB/Parent.h"
 #include "../source/PKB/ParentT.h"
+#include "../source/PKB/RS2.h"
+#include "../source/QPS/PQLEvaluator.h"
+#include "../source/QPS/PQLParser.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

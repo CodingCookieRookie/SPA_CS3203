@@ -1,11 +1,12 @@
 #pragma once
+
 #include <string>
 #include <vector>
 
-#include "QPSCommons.h"
-#include "ParsedQuery.h"
-#include "Instruction.h"
 #include "../Exception/SPAException.h"
+#include "Instruction.h"
+#include "ParsedQuery.h"
+#include "QPSCommons.h"
 
 class PQLEvaluator {
 private:

@@ -1,9 +1,10 @@
 #pragma once
-#include <vector>
-#include <unordered_map>
 
-#include "QPSCommons.h"
+#include <unordered_map>
+#include <vector>
+
 #include "../Exception/SPAException.h"
+#include "QPSCommons.h"
 
 class ParsedQuery {
 private:

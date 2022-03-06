@@ -1,12 +1,12 @@
-#include "PQLResultProjector.h"
-#include "EvaluatedTable.h"
-#include "../PKB/Entity.h"
-#include "QPSCommons.h"
-#include "../QPS/Instruction.h"
-
-#include <string>
 #include <list>
+#include <string>
 #include <unordered_set>
+
+#include "../PKB/Entity.h"
+#include "../QPS/Instruction.h"
+#include "EvaluatedTable.h"
+#include "PQLResultProjector.h"
+#include "QPSCommons.h"
 
 std::list<std::string> PQLResultProjector::resolveTableToResults() {
 	std::unordered_map<std::string, std::vector<int>> table = evaluatedTable.getTableRef();

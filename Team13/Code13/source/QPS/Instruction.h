@@ -1,21 +1,20 @@
 #pragma once
 
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
-#include "QPSCommons.h"
 #include "../Exception/SPAException.h"
-#include "EvaluatedTable.h"
 #include "../PKB/Entity.h"
-#include "../PKB/Modifies.h"
-#include "../PKB/Uses.h"
+#include "../PKB/ExpressionProcessor.h"
 #include "../PKB/Follows.h"
 #include "../PKB/FollowsT.h"
-#include "../PKB/Pattern.h"
+#include "../PKB/Modifies.h"
 #include "../PKB/Parent.h"
 #include "../PKB/ParentT.h"
 #include "../PKB/Pattern.h"
-#include "../PKB/ExpressionProcessor.h"
+#include "../PKB/Uses.h"
+#include "EvaluatedTable.h"
+#include "QPSCommons.h"
 
 class Instruction {
 public:
@@ -28,11 +27,11 @@ private:
 	std::string synonym;
 
 	/* All handlers to set EvaluatedTable to results from PKB. Uses Pass by Reference on EvTable. */
-	EvaluatedTable handleGetAllStmt(std::string synonym);
-	EvaluatedTable handleGetAllStmtByType(std::string synonym, StatementType stmtType);
-	EvaluatedTable handleGetAllVar(std::string synonym);
-	EvaluatedTable handleGetAllProc(std::string synonym);
-	EvaluatedTable handleGetAllConst(std::string synonym);
+	EvaluatedTable handleGetAllStmt(std::string& synonym);
+	EvaluatedTable handleGetAllStmtByType(std::string& synonym, StatementType stmtType);
+	EvaluatedTable handleGetAllVar(std::string& synonym);
+	EvaluatedTable handleGetAllProc(std::string& synonym);
+	EvaluatedTable handleGetAllConst(std::string& synonym);
 
 public:
 	/* Constructor for a GetAllInstruction object */
