@@ -22,23 +22,25 @@ void EvaluatedTable::removeDuplicates() {
 	table = uniqueTable;
 }
 
+void EvaluatedTable::prepopulate(std::unordered_map<std::string, std::vector<int>>& nextTable,
+	std::unordered_map<std::string, PqlEntityType>& nextEntities,
+	std::unordered_map<std::string, std::vector<int>>& currTable,
+	std::unordered_map<std::string, PqlEntityType>& currEntities) {
+	for (const std::pair<std::string, std::vector<int>>& column : currTable) {
+		std::string entityName = column.first;
+		if (nextTable.find(entityName) == nextTable.end()) {
+			nextTable[entityName] = std::vector<int>();
+			nextEntities[entityName] = currEntities[entityName];
+		}
+	}
+}
+
 EvaluatedTable EvaluatedTable::blockNestedJoin(EvaluatedTable& otherTable,
 	std::unordered_set<std::string>& commonEntities) {
 	std::unordered_map<std::string, std::vector<int>> nextTable;
 	std::unordered_map<std::string, PqlEntityType> nextEntities;
-	/* Populate the columns of the new table */
-	for (const std::pair<std::string, std::vector<int>>& column : table) {
-		std::string entityName = column.first;
-		nextTable[entityName] = std::vector<int>();
-		nextEntities[entityName] = entities[entityName];
-	}
-	for (const std::pair<std::string, std::vector<int>>& column : otherTable.table) {
-		std::string entityName = column.first;
-		if (nextTable.find(entityName) == nextTable.end()) {
-			nextTable[entityName] = std::vector<int>();
-			nextEntities[entityName] = otherTable.entities[entityName];
-		}
-	}
+	prepopulate(nextTable, nextEntities, table, entities);
+	prepopulate(nextTable, nextEntities, otherTable.table, otherTable.entities);
 
 	for (size_t i = 0; i < getNumRow(); i++) {
 		for (size_t j = 0; j < otherTable.getNumRow(); j++) {

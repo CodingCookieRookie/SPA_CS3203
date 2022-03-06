@@ -6,18 +6,19 @@
 #include <map>
 #include "QPSCommons.h"
 
-/* Defining different strings */
-typedef std::string VALUE;
-
 class EvaluatedTable {
 private:
 	std::unordered_map<std::string, PqlEntityType> entities;
 	std::unordered_map<std::string, std::vector<int>> table;
-	bool evResult; //if evaluated to false
+	bool evResult;
 
 	void removeDuplicates();
 	EvaluatedTable blockNestedJoin(EvaluatedTable& otherTable,
 		std::unordered_set<std::string>& commonEntities);
+	void EvaluatedTable::prepopulate(std::unordered_map<std::string, std::vector<int>>& nextTable,
+		std::unordered_map<std::string, PqlEntityType>& nextEntities,
+		std::unordered_map<std::string, std::vector<int>>& currTable,
+		std::unordered_map<std::string, PqlEntityType>& currEntities);
 
 public:
 	/* E.g. of an EvalauatedTable:
