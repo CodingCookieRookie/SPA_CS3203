@@ -30,22 +30,10 @@ public:
 			[&queryVar] { PQLParser::parseQuery(queryVar); };
 		Assert::ExpectException<QPSException>(wrapperVar);
 
-		std::string queryProc = "stmt s; variable v; procedure p; Select s such that Modifies(p, _)";
-		auto wrapperProc =
-			[&queryProc] { PQLParser::parseQuery(queryProc); };
-		Assert::ExpectException<QPSException>(wrapperProc);
-
 		std::string queryConst = "stmt s; variable v; constant c; Select s such that Modifies(c, _)";
 		auto wrapperConst =
 			[&queryConst] { PQLParser::parseQuery(queryConst); };
 		Assert::ExpectException<QPSException>(wrapperConst);
-	}
-
-	TEST_METHOD(parseQuery_modifiesFirstArgVariable_exceptionThrown) {
-		std::string queryModifiesEntRef = "stmt s; variable v; Select s such that Modifies(\"x\", _)";
-		auto wrapperModifiesEntRef =
-			[&queryModifiesEntRef] { PQLParser::parseQuery(queryModifiesEntRef); };
-		Assert::ExpectException<QPSException>(wrapperModifiesEntRef);
 	}
 
 	TEST_METHOD(parseQuery_modifiesFirstArgWildcard_exceptionThrown) {
@@ -75,22 +63,10 @@ public:
 			[&queryVar] { PQLParser::parseQuery(queryVar); };
 		Assert::ExpectException<QPSException>(wrapperVar);
 
-		std::string queryProc = "stmt s; variable v; procedure p; Select s such that Uses(p, _)";
-		auto wrapperProc =
-			[&queryProc] { PQLParser::parseQuery(queryProc); };
-		Assert::ExpectException<QPSException>(wrapperProc);
-
 		std::string queryConst = "stmt s; variable v; constant c; Select s such that Uses(c, _)";
 		auto wrapperConst =
 			[&queryConst] { PQLParser::parseQuery(queryConst); };
 		Assert::ExpectException<QPSException>(wrapperConst);
-	}
-
-	TEST_METHOD(parseQuery_usesFirstArgVariable_exceptionThrown) {
-		std::string queryUsesEntRef = "stmt s; variable v; Select s such that Uses(\"x\", _)";
-		auto wrapperUsesEntRef =
-			[&queryUsesEntRef] { PQLParser::parseQuery(queryUsesEntRef); };
-		Assert::ExpectException<QPSException>(wrapperUsesEntRef);
 	}
 
 	TEST_METHOD(parseQuery_usesFirstArgWildcard_exceptionThrown) {
@@ -527,6 +503,42 @@ public:
 			"Select a pattern a (_, _\"02\"_)";
 		auto wrapperFunc = [&query] { PQLParser::parseQuery(query); };
 		Assert::ExpectException<LexerException>(wrapperFunc);
+	}
+
+	TEST_METHOD(parseQuery_modifiesFirstArgIdent_correctlyParsedAsModifiesP) {
+		std::string query = "stmt s; variable v; Select s such that Modifies(\"x\", _)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::IsTrue(PqlRelationshipType::ModifiesP == relationships[0].getRelationshipType());
+	}
+
+	TEST_METHOD(parseQuery_usesFirstArgIdent_correctlyParsedAsUsesP) {
+		std::string query = "stmt s; variable v; Select s such that Uses(\"x\", _)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::IsTrue(PqlRelationshipType::UsesP == relationships[0].getRelationshipType());
+	}
+
+	TEST_METHOD(parseQuery_usesFirstArgProcSynonym_correctlyParsedAsModifiesP) {
+		std::string query = "stmt s; variable v; procedure p; Select s such that Modifies(p, _)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::IsTrue(PqlRelationshipType::ModifiesP == relationships[0].getRelationshipType());
+	}
+
+	TEST_METHOD(parseQuery_usesFirstArgProcSynonym_correctlyParsedAsUsesP) {
+		std::string query = "stmt s; variable v; procedure p; Select s such that Uses(p, _)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::IsTrue(PqlRelationshipType::UsesP == relationships[0].getRelationshipType());
 	}
 	};
 }

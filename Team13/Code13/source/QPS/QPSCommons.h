@@ -79,6 +79,8 @@ bool isSynonymRef(PqlReference reference);
 
 bool isUsesRelationship(ParsedRelationship relationship);
 bool isModifiesRelationship(ParsedRelationship relationship);
+bool isFollowsRelationship(ParsedRelationship relationship);
+bool isParentRelationship(ParsedRelationship relationship);
 
 bool isStatementEntity(PqlEntityType entityType);
 bool isProcedureEntity(PqlEntityType entityType);

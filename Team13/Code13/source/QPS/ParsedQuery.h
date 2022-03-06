@@ -16,7 +16,8 @@ private:
 	PqlEntityType getType(std::string& synonym);
 
 	bool validateStmtRef(PqlReference ref);
-	bool validateEntRef(PqlReference ref);
+	bool validateEntRefVar(PqlReference ref);
+	bool validateEntRefProc(PqlReference ref);
 
 	void populateDeclarations(
 		const std::vector<PQL_VARIABLE>& allDeclarations);

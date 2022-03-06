@@ -34,11 +34,15 @@ PqlExpression ParsedPattern::getExpression() const {
 }
 
 bool isEntRef(PqlReference reference) {
-	return reference.first == PqlReferenceType::synonym || reference.first == PqlReferenceType::wildcard || reference.first == PqlReferenceType::ident;
+	return reference.first == PqlReferenceType::synonym
+		|| reference.first == PqlReferenceType::wildcard
+		|| reference.first == PqlReferenceType::ident;
 }
 
 bool isStmtRef(PqlReference reference) {
-	return reference.first == PqlReferenceType::synonym || reference.first == PqlReferenceType::wildcard || reference.first == PqlReferenceType::integer;
+	return reference.first == PqlReferenceType::synonym
+		|| reference.first == PqlReferenceType::wildcard
+		|| reference.first == PqlReferenceType::integer;
 }
 
 bool isWildcardRef(PqlReference reference) {
@@ -55,6 +59,16 @@ bool isUsesRelationship(ParsedRelationship relationship) {
 
 bool isModifiesRelationship(ParsedRelationship relationship) {
 	return relationship.getRelationshipType() == PqlRelationshipType::Modifies;
+}
+
+bool isFollowsRelationship(ParsedRelationship relationship) {
+	return relationship.getRelationshipType() == PqlRelationshipType::Follows
+		|| relationship.getRelationshipType() == PqlRelationshipType::FollowsT;
+}
+
+bool isParentRelationship(ParsedRelationship relationship) {
+	return relationship.getRelationshipType() == PqlRelationshipType::Parent
+		|| relationship.getRelationshipType() == PqlRelationshipType::ParentT;
 }
 
 bool isStatementEntity(PqlEntityType entityType) {
