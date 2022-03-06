@@ -507,6 +507,12 @@ public:
 		Assert::ExpectException<ExpressionException>(wrapperFunc);
 	}
 
+	TEST_METHOD(parseQuery_invalidExpressionOperatorOnly_exceptionThrown) {
+		std::string query = "assign a; Select a pattern a(_, \" + \")";
+		auto wrapperFunc = [&query] { PQLParser::parseQuery(query); };
+		Assert::ExpectException<ExpressionException>(wrapperFunc);
+	}
+
 	TEST_METHOD(parseQuery_leadingZeroInSuchThat_lexerExceptionThrown) {
 		std::string query =
 			"variable v;"

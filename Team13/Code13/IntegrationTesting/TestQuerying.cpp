@@ -292,7 +292,6 @@ public:
 		std::list<std::string> expectedRes{ "7" };
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
-		Pattern::performCleanUp();
 	}
 
 	TEST_METHOD(querying_declarationAndSelectUsesStmtsOnly_success) {
@@ -1428,6 +1427,234 @@ public:
 		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> results = resultProjector.resolveTableToResults();
 		std::list<std::string> expectedRes{ "99" };
+		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+		Assert::AreEqual(true, areListsEqual);
+	}
+
+	TEST_METHOD(querying_declarationAndPatternExprOnly_success) {
+		// b = (x + 1) * 2 / 3 - 4 % (5)
+		// 1. Setup:
+		std::string query = "assign a; variable v; Select a pattern a(v, _\"x + 1\"_)";
+
+		// PKB inserts 6 types of statements
+		std::vector<StmtIndex> stmts;
+		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+
+		// PKB inserts pattern
+		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		Entity::insertVar("a");
+		VarIndex varIndex = Entity::insertVar("b");
+		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("(x+1)*2/3-4%(5)");
+		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
+
+		// 2. Test QPS Parser:
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		Assert::AreEqual(size_t(2), parsedQuery.getDeclarations().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getPatterns().size());
+
+		// 3. Test QPS Evaluator:
+		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
+
+		//// Test numRow:
+		Assert::AreEqual(size_t(1), evTable.getNumRow());
+
+		//// Test Table:
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("a") != tableRef.end()); // "a" exists
+		Assert::AreEqual(true, tableRef.find("v") != tableRef.end()); // "v" exists
+
+		//// Test Values: std::unordered_map<std::string, PqlEntityType>
+		std::vector<int> values{ 7 };
+		auto actualValues = tableRef.at("a");
+		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// Test EvResult:
+		bool actualEvResult = evTable.getEvResult();
+		Assert::AreEqual(true, actualEvResult);
+
+		// 4. Test QPS Result Projector:
+		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
+		std::list<std::string> results = resultProjector.resolveTableToResults();
+		std::list<std::string> expectedRes{ "7" };
+		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+		Assert::AreEqual(true, areListsEqual);
+	}
+
+	TEST_METHOD(querying_substringButNotSubtree_emptyResult) {
+		// b = (x + 1) * 2 / 3 - 4 % (5)
+		// 1. Setup:
+		std::string query = "assign a; variable v; Select a pattern a(v, _\"2 / 3\"_)";
+
+		// PKB inserts 6 types of statements
+		std::vector<StmtIndex> stmts;
+		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+
+		// PKB inserts pattern
+		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		Entity::insertVar("a");
+		VarIndex varIndex = Entity::insertVar("b");
+		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("(x+1)*2/3-4%(5)");
+		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
+
+		// 2. Test QPS Parser:
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		Assert::AreEqual(size_t(2), parsedQuery.getDeclarations().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getPatterns().size());
+
+		// 3. Test QPS Evaluator:
+		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
+
+		//// Test numRow:
+		Assert::AreEqual(size_t(0), evTable.getNumRow());
+
+		//// Test Table:
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("a") != tableRef.end()); // "a" exists
+		Assert::AreEqual(true, tableRef.find("v") != tableRef.end()); // "v" exists
+
+		//// Test Values: std::unordered_map<std::string, PqlEntityType>
+		std::vector<int> values;
+		auto actualValues = tableRef.at("a");
+		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// Test EvResult:
+		bool actualEvResult = evTable.getEvResult();
+		Assert::AreEqual(true, actualEvResult);
+
+		// 4. Test QPS Result Projector:
+		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
+		std::list<std::string> results = resultProjector.resolveTableToResults();
+		std::list<std::string> expectedRes;
+		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+		Assert::AreEqual(true, areListsEqual);
+	}
+
+	TEST_METHOD(querying_patternFullMatchButSubtree_emptyResult) {
+		// b = (x + 1) * 2 / 3 - 4 % (5)
+		// 1. Setup:
+		std::string query = "assign a; variable v; Select a pattern a(v, \"x + 1\")";
+
+		// PKB inserts 6 types of statements
+		std::vector<StmtIndex> stmts;
+		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+
+		// PKB inserts pattern
+		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		Entity::insertVar("a");
+		VarIndex varIndex = Entity::insertVar("b");
+		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("(x+1)*2/3-4%(5)");
+		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
+
+		// 2. Test QPS Parser:
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		Assert::AreEqual(size_t(2), parsedQuery.getDeclarations().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getPatterns().size());
+
+		// 3. Test QPS Evaluator:
+		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
+
+		//// Test numRow:
+		Assert::AreEqual(size_t(0), evTable.getNumRow());
+
+		//// Test Table:
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("a") != tableRef.end()); // "a" exists
+		Assert::AreEqual(true, tableRef.find("v") != tableRef.end()); // "v" exists
+
+		//// Test Values: std::unordered_map<std::string, PqlEntityType>
+		std::vector<int> values;
+		auto actualValues = tableRef.at("a");
+		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// Test EvResult:
+		bool actualEvResult = evTable.getEvResult();
+		Assert::AreEqual(true, actualEvResult);
+
+		// 4. Test QPS Result Projector:
+		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
+		std::list<std::string> results = resultProjector.resolveTableToResults();
+		std::list<std::string> expectedRes;
+		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+		Assert::AreEqual(true, areListsEqual);
+	}
+
+	TEST_METHOD(querying_patternFullMatchWithFullExpression_success) {
+		// b = (x + 1) * 2 / 3 - 4 % (5)
+		// 1. Setup:
+		std::string query = "assign a; variable v; Select a pattern a(v, _\"(x + 1)       * 2 / 3		-4 %\n 5\"_)";
+
+		// PKB inserts 6 types of statements
+		std::vector<StmtIndex> stmts;
+		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+
+		// PKB inserts pattern
+		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		Entity::insertVar("a");
+		VarIndex varIndex = Entity::insertVar("b");
+		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("(x+1)*2/3-4%(5)");
+		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
+
+		// 2. Test QPS Parser:
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		Assert::AreEqual(size_t(2), parsedQuery.getDeclarations().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getPatterns().size());
+
+		// 3. Test QPS Evaluator:
+		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
+
+		//// Test numRow:
+		Assert::AreEqual(size_t(1), evTable.getNumRow());
+
+		//// Test Table:
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("a") != tableRef.end()); // "a" exists
+		Assert::AreEqual(true, tableRef.find("v") != tableRef.end()); // "v" exists
+
+		//// Test Values: std::unordered_map<std::string, PqlEntityType>
+		std::vector<int> values{ 7 };
+		auto actualValues = tableRef.at("a");
+		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// Test EvResult:
+		bool actualEvResult = evTable.getEvResult();
+		Assert::AreEqual(true, actualEvResult);
+
+		// 4. Test QPS Result Projector:
+		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
+		std::list<std::string> results = resultProjector.resolveTableToResults();
+		std::list<std::string> expectedRes{ "7" };
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
 	}

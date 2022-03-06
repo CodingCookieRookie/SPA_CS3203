@@ -31,6 +31,9 @@ void TestWrapper::parse(std::string filename) {
 	} catch (LexerException& ex) {
 		std::cerr << ex.what() << std::endl;
 		exit(EXIT_FAILURE);
+	} catch (ExpressionException& ex) {
+		std::cerr << ex.what() << std::endl;
+		exit(EXIT_FAILURE);
 	}
 }
 
@@ -55,6 +58,8 @@ void TestWrapper::evaluate(std::string query, std::list<std::string>& results) {
 	} catch (QPSException& ex) {
 		return;
 	} catch (LexerException& ex) {
+		return;
+	} catch (ExpressionException& ex) {
 		return;
 	}
 	// store the answers to the query in the results list (it is initially empty)
