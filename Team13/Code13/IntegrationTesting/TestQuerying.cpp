@@ -371,7 +371,8 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 		// Check PKB populated
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern("w", true);
+		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("w");
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Test QPS Parser:
@@ -434,7 +435,8 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 		// Check PBK populated
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(" x ", true);
+		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("x");
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Test QPS Parser:
@@ -491,7 +493,8 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 		// Check PBK populated
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(" x ", true);
+		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("x");
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Test QPS Parser:
@@ -548,7 +551,8 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 		// Check PBK populated
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(" x ", true);
+		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("x");
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Test QPS Parser:
@@ -605,7 +609,8 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 		// Check PBK populated
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(" x ", true);
+		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("x");
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Test QPS Parser:
@@ -662,7 +667,8 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 		// Check PBK populated
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(" x ", true);
+		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("x");
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Test QPS Parser:
@@ -719,7 +725,8 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 		// Check PBK populated
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(" x ", true);
+		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("x");
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Test QPS Parser:
@@ -776,7 +783,8 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 		// Check PBK populated
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(" x ", true);
+		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("x");
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Test QPS Parser:
@@ -833,7 +841,8 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 		// Check PBK populated
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(" x ", true);
+		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("x");
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Test QPS Parser:
@@ -890,7 +899,8 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 		// Check PBK populated
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(" x ", true);
+		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("x");
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Test QPS Parser:
@@ -947,7 +957,8 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 		// Check PBK populated
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(" x ", true);
+		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("x");
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Test QPS Parser:
@@ -1004,7 +1015,8 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 		// Check PBK populated
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(" y ", true);
+		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("y");
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Test QPS Parser:
@@ -1064,7 +1076,8 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 		// Check PBK populated
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(" y ", true);
+		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("y");
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Test QPS Parser:
@@ -1123,7 +1136,8 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 		// Check PBK populated
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(" y ", true);
+		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("y");
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Test QPS Parser:
@@ -1183,7 +1197,8 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 		// Check PBK populated
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(" y ", true);
+		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("y");
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Test QPS Parser:
@@ -1248,7 +1263,8 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 		// Check PBK populated
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(" y ", true);
+		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("y");
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Test QPS Parser:
@@ -1315,7 +1331,8 @@ public:
 		Follows::insert(readStmt, stmt);
 
 		// Check PKB populated
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern("d", true);
+		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("d");
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(2), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Test QPS Parser:
@@ -1381,7 +1398,8 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmts[98]); //stmt 99
 
 		// Check PKB populated
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern("d", true);
+		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("d");
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Test QPS Parser:

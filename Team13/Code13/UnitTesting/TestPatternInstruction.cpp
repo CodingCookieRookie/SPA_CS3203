@@ -40,7 +40,7 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 		// Check PKB populated
-		std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
+		std::vector<int> allStmts = Pattern::getStmtsFromVarPatternPartialMatch(varIndex, expressionSpec.second);
 		Assert::AreEqual(size_t(0), allStmts.size());
 
 		// 2. Main test:
@@ -68,7 +68,7 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 		// Check PKB populated
-		std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
+		std::vector<int> allStmts = Pattern::getStmtsFromVarPatternPartialMatch(varIndex, expressionSpec.second);
 		Assert::AreEqual(size_t(0), allStmts.size());
 
 		// 2. Main test:
@@ -95,7 +95,7 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 		// Check PKB populated
-		std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
+		std::vector<int> allStmts = Pattern::getStmtsFromVarPatternPartialMatch(varIndex, expressionSpec.second);
 		Assert::AreEqual(size_t(0), allStmts.size());
 
 		// 2. Main test:
@@ -123,8 +123,8 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 		// Check PKB populated
-
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(" x ", true);
+		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("x");
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(0), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Main test:
@@ -152,7 +152,7 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 		// Check PKB populated
-		std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
+		std::vector<int> allStmts = Pattern::getStmtsFromVarPatternPartialMatch(varIndex, expressionSpec.second);
 		Assert::AreEqual(size_t(1), allStmts.size());
 
 		// 2. Main test:
@@ -179,7 +179,7 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 		// Check PKB populated
-		std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
+		std::vector<int> allStmts = Pattern::getStmtsFromVarPatternPartialMatch(varIndex, expressionSpec.second);
 		Assert::AreEqual(size_t(1), allStmts.size());
 
 		// 2. Main test:
@@ -207,7 +207,7 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 		// Check PKB populated
-		std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
+		std::vector<int> allStmts = Pattern::getStmtsFromVarPatternPartialMatch(varIndex, expressionSpec.second);
 		Assert::AreEqual(size_t(1), allStmts.size());
 
 		// 2. Main test:
@@ -236,7 +236,7 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 		// Check PKB populated
-		std::vector<int> allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
+		std::vector<int> allStmts = Pattern::getStmtsFromVarPatternPartialMatch(varIndex, expressionSpec.second);
 		Assert::AreEqual(size_t(1), allStmts.size());
 
 		// 2. Main test:
@@ -263,7 +263,7 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 		// Check PKB populated
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second));
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Main test:
@@ -290,7 +290,7 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 		// Check PKB populated
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second));
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Main test:
@@ -317,7 +317,7 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 		// Check PKB populated
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, true);
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(expressionSpec.second);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Main test:
@@ -344,7 +344,7 @@ public:
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
 		// Check PKB populated
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPattern(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second), true);
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second));
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Main test:

@@ -410,10 +410,10 @@ public:
 
 		Assert::AreEqual(size_t(2), Entity::getAllVars().size());
 		Assert::AreEqual(size_t(3), Entity::getAllConsts().size());
-		std::tuple<std::vector<int>, std::vector<int>> patternVarResult = Pattern::getStmtsFromPattern(std::string(" x "), true);
+		std::tuple<std::vector<int>, std::vector<int>> patternVarResult = Pattern::getStmtsFromPatternPartialMatch(std::string(" x "));
 		Assert::AreEqual(size_t(1), std::get<0>(patternVarResult).size());
 
-		std::tuple<std::vector<int>, std::vector<int>> patternConstResult = Pattern::getStmtsFromPattern(std::string(" 1 "), true);
+		std::tuple<std::vector<int>, std::vector<int>> patternConstResult = Pattern::getStmtsFromPatternPartialMatch(std::string(" 1 "));
 		Assert::AreEqual(size_t(1), std::get<0>(patternConstResult).size());
 	}
 	};

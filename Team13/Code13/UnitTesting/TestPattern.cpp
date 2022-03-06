@@ -80,7 +80,7 @@ public:
 		Pattern::insertPostFixInfo(varIdx2, postFix1, stmtIdx3);
 		Pattern::insertPostFixInfo(varIdx2, postFix1, stmtIdx2);
 
-		std::vector<int> res = Pattern::getStmtsFromVarPattern(varIdx1, postFix1, false);
+		std::vector<int> res = Pattern::getStmtsFromVarPatternFullMatch(varIdx1, postFix1);
 
 		Assert::IsTrue(expectedRes == res);
 	}
@@ -94,7 +94,7 @@ public:
 		Pattern::insertPostFixInfo(varIdx2, postFix1, stmtIdx3);
 		Pattern::insertPostFixInfo(varIdx2, postFix2, stmtIdx2);
 
-		std::vector<int> res = Pattern::getStmtsFromVarPattern(varIdx1, postFix1, false);
+		std::vector<int> res = Pattern::getStmtsFromVarPatternFullMatch(varIdx1, postFix1);
 
 		Assert::IsTrue(expectedRes == res);
 	}
@@ -107,8 +107,8 @@ public:
 		Pattern::insertPostFixInfo(varIdx2, postFix4, stmtIdx3);
 
 		/* postFix3 is a subexpression of postFix4 */
-		std::vector<int> res1 = Pattern::getStmtsFromVarPattern(varIdx1, postFix3, true);
-		std::vector<int> res2 = Pattern::getStmtsFromVarPattern(varIdx1, postFix4, true);
+		std::vector<int> res1 = Pattern::getStmtsFromVarPatternPartialMatch(varIdx1, postFix3);
+		std::vector<int> res2 = Pattern::getStmtsFromVarPatternPartialMatch(varIdx1, postFix4);
 
 		Assert::IsTrue(expectedRes == res1);
 		Assert::IsTrue(expectedRes == res2);
@@ -122,7 +122,7 @@ public:
 		Pattern::insertPostFixInfo(varIdx2, postFix4, stmtIdx3);
 
 		/* postFix1 is a not subexpression of postFix4 */
-		std::vector<int> res = Pattern::getStmtsFromVarPattern(varIdx1, postFix4, true);
+		std::vector<int> res = Pattern::getStmtsFromVarPatternPartialMatch(varIdx1, postFix4);
 
 		Assert::IsTrue(expectedRes == res);
 	}
@@ -135,8 +135,8 @@ public:
 		Pattern::insertPostFixInfo(varIdx2, postFix4, stmtIdx3);
 
 		/* postFix3 is a subexpression of postFix4 */
-		std::vector<int> res1 = Pattern::getStmtsFromVarPattern(varIdx1, postFix3, true);
-		std::vector<int> res2 = Pattern::getStmtsFromVarPattern(varIdx1, postFix4, true);
+		std::vector<int> res1 = Pattern::getStmtsFromVarPatternPartialMatch(varIdx1, postFix3);
+		std::vector<int> res2 = Pattern::getStmtsFromVarPatternPartialMatch(varIdx1, postFix4);
 
 		Assert::IsTrue(expectedRes == res1);
 		Assert::IsTrue(expectedRes == res2);
@@ -145,8 +145,8 @@ public:
 		expectedRes.push_back(3);
 		Pattern::insertPostFixInfo(varIdx1, postFix3, stmtIdx3);
 
-		std::vector<int> res3 = Pattern::getStmtsFromVarPattern(varIdx1, postFix3, true);
-		std::vector<int> res4 = Pattern::getStmtsFromVarPattern(varIdx1, postFix4, true);
+		std::vector<int> res3 = Pattern::getStmtsFromVarPatternPartialMatch(varIdx1, postFix3);
+		std::vector<int> res4 = Pattern::getStmtsFromVarPatternPartialMatch(varIdx1, postFix4);
 
 		Assert::IsTrue(expectedRes == res3);
 		Assert::IsFalse(expectedRes == res4);
@@ -162,7 +162,7 @@ public:
 		Pattern::insertPostFixInfo(varIdx1, postFix1, stmtIdx2);
 		Pattern::insertPostFixInfo(varIdx2, postFix1, stmtIdx3);
 
-		std::tuple<std::vector<int>, std::vector<int>> res = Pattern::getStmtsFromPattern(postFix1, false);
+		std::tuple<std::vector<int>, std::vector<int>> res = Pattern::getStmtsFromPatternFullMatch(postFix1);
 
 		Assert::IsTrue(expectedRes == res);
 	}
@@ -178,7 +178,7 @@ public:
 		Pattern::insertPostFixInfo(varIdx2, postFix1, stmtIdx3);
 		Pattern::insertPostFixInfo(varIdx2, postFix2, stmtIdx3);
 
-		std::tuple<std::vector<int>, std::vector<int>> res = Pattern::getStmtsFromPattern(postFix2, false);
+		std::tuple<std::vector<int>, std::vector<int>> res = Pattern::getStmtsFromPatternFullMatch(postFix2);
 
 		Assert::IsTrue(expectedRes == res);
 	}
@@ -194,8 +194,8 @@ public:
 		Pattern::insertPostFixInfo(varIdx2, postFix4, stmtIdx3);
 
 		/* postFix3 is a subexpression of postFix4 */
-		std::tuple<std::vector<int>, std::vector<int>> res1 = Pattern::getStmtsFromPattern(postFix3, true);
-		std::tuple<std::vector<int>, std::vector<int>> res2 = Pattern::getStmtsFromPattern(postFix4, true);
+		std::tuple<std::vector<int>, std::vector<int>> res1 = Pattern::getStmtsFromPatternPartialMatch(postFix3);
+		std::tuple<std::vector<int>, std::vector<int>> res2 = Pattern::getStmtsFromPatternPartialMatch(postFix4);
 		Assert::IsTrue(expectedRes == res1);
 		Assert::IsTrue(expectedRes == res2);
 	}
@@ -212,7 +212,7 @@ public:
 		Pattern::insertPostFixInfo(varIdx3, postFix4, stmtIdx2);
 
 		/* postFix1 is a not subexpression of postFix4 */
-		std::tuple<std::vector<int>, std::vector<int>> res = Pattern::getStmtsFromPattern(postFix4, true);
+		std::tuple<std::vector<int>, std::vector<int>> res = Pattern::getStmtsFromPatternPartialMatch(postFix4);
 
 		Assert::IsTrue(expectedRes == res);
 	}
@@ -229,8 +229,8 @@ public:
 		Pattern::insertPostFixInfo(varIdx2, postFix4, stmtIdx3);
 
 		/* postFix3 is a subexpression of postFix4 */
-		std::tuple<std::vector<int>, std::vector<int>> res1 = Pattern::getStmtsFromPattern(postFix3, true);
-		std::tuple<std::vector<int>, std::vector<int>> res2 = Pattern::getStmtsFromPattern(postFix4, true);
+		std::tuple<std::vector<int>, std::vector<int>> res1 = Pattern::getStmtsFromPatternPartialMatch(postFix3);
+		std::tuple<std::vector<int>, std::vector<int>> res2 = Pattern::getStmtsFromPatternPartialMatch(postFix4);
 		Assert::IsTrue(expectedRes == res1);
 		Assert::IsTrue(expectedRes == res2);
 
@@ -241,8 +241,8 @@ public:
 
 		Pattern::insertPostFixInfo(varIdx3, postFix3, stmtIdx3);
 
-		std::tuple<std::vector<int>, std::vector<int>> res3 = Pattern::getStmtsFromPattern(postFix3, true);
-		std::tuple<std::vector<int>, std::vector<int>> res4 = Pattern::getStmtsFromPattern(postFix4, true);
+		std::tuple<std::vector<int>, std::vector<int>> res3 = Pattern::getStmtsFromPatternPartialMatch(postFix3);
+		std::tuple<std::vector<int>, std::vector<int>> res4 = Pattern::getStmtsFromPatternPartialMatch(postFix4);
 
 		Assert::IsTrue(expectedRes == res3);
 		Assert::IsFalse(expectedRes == res4);

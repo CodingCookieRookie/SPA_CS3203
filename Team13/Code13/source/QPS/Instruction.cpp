@@ -705,7 +705,7 @@ EvaluatedTable PatternInstruction::handlePatterns() {
 		if (Entity::containsVar(entRef.second)) {
 			VarIndex varIndex = Entity::getVarIdx(entRef.second);
 			if (expressionSpec.first == PqlExpressionType::partial) {
-				allStmts = Pattern::getStmtsFromVarPattern(varIndex, expressionSpec.second, true);
+				allStmts = Pattern::getStmtsFromVarPatternPartialMatch(varIndex, expressionSpec.second);
 			} else if (expressionSpec.first == PqlExpressionType::wildcard) {
 				allStmts = Pattern::getStmtsFromVarPattern(varIndex);
 			}
@@ -718,10 +718,10 @@ EvaluatedTable PatternInstruction::handlePatterns() {
 	/* Pattern a(_, _"x"_) or a(_, _"123"_) or Pattern a(_, _) */
 	std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo;
 	if (expressionSpec.first == PqlExpressionType::full) {
-		allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, false);
+		allPatternStmtInfo = Pattern::getStmtsFromPatternFullMatch(expressionSpec.second);
 	} else if (expressionSpec.first == PqlExpressionType::partial) {
 		/* currently only has this for iteration 1 */
-		allPatternStmtInfo = Pattern::getStmtsFromPattern(expressionSpec.second, true);
+		allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(expressionSpec.second);
 	} else if (expressionSpec.first == PqlExpressionType::wildcard) {
 		allPatternStmtInfo = Pattern::getAllAssignStmtVarsPatternInfo();
 	} else {
