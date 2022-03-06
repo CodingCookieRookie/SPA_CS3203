@@ -11,6 +11,7 @@ const std::string Parser::WHILE = "while";
 const std::string Parser::IF = "if";
 const std::string Parser::THEN = "then";
 const std::string Parser::ELSE = "else";
+const std::string Parser::CALL = "call";
 
 const std::string Parser::EQUAL = "=";
 const std::string Parser::NOT = "!";
@@ -103,6 +104,8 @@ StmtNode* Parser::matchStmt() {
 		stmtNode = matchWhile();
 	} else if (name == IF) {
 		stmtNode = matchIf();
+	} else if (name == CALL) {
+		stmtNode = matchCall();
 	} else {
 		throw ParserException(ParserException::INVALID_STMT);
 	}
@@ -314,4 +317,17 @@ IfNode* Parser::matchIf() {
 	}
 
 	return new IfNode(condNode, thenStmtLst, elseStmtLst);
+}
+
+CallNode* Parser::matchCall() {
+	std::string procName = lexer.nextName();
+	if (procName.empty()) {
+		throw ParserException(ParserException::MISSING_PROC_NAME_IN_CALL_STMT);
+	}
+
+	if (!lexer.match(SEMICOLON)) {
+		throw ParserException(ParserException::MISSING_SEMICOLON);
+	}
+
+	return new CallNode(procName);
 }

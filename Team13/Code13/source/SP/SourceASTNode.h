@@ -108,6 +108,17 @@ public:
 	StatementType getStmtType();
 };
 
+class CallNode : public StmtNode {
+private:
+	std::string procName;
+public:
+	CallNode(std::string procName);
+	std::string getProcName();
+	StatementType getStmtType();
+
+	friend class SourceAST;
+};
+
 class StmtLstNode : public SourceASTNode {
 private:
 	std::vector<StmtNode*> stmtNodes;

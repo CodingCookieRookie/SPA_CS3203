@@ -159,6 +159,17 @@ StatementType IfNode::getStmtType() {
 	return StatementType::ifType;
 }
 
+/* CallNode */
+CallNode::CallNode(std::string procName) : StmtNode(), procName(procName) {}
+
+std::string CallNode::getProcName() {
+	return procName;
+}
+
+StatementType CallNode::getStmtType() {
+	return StatementType::callType;
+}
+
 /* StmtLstNode */
 StmtLstNode::StmtLstNode() : SourceASTNode() {}
 

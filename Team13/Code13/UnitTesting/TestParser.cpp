@@ -3374,5 +3374,196 @@ public:
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 	}
+
+	/* Note that parser does not do semantic check for call stmt.
+	This means that calling a semantically invalid procedure name will still be parsed successfully. */
+	TEST_METHOD(parse_matchCall_syntacticallyValid_semanticallyValid_success) {
+		const char* source =
+			" procedure proc1 {call proc2;}\n"
+			"procedure proc2 {read x;}";
+
+		SourceAST ast = Parser::parse(source);
+		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
+
+		/* Test procedureNodes */
+		Assert::AreEqual(size_t(2), procNodes.size());
+
+		/* 1st procedure */
+		/* procedure proc1 {call proc2;} */
+		Assert::AreEqual(std::string("proc1"), procNodes[0]->getProcName());
+		StmtLstNode* proc1StmtLstNode = procNodes[0]->getStmtLstNode();
+		std::vector<StmtNode*> proc1Stmts = proc1StmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), proc1Stmts.size());
+		CallNode* proc1CallNode = (CallNode*)proc1Stmts[0];
+		Assert::IsTrue(StatementType::callType == proc1CallNode->getStmtType());
+		Assert::AreEqual(std::string("proc2"), proc1CallNode->getProcName());
+
+		/* 2nd procedure */
+		/* procedure proc2 {read x;} */
+		Assert::AreEqual(std::string("proc2"), procNodes[1]->getProcName());
+		StmtLstNode* proc2StmtLstNode = procNodes[1]->getStmtLstNode();
+		std::vector<StmtNode*> proc2Stmts = proc2StmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), proc2Stmts.size());
+		ReadNode* readNode = (ReadNode*)proc2Stmts[0];
+		Assert::IsTrue(StatementType::readType == readNode->getStmtType());
+		Assert::AreEqual(std::string("x"), readNode->getVarName());
+	}
+
+	TEST_METHOD(parse_matchCall_syntacticallyValid_semanticallyInvalid_nonExistentProc_success) {
+		const char* source = "procedure proc1 {call proc2;}";
+		SourceAST ast = Parser::parse(source);
+		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
+
+		/* Test procedureNodes */
+		Assert::AreEqual(size_t(1), procNodes.size());
+
+		/* procedure proc1 {call proc2;} */
+		Assert::AreEqual(std::string("proc1"), procNodes[0]->getProcName());
+		StmtLstNode* proc1StmtLstNode = procNodes[0]->getStmtLstNode();
+		std::vector<StmtNode*> proc1Stmts = proc1StmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), proc1Stmts.size());
+		CallNode* proc1CallNode = (CallNode*)proc1Stmts[0];
+		Assert::IsTrue(StatementType::callType == proc1CallNode->getStmtType());
+		Assert::AreEqual(std::string("proc2"), proc1CallNode->getProcName());
+	}
+
+	TEST_METHOD(parse_matchCall_syntacticallyValid_semanticallyInvalid_selfCall_success) {
+		const char* source = "procedure proc1 {call proc1;}";
+		SourceAST ast = Parser::parse(source);
+		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
+
+		/* Test procedureNodes */
+		Assert::AreEqual(size_t(1), procNodes.size());
+
+		/* procedure proc1 {call proc1;} */
+		Assert::AreEqual(std::string("proc1"), procNodes[0]->getProcName());
+		StmtLstNode* proc1StmtLstNode = procNodes[0]->getStmtLstNode();
+		std::vector<StmtNode*> proc1Stmts = proc1StmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), proc1Stmts.size());
+		CallNode* proc1CallNode = (CallNode*)proc1Stmts[0];
+		Assert::IsTrue(StatementType::callType == proc1CallNode->getStmtType());
+		Assert::AreEqual(std::string("proc1"), proc1CallNode->getProcName());
+	}
+
+	TEST_METHOD(parse_matchCall_syntacticallyValid_semanticallyInvalid_cyclicCall_success) {
+		const char* source =
+			" procedure proc1 {call proc2;}\n"
+			"procedure proc2 {call proc1;}";
+		SourceAST ast = Parser::parse(source);
+		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
+
+		/* Test procedureNodes */
+		Assert::AreEqual(size_t(2), procNodes.size());
+
+		/* 1st procedure */
+		/* procedure proc1 {call proc2;} */
+		Assert::AreEqual(std::string("proc1"), procNodes[0]->getProcName());
+		StmtLstNode* proc1StmtLstNode = procNodes[0]->getStmtLstNode();
+		std::vector<StmtNode*> proc1Stmts = proc1StmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), proc1Stmts.size());
+		CallNode* proc1CallNode = (CallNode*)proc1Stmts[0];
+		Assert::IsTrue(StatementType::callType == proc1CallNode->getStmtType());
+		Assert::AreEqual(std::string("proc2"), proc1CallNode->getProcName());
+
+		/* 2nd procedure */
+		/* procedure proc2 {call proc1;} */
+		Assert::AreEqual(std::string("proc2"), procNodes[1]->getProcName());
+		StmtLstNode* proc2StmtLstNode = procNodes[1]->getStmtLstNode();
+		std::vector<StmtNode*> proc2Stmts = proc2StmtLstNode->getStmtNodes();
+		Assert::AreEqual(size_t(1), proc2Stmts.size());
+		CallNode* callNode = (CallNode*)proc2Stmts[0];
+		Assert::IsTrue(StatementType::callType == callNode->getStmtType());
+		Assert::AreEqual(std::string("proc1"), callNode->getProcName());
+	}
+
+	/* Note that parser does not do semantic check for call stmt.
+	This means that exception will only be raised when there is a syntax error. */
+	TEST_METHOD(parse_matchCall_missingProcName_parserExceptionThrown) {
+		const char* source = "   procedure proc1  "
+			"{ print x1;print y1 ; call } ";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_PROC_NAME_IN_CALL_STMT.c_str(), ex.what());
+		}
+
+		const char* source1 = "   procedure proc1  "
+			"{ print x1;print y1 ; call		; print V; }";
+		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		Assert::ExpectException<ParserException>(wrapperFunc1);
+		try {
+			Parser::parse(source1);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_PROC_NAME_IN_CALL_STMT.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchCall_invalidProcName_parserExceptionThrown) {
+		const char* source = "   procedure proc  "
+			"{ print x1; call 1invalidName ; } ";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_PROC_NAME_IN_CALL_STMT.c_str(), ex.what());
+		}
+
+		const char* source1 = "   procedure proc1  "
+			"{ print x1;print y1 ; call invalid_name; }";
+		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		Assert::ExpectException<ParserException>(wrapperFunc1);
+		try {
+			Parser::parse(source1);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchCall_missingSemicolon_parserExceptionThrown) {
+		const char* source = "   procedure proc  "
+			"{ print x1; call vAliD123nAmE call vAliD123nAmEaGAIN ;}  ";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
+		}
+
+		const char* source1 = "   procedure proc  "
+			"{ print x1; call vAliD123nAmE ; call vAliD123nAmEaGAIN  } ";
+		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		Assert::ExpectException<ParserException>(wrapperFunc1);
+		try {
+			Parser::parse(source1);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
+		}
+	}
+
+	TEST_METHOD(parse_matchCall_tooManySemicolon_parserExceptionThrown) {
+		const char* source = "   procedure proc  "
+			"{ print x1; call vAliD123nAmE ; ; } ";
+		auto wrapperFunc = [&source] { Parser::parse(source); };
+		Assert::ExpectException<ParserException>(wrapperFunc);
+		try {
+			Parser::parse(source);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
+		}
+
+		const char* source1 = "   procedure proc  "
+			"{ print x1; call vAliD123nAmE ;; read x1 ; }";
+		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		Assert::ExpectException<ParserException>(wrapperFunc1);
+		try {
+			Parser::parse(source1);
+		} catch (ParserException& ex) {
+			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
+		}
+	}
 	};
 }
