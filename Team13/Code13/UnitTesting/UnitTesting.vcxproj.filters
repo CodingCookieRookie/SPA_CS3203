@@ -30,6 +30,8 @@
     <ClCompile Include="TestPQLParser.cpp" />
     <ClCompile Include="TestUsesInstruction.cpp" />
     <ClCompile Include="TestGetAllInstruction.cpp" />
+    <ClCompile Include="TestModifiesPInstruction.cpp" />
+    <ClCompile Include="TestUsesPInstruction.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />

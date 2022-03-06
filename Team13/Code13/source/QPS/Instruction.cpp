@@ -172,6 +172,7 @@ EvaluatedTable RelationshipInstruction::handleModifiesS() {
 
 EvaluatedTable RelationshipInstruction::handleModifiesP() {
 	/* Modifies(p / p1, v) or Modifies(p / p1, _)	Modifies(p / p1, "x") */
+	/* Modifies("p", v) or Modifies("p" , _)	Modifies("p", "x") */
 	std::unordered_map<std::string, PqlEntityType> PQLentities;
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
 	PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Procedure));
@@ -192,6 +193,38 @@ EvaluatedTable RelationshipInstruction::handleModifiesP() {
 		if (rhsRef.first != PqlReferenceType::wildcard && rhsRef.first != PqlReferenceType::ident) {
 			varIndices = std::get<1>(allProcVarInfos);
 			PQLmap[rhsRef.second] = varIndices;
+		}
+	} else if (lhsRef.first == PqlReferenceType::ident) {
+		if (rhsRef.first == PqlReferenceType::ident) {
+			if (Entity::containsProc(lhsRef.second)) {
+				ProcIndex procIndex = Entity::getProcIdx(lhsRef.second);
+				if (Entity::containsVar(rhsRef.second)) {
+					VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
+					if (Modifies::contains(procIndex, varIndex)) {
+						return EvaluatedTable(true);
+					} else {
+						return EvaluatedTable(false);
+					}
+				} else {
+					return EvaluatedTable(false);
+				}
+			}
+		} else {
+			if (Entity::containsProc(lhsRef.second)) {
+				ProcIndex procIndex = Entity::getProcIdx(lhsRef.second);
+				if (rhsRef.first == PqlReferenceType::synonym) {
+					varIndices = Modifies::getVariables(procIndex);
+					PQLmap[rhsRef.second] = varIndices;
+				} else if (rhsRef.first == PqlReferenceType::wildcard) {
+					if (Modifies::getVariables(procIndex).size() > 0) {
+						return EvaluatedTable(true);
+					} else {
+						return EvaluatedTable(false);
+					}
+				} else {
+					throw EvaluatorException(EvaluatorException::MODIFIES_P_ERROR);
+				}
+			}
 		}
 	} else {
 		throw EvaluatorException(EvaluatorException::MODIFIES_P_ERROR);
@@ -249,7 +282,7 @@ EvaluatedTable RelationshipInstruction::handleUsesP() {
 	/* Uses (p/p1, v) or Uses (p/p1, "x") or Uses (p/p1, _ ) */
 	std::unordered_map<std::string, PqlEntityType> PQLentities;
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
-	PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
+	PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Procedure));
 	PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Variable));
 	std::tuple<std::vector<int>, std::vector<int>>  allProcVarInfos = Uses::getAllProcVarInfo();
 	std::vector<int> allStmts;
@@ -270,6 +303,38 @@ EvaluatedTable RelationshipInstruction::handleUsesP() {
 		if (rhsRef.first != PqlReferenceType::wildcard && rhsRef.first != PqlReferenceType::ident) {
 			varIndices = std::get<1>(allProcVarInfos);
 			PQLmap[rhsRef.second] = varIndices;
+		}
+	} else if (lhsRef.first == PqlReferenceType::ident) {
+		if (rhsRef.first == PqlReferenceType::ident) {
+			if (Entity::containsProc(lhsRef.second)) {
+				ProcIndex procIndex = Entity::getProcIdx(lhsRef.second);
+				if (Entity::containsVar(rhsRef.second)) {
+					VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
+					if (Uses::contains(procIndex, varIndex)) {
+						return EvaluatedTable(true);
+					} else {
+						return EvaluatedTable(false);
+					}
+				} else {
+					return EvaluatedTable(false);
+				}
+			}
+		} else {
+			if (Entity::containsProc(lhsRef.second)) {
+				ProcIndex procIndex = Entity::getProcIdx(lhsRef.second);
+				if (rhsRef.first == PqlReferenceType::synonym) {
+					varIndices = Uses::getVariables(procIndex);
+					PQLmap[rhsRef.second] = varIndices;
+				} else if (rhsRef.first == PqlReferenceType::wildcard) {
+					if (Uses::getVariables(procIndex).size() > 0) {
+						return EvaluatedTable(true);
+					} else {
+						return EvaluatedTable(false);
+					}
+				} else {
+					throw EvaluatorException(EvaluatorException::USES_P_ERROR);
+				}
+			}
 		}
 	} else {
 		throw EvaluatorException(EvaluatorException::USES_P_ERROR);
@@ -658,7 +723,8 @@ EvaluatedTable RelationshipInstruction::handleParentT() {
 }
 
 RelationshipInstruction::RelationshipInstruction(PqlRelationshipType pqlRSType, PqlReference lhs, PqlReference rhs) :
-	pqlRelationshipType(pqlRSType), lhsRef(lhs), rhsRef(rhs) {}
+	pqlRelationshipType(pqlRSType), lhsRef(lhs), rhsRef(rhs) {
+}
 
 EvaluatedTable RelationshipInstruction::execute() {
 	EvaluatedTable evTable;
