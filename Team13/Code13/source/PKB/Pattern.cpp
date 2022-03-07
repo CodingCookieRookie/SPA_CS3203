@@ -1,6 +1,6 @@
 #include "./Pattern.h"
 
-std::unordered_map<VarIndex, std::vector<std::tuple<StmtIndex, std::string>>, VarIndex::HashFunction> Pattern::varPostFixTable;
+std::unordered_map<VarIndex, std::vector<std::tuple<StmtIndex, std::string>>> Pattern::varPostFixTable;
 std::unordered_map<std::string, std::vector<std::tuple<StmtIndex, VarIndex>>> Pattern::postFixVarTable;
 
 void Pattern::insertPostFixInfo(VarIndex& varIdx, std::string& postFixExpression, StmtIndex& stmtIdx) {
@@ -25,7 +25,7 @@ void Pattern::insertPostFixInfo(VarIndex& varIdx, std::string& postFixExpression
 
 std::vector<int> Pattern::getStmtsFromVarPatternFullMatch(VarIndex& varIdx, std::string& expression) {
 	std::vector<int> res;
-	std::unordered_set<StmtIndex, StmtIndex::HashFunction> stmtSet;
+	std::unordered_set<StmtIndex> stmtSet;
 
 	std::vector<std::tuple<StmtIndex, std::string>> value = varPostFixTable[varIdx];
 	for (auto& varPostFixTuple : value) {
@@ -45,7 +45,7 @@ std::vector<int> Pattern::getStmtsFromVarPatternFullMatch(VarIndex& varIdx, std:
 
 std::vector<int> Pattern::getStmtsFromVarPatternPartialMatch(VarIndex& varIdx, std::string& expression) {
 	std::vector<int> res;
-	std::unordered_set<StmtIndex, StmtIndex::HashFunction> stmtSet;
+	std::unordered_set<StmtIndex> stmtSet;
 
 	std::vector<std::tuple<StmtIndex, std::string>> value = varPostFixTable[varIdx];
 	for (auto& varPostFixTuple : value) {
@@ -97,7 +97,7 @@ std::tuple<std::vector<int>, std::vector<int>> Pattern::getStmtsFromPatternParti
 
 std::vector<int> Pattern::getStmtsFromVarPattern(VarIndex& varIdx) {
 	std::vector<int> res;
-	std::unordered_set<StmtIndex, StmtIndex::HashFunction> stmtSet;
+	std::unordered_set<StmtIndex> stmtSet;
 
 	std::vector<std::tuple<StmtIndex, std::string>> value = varPostFixTable[varIdx];
 	for (auto& varPostFixTuple : value) {

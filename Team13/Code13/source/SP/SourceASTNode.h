@@ -6,8 +6,8 @@
 #include <unordered_set>
 #include <vector>
 
-#include "../Common/Types.h"
 #include "../Common/ExprNode.h"
+#include "../Common/Types.h"
 
 /* Forward definition of StmtLstNode for compatibility with StmtNode */
 class StmtLstNode;

@@ -5,7 +5,7 @@
 
 #include "../source/QPS/PQLEvaluator.h"
 #include "../source/QPS/PQLParser.h"
-#include "../source/PKB/Modifies.h"
+#include "../source/PKB/UsesP.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -16,7 +16,7 @@ namespace UnitTesting {
 private:
 	TEST_METHOD_CLEANUP(cleanUpTables) {
 		Entity::performCleanUp();
-		Uses::performCleanUp();
+		UsesP::performCleanUp();
 	}
 public:
 	TEST_METHOD(execute_lhsSynonymRhsSynonymProc) {
@@ -31,8 +31,8 @@ public:
 		ProcIndex procIndex = Entity::insertProc("p");
 		Entity::insertVar("randomVar");
 		VarIndex varIndex = Entity::insertVar("x");
-		Uses::insert(procIndex, varIndex);
-		Assert::AreEqual(Uses::contains(procIndex, varIndex), true);
+		UsesP::insert(procIndex, varIndex);
+		Assert::AreEqual(UsesP::contains(procIndex, varIndex), true);
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -52,7 +52,7 @@ public:
 		ProcIndex procIndex = Entity::insertProc("p");
 		Entity::insertVar("randomVar");
 		VarIndex varIndex = Entity::insertVar("x");
-		Uses::insert(procIndex, varIndex);
+		UsesP::insert(procIndex, varIndex);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -74,8 +74,8 @@ public:
 		Entity::insertVar("randomVar");
 		VarIndex varIndex = Entity::insertVar("x");
 		VarIndex varIndex2 = Entity::insertVar("y");
-		Uses::insert(procIndex, varIndex);
-		Uses::insert(procIndex, varIndex2);
+		UsesP::insert(procIndex, varIndex);
+		UsesP::insert(procIndex, varIndex2);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -95,8 +95,8 @@ public:
 		ProcIndex procIndex = Entity::insertProc("p");
 		Entity::insertVar("randomVar");
 		VarIndex varIndex = Entity::insertVar("x");
-		Uses::insert(procIndex, varIndex);
-		Assert::AreEqual(Uses::contains(procIndex, varIndex), true);
+		UsesP::insert(procIndex, varIndex);
+		Assert::AreEqual(UsesP::contains(procIndex, varIndex), true);
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -116,7 +116,7 @@ public:
 		ProcIndex procIndex = Entity::insertProc("p");
 		Entity::insertVar("randomVar");
 		VarIndex varIndex = Entity::insertVar("x");
-		Uses::insert(procIndex, varIndex);
+		UsesP::insert(procIndex, varIndex);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -138,8 +138,8 @@ public:
 		Entity::insertVar("randomVar");
 		VarIndex varIndex = Entity::insertVar("x");
 		VarIndex varIndex2 = Entity::insertVar("y");
-		Uses::insert(procIndex, varIndex);
-		Uses::insert(procIndex, varIndex2);
+		UsesP::insert(procIndex, varIndex);
+		UsesP::insert(procIndex, varIndex2);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();

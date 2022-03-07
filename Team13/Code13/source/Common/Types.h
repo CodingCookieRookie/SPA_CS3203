@@ -21,12 +21,6 @@ struct VarIndex {
 		return index == p.index;
 	}
 
-	struct HashFunction {
-		size_t operator()(const VarIndex& k) const {
-			return std::hash<int>()(k.index);
-		}
-	};
-
 	int getIndex() {
 		return index;
 	}
@@ -44,12 +38,6 @@ struct ProcIndex {
 	bool operator==(const ProcIndex& p) const {
 		return index == p.index;
 	}
-
-	struct HashFunction {
-		size_t operator()(const ProcIndex& k) const {
-			return std::hash<int>()(k.index);
-		}
-	};
 
 	int getIndex() {
 		return index;
@@ -69,13 +57,28 @@ struct StmtIndex {
 		return index == p.index;
 	}
 
-	struct HashFunction {
-		size_t operator()(const StmtIndex& k) const {
-			return std::hash<int>()(k.index);
-		}
-	};
-
 	int getIndex() {
 		return index;
+	}
+};
+
+template<>
+struct std::hash<VarIndex> {
+	size_t operator()(const VarIndex& k) const {
+		return std::hash<int>()(k.index);
+	}
+};
+
+template<>
+struct std::hash<ProcIndex> {
+	size_t operator()(const ProcIndex& k) const {
+		return std::hash<int>()(k.index);
+	}
+};
+
+template<>
+struct std::hash<StmtIndex> {
+	size_t operator()(const StmtIndex& k) const {
+		return std::hash<int>()(k.index);
 	}
 };

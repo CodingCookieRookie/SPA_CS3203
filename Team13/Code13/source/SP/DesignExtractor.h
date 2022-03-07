@@ -7,13 +7,13 @@
 class DesignExtractor {
 private:
 	/* Maps a ProcIndex to a vector of the StmtIndices contained in it */
-	static std::unordered_map<ProcIndex, std::vector<StmtIndex>, ProcIndex::HashFunction> procStmtMap;
+	static std::unordered_map<ProcIndex, std::vector<StmtIndex>> procStmtMap;
 
 	/* Maps a StmtIndex to a vector of the StmtIndices contained in it, if applicable */
-	static std::unordered_map<StmtIndex, std::vector<StmtIndex>, StmtIndex::HashFunction> stmtParentMap;
+	static std::unordered_map<StmtIndex, std::vector<StmtIndex>> stmtParentMap;
 
 	/* Maps a StmtIndex to the StmtIndex that follows it, if applicable */
-	static std::unordered_map<StmtIndex, StmtIndex, StmtIndex::HashFunction> stmtFollowsMap;
+	static std::unordered_map<StmtIndex, StmtIndex> stmtFollowsMap;
 
 	DesignExtractor() {}
 	static void processProgramNode(ProgramNode* programNode);
@@ -23,10 +23,7 @@ private:
 		processStmtNode(StmtNode* stmtNode, StmtIndex prevIndex);
 public:
 	static void extract(SourceAST& ast);
-	static std::unordered_map<ProcIndex, std::vector<StmtIndex>, ProcIndex::HashFunction>
-		getProcStmtMap();
-	static std::unordered_map<StmtIndex, std::vector<StmtIndex>, StmtIndex::HashFunction>
-		getStmtParentMap();
-	static std::unordered_map<StmtIndex, StmtIndex, StmtIndex::HashFunction>
-		getStmtFollowsMap();
+	static std::unordered_map<ProcIndex, std::vector<StmtIndex>> getProcStmtMap();
+	static std::unordered_map<StmtIndex, std::vector<StmtIndex>> getStmtParentMap();
+	static std::unordered_map<StmtIndex, StmtIndex> getStmtFollowsMap();
 };

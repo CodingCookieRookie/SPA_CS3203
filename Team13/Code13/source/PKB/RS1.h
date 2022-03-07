@@ -6,66 +6,42 @@
 
 #include "../Common/Types.h"
 
-template<class T>
+template<class T, typename SynonymIndex>
 class RS1 {
 protected:
 	RS1();
-	static std::unordered_map<VarIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>,
-		VarIndex::HashFunction> varStmtTable;
-	static std::unordered_map<StmtIndex, std::unordered_set<VarIndex, VarIndex::HashFunction>,
-		StmtIndex::HashFunction> stmtVarTable;
-	static std::unordered_map<VarIndex, std::unordered_set<ProcIndex, ProcIndex::HashFunction>,
-		VarIndex::HashFunction> varProcTable;
-	static std::unordered_map<ProcIndex, std::unordered_set<VarIndex, VarIndex::HashFunction>,
-		ProcIndex::HashFunction> procVarTable;
+	static std::unordered_map<VarIndex, std::unordered_set<SynonymIndex>> varSynonymTable;
+	static std::unordered_map<SynonymIndex, std::unordered_set<VarIndex>> synonymVarTable;
 
 public:
-	static void insert(StmtIndex stmtIndex, VarIndex varIndex);
-	static void insert(ProcIndex procIndex, VarIndex varIndex);
-	static bool contains(StmtIndex& stmtIndex, VarIndex& varIndex);
-	static bool contains(ProcIndex& procIndex, VarIndex& varIndex);
-	static std::vector<int> getStatements(VarIndex& varIndex);
-	static std::vector<int> getProcedures(VarIndex& varIndex);
-	static std::vector<int> getVariables(StmtIndex& stmtIndex);
-	static std::vector<int> getVariables(ProcIndex& procIndex);
-	static std::tuple<std::vector<int>, std::vector<int>> getAllProcVarInfo();
-	static std::tuple<std::vector<int>, std::vector<int>> getAllStmtVarInfo();
-	static void populateForContainers(StmtIndex& containerStmt,
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction>& subStmts);
+	static void insert(SynonymIndex& index, VarIndex& varIndex);
+	static bool contains(SynonymIndex& index, VarIndex& varIndex);
+	static std::vector<int> getFromVariable(VarIndex& varIndex);
+	static std::vector<int> getVariables(SynonymIndex& index);
+	static std::tuple<std::vector<int>, std::vector<int>> getAllSynonymVarInfo();
+	static void populateFromSubSynonyms(SynonymIndex& synonym, std::unordered_set<SynonymIndex>& subSynonymIndices);
 	static void performCleanUp();
 };
 
-template<class T> std::unordered_map<VarIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>,
-	VarIndex::HashFunction> RS1<T>::varStmtTable = {};
-template<class T> std::unordered_map<StmtIndex, std::unordered_set<VarIndex, VarIndex::HashFunction>,
-	StmtIndex::HashFunction> RS1<T>::stmtVarTable = {};
-template<class T> std::unordered_map<VarIndex, std::unordered_set<ProcIndex, ProcIndex::HashFunction>,
-	VarIndex::HashFunction> RS1<T>::varProcTable = {};
-template<class T> std::unordered_map<ProcIndex, std::unordered_set<VarIndex, VarIndex::HashFunction>,
-	ProcIndex::HashFunction> RS1<T>::procVarTable = {};
+template<class T, typename SynonymIndex> std::unordered_map<VarIndex, std::unordered_set<SynonymIndex>> RS1<T, SynonymIndex>::varSynonymTable = {};
+template<class T, typename SynonymIndex> std::unordered_map<SynonymIndex, std::unordered_set<VarIndex>> RS1<T, SynonymIndex>::synonymVarTable = {};
 
-template<class T>
-RS1<T>::RS1() {};
+template<class T, typename SynonymIndex>
+RS1<T, SynonymIndex>::RS1() {};
 
-template<class T>
-void RS1<T>::insert(StmtIndex stmtIndex, VarIndex varIndex) {
-	varStmtTable[varIndex].insert(stmtIndex);
-	stmtVarTable[stmtIndex].insert(varIndex);
+template<class T, typename SynonymIndex>
+void RS1<T, SynonymIndex>::insert(SynonymIndex& index, VarIndex& varIndex) {
+	varSynonymTable[varIndex].insert(index);
+	synonymVarTable[index].insert(varIndex);
 };
 
-template<class T>
-void RS1<T>::insert(ProcIndex procIndex, VarIndex varIndex) {
-	varProcTable[varIndex].insert(procIndex);
-	procVarTable[procIndex].insert(varIndex);
-};
-
-template<class T>
-bool RS1<T>::contains(StmtIndex& stmtIndex, VarIndex& varIndex) {
-	if (stmtVarTable.find(stmtIndex) == stmtVarTable.end()) {
+template<class T, typename SynonymIndex>
+bool RS1<T, SynonymIndex>::contains(SynonymIndex& index, VarIndex& varIndex) {
+	if (synonymVarTable.find(index) == synonymVarTable.end()) {
 		return false;
 	}
 
-	std::unordered_set<VarIndex, VarIndex::HashFunction> variables = stmtVarTable[stmtIndex];
+	std::unordered_set<VarIndex> variables = synonymVarTable[index];
 	if (variables.find(varIndex) == variables.end()) {
 		return false;
 	}
@@ -73,95 +49,48 @@ bool RS1<T>::contains(StmtIndex& stmtIndex, VarIndex& varIndex) {
 	return true;
 };
 
-template<class T>
-bool RS1<T>::contains(ProcIndex& procIndex, VarIndex& varIndex) {
-	if (procVarTable.find(procIndex) == procVarTable.end()) {
-		return false;
+template<class T, typename SynonymIndex>
+std::vector<int> RS1<T, SynonymIndex>::getFromVariable(VarIndex& varIndex) {
+	std::vector<int> synonyms;
+	for (auto synonym : varSynonymTable[varIndex]) {
+		synonyms.push_back(synonym.index);
 	}
-
-	std::unordered_set<VarIndex, VarIndex::HashFunction> variables = procVarTable[procIndex];
-	if (variables.find(varIndex) == variables.end()) {
-		return false;
-	}
-
-	return true;
+	return synonyms;
 };
 
-template<class T>
-std::vector<int> RS1<T>::getStatements(VarIndex& varIndex) {
-	std::vector<int> statements;
-	for (auto& statement : varStmtTable[varIndex]) {
-		statements.push_back(statement.index);
-	}
-	return statements;
-};
-
-template<class T>
-std::vector<int> RS1<T>::getProcedures(VarIndex& varIndex) {
-	std::vector<int> procedures;
-	for (auto& procedure : varProcTable[varIndex]) {
-		procedures.push_back(procedure.index);
-	}
-	return procedures;
-};
-
-template<class T>
-std::vector<int> RS1<T>::getVariables(StmtIndex& stmtIndex) {
+template<class T, typename SynonymIndex>
+std::vector<int> RS1<T, SynonymIndex>::getVariables(SynonymIndex& index) {
 	std::vector<int> variables;
-	for (auto& variable : stmtVarTable[stmtIndex]) {
+	for (auto variable : synonymVarTable[index]) {
 		variables.push_back(variable.index);
 	}
 	return variables;
 };
 
-template<class T>
-std::vector<int> RS1<T>::getVariables(ProcIndex& procIndex) {
+template<class T, typename SynonymIndex>
+std::tuple<std::vector<int>, std::vector<int>> RS1<T, SynonymIndex>::getAllSynonymVarInfo() {
+	std::vector<int> synonyms;
 	std::vector<int> variables;
-	for (auto& variable : procVarTable[procIndex]) {
-		variables.push_back(variable.index);
-	}
-	return variables;
-};
-
-template<class T>
-std::tuple<std::vector<int>, std::vector<int>> RS1<T>::getAllProcVarInfo() {
-	std::vector<int> procedures;
-	std::vector<int> variables;
-	for (auto& procVarEntry : procVarTable) {
-		for (auto& varIndex : procVarEntry.second) {
-			procedures.push_back(procVarEntry.first.index);
+	for (auto synonymVarEntry : synonymVarTable) {
+		for (auto& varIndex : synonymVarEntry.second) {
+			synonyms.push_back(synonymVarEntry.first.index);
 			variables.push_back(varIndex.index);
 		}
 	}
-	return std::make_tuple(procedures, variables);
+	return std::make_tuple(synonyms, variables);
 };
 
-template<class T>
-std::tuple<std::vector<int>, std::vector<int>> RS1<T>::getAllStmtVarInfo() {
-	std::vector<int> statements;
-	std::vector<int> variables;
-	for (auto& stmtVarEntry : stmtVarTable) {
-		for (auto& varIndex : stmtVarEntry.second) {
-			statements.push_back(stmtVarEntry.first.index);
-			variables.push_back(varIndex.index);
-		}
-	}
-	return std::make_tuple(statements, variables);
-};
-
-template<class T>
-void RS1<T>::populateForContainers(StmtIndex& containerStmt, std::unordered_set<StmtIndex, StmtIndex::HashFunction>& subStmts) {
-	for (auto& stmt : subStmts) {
-		for (auto& var : stmtVarTable[stmt]) {
-			insert(containerStmt, var);
+template<class T, typename SynonymIndex>
+void RS1<T, SynonymIndex>::populateFromSubSynonyms(SynonymIndex& synonym, std::unordered_set<SynonymIndex>& subSynonymIndices) {
+	for (auto subSynonymIndex : subSynonymIndices) {
+		for (auto var : synonymVarTable[subSynonymIndex]) {
+			insert(synonym, var);
 		}
 	}
 }
 
-template<class T>
-void RS1<T>::performCleanUp() {
-	varStmtTable = {};
-	stmtVarTable = {};
-	varProcTable = {};
-	procVarTable = {};
+template<class T, typename SynonymIndex>
+void RS1<T, SynonymIndex>::performCleanUp() {
+	varSynonymTable = {};
+	synonymVarTable = {};
 }

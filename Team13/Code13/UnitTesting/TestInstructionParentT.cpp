@@ -59,8 +59,7 @@ public:
 		for (int i = 0; i < 4; i++) {
 			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
 		}
-		std::unordered_map<StmtIndex,
-			std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> uPredSucTable;
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> uPredSucTable;
 		uPredSucTable[stmts[0]] = { stmts[1] }; // 1 parents 2 (ignored)
 		uPredSucTable[stmts[1]] = { stmts[2], stmts[3] }; // 2 parents 3 and 4
 		ParentT::populate(uPredSucTable);
@@ -110,8 +109,7 @@ public:
 		for (int i = 0; i < 4; i++) {
 			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
 		}
-		std::unordered_map<StmtIndex,
-			std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> uPredSucTable;
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> uPredSucTable;
 		uPredSucTable[stmts[0]] = { stmts[1] }; // 1 parents 2
 		uPredSucTable[stmts[1]] = { stmts[2], stmts[3] }; // 2 parents 3 and 4
 		uPredSucTable[stmts[2]] = { stmts[3] }; //  3 parents 4
@@ -162,8 +160,7 @@ public:
 		for (int i = 0; i < 4; i++) {
 			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
 		}
-		std::unordered_map<StmtIndex,
-			std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> uPredSucTable;
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> uPredSucTable;
 		uPredSucTable[stmts[0]] = { stmts[1], stmts[2] }; // 1 parents 2 and 3
 		uPredSucTable[stmts[1]] = { stmts[2], stmts[3] }; // 2 parents 3 and 4
 		uPredSucTable[stmts[2]] = { stmts[3] }; //  3 parents 4
@@ -224,8 +221,7 @@ public:
 		for (int i = 0; i < 19; i++) {
 			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
 		}
-		std::unordered_map<StmtIndex,
-			std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> uPredSucTable;
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> uPredSucTable;
 		for (int i = 0; i < 18; i++) {
 			uPredSucTable[stmts[i]] = { stmts[i + 1] }; // i parents i + 1, simulate 19 nesting levels
 		}
@@ -299,8 +295,7 @@ public:
 		for (int i = 0; i < 99; i++) {
 			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
 		}
-		std::unordered_map<StmtIndex,
-			std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> uPredSucTable;
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> uPredSucTable;
 		for (int i = 0; i < 99 - 1; i++) {
 			uPredSucTable[stmts[i]] = { stmts[i + 1] }; // i parents i + 1
 		}
@@ -365,8 +360,7 @@ public:
 		for (int i = 0; i < 99; i++) {
 			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
 		}
-		std::unordered_map<StmtIndex,
-			std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> uPredSucTable;
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> uPredSucTable;
 		for (int i = 0; i < 99 - 1; i++) {
 			uPredSucTable[stmts[i]] = { stmts[i + 1] }; // i parents i + 1
 		}
@@ -417,8 +411,7 @@ public:
 		for (int i = 0; i < 4; i++) {
 			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
 		}
-		std::unordered_map<StmtIndex,
-			std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> uPredSucTable;
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> uPredSucTable;
 		uPredSucTable[stmts[0]] = { stmts[1], stmts[2] }; // 1 parents 2 and 3
 		uPredSucTable[stmts[1]] = { stmts[2], stmts[3] }; // 2 parents 3 and 4
 		uPredSucTable[stmts[2]] = { stmts[3] }; //  3 parents 4

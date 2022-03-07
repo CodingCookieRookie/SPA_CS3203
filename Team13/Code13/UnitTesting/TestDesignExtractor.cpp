@@ -11,8 +11,10 @@ namespace UnitTesting {
 private:
 	TEST_METHOD_CLEANUP(cleanUpTables) {
 		Entity::performCleanUp();
-		Uses::performCleanUp();
-		Modifies::performCleanUp();
+		UsesS::performCleanUp();
+		UsesP::performCleanUp();
+		ModifiesS::performCleanUp();
+		ModifiesP::performCleanUp();
 		Pattern::performCleanUp();
 		Parent::performCleanUp();
 		ParentT::performCleanUp();
@@ -41,13 +43,13 @@ public:
 		Assert::AreEqual(size_t(1), Entity::getAllVars().size());
 		Assert::AreEqual(varName, Entity::getVarName(Entity::getAllVars()[0]));
 
-		std::unordered_map<ProcIndex, std::vector<StmtIndex>, ProcIndex::HashFunction>
+		std::unordered_map<ProcIndex, std::vector<StmtIndex>>
 			procStmtMap = DesignExtractor::getProcStmtMap();
 		Assert::AreEqual(size_t(1), procStmtMap.size());
 		ProcIndex procIndex = Entity::getProcIdx(procName);
 		Assert::AreEqual(size_t(1), procStmtMap.at(procIndex).size());
 
-		Assert::AreEqual(size_t(1), std::get<0>(Modifies::getAllStmtVarInfo()).size());
+		Assert::AreEqual(size_t(1), std::get<0>(ModifiesS::getAllSynonymVarInfo()).size());
 	}
 
 	TEST_METHOD(extract_printStatementOnly_success) {
@@ -69,13 +71,13 @@ public:
 		Assert::AreEqual(size_t(1), Entity::getAllVars().size());
 		Assert::AreEqual(varName, Entity::getVarName(Entity::getAllVars()[0]));
 
-		std::unordered_map<ProcIndex, std::vector<StmtIndex>, ProcIndex::HashFunction>
+		std::unordered_map<ProcIndex, std::vector<StmtIndex>>
 			procStmtMap = DesignExtractor::getProcStmtMap();
 		Assert::AreEqual(size_t(1), procStmtMap.size());
 		ProcIndex procIndex = Entity::getProcIdx(procName);
 		Assert::AreEqual(size_t(1), procStmtMap.at(procIndex).size());
 
-		Assert::AreEqual(size_t(1), std::get<0>(Uses::getAllStmtVarInfo()).size());
+		Assert::AreEqual(size_t(1), std::get<0>(UsesS::getAllSynonymVarInfo()).size());
 	}
 
 	TEST_METHOD(extract_readandPrintStatement_success) {
@@ -101,19 +103,19 @@ public:
 		Assert::AreEqual(varNameX, Entity::getVarName(Entity::getAllVars()[0]));
 		Assert::AreEqual(varNameY, Entity::getVarName(Entity::getAllVars()[1]));
 
-		std::unordered_map<ProcIndex, std::vector<StmtIndex>, ProcIndex::HashFunction>
+		std::unordered_map<ProcIndex, std::vector<StmtIndex>>
 			procStmtMap = DesignExtractor::getProcStmtMap();
 		Assert::AreEqual(size_t(1), procStmtMap.size());
 		ProcIndex procIndex = Entity::getProcIdx(procName);
 		Assert::AreEqual(size_t(2), procStmtMap.at(procIndex).size());
 
-		std::unordered_map<StmtIndex, StmtIndex, StmtIndex::HashFunction>
+		std::unordered_map<StmtIndex, StmtIndex>
 			stmtFollowsMap = DesignExtractor::getStmtFollowsMap();
 		Assert::AreEqual(size_t(1), stmtFollowsMap.size());
 		Assert::IsTrue(StmtIndex(2) == stmtFollowsMap.at(StmtIndex(1)));
 
-		Assert::AreEqual(size_t(1), std::get<0>(Modifies::getAllStmtVarInfo()).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Uses::getAllStmtVarInfo()).size());
+		Assert::AreEqual(size_t(1), std::get<0>(ModifiesS::getAllSynonymVarInfo()).size());
+		Assert::AreEqual(size_t(1), std::get<0>(UsesS::getAllSynonymVarInfo()).size());
 
 		Assert::AreEqual(size_t(1), std::get<0>(Follows::getAllPredecessorSuccessorInfo()).size());
 		Assert::AreEqual(size_t(1), std::get<0>(FollowsT::getAllPredecessorSuccessorInfo()).size());

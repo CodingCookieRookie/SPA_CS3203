@@ -164,8 +164,10 @@ private:
 	TEST_METHOD_CLEANUP(cleanUpTables) {
 		Container::performCleanUp();
 		Entity::performCleanUp();
-		Uses::performCleanUp();
-		Modifies::performCleanUp();
+		UsesP::performCleanUp();
+		UsesS::performCleanUp();
+		ModifiesP::performCleanUp();
+		ModifiesS::performCleanUp();
 		Pattern::performCleanUp();
 		Parent::performCleanUp();
 		ParentT::performCleanUp();
@@ -176,8 +178,10 @@ private:
 	TEST_METHOD_INITIALIZE(initTables) {
 		Container::performCleanUp();
 		Entity::performCleanUp();
-		Uses::performCleanUp();
-		Modifies::performCleanUp();
+		UsesP::performCleanUp();
+		UsesS::performCleanUp();
+		ModifiesP::performCleanUp();
+		ModifiesS::performCleanUp();
 		Pattern::performCleanUp();
 		Parent::performCleanUp();
 		ParentT::performCleanUp();
@@ -224,12 +228,12 @@ public:
 		SourceAST ast = Parser::parse(sampleSource1);
 		DesignExtractor::extract(ast);
 
-		Assert::AreEqual(size_t(5), std::get<0>(Modifies::getAllStmtVarInfo()).size());
-		Assert::IsTrue(Modifies::contains(stmtIdx1, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(Modifies::contains(stmtIdx2, Entity::getVarIdx(varName2)));
+		Assert::AreEqual(size_t(5), std::get<0>(ModifiesS::getAllSynonymVarInfo()).size());
+		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
+		Assert::IsTrue(ModifiesS::contains(stmtIdx2, Entity::getVarIdx(varName2)));
 
-		Assert::AreEqual(size_t(5), std::get<0>(Uses::getAllStmtVarInfo()).size());
-		Assert::IsTrue(Uses::contains(stmtIdx2, Entity::getVarIdx(varName1)));
+		Assert::AreEqual(size_t(5), std::get<0>(UsesS::getAllSynonymVarInfo()).size());
+		Assert::IsTrue(UsesS::contains(stmtIdx2, Entity::getVarIdx(varName1)));
 
 		Assert::IsTrue(Follows::containsSuccessor(stmtIdx2, stmtIdx3));
 		Assert::AreEqual(size_t(5), std::get<0>(Follows::getAllPredecessorSuccessorInfo()).size());
@@ -285,17 +289,17 @@ public:
 		SourceAST ast = Parser::parse(sampleSource2);
 		DesignExtractor::extract(ast);
 
-		Assert::AreEqual(size_t(11), std::get<0>(Modifies::getAllStmtVarInfo()).size());
-		Assert::IsTrue(Modifies::contains(stmtIdx1, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(Modifies::contains(stmtIdx2, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(Modifies::contains(stmtIdx2, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(Modifies::contains(stmtIdx2, Entity::getVarIdx(varName4)));
+		Assert::AreEqual(size_t(11), std::get<0>(ModifiesS::getAllSynonymVarInfo()).size());
+		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
+		Assert::IsTrue(ModifiesS::contains(stmtIdx2, Entity::getVarIdx(varName1)));
+		Assert::IsTrue(ModifiesS::contains(stmtIdx2, Entity::getVarIdx(varName2)));
+		Assert::IsTrue(ModifiesS::contains(stmtIdx2, Entity::getVarIdx(varName4)));
 
-		Assert::AreEqual(size_t(9), std::get<0>(Uses::getAllStmtVarInfo()).size());
-		Assert::IsTrue(Uses::contains(stmtIdx2, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(Uses::contains(stmtIdx3, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(Uses::contains(stmtIdx4, Entity::getVarIdx(varName2)));
-		Assert::AreEqual(size_t(3), Uses::getStatements(Entity::getVarIdx(varName1)).size());
+		Assert::AreEqual(size_t(9), std::get<0>(UsesS::getAllSynonymVarInfo()).size());
+		Assert::IsTrue(UsesS::contains(stmtIdx2, Entity::getVarIdx(varName1)));
+		Assert::IsTrue(UsesS::contains(stmtIdx3, Entity::getVarIdx(varName1)));
+		Assert::IsTrue(UsesS::contains(stmtIdx4, Entity::getVarIdx(varName2)));
+		Assert::AreEqual(size_t(3), UsesS::getFromVariable(Entity::getVarIdx(varName1)).size());
 
 		Assert::AreEqual(size_t(8), std::get<0>(Follows::getAllPredecessorSuccessorInfo()).size());
 		Assert::IsFalse(Follows::containsSuccessor(stmtIdx1, stmtIdx2));
@@ -357,16 +361,16 @@ public:
 		SourceAST ast = Parser::parse(sampleSource3);
 		DesignExtractor::extract(ast);
 
-		Assert::AreEqual(size_t(8), std::get<0>(Modifies::getAllStmtVarInfo()).size());
-		Assert::IsTrue(Modifies::contains(stmtIdx1, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(Modifies::contains(stmtIdx2, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(Modifies::contains(stmtIdx2, Entity::getVarIdx(varName2)));
+		Assert::AreEqual(size_t(8), std::get<0>(ModifiesS::getAllSynonymVarInfo()).size());
+		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
+		Assert::IsTrue(ModifiesS::contains(stmtIdx2, Entity::getVarIdx(varName1)));
+		Assert::IsTrue(ModifiesS::contains(stmtIdx2, Entity::getVarIdx(varName2)));
 
-		Assert::AreEqual(size_t(8), std::get<0>(Uses::getAllStmtVarInfo()).size());
-		Assert::IsTrue(Uses::contains(stmtIdx2, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(Uses::contains(stmtIdx3, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(Uses::contains(stmtIdx4, Entity::getVarIdx(varName2)));
-		Assert::AreEqual(size_t(3), Uses::getStatements(Entity::getVarIdx(varName1)).size());
+		Assert::AreEqual(size_t(8), std::get<0>(UsesS::getAllSynonymVarInfo()).size());
+		Assert::IsTrue(UsesS::contains(stmtIdx2, Entity::getVarIdx(varName1)));
+		Assert::IsTrue(UsesS::contains(stmtIdx3, Entity::getVarIdx(varName1)));
+		Assert::IsTrue(UsesS::contains(stmtIdx4, Entity::getVarIdx(varName2)));
+		Assert::AreEqual(size_t(3), UsesS::getFromVariable(Entity::getVarIdx(varName1)).size());
 
 		Assert::AreEqual(size_t(5), std::get<0>(Follows::getAllPredecessorSuccessorInfo()).size());
 		Assert::IsFalse(Follows::containsSuccessor(stmtIdx1, stmtIdx2));
@@ -433,18 +437,18 @@ public:
 		SourceAST ast = Parser::parse(mixedStmtsSource);
 		DesignExtractor::extract(ast);
 
-		Assert::AreEqual(size_t(16), std::get<0>(Modifies::getAllStmtVarInfo()).size());
-		Assert::IsTrue(Modifies::contains(stmtIdx1, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(Modifies::contains(stmtIdx2, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(Modifies::contains(stmtIdx5, Entity::getVarIdx(varName3)));
-		Assert::AreEqual(size_t(3), Modifies::getStatements(Entity::getVarIdx(varName1)).size());
+		Assert::AreEqual(size_t(16), std::get<0>(ModifiesS::getAllSynonymVarInfo()).size());
+		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
+		Assert::IsTrue(ModifiesS::contains(stmtIdx2, Entity::getVarIdx(varName1)));
+		Assert::IsTrue(ModifiesS::contains(stmtIdx5, Entity::getVarIdx(varName3)));
+		Assert::AreEqual(size_t(3), ModifiesS::getFromVariable(Entity::getVarIdx(varName1)).size());
 
-		Assert::AreEqual(size_t(16), std::get<0>(Uses::getAllStmtVarInfo()).size());
-		Assert::IsTrue(Uses::contains(stmtIdx2, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(Uses::contains(stmtIdx2, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(Uses::contains(stmtIdx3, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(Uses::contains(stmtIdx4, Entity::getVarIdx(varName2)));
-		Assert::AreEqual(size_t(4), Uses::getStatements(Entity::getVarIdx(varName1)).size());
+		Assert::AreEqual(size_t(16), std::get<0>(UsesS::getAllSynonymVarInfo()).size());
+		Assert::IsTrue(UsesS::contains(stmtIdx2, Entity::getVarIdx(varName1)));
+		Assert::IsTrue(UsesS::contains(stmtIdx2, Entity::getVarIdx(varName2)));
+		Assert::IsTrue(UsesS::contains(stmtIdx3, Entity::getVarIdx(varName1)));
+		Assert::IsTrue(UsesS::contains(stmtIdx4, Entity::getVarIdx(varName2)));
+		Assert::AreEqual(size_t(4), UsesS::getFromVariable(Entity::getVarIdx(varName1)).size());
 
 		Assert::AreEqual(size_t(10), std::get<0>(Follows::getAllPredecessorSuccessorInfo()).size());
 		Assert::IsFalse(Follows::containsSuccessor(stmtIdx1, stmtIdx2));
@@ -511,17 +515,17 @@ public:
 		SourceAST ast = Parser::parse(nestedWhileIfSource);
 		DesignExtractor::extract(ast);
 
-		Assert::AreEqual(size_t(14), std::get<0>(Modifies::getAllStmtVarInfo()).size());
-		Assert::IsTrue(Modifies::contains(stmtIdx2, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(Modifies::contains(stmtIdx4, Entity::getVarIdx(varName1)));
-		Assert::AreEqual(size_t(3), Modifies::getStatements(Entity::getVarIdx(varName1)).size());
+		Assert::AreEqual(size_t(14), std::get<0>(ModifiesS::getAllSynonymVarInfo()).size());
+		Assert::IsTrue(ModifiesS::contains(stmtIdx2, Entity::getVarIdx(varName2)));
+		Assert::IsTrue(ModifiesS::contains(stmtIdx4, Entity::getVarIdx(varName1)));
+		Assert::AreEqual(size_t(3), ModifiesS::getFromVariable(Entity::getVarIdx(varName1)).size());
 
-		Assert::AreEqual(size_t(27), std::get<0>(Uses::getAllStmtVarInfo()).size());
-		Assert::IsTrue(Uses::contains(stmtIdx1, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(Uses::contains(stmtIdx2, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(Uses::contains(stmtIdx3, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(Uses::contains(stmtIdx6, Entity::getVarIdx(varName1)));
-		Assert::AreEqual(size_t(8), Uses::getStatements(Entity::getVarIdx(varName1)).size());
+		Assert::AreEqual(size_t(27), std::get<0>(UsesS::getAllSynonymVarInfo()).size());
+		Assert::IsTrue(UsesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
+		Assert::IsTrue(UsesS::contains(stmtIdx2, Entity::getVarIdx(varName1)));
+		Assert::IsTrue(UsesS::contains(stmtIdx3, Entity::getVarIdx(varName1)));
+		Assert::IsTrue(UsesS::contains(stmtIdx6, Entity::getVarIdx(varName1)));
+		Assert::AreEqual(size_t(8), UsesS::getFromVariable(Entity::getVarIdx(varName1)).size());
 
 		Assert::AreEqual(size_t(8), std::get<0>(Follows::getAllPredecessorSuccessorInfo()).size());
 		Assert::IsTrue(Follows::containsSuccessor(stmtIdx1, stmtIdx2));
@@ -591,15 +595,15 @@ public:
 		SourceAST ast = Parser::parse(multipleBracketsSource);
 		DesignExtractor::extract(ast);
 
-		Assert::AreEqual(size_t(8), std::get<0>(Modifies::getAllStmtVarInfo()).size());
-		Assert::IsTrue(Modifies::contains(stmtIdx1, Entity::getVarIdx(varName1)));
-		Assert::AreEqual(size_t(3), Modifies::getStatements(Entity::getVarIdx(varName1)).size());
+		Assert::AreEqual(size_t(8), std::get<0>(ModifiesS::getAllSynonymVarInfo()).size());
+		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
+		Assert::AreEqual(size_t(3), ModifiesS::getFromVariable(Entity::getVarIdx(varName1)).size());
 
-		Assert::AreEqual(size_t(8), std::get<0>(Uses::getAllStmtVarInfo()).size());
-		Assert::IsFalse(Uses::contains(stmtIdx1, Entity::getVarIdx(varName1)));
-		Assert::IsFalse(Uses::contains(stmtIdx2, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(Uses::contains(stmtIdx3, Entity::getVarIdx(varName1)));
-		Assert::AreEqual(size_t(3), Uses::getStatements(Entity::getVarIdx(varName1)).size());
+		Assert::AreEqual(size_t(8), std::get<0>(UsesS::getAllSynonymVarInfo()).size());
+		Assert::IsFalse(UsesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
+		Assert::IsFalse(UsesS::contains(stmtIdx2, Entity::getVarIdx(varName2)));
+		Assert::IsTrue(UsesS::contains(stmtIdx3, Entity::getVarIdx(varName1)));
+		Assert::AreEqual(size_t(3), UsesS::getFromVariable(Entity::getVarIdx(varName1)).size());
 
 		Assert::AreEqual(size_t(5), std::get<0>(Follows::getAllPredecessorSuccessorInfo()).size());
 		Assert::IsTrue(Follows::containsSuccessor(stmtIdx1, stmtIdx2));
@@ -660,14 +664,14 @@ public:
 		SourceAST ast = Parser::parse(sameKeywordNameSource);
 		DesignExtractor::extract(ast);
 
-		Assert::AreEqual(size_t(6), std::get<0>(Modifies::getAllStmtVarInfo()).size());
-		Assert::IsTrue(Modifies::contains(stmtIdx1, Entity::getVarIdx(varName1)));
-		Assert::AreEqual(size_t(2), Modifies::getStatements(Entity::getVarIdx(varName1)).size());
+		Assert::AreEqual(size_t(6), std::get<0>(ModifiesS::getAllSynonymVarInfo()).size());
+		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
+		Assert::AreEqual(size_t(2), ModifiesS::getFromVariable(Entity::getVarIdx(varName1)).size());
 
-		Assert::AreEqual(size_t(1), std::get<0>(Uses::getAllStmtVarInfo()).size());
-		Assert::IsTrue(Uses::contains(stmtIdx3, Entity::getVarIdx(varName3)));
-		Assert::IsFalse(Uses::contains(stmtIdx1, Entity::getVarIdx(varName1)));
-		Assert::AreEqual(size_t(1), Uses::getStatements(Entity::getVarIdx(varName3)).size());
+		Assert::AreEqual(size_t(1), std::get<0>(UsesS::getAllSynonymVarInfo()).size());
+		Assert::IsTrue(UsesS::contains(stmtIdx3, Entity::getVarIdx(varName3)));
+		Assert::IsFalse(UsesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
+		Assert::AreEqual(size_t(1), UsesS::getFromVariable(Entity::getVarIdx(varName3)).size());
 
 		Assert::AreEqual(size_t(6), std::get<0>(Follows::getAllPredecessorSuccessorInfo()).size());
 		Assert::IsTrue(Follows::containsSuccessor(stmtIdx1, stmtIdx2));
@@ -720,14 +724,14 @@ public:
 		SourceAST ast = Parser::parse(longAssignmentExprSource);
 		DesignExtractor::extract(ast);
 
-		Assert::AreEqual(size_t(1), std::get<0>(Modifies::getAllStmtVarInfo()).size());
-		Assert::IsTrue(Modifies::contains(stmtIdx, Entity::getVarIdx(varName1)));
-		Assert::AreEqual(size_t(1), Modifies::getStatements(Entity::getVarIdx(varName1)).size());
+		Assert::AreEqual(size_t(1), std::get<0>(ModifiesS::getAllSynonymVarInfo()).size());
+		Assert::IsTrue(ModifiesS::contains(stmtIdx, Entity::getVarIdx(varName1)));
+		Assert::AreEqual(size_t(1), ModifiesS::getFromVariable(Entity::getVarIdx(varName1)).size());
 
-		Assert::AreEqual(size_t(9), std::get<0>(Uses::getAllStmtVarInfo()).size());
-		Assert::IsTrue(Uses::contains(stmtIdx, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(Uses::contains(stmtIdx, Entity::getVarIdx(varName2)));
-		Assert::AreEqual(size_t(1), Uses::getStatements(Entity::getVarIdx(varName1)).size());
+		Assert::AreEqual(size_t(9), std::get<0>(UsesS::getAllSynonymVarInfo()).size());
+		Assert::IsTrue(UsesS::contains(stmtIdx, Entity::getVarIdx(varName1)));
+		Assert::IsTrue(UsesS::contains(stmtIdx, Entity::getVarIdx(varName2)));
+		Assert::AreEqual(size_t(1), UsesS::getFromVariable(Entity::getVarIdx(varName1)).size());
 
 		Assert::AreEqual(size_t(0), std::get<0>(Follows::getAllPredecessorSuccessorInfo()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(FollowsT::getAllPredecessorSuccessorInfo()).size());
@@ -768,12 +772,12 @@ public:
 		SourceAST ast = Parser::parse(longVarNameSource);
 		DesignExtractor::extract(ast);
 
-		Assert::AreEqual(size_t(1), std::get<0>(Modifies::getAllStmtVarInfo()).size());
-		Assert::IsTrue(Modifies::contains(stmtIdx, Entity::getVarIdx(varName)));
-		Assert::AreEqual(size_t(1), Modifies::getStatements(Entity::getVarIdx(varName)).size());
+		Assert::AreEqual(size_t(1), std::get<0>(ModifiesS::getAllSynonymVarInfo()).size());
+		Assert::IsTrue(ModifiesS::contains(stmtIdx, Entity::getVarIdx(varName)));
+		Assert::AreEqual(size_t(1), ModifiesS::getFromVariable(Entity::getVarIdx(varName)).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Uses::getAllStmtVarInfo()).size());
-		Assert::AreEqual(size_t(0), Uses::getStatements(Entity::getVarIdx(varName)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(UsesS::getAllSynonymVarInfo()).size());
+		Assert::AreEqual(size_t(0), UsesS::getFromVariable(Entity::getVarIdx(varName)).size());
 
 		Assert::AreEqual(size_t(0), std::get<0>(Follows::getAllPredecessorSuccessorInfo()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(FollowsT::getAllPredecessorSuccessorInfo()).size());
@@ -829,34 +833,35 @@ public:
 		StmtIndex stmtIdx10 = StmtIndex(10);
 
 		SourceAST ast = Parser::parse(multipleNestingSource);
+		
 		DesignExtractor::extract(ast);
 
-		Assert::AreEqual(size_t(17), std::get<0>(Modifies::getAllStmtVarInfo()).size());
-		Assert::IsTrue(Modifies::contains(stmtIdx1, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(Modifies::contains(stmtIdx1, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(Modifies::contains(stmtIdx2, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(Modifies::contains(stmtIdx3, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(Modifies::contains(stmtIdx4, Entity::getVarIdx(varName1)));
-		Assert::IsFalse(Modifies::contains(stmtIdx6, Entity::getVarIdx(varName1)));
-		Assert::IsFalse(Modifies::contains(stmtIdx7, Entity::getVarIdx(varName1)));
-		Assert::IsFalse(Modifies::contains(stmtIdx8, Entity::getVarIdx(varName1)));
-		Assert::IsFalse(Modifies::contains(stmtIdx9, Entity::getVarIdx(varName1)));
+		Assert::AreEqual(size_t(17), std::get<0>(ModifiesS::getAllSynonymVarInfo()).size());
+		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
+		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName3)));
+		Assert::IsTrue(ModifiesS::contains(stmtIdx2, Entity::getVarIdx(varName1)));
+		Assert::IsTrue(ModifiesS::contains(stmtIdx3, Entity::getVarIdx(varName1)));
+		Assert::IsTrue(ModifiesS::contains(stmtIdx4, Entity::getVarIdx(varName1)));
+		Assert::IsFalse(ModifiesS::contains(stmtIdx6, Entity::getVarIdx(varName1)));
+		Assert::IsFalse(ModifiesS::contains(stmtIdx7, Entity::getVarIdx(varName1)));
+		Assert::IsFalse(ModifiesS::contains(stmtIdx8, Entity::getVarIdx(varName1)));
+		Assert::IsFalse(ModifiesS::contains(stmtIdx9, Entity::getVarIdx(varName1)));
 		Assert::AreEqual(size_t(3), Container::getContainersOfStmt(stmtIdx5).size());
-		Assert::IsTrue(Modifies::contains(stmtIdx5, Entity::getVarIdx(varName1)));
-		Assert::AreEqual(size_t(5), Modifies::getStatements(Entity::getVarIdx(varName1)).size());
-		Assert::AreEqual(size_t(7), Modifies::getStatements(Entity::getVarIdx(varName2)).size());
+		Assert::IsTrue(ModifiesS::contains(stmtIdx5, Entity::getVarIdx(varName1)));
+		Assert::AreEqual(size_t(5), ModifiesS::getFromVariable(Entity::getVarIdx(varName1)).size());
+		Assert::AreEqual(size_t(7), ModifiesS::getFromVariable(Entity::getVarIdx(varName2)).size());
 
-		Assert::AreEqual(size_t(32), std::get<0>(Uses::getAllStmtVarInfo()).size());
-		Assert::IsTrue(Uses::contains(stmtIdx1, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(Uses::contains(stmtIdx2, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(Uses::contains(stmtIdx3, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(Uses::contains(stmtIdx4, Entity::getVarIdx(varName2)));
-		Assert::IsFalse(Uses::contains(stmtIdx6, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(Uses::contains(stmtIdx7, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(Uses::contains(stmtIdx8, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(Uses::contains(stmtIdx9, Entity::getVarIdx(varName2)));
-		Assert::AreEqual(size_t(7), Uses::getStatements(Entity::getVarIdx(varName1)).size());
-		Assert::AreEqual(size_t(9), Uses::getStatements(Entity::getVarIdx(varName2)).size());
+		Assert::AreEqual(size_t(32), std::get<0>(UsesS::getAllSynonymVarInfo()).size());
+		Assert::IsTrue(UsesS::contains(stmtIdx1, Entity::getVarIdx(varName2)));
+		Assert::IsTrue(UsesS::contains(stmtIdx2, Entity::getVarIdx(varName2)));
+		Assert::IsTrue(UsesS::contains(stmtIdx3, Entity::getVarIdx(varName2)));
+		Assert::IsTrue(UsesS::contains(stmtIdx4, Entity::getVarIdx(varName2)));
+		Assert::IsFalse(UsesS::contains(stmtIdx6, Entity::getVarIdx(varName2)));
+		Assert::IsTrue(UsesS::contains(stmtIdx7, Entity::getVarIdx(varName2)));
+		Assert::IsTrue(UsesS::contains(stmtIdx8, Entity::getVarIdx(varName2)));
+		Assert::IsTrue(UsesS::contains(stmtIdx9, Entity::getVarIdx(varName2)));
+		Assert::AreEqual(size_t(7), UsesS::getFromVariable(Entity::getVarIdx(varName1)).size());
+		Assert::AreEqual(size_t(9), UsesS::getFromVariable(Entity::getVarIdx(varName2)).size());
 
 		Assert::AreEqual(size_t(4), std::get<0>(Follows::getAllPredecessorSuccessorInfo()).size());
 		Assert::IsFalse(Follows::containsSuccessor(stmtIdx3, stmtIdx10));
@@ -951,11 +956,11 @@ public:
 		SourceAST ast = Parser::parse(differentCasingNamesSource);
 		DesignExtractor::extract(ast);
 
-		Assert::AreEqual(size_t(4), std::get<0>(Modifies::getAllStmtVarInfo()).size());
-		Assert::IsTrue(Modifies::contains(stmtIdx1, Entity::getVarIdx(varName)));
-		Assert::AreEqual(size_t(1), Modifies::getStatements(Entity::getVarIdx(varName)).size());
+		Assert::AreEqual(size_t(4), std::get<0>(ModifiesS::getAllSynonymVarInfo()).size());
+		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName)));
+		Assert::AreEqual(size_t(1), ModifiesS::getFromVariable(Entity::getVarIdx(varName)).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Uses::getAllStmtVarInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(UsesS::getAllSynonymVarInfo()).size());
 
 		Assert::AreEqual(size_t(3), std::get<0>(Follows::getAllPredecessorSuccessorInfo()).size());
 		Assert::IsTrue(Follows::containsSuccessor(stmtIdx1, stmtIdx2));
@@ -1002,12 +1007,12 @@ public:
 		SourceAST ast = Parser::parse(multipleWhitespacesSource);
 		DesignExtractor::extract(ast);
 
-		Assert::AreEqual(size_t(2), std::get<0>(Modifies::getAllStmtVarInfo()).size());
-		Assert::IsTrue(Modifies::contains(stmtIdx1, Entity::getVarIdx(varName)));
-		Assert::AreEqual(size_t(2), Modifies::getStatements(Entity::getVarIdx(varName)).size());
+		Assert::AreEqual(size_t(2), std::get<0>(ModifiesS::getAllSynonymVarInfo()).size());
+		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName)));
+		Assert::AreEqual(size_t(2), ModifiesS::getFromVariable(Entity::getVarIdx(varName)).size());
 
-		Assert::AreEqual(size_t(1), std::get<0>(Uses::getAllStmtVarInfo()).size());
-		Assert::AreEqual(size_t(1), Uses::getStatements(Entity::getVarIdx(varName)).size());
+		Assert::AreEqual(size_t(1), std::get<0>(UsesS::getAllSynonymVarInfo()).size());
+		Assert::AreEqual(size_t(1), UsesS::getFromVariable(Entity::getVarIdx(varName)).size());
 
 		Assert::AreEqual(size_t(2), std::get<0>(Follows::getAllPredecessorSuccessorInfo()).size());
 		Assert::AreEqual(size_t(3), std::get<0>(FollowsT::getAllPredecessorSuccessorInfo()).size());
@@ -1040,8 +1045,8 @@ public:
 		Assert::AreEqual(size_t(0), Entity::getAllStmts().size());
 		Assert::AreEqual(size_t(0), Entity::getAllVars().size());
 		Assert::AreEqual(size_t(0), Entity::getAllConsts().size());
-		Assert::AreEqual(size_t(0), std::get<0>(Modifies::getAllStmtVarInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Uses::getAllStmtVarInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(ModifiesS::getAllSynonymVarInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(UsesS::getAllSynonymVarInfo()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(Follows::getAllPredecessorSuccessorInfo()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(FollowsT::getAllPredecessorSuccessorInfo()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());

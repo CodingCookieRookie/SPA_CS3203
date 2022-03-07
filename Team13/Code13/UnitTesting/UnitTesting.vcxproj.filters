@@ -8,7 +8,7 @@
     <ClCompile Include="TestInstructionFollowsT.cpp" />
     <ClCompile Include="TestInstructionParent.cpp" />
     <ClCompile Include="TestInstructionParentT.cpp" />
-    <ClCompile Include="TestModifiesInstruction.cpp" />
+    <ClCompile Include="TestModifiesSInstruction.cpp" />
     <ClCompile Include="TestPatternInstruction.cpp" />
     <ClCompile Include="TestPKB.cpp" />
     <ClCompile Include="TestPQLResultProjector.cpp" />
@@ -19,19 +19,35 @@
     <ClCompile Include="TestFollows.cpp" />
     <ClCompile Include="TestFollowsT.cpp" />
     <ClCompile Include="TestLexer.cpp" />
-    <ClCompile Include="TestModifies.cpp" />
     <ClCompile Include="TestParent.cpp" />
     <ClCompile Include="TestParentT.cpp" />
     <ClCompile Include="TestParser.cpp" />
     <ClCompile Include="TestPattern.cpp" />
     <ClCompile Include="TestPQLEvaluator.cpp" />
     <ClCompile Include="TestTypes.cpp" />
-    <ClCompile Include="TestUses.cpp" />
     <ClCompile Include="TestPQLParser.cpp" />
-    <ClCompile Include="TestUsesInstruction.cpp" />
+    <ClCompile Include="TestUsesSInstruction.cpp" />
     <ClCompile Include="TestGetAllInstruction.cpp" />
+    <ClCompile Include="TestCalls.cpp" />
+    <ClCompile Include="TestCallsT.cpp" />
+    <ClCompile Include="TestModifiesP.cpp" />
+    <ClCompile Include="TestModifiesS.cpp" />
+    <ClCompile Include="TestUsesP.cpp" />
+    <ClCompile Include="TestUsesS.cpp" />
     <ClCompile Include="TestModifiesPInstruction.cpp" />
     <ClCompile Include="TestUsesPInstruction.cpp" />
+    <ClCompile Include="TestCalls.cpp" />
+    <ClCompile Include="TestCallsT.cpp" />
+    <ClCompile Include="TestModifiesP.cpp" />
+    <ClCompile Include="TestModifiesS.cpp" />
+    <ClCompile Include="TestUsesP.cpp" />
+    <ClCompile Include="TestUsesS.cpp" />
+    <ClCompile Include="TestCalls.cpp" />
+    <ClCompile Include="TestCallsT.cpp" />
+    <ClCompile Include="TestModifiesP.cpp" />
+    <ClCompile Include="TestModifiesS.cpp" />
+    <ClCompile Include="TestUsesP.cpp" />
+    <ClCompile Include="TestUsesS.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />

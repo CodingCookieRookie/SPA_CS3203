@@ -13,14 +13,14 @@ protected:
 	static int getVarTableSize();
 	static int getProcTableSize();
 	static int getStmtTypeTableSize();
-	static std::unordered_map<VarIndex, std::string, VarIndex::HashFunction> varNameTable;
+	static std::unordered_map<VarIndex, std::string> varNameTable;
 	static std::unordered_map<std::string, VarIndex> varIdxTable;
-	static std::unordered_map<ProcIndex, std::string, ProcIndex::HashFunction> procNameTable;
+	static std::unordered_map<ProcIndex, std::string> procNameTable;
 	static std::unordered_map<std::string, ProcIndex> procIdxTable;
 	static std::unordered_set<int> constTable;
-	static std::unordered_map<StmtIndex, StatementType, StmtIndex::HashFunction> stmtTypeTable;
-	static std::unordered_map<StatementType, std::unordered_set<StmtIndex, StmtIndex::HashFunction>> stmtIdxFromTypeTable;
-	static std::unordered_map<ProcIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, ProcIndex::HashFunction> procStmtTable;
+	static std::unordered_map<StmtIndex, StatementType> stmtTypeTable;
+	static std::unordered_map<StatementType, std::unordered_set<StmtIndex>> stmtIdxFromTypeTable;
+	static std::unordered_map<ProcIndex, std::unordered_set<StmtIndex>> procStmtTable;
 
 public:
 	static VarIndex insertVar(std::string varName);
@@ -41,6 +41,6 @@ public:
 	static std::vector<StmtIndex> getStmtIdxFromType(StatementType stmtType);
 	static std::vector<StmtIndex> getAllStmts();
 	static void insertStmtFromProc(ProcIndex procIdx, StmtIndex stmtIdx);
-	static std::unordered_set<StmtIndex, StmtIndex::HashFunction> getStmtsFromProc(ProcIndex procIdx);
+	static std::unordered_set<StmtIndex> getStmtsFromProc(ProcIndex procIdx);
 	static void performCleanUp();
 };

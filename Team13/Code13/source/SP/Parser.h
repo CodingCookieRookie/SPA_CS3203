@@ -3,11 +3,11 @@
 #include <string>
 #include <vector>
 
+#include "../Common/ExpressionParser.h"
 #include "../Common/Lexer.h"
 #include "../Exception/SPAException.h"
 #include "SourceAST.h"
 #include "SourceASTNode.h"
-#include "../Common/ExpressionParser.h"
 
 class Parser {
 private:

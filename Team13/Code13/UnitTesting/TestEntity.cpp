@@ -258,29 +258,29 @@ public:
 	}
 
 	TEST_METHOD(insertStmtFromProc_getStmtsFromProc_singleProcAndStmt) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> expectedRes;
+		std::unordered_set<StmtIndex> expectedRes;
 		expectedRes.insert(stmtIdx1);
 
 		Entity::insertStmtFromProc(procIdx1, stmtIdx1);
 
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> res = Entity::getStmtsFromProc(procIdx1);
+		std::unordered_set<StmtIndex> res = Entity::getStmtsFromProc(procIdx1);
 		Assert::IsTrue(expectedRes == res);
 	}
 
 	TEST_METHOD(insertStmtFromProc_getStmtsFromProc_multipleProcAndStmt) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> expectedRes1;
+		std::unordered_set<StmtIndex> expectedRes1;
 		expectedRes1.insert(stmtIdx1);
 		expectedRes1.insert(stmtIdx2);
 
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> expectedRes2;
+		std::unordered_set<StmtIndex> expectedRes2;
 		expectedRes2.insert(stmtIdx2);
 
 		Entity::insertStmtFromProc(procIdx1, stmtIdx1);
 		Entity::insertStmtFromProc(procIdx1, stmtIdx2);
 		Entity::insertStmtFromProc(procIdx2, stmtIdx2);
 
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> res1 = Entity::getStmtsFromProc(procIdx1);
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> res2 = Entity::getStmtsFromProc(procIdx2);
+		std::unordered_set<StmtIndex> res1 = Entity::getStmtsFromProc(procIdx1);
+		std::unordered_set<StmtIndex> res2 = Entity::getStmtsFromProc(procIdx2);
 		Assert::IsTrue(expectedRes1 == res1);
 		Assert::IsTrue(expectedRes2 == res2);
 	}

@@ -2,34 +2,33 @@
 
 #include "./RS2.h"
 
-template<class T>
-class RS2T : public RS2<RS2T<T>> {
+template<class T, typename Index>
+class RS2T : public RS2<RS2T<T, Index>, Index> {
 private:
-	using RS2<RS2T>::insert;
-	static std::unordered_set<StmtIndex, StmtIndex::HashFunction> getAllSuccessors(StmtIndex predecessor, std::unordered_map<StmtIndex,
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction>& uPredSucTable);
+	using RS2<RS2T<T, Index>, Index>::insert;
+	static std::unordered_set<Index> getAllSuccessors(Index& predecessor,
+		std::unordered_map<Index, std::unordered_set<Index>> uPredSucTable);
 protected:
 	RS2T();
 public:
-	static void populate(std::unordered_map<StmtIndex,
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction>& uPredSucTable);
+	static void populate(std::unordered_map<Index, std::unordered_set<Index>> uPredSucTable);
 };
 
-template<class T>
-RS2T<T>::RS2T() {};
+template<class T, typename Index>
+RS2T<T, Index>::RS2T() {};
 
-template<class T>
-std::unordered_set<StmtIndex, StmtIndex::HashFunction> RS2T<T>::getAllSuccessors(StmtIndex predecessor,
-	std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction>& uPredSucTable) {
+template<class T, typename Index>
+std::unordered_set<Index> RS2T<T, Index>::getAllSuccessors(Index& predecessor,
+	std::unordered_map<Index, std::unordered_set<Index>> uPredSucTable) {
 	if (predSucTable.find(predecessor) != predSucTable.end()) {
 		return predSucTable[predecessor];
 	}
 
-	std::unordered_set<StmtIndex, StmtIndex::HashFunction> successors;
-	for (auto& successor : uPredSucTable[predecessor]) {
+	std::unordered_set<Index> successors;
+	for (auto successor : uPredSucTable[predecessor]) {
 		successors.insert(successor);
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> grandSuccessors = getAllSuccessors(successor, uPredSucTable);
-		for (auto& grandSuccessor : grandSuccessors) {
+		std::unordered_set<Index> grandSuccessors = getAllSuccessors(successor, uPredSucTable);
+		for (auto grandSuccessor : grandSuccessors) {
 			successors.insert(grandSuccessor);
 			insert(successor, grandSuccessor);
 		}
@@ -38,17 +37,16 @@ std::unordered_set<StmtIndex, StmtIndex::HashFunction> RS2T<T>::getAllSuccessors
 	return successors;
 }
 
-template<class T>
-void RS2T<T>::populate(std::unordered_map<StmtIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>,
-	StmtIndex::HashFunction>& uPredSucTable) {
-	for (auto& uPredSucEntry : uPredSucTable) {
-		StmtIndex predecessor = uPredSucEntry.first;
+template<class T, typename Index>
+void RS2T<T, Index>::populate(std::unordered_map<Index, std::unordered_set<Index>> uPredSucTable) {
+	for (auto uPredSucEntry : uPredSucTable) {
+		Index predecessor = uPredSucEntry.first;
 		if (predSucTable.find(predecessor) != predSucTable.end()) {
 			continue;
 		}
 
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> successors = getAllSuccessors(predecessor, uPredSucTable);
-		for (auto& successor : successors) {
+		std::unordered_set<Index> successors = getAllSuccessors(predecessor, uPredSucTable);
+		for (auto successor : successors) {
 			insert(predecessor, successor);
 		}
 	}

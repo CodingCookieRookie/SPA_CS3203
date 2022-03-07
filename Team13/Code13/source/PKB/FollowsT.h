@@ -1,6 +1,6 @@
 #pragma once
 
-#include "./RS2T.h"
 #include "./Follows.h"
+#include "./RS2T.h"
 
-class FollowsT : public RS2T<FollowsT> {};
+class FollowsT : public RS2T<FollowsT, StmtIndex> {};

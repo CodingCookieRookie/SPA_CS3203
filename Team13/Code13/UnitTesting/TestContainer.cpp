@@ -24,24 +24,24 @@ private:
 public:
 
 	TEST_METHOD(insertStmtInContainer_getStmtsInContainer) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> expectedRes;
+		std::unordered_set<StmtIndex> expectedRes;
 		expectedRes.insert(stmtIdx2);
 
 		Container::insertStmtInContainer(stmtIdx1, stmtIdx2);
 		Container::insertStmtInContainer(stmtIdx2, stmtIdx3);
 
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> res = Container::getStmtsInContainer(stmtIdx1);
+		std::unordered_set<StmtIndex> res = Container::getStmtsInContainer(stmtIdx1);
 		Assert::IsTrue(expectedRes == res);
 	}
 
 	TEST_METHOD(insertStmtInContainer_getStmtsInContainer_noContainedStmt) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> expectedRes;
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> res = Container::getStmtsInContainer(stmtIdx1);
+		std::unordered_set<StmtIndex> expectedRes;
+		std::unordered_set<StmtIndex> res = Container::getStmtsInContainer(stmtIdx1);
 		Assert::IsTrue(expectedRes == res);
 	}
 
 	TEST_METHOD(insertStmtInContainer_getContainersOfStmt) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> expectedRes;
+		std::unordered_set<StmtIndex> expectedRes;
 		expectedRes.insert(stmtIdx1);
 		expectedRes.insert(stmtIdx3);
 
@@ -49,21 +49,21 @@ public:
 		Container::insertStmtInContainer(stmtIdx4, stmtIdx3);
 		Container::insertStmtInContainer(stmtIdx3, stmtIdx2);
 
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> res = Container::getContainersOfStmt(stmtIdx2);
+		std::unordered_set<StmtIndex> res = Container::getContainersOfStmt(stmtIdx2);
 		Assert::IsTrue(expectedRes == res);
 	}
 
 	TEST_METHOD(insertStmtInContainer_getContainersOfStmt_noContainerStmt) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> expectedRes;
+		std::unordered_set<StmtIndex> expectedRes;
 
 		Container::insertStmtInContainer(stmtIdx2, stmtIdx3);
 
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> res = Container::getContainersOfStmt(stmtIdx2);
+		std::unordered_set<StmtIndex> res = Container::getContainersOfStmt(stmtIdx2);
 		Assert::IsTrue(expectedRes == res);
 	}
 
 	TEST_METHOD(populate_getStmtsInContainer_branched) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> expectedRes;
+		std::unordered_set<StmtIndex> expectedRes;
 		expectedRes.insert(stmtIdx2);
 		expectedRes.insert(stmtIdx5);
 
@@ -72,7 +72,7 @@ public:
 		Container::insertStmtInContainer(stmtIdx2, stmtIdx3);
 		Container::insertStmtInContainer(stmtIdx2, stmtIdx4);
 
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> res1 = Container::getStmtsInContainer(stmtIdx1);
+		std::unordered_set<StmtIndex> res1 = Container::getStmtsInContainer(stmtIdx1);
 		Assert::IsTrue(expectedRes == res1);
 
 		expectedRes.insert(stmtIdx3);
@@ -80,12 +80,12 @@ public:
 
 		Container::populate();
 
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> res2 = Container::getStmtsInContainer(stmtIdx1);
+		std::unordered_set<StmtIndex> res2 = Container::getStmtsInContainer(stmtIdx1);
 		Assert::IsTrue(expectedRes == res2);
 	};
 
 	TEST_METHOD(populate_getStmtsInContainer_linear) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> expectedRes;
+		std::unordered_set<StmtIndex> expectedRes;
 		expectedRes.insert(stmtIdx4);
 
 		Container::insertStmtInContainer(stmtIdx2, stmtIdx3);
@@ -93,7 +93,7 @@ public:
 		Container::insertStmtInContainer(stmtIdx4, stmtIdx5);
 		Container::insertStmtInContainer(stmtIdx5, stmtIdx1);
 
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> res1 = Container::getStmtsInContainer(stmtIdx3);
+		std::unordered_set<StmtIndex> res1 = Container::getStmtsInContainer(stmtIdx3);
 		Assert::IsTrue(expectedRes == res1);
 
 		expectedRes.insert(stmtIdx1);
@@ -101,12 +101,12 @@ public:
 
 		Container::populate();
 
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> res2 = Container::getStmtsInContainer(stmtIdx3);
+		std::unordered_set<StmtIndex> res2 = Container::getStmtsInContainer(stmtIdx3);
 		Assert::IsTrue(expectedRes == res2);
 	};
 
 	TEST_METHOD(populate_getContainersOfStmt_branched) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> expectedRes;
+		std::unordered_set<StmtIndex> expectedRes;
 		expectedRes.insert(stmtIdx5);
 
 		Container::insertStmtInContainer(stmtIdx1, stmtIdx2);
@@ -115,7 +115,7 @@ public:
 		Container::insertStmtInContainer(stmtIdx2, stmtIdx5);
 		Container::insertStmtInContainer(stmtIdx3, stmtIdx4);
 
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> res1 = Container::getContainersOfStmt(stmtIdx6);
+		std::unordered_set<StmtIndex> res1 = Container::getContainersOfStmt(stmtIdx6);
 		Assert::IsTrue(expectedRes == res1);
 
 		expectedRes.insert(stmtIdx2);
@@ -123,12 +123,12 @@ public:
 
 		Container::populate();
 
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> res2 = Container::getContainersOfStmt(stmtIdx6);
+		std::unordered_set<StmtIndex> res2 = Container::getContainersOfStmt(stmtIdx6);
 		Assert::IsTrue(expectedRes == res2);
 	};
 
 	TEST_METHOD(populate_getContainersOfStmt_linear) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> expectedRes;
+		std::unordered_set<StmtIndex> expectedRes;
 		expectedRes.insert(stmtIdx3);
 
 		Container::insertStmtInContainer(stmtIdx1, stmtIdx2);
@@ -137,7 +137,7 @@ public:
 		Container::insertStmtInContainer(stmtIdx4, stmtIdx3);
 		Container::insertStmtInContainer(stmtIdx3, stmtIdx6);
 
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> res1 = Container::getContainersOfStmt(stmtIdx6);
+		std::unordered_set<StmtIndex> res1 = Container::getContainersOfStmt(stmtIdx6);
 		Assert::IsTrue(expectedRes == res1);
 
 		expectedRes.insert(stmtIdx4);
@@ -147,22 +147,22 @@ public:
 
 		Container::populate();
 
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> res2 = Container::getContainersOfStmt(stmtIdx6);
+		std::unordered_set<StmtIndex> res2 = Container::getContainersOfStmt(stmtIdx6);
 		Assert::IsTrue(expectedRes == res2);
 	};
 
 	TEST_METHOD(performCleanUp) {
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> expectedRes;
+		std::unordered_set<StmtIndex> expectedRes;
 		expectedRes.insert(stmtIdx2);
 
 		Container::insertStmtInContainer(stmtIdx1, stmtIdx2);
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> res1 = Container::getStmtsInContainer(stmtIdx1);
+		std::unordered_set<StmtIndex> res1 = Container::getStmtsInContainer(stmtIdx1);
 		Assert::IsTrue(expectedRes == res1);
 
 		Container::performCleanUp();
 
 		expectedRes.clear();
-		std::unordered_set<StmtIndex, StmtIndex::HashFunction> res2 = Container::getStmtsInContainer(stmtIdx1);
+		std::unordered_set<StmtIndex> res2 = Container::getStmtsInContainer(stmtIdx1);
 		Assert::IsTrue(expectedRes == res2);
 	}
 	};

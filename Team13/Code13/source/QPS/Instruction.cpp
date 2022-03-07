@@ -131,14 +131,14 @@ EvaluatedTable RelationshipInstruction::handleModifiesS() {
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
 	PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
 	PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Variable));
-	std::tuple<std::vector<int>, std::vector<int>> allStmtVarInfos = Modifies::getAllStmtVarInfo();
+	std::tuple<std::vector<int>, std::vector<int>> allStmtVarInfos = ModifiesS::getAllSynonymVarInfo();
 	std::vector<int> allStmts;
 	std::vector<int> varIndices;
 	if (lhsRef.first == PqlReferenceType::synonym) {
 		if (rhsRef.first == PqlReferenceType::ident) {
 			if (Entity::containsVar(rhsRef.second)) {
 				VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
-				allStmts = Modifies::getStatements(varIndex);
+				allStmts = ModifiesS::getFromVariable(varIndex);
 			}
 		} else {
 			allStmts = std::get<0>(allStmtVarInfos);
@@ -153,13 +153,13 @@ EvaluatedTable RelationshipInstruction::handleModifiesS() {
 		if (Entity::containsStmt(lhsRefValue)) {
 			StmtIndex stmtIndex = { lhsRefValue };
 			if (rhsRef.first == PqlReferenceType::synonym) {
-				varIndices = Modifies::getVariables(stmtIndex);
+				varIndices = ModifiesS::getVariables(stmtIndex);
 				PQLmap[rhsRef.second] = varIndices;
 			} else if (rhsRef.first == PqlReferenceType::ident) {
 				VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
-				return EvaluatedTable(Modifies::contains(stmtIndex, varIndex));
+				return EvaluatedTable(ModifiesS::contains(stmtIndex, varIndex));
 			} else {
-				return EvaluatedTable(Modifies::getVariables(stmtIndex).size() > 0);
+				return EvaluatedTable(ModifiesS::getVariables(stmtIndex).size() > 0);
 			}
 		} else {
 			return EvaluatedTable(false);
@@ -177,14 +177,14 @@ EvaluatedTable RelationshipInstruction::handleModifiesP() {
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
 	PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Procedure));
 	PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Variable));
-	std::tuple<std::vector<int>, std::vector<int>> allProcVarInfos = Modifies::getAllProcVarInfo();
+	std::tuple<std::vector<int>, std::vector<int>> allProcVarInfos = ModifiesP::getAllSynonymVarInfo();
 	std::vector<int> allStmts;
 	std::vector<int> varIndices;
 	if (lhsRef.first == PqlReferenceType::synonym) {
 		if (rhsRef.first == PqlReferenceType::ident) {
 			if (Entity::containsVar(rhsRef.second)) {
 				VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
-				allStmts = Modifies::getProcedures(varIndex);
+				allStmts = ModifiesP::getFromVariable(varIndex);
 			}
 		} else {
 			allStmts = std::get<0>(allProcVarInfos);
@@ -200,7 +200,7 @@ EvaluatedTable RelationshipInstruction::handleModifiesP() {
 				ProcIndex procIndex = Entity::getProcIdx(lhsRef.second);
 				if (Entity::containsVar(rhsRef.second)) {
 					VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
-					if (Modifies::contains(procIndex, varIndex)) {
+					if (ModifiesP::contains(procIndex, varIndex)) {
 						return EvaluatedTable(true);
 					} else {
 						return EvaluatedTable(false);
@@ -213,10 +213,10 @@ EvaluatedTable RelationshipInstruction::handleModifiesP() {
 			if (Entity::containsProc(lhsRef.second)) {
 				ProcIndex procIndex = Entity::getProcIdx(lhsRef.second);
 				if (rhsRef.first == PqlReferenceType::synonym) {
-					varIndices = Modifies::getVariables(procIndex);
+					varIndices = ModifiesP::getVariables(procIndex);
 					PQLmap[rhsRef.second] = varIndices;
 				} else if (rhsRef.first == PqlReferenceType::wildcard) {
-					if (Modifies::getVariables(procIndex).size() > 0) {
+					if (ModifiesP::getVariables(procIndex).size() > 0) {
 						return EvaluatedTable(true);
 					} else {
 						return EvaluatedTable(false);
@@ -239,14 +239,14 @@ EvaluatedTable RelationshipInstruction::handleUsesS() {
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
 	PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
 	PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Variable));
-	std::tuple<std::vector<int>, std::vector<int>>  allStmtVarInfos = Uses::getAllStmtVarInfo();
+	std::tuple<std::vector<int>, std::vector<int>>  allStmtVarInfos = UsesS::getAllSynonymVarInfo();
 	std::vector<int> allStmts;
 	std::vector<int> varIndices;
 	if (lhsRef.first == PqlReferenceType::synonym) {
 		if (rhsRef.first == PqlReferenceType::ident) {
 			if (Entity::containsVar(rhsRef.second)) {
 				VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
-				allStmts = Uses::getStatements(varIndex);
+				allStmts = UsesS::getFromVariable(varIndex);
 			}
 		} else {
 			allStmts = std::get<0>(allStmtVarInfos);
@@ -261,13 +261,13 @@ EvaluatedTable RelationshipInstruction::handleUsesS() {
 		if (Entity::containsStmt(lhsRefValue)) {
 			StmtIndex stmtIndex = { lhsRefValue };
 			if (rhsRef.first == PqlReferenceType::synonym) {
-				varIndices = Uses::getVariables(stmtIndex);
+				varIndices = UsesS::getVariables(stmtIndex);
 				PQLmap[rhsRef.second] = varIndices;
 			} else if (rhsRef.first == PqlReferenceType::ident) {
 				VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
-				return EvaluatedTable(Uses::contains(stmtIndex, varIndex));
+				return EvaluatedTable(UsesS::contains(stmtIndex, varIndex));
 			} else {
-				return EvaluatedTable(Uses::getVariables(stmtIndex).size() > 0);
+				return EvaluatedTable(UsesS::getVariables(stmtIndex).size() > 0);
 			}
 		} else {
 			return EvaluatedTable(false);
@@ -284,7 +284,7 @@ EvaluatedTable RelationshipInstruction::handleUsesP() {
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
 	PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Procedure));
 	PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Variable));
-	std::tuple<std::vector<int>, std::vector<int>>  allProcVarInfos = Uses::getAllProcVarInfo();
+	std::tuple<std::vector<int>, std::vector<int>>  allProcVarInfos = UsesP::getAllSynonymVarInfo();
 	std::vector<int> allStmts;
 	std::vector<int> varIndices;
 
@@ -292,7 +292,7 @@ EvaluatedTable RelationshipInstruction::handleUsesP() {
 		if (rhsRef.first == PqlReferenceType::ident) {
 			if (Entity::containsVar(rhsRef.second)) {
 				VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
-				allStmts = Uses::getProcedures(varIndex);
+				allStmts = UsesP::getFromVariable(varIndex);
 			}
 		} else {
 			allStmts = std::get<0>(allProcVarInfos);
@@ -310,7 +310,7 @@ EvaluatedTable RelationshipInstruction::handleUsesP() {
 				ProcIndex procIndex = Entity::getProcIdx(lhsRef.second);
 				if (Entity::containsVar(rhsRef.second)) {
 					VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
-					if (Uses::contains(procIndex, varIndex)) {
+					if (UsesP::contains(procIndex, varIndex)) {
 						return EvaluatedTable(true);
 					} else {
 						return EvaluatedTable(false);
@@ -323,10 +323,10 @@ EvaluatedTable RelationshipInstruction::handleUsesP() {
 			if (Entity::containsProc(lhsRef.second)) {
 				ProcIndex procIndex = Entity::getProcIdx(lhsRef.second);
 				if (rhsRef.first == PqlReferenceType::synonym) {
-					varIndices = Uses::getVariables(procIndex);
+					varIndices = UsesP::getVariables(procIndex);
 					PQLmap[rhsRef.second] = varIndices;
 				} else if (rhsRef.first == PqlReferenceType::wildcard) {
-					if (Uses::getVariables(procIndex).size() > 0) {
+					if (UsesP::getVariables(procIndex).size() > 0) {
 						return EvaluatedTable(true);
 					} else {
 						return EvaluatedTable(false);
@@ -723,8 +723,7 @@ EvaluatedTable RelationshipInstruction::handleParentT() {
 }
 
 RelationshipInstruction::RelationshipInstruction(PqlRelationshipType pqlRSType, PqlReference lhs, PqlReference rhs) :
-	pqlRelationshipType(pqlRSType), lhsRef(lhs), rhsRef(rhs) {
-}
+	pqlRelationshipType(pqlRSType), lhsRef(lhs), rhsRef(rhs) {}
 
 EvaluatedTable RelationshipInstruction::execute() {
 	EvaluatedTable evTable;

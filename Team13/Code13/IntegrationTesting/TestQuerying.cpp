@@ -13,6 +13,10 @@
 #include "../source/PKB/Parent.h"
 #include "../source/PKB/ParentT.h"
 #include "../source/PKB/Pattern.h"
+#include "../source/PKB/ModifiesP.h"
+#include "../source/PKB/ModifiesS.h"
+#include "../source/PKB/UsesP.h"
+#include "../source/PKB/UsesS.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -25,19 +29,23 @@ private:
 		Follows::performCleanUp();
 		ParentT::performCleanUp();
 		Parent::performCleanUp();
-		Modifies::performCleanUp();
-		Uses::performCleanUp();
+		ModifiesP::performCleanUp();
+		ModifiesS::performCleanUp();
+		UsesP::performCleanUp();
+		UsesS::performCleanUp();
 		Pattern::performCleanUp();
 	}
 
 	TEST_METHOD_INITIALIZE(initTables) {
 		Entity::performCleanUp();
-		Modifies::performCleanUp();
-		Uses::performCleanUp();
+		ModifiesP::performCleanUp();
+		ModifiesS::performCleanUp();
+		UsesP::performCleanUp();
+		UsesS::performCleanUp();
 		Pattern::performCleanUp();
 	}
-public:
 
+public:
 	TEST_METHOD(querying_declarationAndSelectStmtsOnly_success) {
 		// "stmt s; variable v1; Select s";
 		// 1. Setup:
@@ -187,8 +195,7 @@ public:
 		for (int i = 0; i < 99; i++) {
 			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
 		}
-		std::unordered_map<StmtIndex,
-			std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> uPredSucTable;
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> uPredSucTable;
 		for (int i = 0; i < 99 - 1; i++) {
 			uPredSucTable[stmts[i]] = { stmts[i + 1] }; // i parents i + 1
 		}
@@ -209,7 +216,7 @@ public:
 		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
 		EvaluatedTable evTable = pqlEvaluator.evaluate();
 		// Test numRow:
-		Assert::AreEqual(size_t(91), evTable.getNumRow()); //91 statements are parent* to stmt-92
+		Assert::AreEqual(size_t(91), evTable.getNumRow()); // 91 statements are parent* to stmt-92
 		// Test Table:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("s1") != tableRef.end());
@@ -256,8 +263,8 @@ public:
 		Entity::insertVar("randomVar"); // insert dummy var
 		VarIndex varIndex = Entity::insertVar("x");
 		VarIndex varIndex2 = Entity::insertVar("y");
-		Modifies::insert(stmt, varIndex);
-		Modifies::insert(stmt, varIndex2);
+		ModifiesS::insert(stmt, varIndex);
+		ModifiesS::insert(stmt, varIndex2);
 
 		// 2. Test QPS Parser:
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
@@ -283,8 +290,8 @@ public:
 		Assert::AreEqual(true, areVecEqual);
 
 		// Test EvResult:
-		//bool actualEvResult = evTable.getEvResult();
-		//Assert::AreEqual(true, actualEvResult);
+		// bool actualEvResult = evTable.getEvResult();
+		// Assert::AreEqual(true, actualEvResult);
 
 		// 4. Test QPS Result Projector:
 		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
@@ -311,8 +318,8 @@ public:
 		Entity::insertVar("randomVar"); // insert dummy var
 		VarIndex varIndex = Entity::insertVar("x");
 		VarIndex varIndex2 = Entity::insertVar("y");
-		Uses::insert(stmt, varIndex);
-		Uses::insert(stmt, varIndex2);
+		UsesS::insert(stmt, varIndex);
+		UsesS::insert(stmt, varIndex2);
 
 		// 2. Test QPS Parser:
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
@@ -338,8 +345,8 @@ public:
 		Assert::AreEqual(true, areVecEqual);
 
 		// Test EvResult:
-		//bool actualEvResult = evTable.getEvResult();
-		//Assert::AreEqual(true, actualEvResult);
+		// bool actualEvResult = evTable.getEvResult();
+		// Assert::AreEqual(true, actualEvResult);
 
 		// 4. Test QPS Result Projector:
 		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
@@ -370,7 +377,7 @@ public:
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("b+w");
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
-		// Check PKB populated
+		// Check PKB population
 		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("w");
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
@@ -431,10 +438,10 @@ public:
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("x");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("b+x");
-		Modifies::insert(stmt, varIndex);
+		ModifiesS::insert(stmt, varIndex);
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
-		// Check PBK populated
+		// Check PKB population
 		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("x");
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
@@ -489,10 +496,10 @@ public:
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("x");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("b+x");
-		Modifies::insert(stmt, varIndex);
+		ModifiesS::insert(stmt, varIndex);
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
-		// Check PBK populated
+		// Check PKB population
 		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("x");
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
@@ -547,10 +554,10 @@ public:
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("x");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("b+x");
-		Modifies::insert(stmt, varIndex);
+		ModifiesS::insert(stmt, varIndex);
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
-		// Check PBK populated
+		// Check PKB populated
 		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("x");
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
@@ -572,7 +579,7 @@ public:
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end());
 
 		////// Test Values: std::unordered_map<std::string, PqlEntityType>
-		std::vector<int> values{ };
+		std::vector<int> values{};
 		auto actualValues = tableRef.at("a");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
 		Assert::AreEqual(true, areVecEqual);
@@ -580,7 +587,7 @@ public:
 		//// 4. Test QPS Result Projector:
 		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> results = resultProjector.resolveTableToResults();
-		std::list<std::string> expectedRes{ };
+		std::list<std::string> expectedRes{};
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
 	}
@@ -605,10 +612,10 @@ public:
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("x");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("b+x");
-		Modifies::insert(stmt, varIndex);
+		ModifiesS::insert(stmt, varIndex);
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
-		// Check PBK populated
+		// Check PKB population
 		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("x");
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
@@ -630,7 +637,7 @@ public:
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end());
 
 		////// Test Values: std::unordered_map<std::string, PqlEntityType>
-		std::vector<int> values{ };
+		std::vector<int> values{};
 		auto actualValues = tableRef.at("a");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
 		Assert::AreEqual(true, areVecEqual);
@@ -638,7 +645,7 @@ public:
 		//// 4. Test QPS Result Projector:
 		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> results = resultProjector.resolveTableToResults();
-		std::list<std::string> expectedRes{ };
+		std::list<std::string> expectedRes{};
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
 	}
@@ -663,10 +670,10 @@ public:
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("x");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("b+x");
-		Modifies::insert(stmt, varIndex);
+		ModifiesS::insert(stmt, varIndex);
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
-		// Check PBK populated
+		// Check PKB population
 		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("x");
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
@@ -721,10 +728,10 @@ public:
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("x");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("b+x");
-		Modifies::insert(stmt, varIndex);
+		ModifiesS::insert(stmt, varIndex);
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
-		// Check PBK populated
+		// Check PKB population
 		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("x");
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
@@ -779,10 +786,10 @@ public:
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("x");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("b+x");
-		Modifies::insert(stmt, varIndex);
+		ModifiesS::insert(stmt, varIndex);
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
-		// Check PBK populated
+		// Check PKB population
 		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("x");
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
@@ -837,10 +844,10 @@ public:
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("x");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("b+x");
-		Modifies::insert(stmt, varIndex);
+		ModifiesS::insert(stmt, varIndex);
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
-		// Check PBK populated
+		// Check PKB population
 		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("x");
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
@@ -895,10 +902,10 @@ public:
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("x");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("b+x");
-		Modifies::insert(stmt, varIndex);
+		ModifiesS::insert(stmt, varIndex);
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
-		// Check PBK populated
+		// Check PKB population
 		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("x");
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
@@ -953,10 +960,10 @@ public:
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("x");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("b+x");
-		Modifies::insert(stmt, varIndex);
+		ModifiesS::insert(stmt, varIndex);
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
-		// Check PBK populated
+		// Check PKB population
 		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("x");
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
@@ -1011,10 +1018,10 @@ public:
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("y");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("b+y");
-		Uses::insert(stmt, varIndex);
+		UsesS::insert(stmt, varIndex);
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
-		// Check PBK populated
+		// Check PKB population
 		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("y");
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
@@ -1072,10 +1079,10 @@ public:
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("y");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("b+y");
-		Uses::insert(stmt, varIndex);
+		UsesS::insert(stmt, varIndex);
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
-		// Check PBK populated
+		// Check PKB population
 		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("y");
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
@@ -1132,10 +1139,10 @@ public:
 		Entity::insertVar("a");
 		VarIndex varIndex = Entity::insertVar("b");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("b+y");
-		Uses::insert(stmt, varIndex);
+		UsesS::insert(stmt, varIndex);
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
-		// Check PBK populated
+		// Check PKB population
 		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("y");
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
@@ -1193,10 +1200,10 @@ public:
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("y");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("b+y");
-		Uses::insert(stmt, varIndex);
+		UsesS::insert(stmt, varIndex);
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
-		// Check PBK populated
+		// Check PKB population
 		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("y");
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
@@ -1256,13 +1263,13 @@ public:
 		VarIndex varIndex3 = Entity::insertVar("w");
 		VarIndex varIndex4 = Entity::insertVar("dd");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("b+y+w+yy+dd");
-		Uses::insert(stmt, varIndex);
-		Uses::insert(stmt, varIndex2);
-		Uses::insert(stmt, varIndex3);
-		Uses::insert(stmt, varIndex4);
+		UsesS::insert(stmt, varIndex);
+		UsesS::insert(stmt, varIndex2);
+		UsesS::insert(stmt, varIndex3);
+		UsesS::insert(stmt, varIndex4);
 		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmt);
 
-		// Check PBK populated
+		// Check PKB population
 		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("y");
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
@@ -1330,7 +1337,7 @@ public:
 		Pattern::insertPostFixInfo(varIndex2, postFixExpression, stmt);
 		Follows::insert(readStmt, stmt);
 
-		// Check PKB populated
+		// Check PKB population
 		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("d");
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(2), std::get<0>(allPatternStmtInfo).size());
@@ -1383,8 +1390,7 @@ public:
 			stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
 		}
 		stmts.emplace_back(Entity::insertStmt(StatementType::assignType)); // 99th stmt is assignment
-		std::unordered_map<StmtIndex,
-			std::unordered_set<StmtIndex, StmtIndex::HashFunction>, StmtIndex::HashFunction> uPredSucTable;
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> uPredSucTable;
 		for (int i = 0; i < 98; i++) {
 			uPredSucTable[stmts[i]] = { stmts[i + 1] }; // i parents i + 1, up till 97 parents 98th stmt
 		}
@@ -1395,9 +1401,9 @@ public:
 		VarIndex varIndex = Entity::insertVar("abc");
 		VarIndex varIndex2 = Entity::insertVar("d");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix(" abc + d ");
-		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmts[98]); //stmt 99
+		Pattern::insertPostFixInfo(varIndex, postFixExpression, stmts[98]); // stmt 99
 
-		// Check PKB populated
+		// Check PKB population
 		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("d");
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());

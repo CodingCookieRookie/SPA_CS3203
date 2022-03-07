@@ -5,7 +5,7 @@
 
 #include "../source/QPS/PQLEvaluator.h"
 #include "../source/QPS/PQLParser.h"
-#include "../source/PKB/Modifies.h"
+#include "../source/PKB/ModifiesP.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -16,7 +16,7 @@ namespace UnitTesting {
 private:
 	TEST_METHOD_CLEANUP(cleanUpTables) {
 		Entity::performCleanUp();
-		Modifies::performCleanUp();
+		ModifiesP::performCleanUp();
 	}
 public:
 	TEST_METHOD(execute_lhsSynonymRhsSynonymProc) {
@@ -31,7 +31,7 @@ public:
 		ProcIndex procIndex = Entity::insertProc("p");
 		Entity::insertVar("randomVar");
 		VarIndex varIndex = Entity::insertVar("x");
-		Modifies::insert(procIndex, varIndex);
+		ModifiesP::insert(procIndex, varIndex);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -52,7 +52,7 @@ public:
 		ProcIndex procIndex = Entity::insertProc("p");
 		Entity::insertVar("randomVar");
 		VarIndex varIndex = Entity::insertVar("x");
-		Modifies::insert(procIndex, varIndex);
+		ModifiesP::insert(procIndex, varIndex);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -74,8 +74,8 @@ public:
 		Entity::insertVar("randomVar");
 		VarIndex varIndex = Entity::insertVar("x");
 		VarIndex varIndex2 = Entity::insertVar("y");
-		Modifies::insert(procIndex, varIndex);
-		Modifies::insert(procIndex, varIndex2);
+		ModifiesP::insert(procIndex, varIndex);
+		ModifiesP::insert(procIndex, varIndex2);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -95,7 +95,7 @@ public:
 		ProcIndex procIndex = Entity::insertProc("p");
 		Entity::insertVar("randomVar");
 		VarIndex varIndex = Entity::insertVar("x");
-		Modifies::insert(procIndex, varIndex);
+		ModifiesP::insert(procIndex, varIndex);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -116,7 +116,7 @@ public:
 		ProcIndex procIndex = Entity::insertProc("p");
 		Entity::insertVar("randomVar");
 		VarIndex varIndex = Entity::insertVar("x");
-		Modifies::insert(procIndex, varIndex);
+		ModifiesP::insert(procIndex, varIndex);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -139,8 +139,8 @@ public:
 		Entity::insertVar("randomVar");
 		VarIndex varIndex = Entity::insertVar("x");
 		VarIndex varIndex2 = Entity::insertVar("y");
-		Modifies::insert(procIndex, varIndex);
-		Modifies::insert(procIndex, varIndex2);
+		ModifiesP::insert(procIndex, varIndex);
+		ModifiesP::insert(procIndex, varIndex2);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();

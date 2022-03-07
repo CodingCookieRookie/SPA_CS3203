@@ -6,14 +6,14 @@
 
 #include "./Entity.h"
 
-std::unordered_map<VarIndex, std::string, VarIndex::HashFunction> Entity::varNameTable;
+std::unordered_map<VarIndex, std::string> Entity::varNameTable;
 std::unordered_map<std::string, VarIndex> Entity::varIdxTable;
-std::unordered_map<ProcIndex, std::string, ProcIndex::HashFunction> Entity::procNameTable;
+std::unordered_map<ProcIndex, std::string> Entity::procNameTable;
 std::unordered_map<std::string, ProcIndex> Entity::procIdxTable;
 std::unordered_set<int> Entity::constTable;
-std::unordered_map<StmtIndex, StatementType, StmtIndex::HashFunction> Entity::stmtTypeTable;
-std::unordered_map<StatementType, std::unordered_set<StmtIndex, StmtIndex::HashFunction>> Entity::stmtIdxFromTypeTable;
-std::unordered_map<ProcIndex, std::unordered_set<StmtIndex, StmtIndex::HashFunction>, ProcIndex::HashFunction> Entity::procStmtTable;
+std::unordered_map<StmtIndex, StatementType> Entity::stmtTypeTable;
+std::unordered_map<StatementType, std::unordered_set<StmtIndex>> Entity::stmtIdxFromTypeTable;
+std::unordered_map<ProcIndex, std::unordered_set<StmtIndex>> Entity::procStmtTable;
 
 int Entity::getVarTableSize() {
 	return varNameTable.size();
@@ -144,7 +144,7 @@ void Entity::insertStmtFromProc(ProcIndex procIdx, StmtIndex stmtIdx) {
 	procStmtTable[procIdx].insert(stmtIdx);
 }
 
-std::unordered_set<StmtIndex, StmtIndex::HashFunction> Entity::getStmtsFromProc(ProcIndex procIdx) {
+std::unordered_set<StmtIndex> Entity::getStmtsFromProc(ProcIndex procIdx) {
 	return procStmtTable[procIdx];
 }
 

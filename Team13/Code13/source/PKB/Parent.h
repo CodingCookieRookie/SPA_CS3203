@@ -2,4 +2,4 @@
 
 #include "./RS2.h"
 
-class Parent : public RS2<Parent> {};
+class Parent : public RS2<Parent, StmtIndex> {};
