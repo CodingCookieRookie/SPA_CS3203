@@ -187,6 +187,55 @@ public:
 		Assert::AreEqual(true, areListsEqual);
 	}
 
+	TEST_METHOD(querying_selectStmtFollowsClauseTwoSynonymsSameStmtref_success) {
+		// 1. Setup:
+		std::string query = "stmt s1; Select s1 such that Follows(s1, s1)";
+		// PKB inserts 5 statements
+		std::vector<StmtIndex> stmts;
+		for (int i = 0; i < 5; i++) {
+			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+		}
+		for (int i = 0; i < 4; i++) {
+			Follows::insert(stmts[i], stmts[i + 1]);
+		}
+
+		// 2. Test QPS Parser:
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		Assert::AreEqual(size_t(1), parsedQuery.getDeclarations().size());
+		Assert::IsFalse(parsedQuery.getColumns().empty());
+		Assert::AreEqual(std::string("s1"), parsedQuery.getColumns()[0]);
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::IsTrue(PqlRelationshipType::Follows == relationships[0].getRelationshipType());
+		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getLhs().first);
+		Assert::AreEqual(std::string("s1"), relationships[0].getLhs().second);
+
+		// 3. Test QPS Evaluator:
+		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		// Test numRow:
+		Assert::AreEqual(size_t(0), evTable.getNumRow());
+		// Test Table:
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("s1") != tableRef.end());
+		Assert::AreEqual(size_t(1), tableRef.size()); // should contain s1 only
+		// Test Values:
+		std::vector<int> values;
+		auto actualValues = tableRef.at("s1");
+		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+		// Test EvResult:
+		bool actualEvResult = evTable.getEvResult();
+		Assert::AreEqual(true, actualEvResult);
+
+		// 4. Test QPS Result Projector:
+		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
+		std::list<std::string> results = resultProjector.resolveTableToResults();
+		std::list<std::string> expectedRes;
+		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin()); // no results printed out
+		Assert::AreEqual(true, areListsEqual);
+	}
+
 	TEST_METHOD(querying_selectStmtParentStarClauseLHSSynRHSWildcardStress_success) {
 		// 1. Setup:
 		std::string query = "stmt s1; Select s1 such that Parent*(s1, 92)";

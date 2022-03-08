@@ -140,7 +140,8 @@ EvaluatedTable RelationshipInstruction::handleModifiesS() {
 				VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
 				allStmts = ModifiesS::getFromVariable(varIndex);
 			}
-		} else {
+		}
+		else {
 			allStmts = std::get<0>(allStmtVarInfos);
 		}
 		PQLmap[lhsRef.second] = allStmts;
@@ -148,23 +149,27 @@ EvaluatedTable RelationshipInstruction::handleModifiesS() {
 			varIndices = std::get<1>(allStmtVarInfos);
 			PQLmap[rhsRef.second] = varIndices;
 		}
-	} else if (lhsRef.first == PqlReferenceType::integer) {
+	}
+	else if (lhsRef.first == PqlReferenceType::integer) {
 		int lhsRefValue = stoi(lhsRef.second);
 		if (Entity::containsStmt(lhsRefValue)) {
 			StmtIndex stmtIndex = { lhsRefValue };
 			if (rhsRef.first == PqlReferenceType::synonym) {
 				varIndices = ModifiesS::getVariables(stmtIndex);
 				PQLmap[rhsRef.second] = varIndices;
-			} else if (rhsRef.first == PqlReferenceType::ident) {
+			}
+			else if (rhsRef.first == PqlReferenceType::ident) {
 				VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
 				return EvaluatedTable(ModifiesS::contains(stmtIndex, varIndex));
 			} else {
 				return EvaluatedTable(ModifiesS::getVariables(stmtIndex).size() > 0);
 			}
-		} else {
+		}
+		else {
 			return EvaluatedTable(false);
 		}
-	} else {
+	}
+	else {
 		throw EvaluatorException(EvaluatorException::MODIFIES_S_ERROR);
 	}
 	return EvaluatedTable(PQLentities, PQLmap);
@@ -186,7 +191,8 @@ EvaluatedTable RelationshipInstruction::handleModifiesP() {
 				VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
 				allStmts = ModifiesP::getFromVariable(varIndex);
 			}
-		} else {
+		}
+		else {
 			allStmts = std::get<0>(allProcVarInfos);
 		}
 		PQLmap[lhsRef.second] = allStmts;
@@ -248,7 +254,8 @@ EvaluatedTable RelationshipInstruction::handleUsesS() {
 				VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
 				allStmts = UsesS::getFromVariable(varIndex);
 			}
-		} else {
+		}
+		else {
 			allStmts = std::get<0>(allStmtVarInfos);
 		}
 		PQLmap[lhsRef.second] = allStmts;
@@ -256,23 +263,27 @@ EvaluatedTable RelationshipInstruction::handleUsesS() {
 			varIndices = std::get<1>(allStmtVarInfos);
 			PQLmap[rhsRef.second] = varIndices;
 		}
-	} else if (lhsRef.first == PqlReferenceType::integer) {
+	}
+	else if (lhsRef.first == PqlReferenceType::integer) {
 		int lhsRefValue = stoi(lhsRef.second);
 		if (Entity::containsStmt(lhsRefValue)) {
 			StmtIndex stmtIndex = { lhsRefValue };
 			if (rhsRef.first == PqlReferenceType::synonym) {
 				varIndices = UsesS::getVariables(stmtIndex);
 				PQLmap[rhsRef.second] = varIndices;
-			} else if (rhsRef.first == PqlReferenceType::ident) {
+			}
+			else if (rhsRef.first == PqlReferenceType::ident) {
 				VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
 				return EvaluatedTable(UsesS::contains(stmtIndex, varIndex));
 			} else {
 				return EvaluatedTable(UsesS::getVariables(stmtIndex).size() > 0);
 			}
-		} else {
+		}
+		else {
 			return EvaluatedTable(false);
 		}
-	} else {
+	}
+	else {
 		throw EvaluatorException(EvaluatorException::USES_S_ERROR);
 	}
 	return EvaluatedTable(PQLentities, PQLmap);
@@ -294,7 +305,8 @@ EvaluatedTable RelationshipInstruction::handleUsesP() {
 				VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
 				allStmts = UsesP::getFromVariable(varIndex);
 			}
-		} else {
+		}
+		else {
 			allStmts = std::get<0>(allProcVarInfos);
 		}
 
@@ -336,7 +348,8 @@ EvaluatedTable RelationshipInstruction::handleUsesP() {
 				}
 			}
 		}
-	} else {
+	}
+	else {
 		throw EvaluatorException(EvaluatorException::USES_P_ERROR);
 	}
 	return EvaluatedTable(PQLentities, PQLmap);
@@ -409,11 +422,17 @@ EvaluatedTable RelationshipInstruction::handleFollows() {
 	}
 	// Follows(s1, s2), Follows(s1, _), Follows(_, s2)
 	else if (!(lhsRef.first == PqlReferenceType::wildcard && rhsRef.first == PqlReferenceType::wildcard)) {
-		//Assumption: Different synonym names (i.e. Follows(s1, s2), not Follows(s1, s1))
 		std::tuple<std::vector<int>, std::vector<int>> results = Follows::getAllPredecessorSuccessorInfo();
 		//e.g. {1, 2}, {2, 3}, {3, 6}
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
+
+		if (lhsRef.second == rhsRef.second) { /* Special case: Follows(s1, s1)) */
+			PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
+			PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Stmt));
+			/* No values populated to PQLmap for this case */
+			return EvaluatedTable(PQLentities, PQLmap);
+		}
 
 		if (lhsRef.first == PqlReferenceType::synonym) {
 			PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
@@ -510,6 +529,13 @@ EvaluatedTable RelationshipInstruction::handleFollowsT() {
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 
+		if (lhsRef.second == rhsRef.second) { /* Special case: Follows*(s1, s1)) */
+			PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
+			PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Stmt));
+			/* No values populated to PQLmap for this case */
+			return EvaluatedTable(PQLentities, PQLmap);
+		}
+
 		if (lhsRef.first == PqlReferenceType::synonym) {
 			PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
 			PQLmap[lhsRef.second] = std::get<0>(results); // if RHS is wildcard, LHS may have duplicate values
@@ -604,6 +630,13 @@ EvaluatedTable RelationshipInstruction::handleParent() {
 		//e.g. {1, 2}, {2, 3}, {3, 6}
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
+
+		if (lhsRef.second == rhsRef.second) { /* Special case: Parent(s1, s1)) */
+			PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
+			PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Stmt));
+			/* No values populated to PQLmap for this case */
+			return EvaluatedTable(PQLentities, PQLmap);
+		}
 
 		if (lhsRef.first == PqlReferenceType::synonym) {
 			PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
@@ -700,6 +733,13 @@ EvaluatedTable RelationshipInstruction::handleParentT() {
 		std::unordered_map<std::string, PqlEntityType> PQLentities;
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 
+		if (lhsRef.second == rhsRef.second) { /* Special case: Parent*(s1, s1)) */
+			PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
+			PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Stmt));
+			/* No values populated to PQLmap for this case */
+			return EvaluatedTable(PQLentities, PQLmap);
+		}
+
 		if (lhsRef.first == PqlReferenceType::synonym) {
 			PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
 			PQLmap[lhsRef.second] = std::get<0>(results); // if RHS is wildcard, LHS may have duplicate values
@@ -771,7 +811,8 @@ EvaluatedTable PatternInstruction::handlePatterns() {
 			VarIndex varIndex = Entity::getVarIdx(entRef.second);
 			if (expressionSpec.first == PqlExpressionType::partial) {
 				allStmts = Pattern::getStmtsFromVarPatternPartialMatch(varIndex, expressionSpec.second);
-			} else if (expressionSpec.first == PqlExpressionType::wildcard) {
+			}
+			else if (expressionSpec.first == PqlExpressionType::wildcard) {
 				allStmts = Pattern::getStmtsFromVarPattern(varIndex);
 			}
 		}
@@ -784,12 +825,15 @@ EvaluatedTable PatternInstruction::handlePatterns() {
 	std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo;
 	if (expressionSpec.first == PqlExpressionType::full) {
 		allPatternStmtInfo = Pattern::getStmtsFromPatternFullMatch(expressionSpec.second);
-	} else if (expressionSpec.first == PqlExpressionType::partial) {
+	}
+	else if (expressionSpec.first == PqlExpressionType::partial) {
 		/* currently only has this for iteration 1 */
 		allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(expressionSpec.second);
-	} else if (expressionSpec.first == PqlExpressionType::wildcard) {
+	}
+	else if (expressionSpec.first == PqlExpressionType::wildcard) {
 		allPatternStmtInfo = Pattern::getAllAssignStmtVarsPatternInfo();
-	} else {
+	}
+	else {
 		throw EvaluatorException(EvaluatorException::PATTERN_ERROR);
 	}
 	std::vector<int> allStmts = std::get<0>(allPatternStmtInfo);
