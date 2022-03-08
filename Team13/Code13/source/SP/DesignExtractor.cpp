@@ -55,7 +55,7 @@ StmtIndex DesignExtractor::processStmtNode(StmtNode* stmtNode, StmtIndex prevInd
 	if (!pattern.empty() && modifies.size() == 1) {
 		std::string varName = *(modifies.begin());
 		VarIndex varIndex = Entity::getVarIdx(varName);
-		Pattern::insertPostFixInfo(varIndex, pattern, stmtIndex);
+		Pattern::insertAssignInfo(varIndex, pattern, stmtIndex);
 	}
 	std::vector<StmtLstNode*> childStmtLsts = stmtNode->getChildStmtLst();
 	for (StmtLstNode* stmtLstNode : childStmtLsts) {

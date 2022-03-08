@@ -12,14 +12,22 @@ class Pattern {
 protected:
 	static std::unordered_map<VarIndex, std::vector<std::tuple<StmtIndex, std::string>>> varPostFixTable;
 	static std::unordered_map<std::string, std::vector<std::tuple<StmtIndex, VarIndex>>> postFixVarTable;
+	static std::unordered_map<VarIndex, std::unordered_set<StmtIndex>> ifVarTable;
+	static std::unordered_map<VarIndex, std::unordered_set<StmtIndex>> whileVarTable;
 
 public:
-	static void insertPostFixInfo(VarIndex& varIdx, std::string& postFixExpression, StmtIndex& stmtIdx);
-	static std::vector<int> getStmtsFromVarPatternFullMatch(VarIndex& varIdx, std::string& postFixExpression);
-	static std::vector<int> getStmtsFromVarPatternPartialMatch(VarIndex& varIdx, std::string& postFixExpression);
-	static std::tuple<std::vector<int>, std::vector<int>> getStmtsFromPatternFullMatch(std::string& expression);
-	static std::tuple<std::vector<int>, std::vector<int>> getStmtsFromPatternPartialMatch(std::string& expression);
-	static std::vector<int> getStmtsFromVarPattern(VarIndex& varIdx);
-	static std::tuple<std::vector<int>, std::vector<int>> getAllAssignStmtVarsPatternInfo();
+	static void insertAssignInfo(VarIndex& varIdx, std::string& postFixExpression, StmtIndex& stmtIdx);
+	static void insertIfInfo(StmtIndex& stmtIdx, VarIndex& varIdx);
+	static void insertWhileInfo(StmtIndex& stmtIdx, VarIndex& varIdx);
+	static std::vector<int> getAssignStmtsFromVarExprFullMatch(VarIndex& varIdx, std::string& expression);
+	static std::vector<int> getAssignStmtsFromVarExprPartialMatch(VarIndex& varIdx, std::string& expression);
+	static std::tuple<std::vector<int>, std::vector<int>> getAssignStmtsFromExprFullMatch(std::string& expression);
+	static std::tuple<std::vector<int>, std::vector<int>> getAssignStmtsFromExprPartialMatch(std::string& expression);
+	static std::vector<int> getAssignStmtsFromVar(VarIndex& varIdx);
+	static std::vector<int> getIfStmtsFromVar(VarIndex& varIndex);
+	static std::vector<int> getWhileStmtsFromVar(VarIndex& varIndex);
+	static std::tuple<std::vector<int>, std::vector<int>> getAllAssignPatternInfo();
+	static std::tuple<std::vector<int>, std::vector<int>> getAllIfPatternInfo();
+	static std::tuple<std::vector<int>, std::vector<int>> getAllWhilePatternInfo();
 	static void performCleanUp();
 };

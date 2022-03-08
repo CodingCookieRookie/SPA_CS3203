@@ -140,8 +140,7 @@ EvaluatedTable RelationshipInstruction::handleModifiesS() {
 				VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
 				allStmts = ModifiesS::getFromVariable(varIndex);
 			}
-		}
-		else {
+		} else {
 			allStmts = std::get<0>(allStmtVarInfos);
 		}
 		PQLmap[lhsRef.second] = allStmts;
@@ -149,27 +148,23 @@ EvaluatedTable RelationshipInstruction::handleModifiesS() {
 			varIndices = std::get<1>(allStmtVarInfos);
 			PQLmap[rhsRef.second] = varIndices;
 		}
-	}
-	else if (lhsRef.first == PqlReferenceType::integer) {
+	} else if (lhsRef.first == PqlReferenceType::integer) {
 		int lhsRefValue = stoi(lhsRef.second);
 		if (Entity::containsStmt(lhsRefValue)) {
 			StmtIndex stmtIndex = { lhsRefValue };
 			if (rhsRef.first == PqlReferenceType::synonym) {
 				varIndices = ModifiesS::getVariables(stmtIndex);
 				PQLmap[rhsRef.second] = varIndices;
-			}
-			else if (rhsRef.first == PqlReferenceType::ident) {
+			} else if (rhsRef.first == PqlReferenceType::ident) {
 				VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
 				return EvaluatedTable(ModifiesS::contains(stmtIndex, varIndex));
 			} else {
 				return EvaluatedTable(ModifiesS::getVariables(stmtIndex).size() > 0);
 			}
-		}
-		else {
+		} else {
 			return EvaluatedTable(false);
 		}
-	}
-	else {
+	} else {
 		throw EvaluatorException(EvaluatorException::MODIFIES_S_ERROR);
 	}
 	return EvaluatedTable(PQLentities, PQLmap);
@@ -191,8 +186,7 @@ EvaluatedTable RelationshipInstruction::handleModifiesP() {
 				VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
 				allStmts = ModifiesP::getFromVariable(varIndex);
 			}
-		}
-		else {
+		} else {
 			allStmts = std::get<0>(allProcVarInfos);
 		}
 		PQLmap[lhsRef.second] = allStmts;
@@ -254,8 +248,7 @@ EvaluatedTable RelationshipInstruction::handleUsesS() {
 				VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
 				allStmts = UsesS::getFromVariable(varIndex);
 			}
-		}
-		else {
+		} else {
 			allStmts = std::get<0>(allStmtVarInfos);
 		}
 		PQLmap[lhsRef.second] = allStmts;
@@ -263,27 +256,23 @@ EvaluatedTable RelationshipInstruction::handleUsesS() {
 			varIndices = std::get<1>(allStmtVarInfos);
 			PQLmap[rhsRef.second] = varIndices;
 		}
-	}
-	else if (lhsRef.first == PqlReferenceType::integer) {
+	} else if (lhsRef.first == PqlReferenceType::integer) {
 		int lhsRefValue = stoi(lhsRef.second);
 		if (Entity::containsStmt(lhsRefValue)) {
 			StmtIndex stmtIndex = { lhsRefValue };
 			if (rhsRef.first == PqlReferenceType::synonym) {
 				varIndices = UsesS::getVariables(stmtIndex);
 				PQLmap[rhsRef.second] = varIndices;
-			}
-			else if (rhsRef.first == PqlReferenceType::ident) {
+			} else if (rhsRef.first == PqlReferenceType::ident) {
 				VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
 				return EvaluatedTable(UsesS::contains(stmtIndex, varIndex));
 			} else {
 				return EvaluatedTable(UsesS::getVariables(stmtIndex).size() > 0);
 			}
-		}
-		else {
+		} else {
 			return EvaluatedTable(false);
 		}
-	}
-	else {
+	} else {
 		throw EvaluatorException(EvaluatorException::USES_S_ERROR);
 	}
 	return EvaluatedTable(PQLentities, PQLmap);
@@ -305,8 +294,7 @@ EvaluatedTable RelationshipInstruction::handleUsesP() {
 				VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
 				allStmts = UsesP::getFromVariable(varIndex);
 			}
-		}
-		else {
+		} else {
 			allStmts = std::get<0>(allProcVarInfos);
 		}
 
@@ -348,8 +336,7 @@ EvaluatedTable RelationshipInstruction::handleUsesP() {
 				}
 			}
 		}
-	}
-	else {
+	} else {
 		throw EvaluatorException(EvaluatorException::USES_P_ERROR);
 	}
 	return EvaluatedTable(PQLentities, PQLmap);
@@ -810,10 +797,9 @@ EvaluatedTable PatternInstruction::handlePatterns() {
 		if (Entity::containsVar(entRef.second)) {
 			VarIndex varIndex = Entity::getVarIdx(entRef.second);
 			if (expressionSpec.first == PqlExpressionType::partial) {
-				allStmts = Pattern::getStmtsFromVarPatternPartialMatch(varIndex, expressionSpec.second);
-			}
-			else if (expressionSpec.first == PqlExpressionType::wildcard) {
-				allStmts = Pattern::getStmtsFromVarPattern(varIndex);
+				allStmts = Pattern::getAssignStmtsFromVarExprPartialMatch(varIndex, expressionSpec.second);
+			} else if (expressionSpec.first == PqlExpressionType::wildcard) {
+				allStmts = Pattern::getAssignStmtsFromVar(varIndex);
 			}
 		}
 		PQLmap[synonym] = allStmts;
@@ -824,16 +810,13 @@ EvaluatedTable PatternInstruction::handlePatterns() {
 	/* Pattern a(_, _"x"_) or a(_, _"123"_) or Pattern a(_, _) */
 	std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo;
 	if (expressionSpec.first == PqlExpressionType::full) {
-		allPatternStmtInfo = Pattern::getStmtsFromPatternFullMatch(expressionSpec.second);
-	}
-	else if (expressionSpec.first == PqlExpressionType::partial) {
+		allPatternStmtInfo = Pattern::getAssignStmtsFromExprFullMatch(expressionSpec.second);
+	} else if (expressionSpec.first == PqlExpressionType::partial) {
 		/* currently only has this for iteration 1 */
-		allPatternStmtInfo = Pattern::getStmtsFromPatternPartialMatch(expressionSpec.second);
-	}
-	else if (expressionSpec.first == PqlExpressionType::wildcard) {
-		allPatternStmtInfo = Pattern::getAllAssignStmtVarsPatternInfo();
-	}
-	else {
+		allPatternStmtInfo = Pattern::getAssignStmtsFromExprPartialMatch(expressionSpec.second);
+	} else if (expressionSpec.first == PqlExpressionType::wildcard) {
+		allPatternStmtInfo = Pattern::getAllAssignPatternInfo();
+	} else {
 		throw EvaluatorException(EvaluatorException::PATTERN_ERROR);
 	}
 	std::vector<int> allStmts = std::get<0>(allPatternStmtInfo);

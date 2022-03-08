@@ -240,10 +240,10 @@ public:
 		Assert::IsTrue(FollowsT::containsSuccessor(stmtIdx1, stmtIdx3));
 		Assert::AreEqual(size_t(15), std::get<0>(FollowsT::getAllPredecessorSuccessorInfo()).size());
 
-		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getAllAssignStmtVarsPatternInfo()).size());
-		Assert::AreEqual(size_t(1), Pattern::getStmtsFromVarPatternPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix(varName3)).size());
-		Assert::AreEqual(size_t(1), Pattern::getStmtsFromVarPatternPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("num1+num2")).size());
-		Assert::AreEqual(size_t(0), Pattern::getStmtsFromVarPatternPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("num1+num3")).size());
+		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix(varName3)).size());
+		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("num1+num2")).size());
+		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("num1+num3")).size());
 	}
 
 	TEST_METHOD(blackBoxSampleSource2_checkEntities) {
@@ -317,8 +317,8 @@ public:
 		Assert::IsTrue(Parent::containsSuccessor(stmtIdx2, stmtIdx6));
 		Assert::AreEqual(size_t(4), std::get<0>(ParentT::getAllPredecessorSuccessorInfo()).size());
 
-		Assert::AreEqual(size_t(5), std::get<0>(Pattern::getAllAssignStmtVarsPatternInfo()).size());
-		Assert::AreEqual(size_t(1), Pattern::getStmtsFromVarPatternPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix(varName3)).size());
+		Assert::AreEqual(size_t(5), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix(varName3)).size());
 	}
 
 	TEST_METHOD(blackBoxSampleSource3_checkEntities) {
@@ -387,11 +387,11 @@ public:
 		Assert::IsTrue(Parent::containsSuccessor(stmtIdx2, stmtIdx5));
 		Assert::AreEqual(size_t(3), std::get<0>(ParentT::getAllPredecessorSuccessorInfo()).size());
 
-		Assert::AreEqual(size_t(4), std::get<0>(Pattern::getAllAssignStmtVarsPatternInfo()).size());
-		Assert::AreEqual(size_t(1), Pattern::getStmtsFromVarPatternPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
-		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getStmtsFromPatternPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getStmtsFromPatternPartialMatch(ExpressionProcessor::convertInfixToPostFix("number%10"))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getStmtsFromPatternPartialMatch(ExpressionProcessor::convertInfixToPostFix("10%number"))).size());
+		Assert::AreEqual(size_t(4), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
+		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("number%10"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("10%number"))).size());
 	}
 
 	TEST_METHOD(mixedStmtsSource_checkEntities) {
@@ -465,11 +465,11 @@ public:
 		Assert::IsTrue(Parent::containsSuccessor(stmtIdx5, stmtIdx7));
 		Assert::AreEqual(size_t(6), std::get<0>(ParentT::getAllPredecessorSuccessorInfo()).size());
 
-		Assert::AreEqual(size_t(11), std::get<0>(Pattern::getAllAssignStmtVarsPatternInfo()).size());
-		Assert::AreEqual(size_t(1), Pattern::getStmtsFromVarPatternPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getStmtsFromPatternPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getStmtsFromPatternPartialMatch(ExpressionProcessor::convertInfixToPostFix("x+3"))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getStmtsFromPatternPartialMatch(ExpressionProcessor::convertInfixToPostFix("3+x"))).size());
+		Assert::AreEqual(size_t(11), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
+		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("x+3"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("3+x"))).size());
 	}
 
 	TEST_METHOD(nestedWhileIfSource_checkEntities) {
@@ -546,14 +546,14 @@ public:
 		Assert::IsTrue(ParentT::containsSuccessor(stmtIdx4, stmtIdx7));
 		Assert::IsTrue(ParentT::containsSuccessor(stmtIdx4, stmtIdx8));
 
-		Assert::AreEqual(size_t(8), std::get<0>(Pattern::getAllAssignStmtVarsPatternInfo()).size());
-		Assert::AreEqual(size_t(2), Pattern::getStmtsFromVarPatternPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
-		Assert::AreEqual(size_t(1), Pattern::getStmtsFromVarPatternPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix("z-8")).size());
-		Assert::AreEqual(size_t(5), std::get<0>(Pattern::getStmtsFromPatternPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getStmtsFromPatternPartialMatch(ExpressionProcessor::convertInfixToPostFix("z-8-(x*y)"))).size());
-		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getStmtsFromPatternPartialMatch(ExpressionProcessor::convertInfixToPostFix("x*y"))).size());
-		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getStmtsFromPatternPartialMatch(ExpressionProcessor::convertInfixToPostFix("x*y*z"))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getStmtsFromPatternPartialMatch(ExpressionProcessor::convertInfixToPostFix("8-(x*y)"))).size());
+		Assert::AreEqual(size_t(8), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(2), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
+		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix("z-8")).size());
+		Assert::AreEqual(size_t(5), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("z-8-(x*y)"))).size());
+		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("x*y"))).size());
+		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("x*y*z"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("8-(x*y)"))).size());
 	}
 
 	TEST_METHOD(multipleBracketsSource_checkEntities) {
@@ -616,12 +616,12 @@ public:
 		Assert::IsTrue(Parent::containsSuccessor(stmtIdx3, stmtIdx4));
 		Assert::AreEqual(size_t(3), std::get<0>(ParentT::getAllPredecessorSuccessorInfo()).size());
 
-		Assert::AreEqual(size_t(4), std::get<0>(Pattern::getAllAssignStmtVarsPatternInfo()).size());
-		Assert::AreEqual(size_t(1), Pattern::getStmtsFromVarPatternPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
-		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getStmtsFromPatternPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getStmtsFromPatternPartialMatch(ExpressionProcessor::convertInfixToPostFix("number%10"))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getStmtsFromPatternPartialMatch(ExpressionProcessor::convertInfixToPostFix("(((number))%10)"))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getStmtsFromPatternPartialMatch(ExpressionProcessor::convertInfixToPostFix("10%number"))).size());
+		Assert::AreEqual(size_t(4), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
+		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("number%10"))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("(((number))%10)"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("10%number"))).size());
 	}
 
 	TEST_METHOD(sameKeywordNameSource_checkEntities) {
@@ -682,11 +682,11 @@ public:
 		Assert::AreEqual(size_t(0), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(ParentT::getAllPredecessorSuccessorInfo()).size());
 
-		Assert::AreEqual(size_t(5), std::get<0>(Pattern::getAllAssignStmtVarsPatternInfo()).size());
-		Assert::AreEqual(size_t(0), Pattern::getStmtsFromVarPatternPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
-		Assert::AreEqual(size_t(1), Pattern::getStmtsFromVarPatternPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix("1")).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getStmtsFromPatternPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
-		Assert::AreEqual(size_t(4), std::get<0>(Pattern::getStmtsFromPatternPartialMatch(ExpressionProcessor::convertInfixToPostFix("1"))).size());
+		Assert::AreEqual(size_t(5), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
+		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix("1")).size());
+		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
+		Assert::AreEqual(size_t(4), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("1"))).size());
 	}
 
 	TEST_METHOD(longAssignmentExprSource_checkEntities) {
@@ -739,10 +739,10 @@ public:
 		Assert::AreEqual(size_t(0), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(ParentT::getAllPredecessorSuccessorInfo()).size());
 
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAllAssignStmtVarsPatternInfo()).size());
-		Assert::AreEqual(size_t(1), Pattern::getStmtsFromVarPatternPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getStmtsFromPatternPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getStmtsFromPatternPartialMatch(ExpressionProcessor::convertInfixToPostFix("x+y"))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
+		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("x+y"))).size());
 	}
 
 	TEST_METHOD(longVarNameSource_checkEntities) {
@@ -785,9 +785,9 @@ public:
 		Assert::AreEqual(size_t(0), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(ParentT::getAllPredecessorSuccessorInfo()).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllAssignStmtVarsPatternInfo()).size());
-		Assert::AreEqual(size_t(0), Pattern::getStmtsFromVarPatternPartialMatch(Entity::getVarIdx(varName), ExpressionProcessor::convertInfixToPostFix(varName)).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getStmtsFromPatternPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName), ExpressionProcessor::convertInfixToPostFix(varName)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName))).size());
 	}
 
 	TEST_METHOD(multipleNestingSource_checkEntities) {
@@ -833,7 +833,7 @@ public:
 		StmtIndex stmtIdx10 = StmtIndex(10);
 
 		SourceAST ast = Parser::parse(multipleNestingSource);
-		
+
 		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(size_t(17), std::get<0>(ModifiesS::getAllSynonymVarInfo()).size());
@@ -910,12 +910,12 @@ public:
 		Assert::IsTrue(ParentT::containsSuccessor(stmtIdx2, stmtIdx9));
 		Assert::IsTrue(ParentT::containsSuccessor(stmtIdx4, stmtIdx9));
 
-		Assert::AreEqual(size_t(7), std::get<0>(Pattern::getAllAssignStmtVarsPatternInfo()).size());
-		Assert::AreEqual(size_t(3), Pattern::getStmtsFromVarPatternPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
-		Assert::AreEqual(size_t(0), Pattern::getStmtsFromVarPatternPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("sent")).size());
-		Assert::AreEqual(size_t(0), Pattern::getStmtsFromVarPatternPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("y*z")).size());
-		Assert::AreEqual(size_t(3), Pattern::getStmtsFromVarPatternPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("present*y")).size());
-		Assert::AreEqual(size_t(3), std::get<0>(Pattern::getStmtsFromPatternPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
+		Assert::AreEqual(size_t(7), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(3), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
+		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("sent")).size());
+		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("y*z")).size());
+		Assert::AreEqual(size_t(3), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("present*y")).size());
+		Assert::AreEqual(size_t(3), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
 	}
 
 	TEST_METHOD(differentCasingNamesSource_checkEntities) {
@@ -971,9 +971,9 @@ public:
 		Assert::AreEqual(size_t(0), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(ParentT::getAllPredecessorSuccessorInfo()).size());
 
-		Assert::AreEqual(size_t(4), std::get<0>(Pattern::getAllAssignStmtVarsPatternInfo()).size());
-		Assert::AreEqual(size_t(1), Pattern::getStmtsFromVarPatternPartialMatch(Entity::getVarIdx(varName), ExpressionProcessor::convertInfixToPostFix("1")).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getStmtsFromPatternPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName))).size());
+		Assert::AreEqual(size_t(4), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName), ExpressionProcessor::convertInfixToPostFix("1")).size());
+		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName))).size());
 	}
 
 	TEST_METHOD(multipleWhitespacesSource_checkEntities) {
@@ -1020,10 +1020,10 @@ public:
 		Assert::AreEqual(size_t(0), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(ParentT::getAllPredecessorSuccessorInfo()).size());
 
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAllAssignStmtVarsPatternInfo()).size());
-		Assert::AreEqual(size_t(0), Pattern::getStmtsFromVarPatternPartialMatch(Entity::getVarIdx(varName), ExpressionProcessor::convertInfixToPostFix(varName)).size());
-		Assert::AreEqual(size_t(1), Pattern::getStmtsFromVarPatternPartialMatch(Entity::getVarIdx(varName), ExpressionProcessor::convertInfixToPostFix("0")).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getStmtsFromPatternPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName), ExpressionProcessor::convertInfixToPostFix(varName)).size());
+		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName), ExpressionProcessor::convertInfixToPostFix("0")).size());
+		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName))).size());
 	}
 
 	TEST_METHOD(missingSemicolon_parserExceptionThrown_checkPKBTables) {
@@ -1051,7 +1051,7 @@ public:
 		Assert::AreEqual(size_t(0), std::get<0>(FollowsT::getAllPredecessorSuccessorInfo()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(ParentT::getAllPredecessorSuccessorInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllAssignStmtVarsPatternInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
 	}
 	};
 }
