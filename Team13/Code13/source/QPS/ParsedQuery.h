@@ -1,6 +1,7 @@
 #pragma once
 
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include "../Exception/SPAException.h"
@@ -8,6 +9,25 @@
 
 class ParsedQuery {
 private:
+	static const std::unordered_set<PqlReferenceType> stmtRef;
+	static const std::unordered_set<PqlReferenceType> entRef;
+	static const std::unordered_set<PqlReferenceType> stmtRefNoWildcard;
+	static const std::unordered_set<PqlReferenceType> entRefNoWildcard;
+
+	static const std::unordered_set<PqlEntityType> stmtEntities;
+	static const std::unordered_set<PqlEntityType> varEntities;
+	static const std::unordered_set<PqlEntityType> procEntities;
+
+	/* These two unordered_maps validate the type of argument, e.g. stmtRef := '_' | synonym | INTEGER
+	The leftArg map also provides a mapping from the generic Modifies/Uses to the specific P or S variants */
+	static const std::unordered_map<PqlRelationshipType,
+		std::vector<std::pair<PqlRelationshipType, std::unordered_set<PqlReferenceType>>>> validLeftArgs;
+	static const std::unordered_map<PqlRelationshipType, std::unordered_set<PqlReferenceType>> validRightArgs;
+
+	/* If the argument is a synonym, these two unordered_maps validate the design entity that the synonym is declared as */
+	static const std::unordered_map<PqlRelationshipType, std::unordered_set<PqlEntityType>> validLeftDesignEntities;
+	static const std::unordered_map<PqlRelationshipType, std::unordered_set<PqlEntityType>> validRightDesignEntities;
+
 	std::unordered_map<std::string, PqlEntityType> declarations;
 	std::vector<std::string> columns;
 	std::vector<ParsedRelationship> relationships;
@@ -16,10 +36,7 @@ private:
 	bool isDeclared(const std::string& synonym);
 	PqlEntityType getType(std::string& synonym);
 
-	bool validateStmtRef(PqlReference ref);
 	bool validateEntRefVar(PqlReference ref);
-	bool validateEntRefProc(PqlReference ref);
-
 	void populateDeclarations(
 		const std::vector<PQL_VARIABLE>& allDeclarations);
 	void populateColumns(
@@ -28,10 +45,7 @@ private:
 		const std::vector<ParsedRelationship>& allRelationships);
 	void populatePatterns(
 		const std::vector<ParsedPattern>& allPatterns);
-
-	bool isStmtSynonym(PqlReference ref);
 	bool isVarSynonym(PqlReference ref);
-	bool isProcSynonym(PqlReference ref);
 public:
 
 	/* Constructor for a ParsedQuery object */
