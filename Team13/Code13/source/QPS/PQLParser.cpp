@@ -19,7 +19,13 @@ const std::vector<std::pair<std::string, PqlRelationshipType>> PQLParser::suchTh
 	{"Parent*",		PqlRelationshipType::ParentT},
 	{"Parent",		PqlRelationshipType::Parent},
 	{"Modifies",	PqlRelationshipType::Modifies},
-	{"Uses",		PqlRelationshipType::Uses}
+	{"Uses",		PqlRelationshipType::Uses},
+	{"Next*",		PqlRelationshipType::NextT},
+	{"Next",		PqlRelationshipType::Next},
+	{"Calls*",		PqlRelationshipType::CallsT},
+	{"Calls",		PqlRelationshipType::Calls},
+	{"Affects*",	PqlRelationshipType::AffectsT},
+	{"Affects",		PqlRelationshipType::Affects},
 };
 
 Lexer PQLParser::lexer = Lexer();

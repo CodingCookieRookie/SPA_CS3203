@@ -540,5 +540,719 @@ public:
 		Assert::AreEqual(size_t(1), relationships.size());
 		Assert::IsTrue(PqlRelationshipType::UsesP == relationships[0].getRelationshipType());
 	}
+
+	TEST_METHOD(parseQuery_callsClauseTwoSynonyms_bothSynonymsExtracted) {
+		std::string query = "procedure p1, p2; Select p1 such that Calls(p1, p2)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::IsTrue(PqlRelationshipType::Calls == relationships[0].getRelationshipType());
+		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getLhs().first);
+		Assert::AreEqual(std::string("p1"), relationships[0].getLhs().second);
+		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getRhs().first);
+		Assert::AreEqual(std::string("p2"), relationships[0].getRhs().second);
+	}
+
+	TEST_METHOD(parseQuery_callsClauseTwoWildcards_bothWildcardsExtracted) {
+		std::string query = "procedure p1, p2; Select p1 such that Calls(_, _)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::IsTrue(PqlRelationshipType::Calls == relationships[0].getRelationshipType());
+		Assert::IsTrue(PqlReferenceType::wildcard == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::wildcard == relationships[0].getRhs().first);
+	}
+
+	TEST_METHOD(parseQuery_callsClauseTwoIdent_bothIdentsExtracted) {
+		std::string query = "procedure p1, p2; Select p1 such that Calls(\"proc1\", \"proc2\")";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::IsTrue(PqlRelationshipType::Calls == relationships[0].getRelationshipType());
+		Assert::IsTrue(PqlReferenceType::ident == relationships[0].getLhs().first);
+		Assert::AreEqual(std::string("proc1"), relationships[0].getLhs().second);
+		Assert::IsTrue(PqlReferenceType::ident == relationships[0].getRhs().first);
+		Assert::AreEqual(std::string("proc2"), relationships[0].getRhs().second);
+	}
+
+	TEST_METHOD(parseQuery_callsTClauseTwoSynonyms_bothSynonymsExtracted) {
+		std::string query = "procedure p1, p2; Select p1 such that Calls*(p1, p2)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::IsTrue(PqlRelationshipType::CallsT == relationships[0].getRelationshipType());
+		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getLhs().first);
+		Assert::AreEqual(std::string("p1"), relationships[0].getLhs().second);
+		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getRhs().first);
+		Assert::AreEqual(std::string("p2"), relationships[0].getRhs().second);
+	}
+
+	TEST_METHOD(parseQuery_callsTClauseTwoWildcards_bothWildcardsExtracted) {
+		std::string query = "procedure p1, p2; Select p1 such that Calls*(_, _)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::IsTrue(PqlRelationshipType::CallsT == relationships[0].getRelationshipType());
+		Assert::IsTrue(PqlReferenceType::wildcard == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::wildcard == relationships[0].getRhs().first);
+	}
+
+	TEST_METHOD(parseQuery_callsTClauseTwoIdent_bothIdentsExtracted) {
+		std::string query = "procedure p1, p2; Select p1 such that Calls*(\"proc1\", \"proc2\")";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::IsTrue(PqlRelationshipType::CallsT == relationships[0].getRelationshipType());
+		Assert::IsTrue(PqlReferenceType::ident == relationships[0].getLhs().first);
+		Assert::AreEqual(std::string("proc1"), relationships[0].getLhs().second);
+		Assert::IsTrue(PqlReferenceType::ident == relationships[0].getRhs().first);
+		Assert::AreEqual(std::string("proc2"), relationships[0].getRhs().second);
+	}
+
+	TEST_METHOD(parseQuery_nextClauseTwoSynonyms_bothSynonymsExtracted) {
+		std::string query = "stmt s1, s2; Select s1 such that Next(s1, s2)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::IsTrue(PqlRelationshipType::Next == relationships[0].getRelationshipType());
+		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getLhs().first);
+		Assert::AreEqual(std::string("s1"), relationships[0].getLhs().second);
+		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getRhs().first);
+		Assert::AreEqual(std::string("s2"), relationships[0].getRhs().second);
+	}
+
+	TEST_METHOD(parseQuery_nextClauseTwoWildcards_bothWildcardsExtracted) {
+		std::string query = "stmt s1, s2; Select s1 such that Next(_, _)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::IsTrue(PqlRelationshipType::Next == relationships[0].getRelationshipType());
+		Assert::IsTrue(PqlReferenceType::wildcard == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::wildcard == relationships[0].getRhs().first);
+	}
+
+	TEST_METHOD(parseQuery_nextClauseTwoIntegers_bothStmtIndexesExtracted) {
+		std::string query = "stmt s1, s2; Select s1 such that Next(1, 2)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::IsTrue(PqlRelationshipType::Next == relationships[0].getRelationshipType());
+		Assert::IsTrue(PqlReferenceType::integer == relationships[0].getLhs().first);
+		Assert::AreEqual(std::string("1"), relationships[0].getLhs().second);
+		Assert::IsTrue(PqlReferenceType::integer == relationships[0].getRhs().first);
+		Assert::AreEqual(std::string("2"), relationships[0].getRhs().second);
+	}
+
+	TEST_METHOD(parseQuery_nextTClauseTwoSynonyms_bothSynonymsExtracted) {
+		std::string query = "stmt s1, s2; Select s1 such that Next*(s1, s2)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::IsTrue(PqlRelationshipType::NextT == relationships[0].getRelationshipType());
+		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getLhs().first);
+		Assert::AreEqual(std::string("s1"), relationships[0].getLhs().second);
+		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getRhs().first);
+		Assert::AreEqual(std::string("s2"), relationships[0].getRhs().second);
+	}
+
+	TEST_METHOD(parseQuery_nextTClauseTwoWildcards_bothWildcardsExtracted) {
+		std::string query = "stmt s1, s2; Select s1 such that Next*(_, _)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::IsTrue(PqlRelationshipType::NextT == relationships[0].getRelationshipType());
+		Assert::IsTrue(PqlReferenceType::wildcard == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::wildcard == relationships[0].getRhs().first);
+	}
+
+	TEST_METHOD(parseQuery_nextTClauseTwoIntegers_bothStmtIndexesExtracted) {
+		std::string query = "stmt s1, s2; Select s1 such that Next*(1, 2)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::IsTrue(PqlRelationshipType::NextT == relationships[0].getRelationshipType());
+		Assert::IsTrue(PqlReferenceType::integer == relationships[0].getLhs().first);
+		Assert::AreEqual(std::string("1"), relationships[0].getLhs().second);
+		Assert::IsTrue(PqlReferenceType::integer == relationships[0].getRhs().first);
+		Assert::AreEqual(std::string("2"), relationships[0].getRhs().second);
+	}
+
+	TEST_METHOD(parseQuery_affectsClauseTwoAssigns_bothSynonymsExtracted) {
+		std::string query = "assign a1, a2; Select a1 such that Affects(a1, a2)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::IsTrue(PqlRelationshipType::Affects == relationships[0].getRelationshipType());
+		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getLhs().first);
+		Assert::AreEqual(std::string("a1"), relationships[0].getLhs().second);
+		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getRhs().first);
+		Assert::AreEqual(std::string("a2"), relationships[0].getRhs().second);
+	}
+
+	TEST_METHOD(parseQuery_affectsClauseTwoStmts_bothSynonymsExtracted) {
+		std::string query = "stmt s1, s2; Select s1 such that Affects(s1, s2)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::IsTrue(PqlRelationshipType::Affects == relationships[0].getRelationshipType());
+		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getLhs().first);
+		Assert::AreEqual(std::string("s1"), relationships[0].getLhs().second);
+		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getRhs().first);
+		Assert::AreEqual(std::string("s2"), relationships[0].getRhs().second);
+	}
+
+	TEST_METHOD(parseQuery_affectsClauseTwoWildcards_bothWildcardsExtracted) {
+		std::string query = "assign a1, a2; Select a1 such that Affects(_, _)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::IsTrue(PqlRelationshipType::Affects == relationships[0].getRelationshipType());
+		Assert::IsTrue(PqlReferenceType::wildcard == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::wildcard == relationships[0].getRhs().first);
+	}
+
+	TEST_METHOD(parseQuery_affectsClauseTwoIntegers_bothStmtIndexesExtracted) {
+		std::string query = "assign a1, a2; Select a1 such that Affects(1, 2)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::IsTrue(PqlRelationshipType::Affects == relationships[0].getRelationshipType());
+		Assert::IsTrue(PqlReferenceType::integer == relationships[0].getLhs().first);
+		Assert::AreEqual(std::string("1"), relationships[0].getLhs().second);
+		Assert::IsTrue(PqlReferenceType::integer == relationships[0].getRhs().first);
+		Assert::AreEqual(std::string("2"), relationships[0].getRhs().second);
+	}
+
+	TEST_METHOD(parseQuery_affectsTClauseTwoAssigns_bothSynonymsExtracted) {
+		std::string query = "assign a1, a2; Select a1 such that Affects*(a1, a2)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::IsTrue(PqlRelationshipType::AffectsT == relationships[0].getRelationshipType());
+		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getLhs().first);
+		Assert::AreEqual(std::string("a1"), relationships[0].getLhs().second);
+		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getRhs().first);
+		Assert::AreEqual(std::string("a2"), relationships[0].getRhs().second);
+	}
+
+	TEST_METHOD(parseQuery_affectsTClauseTwoStmts_bothSynonymsExtracted) {
+		std::string query = "stmt s1, s2; Select s1 such that Affects*(s1, s2)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::IsTrue(PqlRelationshipType::AffectsT == relationships[0].getRelationshipType());
+		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getLhs().first);
+		Assert::AreEqual(std::string("s1"), relationships[0].getLhs().second);
+		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getRhs().first);
+		Assert::AreEqual(std::string("s2"), relationships[0].getRhs().second);
+	}
+
+	TEST_METHOD(parseQuery_affectsTClauseTwoWildcards_bothWildcardsExtracted) {
+		std::string query = "assign a1, a2; Select a1 such that Affects*(_, _)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::IsTrue(PqlRelationshipType::AffectsT == relationships[0].getRelationshipType());
+		Assert::IsTrue(PqlReferenceType::wildcard == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::wildcard == relationships[0].getRhs().first);
+	}
+
+	TEST_METHOD(parseQuery_affectsTClauseTwoIntegers_bothStmtIndexesExtracted) {
+		std::string query = "assign a1, a2; Select a1 such that Affects*(1, 2)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::IsTrue(PqlRelationshipType::AffectsT == relationships[0].getRelationshipType());
+		Assert::IsTrue(PqlReferenceType::integer == relationships[0].getLhs().first);
+		Assert::AreEqual(std::string("1"), relationships[0].getLhs().second);
+		Assert::IsTrue(PqlReferenceType::integer == relationships[0].getRhs().first);
+		Assert::AreEqual(std::string("2"), relationships[0].getRhs().second);
+	}
+
+	TEST_METHOD(parseQuery_callsFirstArgNonProcSynonym_exceptionThrown) {
+		std::string queryCallsVariable = "procedure p; variable v; Select p such that Calls(v, p)";
+		auto wrapperCallsVariable =
+			[&queryCallsVariable] { PQLParser::parseQuery(queryCallsVariable); };
+		Assert::ExpectException<QPSException>(wrapperCallsVariable);
+
+		std::string queryCallsConst = "procedure p; constant c; Select p such that Calls(c, p)";
+		auto wrapperCallsConst =
+			[&queryCallsConst] { PQLParser::parseQuery(queryCallsConst); };
+		Assert::ExpectException<QPSException>(wrapperCallsConst);
+
+		std::string queryCallsStmt = "procedure p; stmt s; Select p such that Calls(s, p)";
+		auto wrapperCallsStmt =
+			[&queryCallsStmt] { PQLParser::parseQuery(queryCallsStmt); };
+		Assert::ExpectException<QPSException>(wrapperCallsStmt);
+
+		std::string queryCallsRead = "procedure p; read r; Select p such that Calls(r, p)";
+		auto wrapperCallsRead =
+			[&queryCallsRead] { PQLParser::parseQuery(queryCallsRead); };
+		Assert::ExpectException<QPSException>(wrapperCallsRead);
+
+		std::string queryCallsPrint = "procedure p; print pn; Select p such that Calls(pn, p)";
+		auto wrapperCallsPrint =
+			[&queryCallsPrint] { PQLParser::parseQuery(queryCallsPrint); };
+		Assert::ExpectException<QPSException>(wrapperCallsPrint);
+
+		std::string queryCallsCall = "procedure p; call c; Select p such that Calls(c, p)";
+		auto wrapperCallsCall =
+			[&queryCallsCall] { PQLParser::parseQuery(queryCallsCall); };
+		Assert::ExpectException<QPSException>(wrapperCallsCall);
+
+		std::string queryCallsWhile = "procedure p; while w; Select p such that Calls(w, p)";
+		auto wrapperCallsWhile =
+			[&queryCallsWhile] { PQLParser::parseQuery(queryCallsWhile); };
+		Assert::ExpectException<QPSException>(wrapperCallsWhile);
+
+		std::string queryCallsIf = "procedure p; if ifs; Select p such that Calls(ifs, p)";
+		auto wrapperCallsIf =
+			[&queryCallsIf] { PQLParser::parseQuery(queryCallsIf); };
+		Assert::ExpectException<QPSException>(wrapperCallsIf);
+
+		std::string queryCallsAssign = "procedure p; assign a; Select p such that Calls(a, p)";
+		auto wrapperCallsAssign =
+			[&queryCallsAssign] { PQLParser::parseQuery(queryCallsAssign); };
+		Assert::ExpectException<QPSException>(wrapperCallsAssign);
+
+		std::string queryCallsInteger = "procedure p; constant c; Select p such that Calls(1, p)";
+		auto wrapperCallsInteger =
+			[&queryCallsInteger] { PQLParser::parseQuery(queryCallsInteger); };
+		Assert::ExpectException<QPSException>(wrapperCallsInteger);
+	}
+
+	TEST_METHOD(parseQuery_callsSecondArgNonProcSynonym_exceptionThrown) {
+		std::string queryCallsVariable = "procedure p; variable v; Select p such that Calls(p, v)";
+		auto wrapperCallsVariable =
+			[&queryCallsVariable] { PQLParser::parseQuery(queryCallsVariable); };
+		Assert::ExpectException<QPSException>(wrapperCallsVariable);
+
+		std::string queryCallsConst = "procedure p; constant c; Select p such that Calls(p, c)";
+		auto wrapperCallsConst =
+			[&queryCallsConst] { PQLParser::parseQuery(queryCallsConst); };
+		Assert::ExpectException<QPSException>(wrapperCallsConst);
+
+		std::string queryCallsStmt = "procedure p; stmt s; Select p such that Calls(p, s)";
+		auto wrapperCallsStmt =
+			[&queryCallsStmt] { PQLParser::parseQuery(queryCallsStmt); };
+		Assert::ExpectException<QPSException>(wrapperCallsStmt);
+
+		std::string queryCallsRead = "procedure p; read r; Select p such that Calls(p, r)";
+		auto wrapperCallsRead =
+			[&queryCallsRead] { PQLParser::parseQuery(queryCallsRead); };
+		Assert::ExpectException<QPSException>(wrapperCallsRead);
+
+		std::string queryCallsPrint = "procedure p; print pn; Select p such that Calls(p, pn)";
+		auto wrapperCallsPrint =
+			[&queryCallsPrint] { PQLParser::parseQuery(queryCallsPrint); };
+		Assert::ExpectException<QPSException>(wrapperCallsPrint);
+
+		std::string queryCallsCall = "procedure p; call c; Select p such that Calls(p, c)";
+		auto wrapperCallsCall =
+			[&queryCallsCall] { PQLParser::parseQuery(queryCallsCall); };
+		Assert::ExpectException<QPSException>(wrapperCallsCall);
+
+		std::string queryCallsWhile = "procedure p; while w; Select p such that Calls(p, w)";
+		auto wrapperCallsWhile =
+			[&queryCallsWhile] { PQLParser::parseQuery(queryCallsWhile); };
+		Assert::ExpectException<QPSException>(wrapperCallsWhile);
+
+		std::string queryCallsIf = "procedure p; if ifs; Select p such that Calls(p, ifs)";
+		auto wrapperCallsIf =
+			[&queryCallsIf] { PQLParser::parseQuery(queryCallsIf); };
+		Assert::ExpectException<QPSException>(wrapperCallsIf);
+
+		std::string queryCallsAssign = "procedure p; assign a; Select p such that Calls(p, a)";
+		auto wrapperCallsAssign =
+			[&queryCallsAssign] { PQLParser::parseQuery(queryCallsAssign); };
+		Assert::ExpectException<QPSException>(wrapperCallsAssign);
+
+		std::string queryCallsInteger = "procedure p; constant c; Select p such that Calls(p, 1)";
+		auto wrapperCallsInteger =
+			[&queryCallsInteger] { PQLParser::parseQuery(queryCallsInteger); };
+		Assert::ExpectException<QPSException>(wrapperCallsInteger);
+	}
+
+
+	TEST_METHOD(parseQuery_callsTFirstArgNonProcSynonym_exceptionThrown) {
+		std::string queryCallsVariable = "procedure p; variable v; Select p such that Calls*(v, p)";
+		auto wrapperCallsVariable =
+			[&queryCallsVariable] { PQLParser::parseQuery(queryCallsVariable); };
+		Assert::ExpectException<QPSException>(wrapperCallsVariable);
+
+		std::string queryCallsConst = "procedure p; constant c; Select p such that Calls*(c, p)";
+		auto wrapperCallsConst =
+			[&queryCallsConst] { PQLParser::parseQuery(queryCallsConst); };
+		Assert::ExpectException<QPSException>(wrapperCallsConst);
+
+		std::string queryCallsStmt = "procedure p; stmt s; Select p such that Calls*(s, p)";
+		auto wrapperCallsStmt =
+			[&queryCallsStmt] { PQLParser::parseQuery(queryCallsStmt); };
+		Assert::ExpectException<QPSException>(wrapperCallsStmt);
+
+		std::string queryCallsRead = "procedure p; read r; Select p such that Calls*(r, p)";
+		auto wrapperCallsRead =
+			[&queryCallsRead] { PQLParser::parseQuery(queryCallsRead); };
+		Assert::ExpectException<QPSException>(wrapperCallsRead);
+
+		std::string queryCallsPrint = "procedure p; print pn; Select p such that Calls*(pn, p)";
+		auto wrapperCallsPrint =
+			[&queryCallsPrint] { PQLParser::parseQuery(queryCallsPrint); };
+		Assert::ExpectException<QPSException>(wrapperCallsPrint);
+
+		std::string queryCallsCall = "procedure p; call c; Select p such that Calls*(c, p)";
+		auto wrapperCallsCall =
+			[&queryCallsCall] { PQLParser::parseQuery(queryCallsCall); };
+		Assert::ExpectException<QPSException>(wrapperCallsCall);
+
+		std::string queryCallsWhile = "procedure p; while w; Select p such that Calls*(w, p)";
+		auto wrapperCallsWhile =
+			[&queryCallsWhile] { PQLParser::parseQuery(queryCallsWhile); };
+		Assert::ExpectException<QPSException>(wrapperCallsWhile);
+
+		std::string queryCallsIf = "procedure p; if ifs; Select p such that Calls*(ifs, p)";
+		auto wrapperCallsIf =
+			[&queryCallsIf] { PQLParser::parseQuery(queryCallsIf); };
+		Assert::ExpectException<QPSException>(wrapperCallsIf);
+
+		std::string queryCallsAssign = "procedure p; assign a; Select p such that Calls*(a, p)";
+		auto wrapperCallsAssign =
+			[&queryCallsAssign] { PQLParser::parseQuery(queryCallsAssign); };
+		Assert::ExpectException<QPSException>(wrapperCallsAssign);
+
+		std::string queryCallsInteger = "procedure p; constant c; Select p such that Calls*(1, p)";
+		auto wrapperCallsInteger =
+			[&queryCallsInteger] { PQLParser::parseQuery(queryCallsInteger); };
+		Assert::ExpectException<QPSException>(wrapperCallsInteger);
+	}
+
+	TEST_METHOD(parseQuery_callsTSecondArgNonProcSynonym_exceptionThrown) {
+		std::string queryCallsVariable = "procedure p; variable v; Select p such that Calls*(p, v)";
+		auto wrapperCallsVariable =
+			[&queryCallsVariable] { PQLParser::parseQuery(queryCallsVariable); };
+		Assert::ExpectException<QPSException>(wrapperCallsVariable);
+
+		std::string queryCallsConst = "procedure p; constant c; Select p such that Calls*(p, c)";
+		auto wrapperCallsConst =
+			[&queryCallsConst] { PQLParser::parseQuery(queryCallsConst); };
+		Assert::ExpectException<QPSException>(wrapperCallsConst);
+
+		std::string queryCallsStmt = "procedure p; stmt s; Select p such that Calls*(p, s)";
+		auto wrapperCallsStmt =
+			[&queryCallsStmt] { PQLParser::parseQuery(queryCallsStmt); };
+		Assert::ExpectException<QPSException>(wrapperCallsStmt);
+
+		std::string queryCallsRead = "procedure p; read r; Select p such that Calls*(p, r)";
+		auto wrapperCallsRead =
+			[&queryCallsRead] { PQLParser::parseQuery(queryCallsRead); };
+		Assert::ExpectException<QPSException>(wrapperCallsRead);
+
+		std::string queryCallsPrint = "procedure p; print pn; Select p such that Calls*(p, pn)";
+		auto wrapperCallsPrint =
+			[&queryCallsPrint] { PQLParser::parseQuery(queryCallsPrint); };
+		Assert::ExpectException<QPSException>(wrapperCallsPrint);
+
+		std::string queryCallsCall = "procedure p; call c; Select p such that Calls*(p, c)";
+		auto wrapperCallsCall =
+			[&queryCallsCall] { PQLParser::parseQuery(queryCallsCall); };
+		Assert::ExpectException<QPSException>(wrapperCallsCall);
+
+		std::string queryCallsWhile = "procedure p; while w; Select p such that Calls*(p, w)";
+		auto wrapperCallsWhile =
+			[&queryCallsWhile] { PQLParser::parseQuery(queryCallsWhile); };
+		Assert::ExpectException<QPSException>(wrapperCallsWhile);
+
+		std::string queryCallsIf = "procedure p; if ifs; Select p such that Calls*(p, ifs)";
+		auto wrapperCallsIf =
+			[&queryCallsIf] { PQLParser::parseQuery(queryCallsIf); };
+		Assert::ExpectException<QPSException>(wrapperCallsIf);
+
+		std::string queryCallsAssign = "procedure p; assign a; Select p such that Calls*(p, a)";
+		auto wrapperCallsAssign =
+			[&queryCallsAssign] { PQLParser::parseQuery(queryCallsAssign); };
+		Assert::ExpectException<QPSException>(wrapperCallsAssign);
+
+		std::string queryCallsInteger = "procedure p; constant c; Select p such that Calls*(p, 1)";
+		auto wrapperCallsInteger =
+			[&queryCallsInteger] { PQLParser::parseQuery(queryCallsInteger); };
+		Assert::ExpectException<QPSException>(wrapperCallsInteger);
+	}
+
+	TEST_METHOD(parseQuery_nextFirstArgNonStmtSynonym_exceptionThrown) {
+		std::string queryNextVariable = "assign a; variable v; Select a such that Next(a, v)";
+		auto wrapperNextVariable =
+			[&queryNextVariable] { PQLParser::parseQuery(queryNextVariable); };
+		Assert::ExpectException<QPSException>(wrapperNextVariable);
+
+		std::string queryNextProc = "assign a; procedure p; Select a such that Next(a, p)";
+		auto wrapperNextProc =
+			[&queryNextProc] { PQLParser::parseQuery(queryNextProc); };
+		Assert::ExpectException<QPSException>(wrapperNextProc);
+
+		std::string queryNextConst = "assign a; constant c; Select a such that Next(a, c)";
+		auto wrapperNextConst =
+			[&queryNextConst] { PQLParser::parseQuery(queryNextConst); };
+		Assert::ExpectException<QPSException>(wrapperNextConst);
+
+		std::string queryNextVarName = "assign a; constant c; Select a such that Next(a, \"x\")";
+		auto wrapperNextVarName =
+			[&queryNextVarName] { PQLParser::parseQuery(queryNextVarName); };
+		Assert::ExpectException<QPSException>(wrapperNextVarName);
+	}
+
+	TEST_METHOD(parseQuery_nextSecondArgNonStmtSynonym_exceptionThrown) {
+		std::string queryNextVariable = "assign a; variable v; Select a such that Next(v, a)";
+		auto wrapperNextVariable =
+			[&queryNextVariable] { PQLParser::parseQuery(queryNextVariable); };
+		Assert::ExpectException<QPSException>(wrapperNextVariable);
+
+		std::string queryNextProc = "assign a; procedure p; Select a such that Next(p, a)";
+		auto wrapperNextProc =
+			[&queryNextProc] { PQLParser::parseQuery(queryNextProc); };
+		Assert::ExpectException<QPSException>(wrapperNextProc);
+
+		std::string queryNextConst = "assign a; constant c; Select a such that Next(c, a)";
+		auto wrapperNextConst =
+			[&queryNextConst] { PQLParser::parseQuery(queryNextConst); };
+		Assert::ExpectException<QPSException>(wrapperNextConst);
+
+		std::string queryNextVarName = "assign a; constant c; Select a such that Next(\"x\", a)";
+		auto wrapperNextVarName =
+			[&queryNextVarName] { PQLParser::parseQuery(queryNextVarName); };
+		Assert::ExpectException<QPSException>(wrapperNextVarName);
+	}
+
+	TEST_METHOD(parseQuery_nextTFirstArgNonStmtSynonym_exceptionThrown) {
+		std::string queryNextVariable = "assign a; variable v; Select a such that Next*(a, v)";
+		auto wrapperNextVariable =
+			[&queryNextVariable] { PQLParser::parseQuery(queryNextVariable); };
+		Assert::ExpectException<QPSException>(wrapperNextVariable);
+
+		std::string queryNextProc = "assign a; procedure p; Select a such that Next*(a, p)";
+		auto wrapperNextProc =
+			[&queryNextProc] { PQLParser::parseQuery(queryNextProc); };
+		Assert::ExpectException<QPSException>(wrapperNextProc);
+
+		std::string queryNextConst = "assign a; constant c; Select a such that Next*(a, c)";
+		auto wrapperNextConst =
+			[&queryNextConst] { PQLParser::parseQuery(queryNextConst); };
+		Assert::ExpectException<QPSException>(wrapperNextConst);
+
+		std::string queryNextVarName = "assign a; constant c; Select a such that Next*(a, \"x\")";
+		auto wrapperNextVarName =
+			[&queryNextVarName] { PQLParser::parseQuery(queryNextVarName); };
+		Assert::ExpectException<QPSException>(wrapperNextVarName);
+	}
+
+	TEST_METHOD(parseQuery_nextTSecondArgNonStmtSynonym_exceptionThrown) {
+		std::string queryNextVariable = "assign a; variable v; Select a such that Next*(v, a)";
+		auto wrapperNextVariable =
+			[&queryNextVariable] { PQLParser::parseQuery(queryNextVariable); };
+		Assert::ExpectException<QPSException>(wrapperNextVariable);
+
+		std::string queryNextProc = "assign a; procedure p; Select a such that Next*(p, a)";
+		auto wrapperNextProc =
+			[&queryNextProc] { PQLParser::parseQuery(queryNextProc); };
+		Assert::ExpectException<QPSException>(wrapperNextProc);
+
+		std::string queryNextConst = "assign a; constant c; Select a such that Next*(c, a)";
+		auto wrapperNextConst =
+			[&queryNextConst] { PQLParser::parseQuery(queryNextConst); };
+		Assert::ExpectException<QPSException>(wrapperNextConst);
+
+		std::string queryNextVarName = "assign a; constant c; Select a such that Next*(\"x\", a)";
+		auto wrapperNextVarName =
+			[&queryNextVarName] { PQLParser::parseQuery(queryNextVarName); };
+		Assert::ExpectException<QPSException>(wrapperNextVarName);
+	}
+
+	TEST_METHOD(parseQuery_affectsFirstArgNonAssignSynonym_exceptionThrown) {
+		std::string queryAffectsVariable = "assign a; variable v; Select a such that Affects(v, a)";
+		auto wrapperAffectsVariable =
+			[&queryAffectsVariable] { PQLParser::parseQuery(queryAffectsVariable); };
+		Assert::ExpectException<QPSException>(wrapperAffectsVariable);
+
+		std::string queryAffectsConst = "assign a; constant c; Select a such that Affects(c, a)";
+		auto wrapperAffectsConst =
+			[&queryAffectsConst] { PQLParser::parseQuery(queryAffectsConst); };
+		Assert::ExpectException<QPSException>(wrapperAffectsConst);
+
+		std::string queryAffectsRead = "assign a; read r; Select a such that Affects(r, a)";
+		auto wrapperAffectsRead =
+			[&queryAffectsRead] { PQLParser::parseQuery(queryAffectsRead); };
+		Assert::ExpectException<QPSException>(wrapperAffectsRead);
+
+		std::string queryAffectsPrint = "assign a; print pn; Select a such that Affects(pn, a)";
+		auto wrapperAffectsPrint =
+			[&queryAffectsPrint] { PQLParser::parseQuery(queryAffectsPrint); };
+		Assert::ExpectException<QPSException>(wrapperAffectsPrint);
+
+		std::string queryAffectsCall = "assign a; call c; Select a such that Affects(c, a)";
+		auto wrapperAffectsCall =
+			[&queryAffectsCall] { PQLParser::parseQuery(queryAffectsCall); };
+		Assert::ExpectException<QPSException>(wrapperAffectsCall);
+
+		std::string queryAffectsWhile = "assign a; while w; Select a such that Affects(w, a)";
+		auto wrapperAffectsWhile =
+			[&queryAffectsWhile] { PQLParser::parseQuery(queryAffectsWhile); };
+		Assert::ExpectException<QPSException>(wrapperAffectsWhile);
+
+		std::string queryAffectsIf = "assign a; if ifs; Select a such that Affects(ifs, a)";
+		auto wrapperAffectsIf =
+			[&queryAffectsIf] { PQLParser::parseQuery(queryAffectsIf); };
+		Assert::ExpectException<QPSException>(wrapperAffectsIf);
+
+		std::string queryAffectsAssign = "assign a; procedure p; Select a such that Affects(p, a)";
+		auto wrapperAffectsAssign =
+			[&queryAffectsAssign] { PQLParser::parseQuery(queryAffectsAssign); };
+		Assert::ExpectException<QPSException>(wrapperAffectsAssign);
+
+		std::string queryAffectsIdent = "assign a; constant c; Select a such that Affects(\"abc\", a)";
+		auto wrapperAffectsIdent =
+			[&queryAffectsIdent] { PQLParser::parseQuery(queryAffectsIdent); };
+		Assert::ExpectException<QPSException>(wrapperAffectsIdent);
+	}
+
+	TEST_METHOD(parseQuery_affectsSecondArgNonProcSynonym_exceptionThrown) {
+		std::string queryAffectsVariable = "assign a; variable v; Select a such that Affects(a, v)";
+		auto wrapperAffectsVariable =
+			[&queryAffectsVariable] { PQLParser::parseQuery(queryAffectsVariable); };
+		Assert::ExpectException<QPSException>(wrapperAffectsVariable);
+
+		std::string queryAffectsConst = "assign a; constant c; Select a such that Affects(a, c)";
+		auto wrapperAffectsConst =
+			[&queryAffectsConst] { PQLParser::parseQuery(queryAffectsConst); };
+		Assert::ExpectException<QPSException>(wrapperAffectsConst);
+
+		std::string queryAffectsRead = "assign a; read r; Select a such that Affects(a, r)";
+		auto wrapperAffectsRead =
+			[&queryAffectsRead] { PQLParser::parseQuery(queryAffectsRead); };
+		Assert::ExpectException<QPSException>(wrapperAffectsRead);
+
+		std::string queryAffectsPrint = "assign a; print pn; Select a such that Affects(a, pn)";
+		auto wrapperAffectsPrint =
+			[&queryAffectsPrint] { PQLParser::parseQuery(queryAffectsPrint); };
+		Assert::ExpectException<QPSException>(wrapperAffectsPrint);
+
+		std::string queryAffectsCall = "assign a; call c; Select a such that Affects(a, c)";
+		auto wrapperAffectsCall =
+			[&queryAffectsCall] { PQLParser::parseQuery(queryAffectsCall); };
+		Assert::ExpectException<QPSException>(wrapperAffectsCall);
+
+		std::string queryAffectsWhile = "assign a; while w; Select a such that Affects(a, w)";
+		auto wrapperAffectsWhile =
+			[&queryAffectsWhile] { PQLParser::parseQuery(queryAffectsWhile); };
+		Assert::ExpectException<QPSException>(wrapperAffectsWhile);
+
+		std::string queryAffectsIf = "assign a; if ifs; Select a such that Affects(a, ifs)";
+		auto wrapperAffectsIf =
+			[&queryAffectsIf] { PQLParser::parseQuery(queryAffectsIf); };
+		Assert::ExpectException<QPSException>(wrapperAffectsIf);
+
+		std::string queryAffectsAssign = "assign a; procedure p; Select a such that Affects(a, p)";
+		auto wrapperAffectsAssign =
+			[&queryAffectsAssign] { PQLParser::parseQuery(queryAffectsAssign); };
+		Assert::ExpectException<QPSException>(wrapperAffectsAssign);
+
+		std::string queryAffectsIdent = "assign a; constant c; Select a such that Affects(a, \"abc\")";
+		auto wrapperAffectsIdent =
+			[&queryAffectsIdent] { PQLParser::parseQuery(queryAffectsIdent); };
+		Assert::ExpectException<QPSException>(wrapperAffectsIdent);
+	}
+
+
+	TEST_METHOD(parseQuery_affectsTFirstArgNonProcSynonym_exceptionThrown) {
+		std::string queryAffectsVariable = "assign a; variable v; Select a such that Affects*(v, a)";
+		auto wrapperAffectsVariable =
+			[&queryAffectsVariable] { PQLParser::parseQuery(queryAffectsVariable); };
+		Assert::ExpectException<QPSException>(wrapperAffectsVariable);
+
+		std::string queryAffectsConst = "assign a; constant c; Select a such that Affects*(c, a)";
+		auto wrapperAffectsConst =
+			[&queryAffectsConst] { PQLParser::parseQuery(queryAffectsConst); };
+		Assert::ExpectException<QPSException>(wrapperAffectsConst);
+
+		std::string queryAffectsRead = "assign a; read r; Select a such that Affects*(r, a)";
+		auto wrapperAffectsRead =
+			[&queryAffectsRead] { PQLParser::parseQuery(queryAffectsRead); };
+		Assert::ExpectException<QPSException>(wrapperAffectsRead);
+
+		std::string queryAffectsPrint = "assign a; print pn; Select a such that Affects*(pn, a)";
+		auto wrapperAffectsPrint =
+			[&queryAffectsPrint] { PQLParser::parseQuery(queryAffectsPrint); };
+		Assert::ExpectException<QPSException>(wrapperAffectsPrint);
+
+		std::string queryAffectsCall = "assign a; call c; Select a such that Affects*(c, a)";
+		auto wrapperAffectsCall =
+			[&queryAffectsCall] { PQLParser::parseQuery(queryAffectsCall); };
+		Assert::ExpectException<QPSException>(wrapperAffectsCall);
+
+		std::string queryAffectsWhile = "assign a; while w; Select a such that Affects*(w, a)";
+		auto wrapperAffectsWhile =
+			[&queryAffectsWhile] { PQLParser::parseQuery(queryAffectsWhile); };
+		Assert::ExpectException<QPSException>(wrapperAffectsWhile);
+
+		std::string queryAffectsIf = "assign a; if ifs; Select a such that Affects*(ifs, a)";
+		auto wrapperAffectsIf =
+			[&queryAffectsIf] { PQLParser::parseQuery(queryAffectsIf); };
+		Assert::ExpectException<QPSException>(wrapperAffectsIf);
+
+		std::string queryAffectsAssign = "assign a; procedure p; Select a such that Affects*(p, a)";
+		auto wrapperAffectsAssign =
+			[&queryAffectsAssign] { PQLParser::parseQuery(queryAffectsAssign); };
+		Assert::ExpectException<QPSException>(wrapperAffectsAssign);
+
+		std::string queryAffectsIdent = "assign a; constant c; Select a such that Affects*(\"abc\", a)";
+		auto wrapperAffectsIdent =
+			[&queryAffectsIdent] { PQLParser::parseQuery(queryAffectsIdent); };
+		Assert::ExpectException<QPSException>(wrapperAffectsIdent);
+	}
+
+	TEST_METHOD(parseQuery_affectsTSecondArgNonProcSynonym_exceptionThrown) {
+		std::string queryAffectsVariable = "assign a; variable v; Select a such that Affects*(a, v)";
+		auto wrapperAffectsVariable =
+			[&queryAffectsVariable] { PQLParser::parseQuery(queryAffectsVariable); };
+		Assert::ExpectException<QPSException>(wrapperAffectsVariable);
+
+		std::string queryAffectsConst = "assign a; constant c; Select a such that Affects*(a, c)";
+		auto wrapperAffectsConst =
+			[&queryAffectsConst] { PQLParser::parseQuery(queryAffectsConst); };
+		Assert::ExpectException<QPSException>(wrapperAffectsConst);
+
+		std::string queryAffectsRead = "assign a; read r; Select a such that Affects*(a, r)";
+		auto wrapperAffectsRead =
+			[&queryAffectsRead] { PQLParser::parseQuery(queryAffectsRead); };
+		Assert::ExpectException<QPSException>(wrapperAffectsRead);
+
+		std::string queryAffectsPrint = "assign a; print pn; Select a such that Affects*(a, pn)";
+		auto wrapperAffectsPrint =
+			[&queryAffectsPrint] { PQLParser::parseQuery(queryAffectsPrint); };
+		Assert::ExpectException<QPSException>(wrapperAffectsPrint);
+
+		std::string queryAffectsCall = "assign a; call c; Select a such that Affects*(a, c)";
+		auto wrapperAffectsCall =
+			[&queryAffectsCall] { PQLParser::parseQuery(queryAffectsCall); };
+		Assert::ExpectException<QPSException>(wrapperAffectsCall);
+
+		std::string queryAffectsWhile = "assign a; while w; Select a such that Affects*(a, w)";
+		auto wrapperAffectsWhile =
+			[&queryAffectsWhile] { PQLParser::parseQuery(queryAffectsWhile); };
+		Assert::ExpectException<QPSException>(wrapperAffectsWhile);
+
+		std::string queryAffectsIf = "assign a; if ifs; Select a such that Affects*(a, ifs)";
+		auto wrapperAffectsIf =
+			[&queryAffectsIf] { PQLParser::parseQuery(queryAffectsIf); };
+		Assert::ExpectException<QPSException>(wrapperAffectsIf);
+
+		std::string queryAffectsAssign = "assign a; procedure p; Select a such that Affects*(a, p)";
+		auto wrapperAffectsAssign =
+			[&queryAffectsAssign] { PQLParser::parseQuery(queryAffectsAssign); };
+		Assert::ExpectException<QPSException>(wrapperAffectsAssign);
+
+		std::string queryAffectsIdent = "assign a; constant c; Select a such that Affects*(a, \"abc\")";
+		auto wrapperAffectsIdent =
+			[&queryAffectsIdent] { PQLParser::parseQuery(queryAffectsIdent); };
+		Assert::ExpectException<QPSException>(wrapperAffectsIdent);
+	}
 	};
 }

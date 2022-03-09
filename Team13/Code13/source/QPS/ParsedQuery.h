@@ -15,6 +15,7 @@ private:
 	static const std::unordered_set<PqlReferenceType> entRefNoWildcard;
 
 	static const std::unordered_set<PqlEntityType> stmtEntities;
+	static const std::unordered_set<PqlEntityType> assignEntities;
 	static const std::unordered_set<PqlEntityType> varEntities;
 	static const std::unordered_set<PqlEntityType> procEntities;
 
