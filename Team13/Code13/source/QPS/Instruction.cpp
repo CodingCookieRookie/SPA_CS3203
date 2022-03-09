@@ -800,6 +800,8 @@ EvaluatedTable PatternInstruction::handlePatterns() {
 				allStmts = Pattern::getAssignStmtsFromVarExprPartialMatch(varIndex, expressionSpec.second);
 			} else if (expressionSpec.first == PqlExpressionType::wildcard) {
 				allStmts = Pattern::getAssignStmtsFromVar(varIndex);
+			} else if (expressionSpec.first == PqlExpressionType::full) {
+				allStmts = Pattern::getAssignStmtsFromVarExprFullMatch(varIndex, expressionSpec.second);
 			}
 		}
 		PQLmap[synonym] = allStmts;

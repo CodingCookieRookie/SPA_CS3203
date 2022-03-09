@@ -353,5 +353,35 @@ public:
 		std::string expected = "Table String: size: 1\nSynonym: a1 Values: 2 \n";
 		Assert::AreEqual(expected, evTable.getTableString());
 	}
+
+	/*Full pattern matching*/
+	/*expressionSpec is converted to post fix before passed into PatternInstruction*/
+	TEST_METHOD(execute_lhsIdentRhsIdentExactMatch) {
+		// assign1 = assign1 + x
+		// Pattern a1("assign1", "assign1 + x")
+		// 1. Setup:
+		std::string synonym = "a1";
+		PqlReference entRef = std::make_pair(PqlReferenceType::ident, "assign1");
+		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x");
+		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::full, postFixExpression);
+		Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
+
+		// PKB inserts pattern
+		Entity::insertStmt(StatementType::printType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		VarIndex varIndex = Entity::insertVar("assign1");
+
+		Pattern::insertAssignInfo(varIndex, postFixExpression, stmt);
+
+		// Check PKB populated
+		std::vector<int> allPatternStmtInfo = Pattern::getAssignStmtsFromVarExprFullMatch(varIndex, postFixExpression);
+		Assert::AreEqual(size_t(1), allPatternStmtInfo.size());
+
+		// 2. Main test:
+		EvaluatedTable evTable = instruction->execute();
+		Assert::AreEqual(size_t(1), evTable.getNumRow());
+		std::string expected = "Table String: size: 1\nSynonym: a1 Values: 2 \n";
+		Assert::AreEqual(expected, evTable.getTableString());
+	}
 	};
 }
