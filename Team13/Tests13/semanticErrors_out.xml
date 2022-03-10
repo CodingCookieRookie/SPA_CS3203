@@ -1,0 +1,127 @@
+<?xml-stylesheet type="text/xsl" href="analysis.xsl"?>
+<test_results>
+<info>
+<name>Tests13</name><parsing_time_taken>5.000000</parsing_time_taken>
+</info>
+<queries>
+<query>
+<id ReturnTuple="1" CondNum="1" RelNum="0" comment="1 - Undeclared synonym used in Select clause">5</id><querystr><![CDATA[stmt s; Select s1]]></querystr>
+<stuans></stuans>
+<correct></correct>
+<time_taken>3.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" Follows="1" SuchThat="1" CondNum="3" RelNum="1" comment="1.1 - Invalid use of entRef - Follows">6</id><querystr><![CDATA[stmt s; variable v; Select v such that Follows(s, v)]]></querystr>
+<stuans></stuans>
+<correct></correct>
+<time_taken>2.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" Followsstar="1" SuchThat="1" CondNum="3" RelNum="1" comment="1.2 - Invalid use of entRef - Follows*">6</id><querystr><![CDATA[stmt s; variable v; Select v such that Follows*(s, v)]]></querystr>
+<stuans></stuans>
+<correct></correct>
+<time_taken>3.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" Parent="1" SuchThat="1" CondNum="3" RelNum="1" comment="1.3 - Invalid use of entRef - Parent">6</id><querystr><![CDATA[stmt s; variable v; Select v such that Parent(s, v)]]></querystr>
+<stuans></stuans>
+<correct></correct>
+<time_taken>3.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" Parent="1" SuchThat="1" CondNum="3" RelNum="1" comment="1.4 - Invalid use of entRef - Parent*">6</id><querystr><![CDATA[stmt s; variable v; Select v such that Parent(s, v)]]></querystr>
+<stuans></stuans>
+<correct></correct>
+<time_taken>2.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" Modifies="1" SuchThat="1" CondNum="3" RelNum="1" comment="2.1 - entRef and stmtRef are switched - ModifiesS">6</id><querystr><![CDATA[stmt s; variable v; Select v such that Modifies(v, s)]]></querystr>
+<stuans></stuans>
+<correct></correct>
+<time_taken>3.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" Uses="1" SuchThat="1" CondNum="3" RelNum="1" comment="2.2 - entRef and stmtRef are switched - UsesS">6</id><querystr><![CDATA[stmt s; variable v; Select v such that Uses(v, s)]]></querystr>
+<stuans></stuans>
+<correct></correct>
+<time_taken>5.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" Follows="1" SuchThat="1" CondNum="3" RelNum="1" comment="3 - Undeclared synonym in such that clause">6</id><querystr><![CDATA[stmt s; Select s such that Follows(s1, s)]]></querystr>
+<stuans></stuans>
+<correct></correct>
+<time_taken>3.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" UnnamedVar="1" SuchThat="1" CondNum="3" RelNum="0" comment="1.1 - Incorrect syn-assign - stmt">7</id><querystr><![CDATA[stmt s; variable v; Select s such that s(v, _)]]></querystr>
+<stuans></stuans>
+<correct></correct>
+<time_taken>3.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" UnnamedVar="1" SuchThat="1" CondNum="3" RelNum="0" comment="1.2 - Incorrect syn-assign - read">7</id><querystr><![CDATA[read r; variable v; Select r such that r(v, _)]]></querystr>
+<stuans></stuans>
+<correct></correct>
+<time_taken>3.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" UnnamedVar="1" SuchThat="1" CondNum="3" RelNum="0" comment="1.3 - Incorrect syn-assign - print">7</id><querystr><![CDATA[print p; variable v; Select p such that p(v, _)]]></querystr>
+<stuans></stuans>
+<correct></correct>
+<time_taken>3.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" UnnamedVar="1" SuchThat="1" CondNum="3" RelNum="0" comment="1.4 - Incorrect syn-assign - while">7</id><querystr><![CDATA[while w; variable v; Select w such that w(v, _)]]></querystr>
+<stuans></stuans>
+<correct></correct>
+<time_taken>3.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" UnnamedVar="1" SuchThat="1" CondNum="3" RelNum="0" comment="1.5 - Incorrect syn-assign - if">7</id><querystr><![CDATA[if ifs; variable v; Select ifs such that ifs(v, _)]]></querystr>
+<stuans></stuans>
+<correct></correct>
+<time_taken>3.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" UnnamedVar="1" SuchThat="1" CondNum="3" RelNum="0" comment="1.6 - Incorrect syn-assign - variable">7</id><querystr><![CDATA[assign a; variable v; Select a such that v(v, _)]]></querystr>
+<stuans></stuans>
+<correct></correct>
+<time_taken>3.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" UnnamedVar="1" SuchThat="1" CondNum="3" RelNum="0" comment="1.7 - Incorrect syn-assign - constant">7</id><querystr><![CDATA[constant c; variable v; Select v such that c(v, _)]]></querystr>
+<stuans></stuans>
+<correct></correct>
+<time_taken>3.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" UnnamedVar="1" SuchThat="1" CondNum="3" RelNum="0" comment="1.8 - Incorrect syn-assign - procedure">7</id><querystr><![CDATA[procedure p; variable v; Select v such that p(v, _)]]></querystr>
+<stuans></stuans>
+<correct></correct>
+<time_taken>5.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" UnnamedVar="1" Pattern="1" CondNum="3" RelNum="0" comment="2 - Undeclared synonym in pattern-cl">7</id><querystr><![CDATA[assign a; variable v; Select a pattern a(v1, _)]]></querystr>
+<stuans></stuans>
+<correct></correct>
+<time_taken>3.000000</time_taken>
+<passed/>
+</query>
+</queries>
+</test_results>
