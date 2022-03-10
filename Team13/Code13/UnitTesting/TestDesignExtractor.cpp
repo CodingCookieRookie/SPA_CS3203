@@ -206,6 +206,7 @@ public:
 		/* We expect one Parent relationships to be captured, from the read statement in the while-block */
 		Assert::AreEqual(size_t(1), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());
 	}
+
 	TEST_METHOD(extract_whileInWhile_parentAndParentTCaptured) {
 		/* AST is equivalent to the SIMPLE program
 		   procedure main {
@@ -416,6 +417,282 @@ public:
 
 		std::tuple<std::vector<int>, std::vector<int>> patternConstResult = Pattern::getAssignStmtsFromExprPartialMatch(std::string(" 1 "));
 		Assert::AreEqual(size_t(1), std::get<0>(patternConstResult).size());
+	}
+
+	TEST_METHOD(extract_singleIfStatement_singleVar_patternCaptured) {
+		/* AST is equivalent to the SIMPLE program
+		   procedure main {
+			   if (x == x) then {
+				   print x; } else {
+				   read y; } }
+		*/
+		PrintNode* printNode = new PrintNode("x");
+		StmtLstNode* thenStmtLstNode = new StmtLstNode();
+		thenStmtLstNode->addStmtNode(printNode);
+		ReadNode* readNode = new ReadNode("y");
+		StmtLstNode* elseStmtLstNode = new StmtLstNode();
+		elseStmtLstNode->addStmtNode(readNode);
+		ExprNode* rootExprNode = new ExprNode(ExprNodeValueType::relOperator, "==");
+		ExprNode* leftExprNode = new ExprNode(ExprNodeValueType::varName, "x");
+		ExprNode* rightExprNode = new ExprNode(ExprNodeValueType::varName, "x");
+		rootExprNode->addChild(leftExprNode);
+		rootExprNode->addChild(rightExprNode);
+		IfNode* ifNode = new IfNode(rootExprNode, thenStmtLstNode, elseStmtLstNode);
+		StmtLstNode* outerStmtLstNode = new StmtLstNode();
+		outerStmtLstNode->addStmtNode(ifNode);
+		ProcedureNode* procedureNode = new ProcedureNode("main");
+		procedureNode->addStmtLst(outerStmtLstNode);
+		ProgramNode* programNode = new ProgramNode();
+		programNode->addProcedure(procedureNode);
+		SourceAST ast(programNode);
+		DesignExtractor::extract(ast);
+
+		VarIndex x = Entity::getVarIdx("x");
+		VarIndex y = Entity::getVarIdx("y");
+		Assert::AreEqual(size_t(1), Pattern::getIfStmtsFromVar(x).size());
+		Assert::AreEqual(size_t(0), Pattern::getIfStmtsFromVar(y).size());
+
+		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAllIfPatternInfo()).size());
+	}
+
+	TEST_METHOD(extract_singleIfStatement_multVars_patternCaptured) {
+		/* AST is equivalent to the SIMPLE program
+		   procedure main {
+			   if ((x == y) && (z > 0)) then {
+				   print a; } else {
+				   read y; } }
+		*/
+		PrintNode* printNode = new PrintNode("a");
+		StmtLstNode* thenStmtLstNode = new StmtLstNode();
+		thenStmtLstNode->addStmtNode(printNode);
+		ReadNode* readNode = new ReadNode("y");
+		StmtLstNode* elseStmtLstNode = new StmtLstNode();
+		elseStmtLstNode->addStmtNode(readNode);
+		ExprNode* andOp = new ExprNode(ExprNodeValueType::logicalOperator, "&&");
+		ExprNode* eqOp = new ExprNode(ExprNodeValueType::relOperator, "==");
+		ExprNode* gtOp = new ExprNode(ExprNodeValueType::relOperator, ">");
+		andOp->addChild(eqOp);
+		andOp->addChild(gtOp);
+
+		eqOp->addChild(new ExprNode(ExprNodeValueType::varName, "x"));
+		eqOp->addChild(new ExprNode(ExprNodeValueType::varName, "y"));
+		gtOp->addChild(new ExprNode(ExprNodeValueType::varName, "z"));
+		gtOp->addChild(new ExprNode(ExprNodeValueType::constValue, "0"));
+
+		IfNode* ifNode = new IfNode(andOp, thenStmtLstNode, elseStmtLstNode);
+		StmtLstNode* outerStmtLstNode = new StmtLstNode();
+		outerStmtLstNode->addStmtNode(ifNode);
+		ProcedureNode* procedureNode = new ProcedureNode("main");
+		procedureNode->addStmtLst(outerStmtLstNode);
+		ProgramNode* programNode = new ProgramNode();
+		programNode->addProcedure(procedureNode);
+		SourceAST ast(programNode);
+		DesignExtractor::extract(ast);
+
+		VarIndex x = Entity::getVarIdx("x");
+		VarIndex y = Entity::getVarIdx("y");
+		VarIndex z = Entity::getVarIdx("z");
+		VarIndex a = Entity::getVarIdx("a");
+		Assert::AreEqual(size_t(1), Pattern::getIfStmtsFromVar(x).size());
+		Assert::AreEqual(size_t(1), Pattern::getIfStmtsFromVar(y).size());
+		Assert::AreEqual(size_t(1), Pattern::getIfStmtsFromVar(z).size());
+		Assert::AreEqual(size_t(0), Pattern::getIfStmtsFromVar(a).size());
+
+		Assert::AreEqual(size_t(3), std::get<0>(Pattern::getAllIfPatternInfo()).size());
+	}
+
+	TEST_METHOD(extract_multIfStatements_multVars_patternCaptured) {
+		/* AST is equivalent to the SIMPLE program
+		   procedure main {
+			   if ((x == y) && (z > 0)) then {
+				   print a; } else {
+				   read y; }
+				if (x != z) then {
+				   print x; } else {
+				   read a; }
+			}
+		*/
+		PrintNode* printNode1 = new PrintNode("a");
+		StmtLstNode* thenStmtLstNode1 = new StmtLstNode();
+		thenStmtLstNode1->addStmtNode(printNode1);
+		ReadNode* readNode1 = new ReadNode("y");
+		StmtLstNode* elseStmtLstNode1 = new StmtLstNode();
+		elseStmtLstNode1->addStmtNode(readNode1);
+		ExprNode* andOp = new ExprNode(ExprNodeValueType::logicalOperator, "&&");
+		ExprNode* eqOp = new ExprNode(ExprNodeValueType::relOperator, "==");
+		ExprNode* gtOp = new ExprNode(ExprNodeValueType::relOperator, ">");
+		andOp->addChild(eqOp);
+		andOp->addChild(gtOp);
+
+		eqOp->addChild(new ExprNode(ExprNodeValueType::varName, "x"));
+		eqOp->addChild(new ExprNode(ExprNodeValueType::varName, "y"));
+		gtOp->addChild(new ExprNode(ExprNodeValueType::varName, "z"));
+		gtOp->addChild(new ExprNode(ExprNodeValueType::constValue, "0"));
+		IfNode* ifNode1 = new IfNode(andOp, thenStmtLstNode1, elseStmtLstNode1);
+
+		PrintNode* printNode2 = new PrintNode("x");
+		StmtLstNode* thenStmtLstNode2 = new StmtLstNode();
+		thenStmtLstNode2->addStmtNode(printNode2);
+		ReadNode* readNode2 = new ReadNode("a");
+		StmtLstNode* elseStmtLstNode2 = new StmtLstNode();
+		elseStmtLstNode2->addStmtNode(readNode2);
+		ExprNode* neqOp = new ExprNode(ExprNodeValueType::relOperator, "!=");
+		ExprNode* leftExprNode = new ExprNode(ExprNodeValueType::varName, "x");
+		ExprNode* rightExprNode = new ExprNode(ExprNodeValueType::varName, "z");
+		neqOp->addChild(leftExprNode);
+		neqOp->addChild(rightExprNode);
+		IfNode* ifNode2 = new IfNode(neqOp, thenStmtLstNode2, elseStmtLstNode2);
+
+		StmtLstNode* outerStmtLstNode = new StmtLstNode();
+		outerStmtLstNode->addStmtNode(ifNode1);
+		outerStmtLstNode->addStmtNode(ifNode2);
+		ProcedureNode* procedureNode = new ProcedureNode("main");
+		procedureNode->addStmtLst(outerStmtLstNode);
+		ProgramNode* programNode = new ProgramNode();
+		programNode->addProcedure(procedureNode);
+		SourceAST ast(programNode);
+		DesignExtractor::extract(ast);
+
+		VarIndex x = Entity::getVarIdx("x");
+		VarIndex y = Entity::getVarIdx("y");
+		VarIndex z = Entity::getVarIdx("z");
+		VarIndex a = Entity::getVarIdx("a");
+		Assert::AreEqual(size_t(2), Pattern::getIfStmtsFromVar(x).size());
+		Assert::AreEqual(size_t(1), Pattern::getIfStmtsFromVar(y).size());
+		Assert::AreEqual(size_t(2), Pattern::getIfStmtsFromVar(z).size());
+		Assert::AreEqual(size_t(0), Pattern::getIfStmtsFromVar(a).size());
+
+		Assert::AreEqual(size_t(5), std::get<0>(Pattern::getAllIfPatternInfo()).size());
+	}
+
+	TEST_METHOD(extract_singleWhileStatement_singleVar_patternCaptured) {
+		/* AST is equivalent to the SIMPLE program
+		   procedure main {
+				while (x == 0) {
+					read y; } }
+		*/
+		PrintNode* printNode = new PrintNode("y");
+		StmtLstNode* stmtLstNode = new StmtLstNode();
+		stmtLstNode->addStmtNode(printNode);
+		ExprNode* rootExprNode = new ExprNode(ExprNodeValueType::relOperator, "==");
+		ExprNode* leftExprNode = new ExprNode(ExprNodeValueType::varName, "x");
+		ExprNode* rightExprNode = new ExprNode(ExprNodeValueType::constValue, "0");
+		rootExprNode->addChild(leftExprNode);
+		rootExprNode->addChild(rightExprNode);
+		WhileNode* whileNode = new WhileNode(rootExprNode, stmtLstNode);
+		StmtLstNode* outerStmtLstNode = new StmtLstNode();
+		outerStmtLstNode->addStmtNode(whileNode);
+		ProcedureNode* procedureNode = new ProcedureNode("main");
+		procedureNode->addStmtLst(outerStmtLstNode);
+		ProgramNode* programNode = new ProgramNode();
+		programNode->addProcedure(procedureNode);
+		SourceAST ast(programNode);
+		DesignExtractor::extract(ast);
+
+		VarIndex x = Entity::getVarIdx("x");
+		VarIndex y = Entity::getVarIdx("y");
+		Assert::AreEqual(size_t(1), Pattern::getWhileStmtsFromVar(x).size());
+		Assert::AreEqual(size_t(0), Pattern::getWhileStmtsFromVar(y).size());
+
+		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAllWhilePatternInfo()).size());
+	}
+
+	TEST_METHOD(extract_singleWhileStatement_multVars_patternCaptured) {
+		/* AST is equivalent to the SIMPLE program
+		   procedure main {
+		   while ((x == y) && (z > 0)) {
+					print a; } }
+		*/
+		PrintNode* printNode = new PrintNode("a");
+		StmtLstNode* stmtLstNode = new StmtLstNode();
+		stmtLstNode->addStmtNode(printNode);
+		ExprNode* andOp = new ExprNode(ExprNodeValueType::logicalOperator, "&&");
+		ExprNode* eqOp = new ExprNode(ExprNodeValueType::relOperator, "==");
+		ExprNode* gtOp = new ExprNode(ExprNodeValueType::relOperator, ">");
+		andOp->addChild(eqOp);
+		andOp->addChild(gtOp);
+
+		eqOp->addChild(new ExprNode(ExprNodeValueType::varName, "x"));
+		eqOp->addChild(new ExprNode(ExprNodeValueType::varName, "y"));
+		gtOp->addChild(new ExprNode(ExprNodeValueType::varName, "z"));
+		gtOp->addChild(new ExprNode(ExprNodeValueType::constValue, "0"));
+
+		WhileNode* whileNode = new WhileNode(andOp, stmtLstNode);
+		StmtLstNode* outerStmtLstNode = new StmtLstNode();
+		outerStmtLstNode->addStmtNode(whileNode);
+		ProcedureNode* procedureNode = new ProcedureNode("main");
+		procedureNode->addStmtLst(outerStmtLstNode);
+		ProgramNode* programNode = new ProgramNode();
+		programNode->addProcedure(procedureNode);
+		SourceAST ast(programNode);
+		DesignExtractor::extract(ast);
+
+		VarIndex x = Entity::getVarIdx("x");
+		VarIndex y = Entity::getVarIdx("y");
+		VarIndex z = Entity::getVarIdx("z");
+		VarIndex a = Entity::getVarIdx("a");
+		Assert::AreEqual(size_t(1), Pattern::getWhileStmtsFromVar(x).size());
+		Assert::AreEqual(size_t(1), Pattern::getWhileStmtsFromVar(y).size());
+		Assert::AreEqual(size_t(1), Pattern::getWhileStmtsFromVar(z).size());
+		Assert::AreEqual(size_t(0), Pattern::getWhileStmtsFromVar(a).size());
+
+		Assert::AreEqual(size_t(3), std::get<0>(Pattern::getAllWhilePatternInfo()).size());
+	}
+
+	TEST_METHOD(extract_multWhileStatements_multVars_patternCaptured) {
+		/* AST is equivalent to the SIMPLE program
+		   procedure main {
+			   while ((x == y) && (z > 0)) {
+				   print a; }
+				while (x != z)  {
+				   print a; }
+			}
+		*/
+		PrintNode* printNode1 = new PrintNode("a");
+		StmtLstNode* stmtLstNode1 = new StmtLstNode();
+		stmtLstNode1->addStmtNode(printNode1);
+		ExprNode* andOp = new ExprNode(ExprNodeValueType::logicalOperator, "&&");
+		ExprNode* eqOp = new ExprNode(ExprNodeValueType::relOperator, "==");
+		ExprNode* gtOp = new ExprNode(ExprNodeValueType::relOperator, ">");
+		andOp->addChild(eqOp);
+		andOp->addChild(gtOp);
+
+		eqOp->addChild(new ExprNode(ExprNodeValueType::varName, "x"));
+		eqOp->addChild(new ExprNode(ExprNodeValueType::varName, "y"));
+		gtOp->addChild(new ExprNode(ExprNodeValueType::varName, "z"));
+		gtOp->addChild(new ExprNode(ExprNodeValueType::constValue, "0"));
+		WhileNode* whileNode1 = new WhileNode(andOp, stmtLstNode1);
+
+		PrintNode* printNode2 = new PrintNode("a");
+		StmtLstNode* stmtLstNode2 = new StmtLstNode();
+		stmtLstNode2->addStmtNode(printNode2);
+		ExprNode* neqOp = new ExprNode(ExprNodeValueType::relOperator, "!=");
+		ExprNode* leftExprNode = new ExprNode(ExprNodeValueType::varName, "x");
+		ExprNode* rightExprNode = new ExprNode(ExprNodeValueType::varName, "z");
+		neqOp->addChild(leftExprNode);
+		neqOp->addChild(rightExprNode);
+		WhileNode* whileNode2 = new WhileNode(neqOp, stmtLstNode2);
+
+		StmtLstNode* outerStmtLstNode = new StmtLstNode();
+		outerStmtLstNode->addStmtNode(whileNode1);
+		outerStmtLstNode->addStmtNode(whileNode2);
+		ProcedureNode* procedureNode = new ProcedureNode("main");
+		procedureNode->addStmtLst(outerStmtLstNode);
+		ProgramNode* programNode = new ProgramNode();
+		programNode->addProcedure(procedureNode);
+		SourceAST ast(programNode);
+		DesignExtractor::extract(ast);
+
+		VarIndex x = Entity::getVarIdx("x");
+		VarIndex y = Entity::getVarIdx("y");
+		VarIndex z = Entity::getVarIdx("z");
+		VarIndex a = Entity::getVarIdx("a");
+		Assert::AreEqual(size_t(2), Pattern::getWhileStmtsFromVar(x).size());
+		Assert::AreEqual(size_t(1), Pattern::getWhileStmtsFromVar(y).size());
+		Assert::AreEqual(size_t(2), Pattern::getWhileStmtsFromVar(z).size());
+		Assert::AreEqual(size_t(0), Pattern::getWhileStmtsFromVar(a).size());
+
+		Assert::AreEqual(size_t(5), std::get<0>(Pattern::getAllWhilePatternInfo()).size());
 	}
 	};
 }

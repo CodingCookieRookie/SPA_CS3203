@@ -40,11 +40,23 @@ StmtIndex DesignExtractor::processStmtNode(StmtNode* stmtNode, StmtIndex prevInd
 		ModifiesS::insert(stmtIndex, varIndex);
 	}
 
+	/* Container stmts use control variables for pattern */
 	std::unordered_set<std::string> usesVars = stmtNode->getUsesVars();
 	for (const std::string& varName : usesVars) {
 		VarIndex varIndex = Entity::insertVar(varName);
-		UsesS::insert(stmtIndex, varIndex);
+		switch (stmtNode->getStmtType()) {
+		case StatementType::ifType:
+			Pattern::insertIfInfo(stmtIndex, varIndex);
+			break;
+		case StatementType::whileType:
+			Pattern::insertWhileInfo(stmtIndex, varIndex);
+			break;
+		default:
+			UsesS::insert(stmtIndex, varIndex);
+			break;
+		}
 	}
+
 	std::unordered_set<std::string> consts = stmtNode->getConsts();
 	for (const std::string& constName : consts) {
 		int constVal = stoi(constName);
