@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Exception/SPAException.h"
 #include "../PKB/PKB.h"
 #include "../PKB/Pattern.h"
 #include "SourceAST.h"
@@ -15,7 +16,15 @@ private:
 	/* Maps a StmtIndex to the StmtIndex that follows it, if applicable */
 	static std::unordered_map<StmtIndex, StmtIndex> stmtFollowsMap;
 
+	/* Maps a ProcIndex to the set of ProcIndex of the procedures that the former calls */
+	static std::unordered_map<ProcIndex, std::unordered_set<ProcIndex>> callsMap;
+
 	DesignExtractor() {}
+	static void validateAST(ProgramNode* progNode);
+	static void validateNoDuplicateProc(ProgramNode* progNode);
+	static void populateCalls(ProgramNode* progNode);
+	static void processCallsStmtLstNode(StmtLstNode* stmtLstNode, std::unordered_set<ProcIndex>& calledProcs);
+	static void processCallsStmtNode(StmtNode* stmtNode, std::unordered_set<ProcIndex>& calledProcs);
 	static void processProgramNode(ProgramNode* programNode);
 	static void processProcedureNode(ProcedureNode* procedureNode);
 	static std::vector<StmtIndex> processStmtLstNode(StmtLstNode* stmtLstNode);

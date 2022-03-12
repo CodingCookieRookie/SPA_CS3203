@@ -32,6 +32,11 @@ const std::string ParserException::MISSING_WHITESPACE = "Whitespace is missing";
 
 ParserException::ParserException(const std::string& reason) : SPAException(reason) {}
 
+/* DEException */
+const std::string DEException::DUPLICATE_PROC_NAMES = "A program cannot have two procedures with the same name";
+const std::string DEException::CALL_NON_EXISTENT_PROC_NAME = "A procedure cannot call a non-existing procedure";
+DEException::DEException(const std::string& reason) : SPAException(reason) {}
+
 /* QPSException */
 const std::string QPSException::PARSER_ERROR = "Syntax error detected while parsing PQL query";
 const std::string QPSException::VALIDATOR_ERROR = "PQL query failed validator check";

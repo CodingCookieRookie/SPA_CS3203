@@ -37,6 +37,9 @@ public:
 	/* Returns an unordered set of consts in the stmt node */
 	virtual std::unordered_set<std::string> getConsts();
 
+	/* Returns the procedure name called by the stmt node */
+	virtual std::string getProcCalled();
+
 	friend class SourceAST;
 };
 
@@ -113,8 +116,8 @@ private:
 	std::string procName;
 public:
 	CallNode(std::string procName);
-	std::string getProcName();
 	StatementType getStmtType();
+	std::string getProcCalled();
 
 	friend class SourceAST;
 };

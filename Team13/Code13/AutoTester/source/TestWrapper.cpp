@@ -38,6 +38,9 @@ void TestWrapper::parse(std::string filename) {
 	} catch (ExpressionException& ex) {
 		std::cerr << ex.what() << std::endl;
 		exit(EXIT_FAILURE);
+	} catch (DEException& ex) {
+		std::cerr << ex.what() << std::endl;
+		exit(EXIT_FAILURE);
 	}
 }
 

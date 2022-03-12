@@ -3394,9 +3394,9 @@ public:
 		StmtLstNode* proc1StmtLstNode = procNodes[0]->getStmtLstNode();
 		std::vector<StmtNode*> proc1Stmts = proc1StmtLstNode->getStmtNodes();
 		Assert::AreEqual(size_t(1), proc1Stmts.size());
-		CallNode* proc1CallNode = (CallNode*)proc1Stmts[0];
+		StmtNode* proc1CallNode = proc1Stmts[0];
 		Assert::IsTrue(StatementType::callType == proc1CallNode->getStmtType());
-		Assert::AreEqual(std::string("proc2"), proc1CallNode->getProcName());
+		Assert::AreEqual(std::string("proc2"), proc1CallNode->getProcCalled());
 
 		/* 2nd procedure */
 		/* procedure proc2 {read x;} */
@@ -3422,9 +3422,9 @@ public:
 		StmtLstNode* proc1StmtLstNode = procNodes[0]->getStmtLstNode();
 		std::vector<StmtNode*> proc1Stmts = proc1StmtLstNode->getStmtNodes();
 		Assert::AreEqual(size_t(1), proc1Stmts.size());
-		CallNode* proc1CallNode = (CallNode*)proc1Stmts[0];
+		StmtNode* proc1CallNode = proc1Stmts[0];
 		Assert::IsTrue(StatementType::callType == proc1CallNode->getStmtType());
-		Assert::AreEqual(std::string("proc2"), proc1CallNode->getProcName());
+		Assert::AreEqual(std::string("proc2"), proc1CallNode->getProcCalled());
 	}
 
 	TEST_METHOD(parse_matchCall_syntacticallyValid_semanticallyInvalid_selfCall_success) {
@@ -3440,9 +3440,9 @@ public:
 		StmtLstNode* proc1StmtLstNode = procNodes[0]->getStmtLstNode();
 		std::vector<StmtNode*> proc1Stmts = proc1StmtLstNode->getStmtNodes();
 		Assert::AreEqual(size_t(1), proc1Stmts.size());
-		CallNode* proc1CallNode = (CallNode*)proc1Stmts[0];
+		StmtNode* proc1CallNode = proc1Stmts[0];
 		Assert::IsTrue(StatementType::callType == proc1CallNode->getStmtType());
-		Assert::AreEqual(std::string("proc1"), proc1CallNode->getProcName());
+		Assert::AreEqual(std::string("proc1"), proc1CallNode->getProcCalled());
 	}
 
 	TEST_METHOD(parse_matchCall_syntacticallyValid_semanticallyInvalid_cyclicCall_success) {
@@ -3461,9 +3461,9 @@ public:
 		StmtLstNode* proc1StmtLstNode = procNodes[0]->getStmtLstNode();
 		std::vector<StmtNode*> proc1Stmts = proc1StmtLstNode->getStmtNodes();
 		Assert::AreEqual(size_t(1), proc1Stmts.size());
-		CallNode* proc1CallNode = (CallNode*)proc1Stmts[0];
+		StmtNode* proc1CallNode = proc1Stmts[0];
 		Assert::IsTrue(StatementType::callType == proc1CallNode->getStmtType());
-		Assert::AreEqual(std::string("proc2"), proc1CallNode->getProcName());
+		Assert::AreEqual(std::string("proc2"), proc1CallNode->getProcCalled());
 
 		/* 2nd procedure */
 		/* procedure proc2 {call proc1;} */
@@ -3471,9 +3471,9 @@ public:
 		StmtLstNode* proc2StmtLstNode = procNodes[1]->getStmtLstNode();
 		std::vector<StmtNode*> proc2Stmts = proc2StmtLstNode->getStmtNodes();
 		Assert::AreEqual(size_t(1), proc2Stmts.size());
-		CallNode* callNode = (CallNode*)proc2Stmts[0];
+		StmtNode* callNode = proc2Stmts[0];
 		Assert::IsTrue(StatementType::callType == callNode->getStmtType());
-		Assert::AreEqual(std::string("proc1"), callNode->getProcName());
+		Assert::AreEqual(std::string("proc1"), callNode->getProcCalled());
 	}
 
 	/* Note that parser does not do semantic check for call stmt.

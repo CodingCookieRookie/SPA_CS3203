@@ -18,6 +18,10 @@ std::unordered_set<std::string> StmtNode::getConsts() {
 	return std::unordered_set<std::string>();
 }
 
+std::string StmtNode::getProcCalled() {
+	return std::string();
+}
+
 std::string StmtNode::getPattern() {
 	return std::string();
 }
@@ -162,12 +166,12 @@ StatementType IfNode::getStmtType() {
 /* CallNode */
 CallNode::CallNode(std::string procName) : StmtNode(), procName(procName) {}
 
-std::string CallNode::getProcName() {
-	return procName;
-}
-
 StatementType CallNode::getStmtType() {
 	return StatementType::callType;
+}
+
+std::string CallNode::getProcCalled() {
+	return procName;
 }
 
 /* StmtLstNode */

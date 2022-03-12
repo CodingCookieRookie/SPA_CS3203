@@ -42,6 +42,14 @@ public:
 	ParserException(const std::string& reason);
 };
 
+class DEException : public SPAException {
+public:
+	static const std::string DUPLICATE_PROC_NAMES;
+	static const std::string CALL_NON_EXISTENT_PROC_NAME;
+
+	DEException(const std::string& reason);
+};
+
 class QPSException : public SPAException {
 public:
 	static const std::string PARSER_ERROR;

@@ -3,6 +3,7 @@
 std::unordered_map<ProcIndex, std::vector<StmtIndex>> DesignExtractor::procStmtMap{};
 std::unordered_map<StmtIndex, std::vector<StmtIndex>> DesignExtractor::stmtParentMap{};
 std::unordered_map<StmtIndex, StmtIndex> DesignExtractor::stmtFollowsMap{};
+std::unordered_map<ProcIndex, std::unordered_set<ProcIndex>> DesignExtractor::callsMap{};
 
 void DesignExtractor::processProgramNode(ProgramNode* programNode) {
 	for (ProcedureNode* procedureNode : programNode->getProcedureNodes()) {
@@ -11,7 +12,7 @@ void DesignExtractor::processProgramNode(ProgramNode* programNode) {
 }
 
 void DesignExtractor::processProcedureNode(ProcedureNode* procedureNode) {
-	ProcIndex procIndex = Entity::insertProc(procedureNode->getProcName());
+	ProcIndex procIndex = Entity::getProcIdx(procedureNode->getProcName());
 	std::vector<StmtIndex> stmtIndices =
 		processStmtLstNode(procedureNode->getStmtLstNode());
 	procStmtMap[procIndex] = stmtIndices;
@@ -83,7 +84,11 @@ void DesignExtractor::extract(SourceAST& ast) {
 	procStmtMap.clear();
 	stmtParentMap.clear();
 	stmtFollowsMap.clear();
-	processProgramNode(ast.getRoot());
+
+	ProgramNode* progNode = ast.getRoot();
+
+	validateAST(progNode);
+	processProgramNode(progNode);
 
 	/* Populate Parent and Follows Tables, and compute their transitive closures */
 	for (const std::pair<StmtIndex, std::vector<StmtIndex>> parentPair : stmtParentMap) {
@@ -100,6 +105,50 @@ void DesignExtractor::extract(SourceAST& ast) {
 		Follows::insert(predecessor, successor);
 	}
 	PKB::populateRecursiveInfo();
+}
+
+void DesignExtractor::validateAST(ProgramNode* progNode) {
+	validateNoDuplicateProc(progNode);
+	populateCalls(progNode);
+}
+
+void DesignExtractor::validateNoDuplicateProc(ProgramNode* progNode) {
+	for (ProcedureNode* procedureNode : progNode->getProcedureNodes()) {
+		if (Entity::containsProc(procedureNode->getProcName())) {
+			throw DEException(DEException::DUPLICATE_PROC_NAMES);
+		}
+		Entity::insertProc(procedureNode->getProcName());
+	}
+}
+
+void DesignExtractor::populateCalls(ProgramNode* progNode) {
+	for (ProcedureNode* procedureNode : progNode->getProcedureNodes()) {
+		std::unordered_set<ProcIndex> calledProcs;
+		processCallsStmtLstNode(procedureNode->getStmtLstNode(), calledProcs);
+		callsMap[Entity::getProcIdx(procedureNode->getProcName())] = calledProcs;
+	}
+}
+
+void DesignExtractor::processCallsStmtLstNode(StmtLstNode* stmtLstNode, std::unordered_set<ProcIndex>& calledProcs) {
+	for (StmtNode* stmtNode : stmtLstNode->getStmtNodes()) {
+		std::vector<StmtLstNode*> childStmtLsts = stmtNode->getChildStmtLst();
+		for (StmtLstNode* stmtLstNode : childStmtLsts) {
+			processCallsStmtLstNode(stmtLstNode, calledProcs);
+		}
+
+		if (stmtNode->getStmtType() == StatementType::callType) {
+			processCallsStmtNode(stmtNode, calledProcs);
+		}
+	}
+}
+
+void DesignExtractor::processCallsStmtNode(StmtNode* stmtNode, std::unordered_set<ProcIndex>& calledProcs) {
+	std::string procName = stmtNode->getProcCalled();
+	if (!(Entity::containsProc(procName))) {
+		throw DEException(DEException::CALL_NON_EXISTENT_PROC_NAME);
+	}
+
+	calledProcs.insert(Entity::getProcIdx(procName));
 }
 
 std::unordered_map<ProcIndex, std::vector<StmtIndex>> DesignExtractor::getProcStmtMap() {
