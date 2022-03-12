@@ -1254,5 +1254,1300 @@ public:
 			[&queryAffectsIdent] { PQLParser::parseQuery(queryAffectsIdent); };
 		Assert::ExpectException<QPSException>(wrapperAffectsIdent);
 	}
+
+	TEST_METHOD(parseQuery_clausesSuchThatSuchThat_allClausesExtracted) {
+		std::string query = "stmt s; variable v; Select s such that Uses(s, v) and Modifies(s, v)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		Assert::AreEqual(size_t(2), relationships.size());
+		Assert::IsTrue(PqlRelationshipType::UsesS == relationships[0].getRelationshipType());
+		Assert::IsTrue(PqlRelationshipType::ModifiesS == relationships[1].getRelationshipType());
+	}
+
+	TEST_METHOD(parseQuery_clausesSuchThatPattern_allClausesExtracted) {
+		std::string query = "assign a; stmt s; Select a such that Follows(s, s) pattern a(_, _)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		std::vector<ParsedPattern> patterns = parsedQuery.getPatterns();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::AreEqual(size_t(1), patterns.size());
+		Assert::IsTrue(PqlRelationshipType::Follows == relationships[0].getRelationshipType());
+		Assert::IsTrue(PqlPatternType::PatternA == patterns[0].getPatternType());
+	}
+
+	TEST_METHOD(parseQuery_clausesSuchThatWith_allClausesExtracted) {
+		std::string query = "stmt s; constant c; Select s such that Follows*(s, s) with s.stmt# = c.value";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::AreEqual(size_t(1), withs.size());
+		Assert::IsTrue(PqlRelationshipType::FollowsT == relationships[0].getRelationshipType());
+	}
+
+	TEST_METHOD(parseQuery_clausesPatternSuchThat_allClausesExtracted) {
+		std::string query = "if ifs; Select ifs pattern ifs(_, _, _) such that Parent(ifs, ifs)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		std::vector<ParsedPattern> patterns = parsedQuery.getPatterns();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::AreEqual(size_t(1), patterns.size());
+		Assert::IsTrue(PqlRelationshipType::Parent == relationships[0].getRelationshipType());
+		Assert::IsTrue(PqlPatternType::PatternI == patterns[0].getPatternType());
+	}
+
+	TEST_METHOD(parseQuery_clausesPatternPattern_allClausesExtracted) {
+		std::string query = "assign a; while w; Select a pattern a(_, _) and w(_, _)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedPattern> patterns = parsedQuery.getPatterns();
+		Assert::AreEqual(size_t(2), patterns.size());
+		Assert::IsTrue(PqlPatternType::PatternA == patterns[0].getPatternType());
+		Assert::IsTrue(PqlPatternType::PatternW == patterns[1].getPatternType());
+	}
+
+	TEST_METHOD(parseQuery_clausesPatternWith_allClausesExtracted) {
+		std::string query = "if ifs; Select ifs pattern ifs(_, _, _) with ifs.stmt# = ifs.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedPattern> patterns = parsedQuery.getPatterns();
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), patterns.size());
+		Assert::AreEqual(size_t(1), withs.size());
+		Assert::IsTrue(PqlPatternType::PatternI == patterns[0].getPatternType());
+	}
+
+	TEST_METHOD(parseQuery_clausesWithSuchThat_allClausesExtracted) {
+		std::string query = "procedure p; Select p with \"proc\"= p.procName such that Calls(p, p)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), relationships.size());
+		Assert::AreEqual(size_t(1), withs.size());
+		Assert::IsTrue(PqlRelationshipType::Calls == relationships[0].getRelationshipType());
+	}
+
+	TEST_METHOD(parseQuery_clausesWithPattern_allClausesExtracted) {
+		std::string query = "assign a; Select a with a.stmt# = a.stmt# pattern a(_, _)";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedPattern> patterns = parsedQuery.getPatterns();
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), patterns.size());
+		Assert::AreEqual(size_t(1), withs.size());
+		Assert::IsTrue(PqlPatternType::PatternA == patterns[0].getPatternType());
+	}
+
+	TEST_METHOD(parseQuery_clausesWithWith_allClausesExtracted) {
+		std::string query = "print pn; read r; procedure p; Select p with p.procName = pn.varName and r.varName = p.procName";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(2), withs.size());
+	}
+
+	TEST_METHOD(parseQuery_patternAInvalidNumOfArgs_exceptionThrown) {
+		std::string query = "assign a; Select a pattern a(_, _, _)";
+		auto wrapperFunc =
+			[&query] { PQLParser::parseQuery(query); };
+		Assert::ExpectException<QPSException>(wrapperFunc);
+	}
+
+	TEST_METHOD(parseQuery_patternWInvalidNumOfArgs_exceptionThrown) {
+		std::string query = "while w; Select w pattern w(_, _, _)";
+		auto wrapperFunc =
+			[&query] { PQLParser::parseQuery(query); };
+		Assert::ExpectException<QPSException>(wrapperFunc);
+	}
+
+	TEST_METHOD(parseQuery_patternIInvalidNumOfArgs_exceptionThrown) {
+		std::string query = "if ifs; Select ifs pattern ifs(_, _)";
+		auto wrapperFunc =
+			[&query] { PQLParser::parseQuery(query); };
+		Assert::ExpectException<QPSException>(wrapperFunc);
+	}
+
+	TEST_METHOD(parseQuery_patternInvalidDesignEntities_exceptionThrown) {
+		std::string queryStmtTwoArgs = "stmt s; Select s pattern s(_, _)";
+		auto wrapperStmtTwoArgs =
+			[&queryStmtTwoArgs] { PQLParser::parseQuery(queryStmtTwoArgs); };
+		Assert::ExpectException<QPSException>(wrapperStmtTwoArgs);
+
+		std::string queryStmtThreeArgs = "stmt s; Select s pattern s(_, _)";
+		auto wrapperStmtThreeArgs =
+			[&queryStmtThreeArgs] { PQLParser::parseQuery(queryStmtThreeArgs); };
+		Assert::ExpectException<QPSException>(wrapperStmtThreeArgs);
+
+		std::string queryReadTwoArgs = "read r; Select r pattern r(_, _)";
+		auto wrapperReadTwoArgs =
+			[&queryReadTwoArgs] { PQLParser::parseQuery(queryReadTwoArgs); };
+		Assert::ExpectException<QPSException>(wrapperReadTwoArgs);
+
+		std::string queryReadThreeArgs = "read r; Select r pattern r(_, _)";
+		auto wrapperReadThreeArgs =
+			[&queryReadThreeArgs] { PQLParser::parseQuery(queryReadThreeArgs); };
+		Assert::ExpectException<QPSException>(wrapperReadThreeArgs);
+
+		std::string queryPrintTwoArgs = "print p; Select p pattern p(_, _)";
+		auto wrapperPrintTwoArgs =
+			[&queryPrintTwoArgs] { PQLParser::parseQuery(queryPrintTwoArgs); };
+		Assert::ExpectException<QPSException>(wrapperPrintTwoArgs);
+
+		std::string queryPrintThreeArgs = "print p; Select p pattern p(_, _)";
+		auto wrapperPrintThreeArgs =
+			[&queryPrintThreeArgs] { PQLParser::parseQuery(queryPrintThreeArgs); };
+		Assert::ExpectException<QPSException>(wrapperPrintThreeArgs);
+
+		std::string queryCallTwoArgs = "call c; Select c pattern c(_, _)";
+		auto wrapperCallTwoArgs =
+			[&queryCallTwoArgs] { PQLParser::parseQuery(queryCallTwoArgs); };
+		Assert::ExpectException<QPSException>(wrapperCallTwoArgs);
+
+		std::string queryCallThreeArgs = "call c; Select c pattern c(_, _)";
+		auto wrapperCallThreeArgs =
+			[&queryCallThreeArgs] { PQLParser::parseQuery(queryCallThreeArgs); };
+		Assert::ExpectException<QPSException>(wrapperCallThreeArgs);
+
+		std::string queryVariableTwoArgs = "variable v; Select v pattern v(_, _)";
+		auto wrapperVariableTwoArgs =
+			[&queryVariableTwoArgs] { PQLParser::parseQuery(queryVariableTwoArgs); };
+		Assert::ExpectException<QPSException>(wrapperVariableTwoArgs);
+
+		std::string queryVariableThreeArgs = "variable v; Select v pattern v(_, _)";
+		auto wrapperVariableThreeArgs =
+			[&queryVariableThreeArgs] { PQLParser::parseQuery(queryVariableThreeArgs); };
+		Assert::ExpectException<QPSException>(wrapperVariableThreeArgs);
+
+		std::string queryConstantTwoArgs = "constant c; Select c pattern c(_, _)";
+		auto wrapperConstantTwoArgs =
+			[&queryConstantTwoArgs] { PQLParser::parseQuery(queryConstantTwoArgs); };
+		Assert::ExpectException<QPSException>(wrapperConstantTwoArgs);
+
+		std::string queryConstantThreeArgs = "constant c; Select c pattern c(_, _)";
+		auto wrapperConstantThreeArgs =
+			[&queryConstantThreeArgs] { PQLParser::parseQuery(queryConstantThreeArgs); };
+		Assert::ExpectException<QPSException>(wrapperConstantThreeArgs);
+
+		std::string queryProcedureTwoArgs = "procedure p; Select p pattern p(_, _)";
+		auto wrapperProcedureTwoArgs =
+			[&queryProcedureTwoArgs] { PQLParser::parseQuery(queryProcedureTwoArgs); };
+		Assert::ExpectException<QPSException>(wrapperProcedureTwoArgs);
+
+		std::string queryProcedureThreeArgs = "procedure p; Select p pattern p(_, _)";
+		auto wrapperProcedureThreeArgs =
+			[&queryProcedureThreeArgs] { PQLParser::parseQuery(queryProcedureThreeArgs); };
+		Assert::ExpectException<QPSException>(wrapperProcedureThreeArgs);
+	}
+
+	TEST_METHOD(parseQuery_suchThatTrailingAnd_exceptionThrown) {
+		std::string query = "stmt s; Select s such that Modifies(s, _) and";
+		auto wrapperFunc =
+			[&query] { PQLParser::parseQuery(query); };
+		Assert::ExpectException<QPSException>(wrapperFunc);
+	}
+
+	TEST_METHOD(parseQuery_patternTrailingAnd_exceptionThrown) {
+		std::string query = "assign a; Select a pattern a(_, _) and";
+		auto wrapperFunc =
+			[&query] { PQLParser::parseQuery(query); };
+		Assert::ExpectException<QPSException>(wrapperFunc);
+	}
+
+	TEST_METHOD(parseQuery_withTrailingAnd_exceptionThrown) {
+		std::string query = "procedure p; Select p with p.procName = \"hello\" and";
+		auto wrapperFunc =
+			[&query] { PQLParser::parseQuery(query); };
+		Assert::ExpectException<QPSException>(wrapperFunc);
+	}
+	TEST_METHOD(parseQuery_suchThatLeadingAnd_exceptionThrown) {
+		std::string query = "stmt s; Select s and Uses(s, _)";
+		auto wrapperFunc =
+			[&query] { PQLParser::parseQuery(query); };
+		Assert::ExpectException<QPSException>(wrapperFunc);
+	}
+
+	TEST_METHOD(parseQuery_patternLeadingAnd_exceptionThrown) {
+		std::string query = "if ifs; Select ifs and ifs(_, _)";
+		auto wrapperFunc =
+			[&query] { PQLParser::parseQuery(query); };
+		Assert::ExpectException<QPSException>(wrapperFunc);
+	}
+
+	TEST_METHOD(parseQuery_withLeadingAnd_exceptionThrown) {
+		std::string query = "print pn; Select pn and pn.stmt# = 10";
+		auto wrapperFunc =
+			[&query] { PQLParser::parseQuery(query); };
+		Assert::ExpectException<QPSException>(wrapperFunc);
+	}
+
+	TEST_METHOD(parseQuery_withInvalidAttributes_exceptionThrown) {
+		std::string queryStmtProcName = "stmt s; Select s with s.procName = s.procName";
+		auto wrapperStmtProcName =
+			[&queryStmtProcName] { PQLParser::parseQuery(queryStmtProcName); };
+		Assert::ExpectException<QPSException>(wrapperStmtProcName);
+
+		std::string queryStmtVarName = "stmt s; Select s with s.varName = s.varName";
+		auto wrapperStmtVarName =
+			[&queryStmtVarName] { PQLParser::parseQuery(queryStmtVarName); };
+		Assert::ExpectException<QPSException>(wrapperStmtVarName);
+
+		std::string queryStmtValue = "stmt s; Select s with s.value = s.value";
+		auto wrapperStmtValue =
+			[&queryStmtValue] { PQLParser::parseQuery(queryStmtValue); };
+		Assert::ExpectException<QPSException>(wrapperStmtValue);
+
+		std::string queryReadProcName = "read r; Select r with r.procName = r.procName";
+		auto wrapperReadProcName =
+			[&queryReadProcName] { PQLParser::parseQuery(queryReadProcName); };
+		Assert::ExpectException<QPSException>(wrapperReadProcName);
+
+		std::string queryReadValue = "read r; Select r with r.value = r.value";
+		auto wrapperReadValue =
+			[&queryReadValue] { PQLParser::parseQuery(queryReadValue); };
+		Assert::ExpectException<QPSException>(wrapperReadValue);
+
+		std::string queryPrintProcName = "print p; Select p with p.procName = p.procName";
+		auto wrapperPrintProcName =
+			[&queryPrintProcName] { PQLParser::parseQuery(queryPrintProcName); };
+		Assert::ExpectException<QPSException>(wrapperPrintProcName);
+
+		std::string queryPrintValue = "print p; Select p with p.value = p.value";
+		auto wrapperPrintValue =
+			[&queryPrintValue] { PQLParser::parseQuery(queryPrintValue); };
+		Assert::ExpectException<QPSException>(wrapperPrintValue);
+
+		std::string queryCallVarName = "call c; Select c with c.varName = c.varName";
+		auto wrapperCallVarName =
+			[&queryCallVarName] { PQLParser::parseQuery(queryCallVarName); };
+		Assert::ExpectException<QPSException>(wrapperCallVarName);
+
+		std::string queryCallValue = "call c; Select c with c.value = c.value";
+		auto wrapperCallValue =
+			[&queryCallValue] { PQLParser::parseQuery(queryCallValue); };
+		Assert::ExpectException<QPSException>(wrapperCallValue);
+
+		std::string queryVariableProcName = "variable v; Select v with v.procName = v.procName";
+		auto wrapperVariableProcName =
+			[&queryVariableProcName] { PQLParser::parseQuery(queryVariableProcName); };
+		Assert::ExpectException<QPSException>(wrapperVariableProcName);
+
+		std::string queryVariableValue = "variable v; Select v with v.value = v.value";
+		auto wrapperVariableValue =
+			[&queryVariableValue] { PQLParser::parseQuery(queryVariableValue); };
+		Assert::ExpectException<QPSException>(wrapperVariableValue);
+
+		std::string queryVariableStmt = "variable v; Select v with v.stmt# = v.stmt#";
+		auto wrapperVariableStmt =
+			[&queryVariableStmt] { PQLParser::parseQuery(queryVariableStmt); };
+		Assert::ExpectException<QPSException>(wrapperVariableStmt);
+
+		std::string queryConstantProcName = "constant c; Select c with c.procName = c.procName";
+		auto wrapperConstantProcName =
+			[&queryConstantProcName] { PQLParser::parseQuery(queryConstantProcName); };
+		Assert::ExpectException<QPSException>(wrapperConstantProcName);
+
+		std::string queryConstantVarName = "constant c; Select c with c.varName = c.varName";
+		auto wrapperConstantVarName =
+			[&queryConstantVarName] { PQLParser::parseQuery(queryConstantVarName); };
+		Assert::ExpectException<QPSException>(wrapperConstantVarName);
+
+		std::string queryConstantStmt = "constant c; Select c with c.stmt# = c.stmt#";
+		auto wrapperConstantStmt =
+			[&queryConstantStmt] { PQLParser::parseQuery(queryConstantStmt); };
+		Assert::ExpectException<QPSException>(wrapperConstantStmt);
+
+		std::string queryProcedureVarName = "procedure p; Select p with p.varName = p.varName";
+		auto wrapperProcedureVarName =
+			[&queryProcedureVarName] { PQLParser::parseQuery(queryProcedureVarName); };
+		Assert::ExpectException<QPSException>(wrapperProcedureVarName);
+
+		std::string queryProcedureValue = "procedure p; Select p with p.value = p.value";
+		auto wrapperProcedureValue =
+			[&queryProcedureValue] { PQLParser::parseQuery(queryProcedureValue); };
+		Assert::ExpectException<QPSException>(wrapperProcedureValue);
+
+		std::string queryProcedureStmt = "procedure p; Select p with p.stmt# = p.stmt#";
+		auto wrapperProcedureStmt =
+			[&queryProcedureStmt] { PQLParser::parseQuery(queryProcedureStmt); };
+		Assert::ExpectException<QPSException>(wrapperProcedureStmt);
+
+		std::string queryIfProcName = "if i; Select i with i.procName = i.procName";
+		auto wrapperIfProcName =
+			[&queryIfProcName] { PQLParser::parseQuery(queryIfProcName); };
+		Assert::ExpectException<QPSException>(wrapperIfProcName);
+
+		std::string queryIfVarName = "if i; Select i with i.varName = i.varName";
+		auto wrapperIfVarName =
+			[&queryIfVarName] { PQLParser::parseQuery(queryIfVarName); };
+		Assert::ExpectException<QPSException>(wrapperIfVarName);
+
+		std::string queryIfValue = "if i; Select i with i.value = i.value";
+		auto wrapperIfValue =
+			[&queryIfValue] { PQLParser::parseQuery(queryIfValue); };
+		Assert::ExpectException<QPSException>(wrapperIfValue);
+
+		std::string queryWhileProcName = "while w; Select w with w.procName = w.procName";
+		auto wrapperWhileProcName =
+			[&queryWhileProcName] { PQLParser::parseQuery(queryWhileProcName); };
+		Assert::ExpectException<QPSException>(wrapperWhileProcName);
+
+		std::string queryWhileVarName = "while w; Select w with w.varName = w.varName";
+		auto wrapperWhileVarName =
+			[&queryWhileVarName] { PQLParser::parseQuery(queryWhileVarName); };
+		Assert::ExpectException<QPSException>(wrapperWhileVarName);
+
+		std::string queryWhileValue = "while w; Select w with w.value = w.value";
+		auto wrapperWhileValue =
+			[&queryWhileValue] { PQLParser::parseQuery(queryWhileValue); };
+		Assert::ExpectException<QPSException>(wrapperWhileValue);
+
+		std::string queryAssignProcName = "assign a; Select a with a.procName = a.procName";
+		auto wrapperAssignProcName =
+			[&queryAssignProcName] { PQLParser::parseQuery(queryAssignProcName); };
+		Assert::ExpectException<QPSException>(wrapperAssignProcName);
+
+		std::string queryAssignVarName = "assign a; Select a with a.varName = a.varName";
+		auto wrapperAssignVarName =
+			[&queryAssignVarName] { PQLParser::parseQuery(queryAssignVarName); };
+		Assert::ExpectException<QPSException>(wrapperAssignVarName);
+
+		std::string queryAssignValue = "assign a; Select a with a.value = a.value";
+		auto wrapperAssignValue =
+			[&queryAssignValue] { PQLParser::parseQuery(queryAssignValue); };
+		Assert::ExpectException<QPSException>(wrapperAssignValue);
+	}
+
+	TEST_METHOD(parseQuery_withIncompatibleAttributes_exceptionThrown) {
+		std::string queryConstantValueProcedureProcName = "constant c1; procedure p2; Select c1 with c1.value = p2.procName";
+		auto wrapperConstantValueProcedureProcName =
+			[&queryConstantValueProcedureProcName] { PQLParser::parseQuery(queryConstantValueProcedureProcName); };
+		Assert::ExpectException<QPSException>(wrapperConstantValueProcedureProcName);
+
+		std::string queryProcedureProcNameConstantValue = "procedure p1; constant c2; Select p1 with p1.procName = c2.value";
+		auto wrapperProcedureProcNameConstantValue =
+			[&queryProcedureProcNameConstantValue] { PQLParser::parseQuery(queryProcedureProcNameConstantValue); };
+		Assert::ExpectException<QPSException>(wrapperProcedureProcNameConstantValue);
+
+		std::string queryConstantValueCallProcName = "constant c1; call c2; Select c1 with c1.value = c2.procName";
+		auto wrapperConstantValueCallProcName =
+			[&queryConstantValueCallProcName] { PQLParser::parseQuery(queryConstantValueCallProcName); };
+		Assert::ExpectException<QPSException>(wrapperConstantValueCallProcName);
+
+		std::string queryCallProcNameConstantValue = "call c1; constant c2; Select c1 with c1.procName = c2.value";
+		auto wrapperCallProcNameConstantValue =
+			[&queryCallProcNameConstantValue] { PQLParser::parseQuery(queryCallProcNameConstantValue); };
+		Assert::ExpectException<QPSException>(wrapperCallProcNameConstantValue);
+
+		std::string queryConstantValueVariableVarName = "constant c1; variable v2; Select c1 with c1.value = v2.varName";
+		auto wrapperConstantValueVariableVarName =
+			[&queryConstantValueVariableVarName] { PQLParser::parseQuery(queryConstantValueVariableVarName); };
+		Assert::ExpectException<QPSException>(wrapperConstantValueVariableVarName);
+
+		std::string queryVariableVarNameConstantValue = "variable v1; constant c2; Select v1 with v1.varName = c2.value";
+		auto wrapperVariableVarNameConstantValue =
+			[&queryVariableVarNameConstantValue] { PQLParser::parseQuery(queryVariableVarNameConstantValue); };
+		Assert::ExpectException<QPSException>(wrapperVariableVarNameConstantValue);
+
+		std::string queryConstantValueReadVarName = "constant c1; read r2; Select c1 with c1.value = r2.varName";
+		auto wrapperConstantValueReadVarName =
+			[&queryConstantValueReadVarName] { PQLParser::parseQuery(queryConstantValueReadVarName); };
+		Assert::ExpectException<QPSException>(wrapperConstantValueReadVarName);
+
+		std::string queryReadVarNameConstantValue = "read r1; constant c2; Select r1 with r1.varName = c2.value";
+		auto wrapperReadVarNameConstantValue =
+			[&queryReadVarNameConstantValue] { PQLParser::parseQuery(queryReadVarNameConstantValue); };
+		Assert::ExpectException<QPSException>(wrapperReadVarNameConstantValue);
+
+		std::string queryConstantValuePrintVarName = "constant c1; print p2; Select c1 with c1.value = p2.varName";
+		auto wrapperConstantValuePrintVarName =
+			[&queryConstantValuePrintVarName] { PQLParser::parseQuery(queryConstantValuePrintVarName); };
+		Assert::ExpectException<QPSException>(wrapperConstantValuePrintVarName);
+
+		std::string queryPrintVarNameConstantValue = "print p1; constant c2; Select p1 with p1.varName = c2.value";
+		auto wrapperPrintVarNameConstantValue =
+			[&queryPrintVarNameConstantValue] { PQLParser::parseQuery(queryPrintVarNameConstantValue); };
+		Assert::ExpectException<QPSException>(wrapperPrintVarNameConstantValue);
+
+		std::string queryStmtStmtProcedureProcName = "stmt s1; procedure p2; Select s1 with s1.stmt# = p2.procName";
+		auto wrapperStmtStmtProcedureProcName =
+			[&queryStmtStmtProcedureProcName] { PQLParser::parseQuery(queryStmtStmtProcedureProcName); };
+		Assert::ExpectException<QPSException>(wrapperStmtStmtProcedureProcName);
+
+		std::string queryProcedureProcNameStmtStmt = "procedure p1; stmt s2; Select p1 with p1.procName = s2.stmt#";
+		auto wrapperProcedureProcNameStmtStmt =
+			[&queryProcedureProcNameStmtStmt] { PQLParser::parseQuery(queryProcedureProcNameStmtStmt); };
+		Assert::ExpectException<QPSException>(wrapperProcedureProcNameStmtStmt);
+
+		std::string queryStmtStmtCallProcName = "stmt s1; call c2; Select s1 with s1.stmt# = c2.procName";
+		auto wrapperStmtStmtCallProcName =
+			[&queryStmtStmtCallProcName] { PQLParser::parseQuery(queryStmtStmtCallProcName); };
+		Assert::ExpectException<QPSException>(wrapperStmtStmtCallProcName);
+
+		std::string queryCallProcNameStmtStmt = "call c1; stmt s2; Select c1 with c1.procName = s2.stmt#";
+		auto wrapperCallProcNameStmtStmt =
+			[&queryCallProcNameStmtStmt] { PQLParser::parseQuery(queryCallProcNameStmtStmt); };
+		Assert::ExpectException<QPSException>(wrapperCallProcNameStmtStmt);
+
+		std::string queryStmtStmtVariableVarName = "stmt s1; variable v2; Select s1 with s1.stmt# = v2.varName";
+		auto wrapperStmtStmtVariableVarName =
+			[&queryStmtStmtVariableVarName] { PQLParser::parseQuery(queryStmtStmtVariableVarName); };
+		Assert::ExpectException<QPSException>(wrapperStmtStmtVariableVarName);
+
+		std::string queryVariableVarNameStmtStmt = "variable v1; stmt s2; Select v1 with v1.varName = s2.stmt#";
+		auto wrapperVariableVarNameStmtStmt =
+			[&queryVariableVarNameStmtStmt] { PQLParser::parseQuery(queryVariableVarNameStmtStmt); };
+		Assert::ExpectException<QPSException>(wrapperVariableVarNameStmtStmt);
+
+		std::string queryStmtStmtReadVarName = "stmt s1; read r2; Select s1 with s1.stmt# = r2.varName";
+		auto wrapperStmtStmtReadVarName =
+			[&queryStmtStmtReadVarName] { PQLParser::parseQuery(queryStmtStmtReadVarName); };
+		Assert::ExpectException<QPSException>(wrapperStmtStmtReadVarName);
+
+		std::string queryReadVarNameStmtStmt = "read r1; stmt s2; Select r1 with r1.varName = s2.stmt#";
+		auto wrapperReadVarNameStmtStmt =
+			[&queryReadVarNameStmtStmt] { PQLParser::parseQuery(queryReadVarNameStmtStmt); };
+		Assert::ExpectException<QPSException>(wrapperReadVarNameStmtStmt);
+
+		std::string queryStmtStmtPrintVarName = "stmt s1; print p2; Select s1 with s1.stmt# = p2.varName";
+		auto wrapperStmtStmtPrintVarName =
+			[&queryStmtStmtPrintVarName] { PQLParser::parseQuery(queryStmtStmtPrintVarName); };
+		Assert::ExpectException<QPSException>(wrapperStmtStmtPrintVarName);
+
+		std::string queryPrintVarNameStmtStmt = "print p1; stmt s2; Select p1 with p1.varName = s2.stmt#";
+		auto wrapperPrintVarNameStmtStmt =
+			[&queryPrintVarNameStmtStmt] { PQLParser::parseQuery(queryPrintVarNameStmtStmt); };
+		Assert::ExpectException<QPSException>(wrapperPrintVarNameStmtStmt);
+
+		std::string queryReadStmtProcedureProcName = "read r1; procedure p2; Select r1 with r1.stmt# = p2.procName";
+		auto wrapperReadStmtProcedureProcName =
+			[&queryReadStmtProcedureProcName] { PQLParser::parseQuery(queryReadStmtProcedureProcName); };
+		Assert::ExpectException<QPSException>(wrapperReadStmtProcedureProcName);
+
+		std::string queryProcedureProcNameReadStmt = "procedure p1; read r2; Select p1 with p1.procName = r2.stmt#";
+		auto wrapperProcedureProcNameReadStmt =
+			[&queryProcedureProcNameReadStmt] { PQLParser::parseQuery(queryProcedureProcNameReadStmt); };
+		Assert::ExpectException<QPSException>(wrapperProcedureProcNameReadStmt);
+
+		std::string queryReadStmtCallProcName = "read r1; call c2; Select r1 with r1.stmt# = c2.procName";
+		auto wrapperReadStmtCallProcName =
+			[&queryReadStmtCallProcName] { PQLParser::parseQuery(queryReadStmtCallProcName); };
+		Assert::ExpectException<QPSException>(wrapperReadStmtCallProcName);
+
+		std::string queryCallProcNameReadStmt = "call c1; read r2; Select c1 with c1.procName = r2.stmt#";
+		auto wrapperCallProcNameReadStmt =
+			[&queryCallProcNameReadStmt] { PQLParser::parseQuery(queryCallProcNameReadStmt); };
+		Assert::ExpectException<QPSException>(wrapperCallProcNameReadStmt);
+
+		std::string queryReadStmtVariableVarName = "read r1; variable v2; Select r1 with r1.stmt# = v2.varName";
+		auto wrapperReadStmtVariableVarName =
+			[&queryReadStmtVariableVarName] { PQLParser::parseQuery(queryReadStmtVariableVarName); };
+		Assert::ExpectException<QPSException>(wrapperReadStmtVariableVarName);
+
+		std::string queryVariableVarNameReadStmt = "variable v1; read r2; Select v1 with v1.varName = r2.stmt#";
+		auto wrapperVariableVarNameReadStmt =
+			[&queryVariableVarNameReadStmt] { PQLParser::parseQuery(queryVariableVarNameReadStmt); };
+		Assert::ExpectException<QPSException>(wrapperVariableVarNameReadStmt);
+
+		std::string queryReadStmtReadVarName = "read r1; read r2; Select r1 with r1.stmt# = r2.varName";
+		auto wrapperReadStmtReadVarName =
+			[&queryReadStmtReadVarName] { PQLParser::parseQuery(queryReadStmtReadVarName); };
+		Assert::ExpectException<QPSException>(wrapperReadStmtReadVarName);
+
+		std::string queryReadVarNameReadStmt = "read r1; read r2; Select r1 with r1.varName = r2.stmt#";
+		auto wrapperReadVarNameReadStmt =
+			[&queryReadVarNameReadStmt] { PQLParser::parseQuery(queryReadVarNameReadStmt); };
+		Assert::ExpectException<QPSException>(wrapperReadVarNameReadStmt);
+
+		std::string queryReadStmtPrintVarName = "read r1; print p2; Select r1 with r1.stmt# = p2.varName";
+		auto wrapperReadStmtPrintVarName =
+			[&queryReadStmtPrintVarName] { PQLParser::parseQuery(queryReadStmtPrintVarName); };
+		Assert::ExpectException<QPSException>(wrapperReadStmtPrintVarName);
+
+		std::string queryPrintVarNameReadStmt = "print p1; read r2; Select p1 with p1.varName = r2.stmt#";
+		auto wrapperPrintVarNameReadStmt =
+			[&queryPrintVarNameReadStmt] { PQLParser::parseQuery(queryPrintVarNameReadStmt); };
+		Assert::ExpectException<QPSException>(wrapperPrintVarNameReadStmt);
+
+		std::string queryPrintStmtProcedureProcName = "print p1; procedure p2; Select p1 with p1.stmt# = p2.procName";
+		auto wrapperPrintStmtProcedureProcName =
+			[&queryPrintStmtProcedureProcName] { PQLParser::parseQuery(queryPrintStmtProcedureProcName); };
+		Assert::ExpectException<QPSException>(wrapperPrintStmtProcedureProcName);
+
+		std::string queryProcedureProcNamePrintStmt = "procedure p1; print p2; Select p1 with p1.procName = p2.stmt#";
+		auto wrapperProcedureProcNamePrintStmt =
+			[&queryProcedureProcNamePrintStmt] { PQLParser::parseQuery(queryProcedureProcNamePrintStmt); };
+		Assert::ExpectException<QPSException>(wrapperProcedureProcNamePrintStmt);
+
+		std::string queryPrintStmtCallProcName = "print p1; call c2; Select p1 with p1.stmt# = c2.procName";
+		auto wrapperPrintStmtCallProcName =
+			[&queryPrintStmtCallProcName] { PQLParser::parseQuery(queryPrintStmtCallProcName); };
+		Assert::ExpectException<QPSException>(wrapperPrintStmtCallProcName);
+
+		std::string queryCallProcNamePrintStmt = "call c1; print p2; Select c1 with c1.procName = p2.stmt#";
+		auto wrapperCallProcNamePrintStmt =
+			[&queryCallProcNamePrintStmt] { PQLParser::parseQuery(queryCallProcNamePrintStmt); };
+		Assert::ExpectException<QPSException>(wrapperCallProcNamePrintStmt);
+
+		std::string queryPrintStmtVariableVarName = "print p1; variable v2; Select p1 with p1.stmt# = v2.varName";
+		auto wrapperPrintStmtVariableVarName =
+			[&queryPrintStmtVariableVarName] { PQLParser::parseQuery(queryPrintStmtVariableVarName); };
+		Assert::ExpectException<QPSException>(wrapperPrintStmtVariableVarName);
+
+		std::string queryVariableVarNamePrintStmt = "variable v1; print p2; Select v1 with v1.varName = p2.stmt#";
+		auto wrapperVariableVarNamePrintStmt =
+			[&queryVariableVarNamePrintStmt] { PQLParser::parseQuery(queryVariableVarNamePrintStmt); };
+		Assert::ExpectException<QPSException>(wrapperVariableVarNamePrintStmt);
+
+		std::string queryPrintStmtReadVarName = "print p1; read r2; Select p1 with p1.stmt# = r2.varName";
+		auto wrapperPrintStmtReadVarName =
+			[&queryPrintStmtReadVarName] { PQLParser::parseQuery(queryPrintStmtReadVarName); };
+		Assert::ExpectException<QPSException>(wrapperPrintStmtReadVarName);
+
+		std::string queryReadVarNamePrintStmt = "read r1; print p2; Select r1 with r1.varName = p2.stmt#";
+		auto wrapperReadVarNamePrintStmt =
+			[&queryReadVarNamePrintStmt] { PQLParser::parseQuery(queryReadVarNamePrintStmt); };
+		Assert::ExpectException<QPSException>(wrapperReadVarNamePrintStmt);
+
+		std::string queryPrintStmtPrintVarName = "print p1; print p2; Select p1 with p1.stmt# = p2.varName";
+		auto wrapperPrintStmtPrintVarName =
+			[&queryPrintStmtPrintVarName] { PQLParser::parseQuery(queryPrintStmtPrintVarName); };
+		Assert::ExpectException<QPSException>(wrapperPrintStmtPrintVarName);
+
+		std::string queryPrintVarNamePrintStmt = "print p1; print p2; Select p1 with p1.varName = p2.stmt#";
+		auto wrapperPrintVarNamePrintStmt =
+			[&queryPrintVarNamePrintStmt] { PQLParser::parseQuery(queryPrintVarNamePrintStmt); };
+		Assert::ExpectException<QPSException>(wrapperPrintVarNamePrintStmt);
+
+		std::string queryCallStmtProcedureProcName = "call c1; procedure p2; Select c1 with c1.stmt# = p2.procName";
+		auto wrapperCallStmtProcedureProcName =
+			[&queryCallStmtProcedureProcName] { PQLParser::parseQuery(queryCallStmtProcedureProcName); };
+		Assert::ExpectException<QPSException>(wrapperCallStmtProcedureProcName);
+
+		std::string queryProcedureProcNameCallStmt = "procedure p1; call c2; Select p1 with p1.procName = c2.stmt#";
+		auto wrapperProcedureProcNameCallStmt =
+			[&queryProcedureProcNameCallStmt] { PQLParser::parseQuery(queryProcedureProcNameCallStmt); };
+		Assert::ExpectException<QPSException>(wrapperProcedureProcNameCallStmt);
+
+		std::string queryCallStmtCallProcName = "call c1; call c2; Select c1 with c1.stmt# = c2.procName";
+		auto wrapperCallStmtCallProcName =
+			[&queryCallStmtCallProcName] { PQLParser::parseQuery(queryCallStmtCallProcName); };
+		Assert::ExpectException<QPSException>(wrapperCallStmtCallProcName);
+
+		std::string queryCallProcNameCallStmt = "call c1; call c2; Select c1 with c1.procName = c2.stmt#";
+		auto wrapperCallProcNameCallStmt =
+			[&queryCallProcNameCallStmt] { PQLParser::parseQuery(queryCallProcNameCallStmt); };
+		Assert::ExpectException<QPSException>(wrapperCallProcNameCallStmt);
+
+		std::string queryCallStmtVariableVarName = "call c1; variable v2; Select c1 with c1.stmt# = v2.varName";
+		auto wrapperCallStmtVariableVarName =
+			[&queryCallStmtVariableVarName] { PQLParser::parseQuery(queryCallStmtVariableVarName); };
+		Assert::ExpectException<QPSException>(wrapperCallStmtVariableVarName);
+
+		std::string queryVariableVarNameCallStmt = "variable v1; call c2; Select v1 with v1.varName = c2.stmt#";
+		auto wrapperVariableVarNameCallStmt =
+			[&queryVariableVarNameCallStmt] { PQLParser::parseQuery(queryVariableVarNameCallStmt); };
+		Assert::ExpectException<QPSException>(wrapperVariableVarNameCallStmt);
+
+		std::string queryCallStmtReadVarName = "call c1; read r2; Select c1 with c1.stmt# = r2.varName";
+		auto wrapperCallStmtReadVarName =
+			[&queryCallStmtReadVarName] { PQLParser::parseQuery(queryCallStmtReadVarName); };
+		Assert::ExpectException<QPSException>(wrapperCallStmtReadVarName);
+
+		std::string queryReadVarNameCallStmt = "read r1; call c2; Select r1 with r1.varName = c2.stmt#";
+		auto wrapperReadVarNameCallStmt =
+			[&queryReadVarNameCallStmt] { PQLParser::parseQuery(queryReadVarNameCallStmt); };
+		Assert::ExpectException<QPSException>(wrapperReadVarNameCallStmt);
+
+		std::string queryCallStmtPrintVarName = "call c1; print p2; Select c1 with c1.stmt# = p2.varName";
+		auto wrapperCallStmtPrintVarName =
+			[&queryCallStmtPrintVarName] { PQLParser::parseQuery(queryCallStmtPrintVarName); };
+		Assert::ExpectException<QPSException>(wrapperCallStmtPrintVarName);
+
+		std::string queryPrintVarNameCallStmt = "print p1; call c2; Select p1 with p1.varName = c2.stmt#";
+		auto wrapperPrintVarNameCallStmt =
+			[&queryPrintVarNameCallStmt] { PQLParser::parseQuery(queryPrintVarNameCallStmt); };
+		Assert::ExpectException<QPSException>(wrapperPrintVarNameCallStmt);
+
+		std::string queryWhileStmtProcedureProcName = "while w1; procedure p2; Select w1 with w1.stmt# = p2.procName";
+		auto wrapperWhileStmtProcedureProcName =
+			[&queryWhileStmtProcedureProcName] { PQLParser::parseQuery(queryWhileStmtProcedureProcName); };
+		Assert::ExpectException<QPSException>(wrapperWhileStmtProcedureProcName);
+
+		std::string queryProcedureProcNameWhileStmt = "procedure p1; while w2; Select p1 with p1.procName = w2.stmt#";
+		auto wrapperProcedureProcNameWhileStmt =
+			[&queryProcedureProcNameWhileStmt] { PQLParser::parseQuery(queryProcedureProcNameWhileStmt); };
+		Assert::ExpectException<QPSException>(wrapperProcedureProcNameWhileStmt);
+
+		std::string queryWhileStmtCallProcName = "while w1; call c2; Select w1 with w1.stmt# = c2.procName";
+		auto wrapperWhileStmtCallProcName =
+			[&queryWhileStmtCallProcName] { PQLParser::parseQuery(queryWhileStmtCallProcName); };
+		Assert::ExpectException<QPSException>(wrapperWhileStmtCallProcName);
+
+		std::string queryCallProcNameWhileStmt = "call c1; while w2; Select c1 with c1.procName = w2.stmt#";
+		auto wrapperCallProcNameWhileStmt =
+			[&queryCallProcNameWhileStmt] { PQLParser::parseQuery(queryCallProcNameWhileStmt); };
+		Assert::ExpectException<QPSException>(wrapperCallProcNameWhileStmt);
+
+		std::string queryWhileStmtVariableVarName = "while w1; variable v2; Select w1 with w1.stmt# = v2.varName";
+		auto wrapperWhileStmtVariableVarName =
+			[&queryWhileStmtVariableVarName] { PQLParser::parseQuery(queryWhileStmtVariableVarName); };
+		Assert::ExpectException<QPSException>(wrapperWhileStmtVariableVarName);
+
+		std::string queryVariableVarNameWhileStmt = "variable v1; while w2; Select v1 with v1.varName = w2.stmt#";
+		auto wrapperVariableVarNameWhileStmt =
+			[&queryVariableVarNameWhileStmt] { PQLParser::parseQuery(queryVariableVarNameWhileStmt); };
+		Assert::ExpectException<QPSException>(wrapperVariableVarNameWhileStmt);
+
+		std::string queryWhileStmtReadVarName = "while w1; read r2; Select w1 with w1.stmt# = r2.varName";
+		auto wrapperWhileStmtReadVarName =
+			[&queryWhileStmtReadVarName] { PQLParser::parseQuery(queryWhileStmtReadVarName); };
+		Assert::ExpectException<QPSException>(wrapperWhileStmtReadVarName);
+
+		std::string queryReadVarNameWhileStmt = "read r1; while w2; Select r1 with r1.varName = w2.stmt#";
+		auto wrapperReadVarNameWhileStmt =
+			[&queryReadVarNameWhileStmt] { PQLParser::parseQuery(queryReadVarNameWhileStmt); };
+		Assert::ExpectException<QPSException>(wrapperReadVarNameWhileStmt);
+
+		std::string queryWhileStmtPrintVarName = "while w1; print p2; Select w1 with w1.stmt# = p2.varName";
+		auto wrapperWhileStmtPrintVarName =
+			[&queryWhileStmtPrintVarName] { PQLParser::parseQuery(queryWhileStmtPrintVarName); };
+		Assert::ExpectException<QPSException>(wrapperWhileStmtPrintVarName);
+
+		std::string queryPrintVarNameWhileStmt = "print p1; while w2; Select p1 with p1.varName = w2.stmt#";
+		auto wrapperPrintVarNameWhileStmt =
+			[&queryPrintVarNameWhileStmt] { PQLParser::parseQuery(queryPrintVarNameWhileStmt); };
+		Assert::ExpectException<QPSException>(wrapperPrintVarNameWhileStmt);
+
+		std::string queryIfStmtProcedureProcName = "if i1; procedure p2; Select i1 with i1.stmt# = p2.procName";
+		auto wrapperIfStmtProcedureProcName =
+			[&queryIfStmtProcedureProcName] { PQLParser::parseQuery(queryIfStmtProcedureProcName); };
+		Assert::ExpectException<QPSException>(wrapperIfStmtProcedureProcName);
+
+		std::string queryProcedureProcNameIfStmt = "procedure p1; if i2; Select p1 with p1.procName = i2.stmt#";
+		auto wrapperProcedureProcNameIfStmt =
+			[&queryProcedureProcNameIfStmt] { PQLParser::parseQuery(queryProcedureProcNameIfStmt); };
+		Assert::ExpectException<QPSException>(wrapperProcedureProcNameIfStmt);
+
+		std::string queryIfStmtCallProcName = "if i1; call c2; Select i1 with i1.stmt# = c2.procName";
+		auto wrapperIfStmtCallProcName =
+			[&queryIfStmtCallProcName] { PQLParser::parseQuery(queryIfStmtCallProcName); };
+		Assert::ExpectException<QPSException>(wrapperIfStmtCallProcName);
+
+		std::string queryCallProcNameIfStmt = "call c1; if i2; Select c1 with c1.procName = i2.stmt#";
+		auto wrapperCallProcNameIfStmt =
+			[&queryCallProcNameIfStmt] { PQLParser::parseQuery(queryCallProcNameIfStmt); };
+		Assert::ExpectException<QPSException>(wrapperCallProcNameIfStmt);
+
+		std::string queryIfStmtVariableVarName = "if i1; variable v2; Select i1 with i1.stmt# = v2.varName";
+		auto wrapperIfStmtVariableVarName =
+			[&queryIfStmtVariableVarName] { PQLParser::parseQuery(queryIfStmtVariableVarName); };
+		Assert::ExpectException<QPSException>(wrapperIfStmtVariableVarName);
+
+		std::string queryVariableVarNameIfStmt = "variable v1; if i2; Select v1 with v1.varName = i2.stmt#";
+		auto wrapperVariableVarNameIfStmt =
+			[&queryVariableVarNameIfStmt] { PQLParser::parseQuery(queryVariableVarNameIfStmt); };
+		Assert::ExpectException<QPSException>(wrapperVariableVarNameIfStmt);
+
+		std::string queryIfStmtReadVarName = "if i1; read r2; Select i1 with i1.stmt# = r2.varName";
+		auto wrapperIfStmtReadVarName =
+			[&queryIfStmtReadVarName] { PQLParser::parseQuery(queryIfStmtReadVarName); };
+		Assert::ExpectException<QPSException>(wrapperIfStmtReadVarName);
+
+		std::string queryReadVarNameIfStmt = "read r1; if i2; Select r1 with r1.varName = i2.stmt#";
+		auto wrapperReadVarNameIfStmt =
+			[&queryReadVarNameIfStmt] { PQLParser::parseQuery(queryReadVarNameIfStmt); };
+		Assert::ExpectException<QPSException>(wrapperReadVarNameIfStmt);
+
+		std::string queryIfStmtPrintVarName = "if i1; print p2; Select i1 with i1.stmt# = p2.varName";
+		auto wrapperIfStmtPrintVarName =
+			[&queryIfStmtPrintVarName] { PQLParser::parseQuery(queryIfStmtPrintVarName); };
+		Assert::ExpectException<QPSException>(wrapperIfStmtPrintVarName);
+
+		std::string queryPrintVarNameIfStmt = "print p1; if i2; Select p1 with p1.varName = i2.stmt#";
+		auto wrapperPrintVarNameIfStmt =
+			[&queryPrintVarNameIfStmt] { PQLParser::parseQuery(queryPrintVarNameIfStmt); };
+		Assert::ExpectException<QPSException>(wrapperPrintVarNameIfStmt);
+
+		std::string queryAssignStmtProcedureProcName = "assign a1; procedure p2; Select a1 with a1.stmt# = p2.procName";
+		auto wrapperAssignStmtProcedureProcName =
+			[&queryAssignStmtProcedureProcName] { PQLParser::parseQuery(queryAssignStmtProcedureProcName); };
+		Assert::ExpectException<QPSException>(wrapperAssignStmtProcedureProcName);
+
+		std::string queryProcedureProcNameAssignStmt = "procedure p1; assign a2; Select p1 with p1.procName = a2.stmt#";
+		auto wrapperProcedureProcNameAssignStmt =
+			[&queryProcedureProcNameAssignStmt] { PQLParser::parseQuery(queryProcedureProcNameAssignStmt); };
+		Assert::ExpectException<QPSException>(wrapperProcedureProcNameAssignStmt);
+
+		std::string queryAssignStmtCallProcName = "assign a1; call c2; Select a1 with a1.stmt# = c2.procName";
+		auto wrapperAssignStmtCallProcName =
+			[&queryAssignStmtCallProcName] { PQLParser::parseQuery(queryAssignStmtCallProcName); };
+		Assert::ExpectException<QPSException>(wrapperAssignStmtCallProcName);
+
+		std::string queryCallProcNameAssignStmt = "call c1; assign a2; Select c1 with c1.procName = a2.stmt#";
+		auto wrapperCallProcNameAssignStmt =
+			[&queryCallProcNameAssignStmt] { PQLParser::parseQuery(queryCallProcNameAssignStmt); };
+		Assert::ExpectException<QPSException>(wrapperCallProcNameAssignStmt);
+
+		std::string queryAssignStmtVariableVarName = "assign a1; variable v2; Select a1 with a1.stmt# = v2.varName";
+		auto wrapperAssignStmtVariableVarName =
+			[&queryAssignStmtVariableVarName] { PQLParser::parseQuery(queryAssignStmtVariableVarName); };
+		Assert::ExpectException<QPSException>(wrapperAssignStmtVariableVarName);
+
+		std::string queryVariableVarNameAssignStmt = "variable v1; assign a2; Select v1 with v1.varName = a2.stmt#";
+		auto wrapperVariableVarNameAssignStmt =
+			[&queryVariableVarNameAssignStmt] { PQLParser::parseQuery(queryVariableVarNameAssignStmt); };
+		Assert::ExpectException<QPSException>(wrapperVariableVarNameAssignStmt);
+
+		std::string queryAssignStmtReadVarName = "assign a1; read r2; Select a1 with a1.stmt# = r2.varName";
+		auto wrapperAssignStmtReadVarName =
+			[&queryAssignStmtReadVarName] { PQLParser::parseQuery(queryAssignStmtReadVarName); };
+		Assert::ExpectException<QPSException>(wrapperAssignStmtReadVarName);
+
+		std::string queryReadVarNameAssignStmt = "read r1; assign a2; Select r1 with r1.varName = a2.stmt#";
+		auto wrapperReadVarNameAssignStmt =
+			[&queryReadVarNameAssignStmt] { PQLParser::parseQuery(queryReadVarNameAssignStmt); };
+		Assert::ExpectException<QPSException>(wrapperReadVarNameAssignStmt);
+
+		std::string queryAssignStmtPrintVarName = "assign a1; print p2; Select a1 with a1.stmt# = p2.varName";
+		auto wrapperAssignStmtPrintVarName =
+			[&queryAssignStmtPrintVarName] { PQLParser::parseQuery(queryAssignStmtPrintVarName); };
+		Assert::ExpectException<QPSException>(wrapperAssignStmtPrintVarName);
+
+		std::string queryPrintVarNameAssignStmt = "print p1; assign a2; Select p1 with p1.varName = a2.stmt#";
+		auto wrapperPrintVarNameAssignStmt =
+			[&queryPrintVarNameAssignStmt] { PQLParser::parseQuery(queryPrintVarNameAssignStmt); };
+		Assert::ExpectException<QPSException>(wrapperPrintVarNameAssignStmt);
+	}
+	
+	TEST_METHOD(parseQuery_withConstantValueConstantValue_withExtracted) {
+		std::string query = "constant c1; constant c2; Select c1 with c1.value = c2.value";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withConstantValueStmtStmt_withExtracted) {
+		std::string query = "constant c1; stmt s2; Select c1 with c1.value = s2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withConstantValueReadStmt_withExtracted) {
+		std::string query = "constant c1; read r2; Select c1 with c1.value = r2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withConstantValuePrintStmt_withExtracted) {
+		std::string query = "constant c1; print p2; Select c1 with c1.value = p2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withConstantValueCallStmt_withExtracted) {
+		std::string query = "constant c1; call c2; Select c1 with c1.value = c2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withConstantValueWhileStmt_withExtracted) {
+		std::string query = "constant c1; while w2; Select c1 with c1.value = w2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withConstantValueIfStmt_withExtracted) {
+		std::string query = "constant c1; if i2; Select c1 with c1.value = i2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withConstantValueAssignStmt_withExtracted) {
+		std::string query = "constant c1; assign a2; Select c1 with c1.value = a2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withStmtStmtConstantValue_withExtracted) {
+		std::string query = "stmt s1; constant c2; Select s1 with s1.stmt# = c2.value";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withStmtStmtStmtStmt_withExtracted) {
+		std::string query = "stmt s1; stmt s2; Select s1 with s1.stmt# = s2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withStmtStmtReadStmt_withExtracted) {
+		std::string query = "stmt s1; read r2; Select s1 with s1.stmt# = r2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withStmtStmtPrintStmt_withExtracted) {
+		std::string query = "stmt s1; print p2; Select s1 with s1.stmt# = p2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withStmtStmtCallStmt_withExtracted) {
+		std::string query = "stmt s1; call c2; Select s1 with s1.stmt# = c2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withStmtStmtWhileStmt_withExtracted) {
+		std::string query = "stmt s1; while w2; Select s1 with s1.stmt# = w2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withStmtStmtIfStmt_withExtracted) {
+		std::string query = "stmt s1; if i2; Select s1 with s1.stmt# = i2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withStmtStmtAssignStmt_withExtracted) {
+		std::string query = "stmt s1; assign a2; Select s1 with s1.stmt# = a2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withReadStmtConstantValue_withExtracted) {
+		std::string query = "read r1; constant c2; Select r1 with r1.stmt# = c2.value";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withReadStmtStmtStmt_withExtracted) {
+		std::string query = "read r1; stmt s2; Select r1 with r1.stmt# = s2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withReadStmtReadStmt_withExtracted) {
+		std::string query = "read r1; read r2; Select r1 with r1.stmt# = r2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withReadStmtPrintStmt_withExtracted) {
+		std::string query = "read r1; print p2; Select r1 with r1.stmt# = p2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withReadStmtCallStmt_withExtracted) {
+		std::string query = "read r1; call c2; Select r1 with r1.stmt# = c2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withReadStmtWhileStmt_withExtracted) {
+		std::string query = "read r1; while w2; Select r1 with r1.stmt# = w2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withReadStmtIfStmt_withExtracted) {
+		std::string query = "read r1; if i2; Select r1 with r1.stmt# = i2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withReadStmtAssignStmt_withExtracted) {
+		std::string query = "read r1; assign a2; Select r1 with r1.stmt# = a2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withPrintStmtConstantValue_withExtracted) {
+		std::string query = "print p1; constant c2; Select p1 with p1.stmt# = c2.value";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withPrintStmtStmtStmt_withExtracted) {
+		std::string query = "print p1; stmt s2; Select p1 with p1.stmt# = s2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withPrintStmtReadStmt_withExtracted) {
+		std::string query = "print p1; read r2; Select p1 with p1.stmt# = r2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withPrintStmtPrintStmt_withExtracted) {
+		std::string query = "print p1; print p2; Select p1 with p1.stmt# = p2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withPrintStmtCallStmt_withExtracted) {
+		std::string query = "print p1; call c2; Select p1 with p1.stmt# = c2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withPrintStmtWhileStmt_withExtracted) {
+		std::string query = "print p1; while w2; Select p1 with p1.stmt# = w2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withPrintStmtIfStmt_withExtracted) {
+		std::string query = "print p1; if i2; Select p1 with p1.stmt# = i2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withPrintStmtAssignStmt_withExtracted) {
+		std::string query = "print p1; assign a2; Select p1 with p1.stmt# = a2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withCallStmtConstantValue_withExtracted) {
+		std::string query = "call c1; constant c2; Select c1 with c1.stmt# = c2.value";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withCallStmtStmtStmt_withExtracted) {
+		std::string query = "call c1; stmt s2; Select c1 with c1.stmt# = s2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withCallStmtReadStmt_withExtracted) {
+		std::string query = "call c1; read r2; Select c1 with c1.stmt# = r2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withCallStmtPrintStmt_withExtracted) {
+		std::string query = "call c1; print p2; Select c1 with c1.stmt# = p2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withCallStmtCallStmt_withExtracted) {
+		std::string query = "call c1; call c2; Select c1 with c1.stmt# = c2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withCallStmtWhileStmt_withExtracted) {
+		std::string query = "call c1; while w2; Select c1 with c1.stmt# = w2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withCallStmtIfStmt_withExtracted) {
+		std::string query = "call c1; if i2; Select c1 with c1.stmt# = i2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withCallStmtAssignStmt_withExtracted) {
+		std::string query = "call c1; assign a2; Select c1 with c1.stmt# = a2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withWhileStmtConstantValue_withExtracted) {
+		std::string query = "while w1; constant c2; Select w1 with w1.stmt# = c2.value";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withWhileStmtStmtStmt_withExtracted) {
+		std::string query = "while w1; stmt s2; Select w1 with w1.stmt# = s2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withWhileStmtReadStmt_withExtracted) {
+		std::string query = "while w1; read r2; Select w1 with w1.stmt# = r2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withWhileStmtPrintStmt_withExtracted) {
+		std::string query = "while w1; print p2; Select w1 with w1.stmt# = p2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withWhileStmtCallStmt_withExtracted) {
+		std::string query = "while w1; call c2; Select w1 with w1.stmt# = c2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withWhileStmtWhileStmt_withExtracted) {
+		std::string query = "while w1; while w2; Select w1 with w1.stmt# = w2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withWhileStmtIfStmt_withExtracted) {
+		std::string query = "while w1; if i2; Select w1 with w1.stmt# = i2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withWhileStmtAssignStmt_withExtracted) {
+		std::string query = "while w1; assign a2; Select w1 with w1.stmt# = a2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withIfStmtConstantValue_withExtracted) {
+		std::string query = "if i1; constant c2; Select i1 with i1.stmt# = c2.value";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withIfStmtStmtStmt_withExtracted) {
+		std::string query = "if i1; stmt s2; Select i1 with i1.stmt# = s2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withIfStmtReadStmt_withExtracted) {
+		std::string query = "if i1; read r2; Select i1 with i1.stmt# = r2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withIfStmtPrintStmt_withExtracted) {
+		std::string query = "if i1; print p2; Select i1 with i1.stmt# = p2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withIfStmtCallStmt_withExtracted) {
+		std::string query = "if i1; call c2; Select i1 with i1.stmt# = c2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withIfStmtWhileStmt_withExtracted) {
+		std::string query = "if i1; while w2; Select i1 with i1.stmt# = w2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withIfStmtIfStmt_withExtracted) {
+		std::string query = "if i1; if i2; Select i1 with i1.stmt# = i2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withIfStmtAssignStmt_withExtracted) {
+		std::string query = "if i1; assign a2; Select i1 with i1.stmt# = a2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withAssignStmtConstantValue_withExtracted) {
+		std::string query = "assign a1; constant c2; Select a1 with a1.stmt# = c2.value";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withAssignStmtStmtStmt_withExtracted) {
+		std::string query = "assign a1; stmt s2; Select a1 with a1.stmt# = s2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withAssignStmtReadStmt_withExtracted) {
+		std::string query = "assign a1; read r2; Select a1 with a1.stmt# = r2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withAssignStmtPrintStmt_withExtracted) {
+		std::string query = "assign a1; print p2; Select a1 with a1.stmt# = p2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withAssignStmtCallStmt_withExtracted) {
+		std::string query = "assign a1; call c2; Select a1 with a1.stmt# = c2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withAssignStmtWhileStmt_withExtracted) {
+		std::string query = "assign a1; while w2; Select a1 with a1.stmt# = w2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withAssignStmtIfStmt_withExtracted) {
+		std::string query = "assign a1; if i2; Select a1 with a1.stmt# = i2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withAssignStmtAssignStmt_withExtracted) {
+		std::string query = "assign a1; assign a2; Select a1 with a1.stmt# = a2.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withProcedureProcNameProcedureProcName_withExtracted) {
+		std::string query = "procedure p1; procedure p2; Select p1 with p1.procName = p2.procName";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withProcedureProcNameCallProcName_withExtracted) {
+		std::string query = "procedure p1; call c2; Select p1 with p1.procName = c2.procName";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withProcedureProcNameVariableVarName_withExtracted) {
+		std::string query = "procedure p1; variable v2; Select p1 with p1.procName = v2.varName";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withProcedureProcNameReadVarName_withExtracted) {
+		std::string query = "procedure p1; read r2; Select p1 with p1.procName = r2.varName";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withProcedureProcNamePrintVarName_withExtracted) {
+		std::string query = "procedure p1; print p2; Select p1 with p1.procName = p2.varName";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withCallProcNameProcedureProcName_withExtracted) {
+		std::string query = "call c1; procedure p2; Select c1 with c1.procName = p2.procName";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withCallProcNameCallProcName_withExtracted) {
+		std::string query = "call c1; call c2; Select c1 with c1.procName = c2.procName";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withCallProcNameVariableVarName_withExtracted) {
+		std::string query = "call c1; variable v2; Select c1 with c1.procName = v2.varName";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withCallProcNameReadVarName_withExtracted) {
+		std::string query = "call c1; read r2; Select c1 with c1.procName = r2.varName";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withCallProcNamePrintVarName_withExtracted) {
+		std::string query = "call c1; print p2; Select c1 with c1.procName = p2.varName";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withVariableVarNameProcedureProcName_withExtracted) {
+		std::string query = "variable v1; procedure p2; Select v1 with v1.varName = p2.procName";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withVariableVarNameCallProcName_withExtracted) {
+		std::string query = "variable v1; call c2; Select v1 with v1.varName = c2.procName";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withVariableVarNameVariableVarName_withExtracted) {
+		std::string query = "variable v1; variable v2; Select v1 with v1.varName = v2.varName";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withVariableVarNameReadVarName_withExtracted) {
+		std::string query = "variable v1; read r2; Select v1 with v1.varName = r2.varName";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withVariableVarNamePrintVarName_withExtracted) {
+		std::string query = "variable v1; print p2; Select v1 with v1.varName = p2.varName";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withReadVarNameProcedureProcName_withExtracted) {
+		std::string query = "read r1; procedure p2; Select r1 with r1.varName = p2.procName";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withReadVarNameCallProcName_withExtracted) {
+		std::string query = "read r1; call c2; Select r1 with r1.varName = c2.procName";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withReadVarNameVariableVarName_withExtracted) {
+		std::string query = "read r1; variable v2; Select r1 with r1.varName = v2.varName";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withReadVarNameReadVarName_withExtracted) {
+		std::string query = "read r1; read r2; Select r1 with r1.varName = r2.varName";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withReadVarNamePrintVarName_withExtracted) {
+		std::string query = "read r1; print p2; Select r1 with r1.varName = p2.varName";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withPrintVarNameProcedureProcName_withExtracted) {
+		std::string query = "print p1; procedure p2; Select p1 with p1.varName = p2.procName";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withPrintVarNameCallProcName_withExtracted) {
+		std::string query = "print p1; call c2; Select p1 with p1.varName = c2.procName";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withPrintVarNameVariableVarName_withExtracted) {
+		std::string query = "print p1; variable v2; Select p1 with p1.varName = v2.varName";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withPrintVarNameReadVarName_withExtracted) {
+		std::string query = "print p1; read r2; Select p1 with p1.varName = r2.varName";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
+	TEST_METHOD(parseQuery_withPrintVarNamePrintVarName_withExtracted) {
+		std::string query = "print p1; print p2; Select p1 with p1.varName = p2.varName";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		std::vector<ParsedWith> withs = parsedQuery.getWiths();
+		Assert::AreEqual(size_t(1), withs.size());
+	}
 	};
 }

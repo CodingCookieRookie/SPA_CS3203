@@ -28,6 +28,13 @@ const std::vector<std::pair<std::string, PqlRelationshipType>> PQLParser::suchTh
 	{"Affects",		PqlRelationshipType::Affects},
 };
 
+const std::vector<std::pair<std::string, PqlReferenceType>> PQLParser::attributeMap = {
+	{"procName",	PqlReferenceType::procName},
+	{"varName",		PqlReferenceType::varName},
+	{"value",		PqlReferenceType::value},
+	{"stmt#",		PqlReferenceType::stmtNum},
+};
+
 Lexer PQLParser::lexer = Lexer();
 
 std::vector<PQL_VARIABLE> PQLParser::parseSingleDeclaration() {
@@ -96,16 +103,9 @@ std::vector<std::string> PQLParser::parseSelect() {
 	return columns;
 }
 
-std::vector<ParsedRelationship> PQLParser::parseSuchThat() {
-	if (!lexer.match("such")) {
-		// Not a such-that clause, return empty vector
-		return std::vector<ParsedRelationship>();
-	}
+ParsedRelationship PQLParser::parseSingleSuchThat() {
 	std::string whitespace = lexer.nextWhitespace();
 	if (whitespace.empty()) {
-		throw QPSException(QPSException::PARSER_ERROR);
-	}
-	if (!lexer.match("that")) {
 		throw QPSException(QPSException::PARSER_ERROR);
 	}
 	PqlRelationshipType relationshipType;
@@ -132,34 +132,131 @@ std::vector<ParsedRelationship> PQLParser::parseSuchThat() {
 	if (!lexer.match(")")) {
 		throw QPSException(QPSException::PARSER_ERROR);
 	}
-	ParsedRelationship relationship(relationshipType, lValue, rValue);
-	return { relationship };
+	return ParsedRelationship(relationshipType, lValue, rValue);
 }
 
-std::vector<ParsedPattern> PQLParser::parsePattern() {
-	if (!lexer.match("pattern")) {
-		return std::vector<ParsedPattern>();
-	}
+std::vector<ParsedRelationship> PQLParser::parseSuchThat() {
+	std::vector<ParsedRelationship> suchThats;
+	do {
+		ParsedRelationship suchThat = parseSingleSuchThat();
+		suchThats.push_back(suchThat);
+	} while (lexer.match("and"));
+	return suchThats;
+}
+
+ParsedPattern PQLParser::parseSinglePattern() {
 	std::string whitespace = lexer.nextWhitespace();
 	if (whitespace.empty()) {
 		throw QPSException(QPSException::PARSER_ERROR);
 	}
-	std::string synAssign = lexer.nextName();
-	if (synAssign.empty()) {
+	std::string synonym = lexer.nextName();
+	if (synonym.empty()) {
 		throw QPSException(QPSException::PARSER_ERROR);
 	}
 	if (!lexer.match("(")) {
 		throw QPSException(QPSException::PARSER_ERROR);
 	}
+	int numOfArgs = 0;
 	PqlReference ref = parseRef();
+	numOfArgs++;
 	if (!lexer.match(",")) {
 		throw QPSException(QPSException::PARSER_ERROR);
 	}
 	PqlExpression expression = parseExpression();
+	numOfArgs++;
+	if (lexer.match(")")) {
+		return ParsedPattern(synonym, ref, expression, numOfArgs);
+	}
+	if (!lexer.match(",")) {
+		throw QPSException(QPSException::PARSER_ERROR);
+	}
+	if (!lexer.match("_")) {
+		throw QPSException(QPSException::PARSER_ERROR);
+	}
+	numOfArgs++;
 	if (!lexer.match(")")) {
 		throw QPSException(QPSException::PARSER_ERROR);
 	}
-	return { ParsedPattern(synAssign, ref, expression) };
+	return ParsedPattern(synonym, ref, expression, numOfArgs);
+}
+
+std::vector<ParsedPattern> PQLParser::parsePattern() {
+	std::vector<ParsedPattern> patterns;
+	do {
+		ParsedPattern pattern = parseSinglePattern();
+		patterns.push_back(pattern);
+	} while (lexer.match("and"));
+	return patterns;
+}
+
+ParsedWith PQLParser::parseSingleWith() {
+	std::string whitespace = lexer.nextWhitespace();
+	if (whitespace.empty()) {
+		throw QPSException(QPSException::PARSER_ERROR);
+	}
+	PqlReference lhs = parseRef();
+	if (lhs.first == PqlReferenceType::synonym) {
+		if (!lexer.match(".")) {
+			throw QPSException(QPSException::PARSER_ERROR);
+		}
+		bool foundAttr = false;
+		/* Re-assign the reference based on the attrName */
+		for (const std::pair<std::string, PqlReferenceType>& attribute : attributeMap) {
+			std::string attrName = attribute.first;
+			if (lexer.match(attrName)) {
+				lhs = PqlReference(attribute.second, lhs.second);
+				foundAttr = true;
+				break;
+			}
+		}
+		if (!foundAttr) {
+			throw QPSException(QPSException::PARSER_ERROR);
+		}
+	}
+	if (!lexer.match("=")) {
+		throw QPSException(QPSException::PARSER_ERROR);
+	}
+	PqlReference rhs = parseRef();
+	if (rhs.first == PqlReferenceType::wildcard) {
+		throw QPSException(QPSException::PARSER_ERROR);
+	}
+	if (rhs.first == PqlReferenceType::synonym) {
+		if (!lexer.match(".")) {
+			throw QPSException(QPSException::PARSER_ERROR);
+		}
+		bool foundAttr = false;
+		/* Re-assign the reference based on the attrName */
+		for (const std::pair<std::string, PqlReferenceType>& attribute : attributeMap) {
+			std::string attrName = attribute.first;
+			if (lexer.match(attrName)) {
+				/* Additional check -- if the last character of the attrName is an
+				alphanumeric character, and there is no space following it and we have
+				not reached the end of the lexed string, throw a parser exception.
+				This is because if we have not reached the end of the string, the
+				next token will be either "and", "such", "pattern" or "with". */
+				std::string whitespace = lexer.nextWhitespace();
+				if (isalpha(attrName.back()) && whitespace.empty() && !lexer.reachedEnd()) {
+					throw QPSException(QPSException::PARSER_ERROR);
+				}
+				rhs = PqlReference(attribute.second, rhs.second);
+				foundAttr = true;
+				break;
+			}
+		}
+		if (!foundAttr) {
+			throw QPSException(QPSException::PARSER_ERROR);
+		}
+	}
+	return ParsedWith(lhs, rhs);
+}
+
+std::vector<ParsedWith> PQLParser::parseWith() {
+	std::vector<ParsedWith> withs;
+	do {
+		ParsedWith with = parseSingleWith();
+		withs.push_back(with);
+	} while (lexer.match("and"));
+	return withs;
 }
 
 PqlReference PQLParser::parseRef() {
@@ -220,10 +317,37 @@ ParsedQuery PQLParser::parseQuery(const std::string& query) {
 	lexer = Lexer(query);
 	std::vector<PQL_VARIABLE> allDeclarations = parseDeclarations();
 	std::vector<std::string> columns = parseSelect();
-	std::vector<ParsedRelationship> relationships = parseSuchThat();
-	std::vector<ParsedPattern> patterns = parsePattern();
-	if (!lexer.reachedEnd()) {
-		throw QPSException(QPSException::PARSER_ERROR);
+	std::vector<ParsedRelationship> relationships;
+	std::vector<ParsedPattern> patterns;
+	std::vector<ParsedWith> withs;
+	while (!lexer.reachedEnd()) {
+		if (lexer.match("such")) {
+			std::string whitespace = lexer.nextWhitespace();
+			if (whitespace.empty()) {
+				throw QPSException(QPSException::PARSER_ERROR);
+			}
+			if (!lexer.match("that")) {
+				throw QPSException(QPSException::PARSER_ERROR);
+			}
+			std::vector<ParsedRelationship> parsedRelationships = parseSuchThat();
+			for (ParsedRelationship parsedRelationship : parsedRelationships) {
+				relationships.push_back(parsedRelationship);
+			}
+		} else if (lexer.match("pattern")) {
+			std::vector<ParsedPattern> parsedPatterns = parsePattern();
+			for (ParsedPattern parsedPattern : parsedPatterns) {
+				patterns.push_back(parsedPattern);
+			}
+		} else if (lexer.match("with")) {
+			std::vector<ParsedWith> parsedWiths = parseWith();
+			for (ParsedWith parsedWith : parsedWiths) {
+				withs.push_back(parsedWith);
+			}
+		} else {
+			throw QPSException(QPSException::PARSER_ERROR);
+		}
+		/* Consume additional whitespace in the case of trailing whitespace */
+		lexer.nextWhitespace();
 	}
-	return ParsedQuery(allDeclarations, columns, relationships, patterns);
+	return ParsedQuery(allDeclarations, columns, relationships, patterns, withs);
 }

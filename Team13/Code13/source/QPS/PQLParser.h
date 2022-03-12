@@ -15,13 +15,18 @@ private:
 
 	const static std::vector<std::pair<std::string, PqlEntityType>> designEntityMap;
 	const static std::vector<std::pair<std::string, PqlRelationshipType>> suchThatRelationshipMap;
+	const static std::vector<std::pair<std::string, PqlReferenceType>> attributeMap;
 	static Lexer lexer;
 
 	static std::vector<PQL_VARIABLE> parseSingleDeclaration();
 	static std::vector<PQL_VARIABLE> parseDeclarations();
 	static std::vector<std::string> parseSelect();
+	static ParsedRelationship parseSingleSuchThat();
 	static std::vector<ParsedRelationship> parseSuchThat();
+	static ParsedPattern parseSinglePattern();
 	static std::vector<ParsedPattern> parsePattern();
+	static ParsedWith parseSingleWith();
+	static std::vector<ParsedWith> parseWith();
 	static PqlReference parseRef();
 	static PqlExpression parseExpression();
 

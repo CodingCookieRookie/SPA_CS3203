@@ -34,11 +34,16 @@ enum class PqlPatternType {
 };
 
 enum class PqlReferenceType {
-	synonym, wildcard, integer, ident
+	synonym, wildcard, integer, ident,
+	procName, varName, value, stmtNum
 };
 
 enum class PqlExpressionType {
 	full, partial, wildcard
+};
+
+enum class PqlAttributeType {
+	string, integer
 };
 
 typedef std::pair<PqlEntityType, std::string> PQL_VARIABLE;
@@ -66,26 +71,28 @@ private:
 	PqlPatternType patternType;
 	PqlReference entRef;
 	PqlExpression expressionSpec;
+	int numOfArgs;
 public:
-	ParsedPattern(std::string& synonym,
-		PqlReference entRef, PqlExpression expressionSpec);
+	ParsedPattern(std::string& synonym, PqlReference entRef,
+		PqlExpression expressionSpec, int numOfArgs);
 	ParsedPattern(std::string& synonym, PqlPatternType patternType,
-		PqlReference entRef, PqlExpression expressionSpec);
+		PqlReference entRef, PqlExpression expressionSpec, int numOfArgs);
 	std::string getSynonym() const;
 	PqlPatternType getPatternType() const;
 	PqlReference getEntRef() const;
 	PqlExpression getExpression() const;
+	int getNumOfArgs() const;
 };
 
-bool isEntRef(PqlReference reference);
-bool isStmtRef(PqlReference reference);
-bool isWildcardRef(PqlReference reference);
+class ParsedWith {
+private:
+	PqlReference lhs;
+	PqlReference rhs;
+public:
+	ParsedWith(PqlReference lhs, PqlReference rhs);
+	PqlReference getLhs() const;
+	PqlReference getRhs() const;
+};
+
 bool isSynonymRef(PqlReference reference);
-
-bool isUsesRelationship(ParsedRelationship relationship);
-bool isModifiesRelationship(ParsedRelationship relationship);
-bool isFollowsRelationship(ParsedRelationship relationship);
-bool isParentRelationship(ParsedRelationship relationship);
-
 bool isStatementEntity(PqlEntityType entityType);
-bool isProcedureEntity(PqlEntityType entityType);

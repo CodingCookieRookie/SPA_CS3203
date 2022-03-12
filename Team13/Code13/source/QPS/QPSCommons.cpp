@@ -16,12 +16,14 @@ PqlReference ParsedRelationship::getRhs() const {
 	return rhsRef;
 }
 
-ParsedPattern::ParsedPattern(std::string& synonym, PqlReference entRef, PqlExpression expressionSpec)
-	: ParsedPattern(synonym, PqlPatternType::Pattern, entRef, expressionSpec) {}
+ParsedPattern::ParsedPattern(std::string& synonym, PqlReference entRef,
+	PqlExpression expressionSpec, int numOfArgs)
+	: ParsedPattern(synonym, PqlPatternType::Pattern, entRef, expressionSpec, numOfArgs) {}
 
 ParsedPattern::ParsedPattern(std::string& synonym, PqlPatternType patternType,
-	PqlReference entRef, PqlExpression expressionSpec)
-	: synonym(synonym), patternType(patternType), entRef(entRef), expressionSpec(expressionSpec) {}
+	PqlReference entRef, PqlExpression expressionSpec, int numOfArgs)
+	: synonym(synonym), patternType(patternType), entRef(entRef),
+	expressionSpec(expressionSpec), numOfArgs(numOfArgs) {}
 
 std::string ParsedPattern::getSynonym() const {
 	return synonym;
@@ -39,48 +41,32 @@ PqlExpression ParsedPattern::getExpression() const {
 	return expressionSpec;
 }
 
-bool isEntRef(PqlReference reference) {
-	return reference.first == PqlReferenceType::synonym
-		|| reference.first == PqlReferenceType::wildcard
-		|| reference.first == PqlReferenceType::ident;
+int ParsedPattern::getNumOfArgs() const {
+	return numOfArgs;
 }
 
-bool isStmtRef(PqlReference reference) {
-	return reference.first == PqlReferenceType::synonym
-		|| reference.first == PqlReferenceType::wildcard
-		|| reference.first == PqlReferenceType::integer;
+ParsedWith::ParsedWith(PqlReference lhs, PqlReference rhs)
+	: lhs(lhs), rhs(rhs) {}
+
+PqlReference ParsedWith::getLhs() const {
+	return lhs;
 }
 
-bool isWildcardRef(PqlReference reference) {
-	return reference.first == PqlReferenceType::wildcard;
+PqlReference ParsedWith::getRhs() const {
+	return rhs;
 }
 
 bool isSynonymRef(PqlReference reference) {
 	return reference.first == PqlReferenceType::synonym;
 }
 
-bool isUsesRelationship(ParsedRelationship relationship) {
-	return relationship.getRelationshipType() == PqlRelationshipType::Uses;
-}
-
-bool isModifiesRelationship(ParsedRelationship relationship) {
-	return relationship.getRelationshipType() == PqlRelationshipType::Modifies;
-}
-
-bool isFollowsRelationship(ParsedRelationship relationship) {
-	return relationship.getRelationshipType() == PqlRelationshipType::Follows
-		|| relationship.getRelationshipType() == PqlRelationshipType::FollowsT;
-}
-
-bool isParentRelationship(ParsedRelationship relationship) {
-	return relationship.getRelationshipType() == PqlRelationshipType::Parent
-		|| relationship.getRelationshipType() == PqlRelationshipType::ParentT;
-}
-
 bool isStatementEntity(PqlEntityType entityType) {
-	return entityType == PqlEntityType::Assign || entityType == PqlEntityType::Stmt || entityType == PqlEntityType::If || entityType == PqlEntityType::Print || entityType == PqlEntityType::Read || entityType == PqlEntityType::Stmt || entityType == PqlEntityType::While;
-}
-
-bool isProcedureEntity(PqlEntityType entityType) {
-	return entityType == PqlEntityType::Procedure;
+	/* TODO: refactor this into a table */
+	return entityType == PqlEntityType::Assign ||
+		entityType == PqlEntityType::Stmt ||
+		entityType == PqlEntityType::If ||
+		entityType == PqlEntityType::Print ||
+		entityType == PqlEntityType::Read ||
+		entityType == PqlEntityType::Stmt ||
+		entityType == PqlEntityType::While;
 }
