@@ -2,23 +2,23 @@
 
 #include "./RS2.h"
 
-template<class T, typename Index>
-class RS2T : public RS2<RS2T<T, Index>, Index> {
+template<class T, class U, typename Index>
+class RS2T : public RS2<RS2T<T, U, Index>, Index> {
 private:
-	using RS2<RS2T<T, Index>, Index>::insert;
+	using RS2<RS2T<T, U, Index>, Index>::insert;
 	static std::unordered_set<Index> getAllSuccessors(Index& predecessor,
 		std::unordered_map<Index, std::unordered_set<Index>> uPredSucTable);
 protected:
 	RS2T();
 public:
-	static void populate(std::unordered_map<Index, std::unordered_set<Index>> uPredSucTable);
+	static void populate();
 };
 
-template<class T, typename Index>
-RS2T<T, Index>::RS2T() {};
+template<class T, class U, typename Index>
+RS2T<T, U, Index>::RS2T() {};
 
-template<class T, typename Index>
-std::unordered_set<Index> RS2T<T, Index>::getAllSuccessors(Index& predecessor,
+template<class T, class U, typename Index>
+std::unordered_set<Index> RS2T<T, U, Index>::getAllSuccessors(Index& predecessor,
 	std::unordered_map<Index, std::unordered_set<Index>> uPredSucTable) {
 	if (predSucTable.find(predecessor) != predSucTable.end()) {
 		return predSucTable[predecessor];
@@ -37,8 +37,13 @@ std::unordered_set<Index> RS2T<T, Index>::getAllSuccessors(Index& predecessor,
 	return successors;
 }
 
-template<class T, typename Index>
-void RS2T<T, Index>::populate(std::unordered_map<Index, std::unordered_set<Index>> uPredSucTable) {
+template<class T, class U, typename Index>
+void RS2T<T, U, Index>::populate() {
+	auto uPredSucTable = U::getPredSucTable();
+	if (uPredSucTable.size() == 0) {
+		return;
+	}
+
 	for (auto uPredSucEntry : uPredSucTable) {
 		Index predecessor = uPredSucEntry.first;
 		if (predSucTable.find(predecessor) != predSucTable.end()) {

@@ -167,29 +167,5 @@ public:
 		auto callsTable = Calls::getPredSucTable();
 		Assert::IsTrue(expectedAns == callsTable);
 	};
-
-	TEST_METHOD(getSucPredTable_onePredOneSuc) {
-		std::unordered_map<ProcIndex, std::unordered_set<ProcIndex>> expectedAns;
-		expectedAns[successor1].insert(predecessor1);
-		expectedAns[successor2].insert(predecessor2);
-
-		Calls::insert(predecessor1, successor1);
-		Calls::insert(predecessor2, successor2);
-
-		auto callsTable = Calls::getSucPredTable();
-		Assert::IsTrue(expectedAns == callsTable);
-	};
-
-	TEST_METHOD(getSucPredTable_multPredOneSuc) {
-		std::unordered_map<ProcIndex, std::unordered_set<ProcIndex>> expectedAns;
-		expectedAns[successor1].insert(predecessor1);
-		expectedAns[successor1].insert(predecessor2);
-
-		Calls::insert(predecessor1, successor1);
-		Calls::insert(predecessor2, successor1);
-
-		auto callsTable = Calls::getSucPredTable();
-		Assert::IsTrue(expectedAns == callsTable);
-	};
 	};
 }

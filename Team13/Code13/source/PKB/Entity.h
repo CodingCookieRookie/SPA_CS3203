@@ -40,6 +40,7 @@ public:
 	static bool containsStmt(int stmtNo);
 	static std::vector<StmtIndex> getStmtIdxFromType(StatementType stmtType);
 	static std::vector<StmtIndex> getAllStmts();
+	static std::vector<StmtIndex> Entity::getAllContainerStmts();
 	static void insertStmtFromProc(ProcIndex procIdx, StmtIndex stmtIdx);
 	static std::unordered_set<StmtIndex> getStmtsFromProc(ProcIndex procIdx);
 	static void performCleanUp();

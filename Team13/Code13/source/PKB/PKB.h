@@ -19,11 +19,9 @@
 
 class PKB {
 private:
-	static void populateFollowsT();
-	static void populateParentT();
-	static void populateCallsT();
-	static void populateRS1ContainerInfo();
-	static void populateRS1TransitiveProcInfo();
+	static void populateContainerInfo();
+	static void populateTransitiveProcsInfo();
+	static void populateTransitiveStmtsInfo();
 public:
 	static void populateRecursiveInfo();
 };

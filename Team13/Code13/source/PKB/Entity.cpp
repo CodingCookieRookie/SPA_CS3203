@@ -133,8 +133,20 @@ std::vector<StmtIndex> Entity::getStmtIdxFromType(StatementType stmtType) {
 std::vector<StmtIndex> Entity::getAllStmts() {
 	std::vector<StmtIndex> res;
 
-	for (auto& stmtIdx : stmtTypeTable) {
-		res.push_back(stmtIdx.first);
+	for (auto& stmtTypeEntry : stmtTypeTable) {
+		res.push_back(stmtTypeEntry.first);
+	}
+
+	return res;
+}
+
+std::vector<StmtIndex> Entity::getAllContainerStmts() {
+	std::vector<StmtIndex> res;
+
+	for (auto& stmtTypeEntry : stmtTypeTable) {
+		if (Entity::isContainerStmt(stmtTypeEntry.first)) {
+			res.push_back(stmtTypeEntry.first);
+		}
 	}
 
 	return res;

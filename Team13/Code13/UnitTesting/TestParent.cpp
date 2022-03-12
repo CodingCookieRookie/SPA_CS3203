@@ -168,29 +168,5 @@ public:
 		auto parentTable = Parent::getPredSucTable();
 		Assert::IsTrue(expectedAns == parentTable);
 	};
-
-	TEST_METHOD(getSucPredTable_onePredOneSuc) {
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> expectedAns;
-		expectedAns[successor1].insert(predecessor1);
-		expectedAns[successor2].insert(predecessor2);
-
-		Parent::insert(predecessor1, successor1);
-		Parent::insert(predecessor2, successor2);
-
-		auto parentTable = Parent::getSucPredTable();
-		Assert::IsTrue(expectedAns == parentTable);
-	};
-
-	TEST_METHOD(getSucPredTable_multPredOneSuc) {
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> expectedAns;
-		expectedAns[successor1].insert(predecessor1);
-		expectedAns[successor1].insert(predecessor2);
-
-		Parent::insert(predecessor1, successor1);
-		Parent::insert(predecessor2, successor1);
-
-		auto parentTable = Parent::getSucPredTable();
-		Assert::IsTrue(expectedAns == parentTable);
-	};
 	};
 }

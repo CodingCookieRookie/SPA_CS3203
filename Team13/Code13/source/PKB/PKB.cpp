@@ -3,37 +3,10 @@
 
 #include "PKB.h"
 
-void PKB::populateFollowsT() {
-	auto followsPredSucTable = Follows::getPredSucTable();
-	if (followsPredSucTable.size() > 0) {
-		FollowsT::populate(followsPredSucTable);
-	}
-}
+void PKB::populateContainerInfo() {
+	std::vector<StmtIndex> containerStmts = Entity::getAllContainerStmts();
 
-void PKB::populateParentT() {
-	auto parentPredSucTable = Parent::getPredSucTable();
-	if (parentPredSucTable.size() > 0) {
-		ParentT::populate(parentPredSucTable);
-	}
-}
-
-void PKB::populateCallsT() {
-	auto callsPredSucTable = Calls::getPredSucTable();
-	if (callsPredSucTable.size() > 0) {
-		CallsT::populate(callsPredSucTable);
-	}
-}
-
-void PKB::populateRS1ContainerInfo() {
-	auto statements = Entity::getAllStmts();
-	std::vector<StmtIndex> containerStmts;
-
-	for (auto& stmt : statements) {
-		if (Entity::isContainerStmt(stmt)) {
-			containerStmts.push_back(stmt);
-		}
-	}
-
+	Container::populate();
 	for (auto& containerStmt : containerStmts) {
 		auto& subStmts = Container::getStmtsInContainer(containerStmt);
 		if (subStmts.size() > 0) {
@@ -43,7 +16,13 @@ void PKB::populateRS1ContainerInfo() {
 	}
 }
 
-void PKB::populateRS1TransitiveProcInfo() {
+void PKB::populateTransitiveStmtsInfo() {
+	FollowsT::populate();
+	ParentT::populate();
+}
+
+void PKB::populateTransitiveProcsInfo() {
+	CallsT::populate();
 	auto calleeCallers = CallsT::getPredSucTable();
 	for (auto& entry : calleeCallers) {
 		auto caller = entry.first;
@@ -56,10 +35,7 @@ void PKB::populateRS1TransitiveProcInfo() {
 }
 
 void PKB::populateRecursiveInfo() {
-	Container::populate();
-	populateFollowsT();
-	populateParentT();
-	populateCallsT();
-	populateRS1ContainerInfo();
-	populateRS1TransitiveProcInfo();
+	populateContainerInfo();
+	populateTransitiveStmtsInfo();
+	populateTransitiveProcsInfo();
 }

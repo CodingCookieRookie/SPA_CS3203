@@ -3,4 +3,4 @@
 #include "./Parent.h"
 #include "./RS2T.h"
 
-class ParentT : public RS2T<ParentT, StmtIndex> {};
+class ParentT : public RS2T<ParentT, Parent, StmtIndex> {};

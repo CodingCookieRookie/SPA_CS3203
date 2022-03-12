@@ -21,7 +21,6 @@ public:
 	static std::vector<int> getPredecessors(Index& successor);
 	static std::tuple<std::vector<int>, std::vector<int>> getAllPredecessorSuccessorInfo();
 	static std::unordered_map<Index, std::unordered_set<Index>> getPredSucTable();
-	static std::unordered_map<Index, std::unordered_set<Index>> getSucPredTable();
 	static void performCleanUp();
 };
 
@@ -52,7 +51,6 @@ bool RS2<T, Index>::containsPredecessor(Index& predecessor, Index& successor) {
 
 template<class T, typename Index>
 bool RS2<T, Index>::containsSuccessor(Index& predecessor, Index& successor) {
-
 	if (predSucTable.find(predecessor) == predSucTable.end()) {
 		return false;
 	}
@@ -98,17 +96,6 @@ std::unordered_map<Index, std::unordered_set<Index>> RS2<T, Index>::getPredSucTa
 	for (auto predSucEntry : predSucTable) {
 		for (auto successor : predSucEntry.second) {
 			data[predSucEntry.first].insert(successor);
-		}
-	}
-	return data;
-};
-
-template<class T, typename Index>
-std::unordered_map<Index, std::unordered_set<Index>> RS2<T, Index>::getSucPredTable() {
-	std::unordered_map<Index, std::unordered_set<Index>> data;
-	for (auto sucPredEntry : sucPredTable) {
-		for (auto predecessor : sucPredEntry.second) {
-			data[sucPredEntry.first].insert(predecessor);
 		}
 	}
 	return data;

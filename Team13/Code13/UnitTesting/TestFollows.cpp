@@ -167,29 +167,5 @@ public:
 		auto followsTable = Follows::getPredSucTable();
 		Assert::IsTrue(expectedAns == followsTable);
 	};
-
-	TEST_METHOD(getSucPredTable_onePredOneSuc) {
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> expectedAns;
-		expectedAns[successor1].insert(predecessor1);
-		expectedAns[successor2].insert(predecessor2);
-
-		Follows::insert(predecessor1, successor1);
-		Follows::insert(predecessor2, successor2);
-
-		auto followsTable = Follows::getSucPredTable();
-		Assert::IsTrue(expectedAns == followsTable);
-	};
-
-	TEST_METHOD(getSucPredTable_multPredOneSuc) {
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> expectedAns;
-		expectedAns[successor1].insert(predecessor1);
-		expectedAns[successor1].insert(predecessor2);
-
-		Follows::insert(predecessor1, successor1);
-		Follows::insert(predecessor2, successor1);
-
-		auto followsTable = Follows::getSucPredTable();
-		Assert::IsTrue(expectedAns == followsTable);
-	};
 	};
 }

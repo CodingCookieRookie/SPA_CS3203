@@ -34,21 +34,17 @@ public:
 		for (int i = 0; i < 4; i++) {
 			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
 		}
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> uPredSucTable;
-		uPredSucTable[stmts[0]] = { stmts[1] };
-		uPredSucTable[stmts[1]] = { stmts[2], stmts[3] };
-		FollowsT::populate(uPredSucTable);
+
+		Follows::insert(stmts[0], stmts[1]);
+		Follows::insert(stmts[1], stmts[2]);
+		Follows::insert(stmts[1], stmts[3]);
+		FollowsT::populate();
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
 
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
 		Assert::AreEqual(true, evTable.getEvResult()); // Follows*(1, 4) should hold
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		FollowsT::performCleanUp();
-		Follows::performCleanUp();
 	}
 
 	TEST_METHOD(executeFollowsStarInstruction_lhsConstRhsStmt_evaluatedTableFormed) {
@@ -64,10 +60,11 @@ public:
 		for (int i = 0; i < 4; i++) {
 			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
 		}
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> uPredSucTable;
-		uPredSucTable[stmts[0]] = { stmts[1] }; // 1 follows 2 (ignored)
-		uPredSucTable[stmts[1]] = { stmts[2], stmts[3] }; // 2 follows 3 and 4
-		FollowsT::populate(uPredSucTable);
+
+		Follows::insert(stmts[0], stmts[1]);
+		Follows::insert(stmts[1], stmts[2]);
+		Follows::insert(stmts[1], stmts[3]);
+		FollowsT::populate();
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -94,11 +91,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult);
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		FollowsT::performCleanUp();
-		Follows::performCleanUp();
 	}
 
 	TEST_METHOD(executeFollowsStarInstruction_lhsStmtRhsConst_evaluatedTableFormed) {
@@ -114,11 +106,12 @@ public:
 		for (int i = 0; i < 4; i++) {
 			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
 		}
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> uPredSucTable;
-		uPredSucTable[stmts[0]] = { stmts[1] }; // 1 follows 2
-		uPredSucTable[stmts[1]] = { stmts[2], stmts[3] }; // 2 follows 3 and 4
-		uPredSucTable[stmts[2]] = { stmts[3] }; //  3 follows 4
-		FollowsT::populate(uPredSucTable);
+
+		Follows::insert(stmts[0], stmts[1]);
+		Follows::insert(stmts[1], stmts[2]);
+		Follows::insert(stmts[1], stmts[3]);
+		Follows::insert(stmts[2], stmts[3]);
+		FollowsT::populate();
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -145,11 +138,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult);
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		FollowsT::performCleanUp();
-		Follows::performCleanUp();
 	}
 
 	TEST_METHOD(executeFollowsStarInstruction_twoStmts_evaluatedTableFormed) {
@@ -165,11 +153,13 @@ public:
 		for (int i = 0; i < 4; i++) {
 			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
 		}
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> uPredSucTable;
-		uPredSucTable[stmts[0]] = { stmts[1], stmts[2] }; // 1 follows 2 and 3
-		uPredSucTable[stmts[1]] = { stmts[2], stmts[3] }; // 2 follows 3 and 4
-		uPredSucTable[stmts[2]] = { stmts[3] }; //  3 follows 4
-		FollowsT::populate(uPredSucTable);
+
+		Follows::insert(stmts[0], stmts[1]);
+		Follows::insert(stmts[0], stmts[2]);
+		Follows::insert(stmts[1], stmts[2]);
+		Follows::insert(stmts[1], stmts[3]);
+		Follows::insert(stmts[2], stmts[3]);
+		FollowsT::populate();
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -206,11 +196,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult);
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		Follows::performCleanUp();
-		FollowsT::performCleanUp();
 	}
 
 	TEST_METHOD(executeFollowsStarInstruction_twoStmtsStress_evaluatedTableFormed) {
@@ -226,11 +211,11 @@ public:
 		for (int i = 0; i < 19; i++) {
 			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
 		}
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> uPredSucTable;
+
 		for (int i = 0; i < 18; i++) {
-			uPredSucTable[stmts[i]] = { stmts[i + 1] }; // i follows i + 1
+			Follows::insert(stmts[i], stmts[i + 1]);
 		}
-		FollowsT::populate(uPredSucTable);
+		FollowsT::populate();
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -281,11 +266,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult);
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		FollowsT::performCleanUp();
-		Follows::performCleanUp();
 	}
 
 	TEST_METHOD(executeFollowsStarInstruction_lhsStmtRhsWildcardStress_evaluatedTableFormed) {
@@ -301,11 +281,11 @@ public:
 		for (int i = 0; i < 19; i++) {
 			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
 		}
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> uPredSucTable;
+
 		for (int i = 0; i < 18; i++) {
-			uPredSucTable[stmts[i]] = { stmts[i + 1] }; // i follows i + 1
+			Follows::insert(stmts[i], stmts[i + 1]);
 		}
-		FollowsT::populate(uPredSucTable);
+		FollowsT::populate();
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -346,11 +326,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult);
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		FollowsT::performCleanUp();
-		Follows::performCleanUp();
 	}
 
 	TEST_METHOD(executeFollowsStarInstruction_twoWildcards_evaluatedTableFormed) {
@@ -366,12 +341,13 @@ public:
 		for (int i = 0; i < 4; i++) {
 			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
 		}
-		std::unordered_map<StmtIndex,
-			std::unordered_set<StmtIndex>> uPredSucTable;
-		uPredSucTable[stmts[0]] = { stmts[1], stmts[2] }; // 1 follows 2 and 3
-		uPredSucTable[stmts[1]] = { stmts[2], stmts[3] }; // 2 follows 3 and 4
-		uPredSucTable[stmts[2]] = { stmts[3] }; //  3 follows 4
-		FollowsT::populate(uPredSucTable);
+
+		Follows::insert(stmts[0], stmts[1]);
+		Follows::insert(stmts[0], stmts[2]);
+		Follows::insert(stmts[1], stmts[2]);
+		Follows::insert(stmts[1], stmts[3]);
+		Follows::insert(stmts[2], stmts[3]);
+		FollowsT::populate();
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -395,11 +371,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult); // because Follows* rs exist
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		FollowsT::performCleanUp();
-		Follows::performCleanUp();
 	}
 	};
 }

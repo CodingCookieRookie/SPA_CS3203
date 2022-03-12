@@ -28,6 +28,7 @@ private:
 
 	StmtIndex stmtIdx1 = StmtIndex(1);
 	StmtIndex stmtIdx2 = StmtIndex(2);
+	StmtIndex stmtIdx3 = StmtIndex(3);
 
 	TEST_METHOD_CLEANUP(cleanUpEntities) {
 		Entity::performCleanUp();
@@ -254,6 +255,19 @@ public:
 		Entity::insertStmt(stmtType2);
 
 		std::vector<StmtIndex> res = Entity::getAllStmts();
+		Assert::IsTrue(expectedRes == res);
+	}
+
+	TEST_METHOD(insertStmt_getAllContainerStmts) {
+		std::vector<StmtIndex> expectedRes;
+		expectedRes.push_back(stmtIdx2);
+		expectedRes.push_back(stmtIdx3);
+
+		Entity::insertStmt(stmtType1);
+		Entity::insertStmt(stmtType2);
+		Entity::insertStmt(stmtType2);
+
+		std::vector<StmtIndex> res = Entity::getAllContainerStmts();
 		Assert::IsTrue(expectedRes == res);
 	}
 

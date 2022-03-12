@@ -240,11 +240,12 @@ public:
 		for (int i = 0; i < 99; i++) {
 			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
 		}
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> uPredSucTable;
+
 		for (int i = 0; i < 99 - 1; i++) {
-			uPredSucTable[stmts[i]] = { stmts[i + 1] }; // i parents i + 1
+			Parent::insert(stmts[i], stmts[i + 1]);
 		}
-		ParentT::populate(uPredSucTable);
+
+		ParentT::populate();
 
 		// 2. Test QPS Parser:
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
@@ -1415,11 +1416,11 @@ public:
 			stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
 		}
 		stmts.emplace_back(Entity::insertStmt(StatementType::assignType)); // 99th stmt is assignment
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> uPredSucTable;
+
 		for (int i = 0; i < 98; i++) {
-			uPredSucTable[stmts[i]] = { stmts[i + 1] }; // i parents i + 1, up till 97 parents 98th stmt
+			Parent::insert(stmts[i], stmts[i + 1]);
 		}
-		ParentT::populate(uPredSucTable);
+		ParentT::populate();
 
 		// PKB inserts pattern
 		Entity::insertVar("def");

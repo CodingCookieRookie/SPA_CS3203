@@ -40,10 +40,6 @@ public:
 
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
 		Assert::AreEqual(true, evTable.getEvResult());
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		Parent::performCleanUp();
 	}
 
 	TEST_METHOD(executeParentStarInstruction_lhsConstRhsStmt_evaluatedTableFormed) {
@@ -59,10 +55,11 @@ public:
 		for (int i = 0; i < 4; i++) {
 			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
 		}
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> uPredSucTable;
-		uPredSucTable[stmts[0]] = { stmts[1] }; // 1 parents 2 (ignored)
-		uPredSucTable[stmts[1]] = { stmts[2], stmts[3] }; // 2 parents 3 and 4
-		ParentT::populate(uPredSucTable);
+
+		Parent::insert(stmts[0], stmts[1]);
+		Parent::insert(stmts[1], stmts[2]);
+		Parent::insert(stmts[1], stmts[3]);
+		ParentT::populate();
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -89,11 +86,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult);
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		ParentT::performCleanUp();
-		Parent::performCleanUp();
 	}
 
 	TEST_METHOD(executeParentStarInstruction_lhsStmtRhsConst_evaluatedTableFormed) {
@@ -109,11 +101,12 @@ public:
 		for (int i = 0; i < 4; i++) {
 			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
 		}
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> uPredSucTable;
-		uPredSucTable[stmts[0]] = { stmts[1] }; // 1 parents 2
-		uPredSucTable[stmts[1]] = { stmts[2], stmts[3] }; // 2 parents 3 and 4
-		uPredSucTable[stmts[2]] = { stmts[3] }; //  3 parents 4
-		ParentT::populate(uPredSucTable);
+
+		Parent::insert(stmts[0], stmts[1]);
+		Parent::insert(stmts[1], stmts[2]);
+		Parent::insert(stmts[1], stmts[3]);
+		Parent::insert(stmts[2], stmts[3]);
+		ParentT::populate();
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -140,11 +133,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult);
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		ParentT::performCleanUp();
-		Parent::performCleanUp();
 	}
 
 	TEST_METHOD(executeParentStarInstruction_twoStmts_evaluatedTableFormed) {
@@ -160,11 +148,13 @@ public:
 		for (int i = 0; i < 4; i++) {
 			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
 		}
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> uPredSucTable;
-		uPredSucTable[stmts[0]] = { stmts[1], stmts[2] }; // 1 parents 2 and 3
-		uPredSucTable[stmts[1]] = { stmts[2], stmts[3] }; // 2 parents 3 and 4
-		uPredSucTable[stmts[2]] = { stmts[3] }; //  3 parents 4
-		ParentT::populate(uPredSucTable);
+
+		Parent::insert(stmts[0], stmts[1]);
+		Parent::insert(stmts[0], stmts[2]);
+		Parent::insert(stmts[1], stmts[2]);
+		Parent::insert(stmts[1], stmts[3]);
+		Parent::insert(stmts[2], stmts[3]);
+		ParentT::populate();
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -201,11 +191,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult);
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		ParentT::performCleanUp();
-		Parent::performCleanUp();
 	}
 
 	TEST_METHOD(executeParentStarInstruction_twoStmtsStress_evaluatedTableFormed) {
@@ -221,11 +206,11 @@ public:
 		for (int i = 0; i < 19; i++) {
 			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
 		}
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> uPredSucTable;
+
 		for (int i = 0; i < 18; i++) {
-			uPredSucTable[stmts[i]] = { stmts[i + 1] }; // i parents i + 1, simulate 19 nesting levels
+			Parent::insert(stmts[i], stmts[i + 1]); // i parents i + 1, simulate 19 nesting levels
 		}
-		ParentT::populate(uPredSucTable);
+		ParentT::populate();
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -275,11 +260,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult);
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		ParentT::performCleanUp();
-		Parent::performCleanUp();
 	}
 
 	TEST_METHOD(executeParentStarInstruction_lhsStmtRhsWildcardStress_evaluatedTableFormed) {
@@ -295,11 +275,11 @@ public:
 		for (int i = 0; i < 99; i++) {
 			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
 		}
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> uPredSucTable;
+
 		for (int i = 0; i < 99 - 1; i++) {
-			uPredSucTable[stmts[i]] = { stmts[i + 1] }; // i parents i + 1
+			Parent::insert(stmts[i], stmts[i + 1]); // i parents i + 1
 		}
-		ParentT::populate(uPredSucTable);
+		ParentT::populate();
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -340,11 +320,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult);
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		ParentT::performCleanUp();
-		Parent::performCleanUp();
 	}
 
 	TEST_METHOD(executeParentStarInstruction_lhsWildcardRhsConstStress_evaluatedTableFormed) {
@@ -360,11 +335,11 @@ public:
 		for (int i = 0; i < 99; i++) {
 			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
 		}
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> uPredSucTable;
+
 		for (int i = 0; i < 99 - 1; i++) {
-			uPredSucTable[stmts[i]] = { stmts[i + 1] }; // i parents i + 1
+			Parent::insert(stmts[i], stmts[i + 1]); // i parents i + 1
 		}
-		ParentT::populate(uPredSucTable);
+		ParentT::populate();
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -391,11 +366,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult); // there exists a parent* of 87
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		ParentT::performCleanUp();
-		Parent::performCleanUp();
 	}
 
 	TEST_METHOD(executeParentStarInstruction_twoWildcards_evaluatedTableFormed) {
@@ -411,11 +381,13 @@ public:
 		for (int i = 0; i < 4; i++) {
 			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
 		}
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> uPredSucTable;
-		uPredSucTable[stmts[0]] = { stmts[1], stmts[2] }; // 1 parents 2 and 3
-		uPredSucTable[stmts[1]] = { stmts[2], stmts[3] }; // 2 parents 3 and 4
-		uPredSucTable[stmts[2]] = { stmts[3] }; //  3 parents 4
-		ParentT::populate(uPredSucTable);
+
+		Parent::insert(stmts[0], stmts[1]);
+		Parent::insert(stmts[0], stmts[2]);
+		Parent::insert(stmts[1], stmts[2]);
+		Parent::insert(stmts[1], stmts[3]);
+		Parent::insert(stmts[2], stmts[3]);
+		ParentT::populate();
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -439,11 +411,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult); // because Follows* rs exist
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		ParentT::performCleanUp();
-		Parent::performCleanUp();
 	}
 	};
 }

@@ -16,6 +16,7 @@ private:
 	ProcIndex procIdx5 = { 5 };
 
 	TEST_METHOD_CLEANUP(cleanUpCallsT) {
+		Calls::performCleanUp();
 		CallsT::performCleanUp();
 	}
 
@@ -23,11 +24,11 @@ public:
 	TEST_METHOD(populate_getSuccessors_branched) {
 		std::vector<int> callsTExpAns{ procIdx2.index, procIdx3.index, procIdx4.index, procIdx5.index };
 
-		std::unordered_map<ProcIndex, std::unordered_set<ProcIndex>> uPredSucTable;
-		uPredSucTable[procIdx1] = { procIdx2, procIdx5 };
-		uPredSucTable[procIdx2] = { procIdx3, procIdx4 };
-
-		CallsT::populate(uPredSucTable);
+		Calls::insert(procIdx1, procIdx2);
+		Calls::insert(procIdx1, procIdx5);
+		Calls::insert(procIdx2, procIdx3);
+		Calls::insert(procIdx2, procIdx4);
+		CallsT::populate();
 
 		auto callsTStmts = CallsT::getSuccessors(procIdx1);
 		Assert::IsTrue(callsTExpAns == callsTStmts);
@@ -39,13 +40,11 @@ public:
 	TEST_METHOD(populate_getSuccessors_linear) {
 		std::vector<int> callsTExpAns{ procIdx1.index, procIdx2.index, procIdx3.index, procIdx4.index };
 
-		std::unordered_map<ProcIndex, std::unordered_set<ProcIndex>> uPredSucTable;
-		uPredSucTable[procIdx1] = { procIdx2 };
-		uPredSucTable[procIdx2] = { procIdx3 };
-		uPredSucTable[procIdx3] = { procIdx4 };
-		uPredSucTable[procIdx5] = { procIdx1 };
-
-		CallsT::populate(uPredSucTable);
+		Calls::insert(procIdx1, procIdx2);
+		Calls::insert(procIdx2, procIdx3);
+		Calls::insert(procIdx3, procIdx4);
+		Calls::insert(procIdx5, procIdx1);
+		CallsT::populate();
 
 		auto callsTStmts = CallsT::getSuccessors(procIdx5);
 		Assert::IsTrue(callsTExpAns == callsTStmts);
@@ -57,12 +56,11 @@ public:
 	TEST_METHOD(populate_getPredecessors_branched) {
 		std::vector<int> callsTExpAns{ procIdx4.index, procIdx2.index, procIdx1.index };
 
-		std::unordered_map<ProcIndex, std::unordered_set<ProcIndex>> uPredSucTable;
-		uPredSucTable[procIdx1] = { procIdx2 };
-		uPredSucTable[procIdx2] = { procIdx3, procIdx4 };
-		uPredSucTable[procIdx4] = { procIdx5 };
-
-		CallsT::populate(uPredSucTable);
+		Calls::insert(procIdx1, procIdx2);
+		Calls::insert(procIdx2, procIdx3);
+		Calls::insert(procIdx2, procIdx4);
+		Calls::insert(procIdx4, procIdx5);
+		CallsT::populate();
 
 		auto callsTStmts = CallsT::getPredecessors(procIdx5);
 		Assert::IsTrue(callsTExpAns == callsTStmts);
@@ -74,13 +72,11 @@ public:
 	TEST_METHOD(populate_getPredecessors_linear) {
 		std::vector<int> callsTExpAns{ procIdx3.index, procIdx2.index, procIdx1.index, procIdx5.index };
 
-		std::unordered_map<ProcIndex, std::unordered_set<ProcIndex>> uPredSucTable;
-		uPredSucTable[procIdx1] = { procIdx2 };
-		uPredSucTable[procIdx2] = { procIdx3 };
-		uPredSucTable[procIdx3] = { procIdx4 };
-		uPredSucTable[procIdx5] = { procIdx1 };
-
-		CallsT::populate(uPredSucTable);
+		Calls::insert(procIdx1, procIdx2);
+		Calls::insert(procIdx2, procIdx3);
+		Calls::insert(procIdx3, procIdx4);
+		Calls::insert(procIdx5, procIdx1);
+		CallsT::populate();
 
 		auto callsTStmts = CallsT::getPredecessors(procIdx4);
 		Assert::IsTrue(callsTExpAns == callsTStmts);
@@ -90,11 +86,10 @@ public:
 	};
 
 	TEST_METHOD(containsSuccessor) {
-		std::unordered_map<ProcIndex, std::unordered_set<ProcIndex>> uPredSucTable;
-		uPredSucTable[procIdx1] = { procIdx2 };
-		uPredSucTable[procIdx2] = { procIdx3, procIdx4 };
-
-		CallsT::populate(uPredSucTable);
+		Calls::insert(procIdx1, procIdx2);
+		Calls::insert(procIdx2, procIdx3);
+		Calls::insert(procIdx2, procIdx4);
+		CallsT::populate();
 
 		Assert::IsTrue(CallsT::containsSuccessor(procIdx1, procIdx4));
 		Assert::IsFalse(CallsT::containsSuccessor(procIdx4, procIdx1));
@@ -102,11 +97,10 @@ public:
 	};
 
 	TEST_METHOD(containsPredecessor) {
-		std::unordered_map<ProcIndex, std::unordered_set<ProcIndex>> uPredSucTable;
-		uPredSucTable[procIdx1] = { procIdx2 };
-		uPredSucTable[procIdx2] = { procIdx3, procIdx4 };
-
-		CallsT::populate(uPredSucTable);
+		Calls::insert(procIdx1, procIdx2);
+		Calls::insert(procIdx2, procIdx3);
+		Calls::insert(procIdx2, procIdx4);
+		CallsT::populate();
 
 		Assert::IsTrue(CallsT::containsPredecessor(procIdx1, procIdx4));
 		Assert::IsFalse(CallsT::containsPredecessor(procIdx4, procIdx1));
@@ -119,14 +113,11 @@ public:
 		std::tuple<std::vector<int>, std::vector<int>> callsTExpAns =
 			std::make_tuple(callsTpredecessors, callsTsuccessors);
 
-		std::unordered_map<ProcIndex, std::unordered_set<ProcIndex>> uPredSucTable;
-		uPredSucTable[procIdx1] = { procIdx2 };
-		uPredSucTable[procIdx2] = { procIdx3 };
-
-		CallsT::populate(uPredSucTable);
+		Calls::insert(procIdx1, procIdx2);
+		Calls::insert(procIdx2, procIdx3);
+		CallsT::populate();
 
 		auto callsTInfo = CallsT::getAllPredecessorSuccessorInfo();
-
 		Assert::IsTrue(callsTExpAns == callsTInfo);
 	};
 
@@ -136,31 +127,11 @@ public:
 		callsTExpAns[procIdx1].insert(procIdx3);
 		callsTExpAns[procIdx2].insert(procIdx3);
 
-		std::unordered_map<ProcIndex, std::unordered_set<ProcIndex>> uPredSucTable;
-		uPredSucTable[procIdx1] = { procIdx2 };
-		uPredSucTable[procIdx2] = { procIdx3 };
-
-		CallsT::populate(uPredSucTable);
+		Calls::insert(procIdx1, procIdx2);
+		Calls::insert(procIdx2, procIdx3);
+		CallsT::populate();
 
 		auto callsTTable = CallsT::getPredSucTable();
-
-		Assert::IsTrue(callsTExpAns == callsTTable);
-	};
-
-	TEST_METHOD(getSucPredTable) {
-		std::unordered_map<ProcIndex, std::unordered_set<ProcIndex>> callsTExpAns;
-		callsTExpAns[procIdx2].insert(procIdx1);
-		callsTExpAns[procIdx3].insert(procIdx1);
-		callsTExpAns[procIdx3].insert(procIdx2);
-
-		std::unordered_map<ProcIndex, std::unordered_set<ProcIndex>> uSucPredTable;
-		uSucPredTable[procIdx1] = { procIdx2 };
-		uSucPredTable[procIdx2] = { procIdx3 };
-
-		CallsT::populate(uSucPredTable);
-
-		auto callsTTable = CallsT::getSucPredTable();
-
 		Assert::IsTrue(callsTExpAns == callsTTable);
 	};
 	};
