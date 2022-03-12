@@ -1,0 +1,50 @@
+1 - Follows same statement
+while s;
+Select s such that Follows(s, s)
+none
+5000
+2 - FollowsT same statement
+assign s;
+Select s such that Follows*(s, s)
+none
+5000
+3 - Parent same statement
+if s;
+Select s such that Parent (s, s)
+none
+5000
+4 - ParentT same statement
+read s;
+Select s such that Parent*(s, s)
+none
+5000
+1 - normal subexpression
+assign a;
+Select a pattern a (_, _"z + x"_)
+8, 9, 21, 24
+5000
+1 - addition is left associative
+assign a;
+Select a pattern a (_, _"x + i"_)
+none
+5000
+1 - normal subexpression
+assign a;
+Select a pattern a (_, _"z * 3"_)
+15
+5000
+1 - no substring match
+assign a;
+Select a pattern a (_, _"3 + 2"_)
+none
+5000
+1 - full match
+assign a;
+Select a pattern a (_, "z + x")
+8, 24
+5000
+1 - mult proc
+procedure p;
+Select p
+Example, p, q
+5000

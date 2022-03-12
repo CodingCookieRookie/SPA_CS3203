@@ -44,8 +44,6 @@ public:
 		std::vector<ParsedPattern> patterns;
 		ParsedQuery pq1 = ParsedQuery(declarations, columns, relationships, patterns);
 
-		PQLEvaluator pqlEvaluator(pq1);
-
 		Assert::AreEqual(size_t(2), pq1.getDeclarations().size());
 		Assert::IsFalse(pq1.getColumns().empty());
 		Assert::AreEqual(std::string("s"), pq1.getColumns()[0]);

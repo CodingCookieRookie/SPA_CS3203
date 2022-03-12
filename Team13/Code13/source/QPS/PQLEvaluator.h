@@ -13,16 +13,22 @@ private:
 	ParsedQuery parsedQuery;
 
 	/* Helper method to break down parsedQuery into isntructions to call in PKB */
-	std::vector<Instruction*> evaluateToInstructions(ParsedQuery pq);
+	static std::vector<Instruction*> evaluateToInstructions(ParsedQuery pq);
 
 	/* Helper method to execute all instructions */
-	EvaluatedTable executeInstructions(std::vector<Instruction*> instructions);
+	static EvaluatedTable executeInstructions(std::vector<Instruction*> instructions);
+
+	/* Helper method to select columns of table in EvaluatedTable for projection based on Select-cl */
+	static EvaluatedTable PQLEvaluator::selectColumnsForProjection(
+		EvaluatedTable evaluatedTable,
+		std::vector<std::string> columnsProjected,
+		std::unordered_map<std::string, PqlEntityType> declarations);
 
 public:
-
-	/* Instantiate of a PQLEvaluator */
-	PQLEvaluator(ParsedQuery parsedQuery);
-
 	/* Main entry method for parsing the query */
-	EvaluatedTable evaluate();
+	static EvaluatedTable evaluate(ParsedQuery& parsedQuery);
+
+	/* Entry method for selecting projected columns from the EvTable */
+	static EvaluatedTable PQLEvaluator::selectProjection(EvaluatedTable& resultingEvTable, ParsedQuery& parsedQuery);
+
 };

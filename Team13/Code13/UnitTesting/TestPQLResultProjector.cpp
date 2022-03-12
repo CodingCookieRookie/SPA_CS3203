@@ -26,12 +26,11 @@ public:
 
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
-		PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable, columnsProjected, entities);
 		std::list<std::string> expected;
 		expected.push_back("1");
 		expected.push_back("3");
 		expected.push_back("5");
-		std::list<std::string> results = pqlResultProject.resolveTableToResults();
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, columnsProjected, entities);
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -60,12 +59,11 @@ public:
 
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
-		PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable, columnsProjected, entities);
 		std::list<std::string> expected;
 		expected.push_back("a");
 		expected.push_back("b");
 		expected.push_back("c");
-		std::list<std::string> results = pqlResultProject.resolveTableToResults();
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, columnsProjected, entities);
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -95,12 +93,11 @@ public:
 
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
-		PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable, columnsProjected, entities);
 		std::list<std::string> expected;
 		expected.push_back("proc1");
 		expected.push_back("proc2");
 		expected.push_back("proc3");
-		std::list<std::string> results = pqlResultProject.resolveTableToResults();
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, columnsProjected, entities);
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -122,9 +119,8 @@ public:
 
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
-		PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable, columnsProjected, entities);
 		std::list<std::string> expected{ "1", "2", "3", "4" };
-		std::list<std::string> results = pqlResultProject.resolveTableToResults();
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, columnsProjected, entities);
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -145,9 +141,8 @@ public:
 
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
-		PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable, columnsProjected, entities);
 		std::list<std::string> expected{ "1", "2", "3", "4" };
-		std::list<std::string> results = pqlResultProject.resolveTableToResults();
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, columnsProjected, entities);
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -170,9 +165,8 @@ public:
 
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
-		PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable, columnsProjected, entities);
 		std::list<std::string> expected{ "1 4", "2 5", "3 6" };
-		std::list<std::string> results = pqlResultProject.resolveTableToResults();
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, columnsProjected, entities);
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -195,9 +189,8 @@ public:
 
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
-		PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable, columnsProjected, entities);
 		std::list<std::string> expected{ "1 4", "1 5", "2 5", "2 6", "3 6" };
-		std::list<std::string> results = pqlResultProject.resolveTableToResults();
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, columnsProjected, entities);
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -220,9 +213,8 @@ public:
 
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
-		PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable, columnsProjected, entities);
 		std::list<std::string> expected{ "1 4", "1 5", "2 5", "2 6", "3 6", "4 7" };
-		std::list<std::string> results = pqlResultProject.resolveTableToResults();
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, columnsProjected, entities);
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -245,9 +237,8 @@ public:
 
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
-		PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable, columnsProjected, entities);
 		std::list<std::string> expected{ "1", "2", "3" };
-		std::list<std::string> results = pqlResultProject.resolveTableToResults();
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, columnsProjected, entities);
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -284,9 +275,8 @@ public:
 
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
-		PQLResultProjector pqlResultProject = PQLResultProjector(evTestTable, columnsProjected, entities);
 		std::list<std::string> expected{ "1 var1 13 proc1", "2 var2 14 proc2", "3 var3 15 proc3" };
-		std::list<std::string> results = pqlResultProject.resolveTableToResults();
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, columnsProjected, entities);
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();

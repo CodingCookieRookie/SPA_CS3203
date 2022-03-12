@@ -8,40 +8,12 @@
 #include "PQLResultProjector.h"
 #include "QPSCommons.h"
 
-std::list<std::string> PQLResultProjector::resolveTableToResults() {
-	std::unordered_map<std::string, std::vector<int>> table = evaluatedTable.getTableRef();
+std::list<std::string> PQLResultProjector::resolveTableToResults(
+	EvaluatedTable evaluatedTable, std::vector<std::string> columnsProjected,
+	std::unordered_map<std::string, PqlEntityType> declarations) {
 	std::list<std::string> resList;
-
-	std::unordered_map<std::string, PqlEntityType> resultEntities;
-	std::unordered_map<std::string, std::vector<int>> resultTable;
-	for (std::string& column : columnsProjected) {
-		/* For each column that already exists in the final EvTable, take it from the EvTable */
-		if (table.find(column) != table.end()) {
-			resultEntities[column] = declarations[column];
-			resultTable[column] = table[column];
-		}
-	}
-
-	/* If the evaluated table is false or an empty table, use a false table */
-	EvaluatedTable resultEvTable(resultEntities, resultTable);
-	if (evaluatedTable.getEvResult() == false
-		|| (table.size() > 0 && evaluatedTable.getNumRow() == 0)) {
-		resultEvTable = EvaluatedTable(false);
-	}
-
-	for (std::string& column : columnsProjected) {
-		if (table.find(column) == table.end()) {
-			/* For each column that does not exist in the final EvTable, get it via an instruction
-			   and then perform a cross product. */
-			PqlEntityType columnType = declarations.at(column);
-			Instruction* getAll = new GetAllInstruction(columnType, column);
-			EvaluatedTable evTable = getAll->execute();
-			resultEvTable = resultEvTable.innerJoinMerge(evTable);
-		}
-	}
-	/* Extract the table from the EvTable */
-	resultTable = resultEvTable.getTableRef();
-	int numRow = resultEvTable.getNumRow();
+	std::unordered_map<std::string, std::vector<int>> resultTable = evaluatedTable.getTableRef();
+	int numRow = evaluatedTable.getNumRow();
 
 	// 1. Projecting only selected columns
 	// E.g.
@@ -74,13 +46,3 @@ std::list<std::string> PQLResultProjector::resolveTableToResults() {
 
 	return resList;
 }
-
-PQLResultProjector::PQLResultProjector(
-	EvaluatedTable evTable,
-	std::vector<std::string> columns,
-	std::unordered_map<std::string, PqlEntityType> declarations) :
-	evaluatedTable(evTable),
-	columnsProjected(columns),
-	declarations(declarations) {}
-
-PQLResultProjector::PQLResultProjector() {}

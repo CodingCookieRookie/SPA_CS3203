@@ -66,8 +66,7 @@ public:
 		Assert::AreEqual(std::string("s1"), parsedQuery.getColumns()[0]);
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 		// Test numRow:
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
 		// Test Table:
@@ -81,8 +80,8 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 
 		// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes{ "1", "2", "3", "4", "5", "6" };
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
@@ -105,8 +104,7 @@ public:
 		Assert::AreEqual(std::string("s1"), parsedQuery.getColumns()[0]);
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 		// Test numRow:
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
 		// Test Table:
@@ -120,8 +118,8 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 
 		// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes;
 		for (int i = 0; i < 99; i++) {
 			int j = i + 1;
@@ -155,8 +153,7 @@ public:
 		Assert::AreEqual(std::string("s1"), relationships[0].getLhs().second);
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 		// Test numRow:
 		Assert::AreEqual(size_t(4), evTable.getNumRow());
 		// Test Table:
@@ -176,8 +173,8 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 
 		// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes;
 		for (int i = 0; i < 4; i++) {
 			int j = i + 1;
@@ -211,8 +208,7 @@ public:
 		Assert::AreEqual(std::string("s1"), relationships[0].getLhs().second);
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 		// Test numRow:
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
 		// Test Table:
@@ -229,8 +225,8 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 
 		// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes;
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin()); // no results printed out
 		Assert::AreEqual(true, areListsEqual);
@@ -262,8 +258,7 @@ public:
 		Assert::AreEqual(std::string("s1"), relationships[0].getLhs().second);
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 		// Test numRow:
 		Assert::AreEqual(size_t(91), evTable.getNumRow()); // 91 statements are parent* to stmt-92
 		// Test Table:
@@ -284,8 +279,8 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 
 		// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes;
 		for (int i = 0; i < 91; i++) {
 			int j = i + 1;
@@ -322,8 +317,7 @@ public:
 		Assert::AreEqual(std::string("a1"), parsedQuery.getColumns()[0]);
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 
 		// Test numRow:
 		Assert::AreEqual(size_t(2), evTable.getNumRow());
@@ -343,8 +337,8 @@ public:
 		// Assert::AreEqual(true, actualEvResult);
 
 		// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes{ "7" };
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
@@ -377,8 +371,7 @@ public:
 		Assert::AreEqual(std::string("p1"), parsedQuery.getColumns()[0]);
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 
 		// Test numRow:
 		Assert::AreEqual(size_t(2), evTable.getNumRow());
@@ -398,8 +391,8 @@ public:
 		// Assert::AreEqual(true, actualEvResult);
 
 		// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes{ "7" };
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
@@ -438,8 +431,7 @@ public:
 		Assert::AreEqual(size_t(1), parsedQuery.getPatterns().size());
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -460,8 +452,8 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 
 		// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes{ "7" };
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
@@ -501,8 +493,7 @@ public:
 		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -518,8 +509,8 @@ public:
 		Assert::AreEqual(true, areVecEqual);
 
 		//// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes{ "7" };
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
@@ -559,8 +550,7 @@ public:
 		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -576,8 +566,8 @@ public:
 		Assert::AreEqual(true, areVecEqual);
 
 		//// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes{ "7" };
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
@@ -617,15 +607,14 @@ public:
 		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
 
 		//// Test Table:
 		auto tableRef = evTable.getTableRef();
-		Assert::AreEqual(true, tableRef.find("a") != tableRef.end());
+		Assert::AreEqual(true, tableRef.find("a") != tableRef.end()); //"a" exists
 
 		////// Test Values: std::unordered_map<std::string, PqlEntityType>
 		std::vector<int> values{};
@@ -634,8 +623,8 @@ public:
 		Assert::AreEqual(true, areVecEqual);
 
 		//// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes{};
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
@@ -675,8 +664,7 @@ public:
 		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
@@ -692,8 +680,8 @@ public:
 		Assert::AreEqual(true, areVecEqual);
 
 		//// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes{};
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
@@ -733,8 +721,7 @@ public:
 		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -750,8 +737,8 @@ public:
 		Assert::AreEqual(true, areVecEqual);
 
 		//// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes{ "7" };
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
@@ -791,8 +778,7 @@ public:
 		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -808,8 +794,8 @@ public:
 		Assert::AreEqual(true, areVecEqual);
 
 		//// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes{ "7" };
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
@@ -849,8 +835,7 @@ public:
 		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -866,8 +851,8 @@ public:
 		Assert::AreEqual(true, areVecEqual);
 
 		//// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes{ "7" };
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
@@ -907,8 +892,7 @@ public:
 		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 
 		// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -924,8 +908,8 @@ public:
 		Assert::AreEqual(true, areVecEqual);
 
 		// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes{ "7" };
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
@@ -965,8 +949,7 @@ public:
 		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -982,8 +965,8 @@ public:
 		Assert::AreEqual(true, areVecEqual);
 
 		//// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes{ "7" };
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
@@ -1023,8 +1006,7 @@ public:
 		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 
 		// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -1040,8 +1022,8 @@ public:
 		Assert::AreEqual(true, areVecEqual);
 
 		// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes{ "7" };
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
@@ -1081,8 +1063,7 @@ public:
 		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 
 		// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -1102,8 +1083,8 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 
 		// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes{ "7" };
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
@@ -1142,8 +1123,7 @@ public:
 		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 
 		// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -1163,8 +1143,8 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 
 		// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes{ "7" };
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
@@ -1202,8 +1182,7 @@ public:
 		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 
 		// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -1223,8 +1202,8 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 
 		// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes{ "7" };
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
@@ -1263,8 +1242,7 @@ public:
 		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 
 		// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -1284,8 +1262,8 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 
 		// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes{ "7" };
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
@@ -1329,8 +1307,7 @@ public:
 		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 
 		// Test numRow:
 		/*Modifies has 4 statements-var pair*/
@@ -1351,8 +1328,8 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 
 		// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes{ "7" };
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
@@ -1399,8 +1376,7 @@ public:
 		Assert::AreEqual(size_t(1), parsedQuery.getPatterns().size());
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 
 		// Test numRow:
 		Assert::AreEqual(size_t(2), evTable.getNumRow()); // { {"a", { 7, 7 }}, {"r", { 6, 6 }}, {"v", { 2, 3 }}}
@@ -1420,8 +1396,8 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 
 		// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes{ "7" };
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
@@ -1465,8 +1441,7 @@ public:
 		Assert::AreEqual(size_t(1), parsedQuery.getPatterns().size());
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 
 		// Test numRow:
 		Assert::AreEqual(size_t(98), evTable.getNumRow()); // { {"w", { 1, 2,..., 98 }}, {"a", { Ninety-eight 99s }} , {"v", {Ninety-eight 2s }}  }}
@@ -1497,8 +1472,8 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 
 		// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes{ "99" };
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
@@ -1532,8 +1507,7 @@ public:
 		Assert::AreEqual(size_t(1), parsedQuery.getPatterns().size());
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -1554,8 +1528,8 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 
 		// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes{ "7" };
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
@@ -1589,8 +1563,7 @@ public:
 		Assert::AreEqual(size_t(1), parsedQuery.getPatterns().size());
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
@@ -1611,8 +1584,8 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 
 		// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes;
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
@@ -1646,8 +1619,7 @@ public:
 		Assert::AreEqual(size_t(1), parsedQuery.getPatterns().size());
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
@@ -1668,8 +1640,8 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 
 		// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes;
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
@@ -1703,8 +1675,7 @@ public:
 		Assert::AreEqual(size_t(1), parsedQuery.getPatterns().size());
 
 		// 3. Test QPS Evaluator:
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
-		EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -1725,8 +1696,8 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 
 		// 4. Test QPS Result Projector:
-		PQLResultProjector resultProjector = PQLResultProjector(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
-		std::list<std::string> results = resultProjector.resolveTableToResults();
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes{ "7" };
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
