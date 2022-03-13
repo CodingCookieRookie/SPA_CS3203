@@ -15,6 +15,8 @@
 #include "../PKB/Pattern.h"
 #include "../PKB/UsesS.h"
 #include "../PKB/UsesP.h"
+#include "../PKB/Calls.h"
+#include "../PKB/CallsT.h"
 #include "EvaluatedTable.h"
 #include "QPSCommons.h"
 
@@ -59,6 +61,14 @@ private:
 	EvaluatedTable handleFollowsT();
 	EvaluatedTable handleParent();
 	EvaluatedTable handleParentT();
+	EvaluatedTable handleCalls(std::string PqlRsType);
+
+	/* Helper Handle methods */
+	EvaluatedTable helperHandleTwoIdents(std::string pqlRsType);
+	EvaluatedTable RelationshipInstruction::helperHandleOneIdent(
+		std::string pqlRsType, PqlReferenceType lhsRefType, PqlReferenceType rhsRefType);
+	EvaluatedTable RelationshipInstruction::helperHandleTwoProcMaybeWildcard(std::string pqlRsType);
+	EvaluatedTable RelationshipInstruction::helperHandleTwoWildcards(std::string pqlRsType);
 
 public:
 	RelationshipInstruction(PqlRelationshipType pqlRSType, PqlReference lhs, PqlReference rhs);

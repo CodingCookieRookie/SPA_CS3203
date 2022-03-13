@@ -755,6 +755,157 @@ EvaluatedTable RelationshipInstruction::handleParentT() {
 	}
 }
 
+EvaluatedTable RelationshipInstruction::handleCalls(std::string PqlRsType) {
+	EvaluatedTable evTable;
+	std::vector<ProcIndex> procs = Entity::getAllProcs();
+
+	/* e.g Calls/Calls*("first", "second") */
+	if (lhsRef.first == PqlReferenceType::ident && rhsRef.first == PqlReferenceType::ident) {
+		return helperHandleTwoIdents(PqlRsType);
+	}
+	/* e.g Calls/Calls*("first", q), Calls/Calls*("first", _) */
+	else if (lhsRef.first == PqlReferenceType::ident) {
+		if (rhsRef.first == PqlReferenceType::synonym) {
+			return helperHandleOneIdent(PqlRsType, PqlReferenceType::ident, PqlReferenceType::synonym);
+		} else {
+			return helperHandleOneIdent(PqlRsType, PqlReferenceType::ident, PqlReferenceType::wildcard);
+		}
+	}
+	/*  e.g.Calls/Calls*(p, "second"), Calls/Calls*(_, "second") */
+	else if (rhsRef.first == PqlReferenceType::ident) {
+		if (lhsRef.first == PqlReferenceType::synonym) {
+			return helperHandleOneIdent(PqlRsType, PqlReferenceType::synonym, PqlReferenceType::ident);
+		} else {
+			return helperHandleOneIdent(PqlRsType, PqlReferenceType::wildcard, PqlReferenceType::ident);
+		}
+	}
+	/* Calls/Calls*(p, q), Calls/Calls*(p, _), Calls/Calls*(_, q) */
+	else if (!(lhsRef.first == PqlReferenceType::wildcard && rhsRef.first == PqlReferenceType::wildcard)) {
+		return helperHandleTwoProcMaybeWildcard(PqlRsType);
+	}
+	// Calls/Calls*(_, _)
+	else {
+		return helperHandleTwoWildcards(PqlRsType);
+	}
+}
+
+/* Helper Handle Methods */
+
+EvaluatedTable RelationshipInstruction::helperHandleTwoIdents(std::string pqlRsType) {
+	ProcIndex lhsProcIndex, rhsProcIndex;
+	bool evResult = false;
+	if (Entity::containsProc(lhsRef.second) && Entity::containsProc(rhsRef.second)) {
+		lhsProcIndex = Entity::getProcIdx(lhsRef.second);
+		rhsProcIndex = Entity::getProcIdx(rhsRef.second);
+		if (pqlRsType == "Calls") {
+			evResult = Calls::containsSuccessor(lhsProcIndex, rhsProcIndex);
+		} else { /* pqlRsType == "CallsT" */
+			evResult = CallsT::containsSuccessor(lhsProcIndex, rhsProcIndex);
+		}
+	}
+	return EvaluatedTable(evResult); /* e.g evResult == true, if "first" calls "second" */
+}
+
+EvaluatedTable RelationshipInstruction::helperHandleOneIdent(
+	std::string pqlRsType, PqlReferenceType lhsRefType, PqlReferenceType rhsRefType) {
+	std::vector<ProcIndex> procs = Entity::getAllProcs();
+	std::vector<int> results;
+	std::string oneIdent;
+	std::string otherSynonym;
+	if (lhsRefType == PqlReferenceType::ident) {
+		oneIdent = lhsRef.second;
+	} else { /* rhsRefType == PqlReferenceType::ident */
+		oneIdent = rhsRef.second;
+	}
+	/* Handle one ident to proc results */
+	if (Entity::containsProc(oneIdent)) { /* e.g. checks if proc named "first" exists, if not, return empty results */
+		ProcIndex oneIdentRef = Entity::getProcIdx(oneIdent);
+		for (ProcIndex proc : procs) {
+			if (lhsRefType == PqlReferenceType::ident && pqlRsType == "Calls") {
+				if (Calls::containsSuccessor(oneIdentRef, proc)) {
+					results.emplace_back(proc.getIndex()); /* e.g {"first"} if "first" calls some q */
+				}
+			} else if (rhsRefType == PqlReferenceType::ident && pqlRsType == "Calls") {
+				if (Calls::containsSuccessor(proc, oneIdentRef)) {
+					results.emplace_back(proc.getIndex()); /* e.g {"second"} if some p calls "second" */
+				}
+			} else if (lhsRefType == PqlReferenceType::ident && pqlRsType == "CallsT") {
+				if (CallsT::containsSuccessor(oneIdentRef, proc)) {
+					results.emplace_back(proc.getIndex()); /* e.g {"first"} if "first" calls some q */
+				}
+			} else if (rhsRefType == PqlReferenceType::ident && pqlRsType == "CallsT") {
+				if (CallsT::containsSuccessor(proc, oneIdentRef)) {
+					results.emplace_back(proc.getIndex()); /* e.g {"second"} if some p calls "second" */
+				}
+			} else {
+			}
+		}
+	}
+	/* Handle final output, wildcards => boolean, synonyms => table */
+	if (lhsRefType == PqlReferenceType::wildcard || rhsRefType == PqlReferenceType::wildcard) {
+		bool evTable = !results.empty();
+		return EvaluatedTable(evTable);
+	} else {
+		if (lhsRefType == PqlReferenceType::ident) {
+			otherSynonym = rhsRef.second;
+		} else {
+			otherSynonym = lhsRef.second;
+		}
+
+	}
+	std::unordered_map<std::string, PqlEntityType> PQLentities;
+	PQLentities.insert(std::pair(otherSynonym, PqlEntityType::Procedure));
+
+	std::unordered_map<std::string, std::vector<int>> PQLmap;
+	PQLmap[otherSynonym] = results;
+
+	return EvaluatedTable(PQLentities, PQLmap);
+}
+
+EvaluatedTable RelationshipInstruction::helperHandleTwoProcMaybeWildcard(std::string pqlRsType) {
+	/* Assumption: Different synonym names(i.e. Calls(p, q), not Calls(p, p)) */
+	std::tuple<std::vector<int>, std::vector<int>> results;
+	if (pqlRsType == "Calls") {
+		results = Calls::getAllPredecessorSuccessorInfo();
+	} else {
+		results = CallsT::getAllPredecessorSuccessorInfo();
+	}
+	/* e.g. {1, 2}, {2, 3}, {3, 6} */
+	std::unordered_map<std::string, PqlEntityType> PQLentities;
+	std::unordered_map<std::string, std::vector<int>> PQLmap;
+
+	if (lhsRef.second == rhsRef.second) { /* Special case: Calls(p, p), recursive call, technically shouldn't be allowed */
+		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Procedure));
+		PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Procedure));
+		/* No values populated to PQLmap for this case */
+		return EvaluatedTable(PQLentities, PQLmap);
+	}
+
+	if (lhsRef.first == PqlReferenceType::synonym) {
+		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Procedure));
+		PQLmap[lhsRef.second] = std::get<0>(results); /* if RHS is wildcard, LHS may have duplicate values */
+	}
+	if (rhsRef.first == PqlReferenceType::synonym) {
+		PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Procedure));
+		PQLmap[rhsRef.second] = std::get<1>(results); /* if LHS is wildcard, RHS may have duplicate values */
+	}
+	return EvaluatedTable(PQLentities, PQLmap);
+}
+
+EvaluatedTable RelationshipInstruction::helperHandleTwoWildcards(std::string pqlRsType) {
+	bool isEmptyTable = true;
+	if (lhsRef.first == PqlReferenceType::wildcard && rhsRef.first == PqlReferenceType::wildcard) {
+		if (pqlRsType == "Calls") {
+			isEmptyTable = std::get<0>(Calls::getAllPredecessorSuccessorInfo()).empty();
+		} else {
+			isEmptyTable = std::get<0>(CallsT::getAllPredecessorSuccessorInfo()).empty();
+		}
+	}
+	// No Parent rs exists => isEmptyTable == true => EvTable.evResult == false (innerJoinMerge() can drop table)
+	// Parent rs exists => isEmptyTable == false => EvTable.evResult == true (innerJoinMerge() can merge dummy table, preserving all rows)
+	return EvaluatedTable(!isEmptyTable);
+}
+
 RelationshipInstruction::RelationshipInstruction(PqlRelationshipType pqlRSType, PqlReference lhs, PqlReference rhs) :
 	pqlRelationshipType(pqlRSType), lhsRef(lhs), rhsRef(rhs) {}
 
@@ -785,8 +936,13 @@ EvaluatedTable RelationshipInstruction::execute() {
 	case PqlRelationshipType::ParentT:
 		evTable = handleParentT();
 		break;
+	case PqlRelationshipType::Calls:
+		evTable = handleCalls("Calls");
+		break;
+	case PqlRelationshipType::CallsT:
+		evTable = handleCalls("CallsT");
+		break;
 	}
-
 	return evTable;
 }
 
