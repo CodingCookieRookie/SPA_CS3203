@@ -156,6 +156,9 @@ EvaluatedTable RelationshipInstruction::handleModifiesS() {
 				varIndices = ModifiesS::getVariables(stmtIndex);
 				PQLmap[rhsRef.second] = varIndices;
 			} else if (rhsRef.first == PqlReferenceType::ident) {
+				if (!Entity::containsVar(rhsRef.second)) {
+					return EvaluatedTable(false);
+				}
 				VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
 				return EvaluatedTable(ModifiesS::contains(stmtIndex, varIndex));
 			} else {
@@ -264,6 +267,9 @@ EvaluatedTable RelationshipInstruction::handleUsesS() {
 				varIndices = UsesS::getVariables(stmtIndex);
 				PQLmap[rhsRef.second] = varIndices;
 			} else if (rhsRef.first == PqlReferenceType::ident) {
+				if (!Entity::containsVar(rhsRef.second)) {
+					return EvaluatedTable(false);
+				}
 				VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
 				return EvaluatedTable(UsesS::contains(stmtIndex, varIndex));
 			} else {

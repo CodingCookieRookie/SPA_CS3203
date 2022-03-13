@@ -10,6 +10,7 @@ namespace UnitTesting {
 	TEST_CLASS(TestDesignExtractor) {
 private:
 	TEST_METHOD_CLEANUP(cleanUpTables) {
+		Attribute::performCleanUp();
 		Entity::performCleanUp();
 		UsesS::performCleanUp();
 		UsesP::performCleanUp();
@@ -756,6 +757,7 @@ public:
 
 		auto wrapperFunc = [&ast] { DesignExtractor::extract(ast); };
 		Assert::ExpectException<DEException>(wrapperFunc);
+		Attribute::performCleanUp();
 		Entity::performCleanUp();
 		try {
 			DesignExtractor::extract(ast);
@@ -801,6 +803,7 @@ public:
 
 		auto wrapperFunc = [&ast] { DesignExtractor::extract(ast); };
 		Assert::ExpectException<DEException>(wrapperFunc);
+		Attribute::performCleanUp();
 		Entity::performCleanUp();
 		try {
 			DesignExtractor::extract(ast);
@@ -866,6 +869,7 @@ public:
 
 		auto wrapperFunc = [&ast] { DesignExtractor::extract(ast); };
 		Assert::ExpectException<DEException>(wrapperFunc);
+		Attribute::performCleanUp();
 		Entity::performCleanUp();
 		try {
 			DesignExtractor::extract(ast);

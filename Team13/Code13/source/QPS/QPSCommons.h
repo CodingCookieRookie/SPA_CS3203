@@ -2,10 +2,7 @@
 
 #include <string>
 
-enum class PqlEntityType {
-	Stmt, Read, Print, Call, While,
-	If, Assign, Variable, Constant, Procedure
-};
+#include "../Common/Types.h"
 
 enum class InstructionType {
 	getAll, relationship, pattern

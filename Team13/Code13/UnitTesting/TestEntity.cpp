@@ -2,6 +2,7 @@
 #include "CppUnitTest.h"
 
 #include "../source/Common/Types.h"
+#include "../source/PKB/Attribute.h"
 #include "../source/PKB/Entity.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -16,8 +17,12 @@ private:
 	std::string procName1 = "Peter";
 	std::string procName2 = "Stephen";
 
-	StatementType stmtType1 = StatementType::assignType;
-	StatementType stmtType2 = StatementType::whileType;
+	StatementType assignType = StatementType::assignType;
+	StatementType whileType = StatementType::whileType;
+	StatementType callType = StatementType::callType;
+	StatementType readType = StatementType::readType;
+	StatementType printType = StatementType::printType;
+	StatementType ifType = StatementType::ifType;
 
 	VarIndex varIdx1 = VarIndex(1);
 	VarIndex varIdx2 = VarIndex(2);
@@ -31,6 +36,7 @@ private:
 	StmtIndex stmtIdx3 = StmtIndex(3);
 
 	TEST_METHOD_CLEANUP(cleanUpEntities) {
+		Attribute::performCleanUp();
 		Entity::performCleanUp();
 	}
 
@@ -49,6 +55,7 @@ public:
 		bool res = Entity::containsVar(varName2);
 		Assert::IsFalse(res);
 	}
+
 	TEST_METHOD(insertVar_getVarName_differentVariables) {
 		VarIndex idx1 = Entity::insertVar(varName1);
 		VarIndex idx2 = Entity::insertVar(varName2);
@@ -67,6 +74,7 @@ public:
 
 		VarIndex res1 = Entity::getVarIdx(varName1);
 		VarIndex res2 = Entity::getVarIdx(varName2);
+
 		Assert::IsTrue(varIdx1 == res1);
 		Assert::IsTrue(varIdx2 == res2);
 		Assert::IsTrue(idx1 == res1);
@@ -199,35 +207,25 @@ public:
 	}
 
 	TEST_METHOD(insertStmt_containsStmt_stmtExists) {
-		StmtIndex idx = Entity::insertStmt(stmtType1);
+		StmtIndex idx = Entity::insertStmt(assignType);
 
 		bool res = Entity::containsStmt(1);
 		Assert::IsTrue(res);
 	}
 
 	TEST_METHOD(insertStmt_containsStmt_stmtDoesNotExist) {
-		StmtIndex idx = Entity::insertStmt(stmtType1);
+		StmtIndex idx = Entity::insertStmt(assignType);
 
 		bool res = Entity::containsStmt(2);
 		Assert::IsFalse(res);
 	}
 
 	TEST_METHOD(insertStmt_differentStmts) {
-		StmtIndex res1 = Entity::insertStmt(stmtType1);
-		StmtIndex res2 = Entity::insertStmt(stmtType2);
+		StmtIndex res1 = Entity::insertStmt(assignType);
+		StmtIndex res2 = Entity::insertStmt(whileType);
 
 		Assert::IsTrue(stmtIdx1 == res1);
 		Assert::IsTrue(stmtIdx2 == res2);
-	}
-
-	TEST_METHOD(insertStmt_isContainerStmt) {
-		Entity::insertStmt(stmtType1);
-		Entity::insertStmt(stmtType2);
-
-		bool res1 = Entity::isContainerStmt(stmtIdx1);
-		bool res2 = Entity::isContainerStmt(stmtIdx2);
-		Assert::IsFalse(res1);
-		Assert::IsTrue(res2);
 	}
 
 	TEST_METHOD(insertStmt_getStmtIdxFromType_differentStmts) {
@@ -237,11 +235,11 @@ public:
 		std::vector<StmtIndex> expectedRes2;
 		expectedRes2.push_back(stmtIdx2);
 
-		Entity::insertStmt(stmtType1);
-		Entity::insertStmt(stmtType2);
+		Entity::insertStmt(assignType);
+		Entity::insertStmt(whileType);
 
-		std::vector<StmtIndex> res1 = Entity::getStmtIdxFromType(stmtType1);
-		std::vector<StmtIndex> res2 = Entity::getStmtIdxFromType(stmtType2);
+		std::vector<StmtIndex> res1 = Entity::getStmtIdxFromType(assignType);
+		std::vector<StmtIndex> res2 = Entity::getStmtIdxFromType(whileType);
 		Assert::IsTrue(expectedRes1 == res1);
 		Assert::IsTrue(expectedRes2 == res2);
 	}
@@ -251,21 +249,43 @@ public:
 		expectedRes.push_back(stmtIdx1);
 		expectedRes.push_back(stmtIdx2);
 
-		Entity::insertStmt(stmtType1);
-		Entity::insertStmt(stmtType2);
+		Entity::insertStmt(assignType);
+		Entity::insertStmt(whileType);
 
 		std::vector<StmtIndex> res = Entity::getAllStmts();
 		Assert::IsTrue(expectedRes == res);
 	}
 
-	TEST_METHOD(insertStmt_getAllContainerStmts) {
+	TEST_METHOD(insertStmt_getAllContainerStmts_noContainerStmts) {
+		Entity::insertStmt(assignType);
+		Entity::insertStmt(assignType);
+
+		std::vector<StmtIndex> res = Entity::getAllContainerStmts();
+		Assert::IsTrue(0 == res.size());
+	}
+
+	TEST_METHOD(insertStmt_isContainerStmt_allContainerStmts) {
+		std::vector<StmtIndex> expectedRes;
+		expectedRes.push_back(stmtIdx1);
+		expectedRes.push_back(stmtIdx2);
+		expectedRes.push_back(stmtIdx3);
+
+		Entity::insertStmt(ifType);
+		Entity::insertStmt(whileType);
+		Entity::insertStmt(ifType);
+
+		std::vector<StmtIndex> res = Entity::getAllContainerStmts();
+		Assert::IsTrue(expectedRes == res);
+	}
+
+	TEST_METHOD(insertStmt_isContainerStmt_mixedStmts) {
 		std::vector<StmtIndex> expectedRes;
 		expectedRes.push_back(stmtIdx2);
 		expectedRes.push_back(stmtIdx3);
 
-		Entity::insertStmt(stmtType1);
-		Entity::insertStmt(stmtType2);
-		Entity::insertStmt(stmtType2);
+		Entity::insertStmt(assignType);
+		Entity::insertStmt(whileType);
+		Entity::insertStmt(ifType);
 
 		std::vector<StmtIndex> res = Entity::getAllContainerStmts();
 		Assert::IsTrue(expectedRes == res);

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stack>
 #include <string>
 
 #include "../Common/Types.h"

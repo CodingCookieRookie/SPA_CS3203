@@ -1,3 +1,4 @@
+#include <map>
 #include <string>
 #include <tuple>
 #include <unordered_map>
@@ -7,9 +8,7 @@
 #include "./Entity.h"
 
 std::unordered_map<VarIndex, std::string> Entity::varNameTable;
-std::unordered_map<std::string, VarIndex> Entity::varIdxTable;
 std::unordered_map<ProcIndex, std::string> Entity::procNameTable;
-std::unordered_map<std::string, ProcIndex> Entity::procIdxTable;
 std::unordered_set<int> Entity::constTable;
 std::unordered_map<StmtIndex, StatementType> Entity::stmtTypeTable;
 std::unordered_map<StatementType, std::unordered_set<StmtIndex>> Entity::stmtIdxFromTypeTable;
@@ -28,16 +27,22 @@ int Entity::getStmtTypeTableSize() {
 }
 
 VarIndex Entity::insertVar(std::string varName) {
-	if (varIdxTable.find(varName) == varIdxTable.end()) {
+	int nameIdx = Attribute::insertNameValue(varName);
+
+	if (!Attribute::containsVarName(varName)) {
 		VarIndex varIdx = VarIndex(getVarTableSize() + 1);
 		varNameTable[varIdx] = varName;
-		varIdxTable[varName] = varIdx;
+		Attribute::insertVarIdxByName(varIdx, nameIdx);
+		return varIdx;
 	}
-	return varIdxTable[varName];
+
+	return getVarIdx(varName);
 }
 
-bool Entity::containsVar(std::string varName) {
-	return varIdxTable.find(varName) != varIdxTable.end();
+bool Entity::containsVar(std::string& varName) {
+	if (!Attribute::containsName(varName)) return false;
+
+	return Attribute::containsVarName(varName);
 }
 
 std::string Entity::getVarName(VarIndex varIdx) {
@@ -45,7 +50,8 @@ std::string Entity::getVarName(VarIndex varIdx) {
 }
 
 VarIndex Entity::getVarIdx(std::string varName) {
-	return varIdxTable[varName];
+	std::unordered_set<int> varIdxSet = Attribute::getVarIdxSet(varName);
+	return VarIndex(*varIdxSet.begin());
 }
 
 std::vector<VarIndex> Entity::getAllVars() {
@@ -59,16 +65,22 @@ std::vector<VarIndex> Entity::getAllVars() {
 }
 
 ProcIndex Entity::insertProc(std::string procName) {
-	if (procIdxTable.find(procName) == procIdxTable.end()) {
+	int nameIdx = Attribute::insertNameValue(procName);
+
+	if (!Attribute::containsProcName(procName)) {
 		ProcIndex procIdx = ProcIndex(getProcTableSize() + 1);
 		procNameTable[procIdx] = procName;
-		procIdxTable[procName] = procIdx;
+		Attribute::insertProcIdxByName(procIdx, nameIdx);
+		return procIdx;
 	}
-	return procIdxTable[procName];
+
+	return getProcIdx(procName);
 }
 
-bool Entity::containsProc(std::string procName) {
-	return procIdxTable.find(procName) != procIdxTable.end();
+bool Entity::containsProc(std::string& procName) {
+	if (!Attribute::containsName(procName)) return false;
+
+	return Attribute::containsProcName(procName);
 }
 
 std::string Entity::getProcName(ProcIndex procIdx) {
@@ -76,7 +88,8 @@ std::string Entity::getProcName(ProcIndex procIdx) {
 }
 
 ProcIndex Entity::getProcIdx(std::string procName) {
-	return procIdxTable[procName];
+	std::unordered_set<int> procIdxSet = Attribute::getProcIdxSet(procName);
+	return ProcIndex(*procIdxSet.begin());
 }
 
 std::vector<ProcIndex> Entity::getAllProcs() {
@@ -111,7 +124,14 @@ StmtIndex Entity::insertStmt(StatementType stmtType) {
 	return stmtIdx;
 }
 
-bool Entity::isContainerStmt(StmtIndex stmtIdx) {
+StmtIndex Entity::insertStmt(StatementType stmtType, std::string& nameValue) {
+	StmtIndex stmtIdx = insertStmt(stmtType);
+	Attribute::insertStmtByName(stmtIdx, stmtType, nameValue);
+
+	return stmtIdx;
+}
+
+bool Entity::isContainerStmt(StmtIndex& stmtIdx) {
 	StatementType stmtType = stmtTypeTable[stmtIdx];
 	return stmtType == StatementType::whileType || stmtType == StatementType::ifType;
 }
@@ -144,7 +164,8 @@ std::vector<StmtIndex> Entity::getAllContainerStmts() {
 	std::vector<StmtIndex> res;
 
 	for (auto& stmtTypeEntry : stmtTypeTable) {
-		if (Entity::isContainerStmt(stmtTypeEntry.first)) {
+		StmtIndex stmtIdx = stmtTypeEntry.first;
+		if (Entity::isContainerStmt(stmtIdx)) {
 			res.push_back(stmtTypeEntry.first);
 		}
 	}
@@ -156,15 +177,13 @@ void Entity::insertStmtFromProc(ProcIndex procIdx, StmtIndex stmtIdx) {
 	procStmtTable[procIdx].insert(stmtIdx);
 }
 
-std::unordered_set<StmtIndex> Entity::getStmtsFromProc(ProcIndex procIdx) {
+std::unordered_set<StmtIndex> Entity::getStmtsFromProc(ProcIndex& procIdx) {
 	return procStmtTable[procIdx];
 }
 
 void Entity::performCleanUp() {
 	varNameTable = {};
-	varIdxTable = {};
 	procNameTable = {};
-	procIdxTable = {};
 	constTable = {};
 	stmtTypeTable = {};
 	stmtIdxFromTypeTable = {};

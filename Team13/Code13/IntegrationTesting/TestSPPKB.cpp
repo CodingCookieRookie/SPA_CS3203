@@ -162,6 +162,7 @@ private:
 		"     }     ";
 
 	TEST_METHOD_CLEANUP(cleanUpTables) {
+		Attribute::performCleanUp();
 		Container::performCleanUp();
 		Entity::performCleanUp();
 		UsesP::performCleanUp();
@@ -176,6 +177,7 @@ private:
 	}
 
 	TEST_METHOD_INITIALIZE(initTables) {
+		Attribute::performCleanUp();
 		Container::performCleanUp();
 		Entity::performCleanUp();
 		UsesP::performCleanUp();

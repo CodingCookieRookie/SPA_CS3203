@@ -8,6 +8,11 @@ enum class ExprNodeValueType {
 	varName, constValue, arithmeticOperator, logicalOperator, relOperator
 };
 
+enum class PqlEntityType {
+	Stmt, Read, Print, Call, While,
+	If, Assign, Variable, Constant, Procedure
+};
+
 struct VarIndex {
 	int index;
 

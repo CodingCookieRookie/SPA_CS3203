@@ -9,6 +9,11 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting {
 	TEST_CLASS(TestPQLResultProjector) {
+private:
+	TEST_METHOD_CLEANUP(cleanUpTables) {
+		Attribute::performCleanUp();
+		Entity::performCleanUp();
+	}
 public:
 
 	TEST_METHOD(resolveTableToResults_oneColumnStatement_projectOneColumn) {
@@ -72,7 +77,6 @@ public:
 			std::advance(actualRes, 1);
 			std::advance(expectedRes, 1);
 		}
-		Entity::performCleanUp();
 	}
 
 	TEST_METHOD(resolveTableToResults_oneColumnProcedure_projectOneColumn) {
@@ -106,7 +110,6 @@ public:
 			std::advance(actualRes, 1);
 			std::advance(expectedRes, 1);
 		}
-		Entity::performCleanUp();
 	}
 
 	TEST_METHOD(resolveTableToResults_oneColumnConstantRepeated_projectOneColumnUnique) {

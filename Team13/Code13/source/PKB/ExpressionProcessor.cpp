@@ -1,5 +1,3 @@
-#include <stack>
-
 #include "./ExpressionProcessor.h"
 
 bool ExpressionProcessor::isOperand(char currentChar) {

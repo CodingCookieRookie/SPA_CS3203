@@ -24,6 +24,7 @@ namespace IntegrationTesting {
 	TEST_CLASS(TestQPSPKB) {
 private:
 	TEST_METHOD_CLEANUP(cleanUpTables) {
+		Attribute::performCleanUp();
 		Entity::performCleanUp();
 		FollowsT::performCleanUp();
 		Follows::performCleanUp();
@@ -37,6 +38,7 @@ private:
 	}
 
 	TEST_METHOD_INITIALIZE(initTables) {
+		Attribute::performCleanUp();
 		Entity::performCleanUp();
 		ModifiesP::performCleanUp();
 		ModifiesS::performCleanUp();
