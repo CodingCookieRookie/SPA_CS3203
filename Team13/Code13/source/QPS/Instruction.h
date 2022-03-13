@@ -68,11 +68,14 @@ public:
 class PatternInstruction : public Instruction {
 private:
 	std::string synonym;
+	PqlPatternType pqlPatternType;
 	PqlReference entRef;
 	PqlExpression expressionSpec;
 
 public:
-	PatternInstruction(std::string synonym, PqlReference entRef, PqlExpression expressionSpec);
-	EvaluatedTable handlePatterns();
+	PatternInstruction(std::string synonym, PqlPatternType pqlPatternType, PqlReference entRef, PqlExpression expressionSpec);
+	EvaluatedTable handlePatternA();
+	EvaluatedTable handlePatternI();
+	EvaluatedTable handlePatternW();
 	EvaluatedTable execute() override;
 };

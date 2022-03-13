@@ -11,7 +11,7 @@
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting {
-	TEST_CLASS(TestPatternInstruction) {
+	TEST_CLASS(TestPatternAInstruction) {
 private:
 	TEST_METHOD_CLEANUP(cleanUpTables) {
 		Entity::performCleanUp();
@@ -29,7 +29,8 @@ public:
 		std::string synonym = "a1";
 		PqlReference entRef = std::make_pair(PqlReferenceType::synonym, "v");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, " 12345 ");
-		Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
+		PqlPatternType pqlPatternType = PqlPatternType::PatternA;
+		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
 
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::printType);
@@ -57,7 +58,8 @@ public:
 		std::string synonym = "a1";
 		PqlReference entRef = std::make_pair(PqlReferenceType::ident, "v");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, " xx ");
-		Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
+		PqlPatternType pqlPatternType = PqlPatternType::PatternA;
+		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
 
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::printType);
@@ -84,7 +86,8 @@ public:
 		std::string synonym = "a1";
 		PqlReference entRef = std::make_pair(PqlReferenceType::synonym, "v");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, " xx ");
-		Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
+		PqlPatternType pqlPatternType = PqlPatternType::PatternA;
+		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
 
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::printType);
@@ -112,7 +115,8 @@ public:
 		std::string synonym = "a1";
 		PqlReference entRef = std::make_pair(PqlReferenceType::synonym, "v");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, " x ");
-		Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
+		PqlPatternType pqlPatternType = PqlPatternType::PatternA;
+		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
 
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::printType);
@@ -141,7 +145,8 @@ public:
 		std::string synonym = "a1";
 		PqlReference entRef = std::make_pair(PqlReferenceType::synonym, "v");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, " x ");
-		Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
+		PqlPatternType pqlPatternType = PqlPatternType::PatternA;
+		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
 
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::printType);
@@ -168,7 +173,8 @@ public:
 		std::string synonym = "a1";
 		PqlReference entRef = std::make_pair(PqlReferenceType::synonym, "v");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, " 123 ");
-		Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
+		PqlPatternType pqlPatternType = PqlPatternType::PatternA;
+		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
 
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::printType);
@@ -196,7 +202,8 @@ public:
 		std::string synonym = "a1";
 		PqlReference entRef = std::make_pair(PqlReferenceType::ident, "assign1");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, " x ");
-		Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
+		PqlPatternType pqlPatternType = PqlPatternType::PatternA;
+		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
 
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::printType);
@@ -224,7 +231,8 @@ public:
 		std::string synonym = "a1";
 		PqlReference entRef = std::make_pair(PqlReferenceType::ident, "assign1");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, " 123 ");
-		Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
+		PqlPatternType pqlPatternType = PqlPatternType::PatternA;
+		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
 
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::printType);
@@ -253,7 +261,8 @@ public:
 		std::string synonym = "a1";
 		PqlReference entRef = std::make_pair(PqlReferenceType::synonym, "v");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::wildcard, "");
-		Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
+		PqlPatternType pqlPatternType = PqlPatternType::PatternA;
+		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
 
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::printType);
@@ -280,7 +289,8 @@ public:
 		std::string synonym = "a1";
 		PqlReference entRef = std::make_pair(PqlReferenceType::ident, "assign1");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::wildcard, "");
-		Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
+		PqlPatternType pqlPatternType = PqlPatternType::PatternA;
+		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
 
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::printType);
@@ -307,7 +317,8 @@ public:
 		std::string synonym = "a1";
 		PqlReference entRef = std::make_pair(PqlReferenceType::wildcard, "");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::partial, " x ");
-		Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
+		PqlPatternType pqlPatternType = PqlPatternType::PatternA;
+		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
 
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::printType);
@@ -334,7 +345,8 @@ public:
 		std::string synonym = "a1";
 		PqlReference entRef = std::make_pair(PqlReferenceType::wildcard, "");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::wildcard, "");
-		Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
+		PqlPatternType pqlPatternType = PqlPatternType::PatternA;
+		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
 
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::printType);
@@ -355,16 +367,77 @@ public:
 	}
 
 	/*Full pattern matching*/
+	// Pattern a(v, "x") or Pattern a(v, "x + y + 123") or Pattern a("x", "x + y + 123")
+	// Pattern a(_, "x + y + 123")
+	/*expressionSpec is converted to post fix before passed into PatternInstruction*/
+	TEST_METHOD(execute_lhsSynonymRhsIdentExactMatch1) {
+		// assign1 = assign1 + x
+		// Pattern a1(v, "assign1")
+		// 1. Setup:
+		std::string synonym = "a1";
+		PqlReference entRef = std::make_pair(PqlReferenceType::synonym, "v");
+		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1");
+		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::full, postFixExpression);
+		PqlPatternType pqlPatternType = PqlPatternType::PatternA;
+		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
+
+		// PKB inserts pattern
+		Entity::insertStmt(StatementType::printType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		VarIndex varIndex = Entity::insertVar("assign1");
+
+		Pattern::insertAssignInfo(varIndex, postFixExpression, stmt);
+
+		// Check PKB populated
+		std::vector<int> allPatternStmtInfo = Pattern::getAssignStmtsFromVarExprFullMatch(varIndex, postFixExpression);
+		Assert::AreEqual(size_t(1), allPatternStmtInfo.size());
+
+		// 2. Main test:
+		EvaluatedTable evTable = instruction->execute();
+		Assert::AreEqual(size_t(1), evTable.getNumRow());
+		std::string expected = "Table String: size: 2\nSynonym: a1 Values: 2 \nSynonym: v Values: 1 \n";
+		Assert::AreEqual(expected, evTable.getTableString());
+	}
+
+	TEST_METHOD(execute_lhsSynonymRhsIdentExactMatch2) {
+		// assign1 = assign1 + x + y
+		// Pattern a1(v, "assign1 + x + y")
+		// 1. Setup:
+		std::string synonym = "a1";
+		PqlReference entRef = std::make_pair(PqlReferenceType::synonym, "v");
+		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x+y");
+		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::full, postFixExpression);
+		PqlPatternType pqlPatternType = PqlPatternType::PatternA;
+		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
+
+		// PKB inserts pattern
+		Entity::insertStmt(StatementType::printType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		VarIndex varIndex = Entity::insertVar("assign1");
+
+		Pattern::insertAssignInfo(varIndex, postFixExpression, stmt);
+
+		// Check PKB populated
+		std::vector<int> allPatternStmtInfo = Pattern::getAssignStmtsFromVarExprFullMatch(varIndex, postFixExpression);
+		Assert::AreEqual(size_t(1), allPatternStmtInfo.size());
+
+		// 2. Main test:
+		EvaluatedTable evTable = instruction->execute();
+		Assert::AreEqual(size_t(1), evTable.getNumRow());
+		std::string expected = "Table String: size: 2\nSynonym: a1 Values: 2 \nSynonym: v Values: 1 \n";
+		Assert::AreEqual(expected, evTable.getTableString());
+	}
 	/*expressionSpec is converted to post fix before passed into PatternInstruction*/
 	TEST_METHOD(execute_lhsIdentRhsIdentExactMatch) {
 		// assign1 = assign1 + x
-		// Pattern a1("assign1", "assign1 + x")
+		// Pattern a1("assign1", "assign1 + x + y")
 		// 1. Setup:
 		std::string synonym = "a1";
 		PqlReference entRef = std::make_pair(PqlReferenceType::ident, "assign1");
-		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x");
+		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x+y");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::full, postFixExpression);
-		Instruction* instruction = new PatternInstruction(synonym, entRef, expressionSpec);
+		PqlPatternType pqlPatternType = PqlPatternType::PatternA;
+		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
 
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::printType);
@@ -381,6 +454,38 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: a1 Values: 2 \n";
+		Assert::AreEqual(expected, evTable.getTableString());
+	}
+
+	TEST_METHOD(execute_lhsWildCardRhsIdentExactMatch) {
+		// assign1 = assign1 + x
+		// Pattern a1(_, "assign1 + x + y")
+		// 1. Setup:
+		std::string synonym = "a1";
+		PqlReference entRef = std::make_pair(PqlReferenceType::wildcard, "");
+		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x+y");
+		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::full, postFixExpression);
+		PqlPatternType pqlPatternType = PqlPatternType::PatternA;
+		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
+
+		// PKB inserts pattern
+		Entity::insertStmt(StatementType::printType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmt2 = Entity::insertStmt(StatementType::assignType);
+		VarIndex varIndex = Entity::insertVar("assign1");
+		VarIndex varIndex2 = Entity::insertVar("assign2");
+
+		Pattern::insertAssignInfo(varIndex, postFixExpression, stmt);
+		Pattern::insertAssignInfo(varIndex2, postFixExpression, stmt2);
+
+		// Check PKB populated
+		std::tuple< std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getAssignStmtsFromExprFullMatch(postFixExpression);
+		Assert::AreEqual(size_t(2), std::get<0>(allPatternStmtInfo).size());
+
+		// 2. Main test:
+		EvaluatedTable evTable = instruction->execute();
+		Assert::AreEqual(size_t(2), evTable.getNumRow());
+		std::string expected = "Table String: size: 1\nSynonym: a1 Values: 2 3 \n";
 		Assert::AreEqual(expected, evTable.getTableString());
 	}
 	};

@@ -9,7 +9,6 @@
     <ClCompile Include="TestInstructionParent.cpp" />
     <ClCompile Include="TestInstructionParentT.cpp" />
     <ClCompile Include="TestModifiesSInstruction.cpp" />
-    <ClCompile Include="TestPatternInstruction.cpp" />
     <ClCompile Include="TestPKB.cpp" />
     <ClCompile Include="TestPQLResultProjector.cpp" />
     <ClCompile Include="TestSourceASTNode.cpp" />
@@ -48,6 +47,7 @@
     <ClCompile Include="TestModifiesS.cpp" />
     <ClCompile Include="TestUsesP.cpp" />
     <ClCompile Include="TestUsesS.cpp" />
+    <ClCompile Include="TestPatternAInstruction.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
