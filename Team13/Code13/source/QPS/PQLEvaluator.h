@@ -5,6 +5,9 @@
 
 #include "../Exception/SPAException.h"
 #include "Instruction.h"
+#include "GetAllInstruction.h"
+#include "RelationshipInstruction.h"
+#include "PatternInstruction.h"
 #include "ParsedQuery.h"
 #include "QPSCommons.h"
 
