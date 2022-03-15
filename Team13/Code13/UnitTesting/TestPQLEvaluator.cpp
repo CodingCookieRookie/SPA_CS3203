@@ -18,6 +18,7 @@ namespace UnitTesting {
 	TEST_CLASS(TestPQLEvaluator) {
 private:
 	TEST_METHOD_CLEANUP(cleanUpTables) {
+		Attribute::performCleanUp();
 		Entity::performCleanUp();
 		FollowsT::performCleanUp();
 		Follows::performCleanUp();

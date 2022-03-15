@@ -15,6 +15,7 @@ namespace UnitTesting {
 	TEST_CLASS(TestFollowsInstructions) {
 private:
 	TEST_METHOD_CLEANUP(cleanUpTables) {
+		Attribute::performCleanUp();
 		Entity::performCleanUp();
 		Follows::performCleanUp();
 	}
@@ -38,10 +39,6 @@ public:
 
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
 		Assert::AreEqual(true, evTable.getEvResult());
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		Follows::performCleanUp();
 	}
 
 	TEST_METHOD(executeFollowsInstruction_lhsConstantRhsStmt_evaluatedTableFormed) {
@@ -82,10 +79,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult);
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		Follows::performCleanUp();
 	}
 
 	TEST_METHOD(executeFollowsInstruction_lhsStmrRhsConst_evaluatedTableFormed) {
@@ -126,10 +119,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult);
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		Follows::performCleanUp();
 	}
 
 	TEST_METHOD(executeFollowsInstruction_twoStmts_evaluatedTableFormed) {
@@ -182,10 +171,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult);
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		Follows::performCleanUp();
 	}
 
 	TEST_METHOD(executeFollowsInstruction_lhsStmtRhsWildcardStress_evaluatedTableFormed) {
@@ -238,10 +223,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult);
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		Follows::performCleanUp();
 	}
 
 	TEST_METHOD(executeFollowsInstruction_twoWildcards_evaluatedTableFormed) {
@@ -283,10 +264,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult); // because Follows rs exist
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		Follows::performCleanUp();
 	}
 	};
 }

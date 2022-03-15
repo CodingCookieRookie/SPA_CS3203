@@ -12,6 +12,7 @@ private:
 	VarIndex varIdx2 = VarIndex(6);
 
 	TEST_METHOD_CLEANUP(cleanUpPKB) {
+		Attribute::performCleanUp();
 		Entity::performCleanUp();
 		Calls::performCleanUp();
 		CallsT::performCleanUp();

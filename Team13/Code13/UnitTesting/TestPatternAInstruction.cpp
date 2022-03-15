@@ -14,6 +14,7 @@ namespace UnitTesting {
 	TEST_CLASS(TestPatternAInstruction) {
 private:
 	TEST_METHOD_CLEANUP(cleanUpTables) {
+		Attribute::performCleanUp();
 		Entity::performCleanUp();
 		Pattern::performCleanUp();
 	}

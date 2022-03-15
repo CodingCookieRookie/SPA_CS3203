@@ -14,6 +14,7 @@ namespace UnitTesting {
 	TEST_CLASS(TestGetAllInstructions) {
 private:
 	TEST_METHOD_CLEANUP(cleanUpTables) {
+		Attribute::performCleanUp();
 		Entity::performCleanUp();
 	}
 public:
@@ -48,10 +49,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult);
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		Parent::performCleanUp();
 	}
 
 	TEST_METHOD(executeGetAllInstruction_getAllPrintsStress_evaluatedTableFormed) {
@@ -93,10 +90,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult);
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		Parent::performCleanUp();
 	}
 
 	TEST_METHOD(executeGetAllInstruction_getAllVarStress_evaluatedTableFormed) {
@@ -139,10 +132,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult);
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		Parent::performCleanUp();
 	}
 
 	TEST_METHOD(executeGetAllInstruction_getAllConstStress_evaluatedTableFormed) {
@@ -180,10 +169,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult);
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		Parent::performCleanUp();
 	}
 	};
 }

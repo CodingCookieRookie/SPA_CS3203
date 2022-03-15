@@ -15,6 +15,7 @@ namespace UnitTesting {
 	TEST_CLASS(TestParentInstructions) {
 private:
 	TEST_METHOD_CLEANUP(cleanUpTables) {
+		Attribute::performCleanUp();
 		Entity::performCleanUp();
 		Parent::performCleanUp();
 	}
@@ -38,10 +39,6 @@ public:
 
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
 		Assert::AreEqual(true, evTable.getEvResult());
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		Parent::performCleanUp();
 	}
 
 	TEST_METHOD(executeParentInstruction_lhsConstRhsStmt_evaluatedTableFormed) {
@@ -82,10 +79,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult);
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		Parent::performCleanUp();
 	}
 
 	TEST_METHOD(executeParentInstruction_lhsStmtRhsConst_evaluatedTableFormed) {
@@ -126,10 +119,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult);
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		Parent::performCleanUp();
 	}
 
 	TEST_METHOD(executeParentInstruction_twoStmts_evaluatedTableFormed) {
@@ -182,10 +171,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult);
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		Parent::performCleanUp();
 	}
 
 	TEST_METHOD(executeParentInstruction_lhsStmtRhsWildcardStress_evaluatedTableFormed) {
@@ -241,10 +226,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult);
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		Parent::performCleanUp();
 	}
 
 	TEST_METHOD(executeParentInstruction_lhsWildcardRhsConst_evaluatedTableFormed) {
@@ -288,10 +269,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult); // there exists some statement that is a parent of 3
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		Parent::performCleanUp();
 	}
 
 	TEST_METHOD(executeParentInstruction_lhsWildcardRhsConstStress_evaluatedTableFormed) {
@@ -336,10 +313,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult); // there exists a statment that is a parent of 28
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		Parent::performCleanUp();
 	}
 
 	TEST_METHOD(executeParentInstruction_twoWildcards_evaluatedTableFormed) {
@@ -381,10 +354,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult); // because Parent rs exist
-
-		// 3. Clean-up:
-		Entity::performCleanUp();
-		Parent::performCleanUp();
 	}
 	};
 }

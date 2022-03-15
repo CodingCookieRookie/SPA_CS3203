@@ -15,9 +15,11 @@ namespace UnitTesting {
 	TEST_CLASS(TestCallsInstructions) {
 private:
 	TEST_METHOD_CLEANUP(cleanUpTables) {
+		Attribute::performCleanUp();
 		Entity::performCleanUp();
 		Calls::performCleanUp();
 	}
+
 public:
 
 	TEST_METHOD(executeCallsInstruction_twoIdents_evaluatedTableFormed) {
@@ -175,7 +177,6 @@ public:
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult);
-
 	}
 
 	TEST_METHOD(executeCallsInstruction_lhsProcRhsWildcardStress_evaluatedTableFormed) {
