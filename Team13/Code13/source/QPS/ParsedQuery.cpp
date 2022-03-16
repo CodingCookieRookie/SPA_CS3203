@@ -175,12 +175,27 @@ void ParsedQuery::populateDeclarations(
 	}
 }
 
-void ParsedQuery::populateColumns(const std::vector<std::string>& allColumns) {
-	for (const std::string& column : allColumns) {
-		if (!isDeclared(column)) {
+void ParsedQuery::populateColumns(const std::vector<PqlReference>& allElems) {
+	if (allElems.empty() && isDeclared("BOOLEAN")) {
+		/* Handle corner case --If Select BOOLEAN, allElems will be an empty vector
+		But if BOOLEAN is declared as some synonym, treat it as a synonym instead */
+		columns.insert("BOOLEAN");
+		attributes.emplace_back(PqlReferenceType::synonym, "BOOLEAN");
+	}
+	for (const PqlReference& elem : allElems) {
+		std::string synonym = elem.second;
+		if (!isDeclared(synonym)) {
 			throw QPSException(QPSException::VALIDATOR_ERROR);
 		}
-		columns.push_back(column);
+		PqlReferenceType refType = elem.first;
+		if (refType != PqlReferenceType::synonym) {
+			PqlEntityType entityType = getType(synonym);
+			if (validAttribs.at(entityType).find(refType) == validAttribs.at(entityType).end()) {
+				throw QPSException(QPSException::VALIDATOR_ERROR);
+			}
+		}
+		columns.insert(synonym);
+		attributes.push_back(elem);
 	}
 }
 
@@ -358,17 +373,7 @@ void ParsedQuery::populateWiths(const std::vector<ParsedWith>& allWiths) {
 }
 
 ParsedQuery::ParsedQuery(const std::vector<PQL_VARIABLE>& allDeclarations,
-	const std::vector<std::string>& allColumns,
-	const std::vector<ParsedRelationship>& allRelationships,
-	const std::vector<ParsedPattern>& allPatterns) {
-	populateDeclarations(allDeclarations);
-	populateColumns(allColumns);
-	populateRelationships(allRelationships);
-	populatePatterns(allPatterns);
-}
-
-ParsedQuery::ParsedQuery(const std::vector<PQL_VARIABLE>& allDeclarations,
-	const std::vector<std::string>& allColumns,
+	const std::vector<PqlReference>& allColumns,
 	const std::vector<ParsedRelationship>& allRelationships,
 	const std::vector<ParsedPattern>& allPatterns,
 	const std::vector<ParsedWith>& allWiths) {
@@ -395,8 +400,12 @@ std::unordered_map<std::string, PqlEntityType> ParsedQuery::getDeclarations() {
 	return declarations;
 }
 
-std::vector<std::string> ParsedQuery::getColumns() {
+std::unordered_set<std::string> ParsedQuery::getColumns() {
 	return columns;
+}
+
+std::vector<PqlReference> ParsedQuery::getAttributes() {
+	return attributes;
 }
 
 std::vector<ParsedRelationship> ParsedQuery::getRelationships() {

@@ -20,14 +20,14 @@ public:
 		// 1. Set-up:
 		std::unordered_map<std::string, PqlEntityType> entities;
 		std::unordered_map<std::string, std::vector<int>> testTable;
-		std::vector<std::string> columnsProjected;
+		std::vector<PqlReference> columnsProjected;
 		std::vector<int> vec;
 		vec.push_back(1);
 		vec.push_back(3);
 		vec.push_back(5);
 		entities["s"] = PqlEntityType::Stmt;
 		testTable["s"] = vec;
-		columnsProjected.push_back("s");
+		columnsProjected.emplace_back(PqlReferenceType::synonym, "s");
 
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
@@ -50,7 +50,7 @@ public:
 		// 1. Set-up:
 		std::unordered_map<std::string, PqlEntityType> entities;
 		std::unordered_map<std::string, std::vector<int>> testTable;
-		std::vector<std::string> columnsProjected;
+		std::vector<PqlReference> columnsProjected;
 		std::vector<int> vec;
 		vec.push_back(1);
 		vec.push_back(2);
@@ -60,7 +60,7 @@ public:
 		Entity::insertVar("c");
 		entities["v"] = PqlEntityType::Variable;
 		testTable["v"] = vec;
-		columnsProjected.push_back("v");
+		columnsProjected.emplace_back(PqlReferenceType::synonym, "v");
 
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
@@ -83,7 +83,7 @@ public:
 		// 1. Set-up:
 		std::unordered_map<std::string, PqlEntityType> entities;
 		std::unordered_map<std::string, std::vector<int>> testTable;
-		std::vector<std::string> columnsProjected;
+		std::vector<PqlReference> columnsProjected;
 		std::vector<int> vec;
 		vec.push_back(1);
 		vec.push_back(2);
@@ -93,7 +93,7 @@ public:
 		Entity::insertProc("proc3");
 		entities["p"] = PqlEntityType::Procedure;
 		testTable["p"] = vec;
-		columnsProjected.push_back("p");
+		columnsProjected.emplace_back(PqlReferenceType::synonym, "p");
 
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
@@ -116,7 +116,8 @@ public:
 		// 1. Set-up:
 		std::unordered_map<std::string, PqlEntityType> entities;
 		std::unordered_map<std::string, std::vector<int>> testTable;
-		std::vector<std::string> columnsProjected{ "c1" };
+		std::vector<PqlReference> columnsProjected;
+		columnsProjected.emplace_back(PqlReferenceType::synonym, "c1");
 		entities["c1"] = PqlEntityType::Constant;
 		testTable["c1"] = std::vector<int>{ 1, 1, 1, 2, 2, 3, 3, 4 };
 
@@ -138,7 +139,8 @@ public:
 		// 1. Set-up:
 		std::unordered_map<std::string, PqlEntityType> entities;
 		std::unordered_map<std::string, std::vector<int>> testTable;
-		std::vector<std::string> columnsProjected{ "s1" };
+		std::vector<PqlReference> columnsProjected;
+		columnsProjected.emplace_back(PqlReferenceType::synonym, "s1");
 		entities["s1"] = PqlEntityType::Stmt;
 		testTable["s1"] = std::vector<int>{ 1, 1, 1, 2, 2, 3, 3, 4 };
 
@@ -160,7 +162,9 @@ public:
 		// 1. Set-up:
 		std::unordered_map<std::string, PqlEntityType> entities;
 		std::unordered_map<std::string, std::vector<int>> testTable;
-		std::vector<std::string> columnsProjected{ "s1", "s2" };
+		std::vector<PqlReference> columnsProjected;
+		columnsProjected.emplace_back(PqlReferenceType::synonym, "s1");
+		columnsProjected.emplace_back(PqlReferenceType::synonym, "s2");
 		entities["s1"] = PqlEntityType::Stmt;
 		entities["s2"] = PqlEntityType::Stmt;
 		testTable["s1"] = std::vector<int>{ 1, 2, 3 };
@@ -184,7 +188,9 @@ public:
 		// 1. Set-up:
 		std::unordered_map<std::string, PqlEntityType> entities;
 		std::unordered_map<std::string, std::vector<int>> testTable;
-		std::vector<std::string> columnsProjected{ "s1", "s2" };
+		std::vector<PqlReference> columnsProjected;
+		columnsProjected.emplace_back(PqlReferenceType::synonym, "s1");
+		columnsProjected.emplace_back(PqlReferenceType::synonym, "s2");
 		entities["s1"] = PqlEntityType::Stmt;
 		entities["s2"] = PqlEntityType::Stmt;
 		testTable["s1"] = std::vector<int>{ 1, 1, 2, 2, 3 };
@@ -208,7 +214,9 @@ public:
 		// 1. Set-up:
 		std::unordered_map<std::string, PqlEntityType> entities;
 		std::unordered_map<std::string, std::vector<int>> testTable;
-		std::vector<std::string> columnsProjected{ "s1", "s2" };
+		std::vector<PqlReference> columnsProjected;
+		columnsProjected.emplace_back(PqlReferenceType::synonym, "s1");
+		columnsProjected.emplace_back(PqlReferenceType::synonym, "s2");
 		entities["s1"] = PqlEntityType::Stmt;
 		entities["s2"] = PqlEntityType::Stmt;
 		testTable["s1"] = std::vector<int>{ 1, 1, 2, 2, 3, 3, 4, 4, 4 };
@@ -232,7 +240,8 @@ public:
 		// 1. Set-up:
 		std::unordered_map<std::string, PqlEntityType> entities;
 		std::unordered_map<std::string, std::vector<int>> testTable;
-		std::vector<std::string> columnsProjected{ "s1" };
+		std::vector<PqlReference> columnsProjected;
+		columnsProjected.emplace_back(PqlReferenceType::synonym, "s1");
 		entities["s1"] = PqlEntityType::Stmt;
 		entities["s2"] = PqlEntityType::Stmt;
 		testTable["s1"] = std::vector<int>{ 1, 2, 3 };
@@ -256,7 +265,11 @@ public:
 		// 1. Set-up:
 		std::unordered_map<std::string, PqlEntityType> entities;
 		std::unordered_map<std::string, std::vector<int>> testTable;
-		std::vector<std::string> columnsProjected{ "s1", "v1", "a1", "p1" };
+		std::vector<PqlReference> columnsProjected;
+		columnsProjected.emplace_back(PqlReferenceType::synonym, "s1");
+		columnsProjected.emplace_back(PqlReferenceType::synonym, "v1");
+		columnsProjected.emplace_back(PqlReferenceType::synonym, "a1");
+		columnsProjected.emplace_back(PqlReferenceType::synonym, "p1");
 		entities["s1"] = PqlEntityType::Stmt;
 		entities["s2"] = PqlEntityType::Stmt;
 		entities["v1"] = PqlEntityType::Variable;

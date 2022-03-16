@@ -86,21 +86,62 @@ std::vector<PQL_VARIABLE> PQLParser::parseDeclarations() {
 	return allDeclarations;
 }
 
-std::vector<std::string> PQLParser::parseSelect() {
+PqlReference PQLParser::parseElem() {
+	std::string synonym = lexer.nextName();
+	if (synonym.empty()) {
+		throw QPSException(QPSException::PARSER_ERROR);
+	}
+	std::string whitespace = lexer.nextWhitespace();
+	if (!lexer.match(".")) {
+		return PqlReference(PqlReferenceType::synonym, synonym);
+	}
+	bool matchedAttribute = false;
+	PqlReferenceType attributeType;
+	for (const std::pair<std::string, PqlReferenceType>& attribute : attributeMap) {
+		std::string attributeName = attribute.first;
+		if (!lexer.match(attributeName)) {
+			continue;
+		}
+		attributeType = attribute.second;
+		matchedAttribute = true;
+		break;
+	}
+	if (!matchedAttribute) {
+		throw QPSException(QPSException::PARSER_ERROR);
+	}
+	return PqlReference(attributeType, synonym);
+}
+
+std::vector<PqlReference> PQLParser::parseSelect() {
+	std::vector<PqlReference> elems;
 	if (!lexer.match("Select")) {
 		throw QPSException(QPSException::PARSER_ERROR);
 	}
 	std::string whitespace = lexer.nextWhitespace();
+	if (lexer.match("<")) {
+		do {
+			PqlReference elem = parseElem();
+			elems.push_back(elem);
+		} while (lexer.match(","));
+		if (!lexer.match(">")) {
+			throw QPSException(QPSException::PARSER_ERROR);
+		}
+		return elems;
+	}
 	if (whitespace.empty()) {
 		throw QPSException(QPSException::PARSER_ERROR);
 	}
-	std::vector<std::string> columns;
-	std::string columnVariable = lexer.nextName();
-	if (columnVariable.empty()) {
-		throw QPSException(QPSException::PARSER_ERROR);
+	if (lexer.match("BOOLEAN")) {
+		whitespace = lexer.nextWhitespace();
+		bool validDelimiter = !whitespace.empty() || lexer.reachedEnd();
+		if (!validDelimiter) {
+			throw QPSException(QPSException::PARSER_ERROR);
+		}
+		return elems;
 	}
-	columns.push_back(columnVariable);
-	return columns;
+	PqlReference elem = parseElem();
+	elems.push_back(elem);
+	return elems;
 }
 
 ParsedRelationship PQLParser::parseSingleSuchThat() {
@@ -316,7 +357,7 @@ PqlExpression PQLParser::parseExpression() {
 ParsedQuery PQLParser::parseQuery(const std::string& query) {
 	lexer = Lexer(query);
 	std::vector<PQL_VARIABLE> allDeclarations = parseDeclarations();
-	std::vector<std::string> columns = parseSelect();
+	std::vector<PqlReference> columns = parseSelect();
 	std::vector<ParsedRelationship> relationships;
 	std::vector<ParsedPattern> patterns;
 	std::vector<ParsedWith> withs;

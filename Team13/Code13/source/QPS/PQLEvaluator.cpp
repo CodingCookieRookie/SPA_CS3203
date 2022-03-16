@@ -21,7 +21,7 @@ EvaluatedTable PQLEvaluator::selectProjection(EvaluatedTable& resultingEvTable, 
 std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
 	std::vector<Instruction*> instructions = std::vector<Instruction*>();
 	std::unordered_map<std::string, PqlEntityType> declarations = pq.getDeclarations();
-	std::vector<std::string> columns = pq.getColumns();
+	std::unordered_set<std::string> columns = pq.getColumns();
 	std::vector<ParsedRelationship> relationships = pq.getRelationships();
 	std::vector<ParsedPattern> patterns = pq.getPatterns();
 
@@ -68,14 +68,14 @@ EvaluatedTable PQLEvaluator::executeInstructions(std::vector<Instruction*> instr
 
 EvaluatedTable PQLEvaluator::selectColumnsForProjection(
 	EvaluatedTable evaluatedTable,
-	std::vector<std::string> columnsProjected,
+	std::unordered_set<std::string> columnsProjected,
 	std::unordered_map<std::string, PqlEntityType> declarations) {
 	std::unordered_map<std::string, std::vector<int>> table = evaluatedTable.getTableRef();
 	std::unordered_map<std::string, PqlEntityType> resultEntities;
 	std::unordered_map<std::string, std::vector<int>> resultTable;
 
 	/* For each column that already exists in the final EvTable, take it from the evaluatedTable */
-	for (std::string& column : columnsProjected) {
+	for (const std::string& column : columnsProjected) {
 		if (table.find(column) != table.end()) {
 			resultEntities[column] = declarations[column];
 			resultTable[column] = table[column];
@@ -91,7 +91,7 @@ EvaluatedTable PQLEvaluator::selectColumnsForProjection(
 
 	/* For each column that does not exist in the final EvTable,
 	get it via an instruction and then perform a cross product. */
-	for (std::string& column : columnsProjected) {
+	for (const std::string& column : columnsProjected) {
 		if (table.find(column) == table.end()) {
 			PqlEntityType columnType = declarations.at(column);
 			Instruction* getAll = new GetAllInstruction(columnType, column);

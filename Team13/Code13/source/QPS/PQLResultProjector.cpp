@@ -9,7 +9,7 @@
 #include "QPSCommons.h"
 
 std::list<std::string> PQLResultProjector::resolveTableToResults(
-	EvaluatedTable evaluatedTable, std::vector<std::string> columnsProjected,
+	EvaluatedTable evaluatedTable, std::vector<PqlReference> attributes,
 	std::unordered_map<std::string, PqlEntityType> declarations) {
 	std::list<std::string> resList;
 	std::unordered_map<std::string, std::vector<int>> resultTable = evaluatedTable.getTableRef();
@@ -22,7 +22,10 @@ std::list<std::string> PQLResultProjector::resolveTableToResults(
 	for (int i = 0; i < numRow; i++) {	// for each row
 		std::string res = "";
 		bool firstCol = true;
-		for (std::string& entityName : columnsProjected) {
+		/* TODO: Handle each type of reference seperately
+		E.g. read r; Select <r, r.varName> */
+		for (const PqlReference& attribute : attributes) {
+			std::string entityName = attribute.second;
 			std::string value = "";
 			if (isStatementEntity(declarations[entityName])
 				|| declarations[entityName] == PqlEntityType::Constant) {

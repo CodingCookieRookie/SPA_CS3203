@@ -24,7 +24,7 @@ private:
 	/* Helper method to select columns of table in EvaluatedTable for projection based on Select-cl */
 	static EvaluatedTable PQLEvaluator::selectColumnsForProjection(
 		EvaluatedTable evaluatedTable,
-		std::vector<std::string> columnsProjected,
+		std::unordered_set<std::string> columnsProjected,
 		std::unordered_map<std::string, PqlEntityType> declarations);
 
 public:

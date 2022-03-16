@@ -38,16 +38,19 @@ public:
 		declarations.push_back(pair1);
 		declarations.push_back(pair2);
 
-		std::vector<std::string> columns;
-		columns.push_back("s");
+		std::vector<PqlReference> columns;
+		columns.emplace_back(PqlReferenceType::synonym, "s");
 
 		std::vector<ParsedRelationship> relationships;
 		std::vector<ParsedPattern> patterns;
-		ParsedQuery pq1 = ParsedQuery(declarations, columns, relationships, patterns);
+		std::vector<ParsedWith> withs;
+		ParsedQuery pq1 = ParsedQuery(declarations, columns, relationships, patterns, withs);
 
 		Assert::AreEqual(size_t(2), pq1.getDeclarations().size());
 		Assert::IsFalse(pq1.getColumns().empty());
-		Assert::AreEqual(std::string("s"), pq1.getColumns()[0]);
+
+		std::unordered_set<std::string> selects = pq1.getColumns();
+		Assert::IsTrue(selects.find("s") != selects.end());
 	}
 	};
 }

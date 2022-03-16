@@ -20,7 +20,8 @@ private:
 
 	static std::vector<PQL_VARIABLE> parseSingleDeclaration();
 	static std::vector<PQL_VARIABLE> parseDeclarations();
-	static std::vector<std::string> parseSelect();
+	static PqlReference parseElem();
+	static std::vector<PqlReference> parseSelect();
 	static ParsedRelationship parseSingleSuchThat();
 	static std::vector<ParsedRelationship> parseSuchThat();
 	static ParsedPattern parseSinglePattern();

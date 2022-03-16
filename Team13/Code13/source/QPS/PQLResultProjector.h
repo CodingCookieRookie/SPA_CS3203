@@ -12,6 +12,6 @@ private:
 public:
 	/* Resolves the EvaluatedTable results into a list of strings to present the results of the query. */
 	static std::list<std::string> PQLResultProjector::resolveTableToResults(
-		EvaluatedTable evTable, std::vector<std::string> columns,
+		EvaluatedTable evTable, std::vector<PqlReference> attributes,
 		std::unordered_map<std::string, PqlEntityType> declarations);
 };
