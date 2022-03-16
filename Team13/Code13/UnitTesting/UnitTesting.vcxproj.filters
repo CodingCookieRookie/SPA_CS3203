@@ -51,6 +51,8 @@
     <ClCompile Include="TestInstructionCallsT.cpp" />
     <ClCompile Include="TestAttribute.cpp" />
     <ClCompile Include="TestPatternAInstruction.cpp" />
+    <ClCompile Include="TestPatternIInstruction.cpp" />
+    <ClCompile Include="TestPatternWInstruction.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />

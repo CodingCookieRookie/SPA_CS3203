@@ -11,31 +11,41 @@ EvaluatedTable PatternInstruction::handlePatternA() {
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
 	std::vector<int> allStmts;
 	PQLentities.insert(std::pair(synonym, PqlEntityType::Assign));
-	if (entRef.first == PqlReferenceType::ident) {
-		/* Pattern a("x", _"x"_) or a("x", _"123"_) or Pattern a("x", _) */
+	switch (entRef.first) {
+	case PqlReferenceType::ident:
 		if (Entity::containsVar(entRef.second)) {
 			VarIndex varIndex = Entity::getVarIdx(entRef.second);
-			if (expressionSpec.first == PqlExpressionType::partial) {
-				allStmts = Pattern::getAssignStmtsFromVarExprPartialMatch(varIndex, expressionSpec.second);
-			} else if (expressionSpec.first == PqlExpressionType::wildcard) {
-				allStmts = Pattern::getAssignStmtsFromVar(varIndex);
-			} else if (expressionSpec.first == PqlExpressionType::full) {
+			switch (expressionSpec.first) {
+			case PqlExpressionType::full:
 				allStmts = Pattern::getAssignStmtsFromVarExprFullMatch(varIndex, expressionSpec.second);
+				break;
+			case PqlExpressionType::partial:
+				allStmts = Pattern::getAssignStmtsFromVarExprPartialMatch(varIndex, expressionSpec.second);
+				break;
+			case PqlExpressionType::wildcard:
+				allStmts = Pattern::getAssignStmtsFromVar(varIndex);
+				break;
+			default:
+				throw EvaluatorException(EvaluatorException::PATTERN_ERROR);
+				break;
 			}
 		}
-	} else {
-		/* Pattern a(v, _"x"_) or a(v, _"123"_) or Pattern a(v, _) */
-		/* Pattern a(_, _"x"_) or a(_, _"123"_) or Pattern a(_, _) */
+		break;
+	default:
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo;
-		if (expressionSpec.first == PqlExpressionType::full) {
+		switch (expressionSpec.first) {
+		case PqlExpressionType::full:
 			allPatternStmtInfo = Pattern::getAssignStmtsFromExprFullMatch(expressionSpec.second);
-		} else if (expressionSpec.first == PqlExpressionType::partial) {
-			/* currently only has this for iteration 1 */
+			break;
+		case PqlExpressionType::partial:
 			allPatternStmtInfo = Pattern::getAssignStmtsFromExprPartialMatch(expressionSpec.second);
-		} else if (expressionSpec.first == PqlExpressionType::wildcard) {
+			break;
+		case PqlExpressionType::wildcard:
 			allPatternStmtInfo = Pattern::getAllAssignPatternInfo();
-		} else {
+			break;
+		default:
 			throw EvaluatorException(EvaluatorException::PATTERN_ERROR);
+			break;
 		}
 		if (entRef.first == PqlReferenceType::synonym) {
 			std::vector<int> varIndices = std::get<1>(allPatternStmtInfo);
@@ -51,12 +61,52 @@ EvaluatedTable PatternInstruction::handlePatternA() {
 EvaluatedTable PatternInstruction::handlePatternI() {
 	std::unordered_map<std::string, PqlEntityType> PQLentities;
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
+	std::vector<int> allStmts;
+	PQLentities.insert(std::pair(synonym, PqlEntityType::If));
+	switch (entRef.first) {
+	case PqlReferenceType::ident:
+		if (Entity::containsVar(entRef.second)) {
+			VarIndex varIndex = Entity::getVarIdx(entRef.second);
+			allStmts = Pattern::getIfStmtsFromVar(varIndex);
+		}
+		break;
+	default:
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo;
+		allPatternStmtInfo = Pattern::getAllIfPatternInfo();
+		if (entRef.first == PqlReferenceType::synonym) {
+			std::vector<int> varIndices = std::get<1>(allPatternStmtInfo);
+			PQLmap[entRef.second] = varIndices;
+			PQLentities.insert(std::pair(entRef.second, PqlEntityType::Variable));
+		}
+		allStmts = std::get<0>(allPatternStmtInfo);
+	}
+	PQLmap[synonym] = allStmts;
 	return EvaluatedTable(PQLentities, PQLmap);
 }
 
 EvaluatedTable PatternInstruction::handlePatternW() {
 	std::unordered_map<std::string, PqlEntityType> PQLentities;
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
+	std::vector<int> allStmts;
+	PQLentities.insert(std::pair(synonym, PqlEntityType::While));
+	switch (entRef.first) {
+	case PqlReferenceType::ident:
+		if (Entity::containsVar(entRef.second)) {
+			VarIndex varIndex = Entity::getVarIdx(entRef.second);
+			allStmts = Pattern::getWhileStmtsFromVar(varIndex);
+		}
+		break;
+	default:
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo;
+		allPatternStmtInfo = Pattern::getAllWhilePatternInfo();
+		if (entRef.first == PqlReferenceType::synonym) {
+			std::vector<int> varIndices = std::get<1>(allPatternStmtInfo);
+			PQLmap[entRef.second] = varIndices;
+			PQLentities.insert(std::pair(entRef.second, PqlEntityType::Variable));
+		}
+		allStmts = std::get<0>(allPatternStmtInfo);
+	}
+	PQLmap[synonym] = allStmts;
 	return EvaluatedTable(PQLentities, PQLmap);
 }
 

@@ -189,6 +189,8 @@
     <ClCompile Include="TestModifiesP.cpp" />
     <ClCompile Include="TestModifiesS.cpp" />
     <ClCompile Include="TestPatternAInstruction.cpp" />
+    <ClCompile Include="TestPatternIInstruction.cpp" />
+    <ClCompile Include="TestPatternWInstruction.cpp" />
     <ClCompile Include="TestPKB.cpp" />
     <ClCompile Include="TestPQLResultProjector.cpp" />
     <ClCompile Include="TestSourceASTNode.cpp" />
