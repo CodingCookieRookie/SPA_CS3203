@@ -42,12 +42,12 @@ public:
 	ParserException(const std::string& reason);
 };
 
-class DEException : public SPAException {
+class ASTException : public SPAException {
 public:
-	static const std::string DUPLICATE_PROC_NAMES;
-	static const std::string CALL_NON_EXISTENT_PROC_NAME;
+	static const std::string DUPLICATE_PROC_NAMES_ERROR;
+	static const std::string CALL_NON_EXISTENT_PROC_NAME_ERROR;
 
-	DEException(const std::string& reason);
+	ASTException(const std::string& reason);
 };
 
 class QPSException : public SPAException {

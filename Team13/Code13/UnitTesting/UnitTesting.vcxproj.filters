@@ -53,6 +53,7 @@
     <ClCompile Include="TestPatternAInstruction.cpp" />
     <ClCompile Include="TestPatternIInstruction.cpp" />
     <ClCompile Include="TestPatternWInstruction.cpp" />
+    <ClCompile Include="TestASTValidator.cpp" />
     <ClCompile Include="TestWithInstruction.cpp" />
   </ItemGroup>
   <ItemGroup>
