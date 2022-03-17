@@ -65,8 +65,8 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\source\QPS\PatternInstruction.cpp">
-	  <Filter>Source Files</Filter>
-	</ClCompile>
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\source\QPS\WithInstruction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -193,9 +193,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\SP\ASTValidator.h">
-	  <Filter>Header Files</Filter>
-	</ClInclude>
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\source\QPS\WithInstruction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\PKB\Next.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

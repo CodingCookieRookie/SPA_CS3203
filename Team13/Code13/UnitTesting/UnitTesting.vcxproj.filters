@@ -54,6 +54,7 @@
     <ClCompile Include="TestPatternWInstruction.cpp" />
     <ClCompile Include="TestASTValidator.cpp" />
     <ClCompile Include="TestWithInstruction.cpp" />
+    <ClCompile Include="TestNext.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />

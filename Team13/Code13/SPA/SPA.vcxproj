@@ -29,7 +29,7 @@
     <ClCompile Include="..\source\QPS\PQLResultProjector.cpp" />
     <ClCompile Include="..\source\QPS\QPSCommons.cpp" />
     <ClCompile Include="..\source\QPS\RelationshipInstruction.cpp" />
-	<ClCompile Include="..\source\QPS\WithInstruction.cpp" />
+    <ClCompile Include="..\source\QPS\WithInstruction.cpp" />
     <ClCompile Include="..\source\SP\ASTValidator.cpp" />
     <ClCompile Include="..\source\SP\DesignExtractor.cpp" />
     <ClCompile Include="..\source\SP\Parser.cpp" />
@@ -52,6 +52,7 @@
     <ClInclude Include="..\source\PKB\FollowsT.h" />
     <ClInclude Include="..\source\PKB\ModifiesP.h" />
     <ClInclude Include="..\source\PKB\ModifiesS.h" />
+    <ClInclude Include="..\source\PKB\Next.h" />
     <ClInclude Include="..\source\PKB\Parent.h" />
     <ClInclude Include="..\source\PKB\ParentT.h" />
     <ClInclude Include="..\source\PKB\Pattern.h" />
@@ -72,8 +73,8 @@
     <ClInclude Include="..\source\QPS\QPSCommons.h" />
     <ClInclude Include="..\source\QPS\RelationshipInstruction.h" />
     <ClInclude Include="..\source\QPS\WithInstruction.h" />
-	<ClInclude Include="..\source\SP\ASTValidator.h" />
-	<ClInclude Include="..\source\SP\DesignExtractor.h" />
+    <ClInclude Include="..\source\SP\ASTValidator.h" />
+    <ClInclude Include="..\source\SP\DesignExtractor.h" />
     <ClInclude Include="..\source\SP\Parser.h" />
     <ClInclude Include="..\source\SP\SourceAST.h" />
     <ClInclude Include="..\source\SP\SourceASTNode.h" />
