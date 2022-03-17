@@ -248,7 +248,7 @@ EvaluatedTable RelationshipInstruction::handleFollows() {
 			StmtIndex lhsStmt = StmtIndex(lhsRefValue);
 			for (StmtIndex stmt : stmts) {
 				if (Follows::containsSuccessor(lhsStmt, stmt)) {
-					results.emplace_back(stmt.getIndex()); // e.g {7} because 6 is followed by 7
+					results.emplace_back(stmt); // e.g {7} because 6 is followed by 7
 				}
 			}
 		}
@@ -272,7 +272,7 @@ EvaluatedTable RelationshipInstruction::handleFollows() {
 			StmtIndex rhsStmt = StmtIndex(rhsRefValue);
 			for (StmtIndex stmt : stmts) {
 				if (Follows::containsSuccessor(stmt, rhsStmt)) {
-					results.emplace_back(stmt.getIndex()); //e.g {3} because 3 is followed by 6
+					results.emplace_back(stmt); //e.g {3} because 3 is followed by 6
 				}
 			}
 		}
@@ -349,7 +349,7 @@ EvaluatedTable RelationshipInstruction::handleFollowsT() {
 			StmtIndex lhsStmt = StmtIndex(lhsRefValue);
 			for (StmtIndex stmt : stmts) {
 				if (FollowsT::containsSuccessor(lhsStmt, stmt)) {
-					results.emplace_back(stmt.getIndex()); // e.g {7} because 6 is followed by 7
+					results.emplace_back(stmt); // e.g {7} because 6 is followed by 7
 				}
 			}
 		}
@@ -373,7 +373,7 @@ EvaluatedTable RelationshipInstruction::handleFollowsT() {
 			StmtIndex rhsStmt = StmtIndex(rhsRefValue);
 			for (StmtIndex stmt : stmts) {
 				if (FollowsT::containsSuccessor(stmt, rhsStmt)) {
-					results.emplace_back(stmt.getIndex()); //e.g {3} because 3 is followed by 6
+					results.emplace_back(stmt); //e.g {3} because 3 is followed by 6
 				}
 			}
 		}
@@ -451,7 +451,7 @@ EvaluatedTable RelationshipInstruction::handleParent() {
 			StmtIndex lhsStmt = StmtIndex(lhsRefValue);
 			for (StmtIndex stmt : stmts) {
 				if (Parent::containsSuccessor(lhsStmt, stmt)) {
-					results.emplace_back(stmt.getIndex()); // e.g {7} because 6 parents 7
+					results.emplace_back(stmt); // e.g {7} because 6 parents 7
 				}
 			}
 		}
@@ -475,7 +475,7 @@ EvaluatedTable RelationshipInstruction::handleParent() {
 			StmtIndex rhsStmt = StmtIndex(rhsRefValue);
 			for (StmtIndex stmt : stmts) {
 				if (Parent::containsSuccessor(stmt, rhsStmt)) {
-					results.emplace_back(stmt.getIndex()); //e.g {3} because 3 is a parent of 7
+					results.emplace_back(stmt); //e.g {3} because 3 is a parent of 7
 				}
 			}
 		}
@@ -553,7 +553,7 @@ EvaluatedTable RelationshipInstruction::handleParentT() {
 			StmtIndex lhsStmt = StmtIndex(lhsRefValue);
 			for (StmtIndex stmt : stmts) {
 				if (ParentT::containsSuccessor(lhsStmt, stmt)) {
-					results.emplace_back(stmt.getIndex()); // e.g {7} because 6 is a parent* of 7
+					results.emplace_back(stmt); // e.g {7} because 6 is a parent* of 7
 				}
 			}
 		}
@@ -577,7 +577,7 @@ EvaluatedTable RelationshipInstruction::handleParentT() {
 			StmtIndex rhsStmt = StmtIndex(rhsRefValue);
 			for (StmtIndex stmt : stmts) {
 				if (ParentT::containsSuccessor(stmt, rhsStmt)) {
-					results.emplace_back(stmt.getIndex()); //e.g {3} because 3 is a parent* of 7
+					results.emplace_back(stmt); //e.g {3} because 3 is a parent* of 7
 				}
 			}
 		}
@@ -698,19 +698,19 @@ EvaluatedTable RelationshipInstruction::helperHandleOneIdent(
 		for (ProcIndex proc : procs) {
 			if (lhsRefType == PqlReferenceType::ident && pqlRsType == "Calls") {
 				if (Calls::containsSuccessor(oneIdentRef, proc)) {
-					results.emplace_back(proc.getIndex()); /* e.g {"first"} if "first" calls some q */
+					results.emplace_back(proc); /* e.g {"first"} if "first" calls some q */
 				}
 			} else if (rhsRefType == PqlReferenceType::ident && pqlRsType == "Calls") {
 				if (Calls::containsSuccessor(proc, oneIdentRef)) {
-					results.emplace_back(proc.getIndex()); /* e.g {"second"} if some p calls "second" */
+					results.emplace_back(proc); /* e.g {"second"} if some p calls "second" */
 				}
 			} else if (lhsRefType == PqlReferenceType::ident && pqlRsType == "CallsT") {
 				if (CallsT::containsSuccessor(oneIdentRef, proc)) {
-					results.emplace_back(proc.getIndex()); /* e.g {"first"} if "first" calls some q */
+					results.emplace_back(proc); /* e.g {"first"} if "first" calls some q */
 				}
 			} else if (rhsRefType == PqlReferenceType::ident && pqlRsType == "CallsT") {
 				if (CallsT::containsSuccessor(proc, oneIdentRef)) {
-					results.emplace_back(proc.getIndex()); /* e.g {"second"} if some p calls "second" */
+					results.emplace_back(proc); /* e.g {"second"} if some p calls "second" */
 				}
 			} else {
 			}
@@ -726,7 +726,6 @@ EvaluatedTable RelationshipInstruction::helperHandleOneIdent(
 		} else {
 			otherSynonym = lhsRef.second;
 		}
-
 	}
 	std::unordered_map<std::string, PqlEntityType> PQLentities;
 	PQLentities.insert(std::pair(otherSynonym, PqlEntityType::Procedure));

@@ -20,7 +20,7 @@ void DesignExtractor::processProcedureNode(ProcedureNode* procedureNode) {
 std::vector<StmtIndex> DesignExtractor::processStmtLstNode(
 	StmtLstNode* stmtLstNode) {
 	std::vector<StmtIndex> stmtIndices;
-	StmtIndex prevIndex;
+	StmtIndex prevIndex = 0;
 	for (StmtNode* stmtNode : stmtLstNode->getStmtNodes()) {
 		StmtIndex stmtIndex = processStmtNode(stmtNode, prevIndex);
 		stmtIndices.push_back(stmtIndex);

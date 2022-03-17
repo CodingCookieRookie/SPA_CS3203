@@ -206,7 +206,6 @@
     <ClCompile Include="TestParser.cpp" />
     <ClCompile Include="TestPattern.cpp" />
     <ClCompile Include="TestPQLEvaluator.cpp" />
-    <ClCompile Include="TestTypes.cpp" />
     <ClCompile Include="TestPQLParser.cpp" />
     <ClCompile Include="TestUsesSInstruction.cpp" />
     <ClCompile Include="TestUsesP.cpp" />

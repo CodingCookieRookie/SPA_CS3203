@@ -19,8 +19,8 @@ public:
 	static void insertAssignInfo(VarIndex& varIdx, std::string& postFixExpression, StmtIndex& stmtIdx);
 	static void insertIfInfo(StmtIndex& stmtIdx, VarIndex& varIdx);
 	static void insertWhileInfo(StmtIndex& stmtIdx, VarIndex& varIdx);
-	static std::vector<int> getAssignStmtsFromVarExprFullMatch(VarIndex& varIdx, std::string& expression);
-	static std::vector<int> getAssignStmtsFromVarExprPartialMatch(VarIndex& varIdx, std::string& expression);
+	static std::vector<int> getAssignStmtsFromVarExprFullMatch(VarIndex varIdx, std::string& expression);
+	static std::vector<int> getAssignStmtsFromVarExprPartialMatch(VarIndex varIdx, std::string& expression);
 	static std::tuple<std::vector<int>, std::vector<int>> getAssignStmtsFromExprFullMatch(std::string& expression);
 	static std::tuple<std::vector<int>, std::vector<int>> getAssignStmtsFromExprPartialMatch(std::string& expression);
 	static std::vector<int> getAssignStmtsFromVar(VarIndex& varIdx);

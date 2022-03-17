@@ -5,7 +5,7 @@ EvaluatedTable GetAllInstruction::handleGetAllStmt(std::string& synonym) {
 
 	std::vector<int> resultsToInt;
 	for (StmtIndex result : results) {
-		resultsToInt.emplace_back(result.getIndex());
+		resultsToInt.emplace_back(result);
 	}
 
 	std::unordered_map<std::string, PqlEntityType> PQLentities;
@@ -22,7 +22,7 @@ EvaluatedTable GetAllInstruction::handleGetAllStmtByType(std::string& synonym, S
 
 	std::vector<int> resultsToInt;
 	for (StmtIndex result : results) {
-		resultsToInt.emplace_back(result.getIndex());
+		resultsToInt.emplace_back(result);
 	}
 
 	std::unordered_map<std::string, PqlEntityType> PQLentities;
@@ -38,7 +38,7 @@ EvaluatedTable GetAllInstruction::handleGetAllVar(std::string& synonym) {
 	std::vector<VarIndex> results = Entity::getAllVars();
 	std::vector<int> resultsToInt;
 	for (VarIndex result : results) {
-		resultsToInt.emplace_back(result.getIndex());
+		resultsToInt.emplace_back(result);
 	}
 
 	std::unordered_map<std::string, PqlEntityType> PQLentities;
@@ -54,7 +54,7 @@ EvaluatedTable GetAllInstruction::handleGetAllProc(std::string& synonym) {
 	std::vector<ProcIndex> results = Entity::getAllProcs();
 	std::vector<int> resultsToInt;
 	for (ProcIndex result : results) {
-		resultsToInt.emplace_back(result.getIndex());
+		resultsToInt.emplace_back(result);
 	}
 
 	std::unordered_map<std::string, PqlEntityType> PQLentities;

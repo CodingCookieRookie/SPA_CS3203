@@ -22,7 +22,7 @@ private:
 
 public:
 	TEST_METHOD(populate_getSuccessors_branched) {
-		std::vector<int> callsTExpAns{ procIdx2.index, procIdx3.index, procIdx4.index, procIdx5.index };
+		std::vector<int> callsTExpAns{ procIdx2, procIdx3, procIdx4, procIdx5 };
 
 		Calls::insert(procIdx1, procIdx2);
 		Calls::insert(procIdx1, procIdx5);
@@ -38,7 +38,7 @@ public:
 	};
 
 	TEST_METHOD(populate_getSuccessors_linear) {
-		std::vector<int> callsTExpAns{ procIdx1.index, procIdx2.index, procIdx3.index, procIdx4.index };
+		std::vector<int> callsTExpAns{ procIdx1, procIdx2, procIdx3, procIdx4 };
 
 		Calls::insert(procIdx1, procIdx2);
 		Calls::insert(procIdx2, procIdx3);
@@ -54,7 +54,7 @@ public:
 	};
 
 	TEST_METHOD(populate_getPredecessors_branched) {
-		std::vector<int> callsTExpAns{ procIdx4.index, procIdx2.index, procIdx1.index };
+		std::vector<int> callsTExpAns{ procIdx4, procIdx2, procIdx1 };
 
 		Calls::insert(procIdx1, procIdx2);
 		Calls::insert(procIdx2, procIdx3);
@@ -70,7 +70,7 @@ public:
 	};
 
 	TEST_METHOD(populate_getPredecessors_linear) {
-		std::vector<int> callsTExpAns{ procIdx3.index, procIdx2.index, procIdx1.index, procIdx5.index };
+		std::vector<int> callsTExpAns{ procIdx3, procIdx2, procIdx1, procIdx5 };
 
 		Calls::insert(procIdx1, procIdx2);
 		Calls::insert(procIdx2, procIdx3);
@@ -108,8 +108,8 @@ public:
 	};
 
 	TEST_METHOD(getAllPredecessorSuccessorInfo) {
-		std::vector<int> callsTpredecessors{ procIdx2.index, procIdx1.index, procIdx1.index };
-		std::vector<int> callsTsuccessors{ procIdx3.index, procIdx2.index, procIdx3.index };
+		std::vector<int> callsTpredecessors{ procIdx2, procIdx1, procIdx1 };
+		std::vector<int> callsTsuccessors{ procIdx3, procIdx2, procIdx3 };
 		std::tuple<std::vector<int>, std::vector<int>> callsTExpAns =
 			std::make_tuple(callsTpredecessors, callsTsuccessors);
 

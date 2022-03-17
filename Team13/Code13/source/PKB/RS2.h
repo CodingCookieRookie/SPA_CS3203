@@ -63,7 +63,7 @@ template<class T, typename Index>
 std::vector<int> RS2<T, Index>::getSuccessors(Index& predecessor) {
 	std::vector<int> successors;
 	for (auto successor : predSucTable[predecessor]) {
-		successors.push_back(successor.index);
+		successors.push_back(successor);
 	}
 	return successors;
 };
@@ -72,7 +72,7 @@ template<class T, typename Index>
 std::vector<int> RS2<T, Index>::getPredecessors(Index& successor) {
 	std::vector<int> predecessors;
 	for (auto predecessor : sucPredTable[successor]) {
-		predecessors.push_back(predecessor.index);
+		predecessors.push_back(predecessor);
 	}
 	return predecessors;
 };
@@ -83,8 +83,8 @@ std::tuple<std::vector<int>, std::vector<int>> RS2<T, Index>::getAllPredecessorS
 	std::vector<int> successors;
 	for (auto predSucEntry : predSucTable) {
 		for (auto successor : predSucEntry.second) {
-			predecessors.push_back(predSucEntry.first.index);
-			successors.push_back(successor.index);
+			predecessors.push_back(predSucEntry.first);
+			successors.push_back(successor);
 		}
 	}
 	return std::make_tuple(predecessors, successors);

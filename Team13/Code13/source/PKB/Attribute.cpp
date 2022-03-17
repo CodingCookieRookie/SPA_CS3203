@@ -53,11 +53,11 @@ int Attribute::getNameIdx(std::string& nameValue) {
 }
 
 void Attribute::insertVarIdxByName(VarIndex& varIdx, int nameIdx) {
-	nameVarIdxTable[nameIdx].insert(varIdx.index);
+	nameVarIdxTable[nameIdx].insert(varIdx);
 }
 
 void Attribute::insertProcIdxByName(ProcIndex& procIdx, int nameIdx) {
-	nameProcIdxTable[nameIdx].insert(procIdx.index);
+	nameProcIdxTable[nameIdx].insert(procIdx);
 }
 
 void Attribute::insertStmtByName(StmtIndex& stmtIdx, StatementType stmtType, std::string& nameValue) {
@@ -65,13 +65,13 @@ void Attribute::insertStmtByName(StmtIndex& stmtIdx, StatementType stmtType, std
 
 	switch (stmtType) {
 	case StatementType::callType:
-		nameCallProcIdxTable[nameIdx].insert(stmtIdx.index);
+		nameCallProcIdxTable[nameIdx].insert(stmtIdx);
 		break;
 	case StatementType::readType:
-		nameReadVarIdxTable[nameIdx].insert(stmtIdx.index);
+		nameReadVarIdxTable[nameIdx].insert(stmtIdx);
 		break;
 	case StatementType::printType:
-		namePrintVarIdxTable[nameIdx].insert(stmtIdx.index);
+		namePrintVarIdxTable[nameIdx].insert(stmtIdx);
 		break;
 	}
 }
@@ -128,7 +128,7 @@ std::vector<int> Attribute::processIntegerAttributeArgVector(PqlEntityType entit
 	}
 
 	for (auto& stmtIdx : stmtIndices) {
-		res.push_back(stmtIdx.index);
+		res.push_back(stmtIdx);
 	}
 
 	return res;
