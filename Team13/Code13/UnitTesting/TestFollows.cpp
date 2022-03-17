@@ -24,10 +24,10 @@ public:
 		Follows::insert(predecessor2, successor2);
 
 		auto statements = Follows::getSuccessors(predecessor1);
-		Assert::IsTrue(std::vector<int> { successor1 } == statements);
+		Assert::IsTrue(std::vector<StmtIndex> { successor1 } == statements);
 
 		statements = Follows::getSuccessors(predecessor2);
-		Assert::IsTrue(std::vector<int> { successor2 } == statements);
+		Assert::IsTrue(std::vector<StmtIndex> { successor2 } == statements);
 
 		statements = Follows::getSuccessors(successor1);
 		Assert::IsTrue(0 == statements.size());
@@ -38,7 +38,7 @@ public:
 		Follows::insert(predecessor1, successor2);
 
 		auto statements = Follows::getSuccessors(predecessor1);
-		Assert::IsTrue(std::vector<int> { successor1, successor2 } == statements);
+		Assert::IsTrue(std::vector<StmtIndex> { successor1, successor2 } == statements);
 
 		statements = Follows::getSuccessors(successor1);
 		Assert::IsTrue(0 == statements.size());
@@ -49,22 +49,22 @@ public:
 		Follows::insert(predecessor2, successor2);
 
 		auto statements = Follows::getPredecessors(successor1);
-		Assert::IsTrue(std::vector<int> {predecessor1} == statements);
+		Assert::IsTrue(std::vector<StmtIndex> {predecessor1} == statements);
 
 		statements = Follows::getPredecessors(successor2);
-		Assert::IsTrue(std::vector<int> {predecessor2} == statements);
+		Assert::IsTrue(std::vector<StmtIndex> {predecessor2} == statements);
 
 		statements = Follows::getPredecessors(predecessor1);
 		Assert::IsTrue(0 == statements.size());
 	};
 
 	TEST_METHOD(insert_getPredecessors_multPredOneSuc) {
-		std::vector<int> expectedAns{ predecessor1, predecessor2 };
+		std::vector<StmtIndex> expectedAns{ predecessor1, predecessor2 };
 
 		Follows::insert(predecessor1, successor1);
 		Follows::insert(predecessor2, successor1);
 		auto statements = Follows::getPredecessors(successor1);
-		Assert::IsTrue(std::vector<int> { predecessor1, predecessor2 } == statements);
+		Assert::IsTrue(std::vector<StmtIndex> { predecessor1, predecessor2 } == statements);
 
 		statements = Follows::getPredecessors(predecessor1);
 		Assert::IsTrue(0 == statements.size());
@@ -109,9 +109,9 @@ public:
 	};
 
 	TEST_METHOD(insert_getAllPredecessorSuccessorInfo_onePredOneSuc) {
-		std::vector<int> predecessors{ predecessor1, predecessor2 };
-		std::vector<int> successors{ successor1, successor2 };
-		std::tuple<std::vector<int>, std::vector<int>> expectedAns = std::make_tuple(predecessors, successors);
+		std::vector<StmtIndex> predecessors{ predecessor1, predecessor2 };
+		std::vector<StmtIndex> successors{ successor1, successor2 };
+		std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> expectedAns = std::make_tuple(predecessors, successors);
 
 		Follows::insert(predecessor1, successor1);
 		Follows::insert(predecessor2, successor2);
@@ -121,9 +121,9 @@ public:
 	};
 
 	TEST_METHOD(insert_getAllPredecessorSuccessorInfo_onePredMultSuc) {
-		std::vector<int> predecessors{ predecessor1, predecessor1 };
-		std::vector<int> successors{ successor1, successor2 };
-		std::tuple<std::vector<int>, std::vector<int>> expectedAns = std::make_tuple(predecessors, successors);
+		std::vector<StmtIndex> predecessors{ predecessor1, predecessor1 };
+		std::vector<StmtIndex> successors{ successor1, successor2 };
+		std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> expectedAns = std::make_tuple(predecessors, successors);
 
 		Follows::insert(predecessor1, successor1);
 		Follows::insert(predecessor1, successor2);
@@ -133,9 +133,9 @@ public:
 	};
 
 	TEST_METHOD(insert_getAllPredecessorSuccessorInfo_multPredOneSuc) {
-		std::vector<int> predecessors{ predecessor1, predecessor2 };
-		std::vector<int> successors{ successor1, successor1 };
-		std::tuple<std::vector<int>, std::vector<int>> expectedAns = std::make_tuple(predecessors, successors);
+		std::vector<StmtIndex> predecessors{ predecessor1, predecessor2 };
+		std::vector<StmtIndex> successors{ successor1, successor1 };
+		std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> expectedAns = std::make_tuple(predecessors, successors);
 
 		Follows::insert(predecessor1, successor1);
 		Follows::insert(predecessor2, successor1);

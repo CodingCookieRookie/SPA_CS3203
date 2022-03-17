@@ -23,7 +23,7 @@ private:
 
 public:
 	TEST_METHOD(populate_getSuccessors_branched) {
-		std::vector<int> parentTExpAns{ stmtIdx2, stmtIdx3, stmtIdx4, stmtIdx5 };
+		std::vector<StmtIndex> parentTExpAns{ stmtIdx2, stmtIdx3, stmtIdx4, stmtIdx5 };
 
 		Parent::insert(stmtIdx1, stmtIdx2);
 		Parent::insert(stmtIdx1, stmtIdx5);
@@ -44,7 +44,7 @@ public:
 	};
 
 	TEST_METHOD(populate_getSuccessors_linear) {
-		std::vector<int> parentTExpAns{ stmtIdx1, stmtIdx2, stmtIdx3, stmtIdx4 };
+		std::vector<StmtIndex> parentTExpAns{ stmtIdx1, stmtIdx2, stmtIdx3, stmtIdx4 };
 
 		Parent::insert(stmtIdx1, stmtIdx2);
 		Parent::insert(stmtIdx2, stmtIdx3);
@@ -65,7 +65,7 @@ public:
 	};
 
 	TEST_METHOD(populate_getPredecessors_branched) {
-		std::vector<int> parentTExpAns{ stmtIdx4, stmtIdx2, stmtIdx1 };
+		std::vector<StmtIndex> parentTExpAns{ stmtIdx4, stmtIdx2, stmtIdx1 };
 
 		Parent::insert(stmtIdx1, stmtIdx2);
 		Parent::insert(stmtIdx2, stmtIdx3);
@@ -86,7 +86,7 @@ public:
 	};
 
 	TEST_METHOD(populate_getPredecessors_linear) {
-		std::vector<int> parentTExpAns{ stmtIdx3, stmtIdx2, stmtIdx1, stmtIdx5 };
+		std::vector<StmtIndex> parentTExpAns{ stmtIdx3, stmtIdx2, stmtIdx1, stmtIdx5 };
 
 		Parent::insert(stmtIdx1, stmtIdx2);
 		Parent::insert(stmtIdx2, stmtIdx3);
@@ -129,9 +129,9 @@ public:
 	};
 
 	TEST_METHOD(getAllPredecessorSuccessorInfo) {
-		std::vector<int> parentTpredecessors{ stmtIdx2, stmtIdx1, stmtIdx1 };
-		std::vector<int> parentTsuccessors{ stmtIdx3, stmtIdx2, stmtIdx3 };
-		std::tuple<std::vector<int>, std::vector<int>> parentTExpAns =
+		std::vector<StmtIndex> parentTpredecessors{ stmtIdx2, stmtIdx1, stmtIdx1 };
+		std::vector<StmtIndex> parentTsuccessors{ stmtIdx3, stmtIdx2, stmtIdx3 };
+		std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> parentTExpAns =
 			std::make_tuple(parentTpredecessors, parentTsuccessors);
 
 		Parent::insert(stmtIdx1, stmtIdx2);

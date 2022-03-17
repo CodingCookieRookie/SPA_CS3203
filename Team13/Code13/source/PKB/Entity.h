@@ -11,14 +11,14 @@
 
 class Entity {
 protected:
-	static int getVarTableSize();
-	static int getProcTableSize();
-	static int getStmtTypeTableSize();
+	static size_t getVarTableSize();
+	static size_t getProcTableSize();
+	static size_t getStmtTypeTableSize();
 	static bool isContainerStmt(StmtIndex& stmtIdx);
 
 	static std::unordered_map<VarIndex, std::string> varNameTable;
 	static std::unordered_map<ProcIndex, std::string> procNameTable;
-	static std::unordered_set<int> constTable;
+	static std::unordered_set<ConstValue> constTable;
 	static std::unordered_map<StmtIndex, StatementType> stmtTypeTable;
 	static std::unordered_map<StatementType, std::unordered_set<StmtIndex>> stmtIdxFromTypeTable;
 	static std::unordered_map<ProcIndex, std::unordered_set<StmtIndex>> procStmtTable;
@@ -36,12 +36,12 @@ public:
 	static ProcIndex getProcIdx(std::string procName);
 	static std::vector<ProcIndex> getAllProcs();
 
-	static void insertConst(int constant);
-	static std::vector<int> getAllConsts();
+	static void insertConst(ConstValue constant);
+	static std::vector<ConstValue> getAllConsts();
 
 	static StmtIndex insertStmt(StatementType stmtType);
 	static StmtIndex insertStmt(StatementType stmtType, std::string& nameValue);
-	static bool containsStmt(int stmtNo);
+	static bool containsStmt(StmtIndex stmtNo);
 	static std::vector<StmtIndex> getStmtIdxFromType(StatementType stmtType);
 	static std::vector<StmtIndex> getAllStmts();
 	static std::vector<StmtIndex> getAllContainerStmts();

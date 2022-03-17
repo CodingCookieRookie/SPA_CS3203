@@ -13,6 +13,7 @@ enum class PqlEntityType {
 	If, Assign, Variable, Constant, Procedure
 };
 
+typedef int EntityAttributeRef;
 typedef int VarIndex;
 typedef int ProcIndex;
 typedef int StmtIndex;

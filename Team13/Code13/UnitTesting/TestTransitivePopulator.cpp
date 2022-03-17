@@ -52,11 +52,11 @@ public:
 		TransitivePopulator::populateRecursiveInfo();
 
 		/* Check Uses */
-		Assert::IsTrue(std::vector<int>{ varIdx1 } == UsesS::getVariables(stmtIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx1 } == UsesS::getVariables(stmtIdx1));
 		Assert::IsTrue(0 == UsesS::getVariables(stmtIdx4).size());
 
 		/* Check Modifies */
-		Assert::IsTrue(std::vector<int>{varIdx2} == ModifiesS::getVariables(stmtIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{varIdx2} == ModifiesS::getVariables(stmtIdx1));
 		Assert::IsTrue(0 == ModifiesS::getVariables(stmtIdx4).size());
 
 		/* Check Container */
@@ -64,11 +64,11 @@ public:
 			Container::getStmtsInContainer(stmtIdx1));
 
 		/* Check FollowsT */
-		Assert::IsTrue(std::vector<int>{stmtIdx3, stmtIdx4} ==
+		Assert::IsTrue(std::vector<StmtIndex>{stmtIdx3, stmtIdx4} ==
 			FollowsT::getSuccessors(stmtIdx2));
 
 		/* Check ParentT */
-		Assert::IsTrue(std::vector<int>{stmtIdx2, stmtIdx3, stmtIdx4} ==
+		Assert::IsTrue(std::vector<StmtIndex>{stmtIdx2, stmtIdx3, stmtIdx4} ==
 			ParentT::getSuccessors(stmtIdx1));
 	};
 
@@ -97,20 +97,20 @@ public:
 		TransitivePopulator::populateRecursiveInfo();
 
 		/* Check Uses */
-		Assert::IsTrue(std::vector<int>{ varIdx1, varIdx2 } == UsesS::getVariables(stmtIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2 } == UsesS::getVariables(stmtIdx1));
 
 		/* Check Modifies */
-		Assert::IsTrue(std::vector<int>{varIdx2, varIdx1} == ModifiesS::getVariables(stmtIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{varIdx2, varIdx1} == ModifiesS::getVariables(stmtIdx1));
 
 		/* Check Container */
 		Assert::IsTrue(std::unordered_set<StmtIndex>{stmtIdx2, stmtIdx3, stmtIdx4} ==
 			Container::getStmtsInContainer(stmtIdx1));
 
 		/* Check FollowsT */
-		Assert::IsTrue(std::vector<int>{stmtIdx3} == FollowsT::getSuccessors(stmtIdx2));
+		Assert::IsTrue(std::vector<StmtIndex>{stmtIdx3} == FollowsT::getSuccessors(stmtIdx2));
 
 		/* Check ParentT */
-		Assert::IsTrue(std::vector<int>{stmtIdx2, stmtIdx3, stmtIdx4} ==
+		Assert::IsTrue(std::vector<StmtIndex>{stmtIdx2, stmtIdx3, stmtIdx4} ==
 			ParentT::getSuccessors(stmtIdx1));
 	};
 
@@ -139,20 +139,20 @@ public:
 		TransitivePopulator::populateRecursiveInfo();
 
 		/* Check Uses */
-		Assert::IsTrue(std::vector<int>{ varIdx1, varIdx2 } == UsesS::getVariables(stmtIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2 } == UsesS::getVariables(stmtIdx1));
 
 		/* Check Modifies */
-		Assert::IsTrue(std::vector<int>{varIdx2, varIdx1} == ModifiesS::getVariables(stmtIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{varIdx2, varIdx1} == ModifiesS::getVariables(stmtIdx1));
 
 		/* Check Container */
 		Assert::IsTrue(std::unordered_set<StmtIndex>{stmtIdx2, stmtIdx3, stmtIdx4} ==
 			Container::getStmtsInContainer(stmtIdx1));
 
 		/* Check FollowsT */
-		Assert::IsTrue(std::vector<int>{stmtIdx4} == FollowsT::getSuccessors(stmtIdx3));
+		Assert::IsTrue(std::vector<StmtIndex>{stmtIdx4} == FollowsT::getSuccessors(stmtIdx3));
 
 		/* Check ParentT */
-		Assert::IsTrue(std::vector<int>{stmtIdx2, stmtIdx3, stmtIdx4} ==
+		Assert::IsTrue(std::vector<StmtIndex>{stmtIdx2, stmtIdx3, stmtIdx4} ==
 			ParentT::getSuccessors(stmtIdx1));
 	};
 
@@ -173,10 +173,10 @@ public:
 		TransitivePopulator::populateRecursiveInfo();
 
 		/* Check Uses */
-		Assert::IsTrue(std::vector<int>{ varIdx1 } == UsesP::getVariables(procIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx1 } == UsesP::getVariables(procIdx1));
 
 		/* Check Modifies */
-		Assert::IsTrue(std::vector<int>{varIdx2} == ModifiesP::getVariables(procIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{varIdx2} == ModifiesP::getVariables(procIdx1));
 	};
 
 	TEST_METHOD(populateRecursiveInfo_multipleProcs_2) {
@@ -217,24 +217,24 @@ public:
 		TransitivePopulator::populateRecursiveInfo();
 
 		/* Check Uses */
-		Assert::IsTrue(std::vector<int>{ varIdx1, varIdx2 } == UsesS::getVariables(stmtIdx3));
-		Assert::IsTrue(std::vector<int>{ varIdx1, varIdx2 } == UsesP::getVariables(procIdx1));
-		Assert::IsTrue(std::vector<int>{ varIdx1, varIdx2 } == UsesP::getVariables(procIdx2));
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2 } == UsesS::getVariables(stmtIdx3));
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2 } == UsesP::getVariables(procIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2 } == UsesP::getVariables(procIdx2));
 
 		/* Check Modifies */
-		Assert::IsTrue(std::vector<int>{varIdx2, varIdx1} == ModifiesS::getVariables(stmtIdx3));
-		Assert::IsTrue(std::vector<int>{varIdx1, varIdx2} == ModifiesP::getVariables(procIdx1));
-		Assert::IsTrue(std::vector<int>{varIdx1, varIdx2} == ModifiesP::getVariables(procIdx2));
+		Assert::IsTrue(std::vector<VarIndex>{varIdx2, varIdx1} == ModifiesS::getVariables(stmtIdx3));
+		Assert::IsTrue(std::vector<VarIndex>{varIdx1, varIdx2} == ModifiesP::getVariables(procIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{varIdx1, varIdx2} == ModifiesP::getVariables(procIdx2));
 
 		/* Check Container */
 		Assert::IsTrue(std::unordered_set<StmtIndex>{stmtIdx4, stmtIdx5, stmtIdx6} ==
 			Container::getStmtsInContainer(stmtIdx3));
 
 		/* Check FollowsT */
-		Assert::IsTrue(std::vector<int>{stmtIdx5} == FollowsT::getSuccessors(stmtIdx4));
+		Assert::IsTrue(std::vector<StmtIndex>{stmtIdx5} == FollowsT::getSuccessors(stmtIdx4));
 
 		/* Check ParentT */
-		Assert::IsTrue(std::vector<int>{stmtIdx4, stmtIdx5, stmtIdx6} ==
+		Assert::IsTrue(std::vector<StmtIndex>{stmtIdx4, stmtIdx5, stmtIdx6} ==
 			ParentT::getSuccessors(stmtIdx3));
 	};
 	};

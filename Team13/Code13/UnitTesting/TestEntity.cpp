@@ -184,25 +184,25 @@ public:
 	}
 
 	TEST_METHOD(insertConst_getAllConsts_differentConsts) {
-		std::vector<int> expectedRes;
+		std::vector<ConstValue> expectedRes;
 		expectedRes.push_back(1);
 		expectedRes.push_back(2);
 
 		Entity::insertConst(1);
 		Entity::insertConst(2);
 
-		std::vector<int> res = Entity::getAllConsts();
+		std::vector<ConstValue> res = Entity::getAllConsts();
 		Assert::IsTrue(expectedRes == res);
 	}
 
 	TEST_METHOD(insertConst_getAllConsts_sameConst) {
-		std::vector<int> expectedRes;
+		std::vector<ConstValue> expectedRes;
 		expectedRes.push_back(1);
 
 		Entity::insertConst(1);
 		Entity::insertConst(1);
 
-		std::vector<int> res = Entity::getAllConsts();
+		std::vector<ConstValue> res = Entity::getAllConsts();
 		Assert::IsTrue(expectedRes == res);
 	}
 
@@ -336,13 +336,13 @@ public:
 	TEST_METHOD(performCleanUp_ConstSet) {
 		Entity::insertConst(2);
 		Entity::insertConst(4);
-		std::vector<int> res1 = Entity::getAllConsts();
+		std::vector<ConstValue> res1 = Entity::getAllConsts();
 		Assert::IsTrue(res1.size() == 2);
 
 		Entity::performCleanUp();
 
 		Entity::insertConst(3);
-		std::vector<int> res2 = Entity::getAllConsts();
+		std::vector<ConstValue> res2 = Entity::getAllConsts();
 		Assert::IsTrue(res2.size() == 1);
 	}
 	};

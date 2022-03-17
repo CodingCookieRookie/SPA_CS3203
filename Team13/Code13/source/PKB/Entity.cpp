@@ -9,25 +9,25 @@
 
 std::unordered_map<VarIndex, std::string> Entity::varNameTable;
 std::unordered_map<ProcIndex, std::string> Entity::procNameTable;
-std::unordered_set<int> Entity::constTable;
+std::unordered_set<ConstValue> Entity::constTable;
 std::unordered_map<StmtIndex, StatementType> Entity::stmtTypeTable;
 std::unordered_map<StatementType, std::unordered_set<StmtIndex>> Entity::stmtIdxFromTypeTable;
 std::unordered_map<ProcIndex, std::unordered_set<StmtIndex>> Entity::procStmtTable;
 
-int Entity::getVarTableSize() {
+size_t Entity::getVarTableSize() {
 	return varNameTable.size();
 }
 
-int Entity::getProcTableSize() {
+size_t Entity::getProcTableSize() {
 	return procNameTable.size();
 }
 
-int Entity::getStmtTypeTableSize() {
+size_t Entity::getStmtTypeTableSize() {
 	return stmtTypeTable.size();
 }
 
 VarIndex Entity::insertVar(std::string varName) {
-	int nameIdx = Attribute::insertNameValue(varName);
+	NameIndex nameIdx = Attribute::insertNameValue(varName);
 
 	if (!Attribute::containsVarName(varName)) {
 		VarIndex varIdx = VarIndex(getVarTableSize() + 1);
@@ -50,7 +50,7 @@ std::string Entity::getVarName(VarIndex varIdx) {
 }
 
 VarIndex Entity::getVarIdx(std::string varName) {
-	std::unordered_set<int> varIdxSet = Attribute::getVarIdxSet(varName);
+	std::unordered_set<VarIndex> varIdxSet = Attribute::getVarIdxSet(varName);
 	return VarIndex(*varIdxSet.begin());
 }
 
@@ -65,7 +65,7 @@ std::vector<VarIndex> Entity::getAllVars() {
 }
 
 ProcIndex Entity::insertProc(std::string procName) {
-	int nameIdx = Attribute::insertNameValue(procName);
+	NameIndex nameIdx = Attribute::insertNameValue(procName);
 
 	if (!Attribute::containsProcName(procName)) {
 		ProcIndex procIdx = ProcIndex(getProcTableSize() + 1);
@@ -88,7 +88,7 @@ std::string Entity::getProcName(ProcIndex procIdx) {
 }
 
 ProcIndex Entity::getProcIdx(std::string procName) {
-	std::unordered_set<int> procIdxSet = Attribute::getProcIdxSet(procName);
+	std::unordered_set<ProcIndex> procIdxSet = Attribute::getProcIdxSet(procName);
 	return ProcIndex(*procIdxSet.begin());
 }
 
@@ -102,12 +102,12 @@ std::vector<ProcIndex> Entity::getAllProcs() {
 	return res;
 }
 
-void Entity::insertConst(int constant) {
+void Entity::insertConst(ConstValue constant) {
 	constTable.insert(constant);
 }
 
-std::vector<int> Entity::getAllConsts() {
-	std::vector<int> res;
+std::vector<ConstValue> Entity::getAllConsts() {
+	std::vector<ConstValue> res;
 
 	for (auto& constant : constTable) {
 		res.push_back(constant);
@@ -136,7 +136,7 @@ bool Entity::isContainerStmt(StmtIndex& stmtIdx) {
 	return stmtType == StatementType::whileType || stmtType == StatementType::ifType;
 }
 
-bool Entity::containsStmt(int stmtNo) {
+bool Entity::containsStmt(StmtIndex stmtNo) {
 	return stmtTypeTable.find(StmtIndex(stmtNo)) != stmtTypeTable.end();
 }
 

@@ -7,18 +7,18 @@
 
 #include "./Entity.h"
 
-std::unordered_map<std::string, int> Attribute::nameIdxTable;
-std::unordered_map<int, std::unordered_set<int>> Attribute::nameVarIdxTable;
-std::unordered_map<int, std::unordered_set<int>> Attribute::nameProcIdxTable;
-std::unordered_map<int, std::unordered_set<int>> Attribute::nameCallProcIdxTable;
-std::unordered_map<int, std::unordered_set<int>> Attribute::nameReadVarIdxTable;
-std::unordered_map<int, std::unordered_set<int>> Attribute::namePrintVarIdxTable;
+std::unordered_map<std::string, NameIndex> Attribute::nameIdxTable;
+std::unordered_map<NameIndex, std::unordered_set<VarIndex>> Attribute::nameVarIdxTable;
+std::unordered_map<NameIndex, std::unordered_set<ProcIndex>> Attribute::nameProcIdxTable;
+std::unordered_map<NameIndex, std::unordered_set<ProcIndex>> Attribute::nameCallProcIdxTable;
+std::unordered_map<NameIndex, std::unordered_set<VarIndex>> Attribute::nameReadVarIdxTable;
+std::unordered_map<NameIndex, std::unordered_set<VarIndex>> Attribute::namePrintVarIdxTable;
 
-std::unordered_set<int> Attribute::getVarIdxSet(std::string& varName) {
+std::unordered_set<VarIndex> Attribute::getVarIdxSet(std::string& varName) {
 	return nameVarIdxTable[getNameIdx(varName)];
 }
 
-std::unordered_set<int> Attribute::getProcIdxSet(std::string& procName) {
+std::unordered_set<ProcIndex> Attribute::getProcIdxSet(std::string& procName) {
 	return nameProcIdxTable[getNameIdx(procName)];
 }
 
@@ -27,41 +27,41 @@ bool Attribute::containsName(std::string& nameValue) {
 }
 
 bool Attribute::containsVarName(std::string& varName) {
-	int nameIdx = getNameIdx(varName);
+	NameIndex nameIdx = getNameIdx(varName);
 	return nameVarIdxTable.find(nameIdx) != nameVarIdxTable.end();
 }
 
 bool Attribute::containsProcName(std::string& procName) {
-	int nameIdx = getNameIdx(procName);
+	NameIndex nameIdx = getNameIdx(procName);
 	return nameProcIdxTable.find(nameIdx) != nameProcIdxTable.end();
 }
 
-int Attribute::getNameIdxTableSize() {
+size_t Attribute::getNameIdxTableSize() {
 	return nameIdxTable.size();
 }
 
-int Attribute::insertNameValue(std::string nameValue) {
+NameIndex Attribute::insertNameValue(std::string nameValue) {
 	if (!containsName(nameValue)) {
-		int nameIdx = getNameIdxTableSize() + 1;
+		NameIndex nameIdx = NameIndex(getNameIdxTableSize()) + 1;
 		nameIdxTable[nameValue] = nameIdx;
 	}
 	return nameIdxTable[nameValue];
 }
 
-int Attribute::getNameIdx(std::string& nameValue) {
+NameIndex Attribute::getNameIdx(std::string& nameValue) {
 	return nameIdxTable[nameValue];
 }
 
-void Attribute::insertVarIdxByName(VarIndex& varIdx, int nameIdx) {
+void Attribute::insertVarIdxByName(VarIndex& varIdx, NameIndex nameIdx) {
 	nameVarIdxTable[nameIdx].insert(varIdx);
 }
 
-void Attribute::insertProcIdxByName(ProcIndex& procIdx, int nameIdx) {
+void Attribute::insertProcIdxByName(ProcIndex& procIdx, NameIndex nameIdx) {
 	nameProcIdxTable[nameIdx].insert(procIdx);
 }
 
 void Attribute::insertStmtByName(StmtIndex& stmtIdx, StatementType stmtType, std::string& nameValue) {
-	int nameIdx = insertNameValue(nameValue);
+	NameIndex nameIdx = insertNameValue(nameValue);
 
 	switch (stmtType) {
 	case StatementType::callType:
@@ -76,11 +76,11 @@ void Attribute::insertStmtByName(StmtIndex& stmtIdx, StatementType stmtType, std
 	}
 }
 
-std::tuple<std::vector<int>, std::vector<int>> Attribute::getEqualNameAttributes(PqlEntityType leftEntityType, PqlEntityType rightEntityType) {
-	std::vector<int> leftEntityTypeIndices;
-	std::vector<int> rightEntityTypeIndices;
+std::tuple<std::vector<EntityAttributeRef>, std::vector<EntityAttributeRef>> Attribute::getEqualNameAttributes(PqlEntityType leftEntityType, PqlEntityType rightEntityType) {
+	std::vector<EntityAttributeRef> leftEntityTypeIndices;
+	std::vector<EntityAttributeRef> rightEntityTypeIndices;
 
-	std::map<PqlEntityType, std::unordered_map<int, std::unordered_set<int>>> PqlEntityTypeTableMap = {
+	std::map<PqlEntityType, std::unordered_map<EntityAttributeRef, std::unordered_set<EntityAttributeRef>>> PqlEntityTypeTableMap = {
 		{ PqlEntityType::Procedure, Attribute::nameProcIdxTable },
 		{ PqlEntityType::Variable, Attribute::nameVarIdxTable },
 		{ PqlEntityType::Call, Attribute::nameCallProcIdxTable },
@@ -88,11 +88,11 @@ std::tuple<std::vector<int>, std::vector<int>> Attribute::getEqualNameAttributes
 		{ PqlEntityType::Print, Attribute::namePrintVarIdxTable }
 	};
 
-	std::unordered_map<int, std::unordered_set<int>> leftArgMap = PqlEntityTypeTableMap[leftEntityType];
-	std::unordered_map<int, std::unordered_set<int>> rightArgMap = PqlEntityTypeTableMap[rightEntityType];
+	std::unordered_map<EntityAttributeRef, std::unordered_set<EntityAttributeRef>> leftArgMap = PqlEntityTypeTableMap[leftEntityType];
+	std::unordered_map<EntityAttributeRef, std::unordered_set<EntityAttributeRef>> rightArgMap = PqlEntityTypeTableMap[rightEntityType];
 
 	for (auto& leftArgMapInfo : leftArgMap) {
-		int nameIdx = leftArgMapInfo.first;
+		NameIndex nameIdx = leftArgMapInfo.first;
 		for (auto& leftEntityIdx : leftArgMap[nameIdx]) {
 			for (auto& rightEntityIdx : rightArgMap[nameIdx]) {
 				leftEntityTypeIndices.push_back(leftEntityIdx);
@@ -104,7 +104,7 @@ std::tuple<std::vector<int>, std::vector<int>> Attribute::getEqualNameAttributes
 	return std::make_tuple(leftEntityTypeIndices, rightEntityTypeIndices);
 }
 
-std::vector<int> Attribute::processIntegerAttributeArgVector(PqlEntityType entityType) {
+std::vector<EntityAttributeRef> Attribute::processIntegerAttributeArgVector(PqlEntityType entityType) {
 	std::map<PqlEntityType, StatementType> PqlEntityTypeStatementTypeMap = {
 		{ PqlEntityType::Read, StatementType::readType },
 		{ PqlEntityType::Print, StatementType::printType },
@@ -119,7 +119,7 @@ std::vector<int> Attribute::processIntegerAttributeArgVector(PqlEntityType entit
 	}
 
 	std::vector<StmtIndex> stmtIndices;
-	std::vector<int> res;
+	std::vector<StmtIndex> res;
 
 	if (entityType == PqlEntityType::Stmt) {
 		stmtIndices = Entity::getAllStmts();
@@ -134,11 +134,11 @@ std::vector<int> Attribute::processIntegerAttributeArgVector(PqlEntityType entit
 	return res;
 }
 
-std::vector<int> Attribute::getEqualIntegerAttributes(PqlEntityType leftEntityType, PqlEntityType rightEntityType) {
-	std::vector<int> res;
+std::vector<EntityAttributeRef> Attribute::getEqualIntegerAttributes(PqlEntityType leftEntityType, PqlEntityType rightEntityType) {
+	std::vector<EntityAttributeRef> res;
 
-	std::vector<int> leftArgVector = processIntegerAttributeArgVector(leftEntityType);
-	std::vector<int> rightArgVector = processIntegerAttributeArgVector(rightEntityType);
+	std::vector<EntityAttributeRef> leftArgVector = processIntegerAttributeArgVector(leftEntityType);
+	std::vector<EntityAttributeRef> rightArgVector = processIntegerAttributeArgVector(rightEntityType);
 
 	for (auto& intValue : leftArgVector) {
 		if (std::find(rightArgVector.begin(), rightArgVector.end(), intValue) != rightArgVector.end()) {
@@ -149,10 +149,10 @@ std::vector<int> Attribute::getEqualIntegerAttributes(PqlEntityType leftEntityTy
 	return res;
 }
 
-std::vector<int> Attribute::getEqualNameAttributesFromName(PqlEntityType entityType, std::string& nameValue) {
-	std::vector<int> res;
+std::vector<EntityAttributeRef> Attribute::getEqualNameAttributesFromName(PqlEntityType entityType, std::string& nameValue) {
+	std::vector<EntityAttributeRef> res;
 
-	std::map<PqlEntityType, std::unordered_map<int, std::unordered_set<int>>> PqlEntityTypeTableMap = {
+	std::map<PqlEntityType, std::unordered_map<EntityAttributeRef, std::unordered_set<EntityAttributeRef>>> PqlEntityTypeTableMap = {
 		{ PqlEntityType::Procedure, Attribute::nameProcIdxTable },
 		{ PqlEntityType::Variable, Attribute::nameVarIdxTable },
 		{ PqlEntityType::Call, Attribute::nameCallProcIdxTable },
@@ -160,9 +160,9 @@ std::vector<int> Attribute::getEqualNameAttributesFromName(PqlEntityType entityT
 		{ PqlEntityType::Print, Attribute::namePrintVarIdxTable }
 	};
 
-	std::unordered_map<int, std::unordered_set<int>> argMap = PqlEntityTypeTableMap[entityType];
+	std::unordered_map<EntityAttributeRef, std::unordered_set<EntityAttributeRef>> argMap = PqlEntityTypeTableMap[entityType];
 
-	int nameIdx = getNameIdx(nameValue);
+	NameIndex nameIdx = getNameIdx(nameValue);
 
 	for (auto& entityIdx : argMap[nameIdx]) {
 		res.push_back(entityIdx);
@@ -171,8 +171,8 @@ std::vector<int> Attribute::getEqualNameAttributesFromName(PqlEntityType entityT
 	return res;
 }
 
-bool Attribute::hasEqualIntegerAttribute(PqlEntityType entityType, int integerValue) {
-	std::vector<int> argVector = processIntegerAttributeArgVector(entityType);
+bool Attribute::hasEqualIntegerAttribute(PqlEntityType entityType, ConstValue integerValue) {
+	std::vector<EntityAttributeRef> argVector = processIntegerAttributeArgVector(entityType);
 	return std::find(argVector.begin(), argVector.end(), integerValue) != argVector.end();
 }
 

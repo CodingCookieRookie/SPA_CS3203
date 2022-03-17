@@ -33,8 +33,8 @@ void Pattern::insertWhileInfo(StmtIndex& stmtIdx, VarIndex& varIdx) {
 	whileVarTable[varIdx].insert(stmtIdx);
 }
 
-std::vector<int> Pattern::getAssignStmtsFromVarExprFullMatch(VarIndex varIdx, std::string& expression) {
-	std::vector<int> res;
+std::vector<StmtIndex> Pattern::getAssignStmtsFromVarExprFullMatch(VarIndex varIdx, std::string& expression) {
+	std::vector<StmtIndex> res;
 	std::unordered_set<StmtIndex> stmtSet;
 
 	std::vector<std::tuple<StmtIndex, std::string>> value = varPostFixTable[varIdx];
@@ -53,8 +53,8 @@ std::vector<int> Pattern::getAssignStmtsFromVarExprFullMatch(VarIndex varIdx, st
 	return res;
 }
 
-std::vector<int> Pattern::getAssignStmtsFromVarExprPartialMatch(VarIndex varIdx, std::string& expression) {
-	std::vector<int> res;
+std::vector<StmtIndex> Pattern::getAssignStmtsFromVarExprPartialMatch(VarIndex varIdx, std::string& expression) {
+	std::vector<StmtIndex> res;
 	std::unordered_set<StmtIndex> stmtSet;
 
 	std::vector<std::tuple<StmtIndex, std::string>> value = varPostFixTable[varIdx];
@@ -73,9 +73,9 @@ std::vector<int> Pattern::getAssignStmtsFromVarExprPartialMatch(VarIndex varIdx,
 	return res;
 }
 
-std::tuple<std::vector<int>, std::vector<int>> Pattern::getAssignStmtsFromExprFullMatch(std::string& expression) {
-	std::vector<int> stmtIndices;
-	std::vector<int> varIndices;
+std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> Pattern::getAssignStmtsFromExprFullMatch(std::string& expression) {
+	std::vector<StmtIndex> stmtIndices;
+	std::vector<VarIndex> varIndices;
 
 	std::vector<std::tuple<StmtIndex, VarIndex>> value = postFixVarTable[expression];
 	for (auto& postFixVarTuple : value) {
@@ -86,9 +86,9 @@ std::tuple<std::vector<int>, std::vector<int>> Pattern::getAssignStmtsFromExprFu
 	return std::make_tuple(stmtIndices, varIndices);
 }
 
-std::tuple<std::vector<int>, std::vector<int>> Pattern::getAssignStmtsFromExprPartialMatch(std::string& expression) {
-	std::vector<int> stmtIndices;
-	std::vector<int> varIndices;
+std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> Pattern::getAssignStmtsFromExprPartialMatch(std::string& expression) {
+	std::vector<StmtIndex> stmtIndices;
+	std::vector<VarIndex> varIndices;
 
 	for (auto& postFixVarInfo : postFixVarTable) {
 		std::string postFixExpression = postFixVarInfo.first;
@@ -105,8 +105,8 @@ std::tuple<std::vector<int>, std::vector<int>> Pattern::getAssignStmtsFromExprPa
 	return std::make_tuple(stmtIndices, varIndices);
 }
 
-std::vector<int> Pattern::getAssignStmtsFromVar(VarIndex& varIdx) {
-	std::vector<int> res;
+std::vector<StmtIndex> Pattern::getAssignStmtsFromVar(VarIndex& varIdx) {
+	std::vector<StmtIndex> res;
 	std::unordered_set<StmtIndex> stmtSet;
 
 	std::vector<std::tuple<StmtIndex, std::string>> value = varPostFixTable[varIdx];
@@ -121,8 +121,8 @@ std::vector<int> Pattern::getAssignStmtsFromVar(VarIndex& varIdx) {
 	return res;
 }
 
-std::vector<int> Pattern::getIfStmtsFromVar(VarIndex& varIndex) {
-	std::vector<int> res;
+std::vector<StmtIndex> Pattern::getIfStmtsFromVar(VarIndex& varIndex) {
+	std::vector<StmtIndex> res;
 
 	for (auto& stmtIdx : ifVarTable[varIndex]) {
 		res.push_back(stmtIdx);
@@ -131,8 +131,8 @@ std::vector<int> Pattern::getIfStmtsFromVar(VarIndex& varIndex) {
 	return res;
 }
 
-std::vector<int> Pattern::getWhileStmtsFromVar(VarIndex& varIndex) {
-	std::vector<int> res;
+std::vector<StmtIndex> Pattern::getWhileStmtsFromVar(VarIndex& varIndex) {
+	std::vector<StmtIndex> res;
 
 	for (auto& stmtIdx : whileVarTable[varIndex]) {
 		res.push_back(stmtIdx);
@@ -141,9 +141,9 @@ std::vector<int> Pattern::getWhileStmtsFromVar(VarIndex& varIndex) {
 	return res;
 }
 
-std::tuple<std::vector<int>, std::vector<int>> Pattern::getAllAssignPatternInfo() {
-	std::vector<int> stmtIndices;
-	std::vector<int> varIndices;
+std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> Pattern::getAllAssignPatternInfo() {
+	std::vector<StmtIndex> stmtIndices;
+	std::vector<VarIndex> varIndices;
 
 	for (auto& varPostFixInfo : varPostFixTable) {
 		VarIndex varIdx = varPostFixInfo.first;
@@ -157,9 +157,9 @@ std::tuple<std::vector<int>, std::vector<int>> Pattern::getAllAssignPatternInfo(
 	return std::make_tuple(stmtIndices, varIndices);
 }
 
-std::tuple<std::vector<int>, std::vector<int>> Pattern::getAllIfPatternInfo() {
-	std::vector<int> stmtIndices;
-	std::vector<int> varIndices;
+std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> Pattern::getAllIfPatternInfo() {
+	std::vector<StmtIndex> stmtIndices;
+	std::vector<VarIndex> varIndices;
 
 	for (auto& ifVarInfo : ifVarTable) {
 		VarIndex varIdx = ifVarInfo.first;
@@ -171,9 +171,9 @@ std::tuple<std::vector<int>, std::vector<int>> Pattern::getAllIfPatternInfo() {
 
 	return std::make_tuple(stmtIndices, varIndices);
 }
-std::tuple<std::vector<int>, std::vector<int>> Pattern::getAllWhilePatternInfo() {
-	std::vector<int> stmtIndices;
-	std::vector<int> varIndices;
+std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> Pattern::getAllWhilePatternInfo() {
+	std::vector<StmtIndex> stmtIndices;
+	std::vector<VarIndex> varIndices;
 
 	for (auto& whileVarInfo : whileVarTable) {
 		VarIndex varIdx = whileVarInfo.first;

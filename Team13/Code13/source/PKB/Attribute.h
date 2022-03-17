@@ -11,34 +11,34 @@
 
 class Attribute {
 protected:
-	static int getNameIdxTableSize();
-	static std::vector<int> processIntegerAttributeArgVector(PqlEntityType entityType);
+	static size_t getNameIdxTableSize();
+	static std::vector<EntityAttributeRef> processIntegerAttributeArgVector(PqlEntityType entityType);
 
-	static std::unordered_map<std::string, int> nameIdxTable;
-	static std::unordered_map<int, std::unordered_set<int>> nameVarIdxTable;
-	static std::unordered_map<int, std::unordered_set<int>> nameProcIdxTable;
-	static std::unordered_map<int, std::unordered_set<int>> nameCallProcIdxTable;
-	static std::unordered_map<int, std::unordered_set<int>> nameReadVarIdxTable;
-	static std::unordered_map<int, std::unordered_set<int>> namePrintVarIdxTable;
+	static std::unordered_map<std::string, NameIndex> nameIdxTable;
+	static std::unordered_map<NameIndex, std::unordered_set<VarIndex>> nameVarIdxTable;
+	static std::unordered_map<NameIndex, std::unordered_set<ProcIndex>> nameProcIdxTable;
+	static std::unordered_map<NameIndex, std::unordered_set<ProcIndex>> nameCallProcIdxTable;
+	static std::unordered_map<NameIndex, std::unordered_set<VarIndex>> nameReadVarIdxTable;
+	static std::unordered_map<NameIndex, std::unordered_set<VarIndex>> namePrintVarIdxTable;
 
 public:
-	static int insertNameValue(std::string nameValue);
-	static int getNameIdx(std::string& nameValue);
+	static NameIndex insertNameValue(std::string nameValue);
+	static NameIndex getNameIdx(std::string& nameValue);
 	static bool containsName(std::string& nameValue);
 
 	static bool containsVarName(std::string& varName);
 	static bool containsProcName(std::string& procName);
-	static std::unordered_set<int> getVarIdxSet(std::string& varName);
-	static std::unordered_set<int> getProcIdxSet(std::string& procName);
+	static std::unordered_set<VarIndex> getVarIdxSet(std::string& varName);
+	static std::unordered_set<ProcIndex> getProcIdxSet(std::string& procName);
 
-	static void insertVarIdxByName(VarIndex& varIdx, int nameIdx);
-	static void insertProcIdxByName(ProcIndex& procIdx, int nameIdx);
+	static void insertVarIdxByName(VarIndex& varIdx, NameIndex nameIdx);
+	static void insertProcIdxByName(ProcIndex& procIdx, NameIndex nameIdx);
 	static void insertStmtByName(StmtIndex& stmtIdx, StatementType stmtType, std::string& nameValue);
 
-	static std::tuple<std::vector<int>, std::vector<int>> getEqualNameAttributes(PqlEntityType leftEntityType, PqlEntityType rightEntityType);
-	static std::vector<int> getEqualIntegerAttributes(PqlEntityType leftEntityType, PqlEntityType rightEntityType);
-	static std::vector<int> getEqualNameAttributesFromName(PqlEntityType entityType, std::string& nameValue);
-	static bool hasEqualIntegerAttribute(PqlEntityType entityType, int integerValue);
+	static std::tuple<std::vector<EntityAttributeRef>, std::vector<EntityAttributeRef>> getEqualNameAttributes(PqlEntityType leftEntityType, PqlEntityType rightEntityType);
+	static std::vector<EntityAttributeRef> getEqualIntegerAttributes(PqlEntityType leftEntityType, PqlEntityType rightEntityType);
+	static std::vector<EntityAttributeRef> getEqualNameAttributesFromName(PqlEntityType entityType, std::string& nameValue);
+	static bool hasEqualIntegerAttribute(PqlEntityType entityType, ConstValue integerValue);
 
 	static void performCleanUp();
 };

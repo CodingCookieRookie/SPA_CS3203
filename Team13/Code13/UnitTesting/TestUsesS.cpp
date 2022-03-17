@@ -22,15 +22,15 @@ private:
 
 public:
 	TEST_METHOD(insert_getFromVariable) {
-		std::vector<int> expectedAns{ stmtIndex1 };
+		std::vector<StmtIndex> expectedAns{ stmtIndex1 };
 
 		UsesS::insert(stmtIndex1, varIndex1);
-		auto procedures = UsesS::getFromVariable(varIndex1);
-		Assert::IsTrue(expectedAns == procedures);
+		auto statements = UsesS::getFromVariable(varIndex1);
+		Assert::IsTrue(expectedAns == statements);
 
 		/* Check if other relationship gets affected */
-		auto procedures2 = ModifiesS::getFromVariable(varIndex1);
-		Assert::IsTrue(0 == procedures2.size());
+		auto statements2 = ModifiesS::getFromVariable(varIndex1);
+		Assert::IsTrue(0 == statements2.size());
 		ModifiesS::performCleanUp();
 	};
 
@@ -43,7 +43,7 @@ public:
 	};
 
 	TEST_METHOD(insert_getVariables) {
-		std::vector<int> expectedAns{ varIndex1, varIndex2 };
+		std::vector<VarIndex> expectedAns{ varIndex1, varIndex2 };
 
 		UsesS::insert(stmtIndex1, varIndex1);
 		UsesS::insert(stmtIndex1, varIndex2);
@@ -52,9 +52,9 @@ public:
 	};
 
 	TEST_METHOD(getAllSynonymVarInfo) {
-		std::vector<int> procedures{ stmtIndex1, stmtIndex1, stmtIndex2, stmtIndex2 };
-		std::vector<int> variables{ varIndex1, varIndex2, varIndex1, varIndex2 };
-		std::tuple<std::vector<int>, std::vector<int>> expectedAns = std::make_tuple(procedures, variables);
+		std::vector<StmtIndex> statements{ stmtIndex1, stmtIndex1, stmtIndex2, stmtIndex2 };
+		std::vector<VarIndex> variables{ varIndex1, varIndex2, varIndex1, varIndex2 };
+		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> expectedAns = std::make_tuple(statements, variables);
 
 		UsesS::insert(stmtIndex1, varIndex1);
 		UsesS::insert(stmtIndex1, varIndex2);
@@ -66,7 +66,7 @@ public:
 	};
 
 	TEST_METHOD(populateFromSubSynonyms) {
-		std::vector<int> expectedAns{ varIndex1, varIndex2 };
+		std::vector<VarIndex> expectedAns{ varIndex1, varIndex2 };
 
 		std::unordered_set<StmtIndex> subStmts{ stmtIndex1 };
 		UsesS::insert(stmtIndex1, varIndex1);

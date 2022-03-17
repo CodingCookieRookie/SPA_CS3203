@@ -51,7 +51,7 @@ bool RS1<T, SynonymIndex>::contains(SynonymIndex index, VarIndex varIndex) {
 
 template<class T, typename SynonymIndex>
 std::vector<SynonymIndex> RS1<T, SynonymIndex>::getFromVariable(VarIndex varIndex) {
-	std::vector<int> synonyms;
+	std::vector<SynonymIndex> synonyms;
 	for (auto synonym : varSynonymTable[varIndex]) {
 		synonyms.push_back(synonym);
 	}
@@ -60,7 +60,7 @@ std::vector<SynonymIndex> RS1<T, SynonymIndex>::getFromVariable(VarIndex varInde
 
 template<class T, typename SynonymIndex>
 std::vector<VarIndex> RS1<T, SynonymIndex>::getVariables(SynonymIndex index) {
-	std::vector<int> variables;
+	std::vector<VarIndex> variables;
 	for (auto variable : synonymVarTable[index]) {
 		variables.push_back(variable);
 	}
@@ -69,8 +69,8 @@ std::vector<VarIndex> RS1<T, SynonymIndex>::getVariables(SynonymIndex index) {
 
 template<class T, typename SynonymIndex>
 std::tuple<std::vector<SynonymIndex>, std::vector<VarIndex>> RS1<T, SynonymIndex>::getAllSynonymVarInfo() {
-	std::vector<int> synonyms;
-	std::vector<int> variables;
+	std::vector<SynonymIndex> synonyms;
+	std::vector<VarIndex> variables;
 	for (auto synonymVarEntry : synonymVarTable) {
 		for (auto& varIndex : synonymVarEntry.second) {
 			synonyms.push_back(synonymVarEntry.first);

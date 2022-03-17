@@ -23,7 +23,7 @@ private:
 
 public:
 	TEST_METHOD(populate_getSuccessors_branched) {
-		std::vector<int> followsTExpAns{ stmtIdx2, stmtIdx3, stmtIdx4, stmtIdx5 };
+		std::vector<StmtIndex> followsTExpAns{ stmtIdx2, stmtIdx3, stmtIdx4, stmtIdx5 };
 
 		Follows::insert(stmtIdx1, stmtIdx2);
 		Follows::insert(stmtIdx1, stmtIdx5);
@@ -44,7 +44,7 @@ public:
 	};
 
 	TEST_METHOD(populate_getSuccessors_linear) {
-		std::vector<int> followsTExpAns{ stmtIdx1, stmtIdx2, stmtIdx3, stmtIdx4 };
+		std::vector<StmtIndex> followsTExpAns{ stmtIdx1, stmtIdx2, stmtIdx3, stmtIdx4 };
 
 		Follows::insert(stmtIdx1, stmtIdx2);
 		Follows::insert(stmtIdx2, stmtIdx3);
@@ -65,7 +65,7 @@ public:
 	};
 
 	TEST_METHOD(populate_getPredecessors_branched) {
-		std::vector<int> followsTExpAns{ stmtIdx4, stmtIdx2, stmtIdx1 };
+		std::vector<StmtIndex> followsTExpAns{ stmtIdx4, stmtIdx2, stmtIdx1 };
 
 		Follows::insert(stmtIdx1, stmtIdx2);
 		Follows::insert(stmtIdx2, stmtIdx3);
@@ -86,7 +86,7 @@ public:
 	};
 
 	TEST_METHOD(populate_getPredecessors_linear) {
-		std::vector<int> followsTExpAns{ stmtIdx3, stmtIdx2, stmtIdx1, stmtIdx5 };
+		std::vector<StmtIndex> followsTExpAns{ stmtIdx3, stmtIdx2, stmtIdx1, stmtIdx5 };
 
 		Follows::insert(stmtIdx1, stmtIdx2);
 		Follows::insert(stmtIdx2, stmtIdx3);
@@ -129,9 +129,9 @@ public:
 	};
 
 	TEST_METHOD(getAllPredecessorSuccessorInfo) {
-		std::vector<int> followsTpredecessors{ stmtIdx2, stmtIdx1, stmtIdx1 };
-		std::vector<int> followsTsuccessors{ stmtIdx3, stmtIdx2, stmtIdx3 };
-		std::tuple<std::vector<int>, std::vector<int>> followsTExpAns =
+		std::vector<StmtIndex> followsTpredecessors{ stmtIdx2, stmtIdx1, stmtIdx1 };
+		std::vector<StmtIndex> followsTsuccessors{ stmtIdx3, stmtIdx2, stmtIdx3 };
+		std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> followsTExpAns =
 			std::make_tuple(followsTpredecessors, followsTsuccessors);
 
 		Follows::insert(stmtIdx1, stmtIdx2);

@@ -22,7 +22,7 @@ private:
 
 public:
 	TEST_METHOD(insert_getFromVariable) {
-		std::vector<int> expectedAns{ procIndex1 };
+		std::vector<ProcIndex> expectedAns{ procIndex1 };
 
 		ModifiesP::insert(procIndex1, varIndex1);
 		auto procedures = ModifiesP::getFromVariable(varIndex1);
@@ -43,7 +43,7 @@ public:
 	};
 
 	TEST_METHOD(insert_getVariables) {
-		std::vector<int> expectedAns{ varIndex1, varIndex2 };
+		std::vector<VarIndex> expectedAns{ varIndex1, varIndex2 };
 
 		ModifiesP::insert(procIndex1, varIndex1);
 		ModifiesP::insert(procIndex1, varIndex2);
@@ -52,9 +52,9 @@ public:
 	};
 
 	TEST_METHOD(getAllSynonymVarInfo) {
-		std::vector<int> procedures{ procIndex1, procIndex1, procIndex2, procIndex2 };
-		std::vector<int> variables{ varIndex1, varIndex2, varIndex1, varIndex2 };
-		std::tuple<std::vector<int>, std::vector<int>> expectedAns = std::make_tuple(procedures, variables);
+		std::vector<ProcIndex> procedures{ procIndex1, procIndex1, procIndex2, procIndex2 };
+		std::vector<VarIndex> variables{ varIndex1, varIndex2, varIndex1, varIndex2 };
+		std::tuple<std::vector<ProcIndex>, std::vector<VarIndex>> expectedAns = std::make_tuple(procedures, variables);
 
 		ModifiesP::insert(procIndex1, varIndex1);
 		ModifiesP::insert(procIndex1, varIndex2);
@@ -66,7 +66,7 @@ public:
 	};
 
 	TEST_METHOD(populateFromSubSynonyms) {
-		std::vector<int> expectedAns{ varIndex1, varIndex2 };
+		std::vector<VarIndex> expectedAns{ varIndex1, varIndex2 };
 
 		std::unordered_set<ProcIndex> subStmts{ procIndex1 };
 		ModifiesP::insert(procIndex1, varIndex1);

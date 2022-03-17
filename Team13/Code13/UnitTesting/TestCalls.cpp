@@ -24,10 +24,10 @@ public:
 		Calls::insert(predecessor2, successor2);
 
 		auto procedures = Calls::getSuccessors(predecessor1);
-		Assert::IsTrue(std::vector<int> { successor1 } == procedures);
+		Assert::IsTrue(std::vector<ProcIndex> { successor1 } == procedures);
 
 		procedures = Calls::getSuccessors(predecessor2);
-		Assert::IsTrue(std::vector<int> { successor2 } == procedures);
+		Assert::IsTrue(std::vector<ProcIndex> { successor2 } == procedures);
 
 		procedures = Calls::getSuccessors(successor1);
 		Assert::IsTrue(0 == procedures.size());
@@ -38,7 +38,7 @@ public:
 		Calls::insert(predecessor1, successor2);
 
 		auto procedures = Calls::getSuccessors(predecessor1);
-		Assert::IsTrue(std::vector<int> { successor1, successor2 } == procedures);
+		Assert::IsTrue(std::vector<ProcIndex> { successor1, successor2 } == procedures);
 
 		procedures = Calls::getSuccessors(successor1);
 		Assert::IsTrue(0 == procedures.size());
@@ -49,22 +49,22 @@ public:
 		Calls::insert(predecessor2, successor2);
 
 		auto procedures = Calls::getPredecessors(successor1);
-		Assert::IsTrue(std::vector<int> {predecessor1} == procedures);
+		Assert::IsTrue(std::vector<ProcIndex> {predecessor1} == procedures);
 
 		procedures = Calls::getPredecessors(successor2);
-		Assert::IsTrue(std::vector<int> {predecessor2} == procedures);
+		Assert::IsTrue(std::vector<ProcIndex> {predecessor2} == procedures);
 
 		procedures = Calls::getPredecessors(predecessor1);
 		Assert::IsTrue(0 == procedures.size());
 	};
 
 	TEST_METHOD(insert_getPredecessors_multPredOneSuc) {
-		std::vector<int> expectedAns{ predecessor1, predecessor2 };
+		std::vector<ProcIndex> expectedAns{ predecessor1, predecessor2 };
 
 		Calls::insert(predecessor1, successor1);
 		Calls::insert(predecessor2, successor1);
 		auto procedures = Calls::getPredecessors(successor1);
-		Assert::IsTrue(std::vector<int> { predecessor1, predecessor2 } == procedures);
+		Assert::IsTrue(std::vector<ProcIndex> { predecessor1, predecessor2 } == procedures);
 
 		procedures = Calls::getPredecessors(predecessor1);
 		Assert::IsTrue(0 == procedures.size());
@@ -109,9 +109,9 @@ public:
 	};
 
 	TEST_METHOD(insert_getAllPredecessorSuccessorInfo_onePredOneSuc) {
-		std::vector<int> predecessors{ predecessor1, predecessor2 };
-		std::vector<int> successors{ successor1, successor2 };
-		std::tuple<std::vector<int>, std::vector<int>> expectedAns = std::make_tuple(predecessors, successors);
+		std::vector<ProcIndex> predecessors{ predecessor1, predecessor2 };
+		std::vector<ProcIndex> successors{ successor1, successor2 };
+		std::tuple<std::vector<ProcIndex>, std::vector<ProcIndex>> expectedAns = std::make_tuple(predecessors, successors);
 
 		Calls::insert(predecessor1, successor1);
 		Calls::insert(predecessor2, successor2);
@@ -121,9 +121,9 @@ public:
 	};
 
 	TEST_METHOD(insert_getAllPredecessorSuccessorInfo_onePredMultSuc) {
-		std::vector<int> predecessors{ predecessor1, predecessor1 };
-		std::vector<int> successors{ successor1, successor2 };
-		std::tuple<std::vector<int>, std::vector<int>> expectedAns = std::make_tuple(predecessors, successors);
+		std::vector<ProcIndex> predecessors{ predecessor1, predecessor1 };
+		std::vector<ProcIndex> successors{ successor1, successor2 };
+		std::tuple<std::vector<ProcIndex>, std::vector<ProcIndex>> expectedAns = std::make_tuple(predecessors, successors);
 
 		Calls::insert(predecessor1, successor1);
 		Calls::insert(predecessor1, successor2);
@@ -133,9 +133,9 @@ public:
 	};
 
 	TEST_METHOD(insert_getAllPredecessorSuccessorInfo_multPredOneSuc) {
-		std::vector<int> predecessors{ predecessor1, predecessor2 };
-		std::vector<int> successors{ successor1, successor1 };
-		std::tuple<std::vector<int>, std::vector<int>> expectedAns = std::make_tuple(predecessors, successors);
+		std::vector<ProcIndex> predecessors{ predecessor1, predecessor2 };
+		std::vector<ProcIndex> successors{ successor1, successor1 };
+		std::tuple<std::vector<ProcIndex>, std::vector<ProcIndex>> expectedAns = std::make_tuple(predecessors, successors);
 
 		Calls::insert(predecessor1, successor1);
 		Calls::insert(predecessor2, successor1);
