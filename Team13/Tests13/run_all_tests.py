@@ -2,6 +2,7 @@
 
 import os
 import subprocess
+import xml.etree.ElementTree as ET
 
 AUTOTESTER_PATH = '..\Code13\Release\AutoTester.exe'
 SLN_PATH = '..\Code13\StartupSPASolution.sln'
@@ -44,6 +45,14 @@ def main():
             continue
         print(f'Running test set: {root_name}')
         subprocess.call([AUTOTESTER_PATH, source_file, query_file, xml_file])
+        if os.path.exists(xml_file) and os.path.isfile(xml_file):
+            tree = ET.parse(xml_file)
+            num_errors = len(tree.findall('.//failed')) \
+                + len(tree.findall('.//timeout')) \
+                + len(tree.findall('.//exception')) \
+                + len(tree.findall('.//crash'))
+            num_queries = len(tree.findall('.//query'))
+            print(f'Number of errors: {num_errors} / {num_queries}')
     
 if __name__ == '__main__':
     main()
