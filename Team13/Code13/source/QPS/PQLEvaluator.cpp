@@ -24,6 +24,7 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
 	std::unordered_set<std::string> columns = pq.getColumns();
 	std::vector<ParsedRelationship> relationships = pq.getRelationships();
 	std::vector<ParsedPattern> patterns = pq.getPatterns();
+	std::vector<ParsedWith> withs = pq.getWiths();
 
 	// Assumption: Semantically corrct ParsedQuery
 	// 1. Get all relationship results from such-that-clause
@@ -48,6 +49,15 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
 	for (size_t i = 0; i < patterns.size(); i++) {
 		ParsedPattern parsedPattern = patterns.at(i);
 		instructions.push_back(new PatternInstruction(parsedPattern.getSynonym(), parsedPattern.getPatternType(), parsedPattern.getEntRef(), parsedPattern.getExpression()));
+	}
+
+	// 3. Get all with results for with-clause
+	for (const ParsedWith& with : withs) {
+		PqlReference lhs = with.getLhs();
+		PqlReference rhs = with.getRhs();
+		PqlEntityType lhsEntity = declarations.find(lhs.second) != declarations.end() ? declarations.at(lhs.second) : PqlEntityType::Constant;
+		PqlEntityType rhsEntity = declarations.find(rhs.second) != declarations.end() ? declarations.at(rhs.second) : PqlEntityType::Constant;
+		instructions.push_back(new WithInstruction(lhs, rhs, lhsEntity, rhsEntity, with.getAttribType()));
 	}
 
 	// TODO: Optimisation: Sort instructions.

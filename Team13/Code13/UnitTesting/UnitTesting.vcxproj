@@ -211,6 +211,7 @@
     <ClCompile Include="TestUsesP.cpp" />
     <ClCompile Include="TestUsesS.cpp" />
     <ClCompile Include="TestUsesPInstruction.cpp" />
+    <ClCompile Include="TestWithInstruction.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

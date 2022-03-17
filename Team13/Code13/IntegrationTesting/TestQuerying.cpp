@@ -13,6 +13,7 @@
 #include "../source/PKB/Parent.h"
 #include "../source/PKB/ParentT.h"
 #include "../source/PKB/Pattern.h"
+#include "../source/PKB/TransitivePopulator.h"
 #include "../source/PKB/ModifiesP.h"
 #include "../source/PKB/ModifiesS.h"
 #include "../source/PKB/UsesP.h"
@@ -1720,6 +1721,333 @@ public:
 		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
 		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getAttributes(), parsedQuery.getDeclarations());
 		std::list<std::string> expectedRes{ "7" };
+		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+		Assert::AreEqual(true, areListsEqual);
+	}
+	TEST_METHOD(querying_withStringTwoAttributeComparison_successful) {
+		/* Insert test program:
+		* procedure proc1 {
+		* read proc1;
+		* print read;
+		* read = proc1 + 2;
+		* }
+		*/
+		ProcIndex procIndex = Entity::insertProc("proc1");
+		StmtIndex stmtIndex1 = Entity::insertStmt(StatementType::readType);
+		VarIndex varProc1 = Entity::insertVar("proc1");
+		ModifiesS::insert(stmtIndex1, varProc1);
+		Attribute::insertStmtByName(stmtIndex1, StatementType::readType, std::string("proc1"));
+		StmtIndex stmtIndex2 = Entity::insertStmt(StatementType::printType);
+		VarIndex varRead = Entity::insertVar("read");
+		Attribute::insertStmtByName(stmtIndex2, StatementType::printType, std::string("read"));
+		UsesS::insert(stmtIndex2, varRead);
+		StmtIndex stmtIndex3 = Entity::insertStmt(StatementType::assignType);
+		ModifiesS::insert(stmtIndex3, varRead);
+		UsesS::insert(stmtIndex3, varProc1);
+		Entity::insertConst(2);
+		TransitivePopulator::populateRecursiveInfo();
+
+
+		// 2. Test QPS Parser:
+		std::string query = "read r; procedure p; Select r with r.varName = p.procName";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		Assert::AreEqual(size_t(2), parsedQuery.getDeclarations().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getWiths().size());
+
+		// 3. Test QPS Evaluator:
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
+
+		//// Test numRow:
+		Assert::AreEqual(size_t(1), evTable.getNumRow());
+
+		//// Test Table:
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("r") != tableRef.end()); // "r" exists
+
+		//// Test Values: std::unordered_map<std::string, PqlEntityType>
+		std::vector<int> values{ 1 };
+		auto actualValues = tableRef.at("r");
+		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// Test EvResult:
+		bool actualEvResult = evTable.getEvResult();
+		Assert::AreEqual(true, actualEvResult);
+
+		// 4. Test QPS Result Projector:
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getAttributes(), parsedQuery.getDeclarations());
+		std::list<std::string> expectedRes{ "1" };
+		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+		Assert::AreEqual(true, areListsEqual);
+	}
+
+	TEST_METHOD(querying_withStringAttributeIdentComparison_successful) {
+		/* Insert test program:
+		* procedure proc1 {
+		* read proc1;
+		* print read;
+		* read = proc1 + 2;
+		* }
+		*/
+		ProcIndex procIndex = Entity::insertProc("proc1");
+		StmtIndex stmtIndex1 = Entity::insertStmt(StatementType::readType);
+		VarIndex varProc1 = Entity::insertVar("proc1");
+		ModifiesS::insert(stmtIndex1, varProc1);
+		Attribute::insertStmtByName(stmtIndex1, StatementType::readType, std::string("proc1"));
+		StmtIndex stmtIndex2 = Entity::insertStmt(StatementType::printType);
+		VarIndex varRead = Entity::insertVar("read");
+		Attribute::insertStmtByName(stmtIndex2, StatementType::printType, std::string("read"));
+		UsesS::insert(stmtIndex2, varRead);
+		StmtIndex stmtIndex3 = Entity::insertStmt(StatementType::assignType);
+		ModifiesS::insert(stmtIndex3, varRead);
+		UsesS::insert(stmtIndex3, varProc1);
+		Entity::insertConst(2);
+		TransitivePopulator::populateRecursiveInfo();
+
+		// 2. Test QPS Parser:
+		std::string query = "print pn; Select pn with \"read\" = pn.varName";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		Assert::AreEqual(size_t(1), parsedQuery.getDeclarations().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getWiths().size());
+
+		// 3. Test QPS Evaluator:
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
+
+		//// Test numRow:
+		Assert::AreEqual(size_t(1), evTable.getNumRow());
+
+		//// Test Table:
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("pn") != tableRef.end()); // "pn" exists
+
+		//// Test Values: std::unordered_map<std::string, PqlEntityType>
+		std::vector<int> values{ 2 };
+		auto actualValues = tableRef.at("pn");
+		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// Test EvResult:
+		bool actualEvResult = evTable.getEvResult();
+		Assert::AreEqual(true, actualEvResult);
+
+		// 4. Test QPS Result Projector:
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getAttributes(), parsedQuery.getDeclarations());
+		std::list<std::string> expectedRes{ "2" };
+		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+		Assert::AreEqual(true, areListsEqual);
+	}
+
+	TEST_METHOD(querying_withStringTwoIdentComparison_successful) {
+		/* Insert test program:
+		* procedure proc1 {
+		* read proc1;
+		* print read;
+		* read = proc1 + 2;
+		* }
+		*/
+		ProcIndex procIndex = Entity::insertProc("proc1");
+		StmtIndex stmtIndex1 = Entity::insertStmt(StatementType::readType);
+		VarIndex varProc1 = Entity::insertVar("proc1");
+		ModifiesS::insert(stmtIndex1, varProc1);
+		Attribute::insertStmtByName(stmtIndex1, StatementType::readType, std::string("proc1"));
+		StmtIndex stmtIndex2 = Entity::insertStmt(StatementType::printType);
+		VarIndex varRead = Entity::insertVar("read");
+		Attribute::insertStmtByName(stmtIndex2, StatementType::printType, std::string("read"));
+		UsesS::insert(stmtIndex2, varRead);
+		StmtIndex stmtIndex3 = Entity::insertStmt(StatementType::assignType);
+		ModifiesS::insert(stmtIndex3, varRead);
+		UsesS::insert(stmtIndex3, varProc1);
+		Entity::insertConst(2);
+		TransitivePopulator::populateRecursiveInfo();
+
+
+		/* 1. Setup:
+		* Clause: with "print" = "read"
+		*/
+
+
+		// 2. Test QPS Parser:
+		std::string query = "stmt s; Select s with \"abc\" = \"abc\"";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		Assert::AreEqual(size_t(1), parsedQuery.getDeclarations().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getWiths().size());
+
+		// 3. Test QPS Evaluator:
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
+
+		//// Test evResult:
+		Assert::AreEqual(true, evTable.getEvResult());
+
+		// 4. Test QPS Result Projector:
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getAttributes(), parsedQuery.getDeclarations());
+		std::list<std::string> expectedRes{ "1", "2", "3" };
+		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+		Assert::AreEqual(true, areListsEqual);
+	}
+
+	TEST_METHOD(querying_withIntegerTwoAttributeComparison_successful) {
+		/* Insert test program:
+		* procedure proc1 {
+		* read proc1;
+		* print read;
+		* read = proc1 + 2;
+		* }
+		*/
+		ProcIndex procIndex = Entity::insertProc("proc1");
+		StmtIndex stmtIndex1 = Entity::insertStmt(StatementType::readType);
+		VarIndex varProc1 = Entity::insertVar("proc1");
+		ModifiesS::insert(stmtIndex1, varProc1);
+		Attribute::insertStmtByName(stmtIndex1, StatementType::readType, std::string("proc1"));
+		StmtIndex stmtIndex2 = Entity::insertStmt(StatementType::printType);
+		VarIndex varRead = Entity::insertVar("read");
+		Attribute::insertStmtByName(stmtIndex2, StatementType::printType, std::string("read"));
+		UsesS::insert(stmtIndex2, varRead);
+		StmtIndex stmtIndex3 = Entity::insertStmt(StatementType::assignType);
+		ModifiesS::insert(stmtIndex3, varRead);
+		UsesS::insert(stmtIndex3, varProc1);
+		Entity::insertConst(2);
+		TransitivePopulator::populateRecursiveInfo();
+
+		// 2. Test QPS Parser:
+		std::string query = "constant c; stmt s; Select c with c.value = s.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		Assert::AreEqual(size_t(2), parsedQuery.getDeclarations().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getWiths().size());
+
+		// 3. Test QPS Evaluator:
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
+
+		//// Test numRow:
+		Assert::AreEqual(size_t(1), evTable.getNumRow());
+
+		//// Test Table:
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("c") != tableRef.end()); // "c" exists
+		Assert::AreEqual(true, tableRef.find("s") != tableRef.end()); // "s" exists
+
+		//// Test Values: std::unordered_map<std::string, PqlEntityType>
+		std::vector<int> values{ 2 };
+		auto actualValues = tableRef.at("c");
+		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// Test EvResult:
+		bool actualEvResult = evTable.getEvResult();
+		Assert::AreEqual(true, actualEvResult);
+
+		// 4. Test QPS Result Projector:
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getAttributes(), parsedQuery.getDeclarations());
+		std::list<std::string> expectedRes{ "2" };
+		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+		Assert::AreEqual(true, areListsEqual);
+	}
+
+	TEST_METHOD(querying_withIntegerAttributeIntegerComparison_successful) {
+		/* Insert test program:
+		* procedure proc1 {
+		* read proc1;
+		* print read;
+		* read = proc1 + 2;
+		* }
+		*/
+		ProcIndex procIndex = Entity::insertProc("proc1");
+		StmtIndex stmtIndex1 = Entity::insertStmt(StatementType::readType);
+		VarIndex varProc1 = Entity::insertVar("proc1");
+		ModifiesS::insert(stmtIndex1, varProc1);
+		Attribute::insertStmtByName(stmtIndex1, StatementType::readType, std::string("proc1"));
+		StmtIndex stmtIndex2 = Entity::insertStmt(StatementType::printType);
+		VarIndex varRead = Entity::insertVar("read");
+		Attribute::insertStmtByName(stmtIndex2, StatementType::printType, std::string("read"));
+		UsesS::insert(stmtIndex2, varRead);
+		StmtIndex stmtIndex3 = Entity::insertStmt(StatementType::assignType);
+		ModifiesS::insert(stmtIndex3, varRead);
+		UsesS::insert(stmtIndex3, varProc1);
+		Entity::insertConst(2);
+		TransitivePopulator::populateRecursiveInfo();
+
+		// 2. Test QPS Parser:
+		std::string query = "read r; Select r with 1 = r.stmt#";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		Assert::AreEqual(size_t(1), parsedQuery.getDeclarations().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getWiths().size());
+
+		// 3. Test QPS Evaluator:
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
+
+		//// Test numRow:
+		Assert::AreEqual(size_t(1), evTable.getNumRow());
+
+		//// Test Table:
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("r") != tableRef.end()); // "r" exists
+
+		//// Test Values: std::unordered_map<std::string, PqlEntityType>
+		std::vector<int> values{ 1 };
+		auto actualValues = tableRef.at("r");
+		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// Test EvResult:
+		bool actualEvResult = evTable.getEvResult();
+		Assert::AreEqual(true, actualEvResult);
+
+		// 4. Test QPS Result Projector:
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getAttributes(), parsedQuery.getDeclarations());
+		std::list<std::string> expectedRes{ "1" };
+		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+		Assert::AreEqual(true, areListsEqual);
+	}
+
+	TEST_METHOD(querying_withIntegerTwoIntegerComparison_successful) {
+		/* Insert test program:
+		* procedure proc1 {
+		* read proc1;
+		* print read;
+		* read = proc1 + 2;
+		* }
+		*/
+		ProcIndex procIndex = Entity::insertProc("proc1");
+		StmtIndex stmtIndex1 = Entity::insertStmt(StatementType::readType);
+		VarIndex varProc1 = Entity::insertVar("proc1");
+		ModifiesS::insert(stmtIndex1, varProc1);
+		Attribute::insertStmtByName(stmtIndex1, StatementType::readType, std::string("proc1"));
+		StmtIndex stmtIndex2 = Entity::insertStmt(StatementType::printType);
+		VarIndex varRead = Entity::insertVar("read");
+		Attribute::insertStmtByName(stmtIndex2, StatementType::printType, std::string("read"));
+		UsesS::insert(stmtIndex2, varRead);
+		StmtIndex stmtIndex3 = Entity::insertStmt(StatementType::assignType);
+		ModifiesS::insert(stmtIndex3, varRead);
+		UsesS::insert(stmtIndex3, varProc1);
+		Entity::insertConst(2);
+		TransitivePopulator::populateRecursiveInfo();
+
+		// 2. Test QPS Parser:
+		std::string query = "variable v; Select v with 100 = 100";
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		Assert::AreEqual(size_t(1), parsedQuery.getDeclarations().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getWiths().size());
+
+		// 3. Test QPS Evaluator:
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
+
+		//// Test evResult:
+		Assert::AreEqual(true, evTable.getEvResult());
+
+		// 4. Test QPS Result Projector:
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getAttributes(), parsedQuery.getDeclarations());
+		std::list<std::string> expectedRes{ "proc1", "read"};
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
 	}

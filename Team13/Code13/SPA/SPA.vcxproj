@@ -29,6 +29,7 @@
     <ClCompile Include="..\source\QPS\PQLResultProjector.cpp" />
     <ClCompile Include="..\source\QPS\QPSCommons.cpp" />
     <ClCompile Include="..\source\QPS\RelationshipInstruction.cpp" />
+    <ClCompile Include="..\source\QPS\WithInstruction.cpp" />
     <ClCompile Include="..\source\SP\DesignExtractor.cpp" />
     <ClCompile Include="..\source\SP\Parser.cpp" />
     <ClCompile Include="..\source\SP\SourceAST.cpp" />
@@ -69,6 +70,7 @@
     <ClInclude Include="..\source\QPS\PQLResultProjector.h" />
     <ClInclude Include="..\source\QPS\QPSCommons.h" />
     <ClInclude Include="..\source\QPS\RelationshipInstruction.h" />
+    <ClInclude Include="..\source\QPS\WithInstruction.h" />
     <ClInclude Include="..\source\SP\DesignExtractor.h" />
     <ClInclude Include="..\source\SP\Parser.h" />
     <ClInclude Include="..\source\SP\SourceAST.h" />

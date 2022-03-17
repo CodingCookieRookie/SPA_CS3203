@@ -8,6 +8,7 @@
 #include "GetAllInstruction.h"
 #include "RelationshipInstruction.h"
 #include "PatternInstruction.h"
+#include "WithInstruction.h"
 #include "ParsedQuery.h"
 #include "QPSCommons.h"
 

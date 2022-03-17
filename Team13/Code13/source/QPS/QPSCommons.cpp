@@ -45,8 +45,14 @@ int ParsedPattern::getNumOfArgs() const {
 	return numOfArgs;
 }
 
+/* Default constructor used while parsing
+Temporarily assign attribType as unvalidated because
+we delay type validation to the validator */
 ParsedWith::ParsedWith(PqlReference lhs, PqlReference rhs)
-	: lhs(lhs), rhs(rhs) {}
+	: ParsedWith(lhs, rhs, PqlAttributeType::unvalidated) {}
+
+ParsedWith::ParsedWith(PqlReference lhs, PqlReference rhs, PqlAttributeType attribType)
+	: lhs(lhs), rhs(rhs), attribType(attribType) {}
 
 PqlReference ParsedWith::getLhs() const {
 	return lhs;
@@ -54,6 +60,10 @@ PqlReference ParsedWith::getLhs() const {
 
 PqlReference ParsedWith::getRhs() const {
 	return rhs;
+}
+
+PqlAttributeType ParsedWith::getAttribType() const {
+	return attribType;
 }
 
 bool isSynonymRef(PqlReference reference) {

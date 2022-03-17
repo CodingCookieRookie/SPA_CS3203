@@ -40,7 +40,7 @@ enum class PqlExpressionType {
 };
 
 enum class PqlAttributeType {
-	string, integer
+	string, integer, unvalidated
 };
 
 typedef std::pair<PqlEntityType, std::string> PQL_VARIABLE;
@@ -85,10 +85,13 @@ class ParsedWith {
 private:
 	PqlReference lhs;
 	PqlReference rhs;
+	PqlAttributeType attribType;
 public:
 	ParsedWith(PqlReference lhs, PqlReference rhs);
+	ParsedWith(PqlReference lhs, PqlReference rhs, PqlAttributeType attribType);
 	PqlReference getLhs() const;
 	PqlReference getRhs() const;
+	PqlAttributeType getAttribType() const;
 };
 
 bool isSynonymRef(PqlReference reference);

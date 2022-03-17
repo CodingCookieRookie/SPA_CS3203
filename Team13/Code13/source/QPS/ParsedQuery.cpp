@@ -368,7 +368,7 @@ void ParsedQuery::populateWiths(const std::vector<ParsedWith>& allWiths) {
 		if (lhsAttribType != rhsAttribType) {
 			throw QPSException(QPSException::VALIDATOR_ERROR);
 		}
-		withs.push_back(with);
+		withs.emplace_back(with.getLhs(), with.getRhs(), lhsAttribType);
 	}
 }
 
