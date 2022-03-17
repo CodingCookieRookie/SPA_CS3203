@@ -45,6 +45,7 @@ StmtIndex DesignExtractor::processStmtNode(StmtNode* stmtNode, StmtIndex prevInd
 	std::unordered_set<std::string> usesVars = stmtNode->getUsesVars();
 	for (const std::string& varName : usesVars) {
 		VarIndex varIndex = Entity::insertVar(varName);
+		UsesS::insert(stmtIndex, varIndex);
 		switch (stmtNode->getStmtType()) {
 		case StatementType::ifType:
 			Pattern::insertIfInfo(stmtIndex, varIndex);
