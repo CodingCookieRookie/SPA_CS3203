@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-#include "../source/PKB/PKB.h"
+#include "../source/PKB/TransitivePopulator.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -49,7 +49,7 @@ public:
 		Parent::insert(stmtIdx1, stmtIdx3);
 		Parent::insert(stmtIdx1, stmtIdx4);
 
-		PKB::populateRecursiveInfo();
+		TransitivePopulator::populateRecursiveInfo();
 
 		/* Check Uses */
 		Assert::IsTrue(std::vector<int>{ varIdx1.index } == UsesS::getVariables(stmtIdx1));
@@ -94,7 +94,7 @@ public:
 		Parent::insert(stmtIdx3, stmtIdx4);
 		Parent::insert(stmtIdx1, stmtIdx3);
 
-		PKB::populateRecursiveInfo();
+		TransitivePopulator::populateRecursiveInfo();
 
 		/* Check Uses */
 		Assert::IsTrue(std::vector<int>{ varIdx1.index, varIdx2.index } == UsesS::getVariables(stmtIdx1));
@@ -136,7 +136,7 @@ public:
 		Parent::insert(stmtIdx2, stmtIdx3);
 		Parent::insert(stmtIdx2, stmtIdx4);
 
-		PKB::populateRecursiveInfo();
+		TransitivePopulator::populateRecursiveInfo();
 
 		/* Check Uses */
 		Assert::IsTrue(std::vector<int>{ varIdx1.index, varIdx2.index } == UsesS::getVariables(stmtIdx1));
@@ -170,7 +170,7 @@ public:
 		UsesP::insert(procIdx3, varIdx1);
 		ModifiesP::insert(procIdx3, varIdx2);
 
-		PKB::populateRecursiveInfo();
+		TransitivePopulator::populateRecursiveInfo();
 
 		/* Check Uses */
 		Assert::IsTrue(std::vector<int>{ varIdx1.index } == UsesP::getVariables(procIdx1));
@@ -214,7 +214,7 @@ public:
 		Parent::insert(stmtIdx3, stmtIdx5);
 		Parent::insert(stmtIdx5, stmtIdx6);
 
-		PKB::populateRecursiveInfo();
+		TransitivePopulator::populateRecursiveInfo();
 
 		/* Check Uses */
 		Assert::IsTrue(std::vector<int>{ varIdx1.index, varIdx2.index } == UsesS::getVariables(stmtIdx3));

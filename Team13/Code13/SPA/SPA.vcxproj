@@ -19,7 +19,7 @@
     <ClCompile Include="..\source\PKB\Entity.cpp" />
     <ClCompile Include="..\source\PKB\ExpressionProcessor.cpp" />
     <ClCompile Include="..\source\PKB\Pattern.cpp" />
-    <ClCompile Include="..\source\PKB\PKB.cpp" />
+    <ClCompile Include="..\source\PKB\TransitivePopulator.cpp" />
     <ClCompile Include="..\source\QPS\EvaluatedTable.cpp" />
     <ClCompile Include="..\source\QPS\GetAllInstruction.cpp" />
     <ClCompile Include="..\source\QPS\ParsedQuery.cpp" />
@@ -53,7 +53,7 @@
     <ClInclude Include="..\source\PKB\Parent.h" />
     <ClInclude Include="..\source\PKB\ParentT.h" />
     <ClInclude Include="..\source\PKB\Pattern.h" />
-    <ClInclude Include="..\source\PKB\PKB.h" />
+    <ClInclude Include="..\source\PKB\TransitivePopulator.h" />
     <ClInclude Include="..\source\PKB\RS1.h" />
     <ClInclude Include="..\source\PKB\RS2.h" />
     <ClInclude Include="..\source\PKB\RS2T.h" />

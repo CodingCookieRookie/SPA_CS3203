@@ -1,9 +1,9 @@
 #include <string>
 #include <vector>
 
-#include "PKB.h"
+#include "TransitivePopulator.h"
 
-void PKB::populateContainerInfo() {
+void TransitivePopulator::populateContainerInfo() {
 	std::vector<StmtIndex> containerStmts = Entity::getAllContainerStmts();
 
 	Container::populate();
@@ -16,12 +16,12 @@ void PKB::populateContainerInfo() {
 	}
 }
 
-void PKB::populateTransitiveStmtsInfo() {
+void TransitivePopulator::populateTransitiveStmtsInfo() {
 	FollowsT::populate();
 	ParentT::populate();
 }
 
-void PKB::populateTransitiveProcsInfo() {
+void TransitivePopulator::populateTransitiveProcsInfo() {
 	CallsT::populate();
 	auto calleeCallers = CallsT::getPredSucTable();
 	for (auto& entry : calleeCallers) {
@@ -34,7 +34,7 @@ void PKB::populateTransitiveProcsInfo() {
 	}
 }
 
-void PKB::populateRecursiveInfo() {
+void TransitivePopulator::populateRecursiveInfo() {
 	populateContainerInfo();
 	populateTransitiveStmtsInfo();
 	populateTransitiveProcsInfo();

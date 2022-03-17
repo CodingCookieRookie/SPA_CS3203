@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Exception/SPAException.h"
-#include "../PKB/PKB.h"
+#include "../PKB/TransitivePopulator.h"
 #include "../PKB/Pattern.h"
 #include "SourceAST.h"
 

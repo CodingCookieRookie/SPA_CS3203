@@ -104,7 +104,7 @@ void DesignExtractor::extract(SourceAST& ast) {
 		StmtIndex successor = followsPair.second;
 		Follows::insert(predecessor, successor);
 	}
-	PKB::populateRecursiveInfo();
+	TransitivePopulator::populateRecursiveInfo();
 }
 
 void DesignExtractor::validateAST(ProgramNode* progNode) {

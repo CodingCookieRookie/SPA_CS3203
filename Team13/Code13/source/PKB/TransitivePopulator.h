@@ -17,7 +17,7 @@
 #include "./UsesP.h"
 #include "./UsesS.h"
 
-class PKB {
+class TransitivePopulator {
 private:
 	static void populateContainerInfo();
 	static void populateTransitiveProcsInfo();
