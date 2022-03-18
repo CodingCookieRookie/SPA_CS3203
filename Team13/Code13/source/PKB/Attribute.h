@@ -15,11 +15,13 @@ protected:
 	static std::vector<EntityAttributeRef> processIntegerAttributeArgVector(PqlEntityType entityType);
 
 	static std::unordered_map<std::string, NameIndex> nameIdxTable;
+	static std::unordered_map<NameIndex, std::string> idxNameTable;
 	static std::unordered_map<NameIndex, std::unordered_set<VarIndex>> nameVarIdxTable;
 	static std::unordered_map<NameIndex, std::unordered_set<ProcIndex>> nameProcIdxTable;
 	static std::unordered_map<NameIndex, std::unordered_set<ProcIndex>> nameCallProcIdxTable;
 	static std::unordered_map<NameIndex, std::unordered_set<VarIndex>> nameReadVarIdxTable;
 	static std::unordered_map<NameIndex, std::unordered_set<VarIndex>> namePrintVarIdxTable;
+	static std::unordered_map<StmtIndex, NameIndex> stmtIdxAttributeNameTable;
 
 public:
 	static NameIndex insertNameValue(std::string nameValue);
@@ -35,6 +37,7 @@ public:
 	static void insertProcIdxByName(ProcIndex& procIdx, NameIndex nameIdx);
 	static void insertStmtByName(StmtIndex& stmtIdx, StatementType stmtType, std::string& nameValue);
 
+	static std::string getAttributeNameByStmtIdx(StmtIndex& stmtIdx);
 	static std::tuple<std::vector<EntityAttributeRef>, std::vector<EntityAttributeRef>> getEqualNameAttributes(PqlEntityType leftEntityType, PqlEntityType rightEntityType);
 	static std::vector<EntityAttributeRef> getEqualIntegerAttributes(PqlEntityType leftEntityType, PqlEntityType rightEntityType);
 	static std::vector<EntityAttributeRef> getEqualNameAttributesFromName(PqlEntityType entityType, std::string& nameValue);

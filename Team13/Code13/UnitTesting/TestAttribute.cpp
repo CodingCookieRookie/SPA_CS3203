@@ -283,6 +283,124 @@ public:
 		Assert::IsFalse(3 == res3);
 	}
 
+	TEST_METHOD(insertCallStmt_getAttributeNameByStmtIdx_singleStmt) {
+		StmtIndex stmtIdx = Entity::insertStmt(callType, name1);
+
+		std::string res = Attribute::getAttributeNameByStmtIdx(stmtIdx);
+
+		Assert::IsTrue(name1 == res);
+	}
+
+	TEST_METHOD(insertCallStmt_getAttributeNameByStmtIdx_multipleStmts_differentNames) {
+		StmtIndex stmtIdx1 = Entity::insertStmt(callType, name1);
+		StmtIndex stmtIdx2 = Entity::insertStmt(callType, name2);
+
+		std::string res1 = Attribute::getAttributeNameByStmtIdx(stmtIdx1);
+		std::string res2 = Attribute::getAttributeNameByStmtIdx(stmtIdx2);
+
+		Assert::IsTrue(name1 == res1);
+		Assert::IsTrue(name2 == res2);
+	}
+
+	TEST_METHOD(insertCallStmt_getAttributeNameByStmtIdx_multipleStmts_sameName) {
+		StmtIndex stmtIdx1 = Entity::insertStmt(callType, name1);
+		StmtIndex stmtIdx2 = Entity::insertStmt(callType, name1);
+
+		std::string res1 = Attribute::getAttributeNameByStmtIdx(stmtIdx1);
+		std::string res2 = Attribute::getAttributeNameByStmtIdx(stmtIdx2);
+
+		Assert::IsTrue(name1 == res1);
+		Assert::IsTrue(name1 == res2);
+	}
+
+	TEST_METHOD(insertReadStmt_getAttributeNameByStmtIdx_singleStmt) {
+		StmtIndex stmtIdx = Entity::insertStmt(readType, name1);
+
+		std::string res = Attribute::getAttributeNameByStmtIdx(stmtIdx);
+
+		Assert::IsTrue(name1 == res);
+	}
+
+	TEST_METHOD(insertReadStmt_getAttributeNameByStmtIdx_multipleStmts_differentNames) {
+		StmtIndex stmtIdx1 = Entity::insertStmt(readType, name1);
+		StmtIndex stmtIdx2 = Entity::insertStmt(readType, name2);
+
+		std::string res1 = Attribute::getAttributeNameByStmtIdx(stmtIdx1);
+		std::string res2 = Attribute::getAttributeNameByStmtIdx(stmtIdx2);
+
+		Assert::IsTrue(name1 == res1);
+		Assert::IsTrue(name2 == res2);
+	}
+
+	TEST_METHOD(insertReadStmt_getAttributeNameByStmtIdx_multipleStmts_sameName) {
+		StmtIndex stmtIdx1 = Entity::insertStmt(readType, name1);
+		StmtIndex stmtIdx2 = Entity::insertStmt(readType, name1);
+
+		std::string res1 = Attribute::getAttributeNameByStmtIdx(stmtIdx1);
+		std::string res2 = Attribute::getAttributeNameByStmtIdx(stmtIdx2);
+
+		Assert::IsTrue(name1 == res1);
+		Assert::IsTrue(name1 == res2);
+	}
+
+	TEST_METHOD(insertPrintStmt_getAttributeNameByStmtIdx_singleStmt) {
+		StmtIndex stmtIdx = Entity::insertStmt(printType, name1);
+
+		std::string res = Attribute::getAttributeNameByStmtIdx(stmtIdx);
+
+		Assert::IsTrue(name1 == res);
+	}
+
+	TEST_METHOD(insertPrintStmt_getAttributeNameByStmtIdx_multipleStmts_differentNames) {
+		StmtIndex stmtIdx1 = Entity::insertStmt(printType, name1);
+		StmtIndex stmtIdx2 = Entity::insertStmt(printType, name2);
+
+		std::string res1 = Attribute::getAttributeNameByStmtIdx(stmtIdx1);
+		std::string res2 = Attribute::getAttributeNameByStmtIdx(stmtIdx2);
+
+		Assert::IsTrue(name1 == res1);
+		Assert::IsTrue(name2 == res2);
+	}
+
+	TEST_METHOD(insertPrintStmt_getAttributeNameByStmtIdx_multipleStmts_sameName) {
+		StmtIndex stmtIdx1 = Entity::insertStmt(printType, name1);
+		StmtIndex stmtIdx2 = Entity::insertStmt(printType, name1);
+
+		std::string res1 = Attribute::getAttributeNameByStmtIdx(stmtIdx1);
+		std::string res2 = Attribute::getAttributeNameByStmtIdx(stmtIdx2);
+
+		Assert::IsTrue(name1 == res1);
+		Assert::IsTrue(name1 == res2);
+	}
+
+	TEST_METHOD(insertStmt_getAttributeNameByStmtIdx_differentStmtTypes_differentNames) {
+		StmtIndex stmtIdx1 = Entity::insertStmt(callType, name1);
+		StmtIndex stmtIdx2 = Entity::insertStmt(printType, name2);
+		StmtIndex stmtIdx3 = Entity::insertStmt(readType, name3);
+
+		std::string res1 = Attribute::getAttributeNameByStmtIdx(stmtIdx1);
+		std::string res2 = Attribute::getAttributeNameByStmtIdx(stmtIdx2);
+		std::string res3 = Attribute::getAttributeNameByStmtIdx(stmtIdx3);
+
+		Assert::IsTrue(name1 == res1);
+		Assert::IsTrue(name2 == res2);
+		Assert::IsTrue(name3 == res3);
+	}
+
+	TEST_METHOD(insertStmt_getAttributeNameByStmtIdx_differentStmtTypes_sameName) {
+		StmtIndex stmtIdx1 = Entity::insertStmt(callType, name1);
+		StmtIndex stmtIdx2 = Entity::insertStmt(printType, name1);
+		StmtIndex stmtIdx3 = Entity::insertStmt(readType, name1);
+
+		std::string res1 = Attribute::getAttributeNameByStmtIdx(stmtIdx1);
+		std::string res2 = Attribute::getAttributeNameByStmtIdx(stmtIdx2);
+		std::string res3 = Attribute::getAttributeNameByStmtIdx(stmtIdx3);
+
+		Assert::IsTrue(name1 == res1);
+		Assert::IsTrue(name1 == res2);
+		Assert::IsTrue(name1 == res3);
+	}
+
 	TEST_METHOD(getEqualNameAttributes_oneEntity_sameEntityQueried) {
 		ProcIndex procIdx = Entity::insertProc(procName1);
 

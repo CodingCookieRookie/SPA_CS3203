@@ -8,11 +8,13 @@
 #include "./Entity.h"
 
 std::unordered_map<std::string, NameIndex> Attribute::nameIdxTable;
+std::unordered_map<NameIndex, std::string> Attribute::idxNameTable;
 std::unordered_map<NameIndex, std::unordered_set<VarIndex>> Attribute::nameVarIdxTable;
 std::unordered_map<NameIndex, std::unordered_set<ProcIndex>> Attribute::nameProcIdxTable;
-std::unordered_map<NameIndex, std::unordered_set<ProcIndex>> Attribute::nameCallProcIdxTable;
-std::unordered_map<NameIndex, std::unordered_set<VarIndex>> Attribute::nameReadVarIdxTable;
-std::unordered_map<NameIndex, std::unordered_set<VarIndex>> Attribute::namePrintVarIdxTable;
+std::unordered_map<NameIndex, std::unordered_set<StmtIndex>> Attribute::nameCallProcIdxTable;
+std::unordered_map<NameIndex, std::unordered_set<StmtIndex>> Attribute::nameReadVarIdxTable;
+std::unordered_map<NameIndex, std::unordered_set<StmtIndex>> Attribute::namePrintVarIdxTable;
+std::unordered_map<StmtIndex, NameIndex> Attribute::stmtIdxAttributeNameTable;
 
 std::unordered_set<VarIndex> Attribute::getVarIdxSet(std::string& varName) {
 	return nameVarIdxTable[getNameIdx(varName)];
@@ -44,6 +46,7 @@ NameIndex Attribute::insertNameValue(std::string nameValue) {
 	if (!containsName(nameValue)) {
 		NameIndex nameIdx = NameIndex(getNameIdxTableSize()) + 1;
 		nameIdxTable[nameValue] = nameIdx;
+		idxNameTable[nameIdx] = nameValue;
 	}
 	return nameIdxTable[nameValue];
 }
@@ -62,6 +65,7 @@ void Attribute::insertProcIdxByName(ProcIndex& procIdx, NameIndex nameIdx) {
 
 void Attribute::insertStmtByName(StmtIndex& stmtIdx, StatementType stmtType, std::string& nameValue) {
 	NameIndex nameIdx = insertNameValue(nameValue);
+	stmtIdxAttributeNameTable[stmtIdx] = nameIdx;
 
 	switch (stmtType) {
 	case StatementType::callType:
@@ -74,6 +78,10 @@ void Attribute::insertStmtByName(StmtIndex& stmtIdx, StatementType stmtType, std
 		namePrintVarIdxTable[nameIdx].insert(stmtIdx);
 		break;
 	}
+}
+
+std::string Attribute::getAttributeNameByStmtIdx(StmtIndex& stmtIdx) {
+	return idxNameTable[stmtIdxAttributeNameTable[stmtIdx]];
 }
 
 std::tuple<std::vector<EntityAttributeRef>, std::vector<EntityAttributeRef>> Attribute::getEqualNameAttributes(PqlEntityType leftEntityType, PqlEntityType rightEntityType) {
