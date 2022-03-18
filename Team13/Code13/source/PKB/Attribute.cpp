@@ -1,11 +1,4 @@
-#include <map>
-#include <string>
-#include <tuple>
-#include <unordered_map>
-#include <unordered_set>
-#include <vector>
-
-#include "./Entity.h"
+#include "./Attribute.h"
 
 std::unordered_map<std::string, NameIndex> Attribute::nameIdxTable;
 std::unordered_map<NameIndex, std::string> Attribute::idxNameTable;

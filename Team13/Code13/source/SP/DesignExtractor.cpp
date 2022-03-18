@@ -3,6 +3,7 @@
 std::unordered_map<ProcIndex, std::vector<StmtIndex>> DesignExtractor::procStmtMap{};
 std::unordered_map<StmtIndex, std::vector<StmtIndex>> DesignExtractor::stmtParentMap{};
 std::unordered_map<StmtIndex, StmtIndex> DesignExtractor::stmtFollowsMap{};
+std::unordered_map<StmtNode*, StmtIndex> DesignExtractor::stmtNodeIndexMap{};
 
 void DesignExtractor::processProgramNode(ProgramNode* programNode) {
 	for (ProcedureNode* procedureNode : programNode->getProcedureNodes()) {
@@ -12,8 +13,9 @@ void DesignExtractor::processProgramNode(ProgramNode* programNode) {
 
 void DesignExtractor::processProcedureNode(ProcedureNode* procedureNode) {
 	ProcIndex procIndex = Entity::insertProc(procedureNode->getProcName());
+	StmtLstNode* stmtLstNode = procedureNode->getStmtLstNode();
 	std::vector<StmtIndex> stmtIndices =
-		processStmtLstNode(procedureNode->getStmtLstNode());
+		processStmtLstNode(stmtLstNode);
 	procStmtMap[procIndex] = stmtIndices;
 }
 
@@ -31,6 +33,7 @@ std::vector<StmtIndex> DesignExtractor::processStmtLstNode(
 
 StmtIndex DesignExtractor::processStmtNode(StmtNode* stmtNode, StmtIndex prevIndex) {
 	StmtIndex stmtIndex = Entity::insertStmt(stmtNode->getStmtType());
+	stmtNodeIndexMap[stmtNode] = stmtIndex;
 	if (!(prevIndex == StmtIndex())) {
 		stmtFollowsMap[prevIndex] = stmtIndex;
 	}
@@ -78,6 +81,78 @@ StmtIndex DesignExtractor::processStmtNode(StmtNode* stmtNode, StmtIndex prevInd
 		}
 	}
 	return stmtIndex;
+}
+
+void DesignExtractor::appendNode(CFGNode*& head, CFGNode*& tail, CFGNode* next) {
+	if (head == nullptr) {
+		head = next;
+		tail = next;
+	} else {
+		tail->addNext(next);
+		tail = next;
+	}
+}
+
+void DesignExtractor::processCFGStmtIndices(std::unordered_set<StmtIndex>& stmtIndices, CFGNode*& head, CFGNode*& tail) {
+	if (!stmtIndices.empty()) {
+		CFGNode* next = new CFGNode(stmtIndices);
+		appendNode(head, tail, next);
+	}
+}
+
+CFG DesignExtractor::generateCFG(StmtLstNode* stmtLstNode) {
+	CFGNode* head = nullptr;
+	CFGNode* tail = nullptr;
+	std::unordered_set<StmtIndex> stmtIndices;
+	for (StmtNode* stmtNode : stmtLstNode->getStmtNodes()) {
+		if (stmtNode->getStmtType() == StatementType::ifType) {
+			/* Add CFG node for previous non-container statements */
+			processCFGStmtIndices(stmtIndices, head, tail);
+
+			/* Add CFG node for if statement */
+			stmtIndices.clear();
+			stmtIndices.insert(stmtNodeIndexMap[stmtNode]);
+			CFGNode* ifNode = new CFGNode(stmtIndices);
+			appendNode(head, tail, ifNode);
+			stmtIndices.clear();
+
+			/* Link if statement node to CFG of its statement lists */
+			CFG thenCFG = generateCFG(stmtNode->getChildStmtLst()[0]);
+			CFG elseCFG = generateCFG(stmtNode->getChildStmtLst()[1]);
+			CFGNode* thenCFGHead = thenCFG.getHead();
+			CFGNode* elseCFGHead = elseCFG.getHead();
+			tail->addNext(thenCFGHead);
+			tail->addNext(elseCFGHead);
+
+			/* Link to dummy node */
+			CFGNode* dummy = new CFGNode();
+			thenCFG.addToEnd(dummy);
+			elseCFG.addToEnd(dummy);
+			tail = dummy;
+		} else if (stmtNode->getStmtType() == StatementType::whileType) {
+			/* Add CFG node for previous non-container statements */
+			processCFGStmtIndices(stmtIndices, head, tail);
+
+			/* Add CFG node for while statement */
+			stmtIndices.clear();
+			stmtIndices.insert(stmtNodeIndexMap[stmtNode]);
+			CFGNode* whileNode = new CFGNode(stmtIndices);
+			appendNode(head, tail, whileNode);
+			stmtIndices.clear();
+
+			/* Link if statement node to CFG of its statement list */
+			CFG whileCFG = generateCFG(stmtNode->getChildStmtLst()[0]);
+			CFGNode* whileCFGHead = whileCFG.getHead();
+			whileNode->addNext(whileCFGHead);
+			whileCFG.addToEnd(whileNode);
+		} else {
+			/* Accumulate non-container statement indices in stmtIndices */
+			stmtIndices.insert(stmtNodeIndexMap[stmtNode]);
+		}
+	}
+	processCFGStmtIndices(stmtIndices, head, tail);
+
+	return CFG(head, tail);
 }
 
 void DesignExtractor::extract(SourceAST& ast) {

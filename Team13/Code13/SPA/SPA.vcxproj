@@ -31,6 +31,8 @@
     <ClCompile Include="..\source\QPS\RelationshipInstruction.cpp" />
     <ClCompile Include="..\source\QPS\WithInstruction.cpp" />
     <ClCompile Include="..\source\SP\ASTValidator.cpp" />
+    <ClCompile Include="..\source\SP\CFG.cpp" />
+    <ClCompile Include="..\source\SP\CFGNode.cpp" />
     <ClCompile Include="..\source\SP\DesignExtractor.cpp" />
     <ClCompile Include="..\source\SP\Parser.cpp" />
     <ClCompile Include="..\source\SP\SourceAST.cpp" />
@@ -75,6 +77,8 @@
     <ClInclude Include="..\source\QPS\WithInstruction.h" />
     <ClInclude Include="..\source\SP\ASTValidator.h" />
     <ClInclude Include="..\source\SP\DesignExtractor.h" />
+    <ClInclude Include="..\source\SP\CFG.h" />
+    <ClInclude Include="..\source\SP\CFGNode.h" />
     <ClInclude Include="..\source\SP\Parser.h" />
     <ClInclude Include="..\source\SP\SourceAST.h" />
     <ClInclude Include="..\source\SP\SourceASTNode.h" />
