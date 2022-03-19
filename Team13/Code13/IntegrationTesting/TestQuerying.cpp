@@ -70,7 +70,6 @@ public:
 		Assert::IsFalse(selects.empty());
 		Assert::IsTrue(selects.find("s1") != selects.end());
 
-
 		// 3. Test QPS Evaluator:
 		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 		// Test numRow:
@@ -308,7 +307,7 @@ public:
 		Assert::AreEqual(true, areListsEqual);
 	}
 
-	TEST_METHOD(querying_declarationAndSelectModifiesStmtsOnly_success) {
+	TEST_METHOD(querying_declarationAndSelectModifiesSStmtsOnly_success) {
 		// 1. Setup:
 		std::string query = "assign a1; variable v1; Select a1 such that Modifies(a1, v1)";
 		// PKB inserts 6 types of statements
@@ -364,7 +363,64 @@ public:
 		Assert::AreEqual(true, areListsEqual);
 	}
 
-	TEST_METHOD(querying_declarationAndSelectUsesStmtsOnly_success) {
+	TEST_METHOD(querying_declarationAndSelectModifiesPStmtsOnly_success) {
+		// 1. Setup:
+		/* proc proc1 {...} */
+		std::string query = "procedure p1; variable v1; Select p1 such that Modifies(p1, v1)";
+		// PKB inserts 6 types of statements
+		std::vector<StmtIndex> stmts;
+		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+
+		// PKB inserts modifies
+		ProcIndex proc = Entity::insertProc("proc1");
+		Entity::insertVar("randomVar"); // insert dummy var
+		VarIndex varIndex = Entity::insertVar("x");
+		VarIndex varIndex2 = Entity::insertVar("y");
+		ModifiesP::insert(proc, varIndex);
+		ModifiesP::insert(proc, varIndex2);
+
+		// 2. Test QPS Parser:
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		Assert::AreEqual(size_t(2), parsedQuery.getDeclarations().size());
+
+		std::unordered_set<std::string> selects = parsedQuery.getColumns();
+		// Assert::AreEqual(size_t(1), selects.size());
+		//Assert::IsTrue(selects.find("p1") != selects.end());
+
+		// 3. Test QPS Evaluator:
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
+
+		// Test numRow:
+		Assert::AreEqual(size_t(2), evTable.getNumRow());
+
+		//// Test Table:
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("p1") != tableRef.end());
+
+		// Test Values: std::unordered_map<std::string, PqlEntityType>
+		std::vector<int> values{ 1 };
+		auto actualValues = tableRef.at("p1");
+		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		//// Test EvResult:
+		bool actualEvResult = evTable.getEvResult();
+		Assert::AreEqual(true, actualEvResult);
+
+		// 4. Test QPS Result Projector:
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getAttributes(), parsedQuery.getDeclarations());
+		std::list<std::string> expectedRes{ "proc1" };
+		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+		Assert::AreEqual(true, areListsEqual);
+	}
+
+	TEST_METHOD(querying_declarationAndSelectUsesSStmtsOnly_success) {
 		// 1. Setup:
 		std::string query = "print p1; variable v1; Select p1 such that Uses(p1, v1)";
 		// PKB inserts 6 types of statements
@@ -420,7 +476,62 @@ public:
 		Assert::AreEqual(true, areListsEqual);
 	}
 
-	TEST_METHOD(querying_declarationAndPatternOnly_success) {
+	TEST_METHOD(querying_declarationAndSelectUsesPStmtsOnly_success) {
+		// 1. Setup:
+		std::string query = "procedure p1; variable v1; Select p1 such that Uses(p1, v1)";
+		// PKB inserts 6 types of statements
+		std::vector<StmtIndex> stmts;
+		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+
+		// PKB inserts modifies
+		ProcIndex proc = Entity::insertProc("proc1");
+		Entity::insertVar("randomVar"); // insert dummy var
+		VarIndex varIndex = Entity::insertVar("x");
+		VarIndex varIndex2 = Entity::insertVar("y");
+		UsesP::insert(proc, varIndex);
+		UsesP::insert(proc, varIndex2);
+
+		// 2. Test QPS Parser:
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		Assert::AreEqual(size_t(2), parsedQuery.getDeclarations().size());
+
+		std::unordered_set<std::string> selects = parsedQuery.getColumns();
+		Assert::AreEqual(size_t(1), selects.size());
+		Assert::IsTrue(selects.find("p1") != selects.end());
+
+		// 3. Test QPS Evaluator:
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
+
+		// Test numRow:
+		Assert::AreEqual(size_t(2), evTable.getNumRow());
+
+		// Test Table:
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("p1") != tableRef.end());
+
+		// Test Values: std::unordered_map<std::string, PqlEntityType>
+		std::vector<int> values{ 1 };
+		auto actualValues = tableRef.at("p1");
+		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// Test EvResult:
+		// bool actualEvResult = evTable.getEvResult();
+		// Assert::AreEqual(true, actualEvResult);
+
+		// 4. Test QPS Result Projector:
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getAttributes(), parsedQuery.getDeclarations());
+		std::list<std::string> expectedRes{ "proc1" };
+		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+		Assert::AreEqual(true, areListsEqual);
+	}
+	TEST_METHOD(querying_declarationAndPatternAOnly_success) {
 		// b = b + w
 		// 1. Setup:
 		std::string query = "assign a; variable v; Select a pattern a(v, _\"w\"_)";
@@ -481,7 +592,125 @@ public:
 		Assert::AreEqual(true, areListsEqual);
 	}
 
-	TEST_METHOD(querying_ModifiesAndPatternOnly_success1) {
+	TEST_METHOD(querying_declarationAndPatternIOnly_success) {
+		// if (x > 0)
+		// 1. Setup:
+		std::string query = "if ifs; variable v; Select ifs pattern ifs(v, _, _)";
+
+		// PKB inserts 6 types of statements
+		std::vector<StmtIndex> stmts;
+		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+
+		// PKB inserts pattern
+		StmtIndex stmt = Entity::insertStmt(StatementType::ifType);
+		Entity::insertVar("y");
+		VarIndex varIndex = Entity::insertVar("x");
+		Pattern::insertIfInfo(stmt, varIndex);
+
+		// Check PKB population
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getAllIfPatternInfo();
+		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
+
+		// 2. Test QPS Parser:
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		Assert::AreEqual(size_t(2), parsedQuery.getDeclarations().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getPatterns().size());
+
+		// 3. Test QPS Evaluator:
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
+
+		//// Test numRow:
+		Assert::AreEqual(size_t(1), evTable.getNumRow());
+
+		//// Test Table:
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("ifs") != tableRef.end()); // "ifs" exists
+		Assert::AreEqual(true, tableRef.find("v") != tableRef.end()); // "v" exists
+
+		//// Test Values: std::unordered_map<std::string, PqlEntityType>
+		std::vector<int> values{ 7 };
+		auto actualValues = tableRef.at("ifs");
+		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// Test EvResult:
+		bool actualEvResult = evTable.getEvResult();
+		Assert::AreEqual(true, actualEvResult);
+
+		// 4. Test QPS Result Projector:
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getAttributes(), parsedQuery.getDeclarations());
+		std::list<std::string> expectedRes{ "7" };
+		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+		Assert::AreEqual(true, areListsEqual);
+	}
+
+	TEST_METHOD(querying_declarationAndPatternWOnly_success) {
+		// while (x > 0)
+		// 1. Setup:
+		std::string query = "while w; variable v; Select w pattern w(v, _)";
+
+		// PKB inserts 6 types of statements
+		std::vector<StmtIndex> stmts;
+		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+
+		// PKB inserts pattern
+		StmtIndex stmt = Entity::insertStmt(StatementType::whileType);
+		Entity::insertVar("w");
+		VarIndex varIndex = Entity::insertVar("x");
+		Pattern::insertWhileInfo(stmt, varIndex);
+
+		// Check PKB population
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getAllWhilePatternInfo();
+		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
+
+		// 2. Test QPS Parser:
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		Assert::AreEqual(size_t(2), parsedQuery.getDeclarations().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getPatterns().size());
+
+		// 3. Test QPS Evaluator:
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
+
+		//// Test numRow:
+		Assert::AreEqual(size_t(1), evTable.getNumRow());
+
+		//// Test Table:
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("w") != tableRef.end()); // "w" exists
+		Assert::AreEqual(true, tableRef.find("v") != tableRef.end()); // "v" exists
+
+		//// Test Values: std::unordered_map<std::string, PqlEntityType>
+		std::vector<int> values{ 7 };
+		auto actualValues = tableRef.at("w");
+		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// Test EvResult:
+		bool actualEvResult = evTable.getEvResult();
+		Assert::AreEqual(true, actualEvResult);
+
+		// 4. Test QPS Result Projector:
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getAttributes(), parsedQuery.getDeclarations());
+		std::list<std::string> expectedRes{ "7" };
+		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+		Assert::AreEqual(true, areListsEqual);
+	}
+
+	TEST_METHOD(querying_ModifiesSAndPatternAOnly_success1) {
 		/* Modifies(a / r / s / a1, v) pattern (v, "x")*/
 		// b = b + x
 		// 1. Setup:
@@ -538,7 +767,118 @@ public:
 		Assert::AreEqual(true, areListsEqual);
 	}
 
-	TEST_METHOD(querying_ModifiesAndPatternOnly_success2) {
+	TEST_METHOD(querying_ModifiesPAndPatternIOnly_success1) {
+		/* Modifies("p1", v) pattern ifs(v, _, _)*/
+		// if (b > 0)
+		// 1. Setup:
+		std::string query = "procedure p1; variable v; if ifs; Select p1 such that Modifies(p1, v) pattern ifs(v, _, _)";
+		// PKB inserts 6 types of statements
+		std::vector<StmtIndex> stmts;
+		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+
+		// PKB inserts pattern
+		ProcIndex proc = Entity::insertProc("proc1");
+		StmtIndex stmt = Entity::insertStmt(StatementType::ifType);
+		Entity::insertVar("dummy");
+		VarIndex varIndex = Entity::insertVar("b");
+		VarIndex varIndex2 = Entity::insertVar("x");
+		Pattern::insertIfInfo(stmt, varIndex);
+		ModifiesP::insert(proc, varIndex);
+
+		// Check PKB population
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getAllIfPatternInfo();
+		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
+
+		// 2. Test QPS Parser:
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		Assert::AreEqual(size_t(3), parsedQuery.getDeclarations().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
+
+		// 3. Test QPS Evaluator:
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
+
+		// Test numRow:
+		Assert::AreEqual(size_t(1), evTable.getNumRow());
+
+		//// Test Table:
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("p1") != tableRef.end());
+
+		// Test Values: std::unordered_map<std::string, PqlEntityType>
+		std::vector<int> values{ 1 };
+		auto actualValues = tableRef.at("p1");
+		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// 4. Test QPS Result Projector:
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getAttributes(), parsedQuery.getDeclarations());
+		std::list<std::string> expectedRes{ "proc1" };
+		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+		Assert::AreEqual(true, areListsEqual);
+	}
+
+	TEST_METHOD(querying_ModifiesPAndPatternWOnly_success1) {
+		/* Modifies("p1", v) pattern while(v, _)*/
+		// while (b > 0)
+		// 1. Setup:
+		std::string query = "procedure p1; variable v; while w; Select p1 such that Modifies(p1, v) pattern w(v, _)";
+		// PKB inserts 6 types of statements
+		std::vector<StmtIndex> stmts;
+		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+
+		// PKB inserts pattern
+		ProcIndex proc = Entity::insertProc("proc1");
+		StmtIndex stmt = Entity::insertStmt(StatementType::whileType);
+		Entity::insertVar("dummy");
+		VarIndex varIndex = Entity::insertVar("b");
+		VarIndex varIndex2 = Entity::insertVar("x");
+		Pattern::insertWhileInfo(stmt, varIndex);
+		ModifiesP::insert(proc, varIndex);
+
+		// Check PKB population
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getAllWhilePatternInfo();
+		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
+
+		// 2. Test QPS Parser:
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		Assert::AreEqual(size_t(3), parsedQuery.getDeclarations().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
+
+		// 3. Test QPS Evaluator:
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
+
+		// Test numRow:
+		Assert::AreEqual(size_t(1), evTable.getNumRow());
+
+		//// Test Table:
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("p1") != tableRef.end());
+
+		// Test Values: std::unordered_map<std::string, PqlEntityType>
+		std::vector<int> values{ 1 };
+		auto actualValues = tableRef.at("p1");
+		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// 4. Test QPS Result Projector:
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getAttributes(), parsedQuery.getDeclarations());
+		std::list<std::string> expectedRes{ "proc1" };
+		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+		Assert::AreEqual(true, areListsEqual);
+	}
+	TEST_METHOD(querying_ModifiesSAndPatternAOnly_success2) {
 		/* Modifies(a / r / s / a1, v) pattern ("b", "x")*/
 		// b = b + x
 		// 1. Setup:
@@ -595,7 +935,120 @@ public:
 		Assert::AreEqual(true, areListsEqual);
 	}
 
-	TEST_METHOD(querying_ModifiesAndPatternOnly_success3) {
+	TEST_METHOD(querying_ModifiesPAndPatternIOnly_success2) {
+		/* Modifies("p1", v) pattern ifs("b", _, _)*/
+		/* proc1 {
+			if (b > 0)
+			b = b + 1
+		} */
+		// 1. Setup:
+		std::string query = "procedure p1; variable v; if ifs; Select p1 such that Modifies(p1, v) pattern ifs(\"b\", _, _)";
+		// PKB inserts 6 types of statements
+		std::vector<StmtIndex> stmts;
+		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		// PKB inserts pattern
+		ProcIndex proc = Entity::insertProc("proc1");
+		StmtIndex stmt = Entity::insertStmt(StatementType::ifType);
+		Entity::insertVar("dummy");
+		VarIndex varIndex = Entity::insertVar("b");
+		VarIndex varIndex2 = Entity::insertVar("x");
+		Pattern::insertIfInfo(stmt, varIndex);
+		ModifiesP::insert(proc, varIndex);
+
+		// Check PKB population
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getAllIfPatternInfo();
+		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
+
+		// 2. Test QPS Parser:
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		Assert::AreEqual(size_t(3), parsedQuery.getDeclarations().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
+
+		// 3. Test QPS Evaluator:
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
+
+		// Test numRow:
+		Assert::AreEqual(size_t(1), evTable.getNumRow());
+
+		//// Test Table:
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("p1") != tableRef.end());
+
+		// Test Values: std::unordered_map<std::string, PqlEntityType>
+		std::vector<int> values{ 1 };
+		auto actualValues = tableRef.at("p1");
+		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// 4. Test QPS Result Projector:
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getAttributes(), parsedQuery.getDeclarations());
+		std::list<std::string> expectedRes{ "proc1" };
+		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+		Assert::AreEqual(true, areListsEqual);
+	}
+
+	TEST_METHOD(querying_ModifiesPAndPatternWOnly_success2) {
+		/* Modifies("p1", v) pattern w("proc1", _)*/
+		// if (b > 0)
+		// 1. Setup:
+		std::string query = "procedure p1; variable v; while w; Select p1 such that Modifies(p1, v) pattern w(\"b\", _)";
+		// PKB inserts 6 types of statements
+		std::vector<StmtIndex> stmts;
+		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		// PKB inserts pattern
+		ProcIndex proc = Entity::insertProc("proc1");
+		StmtIndex stmt = Entity::insertStmt(StatementType::whileType);
+		Entity::insertVar("dummy");
+		VarIndex varIndex = Entity::insertVar("b");
+		VarIndex varIndex2 = Entity::insertVar("x");
+		Pattern::insertWhileInfo(stmt, varIndex);
+		ModifiesP::insert(proc, varIndex);
+
+		// Check PKB population
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getAllWhilePatternInfo();
+		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
+
+		// 2. Test QPS Parser:
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		Assert::AreEqual(size_t(3), parsedQuery.getDeclarations().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
+
+		// 3. Test QPS Evaluator:
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
+
+		// Test numRow:
+		Assert::AreEqual(size_t(1), evTable.getNumRow());
+
+		//// Test Table:
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("p1") != tableRef.end());
+
+		// Test Values: std::unordered_map<std::string, PqlEntityType>
+		std::vector<int> values{ 1 };
+		auto actualValues = tableRef.at("p1");
+		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// 4. Test QPS Result Projector:
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getAttributes(), parsedQuery.getDeclarations());
+		std::list<std::string> expectedRes{ "proc1" };
+		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+		Assert::AreEqual(true, areListsEqual);
+	}
+
+	TEST_METHOD(querying_ModifiesSAndPatternAOnly_success3) {
 		/* Modifies(a / r / s / a1, "x") pattern (v, "x")*/
 		// b = b + x
 		// 1. Setup:
@@ -652,7 +1105,7 @@ public:
 		Assert::AreEqual(true, areListsEqual);
 	}
 
-	TEST_METHOD(querying_ModifiesAndPatternOnly_success4) {
+	TEST_METHOD(querying_ModifiesSAndPatternAOnly_success4) {
 		/* Modifies(a / r / s / a1, "x") pattern ("b", "x")*/
 		// b = b + x
 		// 1. Setup:
@@ -709,7 +1162,7 @@ public:
 		Assert::AreEqual(true, areListsEqual);
 	}
 
-	TEST_METHOD(querying_ModifiesAndPatternOnly_success5) {
+	TEST_METHOD(querying_ModifiesSAndPatternAOnly_success5) {
 		/* Modifies(a / r / s / a1, _) pattern (v, "x")*/
 		// b = b + x
 		// 1. Setup
@@ -766,7 +1219,7 @@ public:
 		Assert::AreEqual(true, areListsEqual);
 	}
 
-	TEST_METHOD(querying_ModifiesAndPatternOnly_success6) {
+	TEST_METHOD(querying_ModifiesSAndPatternAOnly_success6) {
 		/* Modifies(a / r / s / a1, _) pattern ("b", "x")*/
 		// b = b + x
 		// 1. Setup:
@@ -823,7 +1276,7 @@ public:
 		Assert::AreEqual(true, areListsEqual);
 	}
 
-	TEST_METHOD(querying_ModifiesAndPatternOnly_success7) {
+	TEST_METHOD(querying_ModifiesSAndPatternAOnly_success7) {
 		/* Modifies(7, v) pattern (v, "x")*/
 		// b = b + x
 		// 1. Setup
@@ -880,7 +1333,7 @@ public:
 		Assert::AreEqual(true, areListsEqual);
 	}
 
-	TEST_METHOD(querying_ModifiesAndPatternOnly_success8) {
+	TEST_METHOD(querying_ModifiesSAndPatternAOnly_success8) {
 		/* Modifies(7, "b") pattern ("b", "x")*/
 		// b = b + x
 		// 1. Setup:
@@ -937,7 +1390,7 @@ public:
 		Assert::AreEqual(true, areListsEqual);
 	}
 
-	TEST_METHOD(querying_ModifiesAndPatternOnly_success9) {
+	TEST_METHOD(querying_ModifiesSAndPatternAOnly_success9) {
 		/* Modifies(7, _) pattern (v, "x")*/
 		// b = b + x
 		// 1. Setup
@@ -994,7 +1447,7 @@ public:
 		Assert::AreEqual(true, areListsEqual);
 	}
 
-	TEST_METHOD(querying_ModifiesAndPatternOnly_success10) {
+	TEST_METHOD(querying_ModifiesSAndPatternAOnly_success10) {
 		/* Modifies(7, "b") pattern ("b", "x")*/
 		// b = b + x
 		// 1. Setup:
@@ -1052,7 +1505,7 @@ public:
 	}
 
 	/* Uses variation generally similar to Modifies for testing */
-	TEST_METHOD(querying_UsesAndPatternOnly_success1) {
+	TEST_METHOD(querying_UsesSAndPatternAOnly_success1) {
 		// b = b + y
 		// 1. Setup:
 		std::string query = "assign a; variable v; Select a such that Uses(a, v) pattern a(v, _\"y\"_)";
@@ -1112,7 +1565,135 @@ public:
 		Assert::AreEqual(true, areListsEqual);
 	}
 
-	TEST_METHOD(querying_UsesAndPatternOnly_success2) {
+	TEST_METHOD(querying_UsesPAndPatternIOnly_success1) {
+		/* proc1 {
+			b = b + y
+
+			if (b > 0)
+		*/
+		// 1. Setup:
+		std::string query = "procedure p1; variable v; if ifs; Select p1 such that Uses(p1, v) pattern ifs(v, _, _)";
+
+		// PKB inserts 6 types of statements
+		std::vector<StmtIndex> stmts;
+		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+
+		// PKB inserts pattern
+		ProcIndex proc = Entity::insertProc("proc1");
+		StmtIndex stmt = Entity::insertStmt(StatementType::ifType);
+		Entity::insertVar("dummy");
+		VarIndex varIndex = Entity::insertVar("b");
+		VarIndex varIndex2 = Entity::insertVar("y");
+		UsesP::insert(proc, varIndex);
+		Pattern::insertIfInfo(stmt, varIndex);
+
+		// Check PKB population
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getAllIfPatternInfo();
+		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
+
+		// 2. Test QPS Parser:
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		Assert::AreEqual(size_t(3), parsedQuery.getDeclarations().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
+
+		// 3. Test QPS Evaluator:
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
+
+		// Test numRow:
+		Assert::AreEqual(size_t(1), evTable.getNumRow());
+
+		// Test Table:
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("p1") != tableRef.end());
+
+		// Test Values: std::unordered_map<std::string, PqlEntityType>
+		std::vector<int> values{ 1 };
+		auto actualValues = tableRef.at("p1");
+		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// Test EvResult:
+		bool actualEvResult = evTable.getEvResult();
+		Assert::AreEqual(true, actualEvResult);
+
+		// 4. Test QPS Result Projector:
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getAttributes(), parsedQuery.getDeclarations());
+		std::list<std::string> expectedRes{ "proc1" };
+		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+		Assert::AreEqual(true, areListsEqual);
+	}
+
+	TEST_METHOD(querying_UsesPAndPatternWOnly_success1) {
+		/* proc1 {
+			b = b + y
+
+			if (b > 0)
+		*/
+		// 1. Setup:
+		std::string query = "procedure p1; variable v; while w; Select p1 such that Uses(p1, v) pattern w(v, _)";
+
+		// PKB inserts 6 types of statements
+		std::vector<StmtIndex> stmts;
+		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+
+		// PKB inserts pattern
+		ProcIndex proc = Entity::insertProc("proc1");
+		StmtIndex stmt = Entity::insertStmt(StatementType::whileType);
+		Entity::insertVar("dummy");
+		VarIndex varIndex = Entity::insertVar("b");
+		VarIndex varIndex2 = Entity::insertVar("y");
+		UsesP::insert(proc, varIndex);
+		Pattern::insertWhileInfo(stmt, varIndex);
+
+		// Check PKB population
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getAllWhilePatternInfo();
+		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
+
+		// 2. Test QPS Parser:
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		Assert::AreEqual(size_t(3), parsedQuery.getDeclarations().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
+
+		// 3. Test QPS Evaluator:
+		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
+
+		// Test numRow:
+		Assert::AreEqual(size_t(1), evTable.getNumRow());
+
+		// Test Table:
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("p1") != tableRef.end());
+
+		// Test Values: std::unordered_map<std::string, PqlEntityType>
+		std::vector<int> values{ 1 };
+		auto actualValues = tableRef.at("p1");
+		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// Test EvResult:
+		bool actualEvResult = evTable.getEvResult();
+		Assert::AreEqual(true, actualEvResult);
+
+		// 4. Test QPS Result Projector:
+		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getAttributes(), parsedQuery.getDeclarations());
+		std::list<std::string> expectedRes{ "proc1" };
+		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+		Assert::AreEqual(true, areListsEqual);
+	}
+
+	TEST_METHOD(querying_UsesSAndPatternAOnly_success2) {
 		// b = b + y
 		// 1. Setup:
 		std::string query = "assign a; variable v; Select a such that Uses(7, v) pattern a(v, _\"y\"_)";
@@ -1172,7 +1753,7 @@ public:
 		Assert::AreEqual(true, areListsEqual);
 	}
 
-	TEST_METHOD(querying_UsesAndPatternOnly_success3) {
+	TEST_METHOD(querying_UsesSAndPatternAOnly_success3) {
 		// b = b + y
 		// 1. Setup:
 		std::string query = "assign a; variable v; Select a such that Uses(a, _) pattern a(v, _\"y\"_)";
@@ -1231,7 +1812,7 @@ public:
 		Assert::AreEqual(true, areListsEqual);
 	}
 
-	TEST_METHOD(querying_UsesAndPatternOnly_success4) {
+	TEST_METHOD(querying_UsesSAndPatternAOnly_success4) {
 		// b = b + y
 		// 1. Setup:
 		std::string query = "assign a; variable v; Select a such that Uses(7, _) pattern a(v, _\"y\"_)";
@@ -1291,7 +1872,7 @@ public:
 		Assert::AreEqual(true, areListsEqual);
 	}
 
-	TEST_METHOD(querying_UsesAndPatternOnly_success5) {
+	TEST_METHOD(querying_UsesSAndPatternAOnly_success5) {
 		// b = b + y
 		// 1. Setup:
 		std::string query = "assign a; variable v; Select a such that Uses(a, _) pattern a(v, _\"y\"_)";
@@ -1357,7 +1938,7 @@ public:
 		Assert::AreEqual(true, areListsEqual);
 	}
 
-	TEST_METHOD(querying_FollowsAndPatternOnly_success) {
+	TEST_METHOD(querying_FollowsAndPatternAOnly_success) {
 		// stmt 7. abc = abc + d;
 		// stmt 8. d = abc + d;
 		// 6 is followed by 7 (read follows assign), but 7 is not followed by 8
@@ -1425,7 +2006,7 @@ public:
 		Assert::AreEqual(true, areListsEqual);
 	}
 
-	TEST_METHOD(querying_ParentStarAndPatternOnlyStress99_success) {
+	TEST_METHOD(querying_ParentStarAndPatternAOnlyStress99_success) {
 		// stmt 99. abc = abc + d;
 		// 6 is followed by 7 (read follows assign), but 7 is not followed by 8
 		// Results: {"a", {6}}
@@ -1501,7 +2082,7 @@ public:
 		Assert::AreEqual(true, areListsEqual);
 	}
 
-	TEST_METHOD(querying_declarationAndPatternExprOnly_success) {
+	TEST_METHOD(querying_declarationAndPatternAExprOnly_success) {
 		// b = (x + 1) * 2 / 3 - 4 % (5)
 		// 1. Setup:
 		std::string query = "assign a; variable v; Select a pattern a(v, _\"x + 1\"_)";
@@ -1613,7 +2194,7 @@ public:
 		Assert::AreEqual(true, areListsEqual);
 	}
 
-	TEST_METHOD(querying_patternFullMatchButSubtree_emptyResult) {
+	TEST_METHOD(querying_patternAFullMatchButSubtree_emptyResult) {
 		// b = (x + 1) * 2 / 3 - 4 % (5)
 		// 1. Setup:
 		std::string query = "assign a; variable v; Select a pattern a(v, \"x + 1\")";
@@ -1669,7 +2250,7 @@ public:
 		Assert::AreEqual(true, areListsEqual);
 	}
 
-	TEST_METHOD(querying_patternFullMatchWithFullExpression_success) {
+	TEST_METHOD(querying_patternAFullMatchWithFullExpression_success) {
 		// b = (x + 1) * 2 / 3 - 4 % (5)
 		// 1. Setup:
 		std::string query = "assign a; variable v; Select a pattern a(v, _\"(x + 1)       * 2 / 3		-4 %\n 5\"_)";
@@ -1746,7 +2327,6 @@ public:
 		UsesS::insert(stmtIndex3, varProc1);
 		Entity::insertConst(2);
 		TransitivePopulator::populateRecursiveInfo();
-
 
 		// 2. Test QPS Parser:
 		std::string query = "read r; procedure p; Select r with r.varName = p.procName";
@@ -1864,11 +2444,9 @@ public:
 		Entity::insertConst(2);
 		TransitivePopulator::populateRecursiveInfo();
 
-
 		/* 1. Setup:
 		* Clause: with "print" = "read"
 		*/
-
 
 		// 2. Test QPS Parser:
 		std::string query = "stmt s; Select s with \"abc\" = \"abc\"";
@@ -2047,7 +2625,7 @@ public:
 		// 4. Test QPS Result Projector:
 		evTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
 		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTable, parsedQuery.getAttributes(), parsedQuery.getDeclarations());
-		std::list<std::string> expectedRes{ "proc1", "read"};
+		std::list<std::string> expectedRes{ "proc1", "read" };
 		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
 		Assert::AreEqual(true, areListsEqual);
 	}
