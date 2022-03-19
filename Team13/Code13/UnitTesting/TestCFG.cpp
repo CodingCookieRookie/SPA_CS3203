@@ -14,8 +14,8 @@ private:
 
 public:
 	TEST_METHOD(initCFG_getHead) {
-		std::unordered_set<StmtIndex> stmtIndices1 = { stmtIdx1 , stmtIdx2 };
-		std::unordered_set<StmtIndex> stmtIndices2 = { stmtIdx3 };
+		std::set<StmtIndex> stmtIndices1 = { stmtIdx1 , stmtIdx2 };
+		std::set<StmtIndex> stmtIndices2 = { stmtIdx3 };
 		CFGNode* expectedHeadNode = new CFGNode(stmtIndices1);
 		CFGNode* expectedTailNode = new CFGNode(stmtIndices2);
 
@@ -26,8 +26,8 @@ public:
 	}
 
 	TEST_METHOD(initCFG_getTail) {
-		std::unordered_set<StmtIndex> stmtIndices1 = { stmtIdx1 , stmtIdx2 };
-		std::unordered_set<StmtIndex> stmtIndices2 = { stmtIdx3 };
+		std::set<StmtIndex> stmtIndices1 = { stmtIdx1 , stmtIdx2 };
+		std::set<StmtIndex> stmtIndices2 = { stmtIdx3 };
 		CFGNode* expectedHeadNode = new CFGNode(stmtIndices1);
 		CFGNode* expectedTailNode = new CFGNode(stmtIndices2);
 
@@ -38,9 +38,9 @@ public:
 	}
 
 	TEST_METHOD(initCFG_addToEnd) {
-		std::unordered_set<StmtIndex> stmtIndices1 = { stmtIdx1 };
-		std::unordered_set<StmtIndex> stmtIndices2 = { stmtIdx2 };
-		std::unordered_set<StmtIndex> stmtIndices3 = { stmtIdx3 };
+		std::set<StmtIndex> stmtIndices1 = { stmtIdx1 };
+		std::set<StmtIndex> stmtIndices2 = { stmtIdx2 };
+		std::set<StmtIndex> stmtIndices3 = { stmtIdx3 };
 
 		CFGNode* expectedHeadNode = new CFGNode(stmtIndices1);
 		CFGNode* expectedMidNode = new CFGNode(stmtIndices2);

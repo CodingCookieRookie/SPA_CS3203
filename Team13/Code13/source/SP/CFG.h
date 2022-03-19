@@ -6,7 +6,7 @@ class CFG {
 private:
 	CFGNode* head;
 	CFGNode* tail;
-	size_t traverseCFG(CFGNode*& node, std::unordered_set<CFGNode*>& cfgNodes);
+	size_t getSizeHelper(CFGNode*& node, std::unordered_set<CFGNode*>& cfgNodes);
 
 public:
 	CFG(CFGNode* head, CFGNode* tail);

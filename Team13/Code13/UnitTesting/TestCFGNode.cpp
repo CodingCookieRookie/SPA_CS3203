@@ -16,7 +16,7 @@ public:
 	TEST_METHOD(initEmptyNode_getStmtIndices) {
 		CFGNode* node = new CFGNode();
 
-		std::unordered_set<StmtIndex> res = node->getStmtIndices();
+		std::set<StmtIndex> res = node->getStmtIndices();
 		Assert::IsTrue(0 == res.size());
 	}
 
@@ -28,7 +28,7 @@ public:
 	}
 
 	TEST_METHOD(emptyNode_addNext_getNextNodes) {
-		std::unordered_set<StmtIndex> stmtIndices = { stmtIdx1 };
+		std::set<StmtIndex> stmtIndices = { stmtIdx1 };
 		CFGNode* nextNode = new CFGNode(stmtIndices);
 
 		std::unordered_set<CFGNode*> expectedRes = { nextNode };
@@ -41,19 +41,19 @@ public:
 	}
 
 	TEST_METHOD(initNode_getStmtIndices) {
-		std::unordered_set<StmtIndex> expectedRes = { stmtIdx1 , stmtIdx2 };
+		std::set<StmtIndex> expectedRes = { stmtIdx1 , stmtIdx2 };
 
-		std::unordered_set<StmtIndex> stmtIndices = { stmtIdx1 , stmtIdx2 };
+		std::set<StmtIndex> stmtIndices = { stmtIdx1 , stmtIdx2 };
 		CFGNode* node = new CFGNode(stmtIndices);
 
-		std::unordered_set<StmtIndex> res = node->getStmtIndices();
+		std::set<StmtIndex> res = node->getStmtIndices();
 		Assert::IsTrue(expectedRes == res);
 	}
 
 	TEST_METHOD(initNode_getNextNodes) {
 		std::unordered_set<CFGNode*> expectedRes = { };
 
-		std::unordered_set<StmtIndex> stmtIndices = { stmtIdx1 , stmtIdx2 };
+		std::set<StmtIndex> stmtIndices = { stmtIdx1 , stmtIdx2 };
 		CFGNode* node = new CFGNode(stmtIndices);
 
 		std::unordered_set<CFGNode*> res = node->getNextNodes();
@@ -61,14 +61,14 @@ public:
 	}
 
 	TEST_METHOD(addNext_getNextNodes) {
-		std::unordered_set<StmtIndex> stmtIndices1 = { stmtIdx2 };
-		std::unordered_set<StmtIndex> stmtIndices2 = { stmtIdx3 };
+		std::set<StmtIndex> stmtIndices1 = { stmtIdx2 };
+		std::set<StmtIndex> stmtIndices2 = { stmtIdx3 };
 		CFGNode* nextNode1 = new CFGNode(stmtIndices1);
 		CFGNode* nextNode2 = new CFGNode(stmtIndices2);
 
 		std::unordered_set<CFGNode*> expectedRes = { nextNode1, nextNode2 };
 
-		std::unordered_set<StmtIndex> stmtIndices = { stmtIdx1 };
+		std::set<StmtIndex> stmtIndices = { stmtIdx1 };
 		CFGNode* node = new CFGNode(stmtIndices);
 		node->addNext(nextNode1);
 		node->addNext(nextNode2);

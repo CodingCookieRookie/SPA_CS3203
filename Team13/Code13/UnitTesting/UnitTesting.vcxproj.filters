@@ -57,6 +57,7 @@
     <ClCompile Include="TestNext.cpp" />
     <ClCompile Include="TestCFGNode.cpp" />
     <ClCompile Include="TestCFG.cpp" />
+    <ClCompile Include="TestPKBCFG.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />

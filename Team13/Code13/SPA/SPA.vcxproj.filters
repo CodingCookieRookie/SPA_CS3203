@@ -82,6 +82,9 @@
     <ClCompile Include="..\source\SP\ASTValidator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\PKB\PKBCFG.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\PKB\ModifiesP.h">
@@ -211,6 +214,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\SP\CFGNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\PKB\PKBCFG.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

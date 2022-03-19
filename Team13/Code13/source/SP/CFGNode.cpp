@@ -1,13 +1,13 @@
 #include "CFGNode.h"
 
 CFGNode::CFGNode() {}
-CFGNode::CFGNode(std::unordered_set<StmtIndex> stmtIndices) : stmtIndices(stmtIndices) {}
+CFGNode::CFGNode(std::set<StmtIndex> stmtIndices) : stmtIndices(stmtIndices) {}
 
 void CFGNode::addNext(CFGNode* node) {
 	nextNodes.insert(node);
 }
 
-std::unordered_set<StmtIndex> CFGNode::getStmtIndices() {
+std::set<StmtIndex> CFGNode::getStmtIndices() {
 	return stmtIndices;
 }
 

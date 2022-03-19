@@ -1,9 +1,10 @@
 #pragma once
 
+#include "../PKB/Next.h"
 #include "../PKB/TransitivePopulator.h"
 #include "../PKB/Pattern.h"
+#include "../PKB/PKBCFG.h"
 #include "CFG.h"
-#include "CFGNode.h"
 #include "SourceAST.h"
 
 class DesignExtractor {
@@ -24,7 +25,9 @@ private:
 	static StmtIndex processStmtNode(StmtNode* stmtNode, StmtIndex prevIndex);
 	static StmtIndex insertStmt(StmtNode* stmtNode);
 	static void appendNode(CFGNode*& head, CFGNode*& tail, CFGNode* next);
-	static void processCFGStmtIndices(std::unordered_set<StmtIndex>& stmtIndices, CFGNode*& head, CFGNode*& tail);
+	static void processCFGStmtIndices(std::set<StmtIndex>& stmtIndices, CFGNode*& head, CFGNode*& tail);
+	static void processCFGs(ProgramNode* programNode);
+	static void extractNextInfo(CFGNode* node);
 
 public:
 	static void extract(SourceAST& ast);

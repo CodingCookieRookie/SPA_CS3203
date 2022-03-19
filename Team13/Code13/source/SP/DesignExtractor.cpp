@@ -107,14 +107,13 @@ StmtIndex DesignExtractor::insertStmt(StmtNode* stmtNode) {
 void DesignExtractor::appendNode(CFGNode*& head, CFGNode*& tail, CFGNode* next) {
 	if (head == nullptr) {
 		head = next;
-		tail = next;
 	} else {
 		tail->addNext(next);
-		tail = next;
 	}
+	tail = next;
 }
 
-void DesignExtractor::processCFGStmtIndices(std::unordered_set<StmtIndex>& stmtIndices, CFGNode*& head, CFGNode*& tail) {
+void DesignExtractor::processCFGStmtIndices(std::set<StmtIndex>& stmtIndices, CFGNode*& head, CFGNode*& tail) {
 	if (!stmtIndices.empty()) {
 		CFGNode* next = new CFGNode(stmtIndices);
 		appendNode(head, tail, next);
@@ -124,7 +123,7 @@ void DesignExtractor::processCFGStmtIndices(std::unordered_set<StmtIndex>& stmtI
 CFG DesignExtractor::generateCFG(StmtLstNode* stmtLstNode) {
 	CFGNode* head = nullptr;
 	CFGNode* tail = nullptr;
-	std::unordered_set<StmtIndex> stmtIndices;
+	std::set<StmtIndex> stmtIndices;
 	for (StmtNode* stmtNode : stmtLstNode->getStmtNodes()) {
 		if (stmtNode->getStmtType() == StatementType::ifType) {
 			/* Add CFG node for previous non-container statements */
@@ -176,11 +175,53 @@ CFG DesignExtractor::generateCFG(StmtLstNode* stmtLstNode) {
 	return CFG(head, tail);
 }
 
+void DesignExtractor::processCFGs(ProgramNode* programNode) {
+	for (ProcedureNode* procedureNode : programNode->getProcedureNodes()) {
+		StmtLstNode* stmtLstNode = procedureNode->getStmtLstNode();
+		CFG cfg = generateCFG(stmtLstNode);
+		extractNextInfo(cfg.getHead());
+		PKBCFG::insert(cfg);
+	}
+}
+
+void DesignExtractor::extractNextInfo(CFGNode* node) {
+	std::set<StmtIndex> predecessorStmtIndices = node->getStmtIndices();
+	std::unordered_set<CFGNode*> successorNodes = node->getNextNodes();
+
+	StmtIndex predecessor = *predecessorStmtIndices.begin();
+	/* For more than 1 statement in a CFGNode */
+	if (predecessorStmtIndices.size() > 1) {
+		for (StmtIndex successor : predecessorStmtIndices) {
+			if (successor != predecessor) {
+				Next::insert(predecessor, successor);
+				predecessor = successor;
+			}
+		}
+	}
+
+	for (auto& successorNode : successorNodes) {
+		CFGNode* currNode = successorNode;
+		/* Dummy node encountered */
+		while (currNode->getStmtIndices().size() == 0 && currNode->getNextNodes().size() > 0) {
+			/* Update currNode to dummy node's successor node */
+			currNode = *currNode->getNextNodes().begin();
+		}
+		if (currNode->getStmtIndices().size() > 0) {
+			StmtIndex successor = *currNode->getStmtIndices().begin();
+			if (!Next::containsPredecessor(predecessor, successor)) {
+				Next::insert(predecessor, successor);
+				extractNextInfo(currNode);
+			}
+		}
+	}
+}
+
 void DesignExtractor::extract(SourceAST& ast) {
 	stmtParentMap.clear();
 	stmtFollowsMap.clear();
 
-	processProgramNode(ast.getRoot());
+	ProgramNode* programNode = ast.getRoot();
+	processProgramNode(programNode);
 
 	/* Populate Parent and Follows Tables, and compute their transitive closures */
 	for (const std::pair<StmtIndex, std::vector<StmtIndex>> parentPair : stmtParentMap) {
@@ -197,6 +238,8 @@ void DesignExtractor::extract(SourceAST& ast) {
 		Follows::insert(predecessor, successor);
 	}
 	TransitivePopulator::populateRecursiveInfo();
+
+	processCFGs(programNode);
 }
 
 std::unordered_map<StmtIndex, std::vector<StmtIndex>> DesignExtractor::getStmtParentMap() {
