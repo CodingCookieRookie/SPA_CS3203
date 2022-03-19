@@ -1,6 +1,5 @@
 #include "DesignExtractor.h"
 
-std::unordered_map<ProcIndex, std::vector<StmtIndex>> DesignExtractor::procStmtMap{};
 std::unordered_map<StmtIndex, std::vector<StmtIndex>> DesignExtractor::stmtParentMap{};
 std::unordered_map<StmtIndex, StmtIndex> DesignExtractor::stmtFollowsMap{};
 std::unordered_map<StmtNode*, StmtIndex> DesignExtractor::stmtNodeIndexMap{};
@@ -13,10 +12,8 @@ void DesignExtractor::processProgramNode(ProgramNode* programNode) {
 
 void DesignExtractor::processProcedureNode(ProcedureNode* procedureNode) {
 	ProcIndex procIndex = Entity::insertProc(procedureNode->getProcName());
-	StmtLstNode* stmtLstNode = procedureNode->getStmtLstNode();
 	std::vector<StmtIndex> stmtIndices =
-		processStmtLstNode(stmtLstNode);
-	procStmtMap[procIndex] = stmtIndices;
+		processStmtLstNode(procedureNode->getStmtLstNode());
 }
 
 std::vector<StmtIndex> DesignExtractor::processStmtLstNode(
@@ -31,8 +28,9 @@ std::vector<StmtIndex> DesignExtractor::processStmtLstNode(
 	return stmtIndices;
 }
 
+/* TODO: refactor to adhere to SLAP and remove long method */
 StmtIndex DesignExtractor::processStmtNode(StmtNode* stmtNode, StmtIndex prevIndex) {
-	StmtIndex stmtIndex = Entity::insertStmt(stmtNode->getStmtType());
+	StmtIndex stmtIndex = insertStmt(stmtNode);
 	stmtNodeIndexMap[stmtNode] = stmtIndex;
 	if (!(prevIndex == StmtIndex())) {
 		stmtFollowsMap[prevIndex] = stmtIndex;
@@ -54,9 +52,6 @@ StmtIndex DesignExtractor::processStmtNode(StmtNode* stmtNode, StmtIndex prevInd
 			break;
 		case StatementType::whileType:
 			Pattern::insertWhileInfo(stmtIndex, varIndex);
-			break;
-		default:
-			UsesS::insert(stmtIndex, varIndex);
 			break;
 		}
 	}
@@ -80,6 +75,32 @@ StmtIndex DesignExtractor::processStmtNode(StmtNode* stmtNode, StmtIndex prevInd
 			stmtParentMap[stmtIndex].push_back(childIndex);
 		}
 	}
+	return stmtIndex;
+}
+
+StmtIndex DesignExtractor::insertStmt(StmtNode* stmtNode) {
+	StmtIndex stmtIndex;
+	std::string nameValue;
+	StatementType stmtType = stmtNode->getStmtType();
+
+	switch (stmtType) {
+	case StatementType::readType:
+		nameValue = *stmtNode->getModifiesVars().begin();
+		stmtIndex = Entity::insertStmt(stmtType, nameValue);
+		break;
+	case StatementType::printType:
+		nameValue = *stmtNode->getUsesVars().begin();
+		stmtIndex = Entity::insertStmt(stmtType, nameValue);
+		break;
+	case StatementType::callType:
+		nameValue = stmtNode->getProcCalled();
+		stmtIndex = Entity::insertStmt(stmtType, nameValue);
+		break;
+	default:
+		stmtIndex = Entity::insertStmt(stmtType);
+		break;
+	}
+
 	return stmtIndex;
 }
 
@@ -156,7 +177,6 @@ CFG DesignExtractor::generateCFG(StmtLstNode* stmtLstNode) {
 }
 
 void DesignExtractor::extract(SourceAST& ast) {
-	procStmtMap.clear();
 	stmtParentMap.clear();
 	stmtFollowsMap.clear();
 
@@ -177,10 +197,6 @@ void DesignExtractor::extract(SourceAST& ast) {
 		Follows::insert(predecessor, successor);
 	}
 	TransitivePopulator::populateRecursiveInfo();
-}
-
-std::unordered_map<ProcIndex, std::vector<StmtIndex>> DesignExtractor::getProcStmtMap() {
-	return procStmtMap;
 }
 
 std::unordered_map<StmtIndex, std::vector<StmtIndex>> DesignExtractor::getStmtParentMap() {

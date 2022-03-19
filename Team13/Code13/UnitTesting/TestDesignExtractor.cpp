@@ -44,12 +44,6 @@ public:
 		Assert::AreEqual(size_t(1), Entity::getAllVars().size());
 		Assert::AreEqual(varName, Entity::getVarName(Entity::getAllVars()[0]));
 
-		std::unordered_map<ProcIndex, std::vector<StmtIndex>>
-			procStmtMap = DesignExtractor::getProcStmtMap();
-		Assert::AreEqual(size_t(1), procStmtMap.size());
-		ProcIndex procIndex = Entity::getProcIdx(procName);
-		Assert::AreEqual(size_t(1), procStmtMap.at(procIndex).size());
-
 		Assert::AreEqual(size_t(1), std::get<0>(ModifiesS::getAllSynonymVarInfo()).size());
 	}
 
@@ -71,12 +65,6 @@ public:
 		Assert::AreEqual(size_t(1), Entity::getAllStmts().size());
 		Assert::AreEqual(size_t(1), Entity::getAllVars().size());
 		Assert::AreEqual(varName, Entity::getVarName(Entity::getAllVars()[0]));
-
-		std::unordered_map<ProcIndex, std::vector<StmtIndex>>
-			procStmtMap = DesignExtractor::getProcStmtMap();
-		Assert::AreEqual(size_t(1), procStmtMap.size());
-		ProcIndex procIndex = Entity::getProcIdx(procName);
-		Assert::AreEqual(size_t(1), procStmtMap.at(procIndex).size());
 
 		Assert::AreEqual(size_t(1), std::get<0>(UsesS::getAllSynonymVarInfo()).size());
 	}
@@ -103,12 +91,6 @@ public:
 		Assert::AreEqual(size_t(2), Entity::getAllVars().size());
 		Assert::AreEqual(varNameX, Entity::getVarName(Entity::getAllVars()[0]));
 		Assert::AreEqual(varNameY, Entity::getVarName(Entity::getAllVars()[1]));
-
-		std::unordered_map<ProcIndex, std::vector<StmtIndex>>
-			procStmtMap = DesignExtractor::getProcStmtMap();
-		Assert::AreEqual(size_t(1), procStmtMap.size());
-		ProcIndex procIndex = Entity::getProcIdx(procName);
-		Assert::AreEqual(size_t(2), procStmtMap.at(procIndex).size());
 
 		std::unordered_map<StmtIndex, StmtIndex>
 			stmtFollowsMap = DesignExtractor::getStmtFollowsMap();
@@ -1406,6 +1388,114 @@ public:
 		Assert::IsTrue(thirdNode == *fourthNodeNextNodes.begin());
 
 		Assert::AreEqual(size_t(4), cfg.size());
+	}
+
+	TEST_METHOD(extract_multProcs_insertStmt_attributesPopulated) {
+		/* AST is equivalent to the SIMPLE program
+		   procedure proc1 {
+			   1. if (a <= b) then {
+				   2. while (x == y) {
+					   3. print x;
+					   4. read x; } } else {
+				   5. if (hello != world) then {
+					   6. read y; } else {
+					   7. a = b + c;
+					   8. call proc2 } } }
+			procedure proc2 {
+				9. read x; }
+		*/
+
+		std::string procName1 = "proc1";
+		std::string procName2 = "proc2";
+		std::string varNameX = "x";
+		std::string varNameY = "y";
+
+		/* 1st proc */
+		/* Handle then-block */
+		StmtLstNode* innerWhileStmtLstNode = new StmtLstNode();
+		innerWhileStmtLstNode->addStmtNode(new PrintNode(varNameX));
+		innerWhileStmtLstNode->addStmtNode(new ReadNode(varNameX));
+		ExprNode* whileRootExprNode = new ExprNode(ExprNodeValueType::relOperator, "==");
+		ExprNode* whileLeftExprNode = new ExprNode(ExprNodeValueType::varName, varNameX);
+		ExprNode* whileRightExprNode = new ExprNode(ExprNodeValueType::varName, varNameY);
+		whileRootExprNode->addChild(whileLeftExprNode);
+		whileRootExprNode->addChild(whileRightExprNode);
+		WhileNode* innerWhileNode = new WhileNode(whileRootExprNode, innerWhileStmtLstNode);
+		StmtLstNode* thenStmtLstNode = new StmtLstNode();
+		thenStmtLstNode->addStmtNode(innerWhileNode);
+
+		/* Handle else-block */
+		ReadNode* readNode = new ReadNode(varNameY);
+		StmtLstNode* innerThenStmtLstNode = new StmtLstNode();
+		innerThenStmtLstNode->addStmtNode(readNode);
+		ExprNode* innerElseRootExprNode = new ExprNode(ExprNodeValueType::arithmeticOperator, "+");
+		ExprNode* innerElseLeftExprNode = new ExprNode(ExprNodeValueType::varName, "b");
+		ExprNode* innerElseRightExprNode = new ExprNode(ExprNodeValueType::varName, "c");
+		innerElseRootExprNode->addChild(innerElseLeftExprNode);
+		innerElseRootExprNode->addChild(innerElseRightExprNode);
+		AssignNode* assignNode = new AssignNode("a", innerElseRootExprNode);
+		StmtLstNode* innerElseStmtLstNode = new StmtLstNode();
+		innerElseStmtLstNode->addStmtNode(assignNode);
+		innerElseStmtLstNode->addStmtNode(new CallNode(procName2));
+		ExprNode* innerIfRootExprNode = new ExprNode(ExprNodeValueType::relOperator, "!=");
+		ExprNode* innerIfLeftExprNode = new ExprNode(ExprNodeValueType::varName, "hello");
+		ExprNode* innerIfRightExprNode = new ExprNode(ExprNodeValueType::varName, "world");
+		innerIfRootExprNode->addChild(innerIfLeftExprNode);
+		innerIfRootExprNode->addChild(innerIfRightExprNode);
+		IfNode* innerIfNode = new IfNode(innerIfRootExprNode, innerThenStmtLstNode, innerElseStmtLstNode);
+		StmtLstNode* elseStmtLstNode = new StmtLstNode();
+		elseStmtLstNode->addStmtNode(innerIfNode);
+
+		ExprNode* rootExprNode = new ExprNode(ExprNodeValueType::relOperator, "<=");
+		ExprNode* leftExprNode = new ExprNode(ExprNodeValueType::varName, "a");
+		ExprNode* rightExprNode = new ExprNode(ExprNodeValueType::varName, "b");
+		rootExprNode->addChild(leftExprNode);
+		rootExprNode->addChild(rightExprNode);
+		IfNode* ifNode = new IfNode(rootExprNode, thenStmtLstNode, elseStmtLstNode);
+		StmtLstNode* outerStmtLstNode = new StmtLstNode();
+		outerStmtLstNode->addStmtNode(ifNode);
+		ProcedureNode* procedureNode1 = new ProcedureNode(procName1);
+		procedureNode1->addStmtLst(outerStmtLstNode);
+
+		/* 2nd proc */
+		StmtLstNode* stmtLstNode = new StmtLstNode();
+		stmtLstNode->addStmtNode(new ReadNode(varNameX));
+		ProcedureNode* procedureNode2 = new ProcedureNode(procName2);
+		procedureNode2->addStmtLst(stmtLstNode);
+
+		ProgramNode* programNode = new ProgramNode();
+		programNode->addProcedure(procedureNode1);
+		programNode->addProcedure(procedureNode2);
+		SourceAST ast(programNode);
+		DesignExtractor::extract(ast);
+
+		/* Check stmts and attributes population */
+		Assert::AreEqual(size_t(9), Entity::getAllStmts().size());
+
+		/* read x */
+		std::vector<EntityAttributeRef> expectedResultReadVarNameX{ 4, 9 };
+		std::vector<EntityAttributeRef> resultReadVarNameX = Attribute::getEqualNameAttributesFromName(PqlEntityType::Read, varNameX);
+		Assert::IsTrue(expectedResultReadVarNameX == resultReadVarNameX);
+
+		/* read y */
+		std::vector<EntityAttributeRef> expectedResultReadVarNameY{ 6 };
+		std::vector<EntityAttributeRef> resultReadVarNameY = Attribute::getEqualNameAttributesFromName(PqlEntityType::Read, varNameY);
+		Assert::IsTrue(expectedResultReadVarNameY == resultReadVarNameY);
+
+		/* print x */
+		std::vector<EntityAttributeRef> expectedResultPrintVarNameX{ 3 };
+		std::vector<EntityAttributeRef> resultPrintVarNameX = Attribute::getEqualNameAttributesFromName(PqlEntityType::Print, varNameX);
+		Assert::IsTrue(expectedResultPrintVarNameX == resultPrintVarNameX);
+
+		/* print y (does not exist) */
+		std::vector<EntityAttributeRef> expectedResultPrintVarNameY{ };
+		std::vector<EntityAttributeRef> resultPrintVarNameY = Attribute::getEqualNameAttributesFromName(PqlEntityType::Print, varNameY);
+		Assert::IsTrue(expectedResultPrintVarNameY == resultPrintVarNameY);
+
+		/* call proc2 */
+		std::vector<EntityAttributeRef> expectedResultCallProcName2{ 8 };
+		std::vector<EntityAttributeRef> resultCallProcName2 = Attribute::getEqualNameAttributesFromName(PqlEntityType::Call, procName2);
+		Assert::IsTrue(expectedResultCallProcName2 == resultCallProcName2);
 	}
 	};
 }

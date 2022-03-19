@@ -8,9 +8,6 @@
 
 class DesignExtractor {
 private:
-	/* Maps a ProcIndex to a vector of the StmtIndices contained in it */
-	static std::unordered_map<ProcIndex, std::vector<StmtIndex>> procStmtMap;
-
 	/* Maps a StmtIndex to a vector of the StmtIndices contained in it, if applicable */
 	static std::unordered_map<StmtIndex, std::vector<StmtIndex>> stmtParentMap;
 
@@ -25,13 +22,13 @@ private:
 	static void processProcedureNode(ProcedureNode* procedureNode);
 	static std::vector<StmtIndex> processStmtLstNode(StmtLstNode* stmtLstNode);
 	static StmtIndex processStmtNode(StmtNode* stmtNode, StmtIndex prevIndex);
+	static StmtIndex insertStmt(StmtNode* stmtNode);
 	static void appendNode(CFGNode*& head, CFGNode*& tail, CFGNode* next);
 	static void processCFGStmtIndices(std::unordered_set<StmtIndex>& stmtIndices, CFGNode*& head, CFGNode*& tail);
 
 public:
 	static void extract(SourceAST& ast);
 	static CFG generateCFG(StmtLstNode* stmtLstNode);
-	static std::unordered_map<ProcIndex, std::vector<StmtIndex>> getProcStmtMap();
 	static std::unordered_map<StmtIndex, std::vector<StmtIndex>> getStmtParentMap();
 	static std::unordered_map<StmtIndex, StmtIndex> getStmtFollowsMap();
 };
