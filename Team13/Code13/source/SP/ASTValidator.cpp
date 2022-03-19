@@ -6,6 +6,9 @@ void ASTValidator::validateAST(SourceAST& ast) {
 
 	std::unordered_map<std::string, std::unordered_set<std::string>> callsMap{};
 	validateExistentProcCalls(progNode, callsMap, procNames);
+	if (isCyclic(callsMap)) {
+		throw ASTException(ASTException::CYCLIC_CALL_ERROR);
+	}
 }
 
 std::unordered_set<std::string> ASTValidator::getProcNames(ProgramNode* progNode) {
@@ -59,4 +62,49 @@ void ASTValidator::processCallsStmtNode(
 	}
 
 	calledProcs.insert(procName);
+}
+
+bool ASTValidator::isCyclic(std::unordered_map<std::string, std::unordered_set<std::string>>& callsMap) {
+	/* Initialise all nodes as not visited */
+	std::unordered_map<std::string, CallNodeState> visited;
+	for (const std::pair<std::string, std::unordered_set<std::string>>& callsPair : callsMap) {
+		visited[callsPair.first] = CallNodeState::notVisited;
+	}
+
+	/* Iterate all the non-visited nodes */
+	for (const std::pair<std::string, std::unordered_set<std::string>>& callsPair : callsMap) {
+		std::string curr = callsPair.first;
+		if (visited[curr] == CallNodeState::notVisited) {
+			std::stack<std::string> stack;
+			stack.push(curr);
+			visited[curr] = CallNodeState::inStack;
+			if (isCyclicUtil(stack, visited, callsMap)) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+bool ASTValidator::isCyclicUtil(
+	std::stack<std::string>& stack,
+	std::unordered_map<std::string, CallNodeState>& visited,
+	std::unordered_map<std::string, std::unordered_set<std::string>>& callsMap) {
+	std::unordered_set<std::string> calledProcs = callsMap[stack.top()];
+	for (std::string calledProc : calledProcs) {
+		if (visited[calledProc] == CallNodeState::inStack) {
+			return true;
+		}
+
+		if (visited[calledProc] == CallNodeState::notVisited) {
+			stack.push(calledProc);
+			visited[calledProc] = CallNodeState::inStack;
+			if (isCyclicUtil(stack, visited, callsMap)) {
+				return true;
+			}
+		}
+	}
+	visited[stack.top()] = CallNodeState::done;
+	stack.pop();
+	return false;
 }

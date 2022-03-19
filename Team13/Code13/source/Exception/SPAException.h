@@ -46,6 +46,7 @@ class ASTException : public SPAException {
 public:
 	static const std::string DUPLICATE_PROC_NAMES_ERROR;
 	static const std::string CALL_NON_EXISTENT_PROC_NAME_ERROR;
+	static const std::string CYCLIC_CALL_ERROR;
 
 	ASTException(const std::string& reason);
 };

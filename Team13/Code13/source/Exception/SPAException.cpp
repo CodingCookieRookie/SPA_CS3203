@@ -35,6 +35,7 @@ ParserException::ParserException(const std::string& reason) : SPAException(reaso
 /* ASTException */
 const std::string ASTException::DUPLICATE_PROC_NAMES_ERROR = "A program cannot have two procedures with the same name";
 const std::string ASTException::CALL_NON_EXISTENT_PROC_NAME_ERROR = "A procedure cannot call a non-existing procedure";
+const std::string ASTException::CYCLIC_CALL_ERROR = "Recursive and cyclic calls are not allowed";
 ASTException::ASTException(const std::string& reason) : SPAException(reason) {}
 
 /* QPSException */
