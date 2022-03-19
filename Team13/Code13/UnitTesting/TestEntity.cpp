@@ -319,6 +319,24 @@ public:
 		Assert::IsTrue(expectedRes2 == res2);
 	}
 
+	TEST_METHOD(insertStmtFromProc_getAllProcStmts_multipleProcAndStmt) {
+		std::unordered_map<ProcIndex, std::unordered_set<StmtIndex>> expectedRes;
+		expectedRes[procIdx1].insert(stmtIdx1);
+		expectedRes[procIdx1].insert(stmtIdx2);
+
+		Entity::insertStmtFromProc(procIdx1, stmtIdx1);
+		Entity::insertStmtFromProc(procIdx1, stmtIdx2);
+
+		std::unordered_map<ProcIndex, std::unordered_set<StmtIndex>>  res1 = Entity::getAllProcStmts();
+		Assert::IsTrue(expectedRes == res1);
+
+		expectedRes[procIdx2].insert(stmtIdx2);
+		Entity::insertStmtFromProc(procIdx2, stmtIdx2);
+
+		std::unordered_map<ProcIndex, std::unordered_set<StmtIndex>>  res2 = Entity::getAllProcStmts();
+		Assert::IsTrue(expectedRes == res2);
+	}
+
 	TEST_METHOD(performCleanUp_VarMap) {
 		Entity::insertVar(varName1);
 		Entity::insertVar(varName2);

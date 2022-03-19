@@ -181,6 +181,10 @@ std::unordered_set<StmtIndex> Entity::getStmtsFromProc(ProcIndex& procIdx) {
 	return procStmtTable[procIdx];
 }
 
+std::unordered_map<ProcIndex, std::unordered_set<StmtIndex>> Entity::getAllProcStmts() {
+	return procStmtTable;
+}
+
 void Entity::performCleanUp() {
 	varNameTable = {};
 	procNameTable = {};

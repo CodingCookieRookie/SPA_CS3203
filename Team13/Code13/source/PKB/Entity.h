@@ -48,6 +48,7 @@ public:
 
 	static void insertStmtFromProc(ProcIndex procIdx, StmtIndex stmtIdx);
 	static std::unordered_set<StmtIndex> getStmtsFromProc(ProcIndex& procIdx);
+	static std::unordered_map<ProcIndex, std::unordered_set<StmtIndex>> getAllProcStmts();
 
 	static void performCleanUp();
 };
