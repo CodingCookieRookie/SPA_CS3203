@@ -6,12 +6,14 @@
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting {
-	TEST_CLASS(TestPKB) {
+	TEST_CLASS(TestTransitivePopulator) {
 private:
-	VarIndex varIdx1 = VarIndex(5);
-	VarIndex varIdx2 = VarIndex(6);
+	VarIndex varIdx1 = VarIndex(1);
+	VarIndex varIdx2 = VarIndex(2);
+	VarIndex varIdx3 = VarIndex(3);
+	VarIndex varIdx4 = VarIndex(4);
 
-	TEST_METHOD_CLEANUP(cleanUpPKB) {
+	TEST_METHOD_CLEANUP(cleanUpTransitivePopulator) {
 		Attribute::performCleanUp();
 		Entity::performCleanUp();
 		Calls::performCleanUp();
@@ -28,7 +30,65 @@ private:
 	}
 
 public:
-	TEST_METHOD(populateRecursiveInfo_singleProc_1) {
+
+	TEST_METHOD(populateRecursiveInfo_populateRS1ProcsFromStmts) {
+		/* proc1 { stmt1; stmt2; } */
+		ProcIndex procIdx1 = Entity::insertProc("proc1");
+
+		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::assignType);
+
+		UsesS::insert(stmtIdx1, varIdx1);
+		UsesS::insert(stmtIdx2, varIdx2);
+		ModifiesS::insert(stmtIdx1, varIdx3);
+		ModifiesS::insert(stmtIdx2, varIdx4);
+
+		Entity::insertStmtFromProc(procIdx1, stmtIdx1);
+		Entity::insertStmtFromProc(procIdx1, stmtIdx2);
+
+		TransitivePopulator::populateRecursiveInfo();
+
+		/* Check Uses */
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2 } == UsesP::getVariables(procIdx1));
+
+		/* Check Modifies */
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx3, varIdx4 } == ModifiesP::getVariables(procIdx1));
+	};
+
+	TEST_METHOD(populateRecursiveInfo_populateRS1ProcsFromNestedCalls) {
+		/* proc1 { stmt1; stmt2; calls proc2; } proc2 { stmt4 } */
+		ProcIndex procIdx1 = Entity::insertProc("proc1");
+		ProcIndex procIdx2 = Entity::insertProc("proc2");
+
+		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmtIdx3 = Entity::insertStmt(StatementType::callType, std::string("proc2"));
+		StmtIndex stmtIdx4 = Entity::insertStmt(StatementType::assignType);
+
+		Calls::insert(procIdx1, procIdx2);
+
+		UsesS::insert(stmtIdx1, varIdx1);
+		UsesS::insert(stmtIdx2, varIdx2);
+		UsesS::insert(stmtIdx4, varIdx3);
+		ModifiesS::insert(stmtIdx1, varIdx3);
+		ModifiesS::insert(stmtIdx2, varIdx4);
+		ModifiesS::insert(stmtIdx4, varIdx1);
+
+		Entity::insertStmtFromProc(procIdx1, stmtIdx1);
+		Entity::insertStmtFromProc(procIdx1, stmtIdx2);
+		Entity::insertStmtFromProc(procIdx1, stmtIdx3);
+		Entity::insertStmtFromProc(procIdx2, stmtIdx4);
+
+		TransitivePopulator::populateRecursiveInfo();
+
+		/* Check Uses */
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2, varIdx3 } == UsesP::getVariables(procIdx1));
+
+		/* Check Modifies */
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx3, varIdx4, varIdx1 } == ModifiesP::getVariables(procIdx1));
+	};
+
+	TEST_METHOD(populateRecursiveInfo_singleProc_bothStmtsInIfWhileEmpty) {
 		/* if { stmt2; stmt3; while(){}; } */
 		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::ifType);
 		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::assignType);
@@ -72,7 +132,7 @@ public:
 			ParentT::getSuccessors(stmtIdx1));
 	};
 
-	TEST_METHOD(populateRecursiveInfo_singleProc_2) {
+	TEST_METHOD(populateRecursiveInfo_singleProc_oneStmtInIfOneStmtInWhile) {
 		/* if { stmt2; while(){ stmt4; }; } */
 		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::ifType);
 		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::assignType);
@@ -114,7 +174,7 @@ public:
 			ParentT::getSuccessors(stmtIdx1));
 	};
 
-	TEST_METHOD(populateRecursiveInfo_singleProc_3) {
+	TEST_METHOD(populateRecursiveInfo_singleProc_allStmtsInWhile) {
 		/* if { while(){ stmt3; stmt4; }; } */
 		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::ifType);
 		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::whileType);
@@ -156,19 +216,25 @@ public:
 			ParentT::getSuccessors(stmtIdx1));
 	};
 
-	TEST_METHOD(populateRecursiveInfo_multipleProcs_1) {
+	TEST_METHOD(populateRecursiveInfo_multipleProcs_nestedProcCalls) {
 		/* proc1 { calls proc2(); } proc2 { call proc3(); } proc3 { stmt3; } */
 		ProcIndex procIdx1 = Entity::insertProc("proc1");
 		ProcIndex procIdx2 = Entity::insertProc("proc2");
 		ProcIndex procIdx3 = Entity::insertProc("proc3");
 
+		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::callType, std::string("proc2"));
+		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::callType, std::string("proc3"));
 		StmtIndex stmtIdx3 = Entity::insertStmt(StatementType::assignType);
 
 		Calls::insert(procIdx1, procIdx2);
 		Calls::insert(procIdx2, procIdx3);
 
-		UsesP::insert(procIdx3, varIdx1);
-		ModifiesP::insert(procIdx3, varIdx2);
+		UsesS::insert(stmtIdx3, varIdx1);
+		ModifiesS::insert(stmtIdx3, varIdx2);
+
+		Entity::insertStmtFromProc(procIdx1, stmtIdx1);
+		Entity::insertStmtFromProc(procIdx2, stmtIdx2);
+		Entity::insertStmtFromProc(procIdx3, stmtIdx3);
 
 		TransitivePopulator::populateRecursiveInfo();
 
@@ -179,25 +245,28 @@ public:
 		Assert::IsTrue(std::vector<VarIndex>{varIdx2} == ModifiesP::getVariables(procIdx1));
 	};
 
-	TEST_METHOD(populateRecursiveInfo_multipleProcs_2) {
+	TEST_METHOD(populateRecursiveInfo_multipleProcs_containerStmts) {
 		/* proc1 { calls proc2(); } proc2 { call proc3(); } proc3 { if { stmt4; while(){ stmt6; }; } } */
 		ProcIndex procIdx1 = Entity::insertProc("proc1");
 		ProcIndex procIdx2 = Entity::insertProc("proc2");
 		ProcIndex procIdx3 = Entity::insertProc("proc3");
 
-		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::callType);
-		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::callType);
+		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::callType, std::string("proc2"));
+		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::callType, std::string("proc3"));
 		StmtIndex stmtIdx3 = Entity::insertStmt(StatementType::ifType);
 		StmtIndex stmtIdx4 = Entity::insertStmt(StatementType::assignType);
 		StmtIndex stmtIdx5 = Entity::insertStmt(StatementType::whileType);
 		StmtIndex stmtIdx6 = Entity::insertStmt(StatementType::assignType);
 
+		Entity::insertStmtFromProc(procIdx1, stmtIdx1);
+		Entity::insertStmtFromProc(procIdx2, stmtIdx2);
+		Entity::insertStmtFromProc(procIdx3, stmtIdx3);
+		Entity::insertStmtFromProc(procIdx3, stmtIdx4);
+		Entity::insertStmtFromProc(procIdx3, stmtIdx5);
+		Entity::insertStmtFromProc(procIdx3, stmtIdx6);
+
 		Calls::insert(procIdx1, procIdx2);
 		Calls::insert(procIdx2, procIdx3);
-		UsesP::insert(procIdx3, varIdx1);
-		UsesP::insert(procIdx3, varIdx2);
-		ModifiesP::insert(procIdx3, varIdx1);
-		ModifiesP::insert(procIdx3, varIdx2);
 
 		Container::insertStmtInContainer(stmtIdx3, stmtIdx4);
 		Container::insertStmtInContainer(stmtIdx3, stmtIdx5);
@@ -223,8 +292,8 @@ public:
 
 		/* Check Modifies */
 		Assert::IsTrue(std::vector<VarIndex>{varIdx2, varIdx1} == ModifiesS::getVariables(stmtIdx3));
-		Assert::IsTrue(std::vector<VarIndex>{varIdx1, varIdx2} == ModifiesP::getVariables(procIdx1));
-		Assert::IsTrue(std::vector<VarIndex>{varIdx1, varIdx2} == ModifiesP::getVariables(procIdx2));
+		Assert::IsTrue(std::vector<VarIndex>{varIdx2, varIdx1} == ModifiesP::getVariables(procIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{varIdx2, varIdx1} == ModifiesP::getVariables(procIdx2));
 
 		/* Check Container */
 		Assert::IsTrue(std::unordered_set<StmtIndex>{stmtIdx4, stmtIdx5, stmtIdx6} ==
@@ -236,6 +305,103 @@ public:
 		/* Check ParentT */
 		Assert::IsTrue(std::vector<StmtIndex>{stmtIdx4, stmtIdx5, stmtIdx6} ==
 			ParentT::getSuccessors(stmtIdx3));
+	};
+
+	TEST_METHOD(populateRecursiveInfo_multipleProcs_readStmts) {
+		/* proc1 { call proc2(); } proc2 { print x; call proc3(); } proc3 { print y; } */
+		ProcIndex procIdx1 = Entity::insertProc("proc1");
+		ProcIndex procIdx2 = Entity::insertProc("proc2");
+		ProcIndex procIdx3 = Entity::insertProc("proc3");
+
+		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::callType, std::string("proc2"));
+		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::printType, std::string("x"));
+		StmtIndex stmtIdx3 = Entity::insertStmt(StatementType::callType, std::string("proc3"));
+		StmtIndex stmtIdx4 = Entity::insertStmt(StatementType::printType, std::string("y"));
+
+		Calls::insert(procIdx1, procIdx2);
+		Calls::insert(procIdx2, procIdx3);
+
+		UsesS::insert(stmtIdx2, varIdx1);
+		UsesS::insert(stmtIdx4, varIdx2);
+
+		Entity::insertStmtFromProc(procIdx1, stmtIdx1);
+		Entity::insertStmtFromProc(procIdx2, stmtIdx2);
+		Entity::insertStmtFromProc(procIdx2, stmtIdx3);
+		Entity::insertStmtFromProc(procIdx3, stmtIdx4);
+
+		TransitivePopulator::populateRecursiveInfo();
+
+		/* Check Uses */
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2 } == UsesS::getVariables(stmtIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{varIdx2} == UsesS::getVariables(stmtIdx3));
+	};
+
+	TEST_METHOD(populateRecursiveInfo_multipleProcs_printStmts) {
+		/* proc1 { call proc2(); } proc2 { read x; call proc3(); } proc3 { read y; } */
+		ProcIndex procIdx1 = Entity::insertProc("proc1");
+		ProcIndex procIdx2 = Entity::insertProc("proc2");
+		ProcIndex procIdx3 = Entity::insertProc("proc3");
+
+		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::callType, std::string("proc2"));
+		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::readType, std::string("x"));
+		StmtIndex stmtIdx3 = Entity::insertStmt(StatementType::callType, std::string("proc3"));
+		StmtIndex stmtIdx4 = Entity::insertStmt(StatementType::readType, std::string("y"));
+
+		Calls::insert(procIdx1, procIdx2);
+		Calls::insert(procIdx2, procIdx3);
+
+		ModifiesS::insert(stmtIdx2, varIdx1);
+		ModifiesS::insert(stmtIdx4, varIdx2);
+
+		Entity::insertStmtFromProc(procIdx1, stmtIdx1);
+		Entity::insertStmtFromProc(procIdx2, stmtIdx2);
+		Entity::insertStmtFromProc(procIdx2, stmtIdx3);
+		Entity::insertStmtFromProc(procIdx3, stmtIdx4);
+
+		TransitivePopulator::populateRecursiveInfo();
+
+		/* Check Uses */
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2 } == ModifiesS::getVariables(stmtIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{varIdx2} == ModifiesS::getVariables(stmtIdx3));
+	};
+
+	TEST_METHOD(populateRecursiveInfo_multipleProcs_readAndPrintStmts) {
+		/* proc1 { call proc2(); } proc2 { print x; call proc3(); read p; } proc3 { print y; read r; } */
+		ProcIndex procIdx1 = Entity::insertProc("proc1");
+		ProcIndex procIdx2 = Entity::insertProc("proc2");
+		ProcIndex procIdx3 = Entity::insertProc("proc3");
+
+		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::callType, std::string("proc2"));
+		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::printType, std::string("x"));
+		StmtIndex stmtIdx3 = Entity::insertStmt(StatementType::callType, std::string("proc3"));
+		StmtIndex stmtIdx4 = Entity::insertStmt(StatementType::readType, std::string("p"));
+		StmtIndex stmtIdx5 = Entity::insertStmt(StatementType::printType, std::string("y"));
+		StmtIndex stmtIdx6 = Entity::insertStmt(StatementType::readType, std::string("r"));
+
+		Calls::insert(procIdx1, procIdx2);
+		Calls::insert(procIdx2, procIdx3);
+
+		UsesS::insert(stmtIdx2, varIdx1);
+		UsesS::insert(stmtIdx5, varIdx3);
+		ModifiesS::insert(stmtIdx4, varIdx2);
+		ModifiesS::insert(stmtIdx6, varIdx4);
+
+		Entity::insertStmtFromProc(procIdx1, stmtIdx1);
+		Entity::insertStmtFromProc(procIdx2, stmtIdx2);
+		Entity::insertStmtFromProc(procIdx2, stmtIdx3);
+		Entity::insertStmtFromProc(procIdx2, stmtIdx4);
+		Entity::insertStmtFromProc(procIdx3, stmtIdx5);
+		Entity::insertStmtFromProc(procIdx3, stmtIdx6);
+
+		TransitivePopulator::populateRecursiveInfo();
+
+		/* Check Uses */
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx3 } == UsesS::getVariables(stmtIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{varIdx3} == UsesS::getVariables(stmtIdx3));
+
+		/* Check Modifies */
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx2, varIdx4 } == ModifiesS::getVariables(stmtIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx4 } == ModifiesS::getVariables(stmtIdx3));
 	};
 	};
 }

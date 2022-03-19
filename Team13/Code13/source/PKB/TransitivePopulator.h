@@ -22,6 +22,10 @@ private:
 	static void populateContainerInfo();
 	static void populateTransitiveProcsInfo();
 	static void populateTransitiveStmtsInfo();
+	static void populateRS1ProcsFromStmts();
+	static void populateRS1ProcsFromNestedCalls();
+	static void populateRS1TransitiveCallsStmts();
+
 public:
 	static void populateRecursiveInfo();
 };
