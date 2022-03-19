@@ -2017,7 +2017,7 @@ public:
 			[&queryPrintVarNameAssignStmt] { PQLParser::parseQuery(queryPrintVarNameAssignStmt); };
 		Assert::ExpectException<QPSException>(wrapperPrintVarNameAssignStmt);
 	}
-	
+
 	TEST_METHOD(parseQuery_withConstantValueConstantValue_withExtracted) {
 		std::string query = "constant c1; constant c2; Select c1 with c1.value = c2.value";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
@@ -2633,7 +2633,7 @@ public:
 		std::vector<ParsedWith> withs = parsedQuery.getWiths();
 		Assert::AreEqual(size_t(1), withs.size());
 	}
-	
+
 	TEST_METHOD(parseQuery_withPrintVarNamePrintVarName_withExtracted) {
 		std::string query = "print p1; print p2; Select p1 with p1.varName = p2.varName";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);

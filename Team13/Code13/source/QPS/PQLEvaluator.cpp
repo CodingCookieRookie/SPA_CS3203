@@ -14,7 +14,7 @@ EvaluatedTable PQLEvaluator::evaluate(ParsedQuery& parsedQuery) {
 }
 
 EvaluatedTable PQLEvaluator::selectProjection(EvaluatedTable& resultingEvTable, ParsedQuery& parsedQuery) {
-	EvaluatedTable projectingEvTable = PQLEvaluator::selectColumnsForProjection(resultingEvTable, parsedQuery.getColumns(), parsedQuery.getDeclarations());
+	EvaluatedTable projectingEvTable = PQLEvaluator::selectColumnsForProjection(resultingEvTable, parsedQuery);
 	return projectingEvTable;
 }
 
@@ -77,12 +77,14 @@ EvaluatedTable PQLEvaluator::executeInstructions(std::vector<Instruction*> instr
 }
 
 EvaluatedTable PQLEvaluator::selectColumnsForProjection(
-	EvaluatedTable evaluatedTable,
-	std::unordered_set<std::string> columnsProjected,
-	std::unordered_map<std::string, PqlEntityType> declarations) {
+	EvaluatedTable evaluatedTable, ParsedQuery& pq) {
+	std::unordered_set<std::string> columnsProjected = pq.getColumns();
+	std::vector<PqlReference> attributesProjected = pq.getAttributes();
+	std::unordered_map<std::string, PqlEntityType> declarations = pq.getDeclarations();
 	std::unordered_map<std::string, std::vector<int>> table = evaluatedTable.getTableRef();
 	std::unordered_map<std::string, PqlEntityType> resultEntities;
 	std::unordered_map<std::string, std::vector<int>> resultTable;
+	EvaluatedTable resultEvTable;
 
 	/* For each column that already exists in the final EvTable, take it from the evaluatedTable */
 	for (const std::string& column : columnsProjected) {
@@ -93,7 +95,7 @@ EvaluatedTable PQLEvaluator::selectColumnsForProjection(
 	}
 
 	/* If the evaluated table is false or an empty table, use a false table */
-	EvaluatedTable resultEvTable(resultEntities, resultTable);
+	resultEvTable = EvaluatedTable(resultEntities, resultTable);
 	if (evaluatedTable.getEvResult() == false
 		|| (table.size() > 0 && evaluatedTable.getNumRow() == 0)) {
 		resultEvTable = EvaluatedTable(false);
@@ -109,6 +111,5 @@ EvaluatedTable PQLEvaluator::selectColumnsForProjection(
 			resultEvTable = resultEvTable.innerJoinMerge(evTable);
 		}
 	}
-
 	return resultEvTable;
 }

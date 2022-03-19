@@ -66,6 +66,7 @@ public:
 	static const std::string MODIFIES_P_ERROR;
 	static const std::string USES_S_ERROR;
 	static const std::string USES_P_ERROR;
+	static const std::string PROJECTION_TYPE_ERROR;
 
 	EvaluatorException(const std::string& reason);
 };

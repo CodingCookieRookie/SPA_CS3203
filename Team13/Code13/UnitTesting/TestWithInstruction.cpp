@@ -44,7 +44,6 @@ public:
 		UsesS::insert(stmtIndex3, varProc1);
 		Entity::insertConst(2);
 
-
 		/* 1. Setup:
 		* Clause: with read.varName = proc.procName
 		*/
@@ -83,7 +82,6 @@ public:
 		ModifiesS::insert(stmtIndex3, varRead);
 		UsesS::insert(stmtIndex3, varProc1);
 		Entity::insertConst(2);
-
 
 		/* 1. Setup:
 		* Clause: with print.varName = "read"
@@ -124,7 +122,6 @@ public:
 		UsesS::insert(stmtIndex3, varProc1);
 		Entity::insertConst(2);
 
-
 		/* 1. Setup:
 		* Clause: with "print" = "read"
 		*/
@@ -163,7 +160,6 @@ public:
 		ModifiesS::insert(stmtIndex3, varRead);
 		UsesS::insert(stmtIndex3, varProc1);
 		Entity::insertConst(2);
-
 
 		/* 1. Setup:
 		* Clause: with stmt.stmt# = constant.value
@@ -204,7 +200,6 @@ public:
 		UsesS::insert(stmtIndex3, varProc1);
 		Entity::insertConst(2);
 
-
 		/* 1. Setup:
 		* Clause: with 1 = read.stmt#
 		*/
@@ -243,7 +238,6 @@ public:
 		ModifiesS::insert(stmtIndex3, varRead);
 		UsesS::insert(stmtIndex3, varProc1);
 		Entity::insertConst(2);
-
 
 		/* 1. Setup:
 		* Clause: with 3 = 0

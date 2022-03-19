@@ -6,7 +6,7 @@ EvaluatedTable WithInstruction::handleInt() {
 	}
 	if (lhs.first == PqlReferenceType::integer) {
 		int intVal = stoi(lhs.second);
-		if (Attribute::hasEqualIntegerAttribute(rhsEntity, intVal)) {
+		if (Attribute::hasEqualIntegerAttribute(rhsEntity, intVal)) { /* Read, 1*/
 			std::unordered_map<std::string, std::vector<int>> PQLmap{ { rhs.second, { intVal } } };
 			std::unordered_map<std::string, PqlEntityType> PQLentities{ { rhs.second, rhsEntity } };
 			return EvaluatedTable(PQLentities, PQLmap);
@@ -31,7 +31,7 @@ EvaluatedTable WithInstruction::handleString() {
 	if (lhs.first == PqlReferenceType::ident && rhs.first == PqlReferenceType::ident) {
 		return EvaluatedTable(lhs.second == rhs.second);
 	}
-	if (lhs.first == PqlReferenceType::ident) {
+	if (lhs.first == PqlReferenceType::ident) { /* "proc1" = p.procName,  get(Procedure, "proc1") */
 		std::vector<int> column = Attribute::getEqualNameAttributesFromName(rhsEntity, lhs.second);
 		std::unordered_map<std::string, std::vector<int>> PQLmap{ { rhs.second, column } };
 		std::unordered_map<std::string, PqlEntityType> PQLentities{ { rhs.second, rhsEntity } };

@@ -51,6 +51,7 @@ const std::string EvaluatorException::MODIFIES_S_ERROR = "Invalid handling of Mo
 const std::string EvaluatorException::MODIFIES_P_ERROR = "Invalid handling of ModifiesP query";
 const std::string EvaluatorException::USES_S_ERROR = "Invalid handling of UsesS query";
 const std::string EvaluatorException::USES_P_ERROR = "Invalid handling of UsesP query";
+const std::string EvaluatorException::PROJECTION_TYPE_ERROR = "Unable to obtain Projection Type";
 
 EvaluatorException::EvaluatorException(const std::string& reason) : SPAException(reason) {}
 

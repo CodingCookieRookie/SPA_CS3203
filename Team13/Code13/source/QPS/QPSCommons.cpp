@@ -78,5 +78,6 @@ bool isStatementEntity(PqlEntityType entityType) {
 		entityType == PqlEntityType::Print ||
 		entityType == PqlEntityType::Read ||
 		entityType == PqlEntityType::Stmt ||
-		entityType == PqlEntityType::While;
+		entityType == PqlEntityType::While ||
+		entityType == PqlEntityType::Call;
 }
