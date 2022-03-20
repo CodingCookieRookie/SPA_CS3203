@@ -17,6 +17,7 @@
 #include "../PKB/UsesP.h"
 #include "../PKB/Calls.h"
 #include "../PKB/CallsT.h"
+#include "../PKB/Next.h"
 #include "EvaluatedTable.h"
 #include "QPSCommons.h"
 

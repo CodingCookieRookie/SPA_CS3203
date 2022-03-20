@@ -426,95 +426,33 @@ EvaluatedTable RelationshipInstruction::handleFollowsT() {
 	}
 }
 
-EvaluatedTable RelationshipInstruction::handleParent() {
+EvaluatedTable RelationshipInstruction::handleParent(PqlRelationshipType pqlRsType) {
 	EvaluatedTable evTable;
 	std::vector<StmtIndex> stmts = Entity::getAllStmts();
 
 	// e.g Parent(6, 7)
 	if (lhsRef.first == PqlReferenceType::integer && rhsRef.first == PqlReferenceType::integer) {
-		StmtIndex lhsStmtIndex, rhsStmtIndex;
-		bool evResult = false;
-		int lhsRefValue = stoi(lhsRef.second);
-		int rhsRefValue = stoi(rhsRef.second);
-		if (Entity::containsStmt(lhsRefValue) && Entity::containsStmt(rhsRefValue)) {
-			lhsStmtIndex = StmtIndex(lhsRefValue);
-			rhsStmtIndex = StmtIndex(rhsRefValue);
-			evResult = Parent::containsSuccessor(lhsStmtIndex, rhsStmtIndex);
-		}
-		return EvaluatedTable(evResult); //e.g evResult == true, if 6 parents 7
+		return helperHandleTwoIntegers(pqlRsType);
 	}
 	// e.g Parent(6, s2), Parent(6, _)
 	else if (lhsRef.first == PqlReferenceType::integer) {
-		std::vector<int> results;
-		int lhsRefValue = stoi(lhsRef.second); // might throw error if string value can't be converted to int
-		if (Entity::containsStmt(lhsRefValue)) { // checks if stmt 6 exists, if not, return empty results
-			StmtIndex lhsStmt = StmtIndex(lhsRefValue);
-			for (StmtIndex stmt : stmts) {
-				if (Parent::containsSuccessor(lhsStmt, stmt)) {
-					results.emplace_back(stmt); // e.g {7} because 6 parents 7
-				}
-			}
+		if (rhsRef.first == PqlReferenceType::synonym) {
+			return helperHandleOneInt(pqlRsType, PqlReferenceType::integer, PqlReferenceType::synonym);
+		} else {
+			return helperHandleOneInt(pqlRsType, PqlReferenceType::integer, PqlReferenceType::wildcard);
 		}
-		if (rhsRef.first == PqlReferenceType::wildcard) {
-			bool evTable = !results.empty();
-			return EvaluatedTable(evTable);
-		}
-		std::unordered_map<std::string, PqlEntityType> PQLentities;
-		PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Stmt));
-
-		std::unordered_map<std::string, std::vector<int>> PQLmap;
-		PQLmap[rhsRef.second] = results;
-
-		return EvaluatedTable(PQLentities, PQLmap);
 	}
 	// e.g. Parent(s1, 7), Parent(_ 7)
 	else if (rhsRef.first == PqlReferenceType::integer) {
-		std::vector<int> results;
-		int rhsRefValue = stoi(rhsRef.second); //might throw error if string value can't be converted to int
-		if (Entity::containsStmt(rhsRefValue)) { // checks if stmt 7 exists, if not, return empty results
-			StmtIndex rhsStmt = StmtIndex(rhsRefValue);
-			for (StmtIndex stmt : stmts) {
-				if (Parent::containsSuccessor(stmt, rhsStmt)) {
-					results.emplace_back(stmt); //e.g {3} because 3 is a parent of 7
-				}
-			}
+		if (lhsRef.first == PqlReferenceType::synonym) {
+			return helperHandleOneInt(pqlRsType, PqlReferenceType::synonym, PqlReferenceType::integer);
+		} else {
+			return helperHandleOneInt(pqlRsType, PqlReferenceType::wildcard, PqlReferenceType::integer);
 		}
-		if (lhsRef.first == PqlReferenceType::wildcard) {
-			bool evTable = !results.empty();
-			return EvaluatedTable(evTable);
-		}
-		std::unordered_map<std::string, PqlEntityType> PQLentities;
-		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
-
-		std::unordered_map<std::string, std::vector<int>> PQLmap;
-		PQLmap[lhsRef.second] = results;
-
-		return EvaluatedTable(PQLentities, PQLmap);
 	}
 	// Parent(s1, s2), Parent(s1, _), Parent(_, s2)
 	else if (!(lhsRef.first == PqlReferenceType::wildcard && rhsRef.first == PqlReferenceType::wildcard)) {
-		//Assumption: Different synonym names (i.e. Parent(s1, s2), not Parent(s1, s1))
-		std::tuple<std::vector<int>, std::vector<int>> results = Parent::getAllPredecessorSuccessorInfo();
-		//e.g. {1, 2}, {2, 3}, {3, 6}
-		std::unordered_map<std::string, PqlEntityType> PQLentities;
-		std::unordered_map<std::string, std::vector<int>> PQLmap;
-
-		if (lhsRef.second == rhsRef.second) { /* Special case: Parent(s1, s1)) */
-			PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
-			PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Stmt));
-			/* No values populated to PQLmap for this case */
-			return EvaluatedTable(PQLentities, PQLmap);
-		}
-
-		if (lhsRef.first == PqlReferenceType::synonym) {
-			PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
-			PQLmap[lhsRef.second] = std::get<0>(results); // if RHS is wildcard, LHS may have duplicate values
-		}
-		if (rhsRef.first == PqlReferenceType::synonym) {
-			PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Stmt));
-			PQLmap[rhsRef.second] = std::get<1>(results); // if LHS is wildcard, RHS may have duplicate values
-		}
-		return EvaluatedTable(PQLentities, PQLmap);
+		return helperHandleTwoStmtsMaybeWildcard(pqlRsType);
 	}
 	// Parent(_, _)
 	else {
@@ -630,59 +568,175 @@ EvaluatedTable RelationshipInstruction::handleParentT() {
 	}
 }
 
-EvaluatedTable RelationshipInstruction::handleCalls(std::string PqlRsType) {
+EvaluatedTable RelationshipInstruction::handleCalls(PqlRelationshipType pqlRsType) {
 	EvaluatedTable evTable;
 	std::vector<ProcIndex> procs = Entity::getAllProcs();
 
 	/* e.g Calls/Calls*("first", "second") */
 	if (lhsRef.first == PqlReferenceType::ident && rhsRef.first == PqlReferenceType::ident) {
-		return helperHandleTwoIdents(PqlRsType);
+		return helperHandleTwoIdents(pqlRsType);
 	}
 	/* e.g Calls/Calls*("first", q), Calls/Calls*("first", _) */
 	else if (lhsRef.first == PqlReferenceType::ident) {
 		if (rhsRef.first == PqlReferenceType::synonym) {
-			return helperHandleOneIdent(PqlRsType, PqlReferenceType::ident, PqlReferenceType::synonym);
+			return helperHandleOneIdent(pqlRsType, PqlReferenceType::ident, PqlReferenceType::synonym);
 		} else {
-			return helperHandleOneIdent(PqlRsType, PqlReferenceType::ident, PqlReferenceType::wildcard);
+			return helperHandleOneIdent(pqlRsType, PqlReferenceType::ident, PqlReferenceType::wildcard);
 		}
 	}
 	/*  e.g.Calls/Calls*(p, "second"), Calls/Calls*(_, "second") */
 	else if (rhsRef.first == PqlReferenceType::ident) {
 		if (lhsRef.first == PqlReferenceType::synonym) {
-			return helperHandleOneIdent(PqlRsType, PqlReferenceType::synonym, PqlReferenceType::ident);
+			return helperHandleOneIdent(pqlRsType, PqlReferenceType::synonym, PqlReferenceType::ident);
 		} else {
-			return helperHandleOneIdent(PqlRsType, PqlReferenceType::wildcard, PqlReferenceType::ident);
+			return helperHandleOneIdent(pqlRsType, PqlReferenceType::wildcard, PqlReferenceType::ident);
 		}
 	}
 	/* Calls/Calls*(p, q), Calls/Calls*(p, _), Calls/Calls*(_, q) */
 	else if (!(lhsRef.first == PqlReferenceType::wildcard && rhsRef.first == PqlReferenceType::wildcard)) {
-		return helperHandleTwoProcMaybeWildcard(PqlRsType);
+		return helperHandleTwoProcMaybeWildcard(pqlRsType);
 	}
 	// Calls/Calls*(_, _)
 	else {
-		return helperHandleTwoWildcards(PqlRsType);
+		return helperHandleTwoWildcards(pqlRsType);
+	}
+}
+
+EvaluatedTable RelationshipInstruction::handleNext(PqlRelationshipType pqlRsType) {
+	EvaluatedTable evTable;
+	std::vector<ProcIndex> procs = Entity::getAllProcs();
+
+	/* e.g Next/Next*(6, 7) */
+	if (lhsRef.first == PqlReferenceType::integer && rhsRef.first == PqlReferenceType::integer) {
+		return helperHandleTwoIntegers(pqlRsType);
+	}
+	/* e.g Next/Next*(6, s2), Next/Next*(6, _) */
+	else if (lhsRef.first == PqlReferenceType::integer) {
+		if (rhsRef.first == PqlReferenceType::synonym) {
+			return helperHandleOneInt(pqlRsType, PqlReferenceType::integer, PqlReferenceType::synonym);
+		} else {
+			return helperHandleOneInt(pqlRsType, PqlReferenceType::integer, PqlReferenceType::wildcard);
+		}
+	}
+	/* e.g Next/Next*(s1, 7), Next/Next*(_, 7) */
+	else if (rhsRef.first == PqlReferenceType::integer) {
+		if (lhsRef.first == PqlReferenceType::synonym) {
+			return helperHandleOneInt(pqlRsType, PqlReferenceType::synonym, PqlReferenceType::integer);
+		} else {
+			return helperHandleOneInt(pqlRsType, PqlReferenceType::wildcard, PqlReferenceType::integer);
+		}
+	}
+	/* Next/Next*(s1, s2), Next/Next*(s1, _), Next/Next*(_, s2) */
+	else if (!(lhsRef.first == PqlReferenceType::wildcard && rhsRef.first == PqlReferenceType::wildcard)) {
+		return helperHandleTwoStmtsMaybeWildcard(pqlRsType);
+	}
+	// Next/Next*(_, _)
+	else {
+		return helperHandleTwoWildcards(pqlRsType);
 	}
 }
 
 /* Helper Handle Methods */
 
-EvaluatedTable RelationshipInstruction::helperHandleTwoIdents(std::string pqlRsType) {
+EvaluatedTable RelationshipInstruction::helperHandleTwoIntegers(PqlRelationshipType pqlRsType) {
+	StmtIndex lhsStmtIndex, rhsStmtIndex;
+	bool evResult = false;
+	int lhsRefValue = stoi(lhsRef.second);
+	int rhsRefValue = stoi(rhsRef.second);
+	if (Entity::containsStmt(lhsRefValue) && Entity::containsStmt(rhsRefValue)) {
+		lhsStmtIndex = StmtIndex(lhsRefValue);
+		rhsStmtIndex = StmtIndex(rhsRefValue);
+		switch (pqlRsType) {
+		case PqlRelationshipType::Parent:
+			evResult = Parent::containsSuccessor(lhsStmtIndex, rhsStmtIndex);
+			break;
+		case PqlRelationshipType::Next:
+			evResult = Next::containsSuccessor(lhsStmtIndex, rhsStmtIndex);
+			break;
+		}
+	}
+	return EvaluatedTable(evResult);
+}
+
+EvaluatedTable RelationshipInstruction::helperHandleTwoIdents(PqlRelationshipType pqlRsType) {
 	ProcIndex lhsProcIndex, rhsProcIndex;
 	bool evResult = false;
 	if (Entity::containsProc(lhsRef.second) && Entity::containsProc(rhsRef.second)) {
 		lhsProcIndex = Entity::getProcIdx(lhsRef.second);
 		rhsProcIndex = Entity::getProcIdx(rhsRef.second);
-		if (pqlRsType == "Calls") {
+		if (pqlRsType == PqlRelationshipType::Calls) {
 			evResult = Calls::containsSuccessor(lhsProcIndex, rhsProcIndex);
-		} else { /* pqlRsType == "CallsT" */
+		} else { /* == PqlRelationshipType::CallsT */
 			evResult = CallsT::containsSuccessor(lhsProcIndex, rhsProcIndex);
 		}
 	}
 	return EvaluatedTable(evResult); /* e.g evResult == true, if "first" calls "second" */
 }
 
+EvaluatedTable RelationshipInstruction::helperHandleOneInt(
+	PqlRelationshipType pqlRsType, PqlReferenceType lhsRefType, PqlReferenceType rhsRefType) {
+	std::vector<StmtIndex> stmts = Entity::getAllStmts();
+	std::vector<int> results;
+	int oneInt;
+	std::string otherSynonym;
+	if (lhsRefType == PqlReferenceType::integer) {
+		oneInt = stoi(lhsRef.second);
+	} else { /* rhsRefType == PqlReferenceType::ident */
+		oneInt = stoi(rhsRef.second);
+	}
+	/* Handle one ident to proc results */
+	if (Entity::containsStmt(oneInt)) { /* e.g. checks if stmt 6 exists, if not, return empty results */
+		StmtIndex oneIntIndex = StmtIndex(oneInt);
+		for (StmtIndex stmt : stmts) {
+			switch (pqlRsType) {
+				//TODO: Compress even more
+			case PqlRelationshipType::Parent:
+				if (lhsRefType == PqlReferenceType::integer) {
+					if (Parent::containsSuccessor(oneIntIndex, stmt)) {
+						results.emplace_back(stmt); /* e.g {7} if 6 is a Parent of some s2 (e.g. 7) */
+					}
+				} else if (rhsRefType == PqlReferenceType::integer) {
+					if (Parent::containsSuccessor(stmt, oneIntIndex)) {
+						results.emplace_back(stmt); /* e.g {6} if some s1 (e.g. 6) is a Parent of 7 */
+					}
+				} else {}
+				break;
+			case PqlRelationshipType::Next:
+				if (lhsRefType == PqlReferenceType::integer) {
+					if (Next::containsSuccessor(oneIntIndex, stmt)) {
+						results.emplace_back(stmt); /* e.g {7} if after 6, some s2 (e.g. 7) is next in the CFG */
+					}
+				} else if (rhsRefType == PqlReferenceType::integer) {
+					if (Next::containsSuccessor(stmt, oneIntIndex)) {
+						results.emplace_back(stmt); /* e.g {6} if after some s1 (e.g. 6), 7 is next in the CFG */
+					}
+				} else {}
+			}
+			//TODO: Account for NextT
+		}
+		/* Handle final output, wildcards => boolean, synonyms => table */
+		if (lhsRefType == PqlReferenceType::wildcard || rhsRefType == PqlReferenceType::wildcard) {
+			bool evTable = !results.empty();
+			return EvaluatedTable(evTable);
+		} else {
+			if (lhsRefType == PqlReferenceType::integer) {
+				otherSynonym = rhsRef.second;
+			} else {
+				otherSynonym = lhsRef.second;
+			}
+		}
+		std::unordered_map<std::string, PqlEntityType> PQLentities;
+		PQLentities.insert(std::pair(otherSynonym, PqlEntityType::Stmt));
+
+		std::unordered_map<std::string, std::vector<int>> PQLmap;
+		PQLmap[otherSynonym] = results;
+
+		return EvaluatedTable(PQLentities, PQLmap);
+	}
+}
+
 EvaluatedTable RelationshipInstruction::helperHandleOneIdent(
-	std::string pqlRsType, PqlReferenceType lhsRefType, PqlReferenceType rhsRefType) {
+	PqlRelationshipType pqlRsType, PqlReferenceType lhsRefType, PqlReferenceType rhsRefType) {
 	std::vector<ProcIndex> procs = Entity::getAllProcs();
 	std::vector<int> results;
 	std::string oneIdent;
@@ -696,19 +750,19 @@ EvaluatedTable RelationshipInstruction::helperHandleOneIdent(
 	if (Entity::containsProc(oneIdent)) { /* e.g. checks if proc named "first" exists, if not, return empty results */
 		ProcIndex oneIdentRef = Entity::getProcIdx(oneIdent);
 		for (ProcIndex proc : procs) {
-			if (lhsRefType == PqlReferenceType::ident && pqlRsType == "Calls") {
+			if (lhsRefType == PqlReferenceType::ident && pqlRsType == PqlRelationshipType::Calls) {
 				if (Calls::containsSuccessor(oneIdentRef, proc)) {
 					results.emplace_back(proc); /* e.g {"first"} if "first" calls some q */
 				}
-			} else if (rhsRefType == PqlReferenceType::ident && pqlRsType == "Calls") {
+			} else if (rhsRefType == PqlReferenceType::ident && pqlRsType == PqlRelationshipType::Calls) {
 				if (Calls::containsSuccessor(proc, oneIdentRef)) {
 					results.emplace_back(proc); /* e.g {"second"} if some p calls "second" */
 				}
-			} else if (lhsRefType == PqlReferenceType::ident && pqlRsType == "CallsT") {
+			} else if (lhsRefType == PqlReferenceType::ident && pqlRsType == PqlRelationshipType::CallsT) {
 				if (CallsT::containsSuccessor(oneIdentRef, proc)) {
 					results.emplace_back(proc); /* e.g {"first"} if "first" calls some q */
 				}
-			} else if (rhsRefType == PqlReferenceType::ident && pqlRsType == "CallsT") {
+			} else if (rhsRefType == PqlReferenceType::ident && pqlRsType == PqlRelationshipType::CallsT) {
 				if (CallsT::containsSuccessor(proc, oneIdentRef)) {
 					results.emplace_back(proc); /* e.g {"second"} if some p calls "second" */
 				}
@@ -736,10 +790,51 @@ EvaluatedTable RelationshipInstruction::helperHandleOneIdent(
 	return EvaluatedTable(PQLentities, PQLmap);
 }
 
-EvaluatedTable RelationshipInstruction::helperHandleTwoProcMaybeWildcard(std::string pqlRsType) {
+EvaluatedTable RelationshipInstruction::helperHandleTwoStmtsMaybeWildcard(PqlRelationshipType pqlRsType) {
+	std::tuple<std::vector<int>, std::vector<int>> results;
+	/* e.g. {1, 2}, {2, 3}, {3, 6} */
+	std::unordered_map<std::string, PqlEntityType> PQLentities;
+	std::unordered_map<std::string, std::vector<int>> PQLmap;
+
+	switch (pqlRsType) {
+	case PqlRelationshipType::Parent:
+		results = Parent::getAllPredecessorSuccessorInfo();
+		break;
+	case PqlRelationshipType::Next:
+		results = Next::getAllPredecessorSuccessorInfo();
+		if (lhsRef.second == rhsRef.second) { /* Special case: Next(s1, s1) has a legitimate result */
+			PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt)); /*just do LHS*/
+			PQLmap[lhsRef.second] = std::get<0>(results);
+			return EvaluatedTable(PQLentities, PQLmap);
+		}
+		break;
+	case PqlRelationshipType::NextT:
+		// TODO: NextT
+		/*results = NextT::getAllPredecessorSuccessorInfo(); */
+		break;
+	}
+
+	if (lhsRef.second == rhsRef.second) { /* Special case: Parent(s1, s1), recursive call, technically shouldn't be allowed */
+		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
+		/* No values populated to PQLmap for this case */
+		return EvaluatedTable(PQLentities, PQLmap);
+	}
+
+	if (lhsRef.first == PqlReferenceType::synonym) {
+		PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt));
+		PQLmap[lhsRef.second] = std::get<0>(results); /* if RHS is wildcard, LHS may have duplicate values */
+	}
+	if (rhsRef.first == PqlReferenceType::synonym) {
+		PQLentities.insert(std::pair(rhsRef.second, PqlEntityType::Stmt));
+		PQLmap[rhsRef.second] = std::get<1>(results); /* if LHS is wildcard, RHS may have duplicate values */
+	}
+	return EvaluatedTable(PQLentities, PQLmap);
+}
+
+EvaluatedTable RelationshipInstruction::helperHandleTwoProcMaybeWildcard(PqlRelationshipType pqlRsType) {
 	/* Assumption: Different synonym names(i.e. Calls(p, q), not Calls(p, p)) */
 	std::tuple<std::vector<int>, std::vector<int>> results;
-	if (pqlRsType == "Calls") {
+	if (pqlRsType == PqlRelationshipType::Calls) {
 		results = Calls::getAllPredecessorSuccessorInfo();
 	} else {
 		results = CallsT::getAllPredecessorSuccessorInfo();
@@ -766,13 +861,19 @@ EvaluatedTable RelationshipInstruction::helperHandleTwoProcMaybeWildcard(std::st
 	return EvaluatedTable(PQLentities, PQLmap);
 }
 
-EvaluatedTable RelationshipInstruction::helperHandleTwoWildcards(std::string pqlRsType) {
+EvaluatedTable RelationshipInstruction::helperHandleTwoWildcards(PqlRelationshipType pqlRsType) {
 	bool isEmptyTable = true;
 	if (lhsRef.first == PqlReferenceType::wildcard && rhsRef.first == PqlReferenceType::wildcard) {
-		if (pqlRsType == "Calls") {
+		switch (pqlRsType) {
+		case PqlRelationshipType::Calls:
 			isEmptyTable = std::get<0>(Calls::getAllPredecessorSuccessorInfo()).empty();
-		} else {
+			break;
+		case PqlRelationshipType::CallsT:
 			isEmptyTable = std::get<0>(CallsT::getAllPredecessorSuccessorInfo()).empty();
+			break;
+		case PqlRelationshipType::Next:
+			isEmptyTable = std::get<0>(Next::getAllPredecessorSuccessorInfo()).empty();
+			break;
 		}
 	}
 	// No Parent rs exists => isEmptyTable == true => EvTable.evResult == false (innerJoinMerge() can drop table)
@@ -805,16 +906,19 @@ EvaluatedTable RelationshipInstruction::execute() {
 		evTable = handleFollowsT();
 		break;
 	case PqlRelationshipType::Parent:
-		evTable = handleParent();
+		evTable = handleParent(pqlRelationshipType);
 		break;
 	case PqlRelationshipType::ParentT:
 		evTable = handleParentT();
 		break;
 	case PqlRelationshipType::Calls:
-		evTable = handleCalls("Calls");
+		evTable = handleCalls(pqlRelationshipType);
 		break;
 	case PqlRelationshipType::CallsT:
-		evTable = handleCalls("CallsT");
+		evTable = handleCalls(pqlRelationshipType);
+		break;
+	case PqlRelationshipType::Next:
+		evTable = handleNext(pqlRelationshipType);
 		break;
 	}
 	return evTable;

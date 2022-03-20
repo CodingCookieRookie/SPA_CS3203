@@ -60,7 +60,7 @@ void TestWrapper::evaluate(std::string query, std::list<std::string>& results) {
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 		EvaluatedTable projectedEvTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
-		results = PQLResultProjector::resolveTableToResults(projectedEvTable, parsedQuery.getAttributes(), parsedQuery.getDeclarations());
+		results = PQLResultProjector::resolveTableToResults(projectedEvTable, parsedQuery);
 	} catch (QPSException& ex) {
 		return;
 	} catch (LexerException& ex) {

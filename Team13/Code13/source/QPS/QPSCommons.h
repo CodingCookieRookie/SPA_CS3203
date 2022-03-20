@@ -43,6 +43,10 @@ enum class PqlAttributeType {
 	string, integer, unvalidated
 };
 
+enum class ProjectionType {
+	single, tuple, boolean
+};
+
 typedef std::pair<PqlEntityType, std::string> PQL_VARIABLE;
 
 typedef std::pair<PqlReferenceType, std::string> PqlReference;

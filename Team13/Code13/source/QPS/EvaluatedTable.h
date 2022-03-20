@@ -50,6 +50,10 @@ public:
 	/* Handle table joins */
 	EvaluatedTable innerJoinMerge(EvaluatedTable& otherTable);
 
+	/* Checks if table field has no values */
+	static bool EvaluatedTable::isNoValuesInResultTable(
+		std::unordered_map<std::string, std::vector<int>> resultTable);
+
 	/* Getter for entities */
 	std::unordered_map<std::string, PqlEntityType> getEntities() {
 		return entities;

@@ -66,6 +66,8 @@ public:
 		const std::vector<ParsedWith>& allWiths);
 
 	bool isStmtSubtype(PqlReference ref);
+	static ProjectionType getProjectionType(std::vector<PqlReference> attributesProjected);
+	static bool isClausePresent(ParsedQuery& parsedQuery);
 
 	std::unordered_map<std::string, PqlEntityType> getDeclarations();
 	std::unordered_set<std::string> getColumns();

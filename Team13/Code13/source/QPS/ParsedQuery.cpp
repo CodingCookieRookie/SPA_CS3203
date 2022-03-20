@@ -1,16 +1,16 @@
 #include "ParsedQuery.h"
 
 const std::unordered_set<PqlReferenceType>
-	ParsedQuery::stmtRef = { PqlReferenceType::synonym, PqlReferenceType::wildcard, PqlReferenceType::integer };
+ParsedQuery::stmtRef = { PqlReferenceType::synonym, PqlReferenceType::wildcard, PqlReferenceType::integer };
 
 const std::unordered_set<PqlReferenceType>
-	ParsedQuery::entRef = { PqlReferenceType::synonym, PqlReferenceType::wildcard, PqlReferenceType::ident };
+ParsedQuery::entRef = { PqlReferenceType::synonym, PqlReferenceType::wildcard, PqlReferenceType::ident };
 
 const std::unordered_set<PqlReferenceType>
-	ParsedQuery::stmtRefNoWildcard = { PqlReferenceType::synonym, PqlReferenceType::integer };
+ParsedQuery::stmtRefNoWildcard = { PqlReferenceType::synonym, PqlReferenceType::integer };
 
 const std::unordered_set<PqlReferenceType>
-	ParsedQuery::entRefNoWildcard = { PqlReferenceType::synonym, PqlReferenceType::ident };
+ParsedQuery::entRefNoWildcard = { PqlReferenceType::synonym, PqlReferenceType::ident };
 
 const std::unordered_set<PqlEntityType> ParsedQuery::stmtEntities = {
 	PqlEntityType::Assign, PqlEntityType::Call, PqlEntityType::If, PqlEntityType::Print,
@@ -43,67 +43,67 @@ const std::unordered_map<PqlRelationshipType,
 };
 
 const std::unordered_map<PqlRelationshipType, std::unordered_set<PqlReferenceType>>
-	ParsedQuery::validRightArgs = {
-	{ PqlRelationshipType::Modifies,	ParsedQuery::entRef },
-	{ PqlRelationshipType::Uses,		ParsedQuery::entRef },
-	{ PqlRelationshipType::Follows,		ParsedQuery::stmtRef },
-	{ PqlRelationshipType::FollowsT,	ParsedQuery::stmtRef },
-	{ PqlRelationshipType::Parent,		ParsedQuery::stmtRef },
-	{ PqlRelationshipType::ParentT,		ParsedQuery::stmtRef },
-	{ PqlRelationshipType::Calls,		ParsedQuery::entRef },
-	{ PqlRelationshipType::CallsT,		ParsedQuery::entRef },
-	{ PqlRelationshipType::Next,		ParsedQuery::stmtRef },
-	{ PqlRelationshipType::NextT,		ParsedQuery::stmtRef },
-	{ PqlRelationshipType::Affects,		ParsedQuery::stmtRef },
-	{ PqlRelationshipType::AffectsT,	ParsedQuery::stmtRef },
+ParsedQuery::validRightArgs = {
+{ PqlRelationshipType::Modifies,	ParsedQuery::entRef },
+{ PqlRelationshipType::Uses,		ParsedQuery::entRef },
+{ PqlRelationshipType::Follows,		ParsedQuery::stmtRef },
+{ PqlRelationshipType::FollowsT,	ParsedQuery::stmtRef },
+{ PqlRelationshipType::Parent,		ParsedQuery::stmtRef },
+{ PqlRelationshipType::ParentT,		ParsedQuery::stmtRef },
+{ PqlRelationshipType::Calls,		ParsedQuery::entRef },
+{ PqlRelationshipType::CallsT,		ParsedQuery::entRef },
+{ PqlRelationshipType::Next,		ParsedQuery::stmtRef },
+{ PqlRelationshipType::NextT,		ParsedQuery::stmtRef },
+{ PqlRelationshipType::Affects,		ParsedQuery::stmtRef },
+{ PqlRelationshipType::AffectsT,	ParsedQuery::stmtRef },
 };
 
 const std::unordered_map<PqlRelationshipType, std::unordered_set<PqlEntityType>>
-	ParsedQuery::validLeftDesignEntities = {
-	{ PqlRelationshipType::ModifiesS,	ParsedQuery::stmtEntities },
-	{ PqlRelationshipType::ModifiesP,	ParsedQuery::procEntities },
-	{ PqlRelationshipType::UsesS,		ParsedQuery::stmtEntities },
-	{ PqlRelationshipType::UsesP,		ParsedQuery::procEntities },
-	{ PqlRelationshipType::Follows,		ParsedQuery::stmtEntities },
-	{ PqlRelationshipType::FollowsT,	ParsedQuery::stmtEntities },
-	{ PqlRelationshipType::Parent,		ParsedQuery::stmtEntities },
-	{ PqlRelationshipType::ParentT,		ParsedQuery::stmtEntities },
-	{ PqlRelationshipType::Calls,		ParsedQuery::procEntities },
-	{ PqlRelationshipType::CallsT,		ParsedQuery::procEntities },
-	{ PqlRelationshipType::Next,		ParsedQuery::stmtEntities },
-	{ PqlRelationshipType::NextT,		ParsedQuery::stmtEntities },
-	{ PqlRelationshipType::Affects,		ParsedQuery::assignEntities },
-	{ PqlRelationshipType::AffectsT,	ParsedQuery::assignEntities },
+ParsedQuery::validLeftDesignEntities = {
+{ PqlRelationshipType::ModifiesS,	ParsedQuery::stmtEntities },
+{ PqlRelationshipType::ModifiesP,	ParsedQuery::procEntities },
+{ PqlRelationshipType::UsesS,		ParsedQuery::stmtEntities },
+{ PqlRelationshipType::UsesP,		ParsedQuery::procEntities },
+{ PqlRelationshipType::Follows,		ParsedQuery::stmtEntities },
+{ PqlRelationshipType::FollowsT,	ParsedQuery::stmtEntities },
+{ PqlRelationshipType::Parent,		ParsedQuery::stmtEntities },
+{ PqlRelationshipType::ParentT,		ParsedQuery::stmtEntities },
+{ PqlRelationshipType::Calls,		ParsedQuery::procEntities },
+{ PqlRelationshipType::CallsT,		ParsedQuery::procEntities },
+{ PqlRelationshipType::Next,		ParsedQuery::stmtEntities },
+{ PqlRelationshipType::NextT,		ParsedQuery::stmtEntities },
+{ PqlRelationshipType::Affects,		ParsedQuery::assignEntities },
+{ PqlRelationshipType::AffectsT,	ParsedQuery::assignEntities },
 };
 
 const std::unordered_map<PqlRelationshipType, std::unordered_set<PqlEntityType>>
-	ParsedQuery::validRightDesignEntities = {
-	{ PqlRelationshipType::Modifies,	ParsedQuery::varEntities },
-	{ PqlRelationshipType::Uses,		ParsedQuery::varEntities },
-	{ PqlRelationshipType::Follows,		ParsedQuery::stmtEntities },
-	{ PqlRelationshipType::FollowsT,	ParsedQuery::stmtEntities },
-	{ PqlRelationshipType::Parent,		ParsedQuery::stmtEntities },
-	{ PqlRelationshipType::ParentT,		ParsedQuery::stmtEntities },
-	{ PqlRelationshipType::Calls,		ParsedQuery::procEntities },
-	{ PqlRelationshipType::CallsT,		ParsedQuery::procEntities },
-	{ PqlRelationshipType::Next,		ParsedQuery::stmtEntities },
-	{ PqlRelationshipType::NextT,		ParsedQuery::stmtEntities },
-	{ PqlRelationshipType::Affects,		ParsedQuery::assignEntities },
-	{ PqlRelationshipType::AffectsT,	ParsedQuery::assignEntities },
+ParsedQuery::validRightDesignEntities = {
+{ PqlRelationshipType::Modifies,	ParsedQuery::varEntities },
+{ PqlRelationshipType::Uses,		ParsedQuery::varEntities },
+{ PqlRelationshipType::Follows,		ParsedQuery::stmtEntities },
+{ PqlRelationshipType::FollowsT,	ParsedQuery::stmtEntities },
+{ PqlRelationshipType::Parent,		ParsedQuery::stmtEntities },
+{ PqlRelationshipType::ParentT,		ParsedQuery::stmtEntities },
+{ PqlRelationshipType::Calls,		ParsedQuery::procEntities },
+{ PqlRelationshipType::CallsT,		ParsedQuery::procEntities },
+{ PqlRelationshipType::Next,		ParsedQuery::stmtEntities },
+{ PqlRelationshipType::NextT,		ParsedQuery::stmtEntities },
+{ PqlRelationshipType::Affects,		ParsedQuery::assignEntities },
+{ PqlRelationshipType::AffectsT,	ParsedQuery::assignEntities },
 };
 
 const std::unordered_map<PqlEntityType, PqlPatternType>
-	ParsedQuery::validPatternSynDesignEntities = {
-	{ PqlEntityType::Assign, PqlPatternType::PatternA },
-	{ PqlEntityType::While, PqlPatternType::PatternW },
-	{ PqlEntityType::If, PqlPatternType::PatternI },
+ParsedQuery::validPatternSynDesignEntities = {
+{ PqlEntityType::Assign, PqlPatternType::PatternA },
+{ PqlEntityType::While, PqlPatternType::PatternW },
+{ PqlEntityType::If, PqlPatternType::PatternI },
 };
 
 const std::unordered_map<PqlPatternType, std::unordered_set<PqlReferenceType>>
-	ParsedQuery::validPatternEntRef = {
-	{ PqlPatternType::PatternA, ParsedQuery::entRef },
-	{ PqlPatternType::PatternW, ParsedQuery::entRef },
-	{ PqlPatternType::PatternI, ParsedQuery::entRef },
+ParsedQuery::validPatternEntRef = {
+{ PqlPatternType::PatternA, ParsedQuery::entRef },
+{ PqlPatternType::PatternW, ParsedQuery::entRef },
+{ PqlPatternType::PatternI, ParsedQuery::entRef },
 };
 
 const std::unordered_map<PqlPatternType, std::unordered_set<PqlEntityType>> ParsedQuery::validPatternEntRefEntities = {
@@ -113,17 +113,17 @@ const std::unordered_map<PqlPatternType, std::unordered_set<PqlEntityType>> Pars
 };
 
 const std::unordered_map<PqlPatternType, std::unordered_set<PqlExpressionType>>
-	ParsedQuery::validPatternExprSpec = {
-	{ PqlPatternType::PatternA, { PqlExpressionType::full, PqlExpressionType::partial, PqlExpressionType::wildcard } },
-	{ PqlPatternType::PatternW, { PqlExpressionType::wildcard } },
-	{ PqlPatternType::PatternI, { PqlExpressionType::wildcard } },
+ParsedQuery::validPatternExprSpec = {
+{ PqlPatternType::PatternA, { PqlExpressionType::full, PqlExpressionType::partial, PqlExpressionType::wildcard } },
+{ PqlPatternType::PatternW, { PqlExpressionType::wildcard } },
+{ PqlPatternType::PatternI, { PqlExpressionType::wildcard } },
 };
 
 const std::unordered_map<PqlPatternType, int>
-	ParsedQuery::validPatternNumOfArgs = {
-	{ PqlPatternType::PatternA, 2 },
-	{ PqlPatternType::PatternW, 2 },
-	{ PqlPatternType::PatternI, 3 },
+ParsedQuery::validPatternNumOfArgs = {
+{ PqlPatternType::PatternA, 2 },
+{ PqlPatternType::PatternW, 2 },
+{ PqlPatternType::PatternI, 3 },
 };
 
 const std::unordered_set<PqlReferenceType> ParsedQuery::attribReferences = {
@@ -132,27 +132,27 @@ const std::unordered_set<PqlReferenceType> ParsedQuery::attribReferences = {
 };
 
 const std::unordered_map<PqlEntityType, std::unordered_set<PqlReferenceType>>
-	ParsedQuery::validAttribs = {
-	{ PqlEntityType::Procedure, { PqlReferenceType::procName } },
-	{ PqlEntityType::Call,		{ PqlReferenceType::procName, PqlReferenceType::stmtNum } },
-	{ PqlEntityType::Variable,	{ PqlReferenceType::varName } },
-	{ PqlEntityType::Read,		{ PqlReferenceType::varName, PqlReferenceType::stmtNum } },
-	{ PqlEntityType::Print,		{ PqlReferenceType::varName, PqlReferenceType::stmtNum } },
-	{ PqlEntityType::Constant,	{ PqlReferenceType::value } },
-	{ PqlEntityType::Stmt,		{ PqlReferenceType::stmtNum } },
-	{ PqlEntityType::While,		{ PqlReferenceType::stmtNum } },
-	{ PqlEntityType::If,		{ PqlReferenceType::stmtNum } },
-	{ PqlEntityType::Assign,	{ PqlReferenceType::stmtNum } },
+ParsedQuery::validAttribs = {
+{ PqlEntityType::Procedure, { PqlReferenceType::procName } },
+{ PqlEntityType::Call,		{ PqlReferenceType::procName, PqlReferenceType::stmtNum } },
+{ PqlEntityType::Variable,	{ PqlReferenceType::varName } },
+{ PqlEntityType::Read,		{ PqlReferenceType::varName, PqlReferenceType::stmtNum } },
+{ PqlEntityType::Print,		{ PqlReferenceType::varName, PqlReferenceType::stmtNum } },
+{ PqlEntityType::Constant,	{ PqlReferenceType::value } },
+{ PqlEntityType::Stmt,		{ PqlReferenceType::stmtNum } },
+{ PqlEntityType::While,		{ PqlReferenceType::stmtNum } },
+{ PqlEntityType::If,		{ PqlReferenceType::stmtNum } },
+{ PqlEntityType::Assign,	{ PqlReferenceType::stmtNum } },
 };
 
 const std::unordered_map<PqlReferenceType, PqlAttributeType>
-	ParsedQuery::refToAttribMap = {
-	{ PqlReferenceType::ident,		PqlAttributeType::string },
-	{ PqlReferenceType::integer,	PqlAttributeType::integer },
-	{ PqlReferenceType::procName,	PqlAttributeType::string },
-	{ PqlReferenceType::varName,	PqlAttributeType::string },
-	{ PqlReferenceType::value,		PqlAttributeType::integer },
-	{ PqlReferenceType::stmtNum,	PqlAttributeType::integer },
+ParsedQuery::refToAttribMap = {
+{ PqlReferenceType::ident,		PqlAttributeType::string },
+{ PqlReferenceType::integer,	PqlAttributeType::integer },
+{ PqlReferenceType::procName,	PqlAttributeType::string },
+{ PqlReferenceType::varName,	PqlAttributeType::string },
+{ PqlReferenceType::value,		PqlAttributeType::integer },
+{ PqlReferenceType::stmtNum,	PqlAttributeType::integer },
 };
 
 bool ParsedQuery::isDeclared(const std::string& synonym) {
@@ -395,6 +395,26 @@ bool ParsedQuery::isStmtSubtype(PqlReference ref) {
 		|| (entType == PqlEntityType::Stmt)
 		|| (entType == PqlEntityType::While);
 }
+
+ProjectionType ParsedQuery::getProjectionType(std::vector<PqlReference> attributesProjected) {
+	if (attributesProjected.size() == 0) {
+		return ProjectionType::boolean;
+	} else if (attributesProjected.size() == 1) {
+		return ProjectionType::single;
+	} else if (attributesProjected.size() >= 1) {
+		return ProjectionType::tuple;
+	} else {
+		throw EvaluatorException(EvaluatorException::PROJECTION_TYPE_ERROR);
+	}
+}
+
+bool ParsedQuery::isClausePresent(ParsedQuery& parsedQuery) {
+	std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+	std::vector<ParsedPattern> patterns = parsedQuery.getPatterns();
+	std::vector<ParsedWith> withs = parsedQuery.getWiths();
+	return !(relationships.empty() && patterns.empty() && withs.empty());
+}
+
 
 std::unordered_map<std::string, PqlEntityType> ParsedQuery::getDeclarations() {
 	return declarations;

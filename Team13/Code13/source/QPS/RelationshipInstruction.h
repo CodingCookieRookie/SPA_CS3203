@@ -14,16 +14,21 @@ private:
 	EvaluatedTable handleUsesP();
 	EvaluatedTable handleFollows();
 	EvaluatedTable handleFollowsT();
-	EvaluatedTable handleParent();
+	EvaluatedTable handleParent(PqlRelationshipType pqlRsType);
 	EvaluatedTable handleParentT();
-	EvaluatedTable handleCalls(std::string PqlRsType);
+	EvaluatedTable handleCalls(PqlRelationshipType pqlRsType);
+	EvaluatedTable handleNext(PqlRelationshipType pqlRsType);
 
 	/* Helper Handle methods */
-	EvaluatedTable helperHandleTwoIdents(std::string pqlRsType);
+	EvaluatedTable RelationshipInstruction::helperHandleTwoIntegers(PqlRelationshipType pqlRsType);
+	EvaluatedTable helperHandleTwoIdents(PqlRelationshipType pqlRsType);
+	EvaluatedTable helperHandleOneInt(
+		PqlRelationshipType pqlRsType, PqlReferenceType lhsRefType, PqlReferenceType rhsRefType);
 	EvaluatedTable RelationshipInstruction::helperHandleOneIdent(
-		std::string pqlRsType, PqlReferenceType lhsRefType, PqlReferenceType rhsRefType);
-	EvaluatedTable RelationshipInstruction::helperHandleTwoProcMaybeWildcard(std::string pqlRsType);
-	EvaluatedTable RelationshipInstruction::helperHandleTwoWildcards(std::string pqlRsType);
+		PqlRelationshipType pqlRsType, PqlReferenceType lhsRefType, PqlReferenceType rhsRefType);
+	EvaluatedTable RelationshipInstruction::helperHandleTwoStmtsMaybeWildcard(PqlRelationshipType pqlRsType);
+	EvaluatedTable RelationshipInstruction::helperHandleTwoProcMaybeWildcard(PqlRelationshipType pqlRsType);
+	EvaluatedTable RelationshipInstruction::helperHandleTwoWildcards(PqlRelationshipType pqlRsType);
 
 public:
 	RelationshipInstruction(PqlRelationshipType pqlRSType, PqlReference lhs, PqlReference rhs);

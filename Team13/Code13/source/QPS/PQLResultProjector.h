@@ -2,10 +2,7 @@
 
 #include "EvaluatedTable.h"
 #include "QPSCommons.h"
-
-enum class ProjectionType {
-	single, tuple, boolean
-};
+#include "ParsedQuery.h"
 
 class PQLResultProjector {
 private:
@@ -13,11 +10,10 @@ private:
 	std::vector<std::string> columnsProjected;
 	std::unordered_map<std::string, PqlEntityType> declarations;
 
-	static ProjectionType getProjectionType(std::vector<PqlReference> attributesProjected);
+	static bool isClausePresent(ParsedQuery& parsedQuery);
 
 public:
 	/* Resolves the EvaluatedTable results into a list of strings to present the results of the query. */
 	static std::list<std::string> PQLResultProjector::resolveTableToResults(
-		EvaluatedTable evTable, std::vector<PqlReference> attributes,
-		std::unordered_map<std::string, PqlEntityType> declarations);
+		EvaluatedTable evTable, ParsedQuery& parsedQuery);
 };

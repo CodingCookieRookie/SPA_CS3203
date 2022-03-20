@@ -9,16 +9,20 @@
 #include "QPSCommons.h"
 
 std::list<std::string> PQLResultProjector::resolveTableToResults(
-	EvaluatedTable evaluatedTable, std::vector<PqlReference> attributes,
-	std::unordered_map<std::string, PqlEntityType> declarations) {
+	EvaluatedTable evaluatedTable, ParsedQuery& parsedQuery) {
+	std::vector<PqlReference> attributes = parsedQuery.getAttributes();
+	std::unordered_map<std::string, PqlEntityType> declarations = parsedQuery.getDeclarations();
 	std::list<std::string> resList;
 	std::unordered_map<std::string, std::vector<int>> resultTable = evaluatedTable.getTableRef();
 	int numRow = evaluatedTable.getNumRow();
 
 	/* 1. Check if Projecting Single Synonym, Tuple, or Boolean */
-	ProjectionType projType = PQLResultProjector::getProjectionType(attributes);
+	ProjectionType projType = ParsedQuery::getProjectionType(attributes);
 
-	// 2. Projecting only selected columns
+	/* 2. To check table-emptiness: the table can have rows but no values in them */
+	bool isNoValuesInResultTable = EvaluatedTable::isNoValuesInResultTable(resultTable);
+
+	/* 3. Projecting only selected columns */
 
 	/* procName, varName, value, stmtNum
 	STRING: procedure.procName, call.procName,
@@ -27,12 +31,11 @@ std::list<std::string> PQLResultProjector::resolveTableToResults(
 	INTEGER: stmt.stmt#, read.stmt#, print.stmt#, call.stmt#,
 	INTEGER: while.stmt#, if.stmt#, assign.stmt#: */
 
-	/* TODO: DRY everything */
 	if (projType == ProjectionType::boolean) {
-		if (!resultTable.empty()) {
-			resList.emplace_back("TRUE");
-		} else {
+		if (isNoValuesInResultTable) {
 			resList.emplace_back("FALSE");
+		} else {
+			resList.emplace_back("TRUE");
 		}
 		return resList;
 	}
@@ -102,16 +105,4 @@ std::list<std::string> PQLResultProjector::resolveTableToResults(
 	resList.unique();
 
 	return resList;
-}
-
-ProjectionType PQLResultProjector::getProjectionType(std::vector<PqlReference> attributesProjected) {
-	if (attributesProjected.size() == 0) {
-		return ProjectionType::boolean;
-	} else if (attributesProjected.size() == 1) {
-		return ProjectionType::single;
-	} else if (attributesProjected.size() >= 1) {
-		return ProjectionType::tuple;
-	} else {
-		throw EvaluatorException(EvaluatorException::PROJECTION_TYPE_ERROR);
-	}
 }

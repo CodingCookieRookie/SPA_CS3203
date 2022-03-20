@@ -35,13 +35,21 @@ public:
 		testTable["s"] = vec;
 		attributesProjected.emplace_back(PqlReferenceType::synonym, "s");
 
+		std::vector <std::pair<PqlEntityType, std::string>> declarations;
+		declarations.emplace_back(std::make_pair(PqlEntityType::Stmt, "s"));
+		std::vector<ParsedRelationship> noRelationships;
+		std::vector<ParsedPattern> noPatterns;
+		std::vector<ParsedWith> noWiths;
+		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
+			noRelationships, noPatterns, noWiths);
+
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
 		std::list<std::string> expected;
 		expected.push_back("1");
 		expected.push_back("3");
 		expected.push_back("5");
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, attributesProjected, entities);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -68,13 +76,21 @@ public:
 		testTable["v"] = vec;
 		attributesProjected.emplace_back(PqlReferenceType::synonym, "v");
 
+		std::vector <std::pair<PqlEntityType, std::string>> declarations;
+		declarations.emplace_back(std::make_pair(PqlEntityType::Variable, "v"));
+		std::vector<ParsedRelationship> noRelationships;
+		std::vector<ParsedPattern> noPatterns;
+		std::vector<ParsedWith> noWiths;
+		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
+			noRelationships, noPatterns, noWiths);
+
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
 		std::list<std::string> expected;
 		expected.push_back("a");
 		expected.push_back("b");
 		expected.push_back("c");
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, attributesProjected, entities);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -101,13 +117,21 @@ public:
 		testTable["p"] = vec;
 		attributesProjected.emplace_back(PqlReferenceType::synonym, "p");
 
+		std::vector <std::pair<PqlEntityType, std::string>> declarations;
+		declarations.emplace_back(std::make_pair(PqlEntityType::Procedure, "p"));
+		std::vector<ParsedRelationship> noRelationships;
+		std::vector<ParsedPattern> noPatterns;
+		std::vector<ParsedWith> noWiths;
+		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
+			noRelationships, noPatterns, noWiths);
+
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
 		std::list<std::string> expected;
 		expected.push_back("proc1");
 		expected.push_back("proc2");
 		expected.push_back("proc3");
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, attributesProjected, entities);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -127,10 +151,18 @@ public:
 		entities["c1"] = PqlEntityType::Constant;
 		testTable["c1"] = std::vector<int>{ 1, 1, 1, 2, 2, 3, 3, 4 };
 
+		std::vector <std::pair<PqlEntityType, std::string>> declarations;
+		declarations.emplace_back(std::make_pair(PqlEntityType::Constant, "c1"));
+		std::vector<ParsedRelationship> noRelationships;
+		std::vector<ParsedPattern> noPatterns;
+		std::vector<ParsedWith> noWiths;
+		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
+			noRelationships, noPatterns, noWiths);
+
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
 		std::list<std::string> expected{ "1", "2", "3", "4" };
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, attributesProjected, entities);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -150,10 +182,18 @@ public:
 		entities["s1"] = PqlEntityType::Stmt;
 		testTable["s1"] = std::vector<int>{ 1, 1, 1, 2, 2, 3, 3, 4 };
 
+		std::vector <std::pair<PqlEntityType, std::string>> declarations;
+		declarations.emplace_back(std::make_pair(PqlEntityType::Stmt, "s1"));
+		std::vector<ParsedRelationship> noRelationships;
+		std::vector<ParsedPattern> noPatterns;
+		std::vector<ParsedWith> noWiths;
+		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
+			noRelationships, noPatterns, noWiths);
+
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
 		std::list<std::string> expected{ "1", "2", "3", "4" };
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, attributesProjected, entities);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -176,10 +216,19 @@ public:
 		testTable["s1"] = std::vector<int>{ 1, 2, 3 };
 		testTable["s2"] = std::vector<int>{ 4, 5, 6 };
 
+		std::vector <std::pair<PqlEntityType, std::string>> declarations;
+		declarations.emplace_back(std::make_pair(PqlEntityType::Stmt, "s1"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Stmt, "s2"));
+		std::vector<ParsedRelationship> noRelationships;
+		std::vector<ParsedPattern> noPatterns;
+		std::vector<ParsedWith> noWiths;
+		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
+			noRelationships, noPatterns, noWiths);
+
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
 		std::list<std::string> expected{ "1 4", "2 5", "3 6" };
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, attributesProjected, entities);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -202,10 +251,19 @@ public:
 		testTable["s1"] = std::vector<int>{ 1, 1, 2, 2, 3 };
 		testTable["s2"] = std::vector<int>{ 4, 5, 5, 6, 6 };
 
+		std::vector <std::pair<PqlEntityType, std::string>> declarations;
+		declarations.emplace_back(std::make_pair(PqlEntityType::Stmt, "s1"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Stmt, "s2"));
+		std::vector<ParsedRelationship> noRelationships;
+		std::vector<ParsedPattern> noPatterns;
+		std::vector<ParsedWith> noWiths;
+		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
+			noRelationships, noPatterns, noWiths);
+
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
 		std::list<std::string> expected{ "1 4", "1 5", "2 5", "2 6", "3 6" };
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, attributesProjected, entities);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -228,10 +286,19 @@ public:
 		testTable["s1"] = std::vector<int>{ 1, 1, 2, 2, 3, 3, 4, 4, 4 };
 		testTable["s2"] = std::vector<int>{ 4, 5, 5, 6, 6, 6, 7, 7, 7 };
 
+		std::vector <std::pair<PqlEntityType, std::string>> declarations;
+		declarations.emplace_back(std::make_pair(PqlEntityType::Stmt, "s1"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Stmt, "s2"));
+		std::vector<ParsedRelationship> noRelationships;
+		std::vector<ParsedPattern> noPatterns;
+		std::vector<ParsedWith> noWiths;
+		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
+			noRelationships, noPatterns, noWiths);
+
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
 		std::list<std::string> expected{ "1 4", "1 5", "2 5", "2 6", "3 6", "4 7" };
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, attributesProjected, entities);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -253,10 +320,19 @@ public:
 		testTable["s1"] = std::vector<int>{ 1, 2, 3 };
 		testTable["s2"] = std::vector<int>{ 4, 5, 6 };
 
+		std::vector <std::pair<PqlEntityType, std::string>> declarations;
+		declarations.emplace_back(std::make_pair(PqlEntityType::Stmt, "s1"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Stmt, "s2"));
+		std::vector<ParsedRelationship> noRelationships;
+		std::vector<ParsedPattern> noPatterns;
+		std::vector<ParsedWith> noWiths;
+		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
+			noRelationships, noPatterns, noWiths);
+
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
 		std::list<std::string> expected{ "1", "2", "3" };
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, attributesProjected, entities);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -295,10 +371,23 @@ public:
 			Entity::insertProc("proc" + std::to_string(i + 1));
 		}
 
+		std::vector <std::pair<PqlEntityType, std::string>> declarations;
+		declarations.emplace_back(std::make_pair(PqlEntityType::Stmt, "s1"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Stmt, "s2"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Variable, "v1"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Variable, "v2"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Stmt, "a2"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Procedure, "p1"));
+		std::vector<ParsedRelationship> noRelationships;
+		std::vector<ParsedPattern> noPatterns;
+		std::vector<ParsedWith> noWiths;
+		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
+			noRelationships, noPatterns, noWiths);
+
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
 		std::list<std::string> expected{ "1 var1 13 proc1", "2 var2 14 proc2", "3 var3 15 proc3" };
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, attributesProjected, entities);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -337,10 +426,23 @@ public:
 			Entity::insertProc("proc" + std::to_string(i + 1));
 		}
 
+		std::vector <std::pair<PqlEntityType, std::string>> declarations;
+		declarations.emplace_back(std::make_pair(PqlEntityType::Stmt, "s1"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Stmt, "s2"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Variable, "v1"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Variable, "v2"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Stmt, "a2"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Procedure, "p1"));
+		std::vector<ParsedRelationship> noRelationships;
+		std::vector<ParsedPattern> noPatterns;
+		std::vector<ParsedWith> noWiths;
+		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
+			noRelationships, noPatterns, noWiths);
+
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
 		std::list<std::string> expected{ "1 var1 13 proc1", "2 var2 14 proc2", "3 var3 15 proc3" };
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, attributesProjected, entities);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -375,6 +477,15 @@ public:
 		Attribute::insertStmtByName(CallIdx1, StatementType::callType, proc2);
 		Attribute::insertStmtByName(CallIdx2, StatementType::callType, proc3);
 
+		std::vector <std::pair<PqlEntityType, std::string>> declarations;
+		declarations.emplace_back(std::make_pair(PqlEntityType::Call, "cl"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Procedure, "p"));
+		std::vector<ParsedRelationship> noRelationships;
+		std::vector<ParsedPattern> noPatterns;
+		std::vector<ParsedWith> noWiths;
+		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
+			noRelationships, noPatterns, noWiths);
+
 		// Simulating stmt 1 in proc1 calls proc2, stmt2 in proc2 calls proc3
 		// procedure p; call cl; Select <cl, cl.procName, p, p.procName>
 
@@ -382,7 +493,7 @@ public:
 		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
 		std::list<std::string> expected{
 			"1 proc2 proc1 proc1", "2 proc3 proc2 proc2" };
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, attributesProjected, entities);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -429,6 +540,16 @@ public:
 		Attribute::insertStmtByName(printStmt5, StatementType::printType, var2); // simulate stmt 5 printing var2
 		Attribute::insertStmtByName(printStmt6, StatementType::printType, var3); // simulate stmt 6 printing var3
 
+		std::vector <std::pair<PqlEntityType, std::string>> declarations;
+		declarations.emplace_back(std::make_pair(PqlEntityType::Variable, "v"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Read, "r"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Print, "pn"));
+		std::vector<ParsedRelationship> noRelationships;
+		std::vector<ParsedPattern> noPatterns;
+		std::vector<ParsedWith> noWiths;
+		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
+			noRelationships, noPatterns, noWiths);
+
 		// print pn; read r; variable v; Select <v.varName, r.varName, pn.varName, v, r, pn>
 
 		// 2. Main test:
@@ -437,7 +558,7 @@ public:
 			"var1 var1 var1 var1 1 4",
 			"var2 var2 var2 var2 2 5",
 			"var3 var3 var3 var3 3 6" };
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, attributesProjected, entities);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -464,13 +585,23 @@ public:
 		testTable["c1"] = std::vector<int>{ 10, 20 };
 		testTable["c2"] = std::vector<int>{ 99, 88 };
 
+		std::vector <std::pair<PqlEntityType, std::string>> declarations;
+		declarations.emplace_back(std::make_pair(PqlEntityType::Stmt, "s1"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Constant, "c1"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Constant, "c2"));
+		std::vector<ParsedRelationship> noRelationships;
+		std::vector<ParsedPattern> noPatterns;
+		std::vector<ParsedWith> noWiths;
+		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
+			noRelationships, noPatterns, noWiths);
+
 		// stmt s1; constant c1, c2; Select <s1, c1, c2, c2.value>
 
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
 		std::list<std::string> expected{
 			"1 10 99 99", "2 20 88 88" };
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, attributesProjected, entities);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -511,6 +642,21 @@ public:
 		testTable["if1"] = std::vector<int>{ 13, 14 };
 		testTable["a1"] = std::vector<int>{ 15, 16 };
 
+		std::vector <std::pair<PqlEntityType, std::string>> declarations;
+		declarations.emplace_back(std::make_pair(PqlEntityType::Stmt, "s1"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Stmt, "s2"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Read, "r1"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Print, "pn1"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Call, "cl1"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::While, "w1"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::If, "if1"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Assign, "a1"));
+		std::vector<ParsedRelationship> noRelationships;
+		std::vector<ParsedPattern> noPatterns;
+		std::vector<ParsedWith> noWiths;
+		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
+			noRelationships, noPatterns, noWiths);
+
 		// Select <s1, s2.stmt#, r1.stmt#, pn1.stmt#, cl1.stmt#, w1.stmt#, if1.stmt#, a1.stmt#>
 
 		// 2. Main test:
@@ -518,7 +664,7 @@ public:
 		std::list<std::string> expected{
 			"1 3 5 7 9 11 13 15",
 			"2 4 6 8 10 12 14 16" };
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, attributesProjected, entities);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -551,12 +697,27 @@ public:
 		testTable["if1"] = std::vector<int>{ 13, 14 };
 		testTable["a1"] = std::vector<int>{ 15, 16 };
 
+		std::vector <std::pair<PqlEntityType, std::string>> declarations;
+		declarations.emplace_back(std::make_pair(PqlEntityType::Stmt, "s1"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Stmt, "s2"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Read, "r1"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Print, "pn1"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Call, "cl1"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::While, "w1"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::If, "if1"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Assign, "a1"));
+		std::vector<ParsedRelationship> noRelationships;
+		std::vector<ParsedPattern> noPatterns;
+		std::vector<ParsedWith> noWiths;
+		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
+			noRelationships, noPatterns, noWiths);
+
 		// Select <s1, s2.stmt#, r1.stmt#, pn1.stmt#, cl1.stmt#, w1.stmt#, if1.stmt#, a1.stmt#>
 
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
 		std::list<std::string> expected{ "TRUE" };
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, attributesProjected, entities);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -573,10 +734,17 @@ public:
 		std::unordered_map<std::string, std::vector<int>> testTable;
 		std::vector<PqlReference> attributesProjected; // Empty attributesProjected table
 
+		std::vector <std::pair<PqlEntityType, std::string>> declarations;
+		std::vector<ParsedRelationship> noRelationships;
+		std::vector<ParsedPattern> noPatterns;
+		std::vector<ParsedWith> noWiths;
+		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
+			noRelationships, noPatterns, noWiths);
+
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(false);
 		std::list<std::string> expected{ "FALSE" };
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, attributesProjected, entities);
+		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();

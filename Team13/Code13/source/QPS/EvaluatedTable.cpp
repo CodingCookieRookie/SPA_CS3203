@@ -101,6 +101,20 @@ EvaluatedTable EvaluatedTable::innerJoinMerge(EvaluatedTable& otherTable) {
 	return blockNestedJoin(otherTable, commonEntities);
 }
 
+bool EvaluatedTable::isNoValuesInResultTable(
+	std::unordered_map<std::string, std::vector<int>> resultTable) {
+	if (resultTable.empty()) {
+		return true;
+	}
+	bool isEmpty = false;
+	for (std::pair<std::string, std::vector<int>> row : resultTable) {
+		if ((row.second.empty())) {
+			isEmpty = true;
+		}
+	}
+	return isEmpty;
+}
+
 EvaluatedTable::EvaluatedTable() : EvaluatedTable(true) {}
 
 EvaluatedTable::EvaluatedTable(

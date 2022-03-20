@@ -86,6 +86,26 @@ EvaluatedTable PQLEvaluator::selectColumnsForProjection(
 	std::unordered_map<std::string, std::vector<int>> resultTable;
 	EvaluatedTable resultEvTable;
 
+	/* If Select-cl is BOOLEAN */
+	ProjectionType projType = ParsedQuery::getProjectionType(attributesProjected);
+	if (projType == ProjectionType::boolean) {
+		/* Existence of clauses means clauses determine boolean result,
+		=> short circuit and go straight to PQLResultProjector */
+		if (ParsedQuery::isClausePresent(pq)) {
+			return evaluatedTable;
+		} else {
+			/* No Clauses, existence of declared synonyms determine boolean result
+			=> populate declarations into table */
+			for (const std::pair<std::string, PqlEntityType>& synonym : declarations) {
+				//PqlEntityType columnType = declarations.at(column);
+				Instruction* getAll = new GetAllInstruction(synonym.second, synonym.first);
+				EvaluatedTable evTable = getAll->execute();
+				resultEvTable = resultEvTable.innerJoinMerge(evTable);
+			}
+			return resultEvTable;
+		}
+	}
+
 	/* For each column that already exists in the final EvTable, take it from the evaluatedTable */
 	for (const std::string& column : columnsProjected) {
 		if (table.find(column) != table.end()) {
