@@ -1,0 +1,113 @@
+<?xml-stylesheet type="text/xsl" href="analysis.xsl"?>
+<test_results>
+<info>
+<name>Tests13</name><parsing_time_taken>0.000000</parsing_time_taken>
+</info>
+<queries>
+<query>
+<id ReturnBoolean="1" CondNum="1" RelNum="0" comment="select boolean">1</id><querystr><![CDATA[stmt s; Select BOOLEAN]]></querystr>
+<stuans>TRUE</stuans>
+<correct>TRUE</correct>
+<time_taken>6.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" CondNum="1" RelNum="0" comment="select tuple">2</id><querystr><![CDATA[assign a; call cl; Select <a, cl>]]></querystr>
+<stuans>16 4,16 5,16 6,16 10,16 17,8 4,8 5,8 6,8 10,8 17,11 4,11 5,11 6,11 10,11 17</stuans>
+<correct>8 4,8 5,8 6,8 10,8 17,11 4,11 5,11 6,11 10,11 17,16 4,16 5,16 6,16 10,16 17</correct>
+<time_taken>5.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" UnnamedVar="1" Uses="1" Pattern="1" SuchThat="1" CondNum="5" RelNum="1" comment="multi clause (pattern before such-that)">3</id><querystr><![CDATA[assign a; stmt s; variable v; Select a pattern a (v, _) such that Uses(s, v)]]></querystr>
+<stuans>8,11,8,11,8,11,8,11,8,11,8,11,8,11,8,11</stuans>
+<correct>8,11</correct>
+<time_taken>9.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" Modifies="1" UnnamedVar="2" Uses="1" SuchThat="1" CondNum="6" RelNum="2" comment="explicit and">4</id><querystr><![CDATA[stmt s; Select s such that Modifies(s, _) and Uses(s, _)]]></querystr>
+<stuans>8,11,7,4,12,6,10</stuans>
+<correct>4,6,7,8,10,11,12</correct>
+<time_taken>10.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" With="1" CondNum="2" RelNum="0" comment="with-cl">5</id><querystr><![CDATA[read r; procedure p; Select r with r.varName = p.procName]]></querystr>
+<stuans>1,18</stuans>
+<correct>1,18</correct>
+<time_taken>3.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" UnnamedVar="3" Pattern="1" CondNum="5" RelNum="0" comment="pattern sub-expression for assignment (partial)">6</id><querystr><![CDATA[assign a; Select a pattern a (_, _"x + 1"_)]]></querystr>
+<stuans>8,11</stuans>
+<correct>8,11</correct>
+<time_taken>4.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" UnnamedVar="1" Pattern="1" CondNum="3" RelNum="0" comment="pattern sub-expression for assignment (full)">7</id><querystr><![CDATA[assign a; Select a pattern a (_, "x + 1")]]></querystr>
+<stuans>11</stuans>
+<correct>11</correct>
+<time_taken>3.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" UnnamedVar="1" Pattern="1" CondNum="3" RelNum="0" comment="pattern while">8</id><querystr><![CDATA[while w; Select w pattern w ("call", _)]]></querystr>
+<stuans>3</stuans>
+<correct>3</correct>
+<time_taken>4.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" UnnamedVar="2" Pattern="1" CondNum="4" RelNum="0" comment="pattern if">9</id><querystr><![CDATA[if ifs; Select ifs pattern ifs ("z", _, _)]]></querystr>
+<stuans>12</stuans>
+<correct>12</correct>
+<time_taken>3.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" Calls="1" SuchThat="1" CondNum="3" RelNum="1" comment="calls">10</id><querystr><![CDATA[procedure p; Select p such that Calls("proc1", p)]]></querystr>
+<stuans>call,forwardEdge,another</stuans>
+<correct>call,forwardEdge,another</correct>
+<time_taken>3.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" Callsstar="1" SuchThat="1" CondNum="3" RelNum="1" comment="calls*">11</id><querystr><![CDATA[procedure p; Select p such that Calls*("proc1", p)]]></querystr>
+<stuans>call,forwardEdge,another,last</stuans>
+<correct>call,forwardEdge,another,last</correct>
+<time_taken>3.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" Next="1" SuchThat="1" CondNum="3" RelNum="1" comment="next">12</id><querystr><![CDATA[stmt s; Select s such that Next(12, s)]]></querystr>
+<stuans>13,14</stuans>
+<correct>13,14</correct>
+<time_taken>3.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" CondNum="1" RelNum="0" comment="select attributes">13</id><querystr><![CDATA[call cl; Select cl.procName]]></querystr>
+<stuans>forwardEdge,another,call,forwardEdge,last</stuans>
+<correct>forwardEdge,another,call,last</correct>
+<time_taken>5.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" Modifies="1" SuchThat="1" CondNum="3" RelNum="1" comment="ModifiesP">14</id><querystr><![CDATA[procedure p; Select p such that Modifies(p, "last")]]></querystr>
+<stuans>last,another,proc1</stuans>
+<correct>proc1,another,last</correct>
+<time_taken>7.000000</time_taken>
+<passed/>
+</query>
+<query>
+<id ReturnTuple="1" Uses="1" SuchThat="1" CondNum="3" RelNum="1" comment="UsesP">15</id><querystr><![CDATA[procedure p; Select p such that Uses(p, "x")]]></querystr>
+<stuans>call,forwardEdge,proc1</stuans>
+<correct>proc1,call,forwardEdge</correct>
+<time_taken>4.000000</time_taken>
+<passed/>
+</query>
+</queries>
+</test_results>
