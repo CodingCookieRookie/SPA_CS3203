@@ -415,7 +415,6 @@ bool ParsedQuery::isClausePresent(ParsedQuery& parsedQuery) {
 	return !(relationships.empty() && patterns.empty() && withs.empty());
 }
 
-
 std::unordered_map<std::string, PqlEntityType> ParsedQuery::getDeclarations() {
 	return declarations;
 }

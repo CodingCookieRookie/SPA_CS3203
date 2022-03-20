@@ -356,7 +356,7 @@ public:
 		entities["s2"] = PqlEntityType::Stmt;
 		entities["v1"] = PqlEntityType::Variable;
 		entities["v2"] = PqlEntityType::Variable;
-		entities["a2"] = PqlEntityType::Stmt;
+		entities["a1"] = PqlEntityType::Stmt;
 		entities["p1"] = PqlEntityType::Procedure;
 		testTable["s1"] = std::vector<int>{ 1, 2, 3 };
 		testTable["s2"] = std::vector<int>{ 4, 5, 6 };
@@ -376,7 +376,7 @@ public:
 		declarations.emplace_back(std::make_pair(PqlEntityType::Stmt, "s2"));
 		declarations.emplace_back(std::make_pair(PqlEntityType::Variable, "v1"));
 		declarations.emplace_back(std::make_pair(PqlEntityType::Variable, "v2"));
-		declarations.emplace_back(std::make_pair(PqlEntityType::Stmt, "a2"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Assign, "a1"));
 		declarations.emplace_back(std::make_pair(PqlEntityType::Procedure, "p1"));
 		std::vector<ParsedRelationship> noRelationships;
 		std::vector<ParsedPattern> noPatterns;
@@ -425,13 +425,12 @@ public:
 		for (int i = 0; i < 3; i++) {
 			Entity::insertProc("proc" + std::to_string(i + 1));
 		}
-
 		std::vector <std::pair<PqlEntityType, std::string>> declarations;
 		declarations.emplace_back(std::make_pair(PqlEntityType::Stmt, "s1"));
 		declarations.emplace_back(std::make_pair(PqlEntityType::Stmt, "s2"));
 		declarations.emplace_back(std::make_pair(PqlEntityType::Variable, "v1"));
 		declarations.emplace_back(std::make_pair(PqlEntityType::Variable, "v2"));
-		declarations.emplace_back(std::make_pair(PqlEntityType::Stmt, "a2"));
+		declarations.emplace_back(std::make_pair(PqlEntityType::Assign, "a1"));
 		declarations.emplace_back(std::make_pair(PqlEntityType::Procedure, "p1"));
 		std::vector<ParsedRelationship> noRelationships;
 		std::vector<ParsedPattern> noPatterns;
