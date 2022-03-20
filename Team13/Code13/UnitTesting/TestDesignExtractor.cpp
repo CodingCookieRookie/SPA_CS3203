@@ -23,6 +23,8 @@ private:
 		PKBCFG::performCleanUp();
 		Follows::performCleanUp();
 		FollowsT::performCleanUp();
+		Calls::performCleanUp();
+		CallsT::performCleanUp();
 		Container::performCleanUp();
 	}
 
@@ -93,11 +95,6 @@ public:
 		Assert::AreEqual(size_t(2), Entity::getAllVars().size());
 		Assert::AreEqual(varNameX, Entity::getVarName(Entity::getAllVars()[0]));
 		Assert::AreEqual(varNameY, Entity::getVarName(Entity::getAllVars()[1]));
-
-		std::unordered_map<StmtIndex, StmtIndex>
-			stmtFollowsMap = DesignExtractor::getStmtFollowsMap();
-		Assert::AreEqual(size_t(1), stmtFollowsMap.size());
-		Assert::IsTrue(StmtIndex(2) == stmtFollowsMap.at(StmtIndex(1)));
 
 		Assert::AreEqual(size_t(1), std::get<0>(ModifiesS::getAllSynonymVarInfo()).size());
 		Assert::AreEqual(size_t(1), std::get<0>(UsesS::getAllSynonymVarInfo()).size());
@@ -2272,6 +2269,350 @@ public:
 		Assert::IsTrue(Next::containsPredecessor(stmtIdx6, stmtIdx1));
 		Assert::IsTrue(Next::containsPredecessor(stmtIdx1, stmtIdx7));
 		Assert::AreEqual(size_t(8), std::get<0>(Next::getAllPredecessorSuccessorInfo()).size());
+	}
+
+	TEST_METHOD(extract_insertCalls_callsAndCallsTCaptured) {
+		/* AST is equivalent to the SIMPLE program
+			procedure proc1 {
+			while (x==y) {
+				if (x==y) then { read x; } else {
+				   call proc2; }}
+			}
+			procedure proc2 {
+				   call proc3; call proc3; }
+			}
+			procedure proc3 { read proc1; }
+			procedure proc4 { read proc1; }
+			procedure proc5 {
+				if ((x == y) && (z > 0)) then {
+				   print a; } else {
+				   read y; }
+				if (x != z) then {
+				   call proc4; } else {
+				   read a; }
+			}
+		*/
+
+		std::string procName1 = "proc1";
+		std::string procName2 = "proc2";
+		std::string procName3 = "proc3";
+		std::string procName4 = "proc4";
+		std::string procName5 = "proc5";
+
+		/* proc1 -> proc2 */
+		/* procedure proc1 {
+			while (x==y) {
+				if (x==y) then { read x; } else {
+				   call proc2; }}
+			}
+		*/
+		StmtLstNode* elseStmtLstNode = new StmtLstNode();
+		elseStmtLstNode->addStmtNode(new CallNode(procName2));
+		StmtLstNode* thenStmtLstNode = new StmtLstNode();
+		thenStmtLstNode->addStmtNode(new ReadNode("x"));
+		ExprNode* rootExprNode = new ExprNode(ExprNodeValueType::relOperator, "==");
+		ExprNode* leftExprNode = new ExprNode(ExprNodeValueType::varName, "x");
+		ExprNode* rightExprNode = new ExprNode(ExprNodeValueType::varName, "y");
+		rootExprNode->addChild(leftExprNode);
+		rootExprNode->addChild(rightExprNode);
+		IfNode* ifNode1 = new IfNode(rootExprNode, thenStmtLstNode, elseStmtLstNode);
+		StmtLstNode* whileStmtLstNode = new StmtLstNode();
+		whileStmtLstNode->addStmtNode(ifNode1);
+		WhileNode* whileNode = new WhileNode(rootExprNode, whileStmtLstNode);
+		StmtLstNode* stmtLstNode1 = new StmtLstNode();
+		stmtLstNode1->addStmtNode(whileNode);
+		ProcedureNode* procedureNode1 = new ProcedureNode(procName1);
+		procedureNode1->addStmtLst(stmtLstNode1);
+
+		/* proc2 -> proc3 */
+		/* procedure proc2 {
+				   call proc3; call proc3; }
+			}
+		*/
+		CallNode* callNode = new CallNode(procName3);
+		StmtLstNode* stmtLstNode2 = new StmtLstNode();
+		stmtLstNode2->addStmtNode(callNode);
+		stmtLstNode2->addStmtNode(callNode);
+		ProcedureNode* procedureNode2 = new ProcedureNode(procName2);
+		procedureNode2->addStmtLst(stmtLstNode2);
+
+		/* procedure proc3 { read proc1; } */
+		StmtLstNode* stmtLstNode3 = new StmtLstNode();
+		stmtLstNode3->addStmtNode(new ReadNode(procName1));
+		ProcedureNode* procedureNode3 = new ProcedureNode(procName3);
+		procedureNode3->addStmtLst(stmtLstNode3);
+
+		/* procedure proc4 { read proc1; } */
+		StmtLstNode* stmtLstNode4 = new StmtLstNode();
+		stmtLstNode4->addStmtNode(new ReadNode(procName1));
+		ProcedureNode* procedureNode4 = new ProcedureNode(procName4);
+		procedureNode4->addStmtLst(stmtLstNode4);
+
+		/* proc5 -> proc4 */
+		/* procedure proc5 {
+				if ((x == y) && (z > 0)) then {
+				   print a; } else {
+				   read y; }
+				if (x != z) then {
+				   call proc4; } else {
+				   read a; }
+			}
+		*/
+		PrintNode* printNode1 = new PrintNode("a");
+		StmtLstNode* thenStmtLstNode1 = new StmtLstNode();
+		thenStmtLstNode1->addStmtNode(printNode1);
+		ReadNode* readNode1 = new ReadNode("y");
+		StmtLstNode* elseStmtLstNode1 = new StmtLstNode();
+		elseStmtLstNode1->addStmtNode(readNode1);
+		ExprNode* rootExprNode2 = new ExprNode(ExprNodeValueType::logicalOperator, "&&");
+		ExprNode* leftExprNode2 = new ExprNode(ExprNodeValueType::relOperator, "==");
+		ExprNode* rightExprNode2 = new ExprNode(ExprNodeValueType::relOperator, ">");
+		rootExprNode2->addChild(leftExprNode2);
+		rootExprNode2->addChild(rightExprNode2);
+
+		leftExprNode2->addChild(new ExprNode(ExprNodeValueType::varName, "x"));
+		leftExprNode2->addChild(new ExprNode(ExprNodeValueType::varName, "y"));
+		rightExprNode2->addChild(new ExprNode(ExprNodeValueType::varName, "z"));
+		rightExprNode2->addChild(new ExprNode(ExprNodeValueType::constValue, "0"));
+		IfNode* ifNode2 = new IfNode(rootExprNode2, thenStmtLstNode1, elseStmtLstNode1);
+
+		StmtLstNode* thenStmtLstNode2 = new StmtLstNode();
+		thenStmtLstNode2->addStmtNode(new CallNode(procName4));
+		ReadNode* readNode2 = new ReadNode("a");
+		StmtLstNode* elseStmtLstNode2 = new StmtLstNode();
+		elseStmtLstNode2->addStmtNode(readNode2);
+		ExprNode* rootExprNode3 = new ExprNode(ExprNodeValueType::relOperator, "!=");
+		ExprNode* leftExprNode3 = new ExprNode(ExprNodeValueType::varName, "x");
+		ExprNode* rightExprNode3 = new ExprNode(ExprNodeValueType::varName, "z");
+		rootExprNode3->addChild(leftExprNode3);
+		rootExprNode3->addChild(rightExprNode3);
+		IfNode* ifNode3 = new IfNode(rootExprNode3, thenStmtLstNode2, elseStmtLstNode2);
+
+		StmtLstNode* outerStmtLstNode = new StmtLstNode();
+		outerStmtLstNode->addStmtNode(ifNode2);
+		outerStmtLstNode->addStmtNode(ifNode3);
+		ProcedureNode* procedureNode5 = new ProcedureNode(procName5);
+		procedureNode5->addStmtLst(outerStmtLstNode);
+
+		ProgramNode* programNode = new ProgramNode();
+		programNode->addProcedure(procedureNode1);
+		programNode->addProcedure(procedureNode2);
+		programNode->addProcedure(procedureNode3);
+		programNode->addProcedure(procedureNode4);
+		programNode->addProcedure(procedureNode5);
+		SourceAST ast(programNode);
+		DesignExtractor::extract(ast);
+
+		/* Check Calls population */
+		/* We expect three Calls relationships to be captured: (1, 2), (2, 3), and (5, 4). */
+		Assert::AreEqual(size_t(3), std::get<0>(Calls::getAllPredecessorSuccessorInfo()).size());
+
+		/* We expect four CallsT relationships to be captured:
+		   (1, 2), (1, 3), (2, 3), and (5, 4). */
+		Assert::AreEqual(size_t(4), std::get<0>(CallsT::getAllPredecessorSuccessorInfo()).size());
+	}
+
+	TEST_METHOD(extract_singleProc_insertStmtFromProc_usesPAndModifiesPCaptured) {
+		/* AST is equivalent to the SIMPLE program
+			procedure proc1 {
+			while (u==v) {
+				a = b + c;
+				if (m==n) then { read x; } else {
+				   print y; }}
+			read y;
+			}
+		*/
+
+		std::string procName = "proc1";
+		std::string varNameU = "u"; // VarIndex(1)
+		std::string varNameV = "v"; // VarIndex(2)
+		std::string varNameA = "a"; // VarIndex(3)
+		std::string varNameB = "b"; // VarIndex(4)
+		std::string varNameC = "c"; // VarIndex(5)
+		std::string varNameM = "m"; // VarIndex(6)
+		std::string varNameN = "n"; // VarIndex(7)
+		std::string varNameX = "x"; // VarIndex(8)
+		std::string varNameY = "y"; // VarIndex(9)
+
+		StmtLstNode* elseStmtLstNode = new StmtLstNode();
+		elseStmtLstNode->addStmtNode(new PrintNode(varNameY));
+		StmtLstNode* thenStmtLstNode = new StmtLstNode();
+		thenStmtLstNode->addStmtNode(new ReadNode(varNameX));
+
+		ExprNode* ifRootExprNode = new ExprNode(ExprNodeValueType::relOperator, "==");
+		ExprNode* ifLeftExprNode = new ExprNode(ExprNodeValueType::varName, varNameM);
+		ExprNode* ifRightExprNode = new ExprNode(ExprNodeValueType::varName, varNameN);
+		ifRootExprNode->addChild(ifLeftExprNode);
+		ifRootExprNode->addChild(ifRightExprNode);
+		IfNode* ifNode = new IfNode(ifRootExprNode, thenStmtLstNode, elseStmtLstNode);
+
+		ExprNode* assignRootExprNode = new ExprNode(ExprNodeValueType::arithmeticOperator, "+");
+		ExprNode* assignLeftExprNode = new ExprNode(ExprNodeValueType::varName, varNameB);
+		ExprNode* assignRightExprNode = new ExprNode(ExprNodeValueType::varName, varNameC);
+		assignRootExprNode->addChild(assignLeftExprNode);
+		assignRootExprNode->addChild(assignRightExprNode);
+		AssignNode* assignNode = new AssignNode("a", assignRootExprNode);
+
+		StmtLstNode* whileStmtLstNode = new StmtLstNode();
+		whileStmtLstNode->addStmtNode(assignNode);
+		whileStmtLstNode->addStmtNode(ifNode);
+
+		ExprNode* whileRootExprNode = new ExprNode(ExprNodeValueType::relOperator, "==");
+		ExprNode* whileLeftExprNode = new ExprNode(ExprNodeValueType::varName, varNameU);
+		ExprNode* whileRightExprNode = new ExprNode(ExprNodeValueType::varName, varNameV);
+		whileRootExprNode->addChild(whileLeftExprNode);
+		whileRootExprNode->addChild(whileRightExprNode);
+		WhileNode* whileNode = new WhileNode(whileRootExprNode, whileStmtLstNode);
+		StmtLstNode* stmtLstNode = new StmtLstNode();
+		stmtLstNode->addStmtNode(whileNode);
+		stmtLstNode->addStmtNode(new ReadNode(varNameY));
+
+		ProcedureNode* procedureNode = new ProcedureNode(procName);
+		procedureNode->addStmtLst(stmtLstNode);
+
+		ProgramNode* programNode = new ProgramNode();
+		programNode->addProcedure(procedureNode);
+		SourceAST ast(programNode);
+		DesignExtractor::extract(ast);
+
+		ProcIndex procIndex = Entity::getProcIdx(procName);
+
+		/* Check UsesP (vars might not be in order) */
+		/* Vars used: u, v, b, c, m, n, y */
+		std::vector<VarIndex> expectedResultUsesP{ 1, 2, 4, 5, 6, 7, 9 };
+		std::vector<EntityAttributeRef> resultUsesP = UsesP::getVariables(procIndex);
+		Assert::AreEqual(size_t(7), resultUsesP.size());
+		for (VarIndex varIndex : resultUsesP) {
+			Assert::IsTrue(std::find(expectedResultUsesP.begin(), expectedResultUsesP.end(), varIndex) != expectedResultUsesP.end());
+		}
+
+		/* Check ModifiesP (vars might not be in order) */
+		/* Vars modified: a, x, y */
+		std::vector<VarIndex> expectedResultModifiesP{ 3, 8, 9 };
+		std::vector<EntityAttributeRef> resultModifiesP = ModifiesP::getVariables(procIndex);
+		Assert::AreEqual(size_t(3), resultModifiesP.size());
+		for (VarIndex varIndex : resultModifiesP) {
+			Assert::IsTrue(std::find(expectedResultModifiesP.begin(), expectedResultModifiesP.end(), varIndex) != expectedResultModifiesP.end());
+		}
+	}
+
+	TEST_METHOD(extract_multProcs_insertStmtFromProc_usesPAndModifiesPCaptured) {
+		/* AST is equivalent to the SIMPLE program
+			procedure proc1 {
+			while (u==v) {
+				a = b + c;
+				if (m==n) then { read x; } else {
+				   print y; }}
+			read y;
+			}
+
+			procedure proc2 {
+				read u;
+				a = b + c;
+			}
+		*/
+
+		std::string procName1 = "proc1";
+		std::string procName2 = "proc2";
+		std::string varNameU = "u"; // VarIndex(1)
+		std::string varNameV = "v"; // VarIndex(2)
+		std::string varNameA = "a"; // VarIndex(3)
+		std::string varNameB = "b"; // VarIndex(4)
+		std::string varNameC = "c"; // VarIndex(5)
+		std::string varNameM = "m"; // VarIndex(6)
+		std::string varNameN = "n"; // VarIndex(7)
+		std::string varNameX = "x"; // VarIndex(8)
+		std::string varNameY = "y"; // VarIndex(9)
+
+		/* 1st proc */
+		StmtLstNode* elseStmtLstNode = new StmtLstNode();
+		elseStmtLstNode->addStmtNode(new PrintNode(varNameY));
+		StmtLstNode* thenStmtLstNode = new StmtLstNode();
+		thenStmtLstNode->addStmtNode(new ReadNode(varNameX));
+
+		ExprNode* ifRootExprNode = new ExprNode(ExprNodeValueType::relOperator, "==");
+		ExprNode* ifLeftExprNode = new ExprNode(ExprNodeValueType::varName, varNameM);
+		ExprNode* ifRightExprNode = new ExprNode(ExprNodeValueType::varName, varNameN);
+		ifRootExprNode->addChild(ifLeftExprNode);
+		ifRootExprNode->addChild(ifRightExprNode);
+		IfNode* ifNode = new IfNode(ifRootExprNode, thenStmtLstNode, elseStmtLstNode);
+
+		ExprNode* assignRootExprNode = new ExprNode(ExprNodeValueType::arithmeticOperator, "+");
+		ExprNode* assignLeftExprNode = new ExprNode(ExprNodeValueType::varName, varNameB);
+		ExprNode* assignRightExprNode = new ExprNode(ExprNodeValueType::varName, varNameC);
+		assignRootExprNode->addChild(assignLeftExprNode);
+		assignRootExprNode->addChild(assignRightExprNode);
+		AssignNode* assignNode = new AssignNode("a", assignRootExprNode);
+
+		StmtLstNode* whileStmtLstNode = new StmtLstNode();
+		whileStmtLstNode->addStmtNode(assignNode);
+		whileStmtLstNode->addStmtNode(ifNode);
+
+		ExprNode* whileRootExprNode = new ExprNode(ExprNodeValueType::relOperator, "==");
+		ExprNode* whileLeftExprNode = new ExprNode(ExprNodeValueType::varName, varNameU);
+		ExprNode* whileRightExprNode = new ExprNode(ExprNodeValueType::varName, varNameV);
+		whileRootExprNode->addChild(whileLeftExprNode);
+		whileRootExprNode->addChild(whileRightExprNode);
+		WhileNode* whileNode = new WhileNode(whileRootExprNode, whileStmtLstNode);
+		StmtLstNode* stmtLstNode1 = new StmtLstNode();
+		stmtLstNode1->addStmtNode(whileNode);
+		stmtLstNode1->addStmtNode(new ReadNode(varNameY));
+
+		ProcedureNode* procedureNode1 = new ProcedureNode(procName1);
+		procedureNode1->addStmtLst(stmtLstNode1);
+
+		/* 2nd proc */
+		StmtLstNode* stmtLstNode2 = new StmtLstNode();
+		stmtLstNode2->addStmtNode(new ReadNode(varNameU));
+		stmtLstNode2->addStmtNode(assignNode);
+
+		ProcedureNode* procedureNode2 = new ProcedureNode(procName2);
+		procedureNode2->addStmtLst(stmtLstNode2);
+
+		ProgramNode* programNode = new ProgramNode();
+		programNode->addProcedure(procedureNode1);
+		programNode->addProcedure(procedureNode2);
+		SourceAST ast(programNode);
+		DesignExtractor::extract(ast);
+
+		ProcIndex procIndex1 = Entity::getProcIdx(procName1);
+		ProcIndex procIndex2 = Entity::getProcIdx(procName2);
+
+		/* Check UsesP for 1st proc (vars might not be in order) */
+		/* Vars used: u, v, b, c, m, n, y */
+		std::vector<VarIndex> expectedResultUsesP1{ 1, 2, 4, 5, 6, 7, 9 };
+		std::vector<EntityAttributeRef> resultUsesP1 = UsesP::getVariables(procIndex1);
+		Assert::AreEqual(size_t(7), resultUsesP1.size());
+		for (VarIndex varIndex : resultUsesP1) {
+			Assert::IsTrue(std::find(expectedResultUsesP1.begin(), expectedResultUsesP1.end(), varIndex) != expectedResultUsesP1.end());
+		}
+
+		/* Check ModifiesP for 1st proc (vars might not be in order) */
+		/* Vars modified: a, x, y */
+		std::vector<VarIndex> expectedResultModifiesP1{ 3, 8, 9 };
+		std::vector<EntityAttributeRef> resultModifiesP1 = ModifiesP::getVariables(procIndex1);
+		Assert::AreEqual(size_t(3), resultModifiesP1.size());
+		for (VarIndex varIndex : resultModifiesP1) {
+			Assert::IsTrue(std::find(expectedResultModifiesP1.begin(), expectedResultModifiesP1.end(), varIndex) != expectedResultModifiesP1.end());
+		}
+
+		/* Check UsesP for 2nd proc (vars might not be in order) */
+		/* Vars used: b, c */
+		std::vector<VarIndex> expectedResultUsesP2{ 4, 5 };
+		std::vector<EntityAttributeRef> resultUsesP2 = UsesP::getVariables(procIndex2);
+		Assert::AreEqual(size_t(2), resultUsesP2.size());
+		for (VarIndex varIndex : resultUsesP2) {
+			Assert::IsTrue(std::find(expectedResultUsesP2.begin(), expectedResultUsesP2.end(), varIndex) != expectedResultUsesP2.end());
+		}
+
+		/* Check ModifiesP for 2nd proc (vars might not be in order) */
+		/* Vars modified: u, a */
+		std::vector<VarIndex> expectedResultModifiesP2{ 1, 3 };
+		std::vector<EntityAttributeRef> resultModifiesP2 = ModifiesP::getVariables(procIndex2);
+		Assert::AreEqual(size_t(2), resultModifiesP2.size());
+		for (VarIndex varIndex : resultModifiesP2) {
+			Assert::IsTrue(std::find(expectedResultModifiesP2.begin(), expectedResultModifiesP2.end(), varIndex) != expectedResultModifiesP2.end());
+		}
 	}
 	};
 }

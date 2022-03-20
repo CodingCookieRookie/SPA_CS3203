@@ -1,80 +1,61 @@
 #include "DesignExtractor.h"
 
-std::unordered_map<StmtIndex, std::vector<StmtIndex>> DesignExtractor::stmtParentMap{};
-std::unordered_map<StmtIndex, StmtIndex> DesignExtractor::stmtFollowsMap{};
 std::unordered_map<StmtNode*, StmtIndex> DesignExtractor::stmtNodeIndexMap{};
 
-void DesignExtractor::processProgramNode(ProgramNode* programNode) {
+void DesignExtractor::processProgramNode(
+	ProgramNode* programNode,
+	std::unordered_map<ProcIndex, std::vector<StmtIndex>>& procStmtMap,
+	std::unordered_map<StmtIndex, std::string>& callsProcNameMap) {
 	for (ProcedureNode* procedureNode : programNode->getProcedureNodes()) {
-		processProcedureNode(procedureNode);
+		processProcedureNode(procedureNode, procStmtMap, callsProcNameMap);
 	}
 }
 
-void DesignExtractor::processProcedureNode(ProcedureNode* procedureNode) {
+void DesignExtractor::processProcedureNode(
+	ProcedureNode* procedureNode,
+	std::unordered_map<ProcIndex, std::vector<StmtIndex>>& procStmtMap,
+	std::unordered_map<StmtIndex, std::string>& callsProcNameMap) {
 	ProcIndex procIndex = Entity::insertProc(procedureNode->getProcName());
 	std::vector<StmtIndex> stmtIndices =
-		processStmtLstNode(procedureNode->getStmtLstNode());
+		processStmtLstNode(procedureNode->getStmtLstNode(), callsProcNameMap);
+
+	/* Populates procStmtMap with direct stmts, not including the nested stmts */
+	procStmtMap[procIndex] = stmtIndices;
 }
 
 std::vector<StmtIndex> DesignExtractor::processStmtLstNode(
-	StmtLstNode* stmtLstNode) {
+	StmtLstNode* stmtLstNode,
+	std::unordered_map<StmtIndex, std::string>& callsProcNameMap) {
 	std::vector<StmtIndex> stmtIndices;
 	StmtIndex prevIndex = 0;
 	for (StmtNode* stmtNode : stmtLstNode->getStmtNodes()) {
-		StmtIndex stmtIndex = processStmtNode(stmtNode, prevIndex);
+		StmtIndex stmtIndex = processStmtNode(stmtNode, prevIndex, callsProcNameMap);
 		stmtIndices.push_back(stmtIndex);
 		prevIndex = stmtIndex;
 	}
 	return stmtIndices;
 }
 
-/* TODO: refactor to adhere to SLAP and remove long method */
-StmtIndex DesignExtractor::processStmtNode(StmtNode* stmtNode, StmtIndex prevIndex) {
+StmtIndex DesignExtractor::processStmtNode(
+	StmtNode* stmtNode,
+	StmtIndex& prevIndex,
+	std::unordered_map<StmtIndex, std::string>& callsProcNameMap) {
 	StmtIndex stmtIndex = insertStmt(stmtNode);
 	stmtNodeIndexMap[stmtNode] = stmtIndex;
-	if (!(prevIndex == StmtIndex())) {
-		stmtFollowsMap[prevIndex] = stmtIndex;
-	}
-	std::unordered_set<std::string> modifies = stmtNode->getModifiesVars();
-	for (const std::string& varName : modifies) {
-		VarIndex varIndex = Entity::insertVar(varName);
-		ModifiesS::insert(stmtIndex, varIndex);
+
+	/* Populates the relevant Entity and Relationship */
+	insertFollows(prevIndex, stmtIndex);
+	insertModifies(stmtNode, stmtIndex);
+	insertUses(stmtNode, stmtIndex);
+	insertParent(stmtNode, stmtIndex, callsProcNameMap);
+	insertConst(stmtNode);
+	insertPattern(stmtNode, stmtIndex);
+
+	/* Populates callsProcNameMap only if current stmt is a call stmt */
+	if (stmtNode->getStmtType() == StatementType::callType) {
+		callsProcNameMap[stmtIndex] = stmtNode->getProcCalled();
 	}
 
-	/* Container stmts use control variables for pattern */
-	std::unordered_set<std::string> usesVars = stmtNode->getUsesVars();
-	for (const std::string& varName : usesVars) {
-		VarIndex varIndex = Entity::insertVar(varName);
-		UsesS::insert(stmtIndex, varIndex);
-		switch (stmtNode->getStmtType()) {
-		case StatementType::ifType:
-			Pattern::insertIfInfo(stmtIndex, varIndex);
-			break;
-		case StatementType::whileType:
-			Pattern::insertWhileInfo(stmtIndex, varIndex);
-			break;
-		}
-	}
-
-	std::unordered_set<std::string> consts = stmtNode->getConsts();
-	for (const std::string& constName : consts) {
-		int constVal = stoi(constName);
-		Entity::insertConst(constVal);
-	}
-
-	std::string pattern = stmtNode->getPattern();
-	if (!pattern.empty() && modifies.size() == 1) {
-		std::string varName = *(modifies.begin());
-		VarIndex varIndex = Entity::getVarIdx(varName);
-		Pattern::insertAssignInfo(varIndex, pattern, stmtIndex);
-	}
-	std::vector<StmtLstNode*> childStmtLsts = stmtNode->getChildStmtLst();
-	for (StmtLstNode* stmtLstNode : childStmtLsts) {
-		std::vector<StmtIndex> stmtIndices = processStmtLstNode(stmtLstNode);
-		for (StmtIndex& childIndex : stmtIndices) {
-			stmtParentMap[stmtIndex].push_back(childIndex);
-		}
-	}
 	return stmtIndex;
 }
 
@@ -102,6 +83,104 @@ StmtIndex DesignExtractor::insertStmt(StmtNode* stmtNode) {
 	}
 
 	return stmtIndex;
+}
+
+void DesignExtractor::insertConst(StmtNode* stmtNode) {
+	std::unordered_set<std::string> consts = stmtNode->getConsts();
+	for (const std::string& constName : consts) {
+		Entity::insertConst(stoi(constName));
+	}
+}
+
+void DesignExtractor::insertPattern(StmtNode* stmtNode, StmtIndex& stmtIndex) {
+	std::unordered_set<std::string> modifies = stmtNode->getModifiesVars();
+	std::string pattern = stmtNode->getPattern();
+	if (!pattern.empty() && modifies.size() == 1) {
+		std::string varName = *(modifies.begin());
+		VarIndex varIndex = Entity::getVarIdx(varName);
+		Pattern::insertAssignInfo(varIndex, pattern, stmtIndex);
+	}
+}
+
+void DesignExtractor::insertFollows(StmtIndex& prevIndex, StmtIndex& stmtIndex) {
+	if (!(prevIndex == StmtIndex())) {
+		Follows::insert(prevIndex, stmtIndex);
+	}
+}
+
+void DesignExtractor::insertModifies(StmtNode* stmtNode, StmtIndex& stmtIndex) {
+	std::unordered_set<std::string> modifies = stmtNode->getModifiesVars();
+	for (const std::string& varName : modifies) {
+		VarIndex varIndex = Entity::insertVar(varName);
+		ModifiesS::insert(stmtIndex, varIndex);
+	}
+}
+
+void DesignExtractor::insertUses(StmtNode* stmtNode, StmtIndex& stmtIndex) {
+	/* TODO (iter3): refactor container stmt's getUsesVars to getPattern */
+	/* Container stmts use control variables for pattern */
+	std::unordered_set<std::string> usesVars = stmtNode->getUsesVars();
+	for (const std::string& varName : usesVars) {
+		VarIndex varIndex = Entity::insertVar(varName);
+		UsesS::insert(stmtIndex, varIndex);
+		switch (stmtNode->getStmtType()) {
+		case StatementType::ifType:
+			Pattern::insertIfInfo(stmtIndex, varIndex);
+			break;
+		case StatementType::whileType:
+			Pattern::insertWhileInfo(stmtIndex, varIndex);
+			break;
+		}
+	}
+}
+
+void DesignExtractor::insertParent(
+	StmtNode* stmtNode,
+	StmtIndex& stmtIndex,
+	std::unordered_map<StmtIndex, std::string>& callsProcNameMap) {
+	std::vector<StmtLstNode*> childStmtLsts = stmtNode->getChildStmtLst();
+	for (StmtLstNode* stmtLstNode : childStmtLsts) {
+		std::vector<StmtIndex> stmtIndices = processStmtLstNode(stmtLstNode, callsProcNameMap);
+		for (StmtIndex& childIndex : stmtIndices) {
+			Parent::insert(stmtIndex, childIndex);
+			Container::insertStmtInContainer(stmtIndex, childIndex);
+		}
+	}
+}
+
+void DesignExtractor::processProcStmtMap(std::unordered_map<ProcIndex, std::vector<StmtIndex>>& procStmtMap) {
+	for (auto& procStmt : procStmtMap) {
+		ProcIndex procIndex = procStmt.first;
+		std::vector<StmtIndex> stmtIndices = procStmt.second;
+		for (StmtIndex stmtIndex : stmtIndices) {
+			insertStmtFromProc(procIndex, stmtIndex);
+		}
+	}
+}
+
+void DesignExtractor::insertStmtFromProc(ProcIndex& procIndex, StmtIndex& stmtIndex) {
+	Entity::insertStmtFromProc(procIndex, stmtIndex);
+
+	/* Recursively insert statements in container stmts */
+	std::vector<StmtIndex> nestedStmtIndices = Parent::getSuccessors(stmtIndex);
+	for (StmtIndex nestedStmtIndex : nestedStmtIndices) {
+		insertStmtFromProc(procIndex, nestedStmtIndex);
+	}
+}
+
+void DesignExtractor::processCallsProcNameMap(std::unordered_map<StmtIndex, std::string>& callsProcNameMap) {
+	/* TODO (iter3?): would be better if we have stmt-proc mapping? */
+	for (ProcIndex& predecessor : Entity::getAllProcs()) {
+		std::unordered_set<StmtIndex> stmtIndices = Entity::getStmtsFromProc(predecessor);
+
+		/* Only populate Calls relationship if it is a call stmt*/
+		for (auto& stmtIndex : stmtIndices) {
+			if (callsProcNameMap.find(stmtIndex) != callsProcNameMap.end()) {
+				ProcIndex successor = Entity::getProcIdx(callsProcNameMap[stmtIndex]);
+				Calls::insert(predecessor, successor);
+			}
+		}
+	}
 }
 
 void DesignExtractor::appendNode(CFGNode*& head, CFGNode*& tail, CFGNode* next) {
@@ -217,35 +296,17 @@ void DesignExtractor::extractNextInfo(CFGNode* node) {
 }
 
 void DesignExtractor::extract(SourceAST& ast) {
-	stmtParentMap.clear();
-	stmtFollowsMap.clear();
+	/* Maps procedure index to its direct stmt indices */
+	std::unordered_map<ProcIndex, std::vector<StmtIndex>> procStmtMap;
+
+	/* Maps stmt index of a call stmt to the procedure name called */
+	std::unordered_map<StmtIndex, std::string> callsProcNameMap;
 
 	ProgramNode* programNode = ast.getRoot();
-	processProgramNode(programNode);
-
-	/* Populate Parent and Follows Tables, and compute their transitive closures */
-	for (const std::pair<StmtIndex, std::vector<StmtIndex>> parentPair : stmtParentMap) {
-		StmtIndex predecessor = parentPair.first;
-		std::vector<StmtIndex> successors = parentPair.second;
-		for (StmtIndex& successor : successors) {
-			Parent::insert(predecessor, successor);
-			Container::insertStmtInContainer(predecessor, successor);
-		}
-	}
-	for (const std::pair<StmtIndex, StmtIndex>& followsPair : stmtFollowsMap) {
-		StmtIndex predecessor = followsPair.first;
-		StmtIndex successor = followsPair.second;
-		Follows::insert(predecessor, successor);
-	}
+	processProgramNode(programNode, procStmtMap, callsProcNameMap);
+	processProcStmtMap(procStmtMap);
+	processCallsProcNameMap(callsProcNameMap);
 	TransitivePopulator::populateRecursiveInfo();
 
 	processCFGs(programNode);
-}
-
-std::unordered_map<StmtIndex, std::vector<StmtIndex>> DesignExtractor::getStmtParentMap() {
-	return stmtParentMap;
-}
-
-std::unordered_map<StmtIndex, StmtIndex> DesignExtractor::getStmtFollowsMap() {
-	return stmtFollowsMap;
 }
