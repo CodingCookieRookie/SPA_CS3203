@@ -173,6 +173,53 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 	}
 
+	TEST_METHOD(executeNextInstruction_twoStmtsSameSyn_evaluatedTableFormed) {
+		// 1. Setup:
+		// Next(s1, s1) RelationshipInstruction
+		PqlReference lhsRef, rhsRef;
+		lhsRef = std::make_pair(PqlReferenceType::synonym, "s1");
+		rhsRef = std::make_pair(PqlReferenceType::synonym, "s1");
+		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::Next, lhsRef, rhsRef);
+
+		// PKB inserts 5 statements
+		std::vector<StmtIndex> stmts;
+		for (int i = 0; i < 6; i++) {
+			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+		}
+		for (int i = 0; i < 4; i++) {
+			Next::insert(stmts[i], stmts[i + 1]);
+		}
+		Next::insert(stmts[5], stmts[5]); // 5 is a while loop to itself
+
+		// 2. Main test:
+		EvaluatedTable evTable = instruction->execute();
+
+		// Test numRow:
+		Assert::AreEqual(size_t(1), evTable.getNumRow());
+
+		// Test Table: std::unordered_map<std::string, std::vector<int>>
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("s1") != tableRef.end());
+		Assert::AreEqual(false, tableRef.find("s6") != tableRef.end());
+
+		// Test Entities: std::unordered_map<std::string, PqlEntityType>
+		std::vector<int> s1values{ 6 };
+		auto actuals1Values = tableRef.at("s1");
+		bool areVecEqual = std::equal(s1values.begin(), s1values.end(), actuals1Values.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		auto actualEntities = evTable.getEntities();
+		Assert::AreEqual(true, actualEntities.find("s1") != actualEntities.end());
+		Assert::AreEqual(false, actualEntities.find("s2") != actualEntities.end());
+		Assert::AreEqual(false, actualEntities.find("s6") != actualEntities.end());
+		bool isPqlEntityType = PqlEntityType::Stmt == actualEntities.at("s1");
+		Assert::AreEqual(true, isPqlEntityType);
+
+		// Test EvResult:
+		bool actualEvResult = evTable.getEvResult();
+		Assert::AreEqual(true, actualEvResult);
+	}
+
 	TEST_METHOD(executeNextInstruction_lhsStmtRhsWildcardStress_evaluatedTableFormed) {
 		// 1. Setup:
 		// Next(s1, _) RelationshipInstruction

@@ -804,7 +804,15 @@ EvaluatedTable RelationshipInstruction::helperHandleTwoStmtsMaybeWildcard(PqlRel
 		results = Next::getAllPredecessorSuccessorInfo();
 		if (lhsRef.second == rhsRef.second) { /* Special case: Next(s1, s1) has a legitimate result */
 			PQLentities.insert(std::pair(lhsRef.second, PqlEntityType::Stmt)); /*just do LHS*/
-			PQLmap[lhsRef.second] = std::get<0>(results);
+			std::vector<int> lhsResults = std::get<0>(results);
+			std::vector<int> rhsResults = std::get<1>(results);
+			std::vector<int> finalResults;
+			for (int i = 0; i < lhsResults.size(); i++) {
+				if (lhsResults[i] == rhsResults[i]) {
+					finalResults.emplace_back(lhsResults[i]);
+				}
+			}
+			PQLmap[lhsRef.second] = finalResults;
 			return EvaluatedTable(PQLentities, PQLmap);
 		}
 		break;
