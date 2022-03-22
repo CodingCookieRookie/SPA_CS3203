@@ -73,3 +73,48 @@ procedure p;
 Select p such that Uses(p, "x")
 proc1, call, forwardEdge
 5000
+16 - Modifies call
+call cl;
+Select cl such that Modifies(cl, "last")
+5, 17
+5000
+17 - Uses call
+call cl;
+Select cl such that Uses(cl, "x")
+4, 6, 10
+5000
+18 - pattern sub-expression for assignment (exact entRef, full)
+assign a;
+Select a pattern a ("x", _    "x + 1"           _)
+8, 11
+5000
+19 - explicit and, pattern
+assign a; if ifs;
+Select a pattern a("x", _) and ifs("x", _, _)
+8, 11
+5000
+20 - invalid
+assign a, a1;
+Select a pattern a ("x", _) and pattern a1 (_, _"x"_)
+none
+5000
+21 - with integer comparison
+constant c; stmt s;
+Select c.value with c.value = s.stmt#
+1, 2, 10
+5000
+22
+stmt s; while w;
+Select <w, s> such that Parent(w, s) pattern w(_, _) such that Modifies(s, "y")
+3 4
+5000
+23 - incompatible with-cl
+print pn;
+Select pn with 1 = pn.varName 
+none
+5000
+24 - next same arg
+stmt s;
+Select s such that Next(s, s) 
+none
+5000
