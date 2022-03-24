@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\source\Common\Common.cpp" />
     <ClCompile Include="..\source\Common\ExpressionParser.cpp" />
     <ClCompile Include="..\source\Common\ExprNode.cpp" />
     <ClCompile Include="..\source\Common\Lexer.cpp" />
@@ -41,6 +42,7 @@
     <ClCompile Include="..\source\Exception\SPAException.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\source\Common\Common.h" />
     <ClInclude Include="..\source\Common\ExpressionParser.h" />
     <ClInclude Include="..\source\Common\ExprNode.h" />
     <ClInclude Include="..\source\Common\Lexer.h" />

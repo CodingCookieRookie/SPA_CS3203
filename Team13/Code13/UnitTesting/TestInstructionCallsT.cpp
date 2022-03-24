@@ -28,8 +28,8 @@ public:
 		// 1. Setup:
 		// Calls("first", "second") RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::ident, "procedure2");
-		rhsRef = std::make_pair(PqlReferenceType::ident, "procedure3");
+		lhsRef = std::make_pair(PqlReferenceType::Ident, "procedure2");
+		rhsRef = std::make_pair(PqlReferenceType::Ident, "procedure3");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::CallsT, lhsRef, rhsRef);
 
 		// PKB inserts 4 procs, establishes 3 calls relationships
@@ -56,8 +56,8 @@ public:
 		// 1. Setup:
 		// Calls*("procedure1", q) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::ident, "procedure1");
-		rhsRef = std::make_pair(PqlReferenceType::synonym, "q");
+		lhsRef = std::make_pair(PqlReferenceType::Ident, "procedure1");
+		rhsRef = std::make_pair(PqlReferenceType::Synonym, "q");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::CallsT, lhsRef, rhsRef);
 
 		// PKB inserts 4 procs, establishes 3 calls relationships
@@ -105,8 +105,8 @@ public:
 		// 1. Setup:
 		// Calls*(p, "procedure4") RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::synonym, "p");
-		rhsRef = std::make_pair(PqlReferenceType::ident, "procedure4");
+		lhsRef = std::make_pair(PqlReferenceType::Synonym, "p");
+		rhsRef = std::make_pair(PqlReferenceType::Ident, "procedure4");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::CallsT, lhsRef, rhsRef);
 
 		// PKB inserts 4 procs, establishes 4 calls relationships
@@ -155,8 +155,8 @@ public:
 		// 1. Setup:
 		// Calls*(p, q) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::synonym, "p");
-		rhsRef = std::make_pair(PqlReferenceType::synonym, "q");
+		lhsRef = std::make_pair(PqlReferenceType::Synonym, "p");
+		rhsRef = std::make_pair(PqlReferenceType::Synonym, "q");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::CallsT, lhsRef, rhsRef);
 
 		// PKB inserts 4 procs, establishes 3 calls relationships
@@ -216,8 +216,8 @@ public:
 		// 1. Setup:
 		// Parent*(s1, s2) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::synonym, "p");
-		rhsRef = std::make_pair(PqlReferenceType::synonym, "q");
+		lhsRef = std::make_pair(PqlReferenceType::Synonym, "p");
+		rhsRef = std::make_pair(PqlReferenceType::Synonym, "q");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::CallsT, lhsRef, rhsRef);
 
 		// PKB inserts 19 procs, establishes 18 Calls relationships
@@ -287,8 +287,8 @@ public:
 		// 1. Setup:
 		// Calls*(p, _) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::synonym, "p");
-		rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
+		lhsRef = std::make_pair(PqlReferenceType::Synonym, "p");
+		rhsRef = std::make_pair(PqlReferenceType::Wildcard, "_");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::CallsT, lhsRef, rhsRef);
 
 		// PKB inserts 99 procs, establishes 98 Calls relationships
@@ -349,8 +349,8 @@ public:
 		// 1. Setup:
 		// Calls*(_, "procedure87") RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
-		rhsRef = std::make_pair(PqlReferenceType::ident, "procedure87");
+		lhsRef = std::make_pair(PqlReferenceType::Wildcard, "_");
+		rhsRef = std::make_pair(PqlReferenceType::Ident, "procedure87");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::CallsT, lhsRef, rhsRef);
 
 		// PKB inserts 99 procs, establishes 98 Calls relationships
@@ -396,8 +396,8 @@ public:
 		// 1. Setup:
 		// Calls*(_, _) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
-		rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
+		lhsRef = std::make_pair(PqlReferenceType::Wildcard, "_");
+		rhsRef = std::make_pair(PqlReferenceType::Wildcard, "_");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::CallsT, lhsRef, rhsRef);
 
 		// PKB inserts 99 procs, establishes 98 Calls relationships

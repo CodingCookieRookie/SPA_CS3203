@@ -51,7 +51,7 @@ private:
 	bool isDeclared(const std::string& synonym);
 	PqlEntityType getType(std::string& synonym);
 
-	void populateDeclarations(const std::vector<PQL_VARIABLE>& allDeclarations);
+	void populateDeclarations(const std::vector<PqlEntity>& allDeclarations);
 	void populateColumns(const std::vector<PqlReference>& allColumns);
 	void populateRelationships(const std::vector<ParsedRelationship>& allRelationships);
 	void populatePatterns(const std::vector<ParsedPattern>& allPatterns);
@@ -59,7 +59,7 @@ private:
 public:
 
 	/* Constructor for a ParsedQuery object */
-	ParsedQuery(const std::vector<PQL_VARIABLE>& allDeclarations,
+	ParsedQuery(const std::vector<PqlEntity>& allDeclarations,
 		const std::vector<PqlReference>& allColumns,
 		const std::vector<ParsedRelationship>& allRelationships,
 		const std::vector<ParsedPattern>& allPatterns,

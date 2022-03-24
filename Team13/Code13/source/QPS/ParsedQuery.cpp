@@ -1,16 +1,16 @@
 #include "ParsedQuery.h"
 
 const std::unordered_set<PqlReferenceType>
-ParsedQuery::stmtRef = { PqlReferenceType::synonym, PqlReferenceType::wildcard, PqlReferenceType::integer };
+ParsedQuery::stmtRef = { PqlReferenceType::Synonym, PqlReferenceType::Wildcard, PqlReferenceType::Integer };
 
 const std::unordered_set<PqlReferenceType>
-ParsedQuery::entRef = { PqlReferenceType::synonym, PqlReferenceType::wildcard, PqlReferenceType::ident };
+ParsedQuery::entRef = { PqlReferenceType::Synonym, PqlReferenceType::Wildcard, PqlReferenceType::Ident };
 
 const std::unordered_set<PqlReferenceType>
-ParsedQuery::stmtRefNoWildcard = { PqlReferenceType::synonym, PqlReferenceType::integer };
+ParsedQuery::stmtRefNoWildcard = { PqlReferenceType::Synonym, PqlReferenceType::Integer };
 
 const std::unordered_set<PqlReferenceType>
-ParsedQuery::entRefNoWildcard = { PqlReferenceType::synonym, PqlReferenceType::ident };
+ParsedQuery::entRefNoWildcard = { PqlReferenceType::Synonym, PqlReferenceType::Ident };
 
 const std::unordered_set<PqlEntityType> ParsedQuery::stmtEntities = {
 	PqlEntityType::Assign, PqlEntityType::Call, PqlEntityType::If, PqlEntityType::Print,
@@ -114,9 +114,9 @@ const std::unordered_map<PqlPatternType, std::unordered_set<PqlEntityType>> Pars
 
 const std::unordered_map<PqlPatternType, std::unordered_set<PqlExpressionType>>
 ParsedQuery::validPatternExprSpec = {
-{ PqlPatternType::PatternA, { PqlExpressionType::full, PqlExpressionType::partial, PqlExpressionType::wildcard } },
-{ PqlPatternType::PatternW, { PqlExpressionType::wildcard } },
-{ PqlPatternType::PatternI, { PqlExpressionType::wildcard } },
+{ PqlPatternType::PatternA, { PqlExpressionType::Full, PqlExpressionType::Partial, PqlExpressionType::Wildcard } },
+{ PqlPatternType::PatternW, { PqlExpressionType::Wildcard } },
+{ PqlPatternType::PatternI, { PqlExpressionType::Wildcard } },
 };
 
 const std::unordered_map<PqlPatternType, int>
@@ -127,32 +127,32 @@ ParsedQuery::validPatternNumOfArgs = {
 };
 
 const std::unordered_set<PqlReferenceType> ParsedQuery::attribReferences = {
-	PqlReferenceType::procName, PqlReferenceType::varName,
-	PqlReferenceType::value, PqlReferenceType::stmtNum
+	PqlReferenceType::ProcName, PqlReferenceType::VarName,
+	PqlReferenceType::Value, PqlReferenceType::StmtNum
 };
 
 const std::unordered_map<PqlEntityType, std::unordered_set<PqlReferenceType>>
 ParsedQuery::validAttribs = {
-{ PqlEntityType::Procedure, { PqlReferenceType::procName } },
-{ PqlEntityType::Call,		{ PqlReferenceType::procName, PqlReferenceType::stmtNum } },
-{ PqlEntityType::Variable,	{ PqlReferenceType::varName } },
-{ PqlEntityType::Read,		{ PqlReferenceType::varName, PqlReferenceType::stmtNum } },
-{ PqlEntityType::Print,		{ PqlReferenceType::varName, PqlReferenceType::stmtNum } },
-{ PqlEntityType::Constant,	{ PqlReferenceType::value } },
-{ PqlEntityType::Stmt,		{ PqlReferenceType::stmtNum } },
-{ PqlEntityType::While,		{ PqlReferenceType::stmtNum } },
-{ PqlEntityType::If,		{ PqlReferenceType::stmtNum } },
-{ PqlEntityType::Assign,	{ PqlReferenceType::stmtNum } },
+	{ PqlEntityType::Procedure, { PqlReferenceType::ProcName } },
+	{ PqlEntityType::Call,		{ PqlReferenceType::ProcName, PqlReferenceType::StmtNum } },
+	{ PqlEntityType::Variable,	{ PqlReferenceType::VarName } },
+	{ PqlEntityType::Read,		{ PqlReferenceType::VarName, PqlReferenceType::StmtNum } },
+	{ PqlEntityType::Print,		{ PqlReferenceType::VarName, PqlReferenceType::StmtNum } },
+	{ PqlEntityType::Constant,	{ PqlReferenceType::Value } },
+	{ PqlEntityType::Stmt,		{ PqlReferenceType::StmtNum } },
+	{ PqlEntityType::While,		{ PqlReferenceType::StmtNum } },
+	{ PqlEntityType::If,		{ PqlReferenceType::StmtNum } },
+	{ PqlEntityType::Assign,	{ PqlReferenceType::StmtNum } },
 };
 
 const std::unordered_map<PqlReferenceType, PqlAttributeType>
 ParsedQuery::refToAttribMap = {
-{ PqlReferenceType::ident,		PqlAttributeType::string },
-{ PqlReferenceType::integer,	PqlAttributeType::integer },
-{ PqlReferenceType::procName,	PqlAttributeType::string },
-{ PqlReferenceType::varName,	PqlAttributeType::string },
-{ PqlReferenceType::value,		PqlAttributeType::integer },
-{ PqlReferenceType::stmtNum,	PqlAttributeType::integer },
+	{ PqlReferenceType::Ident,		PqlAttributeType::String },
+	{ PqlReferenceType::Integer,	PqlAttributeType::Integer },
+	{ PqlReferenceType::ProcName,	PqlAttributeType::String },
+	{ PqlReferenceType::VarName,	PqlAttributeType::String },
+	{ PqlReferenceType::Value,		PqlAttributeType::Integer },
+	{ PqlReferenceType::StmtNum,	PqlAttributeType::Integer },
 };
 
 bool ParsedQuery::isDeclared(const std::string& synonym) {
@@ -164,8 +164,8 @@ PqlEntityType ParsedQuery::getType(std::string& synonym) {
 }
 
 void ParsedQuery::populateDeclarations(
-	const std::vector<PQL_VARIABLE>& allDeclarations) {
-	for (const PQL_VARIABLE& variable : allDeclarations) {
+	const std::vector<PqlEntity>& allDeclarations) {
+	for (const PqlEntity& variable : allDeclarations) {
 		PqlEntityType variableType = variable.first;
 		std::string variableName = variable.second;
 		if (isDeclared(variableName)) {
@@ -180,7 +180,7 @@ void ParsedQuery::populateColumns(const std::vector<PqlReference>& allElems) {
 		/* Handle corner case --If Select BOOLEAN, allElems will be an empty vector
 		But if BOOLEAN is declared as some synonym, treat it as a synonym instead */
 		columns.insert("BOOLEAN");
-		attributes.emplace_back(PqlReferenceType::synonym, "BOOLEAN");
+		attributes.emplace_back(PqlReferenceType::Synonym, "BOOLEAN");
 	}
 	for (const PqlReference& elem : allElems) {
 		std::string synonym = elem.second;
@@ -188,7 +188,7 @@ void ParsedQuery::populateColumns(const std::vector<PqlReference>& allElems) {
 			throw QPSException(QPSException::VALIDATOR_ERROR);
 		}
 		PqlReferenceType refType = elem.first;
-		if (refType != PqlReferenceType::synonym) {
+		if (refType != PqlReferenceType::Synonym) {
 			PqlEntityType entityType = getType(synonym);
 			if (validAttribs.at(entityType).find(refType) == validAttribs.at(entityType).end()) {
 				throw QPSException(QPSException::VALIDATOR_ERROR);
@@ -218,7 +218,7 @@ void ParsedQuery::populateRelationships(const std::vector<ParsedRelationship>& a
 		}
 		/* If the right argument is a synonym, perform further
 		type validation on the design entity */
-		if (rhsType == PqlReferenceType::synonym) {
+		if (rhsType == PqlReferenceType::Synonym) {
 			if (validRightDesignEntities.find(relationshipType) == validRightDesignEntities.end()) {
 				throw QPSException(QPSException::VALIDATOR_ERROR);
 			}
@@ -247,7 +247,7 @@ void ParsedQuery::populateRelationships(const std::vector<ParsedRelationship>& a
 			}
 			/* If the right argument is a synonym, perform further
 			type validation on the design entity */
-			if (lhsType == PqlReferenceType::synonym) {
+			if (lhsType == PqlReferenceType::Synonym) {
 				/* If we haven't implemented a certain relationship, throw an exception
 				TODO: remove once all relationships have been implemented */
 				if (validLeftDesignEntities.find(reassignType) == validLeftDesignEntities.end()) {
@@ -293,7 +293,7 @@ void ParsedQuery::populatePatterns(const std::vector<ParsedPattern>& allPatterns
 			throw QPSException(QPSException::VALIDATOR_ERROR);
 		}
 		/* If the entRef is a synonym, perform further type validation on the design entity */
-		if (entRefType == PqlReferenceType::synonym) {
+		if (entRefType == PqlReferenceType::Synonym) {
 			std::string& entRefName = entRef.second;
 			if (!isDeclared(entRefName)) {
 				throw QPSException(QPSException::VALIDATOR_ERROR);
@@ -372,7 +372,7 @@ void ParsedQuery::populateWiths(const std::vector<ParsedWith>& allWiths) {
 	}
 }
 
-ParsedQuery::ParsedQuery(const std::vector<PQL_VARIABLE>& allDeclarations,
+ParsedQuery::ParsedQuery(const std::vector<PqlEntity>& allDeclarations,
 	const std::vector<PqlReference>& allColumns,
 	const std::vector<ParsedRelationship>& allRelationships,
 	const std::vector<ParsedPattern>& allPatterns,

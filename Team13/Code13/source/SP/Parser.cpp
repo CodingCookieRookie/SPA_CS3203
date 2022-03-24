@@ -4,26 +4,6 @@ Parser::Parser() {}
 
 Lexer Parser::lexer;
 
-const std::string Parser::PROCEDURE = "procedure";
-const std::string Parser::READ = "read";
-const std::string Parser::PRINT = "print";
-const std::string Parser::WHILE = "while";
-const std::string Parser::IF = "if";
-const std::string Parser::THEN = "then";
-const std::string Parser::ELSE = "else";
-const std::string Parser::CALL = "call";
-
-const std::string Parser::EQUAL = "=";
-const std::string Parser::NOT = "!";
-const std::string Parser::LEFT_BRACKET = "(";
-const std::string Parser::RIGHT_BRACKET = ")";
-const std::string Parser::LEFT_CURLY = "{";
-const std::string Parser::RIGHT_CURLY = "}";
-const std::string Parser::SEMICOLON = ";";
-
-const std::vector<std::string> Parser::relOperators = { ">=", ">", "<=", "<", "!=", "==" };
-const std::vector<std::string> Parser::logicalOperators = { "&&", "||" };
-
 SourceAST Parser::parse(const std::string& source) {
 	lexer = Lexer(source);
 	ProgramNode* root = matchProgram();
@@ -47,7 +27,7 @@ ProgramNode* Parser::matchProgram() {
 }
 
 ProcedureNode* Parser::matchProcedure() {
-	if (!lexer.match(PROCEDURE)) {
+	if (!lexer.match(Common::PROCEDURE)) {
 		throw ParserException(ParserException::MISSING_PROC_KEYWORD);
 	}
 
@@ -61,13 +41,13 @@ ProcedureNode* Parser::matchProcedure() {
 		throw ParserException(ParserException::MISSING_PROC_NAME);
 	}
 
-	if (!lexer.match(LEFT_CURLY)) {
+	if (!lexer.match(Common::LEFT_CURLY)) {
 		throw ParserException(ParserException::MISSING_LEFT_CURLY);
 	}
 
 	StmtLstNode* stmtLstNode = matchStmtLst();
 
-	if (!lexer.match(RIGHT_CURLY)) {
+	if (!lexer.match(Common::RIGHT_CURLY)) {
 		throw ParserException(ParserException::MISSING_RIGHT_CURLY);
 	}
 
@@ -83,7 +63,7 @@ StmtLstNode* Parser::matchStmtLst() {
 	StmtNode* stmtNode{};
 	while (stmtNode = matchStmt()) {
 		stmtLstNode->addStmtNode(stmtNode);
-		if (lexer.peek(RIGHT_CURLY)) {
+		if (lexer.peek(Common::RIGHT_CURLY)) {
 			break;
 		}
 	}
@@ -94,17 +74,17 @@ StmtNode* Parser::matchStmt() {
 	StmtNode* stmtNode{};
 
 	std::string name = lexer.nextName();
-	if (!name.empty() && lexer.match(EQUAL)) {
+	if (!name.empty() && lexer.match(Common::EQUAL)) {
 		stmtNode = matchAssign(name);
-	} else if (name == READ) {
+	} else if (name == Common::READ) {
 		stmtNode = matchRead();
-	} else if (name == PRINT) {
+	} else if (name == Common::PRINT) {
 		stmtNode = matchPrint();
-	} else if (name == WHILE) {
+	} else if (name == Common::WHILE) {
 		stmtNode = matchWhile();
-	} else if (name == IF) {
+	} else if (name == Common::IF) {
 		stmtNode = matchIf();
-	} else if (name == CALL) {
+	} else if (name == Common::CALL) {
 		stmtNode = matchCall();
 	} else {
 		throw ParserException(ParserException::INVALID_STMT);
@@ -119,7 +99,7 @@ ReadNode* Parser::matchRead() {
 		throw ParserException(ParserException::MISSING_VAR_NAME);
 	}
 
-	if (!lexer.match(SEMICOLON)) {
+	if (!lexer.match(Common::SEMICOLON)) {
 		throw ParserException(ParserException::MISSING_SEMICOLON);
 	}
 
@@ -132,7 +112,7 @@ PrintNode* Parser::matchPrint() {
 		throw ParserException(ParserException::MISSING_VAR_NAME);
 	}
 
-	if (!lexer.match(SEMICOLON)) {
+	if (!lexer.match(Common::SEMICOLON)) {
 		throw ParserException(ParserException::MISSING_SEMICOLON);
 	}
 
@@ -147,30 +127,30 @@ AssignNode* Parser::matchAssign(std::string varName) {
 		throw ParserException(ParserException::INVALID_EXPR);
 	}
 
-	if (!lexer.match(SEMICOLON)) {
+	if (!lexer.match(Common::SEMICOLON)) {
 		throw ParserException(ParserException::MISSING_SEMICOLON);
 	}
 	return new AssignNode(varName, expr);
 }
 
 WhileNode* Parser::matchWhile() {
-	if (!lexer.match(LEFT_BRACKET)) {
+	if (!lexer.match(Common::LEFT_BRACKET)) {
 		throw ParserException(ParserException::MISSING_LEFT_BRACKET);
 	}
 
 	ExprNode* condNode = matchCondExpr();
 
-	if (!lexer.match(RIGHT_BRACKET)) {
+	if (!lexer.match(Common::RIGHT_BRACKET)) {
 		throw ParserException(ParserException::MISSING_RIGHT_BRACKET);
 	}
 
-	if (!lexer.match(LEFT_CURLY)) {
+	if (!lexer.match(Common::LEFT_CURLY)) {
 		throw ParserException(ParserException::MISSING_LEFT_CURLY);
 	}
 
 	StmtLstNode* stmtLstNode = matchStmtLst();
 
-	if (!lexer.match(RIGHT_CURLY)) {
+	if (!lexer.match(Common::RIGHT_CURLY)) {
 		throw ParserException(ParserException::MISSING_RIGHT_CURLY);
 	}
 
@@ -178,32 +158,32 @@ WhileNode* Parser::matchWhile() {
 }
 
 ExprNode* Parser::matchCondExpr() {
-	if (lexer.match(NOT)) {
-		if (!lexer.match(LEFT_BRACKET)) {
+	if (lexer.match(Common::NOT)) {
+		if (!lexer.match(Common::LEFT_BRACKET)) {
 			throw ParserException(ParserException::MISSING_LEFT_BRACKET);
 		}
 
 		ExprNode* condExpr = matchCondExpr();
 
-		if (!lexer.match(RIGHT_BRACKET)) {
+		if (!lexer.match(Common::RIGHT_BRACKET)) {
 			throw ParserException(ParserException::MISSING_RIGHT_BRACKET);
 		}
 
-		ExprNode* notNode = new ExprNode(ExprNodeValueType::logicalOperator, NOT);
+		ExprNode* notNode = new ExprNode(ExprNodeValueType::logicalOperator, Common::NOT);
 		notNode->addChild(condExpr);
 
 		return notNode;
 	}
 
-	if (lexer.match(LEFT_BRACKET)) {
+	if (lexer.match(Common::LEFT_BRACKET)) {
 		ExprNode* leftCondExpr = matchCondExpr();
 
-		if (!lexer.match(RIGHT_BRACKET)) {
+		if (!lexer.match(Common::RIGHT_BRACKET)) {
 			throw ParserException(ParserException::MISSING_RIGHT_BRACKET);
 		}
 
 		ExprNode* logOpNode{};
-		for (const std::string op : logicalOperators) {
+		for (const std::string op : Common::logicalOperators) {
 			if (lexer.match(op)) {
 				logOpNode = new ExprNode(ExprNodeValueType::logicalOperator, op);
 				break;
@@ -214,13 +194,13 @@ ExprNode* Parser::matchCondExpr() {
 			throw ParserException(ParserException::INVALID_COND_EXPR);
 		}
 
-		if (!lexer.match(LEFT_BRACKET)) {
+		if (!lexer.match(Common::LEFT_BRACKET)) {
 			throw ParserException(ParserException::MISSING_LEFT_BRACKET);
 		}
 
 		ExprNode* rightCondExpr = matchCondExpr();
 
-		if (!lexer.match(RIGHT_BRACKET)) {
+		if (!lexer.match(Common::RIGHT_BRACKET)) {
 			throw ParserException(ParserException::MISSING_RIGHT_BRACKET);
 		}
 
@@ -239,7 +219,7 @@ ExprNode* Parser::matchRelExpr() {
 	ExprNode* leftRelFactor = matchRelFactor();
 
 	ExprNode* relOpNode{};
-	for (const std::string op : relOperators) {
+	for (const std::string op : Common::relOperators) {
 		if (lexer.match(op)) {
 			relOpNode = new ExprNode(ExprNodeValueType::relOperator, op);
 			break;
@@ -278,41 +258,41 @@ ExprNode* Parser::matchRelFactor() {
 }
 
 IfNode* Parser::matchIf() {
-	if (!lexer.match(LEFT_BRACKET)) {
+	if (!lexer.match(Common::LEFT_BRACKET)) {
 		throw ParserException(ParserException::MISSING_LEFT_BRACKET);
 	}
 
 	ExprNode* condNode = matchCondExpr();
 
-	if (!lexer.match(RIGHT_BRACKET)) {
+	if (!lexer.match(Common::RIGHT_BRACKET)) {
 		throw ParserException(ParserException::MISSING_RIGHT_BRACKET);
 	}
 
-	if (!lexer.match(THEN)) {
+	if (!lexer.match(Common::THEN)) {
 		throw ParserException(ParserException::MISSING_THEN);
 	}
 
-	if (!lexer.match(LEFT_CURLY)) {
+	if (!lexer.match(Common::LEFT_CURLY)) {
 		throw ParserException(ParserException::MISSING_LEFT_CURLY);
 	}
 
 	StmtLstNode* thenStmtLst = matchStmtLst();
 
-	if (!lexer.match(RIGHT_CURLY)) {
+	if (!lexer.match(Common::RIGHT_CURLY)) {
 		throw ParserException(ParserException::MISSING_RIGHT_CURLY);
 	}
 
-	if (!lexer.match(ELSE)) {
+	if (!lexer.match(Common::ELSE)) {
 		throw ParserException(ParserException::MISSING_ELSE);
 	}
 
-	if (!lexer.match(LEFT_CURLY)) {
+	if (!lexer.match(Common::LEFT_CURLY)) {
 		throw ParserException(ParserException::MISSING_LEFT_CURLY);
 	}
 
 	StmtLstNode* elseStmtLst = matchStmtLst();
 
-	if (!lexer.match(RIGHT_CURLY)) {
+	if (!lexer.match(Common::RIGHT_CURLY)) {
 		throw ParserException(ParserException::MISSING_RIGHT_CURLY);
 	}
 
@@ -325,7 +305,7 @@ CallNode* Parser::matchCall() {
 		throw ParserException(ParserException::MISSING_PROC_NAME_IN_CALL_STMT);
 	}
 
-	if (!lexer.match(SEMICOLON)) {
+	if (!lexer.match(Common::SEMICOLON)) {
 		throw ParserException(ParserException::MISSING_SEMICOLON);
 	}
 

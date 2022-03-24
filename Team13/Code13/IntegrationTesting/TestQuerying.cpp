@@ -159,7 +159,7 @@ public:
 		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
 		Assert::AreEqual(size_t(1), relationships.size());
 		Assert::IsTrue(PqlRelationshipType::Follows == relationships[0].getRelationshipType());
-		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::Synonym == relationships[0].getLhs().first);
 		Assert::AreEqual(std::string("s1"), relationships[0].getLhs().second);
 
 		// 3. Test QPS Evaluator:
@@ -217,7 +217,7 @@ public:
 		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
 		Assert::AreEqual(size_t(1), relationships.size());
 		Assert::IsTrue(PqlRelationshipType::Follows == relationships[0].getRelationshipType());
-		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::Synonym == relationships[0].getLhs().first);
 		Assert::AreEqual(std::string("s1"), relationships[0].getLhs().second);
 
 		// 3. Test QPS Evaluator:
@@ -271,7 +271,7 @@ public:
 		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
 		Assert::AreEqual(size_t(1), relationships.size());
 		Assert::IsTrue(PqlRelationshipType::ParentT == relationships[0].getRelationshipType());
-		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::Synonym == relationships[0].getLhs().first);
 		Assert::AreEqual(std::string("s1"), relationships[0].getLhs().second);
 
 		// 3. Test QPS Evaluator:

@@ -26,8 +26,8 @@ public:
 		// 1. Setup:
 		// Follows*(1, 2) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::integer, "1");
-		rhsRef = std::make_pair(PqlReferenceType::integer, "4");
+		lhsRef = std::make_pair(PqlReferenceType::Integer, "1");
+		rhsRef = std::make_pair(PqlReferenceType::Integer, "4");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::FollowsT, lhsRef, rhsRef);
 
 		// PKB inserts 4 statements, 3 Follows
@@ -52,8 +52,8 @@ public:
 		// 1. Setup:
 		// Follows*(2, s2) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::integer, "2");
-		rhsRef = std::make_pair(PqlReferenceType::synonym, "s2");
+		lhsRef = std::make_pair(PqlReferenceType::Integer, "2");
+		rhsRef = std::make_pair(PqlReferenceType::Synonym, "s2");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::FollowsT, lhsRef, rhsRef);
 
 		// PKB inserts 4 statements
@@ -98,8 +98,8 @@ public:
 		// 1. Setup:
 		// Follows*(s1, 4) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::synonym, "s1");
-		rhsRef = std::make_pair(PqlReferenceType::integer, "4");
+		lhsRef = std::make_pair(PqlReferenceType::Synonym, "s1");
+		rhsRef = std::make_pair(PqlReferenceType::Integer, "4");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::FollowsT, lhsRef, rhsRef);
 
 		// PKB inserts 4 statements
@@ -145,8 +145,8 @@ public:
 		// 1. Setup:
 		// Follows'*(s1, s2) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::synonym, "s1");
-		rhsRef = std::make_pair(PqlReferenceType::synonym, "s2");
+		lhsRef = std::make_pair(PqlReferenceType::Synonym, "s1");
+		rhsRef = std::make_pair(PqlReferenceType::Synonym, "s2");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::FollowsT, lhsRef, rhsRef);
 
 		// PKB inserts 4 statements
@@ -203,8 +203,8 @@ public:
 		// 1. Setup:
 		// Follows*(s1, _) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::synonym, "s1");
-		rhsRef = std::make_pair(PqlReferenceType::synonym, "s2");
+		lhsRef = std::make_pair(PqlReferenceType::Synonym, "s1");
+		rhsRef = std::make_pair(PqlReferenceType::Synonym, "s2");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::FollowsT, lhsRef, rhsRef);
 
 		// PKB inserts 19 statements
@@ -273,8 +273,8 @@ public:
 		// 1. Setup:
 		// Follows*(s1, _) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::synonym, "s1");
-		rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
+		lhsRef = std::make_pair(PqlReferenceType::Synonym, "s1");
+		rhsRef = std::make_pair(PqlReferenceType::Wildcard, "_");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::FollowsT, lhsRef, rhsRef);
 
 		// PKB inserts 19 statements
@@ -333,8 +333,8 @@ public:
 		// 1. Setup:
 		// Follows*(_, _) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
-		rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
+		lhsRef = std::make_pair(PqlReferenceType::Wildcard, "_");
+		rhsRef = std::make_pair(PqlReferenceType::Wildcard, "_");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::FollowsT, lhsRef, rhsRef);
 
 		// PKB inserts 3 statements

@@ -23,8 +23,8 @@ public:
 	TEST_METHOD(execute_lhsSynonymRhsSynonymProc) {
 		// 1. Setup:
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::synonym, "p");
-		rhsRef = std::make_pair(PqlReferenceType::synonym, "v");
+		lhsRef = std::make_pair(PqlReferenceType::Synonym, "p");
+		rhsRef = std::make_pair(PqlReferenceType::Synonym, "v");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesP, lhsRef, rhsRef);
 
 		// PKB inserts modifies
@@ -44,8 +44,8 @@ public:
 	TEST_METHOD(execute_lhsSynonymRhsIdentProc) {
 		// 1. Setup:
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::synonym, "p");
-		rhsRef = std::make_pair(PqlReferenceType::ident, "x");
+		lhsRef = std::make_pair(PqlReferenceType::Synonym, "p");
+		rhsRef = std::make_pair(PqlReferenceType::Ident, "x");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesP, lhsRef, rhsRef);
 
 		// PKB inserts modifies
@@ -65,8 +65,8 @@ public:
 	TEST_METHOD(execute_lhsSynonymRhsWildCardProc) {
 		// 1. Setup:
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::synonym, "p");
-		rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
+		lhsRef = std::make_pair(PqlReferenceType::Synonym, "p");
+		rhsRef = std::make_pair(PqlReferenceType::Wildcard, "_");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesP, lhsRef, rhsRef);
 
 		// PKB inserts modifies
@@ -87,8 +87,8 @@ public:
 	TEST_METHOD(execute_lhsIdentRhsSynonymProc) {
 		// 1. Setup:
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::ident, "p");
-		rhsRef = std::make_pair(PqlReferenceType::synonym, "v");
+		lhsRef = std::make_pair(PqlReferenceType::Ident, "p");
+		rhsRef = std::make_pair(PqlReferenceType::Synonym, "v");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesP, lhsRef, rhsRef);
 
 		// PKB inserts modifies
@@ -108,8 +108,8 @@ public:
 	TEST_METHOD(execute_lhsIdentRhsIdentProc) {
 		// 1. Setup:
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::ident, "p");
-		rhsRef = std::make_pair(PqlReferenceType::ident, "x");
+		lhsRef = std::make_pair(PqlReferenceType::Ident, "p");
+		rhsRef = std::make_pair(PqlReferenceType::Ident, "x");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesP, lhsRef, rhsRef);
 
 		// PKB inserts modifies
@@ -130,8 +130,8 @@ public:
 	TEST_METHOD(execute_lhsIdentRhsWildCardProc) {
 		// 1. Setup:
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::ident, "p");
-		rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
+		lhsRef = std::make_pair(PqlReferenceType::Ident, "p");
+		rhsRef = std::make_pair(PqlReferenceType::Wildcard, "_");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesP, lhsRef, rhsRef);
 
 		// PKB inserts modifies

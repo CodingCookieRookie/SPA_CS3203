@@ -31,23 +31,23 @@ enum class PqlPatternType {
 };
 
 enum class PqlReferenceType {
-	synonym, wildcard, integer, ident,
-	procName, varName, value, stmtNum
+	Synonym, Wildcard, Integer, Ident,
+	ProcName, VarName, Value, StmtNum
 };
 
 enum class PqlExpressionType {
-	full, partial, wildcard
+	Full, Partial, Wildcard
 };
 
 enum class PqlAttributeType {
-	string, integer, unvalidated
+	String, Integer, Unvalidated
 };
 
 enum class ProjectionType {
 	single, tuple, boolean
 };
 
-typedef std::pair<PqlEntityType, std::string> PQL_VARIABLE;
+typedef std::pair<PqlEntityType, std::string> PqlEntity;
 
 typedef std::pair<PqlReferenceType, std::string> PqlReference;
 

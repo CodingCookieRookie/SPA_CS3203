@@ -26,8 +26,8 @@ public:
 		// 1. Setup:
 		std::string synonym = "ifs";
 		PqlPatternType pqlPatternType = PqlPatternType::PatternI;
-		PqlReference entRef = std::make_pair(PqlReferenceType::ident, "v");
-		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::wildcard, "");
+		PqlReference entRef = std::make_pair(PqlReferenceType::Ident, "v");
+		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::Wildcard, "");
 		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
 
 		// PKB inserts pattern
@@ -53,8 +53,8 @@ public:
 		// 1. Setup:
 		std::string synonym = "ifs";
 		PqlPatternType pqlPatternType = PqlPatternType::PatternI;
-		PqlReference entRef = std::make_pair(PqlReferenceType::synonym, "v");
-		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::wildcard, "");
+		PqlReference entRef = std::make_pair(PqlReferenceType::Synonym, "v");
+		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::Wildcard, "");
 		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
 
 		// PKB inserts pattern
@@ -81,8 +81,8 @@ public:
 		// 1. Setup:
 		std::string synonym = "ifs";
 		PqlPatternType pqlPatternType = PqlPatternType::PatternI;
-		PqlReference entRef = std::make_pair(PqlReferenceType::ident, "x");
-		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::wildcard, "");
+		PqlReference entRef = std::make_pair(PqlReferenceType::Ident, "x");
+		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::Wildcard, "");
 		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
 
 		// PKB inserts pattern
@@ -109,8 +109,8 @@ public:
 		// 1. Setup:
 		std::string synonym = "ifs";
 		PqlPatternType pqlPatternType = PqlPatternType::PatternI;
-		PqlReference entRef = std::make_pair(PqlReferenceType::wildcard, "");
-		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::wildcard, "");
+		PqlReference entRef = std::make_pair(PqlReferenceType::Wildcard, "");
+		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::Wildcard, "");
 		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
 
 		// PKB inserts pattern

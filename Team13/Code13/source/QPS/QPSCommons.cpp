@@ -49,7 +49,7 @@ int ParsedPattern::getNumOfArgs() const {
 Temporarily assign attribType as unvalidated because
 we delay type validation to the validator */
 ParsedWith::ParsedWith(PqlReference lhs, PqlReference rhs)
-	: ParsedWith(lhs, rhs, PqlAttributeType::unvalidated) {}
+	: ParsedWith(lhs, rhs, PqlAttributeType::Unvalidated) {}
 
 ParsedWith::ParsedWith(PqlReference lhs, PqlReference rhs, PqlAttributeType attribType)
 	: lhs(lhs), rhs(rhs), attribType(attribType) {}
@@ -67,7 +67,7 @@ PqlAttributeType ParsedWith::getAttribType() const {
 }
 
 bool isSynonymRef(PqlReference reference) {
-	return reference.first == PqlReferenceType::synonym;
+	return reference.first == PqlReferenceType::Synonym;
 }
 
 bool isStatementEntity(PqlEntityType entityType) {

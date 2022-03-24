@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include "../Common/Common.h"
 #include "../Common/ExpressionParser.h"
 #include "../Common/Lexer.h"
 #include "../Exception/SPAException.h"
@@ -12,26 +13,6 @@
 class Parser {
 private:
 	static Lexer lexer;
-
-	static const std::string PROCEDURE;
-	static const std::string READ;
-	static const std::string PRINT;
-	static const std::string WHILE;
-	static const std::string IF;
-	static const std::string THEN;
-	static const std::string ELSE;
-	static const std::string CALL;
-
-	static const std::string EQUAL;
-	static const std::string NOT;
-	static const std::string LEFT_BRACKET;
-	static const std::string RIGHT_BRACKET;
-	static const std::string LEFT_CURLY;
-	static const std::string RIGHT_CURLY;
-	static const std::string SEMICOLON;
-
-	static const std::vector<std::string> relOperators;
-	static const std::vector<std::string> logicalOperators;
 
 	static ProgramNode* matchProgram();
 	static ProcedureNode* matchProcedure();

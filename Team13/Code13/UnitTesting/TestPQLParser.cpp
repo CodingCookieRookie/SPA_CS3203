@@ -318,12 +318,12 @@ public:
 			PqlRelationshipType::UsesS
 			== relationships[0].getRelationshipType());
 		Assert::IsTrue(
-			PqlReferenceType::synonym
+			PqlReferenceType::Synonym
 			== relationships[0].getLhs().first);
 		Assert::AreEqual(std::string("s"),
 			relationships[0].getLhs().second);
 		Assert::IsTrue(
-			PqlReferenceType::synonym
+			PqlReferenceType::Synonym
 			== relationships[0].getRhs().first);
 		Assert::AreEqual(std::string("v"),
 			relationships[0].getRhs().second);
@@ -339,7 +339,7 @@ public:
 			PqlRelationshipType::FollowsT
 			== relationships[0].getRelationshipType());
 		Assert::IsTrue(
-			PqlReferenceType::integer
+			PqlReferenceType::Integer
 			== relationships[0].getLhs().first);
 		Assert::AreEqual(std::string("1"),
 			relationships[0].getLhs().second);
@@ -355,7 +355,7 @@ public:
 			PqlRelationshipType::ModifiesS
 			== relationships[0].getRelationshipType());
 		Assert::IsTrue(
-			PqlReferenceType::ident
+			PqlReferenceType::Ident
 			== relationships[0].getRhs().first);
 		Assert::AreEqual(std::string("x"),
 			relationships[0].getRhs().second);
@@ -369,11 +369,11 @@ public:
 		Assert::AreEqual(size_t(1), patterns.size());
 		Assert::AreEqual(std::string("a"), patterns[0].getSynonym());
 		Assert::IsTrue(
-			PqlReferenceType::wildcard
+			PqlReferenceType::Wildcard
 			== patterns[0].getEntRef().first);
 		Assert::AreEqual(std::string(), patterns[0].getEntRef().second);
 		Assert::IsTrue(
-			PqlExpressionType::wildcard
+			PqlExpressionType::Wildcard
 			== patterns[0].getExpression().first);
 		Assert::AreEqual(std::string(), patterns[0].getExpression().second);
 	}
@@ -386,7 +386,7 @@ public:
 		Assert::AreEqual(size_t(1), patterns.size());
 		Assert::AreEqual(std::string("a"), patterns[0].getSynonym());
 		Assert::IsTrue(
-			PqlReferenceType::synonym
+			PqlReferenceType::Synonym
 			== patterns[0].getEntRef().first);
 		Assert::AreEqual(std::string("v"), patterns[0].getEntRef().second);
 	}
@@ -398,7 +398,7 @@ public:
 			parsedQuery.getPatterns();
 		Assert::AreEqual(size_t(1), patterns.size());
 		Assert::IsTrue(
-			PqlExpressionType::partial
+			PqlExpressionType::Partial
 			== patterns[0].getExpression().first);
 		Assert::AreEqual(std::string(" x "), patterns[0].getExpression().second);
 	}
@@ -420,7 +420,7 @@ public:
 			parsedQuery.getPatterns();
 		Assert::AreEqual(size_t(1), patterns.size());
 		Assert::IsTrue(
-			PqlExpressionType::partial
+			PqlExpressionType::Partial
 			== patterns[0].getExpression().first);
 		Assert::AreEqual(std::string(" x "), patterns[0].getExpression().second);
 	}
@@ -431,7 +431,7 @@ public:
 		std::vector<ParsedPattern> patterns =
 			parsedQuery.getPatterns();
 		Assert::AreEqual(size_t(1), patterns.size());
-		Assert::IsTrue(PqlExpressionType::partial == patterns[0].getExpression().first);
+		Assert::IsTrue(PqlExpressionType::Partial == patterns[0].getExpression().first);
 		Assert::AreEqual(std::string(" x 1 + 2 * 3 / 4 5 % - "), patterns[0].getExpression().second);
 	}
 
@@ -441,7 +441,7 @@ public:
 		std::vector<ParsedPattern> patterns =
 			parsedQuery.getPatterns();
 		Assert::AreEqual(size_t(1), patterns.size());
-		Assert::IsTrue(PqlExpressionType::full == patterns[0].getExpression().first);
+		Assert::IsTrue(PqlExpressionType::Full == patterns[0].getExpression().first);
 		Assert::AreEqual(std::string(" x 1 + 2 * 3 / 4 5 % - "), patterns[0].getExpression().second);
 	}
 
@@ -551,9 +551,9 @@ public:
 		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
 		Assert::AreEqual(size_t(1), relationships.size());
 		Assert::IsTrue(PqlRelationshipType::Calls == relationships[0].getRelationshipType());
-		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::Synonym == relationships[0].getLhs().first);
 		Assert::AreEqual(std::string("p1"), relationships[0].getLhs().second);
-		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getRhs().first);
+		Assert::IsTrue(PqlReferenceType::Synonym == relationships[0].getRhs().first);
 		Assert::AreEqual(std::string("p2"), relationships[0].getRhs().second);
 	}
 
@@ -563,8 +563,8 @@ public:
 		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
 		Assert::AreEqual(size_t(1), relationships.size());
 		Assert::IsTrue(PqlRelationshipType::Calls == relationships[0].getRelationshipType());
-		Assert::IsTrue(PqlReferenceType::wildcard == relationships[0].getLhs().first);
-		Assert::IsTrue(PqlReferenceType::wildcard == relationships[0].getRhs().first);
+		Assert::IsTrue(PqlReferenceType::Wildcard == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::Wildcard == relationships[0].getRhs().first);
 	}
 
 	TEST_METHOD(parseQuery_callsClauseTwoIdent_bothIdentsExtracted) {
@@ -573,9 +573,9 @@ public:
 		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
 		Assert::AreEqual(size_t(1), relationships.size());
 		Assert::IsTrue(PqlRelationshipType::Calls == relationships[0].getRelationshipType());
-		Assert::IsTrue(PqlReferenceType::ident == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::Ident == relationships[0].getLhs().first);
 		Assert::AreEqual(std::string("proc1"), relationships[0].getLhs().second);
-		Assert::IsTrue(PqlReferenceType::ident == relationships[0].getRhs().first);
+		Assert::IsTrue(PqlReferenceType::Ident == relationships[0].getRhs().first);
 		Assert::AreEqual(std::string("proc2"), relationships[0].getRhs().second);
 	}
 
@@ -585,9 +585,9 @@ public:
 		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
 		Assert::AreEqual(size_t(1), relationships.size());
 		Assert::IsTrue(PqlRelationshipType::CallsT == relationships[0].getRelationshipType());
-		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::Synonym == relationships[0].getLhs().first);
 		Assert::AreEqual(std::string("p1"), relationships[0].getLhs().second);
-		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getRhs().first);
+		Assert::IsTrue(PqlReferenceType::Synonym == relationships[0].getRhs().first);
 		Assert::AreEqual(std::string("p2"), relationships[0].getRhs().second);
 	}
 
@@ -597,8 +597,8 @@ public:
 		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
 		Assert::AreEqual(size_t(1), relationships.size());
 		Assert::IsTrue(PqlRelationshipType::CallsT == relationships[0].getRelationshipType());
-		Assert::IsTrue(PqlReferenceType::wildcard == relationships[0].getLhs().first);
-		Assert::IsTrue(PqlReferenceType::wildcard == relationships[0].getRhs().first);
+		Assert::IsTrue(PqlReferenceType::Wildcard == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::Wildcard == relationships[0].getRhs().first);
 	}
 
 	TEST_METHOD(parseQuery_callsTClauseTwoIdent_bothIdentsExtracted) {
@@ -607,9 +607,9 @@ public:
 		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
 		Assert::AreEqual(size_t(1), relationships.size());
 		Assert::IsTrue(PqlRelationshipType::CallsT == relationships[0].getRelationshipType());
-		Assert::IsTrue(PqlReferenceType::ident == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::Ident == relationships[0].getLhs().first);
 		Assert::AreEqual(std::string("proc1"), relationships[0].getLhs().second);
-		Assert::IsTrue(PqlReferenceType::ident == relationships[0].getRhs().first);
+		Assert::IsTrue(PqlReferenceType::Ident == relationships[0].getRhs().first);
 		Assert::AreEqual(std::string("proc2"), relationships[0].getRhs().second);
 	}
 
@@ -619,9 +619,9 @@ public:
 		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
 		Assert::AreEqual(size_t(1), relationships.size());
 		Assert::IsTrue(PqlRelationshipType::Next == relationships[0].getRelationshipType());
-		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::Synonym == relationships[0].getLhs().first);
 		Assert::AreEqual(std::string("s1"), relationships[0].getLhs().second);
-		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getRhs().first);
+		Assert::IsTrue(PqlReferenceType::Synonym == relationships[0].getRhs().first);
 		Assert::AreEqual(std::string("s2"), relationships[0].getRhs().second);
 	}
 
@@ -631,8 +631,8 @@ public:
 		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
 		Assert::AreEqual(size_t(1), relationships.size());
 		Assert::IsTrue(PqlRelationshipType::Next == relationships[0].getRelationshipType());
-		Assert::IsTrue(PqlReferenceType::wildcard == relationships[0].getLhs().first);
-		Assert::IsTrue(PqlReferenceType::wildcard == relationships[0].getRhs().first);
+		Assert::IsTrue(PqlReferenceType::Wildcard == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::Wildcard == relationships[0].getRhs().first);
 	}
 
 	TEST_METHOD(parseQuery_nextClauseTwoIntegers_bothStmtIndexesExtracted) {
@@ -641,9 +641,9 @@ public:
 		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
 		Assert::AreEqual(size_t(1), relationships.size());
 		Assert::IsTrue(PqlRelationshipType::Next == relationships[0].getRelationshipType());
-		Assert::IsTrue(PqlReferenceType::integer == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::Integer == relationships[0].getLhs().first);
 		Assert::AreEqual(std::string("1"), relationships[0].getLhs().second);
-		Assert::IsTrue(PqlReferenceType::integer == relationships[0].getRhs().first);
+		Assert::IsTrue(PqlReferenceType::Integer == relationships[0].getRhs().first);
 		Assert::AreEqual(std::string("2"), relationships[0].getRhs().second);
 	}
 
@@ -653,9 +653,9 @@ public:
 		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
 		Assert::AreEqual(size_t(1), relationships.size());
 		Assert::IsTrue(PqlRelationshipType::NextT == relationships[0].getRelationshipType());
-		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::Synonym == relationships[0].getLhs().first);
 		Assert::AreEqual(std::string("s1"), relationships[0].getLhs().second);
-		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getRhs().first);
+		Assert::IsTrue(PqlReferenceType::Synonym == relationships[0].getRhs().first);
 		Assert::AreEqual(std::string("s2"), relationships[0].getRhs().second);
 	}
 
@@ -665,8 +665,8 @@ public:
 		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
 		Assert::AreEqual(size_t(1), relationships.size());
 		Assert::IsTrue(PqlRelationshipType::NextT == relationships[0].getRelationshipType());
-		Assert::IsTrue(PqlReferenceType::wildcard == relationships[0].getLhs().first);
-		Assert::IsTrue(PqlReferenceType::wildcard == relationships[0].getRhs().first);
+		Assert::IsTrue(PqlReferenceType::Wildcard == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::Wildcard == relationships[0].getRhs().first);
 	}
 
 	TEST_METHOD(parseQuery_nextTClauseTwoIntegers_bothStmtIndexesExtracted) {
@@ -675,9 +675,9 @@ public:
 		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
 		Assert::AreEqual(size_t(1), relationships.size());
 		Assert::IsTrue(PqlRelationshipType::NextT == relationships[0].getRelationshipType());
-		Assert::IsTrue(PqlReferenceType::integer == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::Integer == relationships[0].getLhs().first);
 		Assert::AreEqual(std::string("1"), relationships[0].getLhs().second);
-		Assert::IsTrue(PqlReferenceType::integer == relationships[0].getRhs().first);
+		Assert::IsTrue(PqlReferenceType::Integer == relationships[0].getRhs().first);
 		Assert::AreEqual(std::string("2"), relationships[0].getRhs().second);
 	}
 
@@ -687,9 +687,9 @@ public:
 		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
 		Assert::AreEqual(size_t(1), relationships.size());
 		Assert::IsTrue(PqlRelationshipType::Affects == relationships[0].getRelationshipType());
-		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::Synonym == relationships[0].getLhs().first);
 		Assert::AreEqual(std::string("a1"), relationships[0].getLhs().second);
-		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getRhs().first);
+		Assert::IsTrue(PqlReferenceType::Synonym == relationships[0].getRhs().first);
 		Assert::AreEqual(std::string("a2"), relationships[0].getRhs().second);
 	}
 
@@ -699,9 +699,9 @@ public:
 		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
 		Assert::AreEqual(size_t(1), relationships.size());
 		Assert::IsTrue(PqlRelationshipType::Affects == relationships[0].getRelationshipType());
-		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::Synonym == relationships[0].getLhs().first);
 		Assert::AreEqual(std::string("s1"), relationships[0].getLhs().second);
-		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getRhs().first);
+		Assert::IsTrue(PqlReferenceType::Synonym == relationships[0].getRhs().first);
 		Assert::AreEqual(std::string("s2"), relationships[0].getRhs().second);
 	}
 
@@ -711,8 +711,8 @@ public:
 		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
 		Assert::AreEqual(size_t(1), relationships.size());
 		Assert::IsTrue(PqlRelationshipType::Affects == relationships[0].getRelationshipType());
-		Assert::IsTrue(PqlReferenceType::wildcard == relationships[0].getLhs().first);
-		Assert::IsTrue(PqlReferenceType::wildcard == relationships[0].getRhs().first);
+		Assert::IsTrue(PqlReferenceType::Wildcard == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::Wildcard == relationships[0].getRhs().first);
 	}
 
 	TEST_METHOD(parseQuery_affectsClauseTwoIntegers_bothStmtIndexesExtracted) {
@@ -721,9 +721,9 @@ public:
 		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
 		Assert::AreEqual(size_t(1), relationships.size());
 		Assert::IsTrue(PqlRelationshipType::Affects == relationships[0].getRelationshipType());
-		Assert::IsTrue(PqlReferenceType::integer == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::Integer == relationships[0].getLhs().first);
 		Assert::AreEqual(std::string("1"), relationships[0].getLhs().second);
-		Assert::IsTrue(PqlReferenceType::integer == relationships[0].getRhs().first);
+		Assert::IsTrue(PqlReferenceType::Integer == relationships[0].getRhs().first);
 		Assert::AreEqual(std::string("2"), relationships[0].getRhs().second);
 	}
 
@@ -733,9 +733,9 @@ public:
 		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
 		Assert::AreEqual(size_t(1), relationships.size());
 		Assert::IsTrue(PqlRelationshipType::AffectsT == relationships[0].getRelationshipType());
-		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::Synonym == relationships[0].getLhs().first);
 		Assert::AreEqual(std::string("a1"), relationships[0].getLhs().second);
-		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getRhs().first);
+		Assert::IsTrue(PqlReferenceType::Synonym == relationships[0].getRhs().first);
 		Assert::AreEqual(std::string("a2"), relationships[0].getRhs().second);
 	}
 
@@ -745,9 +745,9 @@ public:
 		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
 		Assert::AreEqual(size_t(1), relationships.size());
 		Assert::IsTrue(PqlRelationshipType::AffectsT == relationships[0].getRelationshipType());
-		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::Synonym == relationships[0].getLhs().first);
 		Assert::AreEqual(std::string("s1"), relationships[0].getLhs().second);
-		Assert::IsTrue(PqlReferenceType::synonym == relationships[0].getRhs().first);
+		Assert::IsTrue(PqlReferenceType::Synonym == relationships[0].getRhs().first);
 		Assert::AreEqual(std::string("s2"), relationships[0].getRhs().second);
 	}
 
@@ -757,8 +757,8 @@ public:
 		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
 		Assert::AreEqual(size_t(1), relationships.size());
 		Assert::IsTrue(PqlRelationshipType::AffectsT == relationships[0].getRelationshipType());
-		Assert::IsTrue(PqlReferenceType::wildcard == relationships[0].getLhs().first);
-		Assert::IsTrue(PqlReferenceType::wildcard == relationships[0].getRhs().first);
+		Assert::IsTrue(PqlReferenceType::Wildcard == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::Wildcard == relationships[0].getRhs().first);
 	}
 
 	TEST_METHOD(parseQuery_affectsTClauseTwoIntegers_bothStmtIndexesExtracted) {
@@ -767,9 +767,9 @@ public:
 		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
 		Assert::AreEqual(size_t(1), relationships.size());
 		Assert::IsTrue(PqlRelationshipType::AffectsT == relationships[0].getRelationshipType());
-		Assert::IsTrue(PqlReferenceType::integer == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlReferenceType::Integer == relationships[0].getLhs().first);
 		Assert::AreEqual(std::string("1"), relationships[0].getLhs().second);
-		Assert::IsTrue(PqlReferenceType::integer == relationships[0].getRhs().first);
+		Assert::IsTrue(PqlReferenceType::Integer == relationships[0].getRhs().first);
 		Assert::AreEqual(std::string("2"), relationships[0].getRhs().second);
 	}
 
@@ -2648,7 +2648,7 @@ public:
 		std::vector<PqlReference> attributes = parsedQuery.getAttributes();
 		Assert::AreEqual(size_t(1), attributes.size());
 		PqlReference attribute = attributes[0];
-		Assert::IsTrue(attribute.first == PqlReferenceType::varName);
+		Assert::IsTrue(attribute.first == PqlReferenceType::VarName);
 		Assert::AreEqual(std::string("pn"), attribute.second);
 	}
 
@@ -2666,7 +2666,7 @@ public:
 
 		std::vector<PqlReference> attributes = parsedQuery.getAttributes();
 		Assert::AreEqual(size_t(1), attributes.size());
-		Assert::IsTrue(attributes[0].first == PqlReferenceType::synonym);
+		Assert::IsTrue(attributes[0].first == PqlReferenceType::Synonym);
 		Assert::AreEqual(std::string("BOOLEAN"), attributes[0].second);
 	}
 
@@ -2676,7 +2676,7 @@ public:
 
 		std::vector<PqlReference> attributes = parsedQuery.getAttributes();
 		Assert::AreEqual(size_t(1), attributes.size());
-		Assert::IsTrue(attributes[0].first == PqlReferenceType::varName);
+		Assert::IsTrue(attributes[0].first == PqlReferenceType::VarName);
 		Assert::AreEqual(std::string("r"), attributes[0].second);
 	}
 
@@ -2686,9 +2686,9 @@ public:
 
 		std::vector<PqlReference> attributes = parsedQuery.getAttributes();
 		Assert::AreEqual(size_t(2), attributes.size());
-		Assert::IsTrue(attributes[0].first == PqlReferenceType::synonym);
+		Assert::IsTrue(attributes[0].first == PqlReferenceType::Synonym);
 		Assert::AreEqual(std::string("r"), attributes[0].second);
-		Assert::IsTrue(attributes[1].first == PqlReferenceType::stmtNum);
+		Assert::IsTrue(attributes[1].first == PqlReferenceType::StmtNum);
 		Assert::AreEqual(std::string("r"), attributes[1].second);
 
 		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
@@ -2700,9 +2700,9 @@ public:
 
 		std::vector<PqlReference> attributes = parsedQuery.getAttributes();
 		Assert::AreEqual(size_t(2), attributes.size());
-		Assert::IsTrue(attributes[0].first == PqlReferenceType::varName);
+		Assert::IsTrue(attributes[0].first == PqlReferenceType::VarName);
 		Assert::AreEqual(std::string("r"), attributes[0].second);
-		Assert::IsTrue(attributes[1].first == PqlReferenceType::stmtNum);
+		Assert::IsTrue(attributes[1].first == PqlReferenceType::StmtNum);
 		Assert::AreEqual(std::string("pn"), attributes[1].second);
 
 		Assert::AreEqual(size_t(2), parsedQuery.getColumns().size());
@@ -2755,7 +2755,7 @@ public:
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<PqlReference> attributes = parsedQuery.getAttributes();
 		Assert::AreEqual(size_t(1), attributes.size());
-		Assert::IsTrue(attributes[0].first == PqlReferenceType::synonym);
+		Assert::IsTrue(attributes[0].first == PqlReferenceType::Synonym);
 		Assert::AreEqual(std::string("BOOLEAN"), attributes[0].second);
 	}
 

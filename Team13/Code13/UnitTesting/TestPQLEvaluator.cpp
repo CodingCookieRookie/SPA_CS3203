@@ -34,12 +34,12 @@ public:
 		DECLARATION pair1 = DECLARATION(PqlEntityType::Stmt, "s");
 		DECLARATION pair2 = DECLARATION(PqlEntityType::If, "ifs");
 
-		std::vector<PQL_VARIABLE> declarations;
+		std::vector<PqlEntity> declarations;
 		declarations.push_back(pair1);
 		declarations.push_back(pair2);
 
 		std::vector<PqlReference> columns;
-		columns.emplace_back(PqlReferenceType::synonym, "s");
+		columns.emplace_back(PqlReferenceType::Synonym, "s");
 
 		std::vector<ParsedRelationship> relationships;
 		std::vector<ParsedPattern> patterns;

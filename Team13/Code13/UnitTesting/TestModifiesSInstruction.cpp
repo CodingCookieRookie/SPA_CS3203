@@ -26,8 +26,8 @@ public:
 	TEST_METHOD(execute_lhsSynonymRhsSynonymStmt) {
 		// 1. Setup:
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::synonym, "a1");
-		rhsRef = std::make_pair(PqlReferenceType::synonym, "v");
+		lhsRef = std::make_pair(PqlReferenceType::Synonym, "a1");
+		rhsRef = std::make_pair(PqlReferenceType::Synonym, "v");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesS, lhsRef, rhsRef);
 
 		// PKB inserts modifies
@@ -47,8 +47,8 @@ public:
 	TEST_METHOD(execute_lhsSynonymRhsIdentStmt) {
 		// 1. Setup:
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::synonym, "a1");
-		rhsRef = std::make_pair(PqlReferenceType::ident, "x");
+		lhsRef = std::make_pair(PqlReferenceType::Synonym, "a1");
+		rhsRef = std::make_pair(PqlReferenceType::Ident, "x");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesS, lhsRef, rhsRef);
 
 		// PKB inserts modifies
@@ -68,8 +68,8 @@ public:
 	TEST_METHOD(execute_lhsSynonymRhsWildCardStmt) {
 		// 1. Setup:
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::synonym, "a1");
-		rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
+		lhsRef = std::make_pair(PqlReferenceType::Synonym, "a1");
+		rhsRef = std::make_pair(PqlReferenceType::Wildcard, "_");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesS, lhsRef, rhsRef);
 
 		// PKB inserts modifies
@@ -91,8 +91,8 @@ public:
 	TEST_METHOD(execute_lhsConstRhsSynonym_EvTableTrue) {
 		// 1. Setup:
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::integer, "2");
-		rhsRef = std::make_pair(PqlReferenceType::synonym, "a1");
+		lhsRef = std::make_pair(PqlReferenceType::Integer, "2");
+		rhsRef = std::make_pair(PqlReferenceType::Synonym, "a1");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesS, lhsRef, rhsRef);
 
 		// PKB inserts modifies
@@ -114,8 +114,8 @@ public:
 	TEST_METHOD(execute_lhsConstRhsSynonym_EvTableFalse) {
 		// 1. Setup:
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::integer, "2");
-		rhsRef = std::make_pair(PqlReferenceType::synonym, "a1");
+		lhsRef = std::make_pair(PqlReferenceType::Integer, "2");
+		rhsRef = std::make_pair(PqlReferenceType::Synonym, "a1");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesS, lhsRef, rhsRef);
 
 		// PKB inserts modifies
@@ -135,8 +135,8 @@ public:
 	TEST_METHOD(execute_lhsConstRhsSynonym_ConstOutOfBoundsEvTableFalse) {
 		// 1. Setup:
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::integer, "50");
-		rhsRef = std::make_pair(PqlReferenceType::synonym, "a1");
+		lhsRef = std::make_pair(PqlReferenceType::Integer, "50");
+		rhsRef = std::make_pair(PqlReferenceType::Synonym, "a1");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesS, lhsRef, rhsRef);
 
 		// PKB inserts modifies
@@ -159,8 +159,8 @@ public:
 	TEST_METHOD(execute_lhsConstRhsSynonym_VarOutOfBoundsEvTableFalse) {
 		// 1. Setup:
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::integer, "2");
-		rhsRef = std::make_pair(PqlReferenceType::ident, "fhg");
+		lhsRef = std::make_pair(PqlReferenceType::Integer, "2");
+		rhsRef = std::make_pair(PqlReferenceType::Ident, "fhg");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesS, lhsRef, rhsRef);
 
 		// PKB inserts modifies
@@ -183,8 +183,8 @@ public:
 	TEST_METHOD(execute_lhsConstRhsWildcard_EvTableTrue) {
 		// 1. Setup:
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::integer, "2");
-		rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
+		lhsRef = std::make_pair(PqlReferenceType::Integer, "2");
+		rhsRef = std::make_pair(PqlReferenceType::Wildcard, "_");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesS, lhsRef, rhsRef);
 
 		// PKB inserts modifies
@@ -207,8 +207,8 @@ public:
 	TEST_METHOD(execute_lhsConstRhsWildcard_EvTableFalse) {
 		// 1. Setup:
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::integer, "2");
-		rhsRef = std::make_pair(PqlReferenceType::wildcard, "_");
+		lhsRef = std::make_pair(PqlReferenceType::Integer, "2");
+		rhsRef = std::make_pair(PqlReferenceType::Wildcard, "_");
 		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::ModifiesS, lhsRef, rhsRef);
 
 		// PKB inserts modifies

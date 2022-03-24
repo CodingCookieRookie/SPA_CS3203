@@ -49,7 +49,7 @@ std::list<std::string> PQLResultProjector::resolveTableToResults(
 			std::string entityName = attribute.second;
 			PqlReferenceType attributeType = attribute.first;
 			std::string value = "";
-			if (attributeType == PqlReferenceType::synonym) {
+			if (attributeType == PqlReferenceType::Synonym) {
 				if (isStatementEntity(declarations[entityName])
 					|| declarations[entityName] == PqlEntityType::Constant) {
 					value = std::to_string(resultTable[entityName][i]);
@@ -59,7 +59,7 @@ std::list<std::string> PQLResultProjector::resolveTableToResults(
 					value = Entity::getProcName(resultTable[entityName][i]);
 				} else {}
 
-			} else if (attributeType == PqlReferenceType::procName) {
+			} else if (attributeType == PqlReferenceType::ProcName) {
 				/* Assumption: there exists a column of p or cl */
 				int index = resultTable[entityName][i]; /* index could be ProcIdx or StmtIdx */
 				if ((declarations[entityName] == PqlEntityType::Procedure)) {
@@ -68,7 +68,7 @@ std::list<std::string> PQLResultProjector::resolveTableToResults(
 					value = Attribute::getAttributeNameByStmtIdx(index);
 				}
 
-			} else if (attributeType == PqlReferenceType::varName) {
+			} else if (attributeType == PqlReferenceType::VarName) {
 				/* Assumption: there exists a column of v, r or pn */
 				int index = resultTable[entityName][i]; /* index could be VarIdx or StmtIdx */
 				if ((declarations[entityName] == PqlEntityType::Variable)) {
@@ -79,14 +79,14 @@ std::list<std::string> PQLResultProjector::resolveTableToResults(
 					value = Attribute::getAttributeNameByStmtIdx(index);
 				} else {}
 
-			} else if (attributeType == PqlReferenceType::value) {
+			} else if (attributeType == PqlReferenceType::Value) {
 				/* Assumption: there exists a column of c */
 				int index = resultTable[entityName][i]; /* index is the constant value itself */
 				if ((declarations[entityName] == PqlEntityType::Constant)) {
 					value = std::to_string(index);
 				} else {}
 
-			} else if (attributeType == PqlReferenceType::stmtNum) {
+			} else if (attributeType == PqlReferenceType::StmtNum) {
 				/* Assumption: there exists a column of s, r, pn, cl, if, a */
 				int index = resultTable[entityName][i]; /* index is StmtIdx */
 				value = std::to_string(index);

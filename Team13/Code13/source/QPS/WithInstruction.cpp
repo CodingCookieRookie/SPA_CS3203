@@ -1,10 +1,10 @@
 #include "WithInstruction.h"
 
 EvaluatedTable WithInstruction::handleInt() {
-	if (lhs.first == PqlReferenceType::integer && rhs.first == PqlReferenceType::integer) {
+	if (lhs.first == PqlReferenceType::Integer && rhs.first == PqlReferenceType::Integer) {
 		return EvaluatedTable(lhs.second == rhs.second);
 	}
-	if (lhs.first == PqlReferenceType::integer) {
+	if (lhs.first == PqlReferenceType::Integer) {
 		int intVal = stoi(lhs.second);
 		if (Attribute::hasEqualIntegerAttribute(rhsEntity, intVal)) { /* Read, 1*/
 			std::unordered_map<std::string, std::vector<int>> PQLmap{ { rhs.second, { intVal } } };
@@ -13,7 +13,7 @@ EvaluatedTable WithInstruction::handleInt() {
 		}
 		return EvaluatedTable(false);
 	}
-	if (rhs.first == PqlReferenceType::integer) {
+	if (rhs.first == PqlReferenceType::Integer) {
 		int intVal = stoi(rhs.second);
 		if (Attribute::hasEqualIntegerAttribute(lhsEntity, intVal)) {
 			std::unordered_map<std::string, std::vector<int>> PQLmap{ { lhs.second, { intVal } } };
@@ -28,16 +28,16 @@ EvaluatedTable WithInstruction::handleInt() {
 }
 
 EvaluatedTable WithInstruction::handleString() {
-	if (lhs.first == PqlReferenceType::ident && rhs.first == PqlReferenceType::ident) {
+	if (lhs.first == PqlReferenceType::Ident && rhs.first == PqlReferenceType::Ident) {
 		return EvaluatedTable(lhs.second == rhs.second);
 	}
-	if (lhs.first == PqlReferenceType::ident) { /* "proc1" = p.procName,  get(Procedure, "proc1") */
+	if (lhs.first == PqlReferenceType::Ident) { /* "proc1" = p.procName,  get(Procedure, "proc1") */
 		std::vector<int> column = Attribute::getEqualNameAttributesFromName(rhsEntity, lhs.second);
 		std::unordered_map<std::string, std::vector<int>> PQLmap{ { rhs.second, column } };
 		std::unordered_map<std::string, PqlEntityType> PQLentities{ { rhs.second, rhsEntity } };
 		return EvaluatedTable(PQLentities, PQLmap);
 	}
-	if (rhs.first == PqlReferenceType::ident) {
+	if (rhs.first == PqlReferenceType::Ident) {
 		std::vector<int> column = Attribute::getEqualNameAttributesFromName(lhsEntity, rhs.second);
 		std::unordered_map<std::string, std::vector<int>> PQLmap{ { lhs.second, column } };
 		std::unordered_map<std::string, PqlEntityType> PQLentities{ { lhs.second, lhsEntity } };
@@ -55,10 +55,10 @@ WithInstruction::WithInstruction(PqlReference lhs, PqlReference rhs, PqlEntityTy
 EvaluatedTable WithInstruction::execute() {
 	EvaluatedTable evTable;
 	switch (attribType) {
-	case PqlAttributeType::integer:
+	case PqlAttributeType::Integer:
 		evTable = handleInt();
 		break;
-	case PqlAttributeType::string:
+	case PqlAttributeType::String:
 		evTable = handleString();
 		break;
 	default:

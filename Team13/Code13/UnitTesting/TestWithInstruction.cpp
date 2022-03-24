@@ -48,9 +48,9 @@ public:
 		* Clause: with read.varName = proc.procName
 		*/
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::varName, "read");
-		rhsRef = std::make_pair(PqlReferenceType::procName, "proc");
-		Instruction* instruction = new WithInstruction(lhsRef, rhsRef, PqlEntityType::Read, PqlEntityType::Procedure, PqlAttributeType::string);
+		lhsRef = std::make_pair(PqlReferenceType::VarName, "read");
+		rhsRef = std::make_pair(PqlReferenceType::ProcName, "proc");
+		Instruction* instruction = new WithInstruction(lhsRef, rhsRef, PqlEntityType::Read, PqlEntityType::Procedure, PqlAttributeType::String);
 
 		/* 2. Check result of EvTable */
 		EvaluatedTable evTable = instruction->execute();
@@ -87,10 +87,10 @@ public:
 		* Clause: with print.varName = "read"
 		*/
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::varName, "print");
-		rhsRef = std::make_pair(PqlReferenceType::ident, "read");
+		lhsRef = std::make_pair(PqlReferenceType::VarName, "print");
+		rhsRef = std::make_pair(PqlReferenceType::Ident, "read");
 		/* TODO: Redesign WithInstruction*/
-		Instruction* instruction = new WithInstruction(lhsRef, rhsRef, PqlEntityType::Print, PqlEntityType::Constant, PqlAttributeType::string);
+		Instruction* instruction = new WithInstruction(lhsRef, rhsRef, PqlEntityType::Print, PqlEntityType::Constant, PqlAttributeType::String);
 
 		/* 2. Check result of EvTable */
 		EvaluatedTable evTable = instruction->execute();
@@ -126,10 +126,10 @@ public:
 		* Clause: with "print" = "read"
 		*/
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::ident, "print");
-		rhsRef = std::make_pair(PqlReferenceType::ident, "read");
+		lhsRef = std::make_pair(PqlReferenceType::Ident, "print");
+		rhsRef = std::make_pair(PqlReferenceType::Ident, "read");
 		/* TODO: Redesign WithInstruction*/
-		Instruction* instruction = new WithInstruction(lhsRef, rhsRef, PqlEntityType::Constant, PqlEntityType::Constant, PqlAttributeType::string);
+		Instruction* instruction = new WithInstruction(lhsRef, rhsRef, PqlEntityType::Constant, PqlEntityType::Constant, PqlAttributeType::String);
 
 		/* 2. Check result of EvTable */
 		EvaluatedTable evTable = instruction->execute();
@@ -165,9 +165,9 @@ public:
 		* Clause: with stmt.stmt# = constant.value
 		*/
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::stmtNum, "stmt");
-		rhsRef = std::make_pair(PqlReferenceType::value, "constant");
-		Instruction* instruction = new WithInstruction(lhsRef, rhsRef, PqlEntityType::Stmt, PqlEntityType::Constant, PqlAttributeType::integer);
+		lhsRef = std::make_pair(PqlReferenceType::StmtNum, "stmt");
+		rhsRef = std::make_pair(PqlReferenceType::Value, "constant");
+		Instruction* instruction = new WithInstruction(lhsRef, rhsRef, PqlEntityType::Stmt, PqlEntityType::Constant, PqlAttributeType::Integer);
 
 		/* 2. Check result of EvTable */
 		EvaluatedTable evTable = instruction->execute();
@@ -204,10 +204,10 @@ public:
 		* Clause: with 1 = read.stmt#
 		*/
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::integer, "1");
-		rhsRef = std::make_pair(PqlReferenceType::stmtNum, "read");
+		lhsRef = std::make_pair(PqlReferenceType::Integer, "1");
+		rhsRef = std::make_pair(PqlReferenceType::StmtNum, "read");
 		/* TODO: Redesign WithInstruction*/
-		Instruction* instruction = new WithInstruction(lhsRef, rhsRef, PqlEntityType::Constant, PqlEntityType::Read, PqlAttributeType::integer);
+		Instruction* instruction = new WithInstruction(lhsRef, rhsRef, PqlEntityType::Constant, PqlEntityType::Read, PqlAttributeType::Integer);
 
 		/* 2. Check result of EvTable */
 		EvaluatedTable evTable = instruction->execute();
@@ -243,10 +243,10 @@ public:
 		* Clause: with 3 = 0
 		*/
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::integer, "3");
-		rhsRef = std::make_pair(PqlReferenceType::integer, "0");
+		lhsRef = std::make_pair(PqlReferenceType::Integer, "3");
+		rhsRef = std::make_pair(PqlReferenceType::Integer, "0");
 		/* TODO: Redesign WithInstruction*/
-		Instruction* instruction = new WithInstruction(lhsRef, rhsRef, PqlEntityType::Constant, PqlEntityType::Constant, PqlAttributeType::integer);
+		Instruction* instruction = new WithInstruction(lhsRef, rhsRef, PqlEntityType::Constant, PqlEntityType::Constant, PqlAttributeType::Integer);
 
 		/* 2. Check result of EvTable */
 		EvaluatedTable evTable = instruction->execute();
