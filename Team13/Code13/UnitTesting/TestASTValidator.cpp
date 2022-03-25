@@ -42,7 +42,7 @@ public:
 		}
 	}
 
-	TEST_METHOD(validateAST_callNonExistentFunction_noContainerStmt_ASTExceptionThrown) {
+	TEST_METHOD(validateAST_callNonExistentProcedure_noContainerStmt_ASTExceptionThrown) {
 		/* AST is equivalent to the SIMPLE program
 		   procedure main {
 				   call proc1; }
@@ -76,7 +76,7 @@ public:
 		}
 	}
 
-	TEST_METHOD(validateAST_callNonExistentFunction_insideOneContainerStmt_ASTExceptionThrown) {
+	TEST_METHOD(validateAST_callNonExistentProcedure_insideOneContainerStmt_ASTExceptionThrown) {
 		/* AST is equivalent to the SIMPLE program
 		   procedure main {
 			while (x==y) {
@@ -120,7 +120,7 @@ public:
 		}
 	}
 
-	TEST_METHOD(validateAST_callNonExistentFunction_insideNestedContainerStmts_ASTExceptionThrown) {
+	TEST_METHOD(validateAST_callNonExistentProcedure_insideNestedContainerStmts_ASTExceptionThrown) {
 		/* AST is equivalent to the SIMPLE program
 			procedure proc {
 				   read a; }
@@ -260,7 +260,7 @@ public:
 	TEST_METHOD(validateAST_cyclicCall_twoProcs_ASTExceptionThrown) {
 		/* AST is equivalent to the SIMPLE program
 			procedure proc {
-				   call main; }
+				   call main;
 			}
 			procedure main {
 			while (x==y) {
@@ -331,7 +331,7 @@ public:
 				   call proc2; }}
 			}
 			procedure proc2 {
-				   call proc3; call proc3; }
+				   call proc3; call proc3;
 			}
 			procedure proc3 {
 				if ((x == y) && (z > 0)) then {
@@ -454,7 +454,7 @@ public:
 				   call proc2; }}
 			}
 			procedure proc2 {
-				   call proc3; call proc3; }
+				   call proc3; call proc3;
 			}
 			procedure proc3 { call proc1; }
 			procedure proc4 { read proc1; }
