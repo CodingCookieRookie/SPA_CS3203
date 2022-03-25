@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "../Exception/SPAException.h"
+#include "Clause.h"
 #include "QPSCommons.h"
 
 class ParsedQuery {

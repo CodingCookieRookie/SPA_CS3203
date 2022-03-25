@@ -53,16 +53,11 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
 
 	// 3. Get all with results for with-clause
 	for (const ParsedWith& with : withs) {
-		PqlReference lhs = with.getLhs();
-		PqlReference rhs = with.getRhs();
-		PqlEntityType lhsEntity = declarations.find(lhs.second) != declarations.end() ? declarations.at(lhs.second) : PqlEntityType::Constant;
-		PqlEntityType rhsEntity = declarations.find(rhs.second) != declarations.end() ? declarations.at(rhs.second) : PqlEntityType::Constant;
-		instructions.push_back(new WithInstruction(lhs, rhs, lhsEntity, rhsEntity, with.getAttribType()));
+		instructions.push_back(with.toInstruction());
 	}
 
 	// TODO: Optimisation: Sort instructions.
 	return instructions;
-
 }
 
 EvaluatedTable PQLEvaluator::executeInstructions(std::vector<Instruction*> instructions) {
