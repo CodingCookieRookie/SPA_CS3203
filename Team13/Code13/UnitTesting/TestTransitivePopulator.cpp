@@ -289,11 +289,15 @@ public:
 		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2 } == UsesS::getVariables(stmtIdx3));
 		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2 } == UsesP::getVariables(procIdx1));
 		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2 } == UsesP::getVariables(procIdx2));
+		Assert::IsTrue(std::vector<StmtIndex>{stmtIdx6, stmtIdx3, stmtIdx5, stmtIdx1, stmtIdx2} ==
+			UsesS::getFromVariable(varIdx2)); // calls stmt uses var
 
 		/* Check Modifies */
 		Assert::IsTrue(std::vector<VarIndex>{varIdx2, varIdx1} == ModifiesS::getVariables(stmtIdx3));
 		Assert::IsTrue(std::vector<VarIndex>{varIdx2, varIdx1} == ModifiesP::getVariables(procIdx1));
 		Assert::IsTrue(std::vector<VarIndex>{varIdx2, varIdx1} == ModifiesP::getVariables(procIdx2));
+		Assert::IsTrue(std::vector<StmtIndex>{stmtIdx6, stmtIdx3, stmtIdx5, stmtIdx1, stmtIdx2} ==
+			ModifiesS::getFromVariable(varIdx1)); // calls stmt modifies var
 
 		/* Check Container */
 		Assert::IsTrue(std::unordered_set<StmtIndex>{stmtIdx4, stmtIdx5, stmtIdx6} ==
@@ -403,5 +407,33 @@ public:
 		Assert::IsTrue(std::vector<VarIndex>{ varIdx2, varIdx4 } == ModifiesS::getVariables(stmtIdx1));
 		Assert::IsTrue(std::vector<VarIndex>{ varIdx4 } == ModifiesS::getVariables(stmtIdx3));
 	};
+
+	TEST_METHOD(populateRecursiveInfo_multipleProcs_callInWhile) {
+		/* proc p { while() { calls q; } } proc q { x = x + 1 } */
+		ProcIndex procIdx1 = Entity::insertProc("p");
+		ProcIndex procIdx2 = Entity::insertProc("q");
+
+		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::whileType);
+		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::callType, std::string("q"));
+		StmtIndex stmtIdx3 = Entity::insertStmt(StatementType::assignType);
+
+		VarIndex varIdx1 = Entity::insertVar("x");
+
+		Entity::insertStmtFromProc(procIdx1, stmtIdx1);
+		Entity::insertStmtFromProc(procIdx1, stmtIdx2);
+		Entity::insertStmtFromProc(procIdx2, stmtIdx3);
+
+		Container::insertStmtInContainer(stmtIdx1, stmtIdx2);
+
+		Calls::insert(procIdx1, procIdx2);
+
+		UsesS::insert(stmtIdx3, varIdx1);
+		ModifiesS::insert(stmtIdx3, varIdx1);
+
+		TransitivePopulator::populateRecursiveInfo();
+
+		Assert::IsTrue(std::vector<StmtIndex> { stmtIdx3, stmtIdx2, stmtIdx1 } == ModifiesS::getFromVariable(varIdx1));
+		Assert::IsTrue(std::vector<StmtIndex> { stmtIdx3, stmtIdx2, stmtIdx1 } == UsesS::getFromVariable(varIdx1));
+	}
 	};
 }

@@ -742,7 +742,7 @@ public:
 		SourceAST ast = Parser::parse(sampleSource4);
 		DesignExtractor::extract(ast);
 
-		Assert::AreEqual(size_t(30), std::get<0>(ModifiesS::getAllSynonymVarInfo()).size());
+		Assert::AreEqual(size_t(32), std::get<0>(ModifiesS::getAllSynonymVarInfo()).size());
 		Assert::IsTrue(ModifiesS::contains(stmtIdx2, Entity::getVarIdx(varName1)));
 		Assert::IsTrue(ModifiesS::contains(stmtIdx4, Entity::getVarIdx(varName2)));
 		Assert::IsTrue(ModifiesS::contains(stmtIdx5, Entity::getVarIdx(varName3)));

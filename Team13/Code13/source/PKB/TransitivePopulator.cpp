@@ -70,6 +70,8 @@ void TransitivePopulator::populateRS1TransitiveCallsStmts() {
 			ModifiesS::insert(callStmtIndex, varIndex);
 		}
 	}
+
+	populateContainerInfo();
 }
 
 void TransitivePopulator::populateTransitiveProcsInfo() {
