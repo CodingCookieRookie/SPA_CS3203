@@ -20,6 +20,7 @@
 #include "../PKB/Next.h"
 #include "EvaluatedTable.h"
 #include "QPSCommons.h"
+#include "../Common/Types.h"
 
 class Instruction {
 public:

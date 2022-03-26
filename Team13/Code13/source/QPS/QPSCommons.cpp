@@ -1,17 +1,17 @@
 #include "QPSCommons.h"
 
 bool isSynonymRef(PqlReference reference) {
-	return reference.first == PqlReferenceType::Synonym;
+	return reference.first == PqlReferenceType::SYNONYM;
 }
 
-bool isStatementEntity(PqlEntityType entityType) {
+bool isStatementEntity(EntityType entityType) {
 	/* TODO: refactor this into a table */
-	return entityType == PqlEntityType::Assign ||
-		entityType == PqlEntityType::Stmt ||
-		entityType == PqlEntityType::If ||
-		entityType == PqlEntityType::Print ||
-		entityType == PqlEntityType::Read ||
-		entityType == PqlEntityType::Stmt ||
-		entityType == PqlEntityType::While ||
-		entityType == PqlEntityType::Call;
+	return entityType == EntityType::ASSIGN ||
+		entityType == EntityType::STMT ||
+		entityType == EntityType::IF ||
+		entityType == EntityType::PRINT ||
+		entityType == EntityType::READ ||
+		entityType == EntityType::STMT ||
+		entityType == EntityType::WHILE ||
+		entityType == EntityType::CALL;
 }

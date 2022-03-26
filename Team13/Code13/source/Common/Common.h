@@ -63,6 +63,6 @@ public:
 	const static std::string UNDERSCORE;
 	const static std::string QUOTATION;
 
-	const static std::vector<std::string> relOperators;
-	const static std::vector<std::string> logicalOperators;
+	const static std::vector<std::string> REL_OPERATORS;
+	const static std::vector<std::string> LOGICAL_OPERATORS;
 };

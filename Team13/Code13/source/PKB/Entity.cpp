@@ -133,7 +133,7 @@ StmtIndex Entity::insertStmt(StatementType stmtType, std::string& nameValue) {
 
 bool Entity::isContainerStmt(StmtIndex& stmtIdx) {
 	StatementType stmtType = stmtTypeTable[stmtIdx];
-	return stmtType == StatementType::whileType || stmtType == StatementType::ifType;
+	return stmtType == StatementType::WHILE_TYPE || stmtType == StatementType::IF_TYPE;
 }
 
 bool Entity::containsStmt(StmtIndex stmtNo) {

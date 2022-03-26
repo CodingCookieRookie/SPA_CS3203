@@ -38,7 +38,7 @@ std::unordered_set<std::string> StmtNode::getUsesVarsInExpr(ExprNode* expr) {
 	while (!queue.empty()) {
 		ExprNode* currNode = queue.front();
 		queue.pop();
-		if (currNode->getExprNodeValueType() == ExprNodeValueType::varName) {
+		if (currNode->getExprNodeValueType() == ExprNodeValueType::VAR_NAME) {
 			usesVars.insert(currNode->getValue());
 		}
 
@@ -58,7 +58,7 @@ std::unordered_set<std::string> StmtNode::getConstsInExpr(ExprNode* expr) {
 	while (!queue.empty()) {
 		ExprNode* currNode = queue.front();
 		queue.pop();
-		if (currNode->getExprNodeValueType() == ExprNodeValueType::constValue) {
+		if (currNode->getExprNodeValueType() == ExprNodeValueType::CONST_VALUE) {
 			consts.insert(currNode->getValue());
 		}
 
@@ -77,7 +77,7 @@ std::string ReadNode::getVarName() {
 }
 
 StatementType ReadNode::getStmtType() {
-	return StatementType::readType;
+	return StatementType::READ_TYPE;
 }
 
 std::unordered_set<std::string> ReadNode::getModifiesVars() {
@@ -92,7 +92,7 @@ std::string PrintNode::getVarName() {
 }
 
 StatementType PrintNode::getStmtType() {
-	return StatementType::printType;
+	return StatementType::PRINT_TYPE;
 }
 
 std::unordered_set<std::string> PrintNode::getUsesVars() {
@@ -107,7 +107,7 @@ std::string AssignNode::getVarName() {
 }
 
 StatementType AssignNode::getStmtType() {
-	return StatementType::assignType;
+	return StatementType::ASSIGN_TYPE;
 }
 
 ExprNode* AssignNode::getExpr() {
@@ -153,21 +153,21 @@ std::unordered_set<std::string> ContainerNode::getConsts() {
 WhileNode::WhileNode(ExprNode* condExpr, StmtLstNode* stmtLst) : ContainerNode(condExpr, { stmtLst }) {}
 
 StatementType WhileNode::getStmtType() {
-	return StatementType::whileType;
+	return StatementType::WHILE_TYPE;
 }
 
 /* IfNode */
 IfNode::IfNode(ExprNode* condExpr, StmtLstNode* thenStmtLst, StmtLstNode* elseStmtLst) : ContainerNode(condExpr, { thenStmtLst, elseStmtLst }) {}
 
 StatementType IfNode::getStmtType() {
-	return StatementType::ifType;
+	return StatementType::IF_TYPE;
 }
 
 /* CallNode */
 CallNode::CallNode(std::string procName) : StmtNode(), procName(procName) {}
 
 StatementType CallNode::getStmtType() {
-	return StatementType::callType;
+	return StatementType::CALL_TYPE;
 }
 
 std::string CallNode::getProcCalled() {

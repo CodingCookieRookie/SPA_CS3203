@@ -17,12 +17,12 @@ private:
 	std::string procName1 = "Peter";
 	std::string procName2 = "Stephen";
 
-	StatementType assignType = StatementType::assignType;
-	StatementType whileType = StatementType::whileType;
-	StatementType callType = StatementType::callType;
-	StatementType readType = StatementType::readType;
-	StatementType printType = StatementType::printType;
-	StatementType ifType = StatementType::ifType;
+	StatementType assignType = StatementType::ASSIGN_TYPE;
+	StatementType whileType = StatementType::WHILE_TYPE;
+	StatementType callType = StatementType::CALL_TYPE;
+	StatementType readType = StatementType::READ_TYPE;
+	StatementType printType = StatementType::PRINT_TYPE;
+	StatementType ifType = StatementType::IF_TYPE;
 
 	VarIndex varIdx1 = VarIndex(1);
 	VarIndex varIdx2 = VarIndex(2);

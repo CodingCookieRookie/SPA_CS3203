@@ -11,7 +11,7 @@
 std::list<std::string> PQLResultProjector::resolveTableToResults(
 	EvaluatedTable evaluatedTable, ParsedQuery& parsedQuery) {
 	std::vector<PqlReference> attributes = parsedQuery.getAttributes();
-	std::unordered_map<std::string, PqlEntityType> declarations = parsedQuery.getDeclarations();
+	std::unordered_map<std::string, EntityType> declarations = parsedQuery.getDeclarations();
 	std::list<std::string> resList;
 	std::unordered_map<std::string, std::vector<int>> resultTable = evaluatedTable.getTableRef();
 	int numRow = evaluatedTable.getNumRow();
@@ -31,7 +31,7 @@ std::list<std::string> PQLResultProjector::resolveTableToResults(
 	INTEGER: stmt.stmt#, read.stmt#, print.stmt#, call.stmt#,
 	INTEGER: while.stmt#, if.stmt#, assign.stmt#: */
 
-	if (projType == ProjectionType::boolean) {
+	if (projType == ProjectionType::BOOLEAN) {
 		if (isNoValuesInResultTable) {
 			resList.emplace_back("FALSE");
 		} else {
@@ -49,44 +49,44 @@ std::list<std::string> PQLResultProjector::resolveTableToResults(
 			std::string entityName = attribute.second;
 			PqlReferenceType attributeType = attribute.first;
 			std::string value = "";
-			if (attributeType == PqlReferenceType::Synonym) {
+			if (attributeType == PqlReferenceType::SYNONYM) {
 				if (isStatementEntity(declarations[entityName])
-					|| declarations[entityName] == PqlEntityType::Constant) {
+					|| declarations[entityName] == EntityType::CONSTANT) {
 					value = std::to_string(resultTable[entityName][i]);
-				} else if ((declarations[entityName] == PqlEntityType::Variable)) {
+				} else if ((declarations[entityName] == EntityType::VARIABLE)) {
 					value = Entity::getVarName(resultTable[entityName][i]);
-				} else if ((declarations[entityName] == PqlEntityType::Procedure)) {
+				} else if ((declarations[entityName] == EntityType::PROCEDURE)) {
 					value = Entity::getProcName(resultTable[entityName][i]);
 				} else {}
 
-			} else if (attributeType == PqlReferenceType::ProcName) {
+			} else if (attributeType == PqlReferenceType::PROC_NAME) {
 				/* Assumption: there exists a column of p or cl */
 				int index = resultTable[entityName][i]; /* index could be ProcIdx or StmtIdx */
-				if ((declarations[entityName] == PqlEntityType::Procedure)) {
+				if ((declarations[entityName] == EntityType::PROCEDURE)) {
 					value = Entity::getProcName(index);
-				} else if ((declarations[entityName] == PqlEntityType::Call)) {
+				} else if ((declarations[entityName] == EntityType::CALL)) {
 					value = Attribute::getAttributeNameByStmtIdx(index);
 				}
 
-			} else if (attributeType == PqlReferenceType::VarName) {
+			} else if (attributeType == PqlReferenceType::VAR_NAME) {
 				/* Assumption: there exists a column of v, r or pn */
 				int index = resultTable[entityName][i]; /* index could be VarIdx or StmtIdx */
-				if ((declarations[entityName] == PqlEntityType::Variable)) {
+				if ((declarations[entityName] == EntityType::VARIABLE)) {
 					value = Entity::getVarName(index);
-				} else if ((declarations[entityName] == PqlEntityType::Read)) {
+				} else if ((declarations[entityName] == EntityType::READ)) {
 					value = Attribute::getAttributeNameByStmtIdx(index);
-				} else if ((declarations[entityName] == PqlEntityType::Print)) {
+				} else if ((declarations[entityName] == EntityType::PRINT)) {
 					value = Attribute::getAttributeNameByStmtIdx(index);
 				} else {}
 
-			} else if (attributeType == PqlReferenceType::Value) {
+			} else if (attributeType == PqlReferenceType::VALUE) {
 				/* Assumption: there exists a column of c */
 				int index = resultTable[entityName][i]; /* index is the constant value itself */
-				if ((declarations[entityName] == PqlEntityType::Constant)) {
+				if ((declarations[entityName] == EntityType::CONSTANT)) {
 					value = std::to_string(index);
 				} else {}
 
-			} else if (attributeType == PqlReferenceType::StmtNum) {
+			} else if (attributeType == PqlReferenceType::STMT_NUM) {
 				/* Assumption: there exists a column of s, r, pn, cl, if, a */
 				int index = resultTable[entityName][i]; /* index is StmtIdx */
 				value = std::to_string(index);

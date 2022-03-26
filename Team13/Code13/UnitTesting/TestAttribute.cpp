@@ -20,12 +20,12 @@ private:
 	std::string procName1 = "Peter";
 	std::string procName2 = "Stephen";
 
-	StatementType assignType = StatementType::assignType;
-	StatementType whileType = StatementType::whileType;
-	StatementType callType = StatementType::callType;
-	StatementType readType = StatementType::readType;
-	StatementType printType = StatementType::printType;
-	StatementType ifType = StatementType::ifType;
+	StatementType assignType = StatementType::ASSIGN_TYPE;
+	StatementType whileType = StatementType::WHILE_TYPE;
+	StatementType callType = StatementType::CALL_TYPE;
+	StatementType readType = StatementType::READ_TYPE;
+	StatementType printType = StatementType::PRINT_TYPE;
+	StatementType ifType = StatementType::IF_TYPE;
 
 	TEST_METHOD_CLEANUP(cleanUpAttributeInfo) {
 		Attribute::performCleanUp();
@@ -413,7 +413,7 @@ public:
 			= std::make_tuple(expectedLeftEntityTypeIndices, expectedRightEntityTypeIndices);
 
 		std::tuple<std::vector<EntityAttributeRef>, std::vector<EntityAttributeRef>> res
-			= Attribute::getEqualNameAttributes(PqlEntityType::Procedure, PqlEntityType::Procedure);
+			= Attribute::getEqualNameAttributes(EntityType::PROCEDURE, EntityType::PROCEDURE);
 		Assert::IsTrue(expectedRes == res);
 	}
 
@@ -424,14 +424,14 @@ public:
 		Assert::IsTrue(1 == nameIdx);
 
 		std::tuple<std::vector<EntityAttributeRef>, std::vector<EntityAttributeRef>> res1
-			= Attribute::getEqualNameAttributes(PqlEntityType::Variable, PqlEntityType::Variable);
+			= Attribute::getEqualNameAttributes(EntityType::VARIABLE, EntityType::VARIABLE);
 		std::vector<EntityAttributeRef> res1LeftEntityTypeIndices = std::get<0>(res1);
 		std::vector<EntityAttributeRef> res1RightEntityTypeIndices = std::get<1>(res1);
 		Assert::IsTrue(0 == res1LeftEntityTypeIndices.size());
 		Assert::IsTrue(0 == res1RightEntityTypeIndices.size());
 
 		std::tuple<std::vector<EntityAttributeRef>, std::vector<EntityAttributeRef>> res2
-			= Attribute::getEqualNameAttributes(PqlEntityType::Procedure, PqlEntityType::Variable);
+			= Attribute::getEqualNameAttributes(EntityType::PROCEDURE, EntityType::VARIABLE);
 		std::vector<EntityAttributeRef> res2LeftEntityTypeIndices = std::get<0>(res2);
 		std::vector<EntityAttributeRef> res2RightEntityTypeIndices = std::get<1>(res2);
 		Assert::IsTrue(0 == res2LeftEntityTypeIndices.size());
@@ -453,7 +453,7 @@ public:
 			= std::make_tuple(expectedLeftEntityTypeIndices, expectedRightEntityTypeIndices);
 
 		std::tuple<std::vector<EntityAttributeRef>, std::vector<EntityAttributeRef>> res
-			= Attribute::getEqualNameAttributes(PqlEntityType::Procedure, PqlEntityType::Procedure);
+			= Attribute::getEqualNameAttributes(EntityType::PROCEDURE, EntityType::PROCEDURE);
 		Assert::IsTrue(expectedRes == res);
 	}
 
@@ -470,9 +470,9 @@ public:
 			= std::make_tuple(expectedLeftEntityTypeIndices, expectedRightEntityTypeIndices);
 
 		std::tuple<std::vector<EntityAttributeRef>, std::vector<EntityAttributeRef>> res1
-			= Attribute::getEqualNameAttributes(PqlEntityType::Procedure, PqlEntityType::Variable);
+			= Attribute::getEqualNameAttributes(EntityType::PROCEDURE, EntityType::VARIABLE);
 		std::tuple<std::vector<EntityAttributeRef>, std::vector<EntityAttributeRef>> res2
-			= Attribute::getEqualNameAttributes(PqlEntityType::Variable, PqlEntityType::Procedure);
+			= Attribute::getEqualNameAttributes(EntityType::VARIABLE, EntityType::PROCEDURE);
 
 		Assert::IsTrue(expectedRes == res1);
 		Assert::IsTrue(expectedRes == res2);
@@ -495,9 +495,9 @@ public:
 			= std::make_tuple(expectedLeftEntityTypeIndices1, expectedRightEntityTypeIndices1);
 
 		std::tuple<std::vector<EntityAttributeRef>, std::vector<EntityAttributeRef>> res1
-			= Attribute::getEqualNameAttributes(PqlEntityType::Procedure, PqlEntityType::Variable);
+			= Attribute::getEqualNameAttributes(EntityType::PROCEDURE, EntityType::VARIABLE);
 		std::tuple<std::vector<EntityAttributeRef>, std::vector<EntityAttributeRef>> res2
-			= Attribute::getEqualNameAttributes(PqlEntityType::Procedure, PqlEntityType::Call);
+			= Attribute::getEqualNameAttributes(EntityType::PROCEDURE, EntityType::CALL);
 
 		Assert::IsTrue(expectedRes1 == res1);
 		Assert::IsTrue(expectedRes1 == res2);
@@ -508,9 +508,9 @@ public:
 			= std::make_tuple(expectedLeftEntityTypeIndices2, expectedRightEntityTypeIndices2);
 
 		std::tuple<std::vector<EntityAttributeRef>, std::vector<EntityAttributeRef>> res3
-			= Attribute::getEqualNameAttributes(PqlEntityType::Variable, PqlEntityType::Procedure);
+			= Attribute::getEqualNameAttributes(EntityType::VARIABLE, EntityType::PROCEDURE);
 		std::tuple<std::vector<EntityAttributeRef>, std::vector<EntityAttributeRef>> res4
-			= Attribute::getEqualNameAttributes(PqlEntityType::Call, PqlEntityType::Procedure);
+			= Attribute::getEqualNameAttributes(EntityType::CALL, EntityType::PROCEDURE);
 
 		Assert::IsTrue(expectedRes2 == res3);
 		Assert::IsTrue(expectedRes2 == res4);
@@ -521,13 +521,13 @@ public:
 			= std::make_tuple(expectedLeftEntityTypeIndices3, expectedRightEntityTypeIndices3);
 
 		std::tuple<std::vector<EntityAttributeRef>, std::vector<EntityAttributeRef>> res5
-			= Attribute::getEqualNameAttributes(PqlEntityType::Call, PqlEntityType::Variable);
+			= Attribute::getEqualNameAttributes(EntityType::CALL, EntityType::VARIABLE);
 		std::tuple<std::vector<EntityAttributeRef>, std::vector<EntityAttributeRef>> res6
-			= Attribute::getEqualNameAttributes(PqlEntityType::Variable, PqlEntityType::Call);
+			= Attribute::getEqualNameAttributes(EntityType::VARIABLE, EntityType::CALL);
 		std::tuple<std::vector<EntityAttributeRef>, std::vector<EntityAttributeRef>> res7
-			= Attribute::getEqualNameAttributes(PqlEntityType::Call, PqlEntityType::Call);
+			= Attribute::getEqualNameAttributes(EntityType::CALL, EntityType::CALL);
 		std::tuple<std::vector<EntityAttributeRef>, std::vector<EntityAttributeRef>> res8
-			= Attribute::getEqualNameAttributes(PqlEntityType::Variable, PqlEntityType::Variable);
+			= Attribute::getEqualNameAttributes(EntityType::VARIABLE, EntityType::VARIABLE);
 
 		Assert::IsTrue(expectedRes3 == res5);
 		Assert::IsTrue(expectedRes3 == res6);
@@ -540,7 +540,7 @@ public:
 			= std::make_tuple(expectedLeftEntityTypeIndices4, expectedRightEntityTypeIndices4);
 
 		std::tuple<std::vector<EntityAttributeRef>, std::vector<EntityAttributeRef>> res9
-			= Attribute::getEqualNameAttributes(PqlEntityType::Procedure, PqlEntityType::Procedure);
+			= Attribute::getEqualNameAttributes(EntityType::PROCEDURE, EntityType::PROCEDURE);
 
 		Assert::IsTrue(expectedRes4 == res9);
 	}
@@ -553,7 +553,7 @@ public:
 
 		std::vector<EntityAttributeRef> expectedRes{ 1 };
 
-		std::vector<EntityAttributeRef> res = Attribute::getEqualNameAttributesFromName(PqlEntityType::Procedure, name1);
+		std::vector<EntityAttributeRef> res = Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, name1);
 
 		Assert::IsTrue(expectedRes == res);
 	}
@@ -564,7 +564,7 @@ public:
 		NameIndex nameIdx = Attribute::getNameIdx(name1);
 		Assert::IsTrue(1 == nameIdx);
 
-		std::vector<EntityAttributeRef> res = Attribute::getEqualNameAttributesFromName(PqlEntityType::Procedure, name2);
+		std::vector<EntityAttributeRef> res = Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, name2);
 
 		Assert::IsTrue(0 == res.size());
 	}
@@ -575,7 +575,7 @@ public:
 		NameIndex nameIdx = Attribute::getNameIdx(name1);
 		Assert::IsTrue(1 == nameIdx);
 
-		std::vector<EntityAttributeRef> res = Attribute::getEqualNameAttributesFromName(PqlEntityType::Variable, name1);
+		std::vector<EntityAttributeRef> res = Attribute::getEqualNameAttributesFromName(EntityType::VARIABLE, name1);
 
 		Assert::IsTrue(0 == res.size());
 	}
@@ -586,7 +586,7 @@ public:
 		NameIndex nameIdx = Attribute::getNameIdx(name1);
 		Assert::IsTrue(1 == nameIdx);
 
-		std::vector<EntityAttributeRef> res = Attribute::getEqualNameAttributesFromName(PqlEntityType::Variable, name2);
+		std::vector<EntityAttributeRef> res = Attribute::getEqualNameAttributesFromName(EntityType::VARIABLE, name2);
 
 		Assert::IsTrue(0 == res.size());
 	}
@@ -600,9 +600,9 @@ public:
 
 		std::vector<EntityAttributeRef> expectedRes{ 1, 2 };
 
-		std::vector<EntityAttributeRef> res1 = Attribute::getEqualNameAttributesFromName(PqlEntityType::Call, name1);
-		std::vector<EntityAttributeRef> res2 = Attribute::getEqualNameAttributesFromName(PqlEntityType::Read, name1);
-		std::vector<EntityAttributeRef> res3 = Attribute::getEqualNameAttributesFromName(PqlEntityType::Print, name1);
+		std::vector<EntityAttributeRef> res1 = Attribute::getEqualNameAttributesFromName(EntityType::CALL, name1);
+		std::vector<EntityAttributeRef> res2 = Attribute::getEqualNameAttributesFromName(EntityType::READ, name1);
+		std::vector<EntityAttributeRef> res3 = Attribute::getEqualNameAttributesFromName(EntityType::PRINT, name1);
 
 		Assert::IsTrue(expectedRes == res1);
 		Assert::IsTrue(0 == res2.size());
@@ -621,23 +621,23 @@ public:
 		Assert::IsTrue(1 == nameIdx2);
 
 		std::vector<EntityAttributeRef> expectedRes1{ 2 };
-		std::vector<EntityAttributeRef> res1 = Attribute::getEqualNameAttributesFromName(PqlEntityType::Call, name1);
+		std::vector<EntityAttributeRef> res1 = Attribute::getEqualNameAttributesFromName(EntityType::CALL, name1);
 		Assert::IsTrue(expectedRes1 == res1);
 
 		std::vector<EntityAttributeRef> expectedRes2{ 3 };
-		std::vector<EntityAttributeRef> res2 = Attribute::getEqualNameAttributesFromName(PqlEntityType::Read, name1);
+		std::vector<EntityAttributeRef> res2 = Attribute::getEqualNameAttributesFromName(EntityType::READ, name1);
 		Assert::IsTrue(expectedRes2 == res2);
 
 		std::vector<EntityAttributeRef> expectedRes3{ 4 };
-		std::vector<EntityAttributeRef> res3 = Attribute::getEqualNameAttributesFromName(PqlEntityType::Print, name1);
+		std::vector<EntityAttributeRef> res3 = Attribute::getEqualNameAttributesFromName(EntityType::PRINT, name1);
 		Assert::IsTrue(expectedRes3 == res3);
 
 		std::vector<EntityAttributeRef> expectedRes4{ 1 };
-		std::vector<EntityAttributeRef> res4 = Attribute::getEqualNameAttributesFromName(PqlEntityType::Call, name2);
+		std::vector<EntityAttributeRef> res4 = Attribute::getEqualNameAttributesFromName(EntityType::CALL, name2);
 		Assert::IsTrue(expectedRes4 == res4);
 
-		std::vector<EntityAttributeRef> res5 = Attribute::getEqualNameAttributesFromName(PqlEntityType::Read, name2);
-		std::vector<EntityAttributeRef> res6 = Attribute::getEqualNameAttributesFromName(PqlEntityType::Print, name2);
+		std::vector<EntityAttributeRef> res5 = Attribute::getEqualNameAttributesFromName(EntityType::READ, name2);
+		std::vector<EntityAttributeRef> res6 = Attribute::getEqualNameAttributesFromName(EntityType::PRINT, name2);
 		Assert::IsTrue(0 == res5.size());
 		Assert::IsTrue(0 == res6.size());
 	}
@@ -650,8 +650,8 @@ public:
 
 		std::vector<EntityAttributeRef> expectedRes{ 1 };
 
-		std::vector<EntityAttributeRef> res1 = Attribute::getEqualIntegerAttributes(PqlEntityType::Call, PqlEntityType::Call);
-		std::vector<EntityAttributeRef> res2 = Attribute::getEqualIntegerAttributes(PqlEntityType::Stmt, PqlEntityType::Stmt);
+		std::vector<EntityAttributeRef> res1 = Attribute::getEqualIntegerAttributes(EntityType::CALL, EntityType::CALL);
+		std::vector<EntityAttributeRef> res2 = Attribute::getEqualIntegerAttributes(EntityType::STMT, EntityType::STMT);
 		Assert::IsTrue(expectedRes == res1);
 		Assert::IsTrue(expectedRes == res2);
 	}
@@ -663,13 +663,13 @@ public:
 		Assert::IsTrue(1 == nameIdx);
 
 		std::vector<EntityAttributeRef> expectedRes{ 1 };
-		std::vector<EntityAttributeRef> res1 = Attribute::getEqualIntegerAttributes(PqlEntityType::Read, PqlEntityType::Stmt);
-		std::vector<EntityAttributeRef> res2 = Attribute::getEqualIntegerAttributes(PqlEntityType::Stmt, PqlEntityType::Read);
+		std::vector<EntityAttributeRef> res1 = Attribute::getEqualIntegerAttributes(EntityType::READ, EntityType::STMT);
+		std::vector<EntityAttributeRef> res2 = Attribute::getEqualIntegerAttributes(EntityType::STMT, EntityType::READ);
 		Assert::IsTrue(expectedRes == res1);
 		Assert::IsTrue(expectedRes == res2);
 
-		std::vector<EntityAttributeRef> res3 = Attribute::getEqualIntegerAttributes(PqlEntityType::Read, PqlEntityType::Call);
-		std::vector<EntityAttributeRef> res4 = Attribute::getEqualIntegerAttributes(PqlEntityType::Call, PqlEntityType::Stmt);
+		std::vector<EntityAttributeRef> res3 = Attribute::getEqualIntegerAttributes(EntityType::READ, EntityType::CALL);
+		std::vector<EntityAttributeRef> res4 = Attribute::getEqualIntegerAttributes(EntityType::CALL, EntityType::STMT);
 		Assert::IsTrue(0 == res3.size());
 		Assert::IsTrue(0 == res4.size());
 	}
@@ -684,9 +684,9 @@ public:
 		Assert::IsTrue(2 == nameIdx2);
 
 		std::vector<EntityAttributeRef> expectedRes{ 1, 2 };
-		std::vector<EntityAttributeRef> res1 = Attribute::getEqualIntegerAttributes(PqlEntityType::Read, PqlEntityType::Read);
-		std::vector<EntityAttributeRef> res2 = Attribute::getEqualIntegerAttributes(PqlEntityType::Read, PqlEntityType::Stmt);
-		std::vector<EntityAttributeRef> res3 = Attribute::getEqualIntegerAttributes(PqlEntityType::Stmt, PqlEntityType::Stmt);
+		std::vector<EntityAttributeRef> res1 = Attribute::getEqualIntegerAttributes(EntityType::READ, EntityType::READ);
+		std::vector<EntityAttributeRef> res2 = Attribute::getEqualIntegerAttributes(EntityType::READ, EntityType::STMT);
+		std::vector<EntityAttributeRef> res3 = Attribute::getEqualIntegerAttributes(EntityType::STMT, EntityType::STMT);
 		Assert::IsTrue(expectedRes == res1);
 		Assert::IsTrue(expectedRes == res2);
 		Assert::IsTrue(expectedRes == res3);
@@ -703,35 +703,35 @@ public:
 		Assert::IsTrue(2 == nameIdx2);
 
 		std::vector<EntityAttributeRef> expectedRes1{ 1 };
-		std::vector<EntityAttributeRef> res1 = Attribute::getEqualIntegerAttributes(PqlEntityType::Read, PqlEntityType::Read);
-		std::vector<EntityAttributeRef> res2 = Attribute::getEqualIntegerAttributes(PqlEntityType::Read, PqlEntityType::Stmt);
-		std::vector<EntityAttributeRef> res3 = Attribute::getEqualIntegerAttributes(PqlEntityType::Stmt, PqlEntityType::Read);
+		std::vector<EntityAttributeRef> res1 = Attribute::getEqualIntegerAttributes(EntityType::READ, EntityType::READ);
+		std::vector<EntityAttributeRef> res2 = Attribute::getEqualIntegerAttributes(EntityType::READ, EntityType::STMT);
+		std::vector<EntityAttributeRef> res3 = Attribute::getEqualIntegerAttributes(EntityType::STMT, EntityType::READ);
 		Assert::IsTrue(expectedRes1 == res1);
 		Assert::IsTrue(expectedRes1 == res2);
 		Assert::IsTrue(expectedRes1 == res3);
 
 		std::vector<EntityAttributeRef> expectedRes2{ 2 };
-		std::vector<EntityAttributeRef> res4 = Attribute::getEqualIntegerAttributes(PqlEntityType::Call, PqlEntityType::Call);
-		std::vector<EntityAttributeRef> res5 = Attribute::getEqualIntegerAttributes(PqlEntityType::Call, PqlEntityType::Stmt);
-		std::vector<EntityAttributeRef> res6 = Attribute::getEqualIntegerAttributes(PqlEntityType::Stmt, PqlEntityType::Call);
+		std::vector<EntityAttributeRef> res4 = Attribute::getEqualIntegerAttributes(EntityType::CALL, EntityType::CALL);
+		std::vector<EntityAttributeRef> res5 = Attribute::getEqualIntegerAttributes(EntityType::CALL, EntityType::STMT);
+		std::vector<EntityAttributeRef> res6 = Attribute::getEqualIntegerAttributes(EntityType::STMT, EntityType::CALL);
 		Assert::IsTrue(expectedRes2 == res4);
 		Assert::IsTrue(expectedRes2 == res5);
 		Assert::IsTrue(expectedRes2 == res6);
 
 		std::vector<EntityAttributeRef> expectedRes3{ 3 };
-		std::vector<EntityAttributeRef> res7 = Attribute::getEqualIntegerAttributes(PqlEntityType::Print, PqlEntityType::Print);
-		std::vector<EntityAttributeRef> res8 = Attribute::getEqualIntegerAttributes(PqlEntityType::Print, PqlEntityType::Stmt);
-		std::vector<EntityAttributeRef> res9 = Attribute::getEqualIntegerAttributes(PqlEntityType::Stmt, PqlEntityType::Print);
+		std::vector<EntityAttributeRef> res7 = Attribute::getEqualIntegerAttributes(EntityType::PRINT, EntityType::PRINT);
+		std::vector<EntityAttributeRef> res8 = Attribute::getEqualIntegerAttributes(EntityType::PRINT, EntityType::STMT);
+		std::vector<EntityAttributeRef> res9 = Attribute::getEqualIntegerAttributes(EntityType::STMT, EntityType::PRINT);
 		Assert::IsTrue(expectedRes3 == res7);
 		Assert::IsTrue(expectedRes3 == res8);
 		Assert::IsTrue(expectedRes3 == res9);
 
 		std::vector<EntityAttributeRef> expectedRes4{ 1, 2, 3 };
-		std::vector<EntityAttributeRef> res10 = Attribute::getEqualIntegerAttributes(PqlEntityType::Stmt, PqlEntityType::Stmt);
+		std::vector<EntityAttributeRef> res10 = Attribute::getEqualIntegerAttributes(EntityType::STMT, EntityType::STMT);
 		Assert::IsTrue(expectedRes4 == res10);
 
-		std::vector<EntityAttributeRef> res11 = Attribute::getEqualIntegerAttributes(PqlEntityType::Read, PqlEntityType::Print);
-		std::vector<EntityAttributeRef> res12 = Attribute::getEqualIntegerAttributes(PqlEntityType::Call, PqlEntityType::Read);
+		std::vector<EntityAttributeRef> res11 = Attribute::getEqualIntegerAttributes(EntityType::READ, EntityType::PRINT);
+		std::vector<EntityAttributeRef> res12 = Attribute::getEqualIntegerAttributes(EntityType::CALL, EntityType::READ);
 		Assert::IsTrue(0 == res11.size());
 		Assert::IsTrue(0 == res12.size());
 	}
@@ -744,19 +744,19 @@ public:
 		StmtIndex stmtIdx3 = Entity::insertStmt(whileType);
 
 		std::vector<EntityAttributeRef> expectedRes1{ 1 };
-		std::vector<EntityAttributeRef> res1 = Attribute::getEqualIntegerAttributes(PqlEntityType::Assign, PqlEntityType::Assign);
-		std::vector<EntityAttributeRef> res2 = Attribute::getEqualIntegerAttributes(PqlEntityType::Assign, PqlEntityType::Stmt);
-		std::vector<EntityAttributeRef> res3 = Attribute::getEqualIntegerAttributes(PqlEntityType::Stmt, PqlEntityType::Assign);
+		std::vector<EntityAttributeRef> res1 = Attribute::getEqualIntegerAttributes(EntityType::ASSIGN, EntityType::ASSIGN);
+		std::vector<EntityAttributeRef> res2 = Attribute::getEqualIntegerAttributes(EntityType::ASSIGN, EntityType::STMT);
+		std::vector<EntityAttributeRef> res3 = Attribute::getEqualIntegerAttributes(EntityType::STMT, EntityType::ASSIGN);
 		Assert::IsTrue(expectedRes1 == res1);
 		Assert::IsTrue(expectedRes1 == res2);
 		Assert::IsTrue(expectedRes1 == res3);
 
 		std::vector<EntityAttributeRef> expectedRes2{ 2 };
-		std::vector<EntityAttributeRef> res4 = Attribute::getEqualIntegerAttributes(PqlEntityType::If, PqlEntityType::If);
-		std::vector<EntityAttributeRef> res5 = Attribute::getEqualIntegerAttributes(PqlEntityType::If, PqlEntityType::Stmt);
-		std::vector<EntityAttributeRef> res6 = Attribute::getEqualIntegerAttributes(PqlEntityType::Stmt, PqlEntityType::If);
-		std::vector<EntityAttributeRef> res7 = Attribute::getEqualIntegerAttributes(PqlEntityType::Stmt, PqlEntityType::Constant);
-		std::vector<EntityAttributeRef> res8 = Attribute::getEqualIntegerAttributes(PqlEntityType::Constant, PqlEntityType::Stmt);
+		std::vector<EntityAttributeRef> res4 = Attribute::getEqualIntegerAttributes(EntityType::IF, EntityType::IF);
+		std::vector<EntityAttributeRef> res5 = Attribute::getEqualIntegerAttributes(EntityType::IF, EntityType::STMT);
+		std::vector<EntityAttributeRef> res6 = Attribute::getEqualIntegerAttributes(EntityType::STMT, EntityType::IF);
+		std::vector<EntityAttributeRef> res7 = Attribute::getEqualIntegerAttributes(EntityType::STMT, EntityType::CONSTANT);
+		std::vector<EntityAttributeRef> res8 = Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT);
 		Assert::IsTrue(expectedRes2 == res4);
 		Assert::IsTrue(expectedRes2 == res5);
 		Assert::IsTrue(expectedRes2 == res6);
@@ -764,24 +764,24 @@ public:
 		Assert::IsTrue(expectedRes2 == res8);
 
 		std::vector<EntityAttributeRef> expectedRes3{ 3 };
-		std::vector<EntityAttributeRef> res9 = Attribute::getEqualIntegerAttributes(PqlEntityType::While, PqlEntityType::While);
-		std::vector<EntityAttributeRef> res10 = Attribute::getEqualIntegerAttributes(PqlEntityType::While, PqlEntityType::Stmt);
-		std::vector<EntityAttributeRef> res11 = Attribute::getEqualIntegerAttributes(PqlEntityType::Stmt, PqlEntityType::While);
+		std::vector<EntityAttributeRef> res9 = Attribute::getEqualIntegerAttributes(EntityType::WHILE, EntityType::WHILE);
+		std::vector<EntityAttributeRef> res10 = Attribute::getEqualIntegerAttributes(EntityType::WHILE, EntityType::STMT);
+		std::vector<EntityAttributeRef> res11 = Attribute::getEqualIntegerAttributes(EntityType::STMT, EntityType::WHILE);
 		Assert::IsTrue(expectedRes3 == res9);
 		Assert::IsTrue(expectedRes3 == res10);
 		Assert::IsTrue(expectedRes3 == res11);
 
 		std::vector<EntityAttributeRef> expectedRes4{ 1, 2, 3 };
-		std::vector<EntityAttributeRef> res12 = Attribute::getEqualIntegerAttributes(PqlEntityType::Stmt, PqlEntityType::Stmt);
+		std::vector<EntityAttributeRef> res12 = Attribute::getEqualIntegerAttributes(EntityType::STMT, EntityType::STMT);
 		Assert::IsTrue(expectedRes4 == res12);
 
 		std::vector<EntityAttributeRef> expectedRes5{ 2, 9 };
-		std::vector<EntityAttributeRef> res13 = Attribute::getEqualIntegerAttributes(PqlEntityType::Constant, PqlEntityType::Constant);
+		std::vector<EntityAttributeRef> res13 = Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::CONSTANT);
 		Assert::IsTrue(expectedRes5 == res13);
 
-		std::vector<EntityAttributeRef> res14 = Attribute::getEqualIntegerAttributes(PqlEntityType::Assign, PqlEntityType::If);
-		std::vector<EntityAttributeRef> res15 = Attribute::getEqualIntegerAttributes(PqlEntityType::If, PqlEntityType::While);
-		std::vector<EntityAttributeRef> res16 = Attribute::getEqualIntegerAttributes(PqlEntityType::While, PqlEntityType::Constant);
+		std::vector<EntityAttributeRef> res14 = Attribute::getEqualIntegerAttributes(EntityType::ASSIGN, EntityType::IF);
+		std::vector<EntityAttributeRef> res15 = Attribute::getEqualIntegerAttributes(EntityType::IF, EntityType::WHILE);
+		std::vector<EntityAttributeRef> res16 = Attribute::getEqualIntegerAttributes(EntityType::WHILE, EntityType::CONSTANT);
 		Assert::IsTrue(0 == res14.size());
 		Assert::IsTrue(0 == res15.size());
 		Assert::IsTrue(0 == res16.size());
@@ -793,8 +793,8 @@ public:
 		NameIndex nameIdx = Attribute::getNameIdx(name1);
 		Assert::IsTrue(1 == nameIdx);
 
-		bool res1 = Attribute::hasEqualIntegerAttribute(PqlEntityType::Read, 1);
-		bool res2 = Attribute::hasEqualIntegerAttribute(PqlEntityType::Stmt, 1);
+		bool res1 = Attribute::hasEqualIntegerAttribute(EntityType::READ, 1);
+		bool res2 = Attribute::hasEqualIntegerAttribute(EntityType::STMT, 1);
 
 		Assert::IsTrue(res1);
 		Assert::IsTrue(res2);
@@ -806,8 +806,8 @@ public:
 		NameIndex nameIdx = Attribute::getNameIdx(name1);
 		Assert::IsTrue(1 == nameIdx);
 
-		bool res1 = Attribute::hasEqualIntegerAttribute(PqlEntityType::Read, 2);
-		bool res2 = Attribute::hasEqualIntegerAttribute(PqlEntityType::Stmt, 2);
+		bool res1 = Attribute::hasEqualIntegerAttribute(EntityType::READ, 2);
+		bool res2 = Attribute::hasEqualIntegerAttribute(EntityType::STMT, 2);
 
 		Assert::IsFalse(res1);
 		Assert::IsFalse(res2);
@@ -819,8 +819,8 @@ public:
 		NameIndex nameIdx = Attribute::getNameIdx(name1);
 		Assert::IsTrue(1 == nameIdx);
 
-		bool res1 = Attribute::hasEqualIntegerAttribute(PqlEntityType::Assign, 1);
-		bool res2 = Attribute::hasEqualIntegerAttribute(PqlEntityType::Constant, 1);
+		bool res1 = Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 1);
+		bool res2 = Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 1);
 
 		Assert::IsFalse(res1);
 		Assert::IsFalse(res2);
@@ -832,8 +832,8 @@ public:
 		NameIndex nameIdx = Attribute::getNameIdx(name1);
 		Assert::IsTrue(1 == nameIdx);
 
-		bool res1 = Attribute::hasEqualIntegerAttribute(PqlEntityType::While, 2);
-		bool res2 = Attribute::hasEqualIntegerAttribute(PqlEntityType::Call, 3);
+		bool res1 = Attribute::hasEqualIntegerAttribute(EntityType::WHILE, 2);
+		bool res2 = Attribute::hasEqualIntegerAttribute(EntityType::CALL, 3);
 
 		Assert::IsFalse(res1);
 		Assert::IsFalse(res2);
@@ -846,10 +846,10 @@ public:
 		NameIndex nameIdx = Attribute::getNameIdx(name1);
 		Assert::IsTrue(1 == nameIdx);
 
-		bool res1 = Attribute::hasEqualIntegerAttribute(PqlEntityType::Call, 1);
-		bool res2 = Attribute::hasEqualIntegerAttribute(PqlEntityType::Stmt, 1);
-		bool res3 = Attribute::hasEqualIntegerAttribute(PqlEntityType::Call, 2);
-		bool res4 = Attribute::hasEqualIntegerAttribute(PqlEntityType::Stmt, 2);
+		bool res1 = Attribute::hasEqualIntegerAttribute(EntityType::CALL, 1);
+		bool res2 = Attribute::hasEqualIntegerAttribute(EntityType::STMT, 1);
+		bool res3 = Attribute::hasEqualIntegerAttribute(EntityType::CALL, 2);
+		bool res4 = Attribute::hasEqualIntegerAttribute(EntityType::STMT, 2);
 
 		Assert::IsTrue(res1);
 		Assert::IsTrue(res2);
@@ -873,15 +873,15 @@ public:
 		Assert::IsTrue(1 == nameIdx2);
 		Assert::IsTrue(3 == nameIdx3);
 
-		bool res1 = Attribute::hasEqualIntegerAttribute(PqlEntityType::Call, 1);
-		bool res2 = Attribute::hasEqualIntegerAttribute(PqlEntityType::Assign, 2);
-		bool res3 = Attribute::hasEqualIntegerAttribute(PqlEntityType::Read, 3);
-		bool res4 = Attribute::hasEqualIntegerAttribute(PqlEntityType::Print, 4);
-		bool res5 = Attribute::hasEqualIntegerAttribute(PqlEntityType::Read, 5);
-		bool res6 = Attribute::hasEqualIntegerAttribute(PqlEntityType::Constant, 3);
-		bool res7 = Attribute::hasEqualIntegerAttribute(PqlEntityType::Constant, 4);
-		bool res8 = Attribute::hasEqualIntegerAttribute(PqlEntityType::Constant, 1);
-		bool res9 = Attribute::hasEqualIntegerAttribute(PqlEntityType::Call, 2);
+		bool res1 = Attribute::hasEqualIntegerAttribute(EntityType::CALL, 1);
+		bool res2 = Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 2);
+		bool res3 = Attribute::hasEqualIntegerAttribute(EntityType::READ, 3);
+		bool res4 = Attribute::hasEqualIntegerAttribute(EntityType::PRINT, 4);
+		bool res5 = Attribute::hasEqualIntegerAttribute(EntityType::READ, 5);
+		bool res6 = Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 3);
+		bool res7 = Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 4);
+		bool res8 = Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 1);
+		bool res9 = Attribute::hasEqualIntegerAttribute(EntityType::CALL, 2);
 
 		Assert::IsTrue(res1);
 		Assert::IsTrue(res2);

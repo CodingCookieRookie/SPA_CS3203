@@ -55,12 +55,12 @@ public:
 		std::string query = "stmt s1; if ifs; Select s1";
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// 2. Test QPS Parser:
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
@@ -77,7 +77,7 @@ public:
 		// Test Table:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(false, tableRef.find("s1") != tableRef.end());
-		// Test Values: std::unordered_map<std::string, PqlEntityType>
+		// Test Values: std::unordered_map<std::string, EntityType>
 		// No Test Values, empty table (merged in ResultProjector)
 
 		// Test EvResult:
@@ -99,7 +99,7 @@ public:
 		// PKB inserts 99 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 99; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
 		}
 
 		// 2. Test QPS Parser:
@@ -142,7 +142,7 @@ public:
 		// PKB inserts 5 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 5; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
 		}
 		for (int i = 0; i < 4; i++) {
 			Follows::insert(stmts[i], stmts[i + 1]);
@@ -158,8 +158,8 @@ public:
 
 		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
 		Assert::AreEqual(size_t(1), relationships.size());
-		Assert::IsTrue(PqlRelationshipType::Follows == relationships[0].getRelationshipType());
-		Assert::IsTrue(PqlReferenceType::Synonym == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlRelationshipType::FOLLOWS == relationships[0].getRelationshipType());
+		Assert::IsTrue(PqlReferenceType::SYNONYM == relationships[0].getLhs().first);
 		Assert::AreEqual(std::string("s1"), relationships[0].getLhs().second);
 
 		// 3. Test QPS Evaluator:
@@ -200,7 +200,7 @@ public:
 		// PKB inserts 5 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 5; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
 		}
 		for (int i = 0; i < 4; i++) {
 			Follows::insert(stmts[i], stmts[i + 1]);
@@ -216,8 +216,8 @@ public:
 
 		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
 		Assert::AreEqual(size_t(1), relationships.size());
-		Assert::IsTrue(PqlRelationshipType::Follows == relationships[0].getRelationshipType());
-		Assert::IsTrue(PqlReferenceType::Synonym == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlRelationshipType::FOLLOWS == relationships[0].getRelationshipType());
+		Assert::IsTrue(PqlReferenceType::SYNONYM == relationships[0].getLhs().first);
 		Assert::AreEqual(std::string("s1"), relationships[0].getLhs().second);
 
 		// 3. Test QPS Evaluator:
@@ -251,7 +251,7 @@ public:
 		// PKB inserts 99 statements, 99 Parent relationships
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 99; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
 		}
 
 		for (int i = 0; i < 99 - 1; i++) {
@@ -270,8 +270,8 @@ public:
 
 		std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
 		Assert::AreEqual(size_t(1), relationships.size());
-		Assert::IsTrue(PqlRelationshipType::ParentT == relationships[0].getRelationshipType());
-		Assert::IsTrue(PqlReferenceType::Synonym == relationships[0].getLhs().first);
+		Assert::IsTrue(PqlRelationshipType::PARENT_T == relationships[0].getRelationshipType());
+		Assert::IsTrue(PqlReferenceType::SYNONYM == relationships[0].getLhs().first);
 		Assert::AreEqual(std::string("s1"), relationships[0].getLhs().second);
 
 		// 3. Test QPS Evaluator:
@@ -312,15 +312,15 @@ public:
 		std::string query = "assign a1; variable v1; Select a1 such that Modifies(a1, v1)";
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts modifies
-		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		Entity::insertVar("randomVar"); // insert dummy var
 		VarIndex varIndex = Entity::insertVar("x");
 		VarIndex varIndex2 = Entity::insertVar("y");
@@ -345,7 +345,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("a1") != tableRef.end());
 
-		// Test Values: std::unordered_map<std::string, PqlEntityType>
+		// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 7, 7 };
 		auto actualValues = tableRef.at("a1");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -369,12 +369,12 @@ public:
 		std::string query = "procedure p1; variable v1; Select p1 such that Modifies(p1, v1)";
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts modifies
 		ProcIndex proc = Entity::insertProc("proc1");
@@ -402,7 +402,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("p1") != tableRef.end());
 
-		// Test Values: std::unordered_map<std::string, PqlEntityType>
+		// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 1 };
 		auto actualValues = tableRef.at("p1");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -425,15 +425,15 @@ public:
 		std::string query = "print p1; variable v1; Select p1 such that Uses(p1, v1)";
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts modifies
-		StmtIndex stmt = Entity::insertStmt(StatementType::printType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::PRINT_TYPE);
 		Entity::insertVar("randomVar"); // insert dummy var
 		VarIndex varIndex = Entity::insertVar("x");
 		VarIndex varIndex2 = Entity::insertVar("y");
@@ -458,7 +458,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("p1") != tableRef.end());
 
-		// Test Values: std::unordered_map<std::string, PqlEntityType>
+		// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 7, 7 };
 		auto actualValues = tableRef.at("p1");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -481,12 +481,12 @@ public:
 		std::string query = "procedure p1; variable v1; Select p1 such that Uses(p1, v1)";
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts modifies
 		ProcIndex proc = Entity::insertProc("proc1");
@@ -514,7 +514,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("p1") != tableRef.end());
 
-		// Test Values: std::unordered_map<std::string, PqlEntityType>
+		// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 1 };
 		auto actualValues = tableRef.at("p1");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -538,15 +538,15 @@ public:
 
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts pattern
-		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		Entity::insertVar("a");
 		VarIndex varIndex = Entity::insertVar("b");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("b+w");
@@ -574,7 +574,7 @@ public:
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end()); // "a" exists
 		Assert::AreEqual(true, tableRef.find("v") != tableRef.end()); // "v" exists
 
-		//// Test Values: std::unordered_map<std::string, PqlEntityType>
+		//// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 7 };
 		auto actualValues = tableRef.at("a");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -599,15 +599,15 @@ public:
 
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts pattern
-		StmtIndex stmt = Entity::insertStmt(StatementType::ifType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::IF_TYPE);
 		Entity::insertVar("y");
 		VarIndex varIndex = Entity::insertVar("x");
 		Pattern::insertIfInfo(stmt, varIndex);
@@ -633,7 +633,7 @@ public:
 		Assert::AreEqual(true, tableRef.find("ifs") != tableRef.end()); // "ifs" exists
 		Assert::AreEqual(true, tableRef.find("v") != tableRef.end()); // "v" exists
 
-		//// Test Values: std::unordered_map<std::string, PqlEntityType>
+		//// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 7 };
 		auto actualValues = tableRef.at("ifs");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -658,15 +658,15 @@ public:
 
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts pattern
-		StmtIndex stmt = Entity::insertStmt(StatementType::whileType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::WHILE_TYPE);
 		Entity::insertVar("w");
 		VarIndex varIndex = Entity::insertVar("x");
 		Pattern::insertWhileInfo(stmt, varIndex);
@@ -692,7 +692,7 @@ public:
 		Assert::AreEqual(true, tableRef.find("w") != tableRef.end()); // "w" exists
 		Assert::AreEqual(true, tableRef.find("v") != tableRef.end()); // "v" exists
 
-		//// Test Values: std::unordered_map<std::string, PqlEntityType>
+		//// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 7 };
 		auto actualValues = tableRef.at("w");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -717,15 +717,15 @@ public:
 		std::string query = "assign a; variable v; Select a such that Modifies(a, v) pattern a(v, _\"x\"_)";
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts pattern
-		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		Entity::insertVar("a");
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("x");
@@ -753,7 +753,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end());
 
-		////// Test Values: std::unordered_map<std::string, PqlEntityType>
+		////// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 7 };
 		auto actualValues = tableRef.at("a");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -774,16 +774,16 @@ public:
 		std::string query = "procedure p1; variable v; if ifs; Select p1 such that Modifies(p1, v) pattern ifs(v, _, _)";
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts pattern
 		ProcIndex proc = Entity::insertProc("proc1");
-		StmtIndex stmt = Entity::insertStmt(StatementType::ifType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::IF_TYPE);
 		Entity::insertVar("dummy");
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("x");
@@ -809,7 +809,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("p1") != tableRef.end());
 
-		// Test Values: std::unordered_map<std::string, PqlEntityType>
+		// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 1 };
 		auto actualValues = tableRef.at("p1");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -830,16 +830,16 @@ public:
 		std::string query = "procedure p1; variable v; while w; Select p1 such that Modifies(p1, v) pattern w(v, _)";
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts pattern
 		ProcIndex proc = Entity::insertProc("proc1");
-		StmtIndex stmt = Entity::insertStmt(StatementType::whileType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::WHILE_TYPE);
 		Entity::insertVar("dummy");
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("x");
@@ -865,7 +865,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("p1") != tableRef.end());
 
-		// Test Values: std::unordered_map<std::string, PqlEntityType>
+		// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 1 };
 		auto actualValues = tableRef.at("p1");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -885,15 +885,15 @@ public:
 		std::string query = "assign a; variable v; Select a such that Modifies(a, v) pattern a(\"b\", _\"x\"_)";
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts pattern
-		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		Entity::insertVar("a");
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("x");
@@ -921,7 +921,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end());
 
-		////// Test Values: std::unordered_map<std::string, PqlEntityType>
+		////// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 7 };
 		auto actualValues = tableRef.at("a");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -945,15 +945,15 @@ public:
 		std::string query = "procedure p1; variable v; if ifs; Select p1 such that Modifies(p1, v) pattern ifs(\"b\", _, _)";
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 		// PKB inserts pattern
 		ProcIndex proc = Entity::insertProc("proc1");
-		StmtIndex stmt = Entity::insertStmt(StatementType::ifType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::IF_TYPE);
 		Entity::insertVar("dummy");
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("x");
@@ -979,7 +979,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("p1") != tableRef.end());
 
-		// Test Values: std::unordered_map<std::string, PqlEntityType>
+		// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 1 };
 		auto actualValues = tableRef.at("p1");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -1000,15 +1000,15 @@ public:
 		std::string query = "procedure p1; variable v; while w; Select p1 such that Modifies(p1, v) pattern w(\"b\", _)";
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 		// PKB inserts pattern
 		ProcIndex proc = Entity::insertProc("proc1");
-		StmtIndex stmt = Entity::insertStmt(StatementType::whileType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::WHILE_TYPE);
 		Entity::insertVar("dummy");
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("x");
@@ -1034,7 +1034,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("p1") != tableRef.end());
 
-		// Test Values: std::unordered_map<std::string, PqlEntityType>
+		// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 1 };
 		auto actualValues = tableRef.at("p1");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -1055,15 +1055,15 @@ public:
 		std::string query = "assign a; variable v; Select a such that Modifies(a, \"x\") pattern a(v, _\"x\"_)";
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts pattern
-		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		Entity::insertVar("a");
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("x");
@@ -1091,7 +1091,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end()); //"a" exists
 
-		////// Test Values: std::unordered_map<std::string, PqlEntityType>
+		////// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{};
 		auto actualValues = tableRef.at("a");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -1112,15 +1112,15 @@ public:
 		std::string query = "assign a; variable v; Select a such that Modifies(a, \"x\") pattern a(\"b\", _\"x\"_)";
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts pattern
-		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		Entity::insertVar("a");
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("x");
@@ -1148,7 +1148,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end());
 
-		////// Test Values: std::unordered_map<std::string, PqlEntityType>
+		////// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{};
 		auto actualValues = tableRef.at("a");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -1169,15 +1169,15 @@ public:
 		std::string query = "assign a; variable v; Select a such that Modifies(a, _) pattern a(v, _\"x\"_)";
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts pattern
-		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		Entity::insertVar("a");
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("x");
@@ -1205,7 +1205,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end());
 
-		////// Test Values: std::unordered_map<std::string, PqlEntityType>
+		////// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 7 };
 		auto actualValues = tableRef.at("a");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -1226,15 +1226,15 @@ public:
 		std::string query = "assign a; variable v; Select a such that Modifies(a, _) pattern a(\"b\", _\"x\"_)";
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts pattern
-		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		Entity::insertVar("a");
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("x");
@@ -1262,7 +1262,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end());
 
-		////// Test Values: std::unordered_map<std::string, PqlEntityType>
+		////// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 7 };
 		auto actualValues = tableRef.at("a");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -1283,15 +1283,15 @@ public:
 		std::string query = "assign a; variable v; Select a such that Modifies(7, v) pattern a(v, _\"x\"_)";
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts pattern
-		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		Entity::insertVar("a");
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("x");
@@ -1319,7 +1319,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end());
 
-		////// Test Values: std::unordered_map<std::string, PqlEntityType>
+		////// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 7 };
 		auto actualValues = tableRef.at("a");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -1340,15 +1340,15 @@ public:
 		std::string query = "assign a; variable v; Select a such that Modifies(7, v) pattern a(\"b\", _\"x\"_)";
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts pattern
-		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		Entity::insertVar("a");
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("x");
@@ -1376,7 +1376,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end());
 
-		// Test Values: std::unordered_map<std::string, PqlEntityType>
+		// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 7 };
 		auto actualValues = tableRef.at("a");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -1397,15 +1397,15 @@ public:
 		std::string query = "assign a; variable v; Select a such that Modifies(7, _) pattern a(v, _\"x\"_)";
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts pattern
-		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		Entity::insertVar("a");
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("x");
@@ -1433,7 +1433,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end());
 
-		////// Test Values: std::unordered_map<std::string, PqlEntityType>
+		////// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 7 };
 		auto actualValues = tableRef.at("a");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -1454,15 +1454,15 @@ public:
 		std::string query = "assign a; variable v; Select a such that Modifies(7, _) pattern a(\"b\", _\"x\"_)";
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts pattern
-		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		Entity::insertVar("a");
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("x");
@@ -1490,7 +1490,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end());
 
-		// Test Values: std::unordered_map<std::string, PqlEntityType>
+		// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 7 };
 		auto actualValues = tableRef.at("a");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -1511,15 +1511,15 @@ public:
 		std::string query = "assign a; variable v; Select a such that Uses(a, v) pattern a(v, _\"y\"_)";
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts pattern
-		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		Entity::insertVar("a");
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("y");
@@ -1547,7 +1547,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end());
 
-		// Test Values: std::unordered_map<std::string, PqlEntityType>
+		// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 7 };
 		auto actualValues = tableRef.at("a");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -1576,16 +1576,16 @@ public:
 
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts pattern
 		ProcIndex proc = Entity::insertProc("proc1");
-		StmtIndex stmt = Entity::insertStmt(StatementType::ifType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::IF_TYPE);
 		Entity::insertVar("dummy");
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("y");
@@ -1611,7 +1611,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("p1") != tableRef.end());
 
-		// Test Values: std::unordered_map<std::string, PqlEntityType>
+		// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 1 };
 		auto actualValues = tableRef.at("p1");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -1640,16 +1640,16 @@ public:
 
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts pattern
 		ProcIndex proc = Entity::insertProc("proc1");
-		StmtIndex stmt = Entity::insertStmt(StatementType::whileType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::WHILE_TYPE);
 		Entity::insertVar("dummy");
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("y");
@@ -1675,7 +1675,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("p1") != tableRef.end());
 
-		// Test Values: std::unordered_map<std::string, PqlEntityType>
+		// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 1 };
 		auto actualValues = tableRef.at("p1");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -1699,15 +1699,15 @@ public:
 		std::string query = "assign a; variable v; Select a such that Uses(7, v) pattern a(v, _\"y\"_)";
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts pattern
-		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		Entity::insertVar("a");
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("y");
@@ -1735,7 +1735,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end());
 
-		// Test Values: std::unordered_map<std::string, PqlEntityType>
+		// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 7 };
 		auto actualValues = tableRef.at("a");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -1759,15 +1759,15 @@ public:
 		std::string query = "assign a; variable v; Select a such that Uses(a, _) pattern a(v, _\"y\"_)";
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts pattern
-		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		Entity::insertVar("a");
 		VarIndex varIndex = Entity::insertVar("b");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("b+y");
@@ -1794,7 +1794,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end());
 
-		// Test Values: std::unordered_map<std::string, PqlEntityType>
+		// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 7 };
 		auto actualValues = tableRef.at("a");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -1818,15 +1818,15 @@ public:
 		std::string query = "assign a; variable v; Select a such that Uses(7, _) pattern a(v, _\"y\"_)";
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts pattern
-		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		Entity::insertVar("a");
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("y");
@@ -1854,7 +1854,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end());
 
-		// Test Values: std::unordered_map<std::string, PqlEntityType>
+		// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 7 };
 		auto actualValues = tableRef.at("a");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -1878,15 +1878,15 @@ public:
 		std::string query = "assign a; variable v; Select a such that Uses(a, _) pattern a(v, _\"y\"_)";
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts pattern
-		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		Entity::insertVar("a");
 		VarIndex varIndex = Entity::insertVar("b");
 		VarIndex varIndex2 = Entity::insertVar("y");
@@ -1920,7 +1920,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end());
 
-		// Test Values: std::unordered_map<std::string, PqlEntityType>
+		// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 7 };
 		auto actualValues = tableRef.at("a");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -1947,17 +1947,17 @@ public:
 		std::string query = "read r; assign a; variable v; Select a such that Follows(r, a) pattern a(v, _\"d\"_)";
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
 
-		StmtIndex readStmt = Entity::insertStmt(StatementType::readType);
+		StmtIndex readStmt = Entity::insertStmt(StatementType::READ_TYPE);
 
 		// PKB inserts pattern
-		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
-		StmtIndex stmt2 = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
+		StmtIndex stmt2 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		Entity::insertVar("def");
 		VarIndex varIndex = Entity::insertVar("abc");
 		VarIndex varIndex2 = Entity::insertVar("d");
@@ -1988,7 +1988,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end());
 
-		// Test Values: std::unordered_map<std::string, PqlEntityType>
+		// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 7 };
 		auto actualValues = tableRef.at("a");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -2015,9 +2015,9 @@ public:
 		// PKB inserts 99 statements and 98 Parent* relationships
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 98; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
+			stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
 		}
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType)); // 99th stmt is assignment
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE)); // 99th stmt is assignment
 
 		for (int i = 0; i < 98; i++) {
 			Parent::insert(stmts[i], stmts[i + 1]);
@@ -2055,7 +2055,7 @@ public:
 		Assert::AreEqual(true, tableRef.find("w") != tableRef.end());
 		Assert::AreEqual(true, tableRef.find("v") != tableRef.end());
 
-		// Test Values: std::unordered_map<std::string, PqlEntityType>
+		// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> wValues, aValues;
 		for (int i = 0; i < 98; i++) {
 			wValues.emplace_back(i + 1);
@@ -2089,15 +2089,15 @@ public:
 
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts pattern
-		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		Entity::insertVar("a");
 		VarIndex varIndex = Entity::insertVar("b");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("(x+1)*2/3-4%(5)");
@@ -2120,7 +2120,7 @@ public:
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end()); // "a" exists
 		Assert::AreEqual(true, tableRef.find("v") != tableRef.end()); // "v" exists
 
-		//// Test Values: std::unordered_map<std::string, PqlEntityType>
+		//// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 7 };
 		auto actualValues = tableRef.at("a");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -2145,15 +2145,15 @@ public:
 
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts pattern
-		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		Entity::insertVar("a");
 		VarIndex varIndex = Entity::insertVar("b");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("(x+1)*2/3-4%(5)");
@@ -2176,7 +2176,7 @@ public:
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end()); // "a" exists
 		Assert::AreEqual(true, tableRef.find("v") != tableRef.end()); // "v" exists
 
-		//// Test Values: std::unordered_map<std::string, PqlEntityType>
+		//// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values;
 		auto actualValues = tableRef.at("a");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -2201,15 +2201,15 @@ public:
 
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts pattern
-		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		Entity::insertVar("a");
 		VarIndex varIndex = Entity::insertVar("b");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("(x+1)*2/3-4%(5)");
@@ -2232,7 +2232,7 @@ public:
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end()); // "a" exists
 		Assert::AreEqual(true, tableRef.find("v") != tableRef.end()); // "v" exists
 
-		//// Test Values: std::unordered_map<std::string, PqlEntityType>
+		//// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values;
 		auto actualValues = tableRef.at("a");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -2257,15 +2257,15 @@ public:
 
 		// PKB inserts 6 types of statements
 		std::vector<StmtIndex> stmts;
-		stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::printType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::callType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::ifType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::whileType));
-		stmts.emplace_back(Entity::insertStmt(StatementType::readType));
+		stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
 
 		// PKB inserts pattern
-		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		Entity::insertVar("a");
 		VarIndex varIndex = Entity::insertVar("b");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("(x+1)*2/3-4%(5)");
@@ -2288,7 +2288,7 @@ public:
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end()); // "a" exists
 		Assert::AreEqual(true, tableRef.find("v") != tableRef.end()); // "v" exists
 
-		//// Test Values: std::unordered_map<std::string, PqlEntityType>
+		//// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 7 };
 		auto actualValues = tableRef.at("a");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -2314,15 +2314,15 @@ public:
 		* }
 		*/
 		ProcIndex procIndex = Entity::insertProc("proc1");
-		StmtIndex stmtIndex1 = Entity::insertStmt(StatementType::readType);
+		StmtIndex stmtIndex1 = Entity::insertStmt(StatementType::READ_TYPE);
 		VarIndex varProc1 = Entity::insertVar("proc1");
 		ModifiesS::insert(stmtIndex1, varProc1);
-		Attribute::insertStmtByName(stmtIndex1, StatementType::readType, std::string("proc1"));
-		StmtIndex stmtIndex2 = Entity::insertStmt(StatementType::printType);
+		Attribute::insertStmtByName(stmtIndex1, StatementType::READ_TYPE, std::string("proc1"));
+		StmtIndex stmtIndex2 = Entity::insertStmt(StatementType::PRINT_TYPE);
 		VarIndex varRead = Entity::insertVar("read");
-		Attribute::insertStmtByName(stmtIndex2, StatementType::printType, std::string("read"));
+		Attribute::insertStmtByName(stmtIndex2, StatementType::PRINT_TYPE, std::string("read"));
 		UsesS::insert(stmtIndex2, varRead);
-		StmtIndex stmtIndex3 = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmtIndex3 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		ModifiesS::insert(stmtIndex3, varRead);
 		UsesS::insert(stmtIndex3, varProc1);
 		Entity::insertConst(2);
@@ -2345,7 +2345,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("r") != tableRef.end()); // "r" exists
 
-		//// Test Values: std::unordered_map<std::string, PqlEntityType>
+		//// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 1 };
 		auto actualValues = tableRef.at("r");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -2372,15 +2372,15 @@ public:
 		* }
 		*/
 		ProcIndex procIndex = Entity::insertProc("proc1");
-		StmtIndex stmtIndex1 = Entity::insertStmt(StatementType::readType);
+		StmtIndex stmtIndex1 = Entity::insertStmt(StatementType::READ_TYPE);
 		VarIndex varProc1 = Entity::insertVar("proc1");
 		ModifiesS::insert(stmtIndex1, varProc1);
-		Attribute::insertStmtByName(stmtIndex1, StatementType::readType, std::string("proc1"));
-		StmtIndex stmtIndex2 = Entity::insertStmt(StatementType::printType);
+		Attribute::insertStmtByName(stmtIndex1, StatementType::READ_TYPE, std::string("proc1"));
+		StmtIndex stmtIndex2 = Entity::insertStmt(StatementType::PRINT_TYPE);
 		VarIndex varRead = Entity::insertVar("read");
-		Attribute::insertStmtByName(stmtIndex2, StatementType::printType, std::string("read"));
+		Attribute::insertStmtByName(stmtIndex2, StatementType::PRINT_TYPE, std::string("read"));
 		UsesS::insert(stmtIndex2, varRead);
-		StmtIndex stmtIndex3 = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmtIndex3 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		ModifiesS::insert(stmtIndex3, varRead);
 		UsesS::insert(stmtIndex3, varProc1);
 		Entity::insertConst(2);
@@ -2403,7 +2403,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("pn") != tableRef.end()); // "pn" exists
 
-		//// Test Values: std::unordered_map<std::string, PqlEntityType>
+		//// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 2 };
 		auto actualValues = tableRef.at("pn");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -2430,15 +2430,15 @@ public:
 		* }
 		*/
 		ProcIndex procIndex = Entity::insertProc("proc1");
-		StmtIndex stmtIndex1 = Entity::insertStmt(StatementType::readType);
+		StmtIndex stmtIndex1 = Entity::insertStmt(StatementType::READ_TYPE);
 		VarIndex varProc1 = Entity::insertVar("proc1");
 		ModifiesS::insert(stmtIndex1, varProc1);
-		Attribute::insertStmtByName(stmtIndex1, StatementType::readType, std::string("proc1"));
-		StmtIndex stmtIndex2 = Entity::insertStmt(StatementType::printType);
+		Attribute::insertStmtByName(stmtIndex1, StatementType::READ_TYPE, std::string("proc1"));
+		StmtIndex stmtIndex2 = Entity::insertStmt(StatementType::PRINT_TYPE);
 		VarIndex varRead = Entity::insertVar("read");
-		Attribute::insertStmtByName(stmtIndex2, StatementType::printType, std::string("read"));
+		Attribute::insertStmtByName(stmtIndex2, StatementType::PRINT_TYPE, std::string("read"));
 		UsesS::insert(stmtIndex2, varRead);
-		StmtIndex stmtIndex3 = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmtIndex3 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		ModifiesS::insert(stmtIndex3, varRead);
 		UsesS::insert(stmtIndex3, varProc1);
 		Entity::insertConst(2);
@@ -2478,15 +2478,15 @@ public:
 		* }
 		*/
 		ProcIndex procIndex = Entity::insertProc("proc1");
-		StmtIndex stmtIndex1 = Entity::insertStmt(StatementType::readType);
+		StmtIndex stmtIndex1 = Entity::insertStmt(StatementType::READ_TYPE);
 		VarIndex varProc1 = Entity::insertVar("proc1");
 		ModifiesS::insert(stmtIndex1, varProc1);
-		Attribute::insertStmtByName(stmtIndex1, StatementType::readType, std::string("proc1"));
-		StmtIndex stmtIndex2 = Entity::insertStmt(StatementType::printType);
+		Attribute::insertStmtByName(stmtIndex1, StatementType::READ_TYPE, std::string("proc1"));
+		StmtIndex stmtIndex2 = Entity::insertStmt(StatementType::PRINT_TYPE);
 		VarIndex varRead = Entity::insertVar("read");
-		Attribute::insertStmtByName(stmtIndex2, StatementType::printType, std::string("read"));
+		Attribute::insertStmtByName(stmtIndex2, StatementType::PRINT_TYPE, std::string("read"));
 		UsesS::insert(stmtIndex2, varRead);
-		StmtIndex stmtIndex3 = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmtIndex3 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		ModifiesS::insert(stmtIndex3, varRead);
 		UsesS::insert(stmtIndex3, varProc1);
 		Entity::insertConst(2);
@@ -2510,7 +2510,7 @@ public:
 		Assert::AreEqual(true, tableRef.find("c") != tableRef.end()); // "c" exists
 		Assert::AreEqual(true, tableRef.find("s") != tableRef.end()); // "s" exists
 
-		//// Test Values: std::unordered_map<std::string, PqlEntityType>
+		//// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 2 };
 		auto actualValues = tableRef.at("c");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -2537,15 +2537,15 @@ public:
 		* }
 		*/
 		ProcIndex procIndex = Entity::insertProc("proc1");
-		StmtIndex stmtIndex1 = Entity::insertStmt(StatementType::readType);
+		StmtIndex stmtIndex1 = Entity::insertStmt(StatementType::READ_TYPE);
 		VarIndex varProc1 = Entity::insertVar("proc1");
 		ModifiesS::insert(stmtIndex1, varProc1);
-		Attribute::insertStmtByName(stmtIndex1, StatementType::readType, std::string("proc1"));
-		StmtIndex stmtIndex2 = Entity::insertStmt(StatementType::printType);
+		Attribute::insertStmtByName(stmtIndex1, StatementType::READ_TYPE, std::string("proc1"));
+		StmtIndex stmtIndex2 = Entity::insertStmt(StatementType::PRINT_TYPE);
 		VarIndex varRead = Entity::insertVar("read");
-		Attribute::insertStmtByName(stmtIndex2, StatementType::printType, std::string("read"));
+		Attribute::insertStmtByName(stmtIndex2, StatementType::PRINT_TYPE, std::string("read"));
 		UsesS::insert(stmtIndex2, varRead);
-		StmtIndex stmtIndex3 = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmtIndex3 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		ModifiesS::insert(stmtIndex3, varRead);
 		UsesS::insert(stmtIndex3, varProc1);
 		Entity::insertConst(2);
@@ -2568,7 +2568,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("r") != tableRef.end()); // "r" exists
 
-		//// Test Values: std::unordered_map<std::string, PqlEntityType>
+		//// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 1 };
 		auto actualValues = tableRef.at("r");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -2595,15 +2595,15 @@ public:
 		* }
 		*/
 		ProcIndex procIndex = Entity::insertProc("proc1");
-		StmtIndex stmtIndex1 = Entity::insertStmt(StatementType::readType);
+		StmtIndex stmtIndex1 = Entity::insertStmt(StatementType::READ_TYPE);
 		VarIndex varProc1 = Entity::insertVar("proc1");
 		ModifiesS::insert(stmtIndex1, varProc1);
-		Attribute::insertStmtByName(stmtIndex1, StatementType::readType, std::string("proc1"));
-		StmtIndex stmtIndex2 = Entity::insertStmt(StatementType::printType);
+		Attribute::insertStmtByName(stmtIndex1, StatementType::READ_TYPE, std::string("proc1"));
+		StmtIndex stmtIndex2 = Entity::insertStmt(StatementType::PRINT_TYPE);
 		VarIndex varRead = Entity::insertVar("read");
-		Attribute::insertStmtByName(stmtIndex2, StatementType::printType, std::string("read"));
+		Attribute::insertStmtByName(stmtIndex2, StatementType::PRINT_TYPE, std::string("read"));
 		UsesS::insert(stmtIndex2, varRead);
-		StmtIndex stmtIndex3 = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmtIndex3 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		ModifiesS::insert(stmtIndex3, varRead);
 		UsesS::insert(stmtIndex3, varProc1);
 		Entity::insertConst(2);

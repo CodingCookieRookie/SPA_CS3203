@@ -29,17 +29,17 @@ public:
 
 	TEST_METHOD(evaluateQuery_declarationAndSelectOnly_designEntitiesExtracted) {
 		// "stmt s; if ifs; Select s";
-		typedef std::pair<PqlEntityType, std::string> DECLARATION;
+		typedef std::pair<EntityType, std::string> DECLARATION;
 
-		DECLARATION pair1 = DECLARATION(PqlEntityType::Stmt, "s");
-		DECLARATION pair2 = DECLARATION(PqlEntityType::If, "ifs");
+		DECLARATION pair1 = DECLARATION(EntityType::STMT, "s");
+		DECLARATION pair2 = DECLARATION(EntityType::IF, "ifs");
 
 		std::vector<PqlEntity> declarations;
 		declarations.push_back(pair1);
 		declarations.push_back(pair2);
 
 		std::vector<PqlReference> columns;
-		columns.emplace_back(PqlReferenceType::Synonym, "s");
+		columns.emplace_back(PqlReferenceType::SYNONYM, "s");
 
 		std::vector<ParsedRelationship> relationships;
 		std::vector<ParsedPattern> patterns;

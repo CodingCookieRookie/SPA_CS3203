@@ -89,9 +89,9 @@ public:
 		CallNode* callNode = new CallNode("proc1");
 		StmtLstNode* innerStmtLstNode = new StmtLstNode();
 		innerStmtLstNode->addStmtNode(callNode);
-		ExprNode* rootExprNode = new ExprNode(ExprNodeValueType::relOperator, "==");
-		ExprNode* leftExprNode = new ExprNode(ExprNodeValueType::varName, "x");
-		ExprNode* rightExprNode = new ExprNode(ExprNodeValueType::varName, "y");
+		ExprNode* rootExprNode = new ExprNode(ExprNodeValueType::REL_OPERATOR, "==");
+		ExprNode* leftExprNode = new ExprNode(ExprNodeValueType::VAR_NAME, "x");
+		ExprNode* rightExprNode = new ExprNode(ExprNodeValueType::VAR_NAME, "y");
 		rootExprNode->addChild(leftExprNode);
 		rootExprNode->addChild(rightExprNode);
 		WhileNode* whileNode = new WhileNode(rootExprNode, innerStmtLstNode);
@@ -154,9 +154,9 @@ public:
 		elseStmtLstNode->addStmtNode(callNode1);
 		StmtLstNode* thenStmtLstNode = new StmtLstNode();
 		thenStmtLstNode->addStmtNode(readNode);
-		ExprNode* rootExprNode = new ExprNode(ExprNodeValueType::relOperator, "==");
-		ExprNode* leftExprNode = new ExprNode(ExprNodeValueType::varName, "x");
-		ExprNode* rightExprNode = new ExprNode(ExprNodeValueType::varName, "y");
+		ExprNode* rootExprNode = new ExprNode(ExprNodeValueType::REL_OPERATOR, "==");
+		ExprNode* leftExprNode = new ExprNode(ExprNodeValueType::VAR_NAME, "x");
+		ExprNode* rightExprNode = new ExprNode(ExprNodeValueType::VAR_NAME, "y");
 		rootExprNode->addChild(leftExprNode);
 		rootExprNode->addChild(rightExprNode);
 		IfNode* ifNode = new IfNode(rootExprNode, thenStmtLstNode, elseStmtLstNode);
@@ -230,9 +230,9 @@ public:
 		StmtLstNode* elseStmtLstNode = new StmtLstNode();
 		elseStmtLstNode->addStmtNode(callNode1);
 
-		ExprNode* rootExprNode = new ExprNode(ExprNodeValueType::relOperator, "==");
-		ExprNode* leftExprNode = new ExprNode(ExprNodeValueType::varName, "x");
-		ExprNode* rightExprNode = new ExprNode(ExprNodeValueType::varName, "y");
+		ExprNode* rootExprNode = new ExprNode(ExprNodeValueType::REL_OPERATOR, "==");
+		ExprNode* leftExprNode = new ExprNode(ExprNodeValueType::VAR_NAME, "x");
+		ExprNode* rightExprNode = new ExprNode(ExprNodeValueType::VAR_NAME, "y");
 		rootExprNode->addChild(leftExprNode);
 		rootExprNode->addChild(rightExprNode);
 		IfNode* ifNode = new IfNode(rootExprNode, thenStmtLstNode, elseStmtLstNode);
@@ -295,9 +295,9 @@ public:
 		elseStmtLstNode->addStmtNode(callNode2);
 		StmtLstNode* thenStmtLstNode = new StmtLstNode();
 		thenStmtLstNode->addStmtNode(new ReadNode("x"));
-		ExprNode* rootExprNode = new ExprNode(ExprNodeValueType::relOperator, "==");
-		ExprNode* leftExprNode = new ExprNode(ExprNodeValueType::varName, "x");
-		ExprNode* rightExprNode = new ExprNode(ExprNodeValueType::varName, "y");
+		ExprNode* rootExprNode = new ExprNode(ExprNodeValueType::REL_OPERATOR, "==");
+		ExprNode* leftExprNode = new ExprNode(ExprNodeValueType::VAR_NAME, "x");
+		ExprNode* rightExprNode = new ExprNode(ExprNodeValueType::VAR_NAME, "y");
 		rootExprNode->addChild(leftExprNode);
 		rootExprNode->addChild(rightExprNode);
 		IfNode* ifNode = new IfNode(rootExprNode, thenStmtLstNode, elseStmtLstNode);
@@ -359,9 +359,9 @@ public:
 		elseStmtLstNode->addStmtNode(callNode1);
 		StmtLstNode* thenStmtLstNode = new StmtLstNode();
 		thenStmtLstNode->addStmtNode(new ReadNode("x"));
-		ExprNode* rootExprNode1 = new ExprNode(ExprNodeValueType::relOperator, "==");
-		ExprNode* leftExprNode1 = new ExprNode(ExprNodeValueType::varName, "x");
-		ExprNode* rightExprNode1 = new ExprNode(ExprNodeValueType::varName, "y");
+		ExprNode* rootExprNode1 = new ExprNode(ExprNodeValueType::REL_OPERATOR, "==");
+		ExprNode* leftExprNode1 = new ExprNode(ExprNodeValueType::VAR_NAME, "x");
+		ExprNode* rightExprNode1 = new ExprNode(ExprNodeValueType::VAR_NAME, "y");
 		rootExprNode1->addChild(leftExprNode1);
 		rootExprNode1->addChild(rightExprNode1);
 		IfNode* ifNode1 = new IfNode(rootExprNode1, thenStmtLstNode, elseStmtLstNode);
@@ -401,16 +401,16 @@ public:
 		ReadNode* readNode1 = new ReadNode("y");
 		StmtLstNode* elseStmtLstNode1 = new StmtLstNode();
 		elseStmtLstNode1->addStmtNode(readNode1);
-		ExprNode* rootExprNode2 = new ExprNode(ExprNodeValueType::logicalOperator, "&&");
-		ExprNode* leftExprNode2 = new ExprNode(ExprNodeValueType::relOperator, "==");
-		ExprNode* rightExprNode2 = new ExprNode(ExprNodeValueType::relOperator, ">");
+		ExprNode* rootExprNode2 = new ExprNode(ExprNodeValueType::LOGICAL_OPERATOR, "&&");
+		ExprNode* leftExprNode2 = new ExprNode(ExprNodeValueType::REL_OPERATOR, "==");
+		ExprNode* rightExprNode2 = new ExprNode(ExprNodeValueType::REL_OPERATOR, ">");
 		rootExprNode2->addChild(leftExprNode2);
 		rootExprNode2->addChild(rightExprNode2);
 
-		leftExprNode2->addChild(new ExprNode(ExprNodeValueType::varName, "x"));
-		leftExprNode2->addChild(new ExprNode(ExprNodeValueType::varName, "y"));
-		rightExprNode2->addChild(new ExprNode(ExprNodeValueType::varName, "z"));
-		rightExprNode2->addChild(new ExprNode(ExprNodeValueType::constValue, "0"));
+		leftExprNode2->addChild(new ExprNode(ExprNodeValueType::VAR_NAME, "x"));
+		leftExprNode2->addChild(new ExprNode(ExprNodeValueType::VAR_NAME, "y"));
+		rightExprNode2->addChild(new ExprNode(ExprNodeValueType::VAR_NAME, "z"));
+		rightExprNode2->addChild(new ExprNode(ExprNodeValueType::CONST_VALUE, "0"));
 		IfNode* ifNode2 = new IfNode(rootExprNode2, thenStmtLstNode1, elseStmtLstNode1);
 
 		CallNode* callNode3 = new CallNode(procName1);
@@ -419,9 +419,9 @@ public:
 		ReadNode* readNode2 = new ReadNode("a");
 		StmtLstNode* elseStmtLstNode2 = new StmtLstNode();
 		elseStmtLstNode2->addStmtNode(readNode2);
-		ExprNode* rootExprNode3 = new ExprNode(ExprNodeValueType::relOperator, "!=");
-		ExprNode* leftExprNode3 = new ExprNode(ExprNodeValueType::varName, "x");
-		ExprNode* rightExprNode3 = new ExprNode(ExprNodeValueType::varName, "z");
+		ExprNode* rootExprNode3 = new ExprNode(ExprNodeValueType::REL_OPERATOR, "!=");
+		ExprNode* leftExprNode3 = new ExprNode(ExprNodeValueType::VAR_NAME, "x");
+		ExprNode* rightExprNode3 = new ExprNode(ExprNodeValueType::VAR_NAME, "z");
 		rootExprNode3->addChild(leftExprNode3);
 		rootExprNode3->addChild(rightExprNode3);
 		IfNode* ifNode3 = new IfNode(rootExprNode3, thenStmtLstNode2, elseStmtLstNode2);
@@ -486,9 +486,9 @@ public:
 		elseStmtLstNode->addStmtNode(callNode1);
 		StmtLstNode* thenStmtLstNode = new StmtLstNode();
 		thenStmtLstNode->addStmtNode(new ReadNode("x"));
-		ExprNode* rootExprNode = new ExprNode(ExprNodeValueType::relOperator, "==");
-		ExprNode* leftExprNode = new ExprNode(ExprNodeValueType::varName, "x");
-		ExprNode* rightExprNode = new ExprNode(ExprNodeValueType::varName, "y");
+		ExprNode* rootExprNode = new ExprNode(ExprNodeValueType::REL_OPERATOR, "==");
+		ExprNode* leftExprNode = new ExprNode(ExprNodeValueType::VAR_NAME, "x");
+		ExprNode* rightExprNode = new ExprNode(ExprNodeValueType::VAR_NAME, "y");
 		rootExprNode->addChild(leftExprNode);
 		rootExprNode->addChild(rightExprNode);
 		IfNode* ifNode1 = new IfNode(rootExprNode, thenStmtLstNode, elseStmtLstNode);
@@ -541,16 +541,16 @@ public:
 		ReadNode* readNode1 = new ReadNode("y");
 		StmtLstNode* elseStmtLstNode1 = new StmtLstNode();
 		elseStmtLstNode1->addStmtNode(readNode1);
-		ExprNode* rootExprNode2 = new ExprNode(ExprNodeValueType::logicalOperator, "&&");
-		ExprNode* leftExprNode2 = new ExprNode(ExprNodeValueType::relOperator, "==");
-		ExprNode* rightExprNode2 = new ExprNode(ExprNodeValueType::relOperator, ">");
+		ExprNode* rootExprNode2 = new ExprNode(ExprNodeValueType::LOGICAL_OPERATOR, "&&");
+		ExprNode* leftExprNode2 = new ExprNode(ExprNodeValueType::REL_OPERATOR, "==");
+		ExprNode* rightExprNode2 = new ExprNode(ExprNodeValueType::REL_OPERATOR, ">");
 		rootExprNode2->addChild(leftExprNode2);
 		rootExprNode2->addChild(rightExprNode2);
 
-		leftExprNode2->addChild(new ExprNode(ExprNodeValueType::varName, "x"));
-		leftExprNode2->addChild(new ExprNode(ExprNodeValueType::varName, "y"));
-		rightExprNode2->addChild(new ExprNode(ExprNodeValueType::varName, "z"));
-		rightExprNode2->addChild(new ExprNode(ExprNodeValueType::constValue, "0"));
+		leftExprNode2->addChild(new ExprNode(ExprNodeValueType::VAR_NAME, "x"));
+		leftExprNode2->addChild(new ExprNode(ExprNodeValueType::VAR_NAME, "y"));
+		rightExprNode2->addChild(new ExprNode(ExprNodeValueType::VAR_NAME, "z"));
+		rightExprNode2->addChild(new ExprNode(ExprNodeValueType::CONST_VALUE, "0"));
 		IfNode* ifNode2 = new IfNode(rootExprNode2, thenStmtLstNode1, elseStmtLstNode1);
 
 		CallNode* callNode3 = new CallNode(procName4);
@@ -559,9 +559,9 @@ public:
 		ReadNode* readNode2 = new ReadNode("a");
 		StmtLstNode* elseStmtLstNode2 = new StmtLstNode();
 		elseStmtLstNode2->addStmtNode(readNode2);
-		ExprNode* rootExprNode3 = new ExprNode(ExprNodeValueType::relOperator, "!=");
-		ExprNode* leftExprNode3 = new ExprNode(ExprNodeValueType::varName, "x");
-		ExprNode* rightExprNode3 = new ExprNode(ExprNodeValueType::varName, "z");
+		ExprNode* rootExprNode3 = new ExprNode(ExprNodeValueType::REL_OPERATOR, "!=");
+		ExprNode* leftExprNode3 = new ExprNode(ExprNodeValueType::VAR_NAME, "x");
+		ExprNode* rightExprNode3 = new ExprNode(ExprNodeValueType::VAR_NAME, "z");
 		rootExprNode3->addChild(leftExprNode3);
 		rootExprNode3->addChild(rightExprNode3);
 		IfNode* ifNode3 = new IfNode(rootExprNode3, thenStmtLstNode2, elseStmtLstNode2);
@@ -619,9 +619,9 @@ public:
 		elseStmtLstNode->addStmtNode(callNode1);
 		StmtLstNode* thenStmtLstNode = new StmtLstNode();
 		thenStmtLstNode->addStmtNode(new ReadNode("x"));
-		ExprNode* rootExprNode = new ExprNode(ExprNodeValueType::relOperator, "==");
-		ExprNode* leftExprNode = new ExprNode(ExprNodeValueType::varName, "x");
-		ExprNode* rightExprNode = new ExprNode(ExprNodeValueType::varName, "y");
+		ExprNode* rootExprNode = new ExprNode(ExprNodeValueType::REL_OPERATOR, "==");
+		ExprNode* leftExprNode = new ExprNode(ExprNodeValueType::VAR_NAME, "x");
+		ExprNode* rightExprNode = new ExprNode(ExprNodeValueType::VAR_NAME, "y");
 		rootExprNode->addChild(leftExprNode);
 		rootExprNode->addChild(rightExprNode);
 		IfNode* ifNode = new IfNode(rootExprNode, thenStmtLstNode, elseStmtLstNode);
@@ -703,9 +703,9 @@ public:
 		elseStmtLstNode->addStmtNode(callNode2);
 		StmtLstNode* thenStmtLstNode = new StmtLstNode();
 		thenStmtLstNode->addStmtNode(new ReadNode("x"));
-		ExprNode* rootExprNode = new ExprNode(ExprNodeValueType::relOperator, "==");
-		ExprNode* leftExprNode = new ExprNode(ExprNodeValueType::varName, "x");
-		ExprNode* rightExprNode = new ExprNode(ExprNodeValueType::varName, "y");
+		ExprNode* rootExprNode = new ExprNode(ExprNodeValueType::REL_OPERATOR, "==");
+		ExprNode* leftExprNode = new ExprNode(ExprNodeValueType::VAR_NAME, "x");
+		ExprNode* rightExprNode = new ExprNode(ExprNodeValueType::VAR_NAME, "y");
 		rootExprNode->addChild(leftExprNode);
 		rootExprNode->addChild(rightExprNode);
 		IfNode* ifNode1 = new IfNode(rootExprNode, thenStmtLstNode, elseStmtLstNode);
@@ -786,9 +786,9 @@ public:
 		elseStmtLstNode->addStmtNode(new CallNode(procName2));
 		StmtLstNode* thenStmtLstNode = new StmtLstNode();
 		thenStmtLstNode->addStmtNode(new ReadNode("x"));
-		ExprNode* rootExprNode = new ExprNode(ExprNodeValueType::relOperator, "==");
-		ExprNode* leftExprNode = new ExprNode(ExprNodeValueType::varName, "x");
-		ExprNode* rightExprNode = new ExprNode(ExprNodeValueType::varName, "y");
+		ExprNode* rootExprNode = new ExprNode(ExprNodeValueType::REL_OPERATOR, "==");
+		ExprNode* leftExprNode = new ExprNode(ExprNodeValueType::VAR_NAME, "x");
+		ExprNode* rightExprNode = new ExprNode(ExprNodeValueType::VAR_NAME, "y");
 		rootExprNode->addChild(leftExprNode);
 		rootExprNode->addChild(rightExprNode);
 		IfNode* ifNode1 = new IfNode(rootExprNode, thenStmtLstNode, elseStmtLstNode);
@@ -840,16 +840,16 @@ public:
 		ReadNode* readNode1 = new ReadNode("y");
 		StmtLstNode* elseStmtLstNode1 = new StmtLstNode();
 		elseStmtLstNode1->addStmtNode(readNode1);
-		ExprNode* rootExprNode2 = new ExprNode(ExprNodeValueType::logicalOperator, "&&");
-		ExprNode* leftExprNode2 = new ExprNode(ExprNodeValueType::relOperator, "==");
-		ExprNode* rightExprNode2 = new ExprNode(ExprNodeValueType::relOperator, ">");
+		ExprNode* rootExprNode2 = new ExprNode(ExprNodeValueType::LOGICAL_OPERATOR, "&&");
+		ExprNode* leftExprNode2 = new ExprNode(ExprNodeValueType::REL_OPERATOR, "==");
+		ExprNode* rightExprNode2 = new ExprNode(ExprNodeValueType::REL_OPERATOR, ">");
 		rootExprNode2->addChild(leftExprNode2);
 		rootExprNode2->addChild(rightExprNode2);
 
-		leftExprNode2->addChild(new ExprNode(ExprNodeValueType::varName, "x"));
-		leftExprNode2->addChild(new ExprNode(ExprNodeValueType::varName, "y"));
-		rightExprNode2->addChild(new ExprNode(ExprNodeValueType::varName, "z"));
-		rightExprNode2->addChild(new ExprNode(ExprNodeValueType::constValue, "0"));
+		leftExprNode2->addChild(new ExprNode(ExprNodeValueType::VAR_NAME, "x"));
+		leftExprNode2->addChild(new ExprNode(ExprNodeValueType::VAR_NAME, "y"));
+		rightExprNode2->addChild(new ExprNode(ExprNodeValueType::VAR_NAME, "z"));
+		rightExprNode2->addChild(new ExprNode(ExprNodeValueType::CONST_VALUE, "0"));
 		IfNode* ifNode2 = new IfNode(rootExprNode2, thenStmtLstNode1, elseStmtLstNode1);
 
 		StmtLstNode* thenStmtLstNode2 = new StmtLstNode();
@@ -857,9 +857,9 @@ public:
 		ReadNode* readNode2 = new ReadNode("a");
 		StmtLstNode* elseStmtLstNode2 = new StmtLstNode();
 		elseStmtLstNode2->addStmtNode(readNode2);
-		ExprNode* rootExprNode3 = new ExprNode(ExprNodeValueType::relOperator, "!=");
-		ExprNode* leftExprNode3 = new ExprNode(ExprNodeValueType::varName, "x");
-		ExprNode* rightExprNode3 = new ExprNode(ExprNodeValueType::varName, "z");
+		ExprNode* rootExprNode3 = new ExprNode(ExprNodeValueType::REL_OPERATOR, "!=");
+		ExprNode* leftExprNode3 = new ExprNode(ExprNodeValueType::VAR_NAME, "x");
+		ExprNode* rightExprNode3 = new ExprNode(ExprNodeValueType::VAR_NAME, "z");
 		rootExprNode3->addChild(leftExprNode3);
 		rootExprNode3->addChild(rightExprNode3);
 		IfNode* ifNode3 = new IfNode(rootExprNode3, thenStmtLstNode2, elseStmtLstNode2);

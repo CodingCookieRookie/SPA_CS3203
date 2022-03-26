@@ -7,14 +7,14 @@ class WithInstruction : public Instruction {
 protected:
 	PqlReference lhs;
 	PqlReference rhs;
-	PqlEntityType lhsEntity;
-	PqlEntityType rhsEntity;
+	EntityType lhsEntity;
+	EntityType rhsEntity;
 	PqlAttributeType attribType;
 
 	EvaluatedTable handleInt();
 	EvaluatedTable handleString();
 public:
-	WithInstruction(PqlReference lhs, PqlReference rhs, PqlEntityType lhsEntity, PqlEntityType rhsEntity, PqlAttributeType attribType);
+	WithInstruction(PqlReference lhs, PqlReference rhs, EntityType lhsEntity, EntityType rhsEntity, PqlAttributeType attribType);
 
 	/* Main entry method for executing instruction */
 	EvaluatedTable execute() override;
@@ -22,12 +22,12 @@ public:
 
 class WithStringInstruction : public WithInstruction {
 public:
-	WithStringInstruction(PqlReference lhs, PqlReference rhs, PqlEntityType lhsEntity, PqlEntityType rhsEntity);
+	WithStringInstruction(PqlReference lhs, PqlReference rhs, EntityType lhsEntity, EntityType rhsEntity);
 	EvaluatedTable execute() override;
 };
 
 class WithIntegerInstruction : public WithInstruction {
 public:
-	WithIntegerInstruction(PqlReference lhs, PqlReference rhs, PqlEntityType lhsEntity, PqlEntityType rhsEntity);
+	WithIntegerInstruction(PqlReference lhs, PqlReference rhs, EntityType lhsEntity, EntityType rhsEntity);
 	EvaluatedTable execute() override;
 };

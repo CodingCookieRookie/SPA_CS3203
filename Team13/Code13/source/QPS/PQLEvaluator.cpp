@@ -20,7 +20,7 @@ EvaluatedTable PQLEvaluator::selectProjection(EvaluatedTable& resultingEvTable, 
 
 std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
 	std::vector<Instruction*> instructions = std::vector<Instruction*>();
-	std::unordered_map<std::string, PqlEntityType> declarations = pq.getDeclarations();
+	std::unordered_map<std::string, EntityType> declarations = pq.getDeclarations();
 	std::unordered_set<std::string> columns = pq.getColumns();
 	std::vector<ParsedRelationship> relationships = pq.getRelationships();
 	std::vector<ParsedPattern> patterns = pq.getPatterns();
@@ -35,22 +35,23 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
 		instructions.push_back(new RelationshipInstruction(parsedRelationship.getRelationshipType(), lhsRef, rhsRef));
 		if (isSynonymRef(lhsRef) && pq.isStmtSubtype(lhsRef)) {
 			std::string lhsVal = lhsRef.second;
-			PqlEntityType lhsType = declarations.at(lhsVal);
+			EntityType lhsType = declarations.at(lhsVal);
 			instructions.push_back(new GetAllInstruction(lhsType, lhsVal));
 		}
 		if (isSynonymRef(rhsRef) && pq.isStmtSubtype(rhsRef)) {
 			std::string rhsVal = rhsRef.second;
-			PqlEntityType rhsType = declarations.at(rhsVal);
+			EntityType rhsType = declarations.at(rhsVal);
 			instructions.push_back(new GetAllInstruction(rhsType, rhsVal));
 		}
 	}
 
 	for (const ParsedRelationship& relationship : relationships) {
-		if (relationship.getRelationshipType() == PqlRelationshipType::ModifiesS ||
-			relationship.getRelationshipType() == PqlRelationshipType::ModifiesP ||
-			relationship.getRelationshipType() == PqlRelationshipType::UsesS ||
-			relationship.getRelationshipType() == PqlRelationshipType::UsesP)
+		if (relationship.getRelationshipType() == PqlRelationshipType::MODIFIES_S ||
+			relationship.getRelationshipType() == PqlRelationshipType::MODIFIES_P ||
+			relationship.getRelationshipType() == PqlRelationshipType::USES_S ||
+			relationship.getRelationshipType() == PqlRelationshipType::USES_P) {
 			instructions.push_back(relationship.toInstruction());
+		}
 	}
 
 	// 2. Get all pattern results from pattern-clause
@@ -83,15 +84,15 @@ EvaluatedTable PQLEvaluator::selectColumnsForProjection(
 	EvaluatedTable evaluatedTable, ParsedQuery& pq) {
 	std::unordered_set<std::string> columnsProjected = pq.getColumns();
 	std::vector<PqlReference> attributesProjected = pq.getAttributes();
-	std::unordered_map<std::string, PqlEntityType> declarations = pq.getDeclarations();
+	std::unordered_map<std::string, EntityType> declarations = pq.getDeclarations();
 	std::unordered_map<std::string, std::vector<int>> table = evaluatedTable.getTableRef();
-	std::unordered_map<std::string, PqlEntityType> resultEntities;
+	std::unordered_map<std::string, EntityType> resultEntities;
 	std::unordered_map<std::string, std::vector<int>> resultTable;
 	EvaluatedTable resultEvTable;
 
 	/* If Select-cl is BOOLEAN */
 	ProjectionType projType = ParsedQuery::getProjectionType(attributesProjected);
-	if (projType == ProjectionType::boolean) {
+	if (projType == ProjectionType::BOOLEAN) {
 		/* Existence of clauses means clauses determine boolean result,
 		=> short circuit and go straight to PQLResultProjector */
 		if (ParsedQuery::isClausePresent(pq)) {
@@ -99,8 +100,8 @@ EvaluatedTable PQLEvaluator::selectColumnsForProjection(
 		} else {
 			/* No Clauses, existence of declared synonyms determine boolean result
 			=> populate declarations into table */
-			for (const std::pair<std::string, PqlEntityType>& synonym : declarations) {
-				//PqlEntityType columnType = declarations.at(column);
+			for (const std::pair<std::string, EntityType>& synonym : declarations) {
+				//EntityType columnType = declarations.at(column);
 				Instruction* getAll = new GetAllInstruction(synonym.second, synonym.first);
 				EvaluatedTable evTable = getAll->execute();
 				resultEvTable = resultEvTable.innerJoinMerge(evTable);
@@ -128,7 +129,7 @@ EvaluatedTable PQLEvaluator::selectColumnsForProjection(
 	get it via an instruction and then perform a cross product. */
 	for (const std::string& column : columnsProjected) {
 		if (table.find(column) == table.end()) {
-			PqlEntityType columnType = declarations.at(column);
+			EntityType columnType = declarations.at(column);
 			Instruction* getAll = new GetAllInstruction(columnType, column);
 			EvaluatedTable evTable = getAll->execute();
 			resultEvTable = resultEvTable.innerJoinMerge(evTable);

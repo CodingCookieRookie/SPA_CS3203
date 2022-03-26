@@ -8,7 +8,7 @@ class PQLResultProjector {
 private:
 	EvaluatedTable evaluatedTable;
 	std::vector<std::string> columnsProjected;
-	std::unordered_map<std::string, PqlEntityType> declarations;
+	std::unordered_map<std::string, EntityType> declarations;
 
 	static bool isClausePresent(ParsedQuery& parsedQuery);
 

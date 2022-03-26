@@ -44,7 +44,7 @@ void ASTValidator::processCallsStmtLstNode(
 			processCallsStmtLstNode(stmtLstNode, calledProcs, procNames);
 		}
 
-		if (stmtNode->getStmtType() == StatementType::callType) {
+		if (stmtNode->getStmtType() == StatementType::CALL_TYPE) {
 			processCallsStmtNode(stmtNode, calledProcs, procNames);
 		}
 	}
@@ -68,16 +68,16 @@ bool ASTValidator::isCyclic(std::unordered_map<std::string, std::unordered_set<s
 	/* Initialise all nodes as not visited */
 	std::unordered_map<std::string, CallNodeState> visited;
 	for (const std::pair<std::string, std::unordered_set<std::string>>& callsPair : callsMap) {
-		visited[callsPair.first] = CallNodeState::notVisited;
+		visited[callsPair.first] = CallNodeState::NOT_VISITED;
 	}
 
 	/* Iterate all the non-visited nodes */
 	for (const std::pair<std::string, std::unordered_set<std::string>>& callsPair : callsMap) {
 		std::string curr = callsPair.first;
-		if (visited[curr] == CallNodeState::notVisited) {
+		if (visited[curr] == CallNodeState::NOT_VISITED) {
 			std::stack<std::string> stack;
 			stack.push(curr);
-			visited[curr] = CallNodeState::inStack;
+			visited[curr] = CallNodeState::IN_STACK;
 			if (isCyclicUtil(stack, visited, callsMap)) {
 				return true;
 			}
@@ -92,19 +92,19 @@ bool ASTValidator::isCyclicUtil(
 	std::unordered_map<std::string, std::unordered_set<std::string>>& callsMap) {
 	std::unordered_set<std::string> calledProcs = callsMap[stack.top()];
 	for (std::string calledProc : calledProcs) {
-		if (visited[calledProc] == CallNodeState::inStack) {
+		if (visited[calledProc] == CallNodeState::IN_STACK) {
 			return true;
 		}
 
-		if (visited[calledProc] == CallNodeState::notVisited) {
+		if (visited[calledProc] == CallNodeState::NOT_VISITED) {
 			stack.push(calledProc);
-			visited[calledProc] = CallNodeState::inStack;
+			visited[calledProc] = CallNodeState::IN_STACK;
 			if (isCyclicUtil(stack, visited, callsMap)) {
 				return true;
 			}
 		}
 	}
-	visited[stack.top()] = CallNodeState::done;
+	visited[stack.top()] = CallNodeState::DONE;
 	stack.pop();
 	return false;
 }

@@ -1,10 +1,11 @@
 #pragma once
 
 #include "Instruction.h"
+#include "../Common/Types.h"
 
 class GetAllInstruction : public Instruction {
 private:
-	PqlEntityType pqlEntityType;
+	EntityType entityType;
 	std::string synonym;
 
 	/* All handlers to set EvaluatedTable to results from PKB. Uses Pass by Reference on EvTable. */
@@ -16,10 +17,10 @@ private:
 
 public:
 	/* Constructor for a GetAllInstruction object */
-	GetAllInstruction(PqlEntityType type, std::string synonym);
-	PqlEntityType getType();
+	GetAllInstruction(EntityType type, std::string synonym);
+	EntityType getType();
 	std::string getSynonym();
 
-	/* Main entry method for executing instruction based on PqlEntityType in Select-cl */
+	/* Main entry method for executing instruction based on EntityType in Select-cl */
 	EvaluatedTable execute() override;
 };

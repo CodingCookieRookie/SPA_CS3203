@@ -11,9 +11,9 @@ namespace UnitTesting {
 	TEST_CLASS(TestEvaluatedTable) {
 public:
 	TEST_METHOD(innerJoinMerge_noCommonColumns_crossProduct) {
-		std::unordered_map<std::string, PqlEntityType> leftEntities = {
-			{"s1", PqlEntityType::Stmt},
-			{"v1", PqlEntityType::Variable}
+		std::unordered_map<std::string, EntityType> leftEntities = {
+			{"s1", EntityType::STMT},
+			{"v1", EntityType::VARIABLE}
 		};
 		std::unordered_map<std::string, std::vector<int>> leftTable = {
 			{"s1", { 1, 3 } },
@@ -21,9 +21,9 @@ public:
 		};
 		EvaluatedTable leftEvTable(leftEntities, leftTable);
 
-		std::unordered_map<std::string, PqlEntityType> rightEntities = {
-			{"s2", PqlEntityType::Stmt},
-			{"v2", PqlEntityType::Variable}
+		std::unordered_map<std::string, EntityType> rightEntities = {
+			{"s2", EntityType::STMT},
+			{"v2", EntityType::VARIABLE}
 		};
 		std::unordered_map<std::string, std::vector<int>> rightTable = {
 			{"s2", { 5, 7, 9} },
@@ -33,7 +33,7 @@ public:
 
 		EvaluatedTable mergedTable = leftEvTable.innerJoinMerge(rightEvTable);
 		Assert::AreEqual(size_t(4), mergedTable.getEntities().size());
-		std::unordered_map<std::string, PqlEntityType> entities = mergedTable.getEntities();
+		std::unordered_map<std::string, EntityType> entities = mergedTable.getEntities();
 		Assert::IsTrue(entities.find(std::string("s1")) != entities.end());
 		Assert::IsTrue(entities.find(std::string("v1")) != entities.end());
 		Assert::IsTrue(entities.find(std::string("s2")) != entities.end());
@@ -42,9 +42,9 @@ public:
 	}
 
 	TEST_METHOD(innerJoinMerge_commonColumnExists_innerJoin) {
-		std::unordered_map<std::string, PqlEntityType> leftEntities = {
-			{"s", PqlEntityType::Stmt},
-			{"v1", PqlEntityType::Variable}
+		std::unordered_map<std::string, EntityType> leftEntities = {
+			{"s", EntityType::STMT},
+			{"v1", EntityType::VARIABLE}
 		};
 		std::unordered_map<std::string, std::vector<int>> leftTable = {
 			{"s", { 1, 3, 4} },
@@ -52,9 +52,9 @@ public:
 		};
 		EvaluatedTable leftEvTable(leftEntities, leftTable);
 
-		std::unordered_map<std::string, PqlEntityType> rightEntities = {
-			{"s", PqlEntityType::Stmt},
-			{"v2", PqlEntityType::Variable}
+		std::unordered_map<std::string, EntityType> rightEntities = {
+			{"s", EntityType::STMT},
+			{"v2", EntityType::VARIABLE}
 		};
 		std::unordered_map<std::string, std::vector<int>> rightTable = {
 			{"s", { 1, 3, 5} },
@@ -64,7 +64,7 @@ public:
 
 		EvaluatedTable mergedTable = leftEvTable.innerJoinMerge(rightEvTable);
 		Assert::AreEqual(size_t(3), mergedTable.getEntities().size());
-		std::unordered_map<std::string, PqlEntityType> entities = mergedTable.getEntities();
+		std::unordered_map<std::string, EntityType> entities = mergedTable.getEntities();
 		Assert::IsTrue(entities.find(std::string("s")) != entities.end());
 		Assert::IsTrue(entities.find(std::string("v1")) != entities.end());
 		Assert::IsTrue(entities.find(std::string("v2")) != entities.end());
@@ -74,9 +74,9 @@ public:
 	TEST_METHOD(innerJoinMerge_falseLHS_returnsEmptyTable) {
 		EvaluatedTable leftEvTable(false);
 
-		std::unordered_map<std::string, PqlEntityType> rightEntities = {
-			{"s", PqlEntityType::Stmt},
-			{"v2", PqlEntityType::Variable}
+		std::unordered_map<std::string, EntityType> rightEntities = {
+			{"s", EntityType::STMT},
+			{"v2", EntityType::VARIABLE}
 		};
 		std::unordered_map<std::string, std::vector<int>> rightTable = {
 			{"s", { 1, 3, 5} },
@@ -90,9 +90,9 @@ public:
 	}
 
 	TEST_METHOD(innerJoinMerge_falseRHS_returnsEmptyTable) {
-		std::unordered_map<std::string, PqlEntityType> leftEntities = {
-			{"s", PqlEntityType::Stmt},
-			{"v1", PqlEntityType::Variable}
+		std::unordered_map<std::string, EntityType> leftEntities = {
+			{"s", EntityType::STMT},
+			{"v1", EntityType::VARIABLE}
 		};
 		std::unordered_map<std::string, std::vector<int>> leftTable = {
 			{"s", { 1, 3, 4} },
@@ -110,9 +110,9 @@ public:
 	TEST_METHOD(innerJoinMerge_trueLHS_returnsRHS) {
 		EvaluatedTable leftEvTable(true);
 
-		std::unordered_map<std::string, PqlEntityType> rightEntities = {
-			{"s", PqlEntityType::Stmt},
-			{"v2", PqlEntityType::Variable}
+		std::unordered_map<std::string, EntityType> rightEntities = {
+			{"s", EntityType::STMT},
+			{"v2", EntityType::VARIABLE}
 		};
 		std::unordered_map<std::string, std::vector<int>> rightTable = {
 			{"s", { 1, 3, 5} },
@@ -126,9 +126,9 @@ public:
 	}
 
 	TEST_METHOD(innerJoinMerge_trueRHS_returnsLHS) {
-		std::unordered_map<std::string, PqlEntityType> leftEntities = {
-			{"s", PqlEntityType::Stmt},
-			{"v1", PqlEntityType::Variable}
+		std::unordered_map<std::string, EntityType> leftEntities = {
+			{"s", EntityType::STMT},
+			{"v1", EntityType::VARIABLE}
 		};
 		std::unordered_map<std::string, std::vector<int>> leftTable = {
 			{"s", { 1, 3, 4} },

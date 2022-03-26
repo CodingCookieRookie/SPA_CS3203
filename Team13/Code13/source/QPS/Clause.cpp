@@ -18,16 +18,16 @@ PqlReference ParsedRelationship::getRhs() const {
 Instruction* ParsedRelationship::toInstruction() const {
 	Instruction* instruction = nullptr;
 	switch (relationshipType) {
-	case PqlRelationshipType::ModifiesS:
+	case PqlRelationshipType::MODIFIES_S:
 		instruction = new ModifiesSInstruction(lhsRef, rhsRef);
 		break;
-	case PqlRelationshipType::ModifiesP:
+	case PqlRelationshipType::MODIFIES_P:
 		instruction = new ModifiesPInstruction(lhsRef, rhsRef);
 		break;
-	case PqlRelationshipType::UsesS:
+	case PqlRelationshipType::USES_S:
 		instruction = new UsesSInstruction(lhsRef, rhsRef);
 		break;
-	case PqlRelationshipType::UsesP:
+	case PqlRelationshipType::USES_P:
 		instruction = new UsesPInstruction(lhsRef, rhsRef);
 		break;
 		/*case PqlRelationshipType::Follows:
@@ -59,7 +59,7 @@ Instruction* ParsedRelationship::toInstruction() const {
 
 ParsedPattern::ParsedPattern(std::string& synonym, PqlReference entRef,
 	PqlExpression expressionSpec, int numOfArgs)
-	: ParsedPattern(synonym, PqlPatternType::Pattern, entRef, expressionSpec, numOfArgs) {}
+	: ParsedPattern(synonym, PqlPatternType::PATTERN, entRef, expressionSpec, numOfArgs) {}
 
 ParsedPattern::ParsedPattern(std::string& synonym, PqlPatternType patternType,
 	PqlReference entRef, PqlExpression expressionSpec, int numOfArgs)
@@ -90,9 +90,9 @@ int ParsedPattern::getNumOfArgs() const {
 Temporarily assign attribType as unvalidated because
 we delay type validation to the validator */
 ParsedWith::ParsedWith(PqlReference lhs, PqlReference rhs)
-	: ParsedWith(lhs, rhs, PqlEntityType::Constant, PqlEntityType::Constant, PqlAttributeType::Unvalidated) {}
+	: ParsedWith(lhs, rhs, EntityType::CONSTANT, EntityType::CONSTANT, PqlAttributeType::UNVALIDATED) {}
 
-ParsedWith::ParsedWith(PqlReference lhs, PqlReference rhs, PqlEntityType lhsEntity, PqlEntityType rhsEntity, PqlAttributeType attribType)
+ParsedWith::ParsedWith(PqlReference lhs, PqlReference rhs, EntityType lhsEntity, EntityType rhsEntity, PqlAttributeType attribType)
 	: lhs(lhs), rhs(rhs), lhsEntity(lhsEntity), rhsEntity(rhsEntity), attribType(attribType) {}
 
 PqlReference ParsedWith::getLhs() const {
@@ -116,10 +116,10 @@ Instruction* ParsedWith::toInstruction() const {
 	//}
 	Instruction* instruction = nullptr;
 	switch (attribType) {
-	case PqlAttributeType::String:
+	case PqlAttributeType::STRING:
 		instruction = new WithStringInstruction(lhs, rhs, lhsEntity, rhsEntity);
 		break;
-	case PqlAttributeType::Integer:
+	case PqlAttributeType::INTEGER:
 		instruction = new WithIntegerInstruction(lhs, rhs, lhsEntity, rhsEntity);
 		break;
 	default:

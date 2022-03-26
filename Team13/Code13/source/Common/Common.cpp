@@ -31,5 +31,5 @@ const std::string Common::FULLSTOP = ".";
 const std::string Common::UNDERSCORE = "_";
 const std::string Common::QUOTATION = "\"";
 
-const std::vector<std::string> Common::relOperators = { ">=", ">", "<=", "<", "!=", "==" };
-const std::vector<std::string> Common::logicalOperators = { "&&", "||" };
+const std::vector<std::string> Common::REL_OPERATORS = { ">=", ">", "<=", "<", "!=", "==" };
+const std::vector<std::string> Common::LOGICAL_OPERATORS = { "&&", "||" };

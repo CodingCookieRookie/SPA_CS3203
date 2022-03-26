@@ -25,14 +25,14 @@ public:
 		// Pattern w("v", "_")
 		// 1. Setup:
 		std::string synonym = "w";
-		PqlPatternType pqlPatternType = PqlPatternType::PatternW;
-		PqlReference entRef = std::make_pair(PqlReferenceType::Ident, "v");
-		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::Wildcard, "");
+		PqlPatternType pqlPatternType = PqlPatternType::PATTERN_W;
+		PqlReference entRef = std::make_pair(PqlReferenceType::IDENT, "v");
+		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::WILDCARD, "");
 		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
 
 		// PKB inserts pattern
-		Entity::insertStmt(StatementType::printType);
-		StmtIndex stmt = Entity::insertStmt(StatementType::whileType);
+		Entity::insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = Entity::insertStmt(StatementType::WHILE_TYPE);
 		Entity::insertVar("y");
 		VarIndex varIndex = Entity::insertVar("x");
 		Pattern::insertWhileInfo(stmt, varIndex);
@@ -50,14 +50,14 @@ public:
 	TEST_METHOD(execute_lhsSynonym) {
 		// while(v, "_")
 		std::string synonym = "w";
-		PqlPatternType pqlPatternType = PqlPatternType::PatternW;
-		PqlReference entRef = std::make_pair(PqlReferenceType::Synonym, "v");
-		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::Wildcard, "");
+		PqlPatternType pqlPatternType = PqlPatternType::PATTERN_W;
+		PqlReference entRef = std::make_pair(PqlReferenceType::SYNONYM, "v");
+		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::WILDCARD, "");
 		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
 
 		// PKB inserts pattern
-		Entity::insertStmt(StatementType::printType);
-		StmtIndex stmt = Entity::insertStmt(StatementType::whileType);
+		Entity::insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = Entity::insertStmt(StatementType::WHILE_TYPE);
 		Entity::insertVar("y");
 		VarIndex varIndex = Entity::insertVar("x");
 		Pattern::insertWhileInfo(stmt, varIndex);
@@ -76,14 +76,14 @@ public:
 	TEST_METHOD(execute_lhsIdent) {
 		// while ("x", "_")
 		std::string synonym = "w";
-		PqlPatternType pqlPatternType = PqlPatternType::PatternW;
-		PqlReference entRef = std::make_pair(PqlReferenceType::Ident, "x");
-		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::Wildcard, "");
+		PqlPatternType pqlPatternType = PqlPatternType::PATTERN_W;
+		PqlReference entRef = std::make_pair(PqlReferenceType::IDENT, "x");
+		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::WILDCARD, "");
 		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
 
 		// PKB inserts pattern
-		Entity::insertStmt(StatementType::printType);
-		StmtIndex stmt = Entity::insertStmt(StatementType::whileType);
+		Entity::insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = Entity::insertStmt(StatementType::WHILE_TYPE);
 		Entity::insertVar("y");
 		VarIndex varIndex = Entity::insertVar("x");
 		Pattern::insertWhileInfo(stmt, varIndex);
@@ -102,14 +102,14 @@ public:
 	TEST_METHOD(execute_lhsWildCard) {
 		// Pattern while ("_", "_")
 		std::string synonym = "w";
-		PqlPatternType pqlPatternType = PqlPatternType::PatternW;
-		PqlReference entRef = std::make_pair(PqlReferenceType::Wildcard, "");
-		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::Wildcard, "");
+		PqlPatternType pqlPatternType = PqlPatternType::PATTERN_W;
+		PqlReference entRef = std::make_pair(PqlReferenceType::WILDCARD, "");
+		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::WILDCARD, "");
 		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
 
 		// PKB inserts pattern
-		Entity::insertStmt(StatementType::printType);
-		StmtIndex stmt = Entity::insertStmt(StatementType::whileType);
+		Entity::insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = Entity::insertStmt(StatementType::WHILE_TYPE);
 		Entity::insertVar("y");
 		VarIndex varIndex = Entity::insertVar("x");
 		Pattern::insertWhileInfo(stmt, varIndex);

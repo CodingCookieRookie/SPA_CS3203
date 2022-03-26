@@ -33,15 +33,15 @@ public:
 	}
 
 	TEST_METHOD(evaluateOperatorPrecedence_validOperator) {
-		Assert::IsTrue(OperatorPriority::high == mulRes);
-		Assert::IsTrue(OperatorPriority::high == divRes);
-		Assert::IsTrue(OperatorPriority::high == modRes);
-		Assert::IsTrue(OperatorPriority::medium == addRes);
-		Assert::IsTrue(OperatorPriority::medium == subRes);
+		Assert::IsTrue(OperatorPriority::HIGH == mulRes);
+		Assert::IsTrue(OperatorPriority::HIGH == divRes);
+		Assert::IsTrue(OperatorPriority::HIGH == modRes);
+		Assert::IsTrue(OperatorPriority::MEDIUM == addRes);
+		Assert::IsTrue(OperatorPriority::MEDIUM == subRes);
 	}
 	TEST_METHOD(evaluateOperatorPrecedence_invalidOperator) {
 		OperatorPriority res = ExpressionProcessor::evaluateOperatorPrecedence('^');
-		Assert::IsTrue(OperatorPriority::low == res);
+		Assert::IsTrue(OperatorPriority::LOW == res);
 	}
 
 	TEST_METHOD(evaluateOperatorPrecedence_comparePrecedence_differentOperator) {
