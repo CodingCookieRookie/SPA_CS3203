@@ -28,7 +28,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::Synonym, "a1");
 		rhsRef = std::make_pair(PqlReferenceType::Synonym, "v");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
+		Instruction* instruction = new UsesSInstruction(lhsRef, rhsRef);
 
 		// PKB inserts uses
 		Entity::insertStmt(StatementType::printType);   // insert dummy stmt
@@ -49,7 +49,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::Synonym, "a1");
 		rhsRef = std::make_pair(PqlReferenceType::Ident, "x");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
+		Instruction* instruction = new UsesSInstruction(lhsRef, rhsRef);
 
 		// PKB inserts uses
 		Entity::insertStmt(StatementType::readType);
@@ -70,7 +70,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::Synonym, "a1");
 		rhsRef = std::make_pair(PqlReferenceType::Wildcard, "_");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
+		Instruction* instruction = new UsesSInstruction(lhsRef, rhsRef);
 
 		// PKB inserts uses
 		Entity::insertStmt(StatementType::printType);
@@ -93,7 +93,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::Integer, "2");
 		rhsRef = std::make_pair(PqlReferenceType::Synonym, "a1");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
+		Instruction* instruction = new UsesSInstruction(lhsRef, rhsRef);
 
 		// PKB inserts uses
 		Entity::insertStmt(StatementType::printType);
@@ -116,7 +116,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::Integer, "2");
 		rhsRef = std::make_pair(PqlReferenceType::Synonym, "a1");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
+		Instruction* instruction = new UsesSInstruction(lhsRef, rhsRef);
 
 		// PKB inserts uses
 		Entity::insertStmt(StatementType::printType);
@@ -137,7 +137,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::Integer, "50");
 		rhsRef = std::make_pair(PqlReferenceType::Synonym, "a1");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
+		Instruction* instruction = new UsesSInstruction(lhsRef, rhsRef);
 
 		// PKB inserts modifies
 		Entity::insertStmt(StatementType::printType);
@@ -161,7 +161,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::Integer, "2");
 		rhsRef = std::make_pair(PqlReferenceType::Ident, "fhg");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
+		Instruction* instruction = new UsesSInstruction(lhsRef, rhsRef);
 
 		// PKB inserts modifies
 		Entity::insertStmt(StatementType::printType);
@@ -185,7 +185,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::Integer, "2");
 		rhsRef = std::make_pair(PqlReferenceType::Wildcard, "_");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
+		Instruction* instruction = new UsesSInstruction(lhsRef, rhsRef);
 
 		// PKB inserts uses
 		Entity::insertStmt(StatementType::printType);
@@ -209,7 +209,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::Integer, "2");
 		rhsRef = std::make_pair(PqlReferenceType::Wildcard, "_");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesS, lhsRef, rhsRef);
+		Instruction* instruction = new UsesSInstruction(lhsRef, rhsRef);
 
 		// PKB inserts uses
 		Entity::insertStmt(StatementType::printType);

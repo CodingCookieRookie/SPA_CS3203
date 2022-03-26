@@ -3,6 +3,8 @@
 #include "Instruction.h"
 #include "QPSCommons.h"
 #include "WithInstruction.h"
+#include "ModifiesInstruction.h"
+#include "UsesInstruction.h"
 
 class Clause {
 public:
@@ -22,6 +24,7 @@ public:
 	PqlRelationshipType getRelationshipType() const;
 	PqlReference getLhs() const;
 	PqlReference getRhs() const;
+	Instruction* toInstruction() const;
 };
 
 class ParsedPattern : public Clause {

@@ -45,6 +45,14 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
 		}
 	}
 
+	for (const ParsedRelationship& relationship : relationships) {
+		if (relationship.getRelationshipType() == PqlRelationshipType::ModifiesS ||
+			relationship.getRelationshipType() == PqlRelationshipType::ModifiesP ||
+			relationship.getRelationshipType() == PqlRelationshipType::UsesS ||
+			relationship.getRelationshipType() == PqlRelationshipType::UsesP)
+			instructions.push_back(relationship.toInstruction());
+	}
+
 	// 2. Get all pattern results from pattern-clause
 	for (size_t i = 0; i < patterns.size(); i++) {
 		ParsedPattern parsedPattern = patterns.at(i);

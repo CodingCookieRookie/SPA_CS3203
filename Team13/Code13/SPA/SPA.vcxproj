@@ -25,6 +25,7 @@
     <ClCompile Include="..\source\QPS\Clause.cpp" />
     <ClCompile Include="..\source\QPS\EvaluatedTable.cpp" />
     <ClCompile Include="..\source\QPS\GetAllInstruction.cpp" />
+    <ClCompile Include="..\source\QPS\ModifiesInstruction.cpp" />
     <ClCompile Include="..\source\QPS\ParsedQuery.cpp" />
     <ClCompile Include="..\source\QPS\PatternInstruction.cpp" />
     <ClCompile Include="..\source\QPS\PQLEvaluator.cpp" />
@@ -32,6 +33,7 @@
     <ClCompile Include="..\source\QPS\PQLResultProjector.cpp" />
     <ClCompile Include="..\source\QPS\QPSCommons.cpp" />
     <ClCompile Include="..\source\QPS\RelationshipInstruction.cpp" />
+    <ClCompile Include="..\source\QPS\UsesInstruction.cpp" />
     <ClCompile Include="..\source\QPS\WithInstruction.cpp" />
     <ClCompile Include="..\source\SP\ASTValidator.cpp" />
     <ClCompile Include="..\source\SP\CFG.cpp" />
@@ -73,6 +75,7 @@
     <ClInclude Include="..\source\QPS\EvaluatedTable.h" />
     <ClInclude Include="..\source\QPS\GetAllInstruction.h" />
     <ClInclude Include="..\source\QPS\Instruction.h" />
+    <ClInclude Include="..\source\QPS\ModifiesInstruction.h" />
     <ClInclude Include="..\source\QPS\ParsedQuery.h" />
     <ClInclude Include="..\source\QPS\PatternInstruction.h" />
     <ClInclude Include="..\source\QPS\PQLEvaluator.h" />
@@ -80,6 +83,7 @@
     <ClInclude Include="..\source\QPS\PQLResultProjector.h" />
     <ClInclude Include="..\source\QPS\QPSCommons.h" />
     <ClInclude Include="..\source\QPS\RelationshipInstruction.h" />
+    <ClInclude Include="..\source\QPS\UsesInstruction.h" />
     <ClInclude Include="..\source\QPS\WithInstruction.h" />
     <ClInclude Include="..\source\SP\ASTValidator.h" />
     <ClInclude Include="..\source\SP\DesignExtractor.h" />

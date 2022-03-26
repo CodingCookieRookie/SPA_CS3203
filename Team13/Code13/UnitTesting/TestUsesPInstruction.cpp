@@ -25,7 +25,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::Synonym, "p");
 		rhsRef = std::make_pair(PqlReferenceType::Synonym, "v");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesP, lhsRef, rhsRef);
+		Instruction* instruction = new UsesPInstruction(lhsRef, rhsRef);
 
 		// PKB inserts uses
 		Entity::insertProc("randomProc");
@@ -46,7 +46,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::Synonym, "p");
 		rhsRef = std::make_pair(PqlReferenceType::Ident, "x");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesP, lhsRef, rhsRef);
+		Instruction* instruction = new UsesPInstruction(lhsRef, rhsRef);
 
 		// PKB inserts uses
 		Entity::insertProc("randomProc");
@@ -67,7 +67,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::Synonym, "p");
 		rhsRef = std::make_pair(PqlReferenceType::Wildcard, "_");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesP, lhsRef, rhsRef);
+		Instruction* instruction = new UsesPInstruction(lhsRef, rhsRef);
 
 		// PKB inserts uses
 		Entity::insertProc("randomProc");
@@ -89,7 +89,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::Ident, "p");
 		rhsRef = std::make_pair(PqlReferenceType::Synonym, "v");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesP, lhsRef, rhsRef);
+		Instruction* instruction = new UsesPInstruction(lhsRef, rhsRef);
 
 		// PKB inserts uses
 		Entity::insertProc("randomProc");
@@ -110,7 +110,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::Ident, "p");
 		rhsRef = std::make_pair(PqlReferenceType::Ident, "x");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesP, lhsRef, rhsRef);
+		Instruction* instruction = new UsesPInstruction(lhsRef, rhsRef);
 
 		// PKB inserts uses
 		Entity::insertProc("randomProc");
@@ -131,7 +131,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::Ident, "p");
 		rhsRef = std::make_pair(PqlReferenceType::Wildcard, "_");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::UsesP, lhsRef, rhsRef);
+		Instruction* instruction = new UsesPInstruction(lhsRef, rhsRef);
 
 		// PKB inserts uses
 		Entity::insertProc("randomProc");
