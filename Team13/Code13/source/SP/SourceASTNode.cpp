@@ -14,7 +14,7 @@ std::unordered_set<std::string> StmtNode::getUsesVars() {
 	return std::unordered_set<std::string>();
 }
 
-std::unordered_set<std::string> StmtNode::getConsts() {
+std::unordered_set<std::string> StmtNode::getUsesConsts() {
 	return std::unordered_set<std::string>();
 }
 
@@ -30,44 +30,28 @@ std::vector<StmtLstNode*> StmtNode::getChildStmtLst() {
 	return std::vector<StmtLstNode*>();
 }
 
-std::unordered_set<std::string> StmtNode::getUsesVarsInExpr(ExprNode* expr) {
-	std::unordered_set<std::string> usesVars;
-	std::queue<ExprNode*> queue;
-	queue.push(expr);
+std::unordered_set<std::string> StmtNode::getUses(ExprNode* expr, ExprNodeValueType valueType) {
+	std::unordered_set<std::string> uses;
+	std::stack<ExprNode*> stack;
+	ExprNode* curr = expr;
 
-	while (!queue.empty()) {
-		ExprNode* currNode = queue.front();
-		queue.pop();
-		if (currNode->getExprNodeValueType() == ExprNodeValueType::VAR_NAME) {
-			usesVars.insert(currNode->getValue());
-		}
-
-		for (ExprNode* child : currNode->getChildren()) {
-			queue.push(child);
-		}
-	}
-
-	return usesVars;
-}
-
-std::unordered_set<std::string> StmtNode::getConstsInExpr(ExprNode* expr) {
-	std::unordered_set<std::string> consts;
-
-	std::queue<ExprNode*> queue;
-	queue.push(expr);
-	while (!queue.empty()) {
-		ExprNode* currNode = queue.front();
-		queue.pop();
-		if (currNode->getExprNodeValueType() == ExprNodeValueType::CONST_VALUE) {
-			consts.insert(currNode->getValue());
-		}
-
-		for (ExprNode* child : currNode->getChildren()) {
-			queue.push(child);
+	while (!stack.empty() || curr != nullptr) {
+		/* Keeps traversing the left child as much as possible,
+		else pops node from stack and traverses the right child. */
+		if (curr != nullptr) {
+			stack.push(curr);
+			curr = curr->getLeftChild();
+		} else {
+			curr = stack.top();
+			stack.pop();
+			if (curr->getExprNodeValueType() == valueType) {
+				uses.insert(curr->getValue());
+			}
+			curr = curr->getRightChild();
 		}
 	}
 
-	return consts;
+	return uses;
 }
 
 /* ReadNode */
@@ -123,11 +107,11 @@ std::string AssignNode::getPattern() {
 }
 
 std::unordered_set<std::string> AssignNode::getUsesVars() {
-	return getUsesVarsInExpr(getExpr());
+	return getUses(getExpr(), ExprNodeValueType::VAR_NAME);
 }
 
-std::unordered_set<std::string> AssignNode::getConsts() {
-	return getConstsInExpr(getExpr());
+std::unordered_set<std::string> AssignNode::getUsesConsts() {
+	return getUses(getExpr(), ExprNodeValueType::CONST_VALUE);
 }
 
 /* ContainerNode */
@@ -142,11 +126,11 @@ std::vector<StmtLstNode*> ContainerNode::getChildStmtLst() {
 }
 
 std::unordered_set<std::string> ContainerNode::getUsesVars() {
-	return getUsesVarsInExpr(condExpr);
+	return getUses(condExpr, ExprNodeValueType::VAR_NAME);
 }
 
-std::unordered_set<std::string> ContainerNode::getConsts() {
-	return getConstsInExpr(condExpr);
+std::unordered_set<std::string> ContainerNode::getUsesConsts() {
+	return getUses(condExpr, ExprNodeValueType::CONST_VALUE);
 }
 
 /* WhileNode */

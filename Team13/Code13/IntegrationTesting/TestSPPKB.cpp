@@ -258,6 +258,7 @@ public:
 		std::string varName1 = "num1";
 		std::string varName2 = "ave";
 		std::string procName = "computeAverage";
+		VarIndex constVal = 3;
 
 		ProcIndex procIdx = ProcIndex(1);
 
@@ -280,6 +281,7 @@ public:
 		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[4]));
 
 		Assert::AreEqual(size_t(1), Entity::getAllConsts().size());
+		Assert::AreEqual(constVal, Entity::getAllConsts()[0]);
 
 		Assert::AreEqual(size_t(6), Entity::getAllProcStmts()[procIdx].size());
 		Assert::AreEqual(size_t(6), Entity::getStmtsFromProc(procIdx).size());
@@ -419,6 +421,8 @@ public:
 		std::string varName1 = "num1";
 		std::string varName2 = "temp";
 		std::string procName = "printAscending";
+		VarIndex constVal1 = 0;
+		VarIndex constVal2 = 1;
 
 		ProcIndex procIdx = ProcIndex(1);
 
@@ -441,6 +445,8 @@ public:
 		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[3]));
 
 		Assert::AreEqual(size_t(2), Entity::getAllConsts().size());
+		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
+		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
 
 		Assert::AreEqual(size_t(11), Entity::getAllProcStmts()[procIdx].size());
 		Assert::AreEqual(size_t(11), Entity::getStmtsFromProc(procIdx).size());
@@ -599,6 +605,8 @@ public:
 		std::string varName1 = "number";
 		std::string varName2 = "digit";
 		std::string procName = "sumDigits";
+		VarIndex constVal1 = 0;
+		VarIndex constVal2 = 10;
 
 		ProcIndex procIdx = ProcIndex(1);
 
@@ -621,6 +629,8 @@ public:
 		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[2]));
 
 		Assert::AreEqual(size_t(2), Entity::getAllConsts().size());
+		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
+		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
 
 		Assert::AreEqual(size_t(7), Entity::getAllProcStmts()[procIdx].size());
 		Assert::AreEqual(size_t(7), Entity::getStmtsFromProc(procIdx).size());
@@ -783,6 +793,8 @@ public:
 		std::string varName3 = "y";
 		std::string procName1 = "main";
 		std::string procName4 = "computeCentroid";
+		VarIndex constVal1 = 0;
+		VarIndex constVal2 = 1;
 
 		ProcIndex procIdx1 = ProcIndex(1);
 		ProcIndex procIdx2 = ProcIndex(2);
@@ -809,6 +821,8 @@ public:
 		Assert::AreEqual(varName3, Entity::getVarName(Entity::getAllVars()[2]));
 
 		Assert::AreEqual(size_t(2), Entity::getAllConsts().size());
+		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
+		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
 
 		Assert::AreEqual(size_t(3), Entity::getStmtsFromProc(procIdx1).size());
 		Assert::AreEqual(size_t(2), Entity::getStmtsFromProc(procIdx2).size());
@@ -1039,6 +1053,10 @@ public:
 		std::string varName1 = "count";
 		std::string varName2 = "normSq";
 		std::string procName = "computeCentroid";
+		VarIndex constVal1 = 0;
+		VarIndex constVal2 = 5;
+		VarIndex constVal3 = 3;
+		VarIndex constVal4 = 1;
 
 		ProcIndex procIdx = ProcIndex(1);
 
@@ -1061,6 +1079,10 @@ public:
 		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[6]));
 
 		Assert::AreEqual(size_t(4), Entity::getAllConsts().size());
+		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
+		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
+		Assert::AreEqual(constVal3, Entity::getAllConsts()[2]);
+		Assert::AreEqual(constVal4, Entity::getAllConsts()[3]);
 
 		Assert::AreEqual(size_t(14), Entity::getAllProcStmts()[procIdx].size());
 		Assert::AreEqual(size_t(14), Entity::getStmtsFromProc(procIdx).size());
@@ -1225,6 +1247,11 @@ public:
 		std::string varName1 = "present";
 		std::string varName2 = "x";
 		std::string procName = "Peter";
+		VarIndex constVal1 = 0;
+		VarIndex constVal2 = 8;
+		VarIndex constVal3 = 4;
+		VarIndex constVal4 = 2;
+		VarIndex constVal5 = 1;
 
 		ProcIndex procIdx = ProcIndex(1);
 
@@ -1247,6 +1274,11 @@ public:
 		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[4]));
 
 		Assert::AreEqual(size_t(5), Entity::getAllConsts().size());
+		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
+		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
+		Assert::AreEqual(constVal3, Entity::getAllConsts()[2]);
+		Assert::AreEqual(constVal4, Entity::getAllConsts()[3]);
+		Assert::AreEqual(constVal5, Entity::getAllConsts()[4]);
 
 		Assert::AreEqual(size_t(12), Entity::getAllProcStmts()[procIdx].size());
 		Assert::AreEqual(size_t(12), Entity::getStmtsFromProc(procIdx).size());
@@ -1440,6 +1472,8 @@ public:
 		std::string varName1 = "number";
 		std::string varName2 = "digit";
 		std::string procName = "sumDigits";
+		VarIndex constVal1 = 0;
+		VarIndex constVal2 = 10;
 
 		ProcIndex procIdx = ProcIndex(1);
 
@@ -1462,6 +1496,8 @@ public:
 		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[2]));
 
 		Assert::AreEqual(size_t(2), Entity::getAllConsts().size());
+		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
+		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
 
 		Assert::AreEqual(size_t(7), Entity::getAllProcStmts()[procIdx].size());
 		Assert::AreEqual(size_t(7), Entity::getStmtsFromProc(procIdx).size());
@@ -1620,6 +1656,8 @@ public:
 		std::string varName2 = "if";
 		std::string varName3 = "procedure";
 		std::string procName = "procedure";
+		VarIndex constVal1 = 0;
+		VarIndex constVal2 = 1;
 
 		ProcIndex procIdx = ProcIndex(1);
 
@@ -1643,6 +1681,8 @@ public:
 		Assert::AreEqual(varName3, Entity::getVarName(Entity::getAllVars()[4]));
 
 		Assert::AreEqual(size_t(2), Entity::getAllConsts().size());
+		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
+		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
 
 		Assert::AreEqual(size_t(7), Entity::getAllProcStmts()[procIdx].size());
 		Assert::AreEqual(size_t(7), Entity::getStmtsFromProc(procIdx).size());
@@ -1796,8 +1836,9 @@ public:
 
 	TEST_METHOD(longAssignmentExprSource_checkEntities) {
 		std::string varName1 = "x";
-		std::string varName2 = "y";
+		std::string varName2 = "g";
 		std::string procName = "main";
+		VarIndex constVal = 9;
 
 		ProcIndex procIdx = ProcIndex(1);
 
@@ -1815,11 +1856,13 @@ public:
 		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::WHILE_TYPE).size());
 		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
 
+		/* ordering: x, a, y, b, z, c, d, f, g */
 		Assert::AreEqual(size_t(9), Entity::getAllVars().size());
 		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[0]));
 		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[8]));
 
 		Assert::AreEqual(size_t(1), Entity::getAllConsts().size());
+		Assert::AreEqual(constVal, Entity::getAllConsts()[0]);
 
 		Assert::AreEqual(size_t(1), Entity::getAllProcStmts()[procIdx].size());
 		Assert::AreEqual(size_t(1), Entity::getStmtsFromProc(procIdx).size());
@@ -2007,6 +2050,9 @@ public:
 		std::string varName1 = "present";
 		std::string varName2 = "y";
 		std::string procName = "Peter";
+		VarIndex constVal1 = 0;
+		VarIndex constVal2 = 8;
+		VarIndex constVal3 = 1;
 
 		ProcIndex procIdx = ProcIndex(1);
 
@@ -2029,6 +2075,9 @@ public:
 		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[3]));
 
 		Assert::AreEqual(size_t(3), Entity::getAllConsts().size());
+		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
+		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
+		Assert::AreEqual(constVal3, Entity::getAllConsts()[2]);
 
 		Assert::AreEqual(size_t(11), Entity::getAllProcStmts()[procIdx].size());
 		Assert::AreEqual(size_t(11), Entity::getStmtsFromProc(procIdx).size());
@@ -2278,6 +2327,7 @@ public:
 		std::string varName1 = "v";
 		std::string varName2 = "V1";
 		std::string procName = "mAin";
+		VarIndex constVal = 1;
 
 		ProcIndex procIdx = ProcIndex(1);
 
@@ -2301,6 +2351,7 @@ public:
 		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[3]));
 
 		Assert::AreEqual(size_t(1), Entity::getAllConsts().size());
+		Assert::AreEqual(constVal, Entity::getAllConsts()[0]);
 
 		Assert::AreEqual(size_t(4), Entity::getAllProcStmts()[procIdx].size());
 		Assert::AreEqual(size_t(4), Entity::getStmtsFromProc(procIdx).size());
@@ -2422,6 +2473,7 @@ public:
 	TEST_METHOD(multipleWhitespacesSource_checkEntities) {
 		std::string varName = "v";
 		std::string procName = "main";
+		VarIndex constVal = 0;
 
 		ProcIndex procIdx = ProcIndex(1);
 
@@ -2443,6 +2495,7 @@ public:
 		Assert::AreEqual(varName, Entity::getVarName(Entity::getAllVars()[0]));
 
 		Assert::AreEqual(size_t(1), Entity::getAllConsts().size());
+		Assert::AreEqual(constVal, Entity::getAllConsts()[0]);
 
 		Assert::AreEqual(size_t(3), Entity::getAllProcStmts()[procIdx].size());
 		Assert::AreEqual(size_t(3), Entity::getStmtsFromProc(procIdx).size());

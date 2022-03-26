@@ -1,6 +1,5 @@
 #pragma once
 
-#include <queue>
 #include <stack>
 #include <string>
 #include <unordered_set>
@@ -20,24 +19,26 @@ public:
 
 class StmtNode : public SourceASTNode {
 protected:
-	std::unordered_set<std::string> getUsesVarsInExpr(ExprNode* expr);
-	std::unordered_set<std::string> getConstsInExpr(ExprNode* expr);
+	/* Returns the unordered set of vars or consts used by the StmtNode.
+	Set to protected so it can be accessed by the relevant StmtNode's subclasses
+	which uses vars and/ or consts. */
+	std::unordered_set<std::string> getUses(ExprNode* expr, ExprNodeValueType valueType);
 public:
 	StmtNode();
 	virtual StatementType getStmtType() = 0;
 	virtual std::string getPattern();
 	virtual std::vector<StmtLstNode*> getChildStmtLst();
 
-	/* Returns an unordered set of vars used by the stmt node */
+	/* Returns the unordered set of vars used by the StmtNode */
 	virtual std::unordered_set<std::string> getUsesVars();
 
-	/* Returns an unordered set of vars modified by the stmt node */
+	/* Returns the unordered set of vars modified by the StmtNode */
 	virtual std::unordered_set<std::string> getModifiesVars();
 
-	/* Returns an unordered set of consts in the stmt node */
-	virtual std::unordered_set<std::string> getConsts();
+	/* Returns the unordered set of consts used by the StmtNode */
+	virtual std::unordered_set<std::string> getUsesConsts();
 
-	/* Returns the procedure name called by the stmt node */
+	/* Returns the procedure name called by the StmtNode */
 	virtual std::string getProcCalled();
 
 	friend class SourceAST;
@@ -81,7 +82,7 @@ public:
 	StatementType getStmtType();
 	std::unordered_set<std::string> getUsesVars();
 	std::unordered_set<std::string> getModifiesVars();
-	std::unordered_set<std::string> getConsts();
+	std::unordered_set<std::string> getUsesConsts();
 	std::string getPattern();
 
 	friend class SourceAST;
@@ -95,7 +96,7 @@ public:
 	ContainerNode(ExprNode* condExpr, std::vector<StmtLstNode*> childStmtLst);
 	ExprNode* getCondExpr();
 	std::unordered_set<std::string> getUsesVars();
-	std::unordered_set<std::string> getConsts();
+	std::unordered_set<std::string> getUsesConsts();
 	std::vector<StmtLstNode*> getChildStmtLst();
 };
 

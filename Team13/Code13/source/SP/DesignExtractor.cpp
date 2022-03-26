@@ -86,9 +86,9 @@ StmtIndex DesignExtractor::insertStmt(StmtNode* stmtNode) {
 }
 
 void DesignExtractor::insertConst(StmtNode* stmtNode) {
-	std::unordered_set<std::string> consts = stmtNode->getConsts();
-	for (const std::string& constName : consts) {
-		Entity::insertConst(stoi(constName));
+	std::unordered_set<std::string> usesConsts = stmtNode->getUsesConsts();
+	for (const std::string& usesConst : usesConsts) {
+		Entity::insertConst(stoi(usesConst));
 	}
 }
 

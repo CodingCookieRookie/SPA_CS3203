@@ -7,6 +7,22 @@ void ExprNode::addChild(ExprNode* child) {
 	children.push_back(child);
 }
 
+bool ExprNode::hasLeftChild() {
+	return !children.empty();
+}
+
+bool ExprNode::hasRightChild() {
+	return children.size() == 2;
+}
+
+ExprNode* ExprNode::getLeftChild() {
+	return hasLeftChild() ? children[0] : nullptr;
+}
+
+ExprNode* ExprNode::getRightChild() {
+	return hasRightChild() ? children[1] : nullptr;
+}
+
 std::vector<ExprNode*> ExprNode::getChildren() {
 	return children;
 }
