@@ -30,6 +30,7 @@
     <ClCompile Include="..\source\QPS\FollowsStarInstruction.cpp" />
     <ClCompile Include="..\source\QPS\GetAllInstruction.cpp" />
     <ClCompile Include="..\source\QPS\ModifiesInstruction.cpp" />
+    <ClCompile Include="..\source\QPS\NextInstruction.cpp" />
     <ClCompile Include="..\source\QPS\ParentInstruction.cpp" />
     <ClCompile Include="..\source\QPS\ParentStarInstruction.cpp" />
     <ClCompile Include="..\source\QPS\ParsedPattern.cpp" />
@@ -89,6 +90,7 @@
     <ClInclude Include="..\source\QPS\GetAllInstruction.h" />
     <ClInclude Include="..\source\QPS\Instruction.h" />
     <ClInclude Include="..\source\QPS\ModifiesInstruction.h" />
+    <ClInclude Include="..\source\QPS\NextInstruction.h" />
     <ClInclude Include="..\source\QPS\ParentInstruction.h" />
     <ClInclude Include="..\source\QPS\ParentStarInstruction.h" />
     <ClInclude Include="..\source\QPS\ParsedPattern.h" />

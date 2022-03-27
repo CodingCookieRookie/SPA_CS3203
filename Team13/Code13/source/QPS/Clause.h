@@ -11,6 +11,7 @@
 #include "FollowsStarInstruction.h"
 #include "CallsInstruction.h"
 #include "CallsStarInstruction.h"
+#include "NextInstruction.h"
 
 class Clause {
 public:

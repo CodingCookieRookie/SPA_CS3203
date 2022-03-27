@@ -27,7 +27,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "1");
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "2");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::NEXT, lhsRef, rhsRef);
+		Instruction* instruction = new NextInstruction(lhsRef, rhsRef);
 
 		// PKB inserts statements
 		StmtIndex stmt1 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
@@ -47,7 +47,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s2");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::NEXT, lhsRef, rhsRef);
+		Instruction* instruction = new NextInstruction(lhsRef, rhsRef);
 
 		// PKB inserts statements
 		StmtIndex stmt1 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
@@ -87,7 +87,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "2");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::NEXT, lhsRef, rhsRef);
+		Instruction* instruction = new NextInstruction(lhsRef, rhsRef);
 
 		// PKB inserts statements
 		StmtIndex stmt1 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
@@ -127,7 +127,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s2");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::NEXT, lhsRef, rhsRef);
+		Instruction* instruction = new NextInstruction(lhsRef, rhsRef);
 
 		// PKB inserts 5 statements
 		std::vector<StmtIndex> stmts;
@@ -179,7 +179,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::NEXT, lhsRef, rhsRef);
+		Instruction* instruction = new NextInstruction(lhsRef, rhsRef);
 
 		// PKB inserts 5 statements
 		std::vector<StmtIndex> stmts;
@@ -226,7 +226,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::NEXT, lhsRef, rhsRef);
+		Instruction* instruction = new NextInstruction(lhsRef, rhsRef);
 
 		// PKB inserts 37213 statements
 		std::vector<StmtIndex> stmts;
@@ -281,7 +281,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "3");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::NEXT, lhsRef, rhsRef);
+		Instruction* instruction = new NextInstruction(lhsRef, rhsRef);
 
 		// PKB inserts 3 statements
 		std::vector<StmtIndex> stmts;
@@ -324,7 +324,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "28");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::NEXT, lhsRef, rhsRef);
+		Instruction* instruction = new NextInstruction(lhsRef, rhsRef);
 
 		// PKB inserts 976 statements
 		std::vector<StmtIndex> stmts;
@@ -368,7 +368,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::NEXT, lhsRef, rhsRef);
+		Instruction* instruction = new NextInstruction(lhsRef, rhsRef);
 
 		// PKB inserts 3 statements
 		std::vector<StmtIndex> stmts;

@@ -106,7 +106,6 @@
     <ClCompile Include="..\source\QPS\WithInstruction.cpp">
       <Filter>Source Files\QPS</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\QPS\ParentInstruction.cpp" />
     <ClCompile Include="..\source\QPS\ParentStarInstruction.cpp">
       <Filter>Source Files\QPS</Filter>
     </ClCompile>
@@ -121,6 +120,12 @@
     </ClCompile>
     <ClCompile Include="..\source\QPS\CallsStarInstruction.cpp">
       <Filter>Source Files\QPS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\NextInstruction.cpp">
+      <Filter>Source Files\QPS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\ParentInstruction.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -277,7 +282,6 @@
     <ClInclude Include="..\source\QPS\WithInstruction.h">
       <Filter>Header Files\QPS</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\QPS\ParentInstruction.h" />
     <ClInclude Include="..\source\QPS\ParentStarInstruction.h">
       <Filter>Header Files\QPS</Filter>
     </ClInclude>
@@ -291,6 +295,12 @@
       <Filter>Header Files\QPS</Filter>
     </ClInclude>
     <ClInclude Include="..\source\QPS\CallsStarInstruction.h">
+      <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\NextInstruction.h">
+      <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\ParentInstruction.h">
       <Filter>Header Files\QPS</Filter>
     </ClInclude>
   </ItemGroup>

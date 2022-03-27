@@ -47,9 +47,7 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
 	}
 
 	for (ParsedRelationship& relationship : relationships) {
-		if (PQLEvaluator::isRelationship(relationship)) {
-			instructions.push_back(relationship.toInstruction());
-		}
+		instructions.push_back(relationship.toInstruction());
 	}
 
 	// 2. Get all pattern results from pattern-clause
@@ -65,19 +63,6 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
 
 	// TODO: Optimisation: Sort instructions.
 	return instructions;
-}
-
-bool PQLEvaluator::isRelationship(ParsedRelationship& relationship) {
-	return relationship.getRelationshipType() == PqlRelationshipType::MODIFIES_S ||
-		relationship.getRelationshipType() == PqlRelationshipType::MODIFIES_P ||
-		relationship.getRelationshipType() == PqlRelationshipType::USES_S ||
-		relationship.getRelationshipType() == PqlRelationshipType::USES_P ||
-		relationship.getRelationshipType() == PqlRelationshipType::PARENT ||
-		relationship.getRelationshipType() == PqlRelationshipType::PARENT_T ||
-		relationship.getRelationshipType() == PqlRelationshipType::FOLLOWS ||
-		relationship.getRelationshipType() == PqlRelationshipType::FOLLOWS_T ||
-		relationship.getRelationshipType() == PqlRelationshipType::CALLS ||
-		relationship.getRelationshipType() == PqlRelationshipType::CALLS_T;
 }
 
 EvaluatedTable PQLEvaluator::executeInstructions(std::vector<Instruction*> instructions) {
