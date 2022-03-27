@@ -30,7 +30,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::IDENT, "procedure2");
 		rhsRef = std::make_pair(PqlReferenceType::IDENT, "procedure3");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::CALLS_T, lhsRef, rhsRef);
+		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef);
 
 		// PKB inserts 4 procs, establishes 3 calls relationships
 		std::vector<ProcIndex> procs;
@@ -58,7 +58,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::IDENT, "procedure1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "q");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::CALLS_T, lhsRef, rhsRef);
+		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef);
 
 		// PKB inserts 4 procs, establishes 3 calls relationships
 		std::vector<ProcIndex> procs;
@@ -107,7 +107,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "p");
 		rhsRef = std::make_pair(PqlReferenceType::IDENT, "procedure4");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::CALLS_T, lhsRef, rhsRef);
+		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef);
 
 		// PKB inserts 4 procs, establishes 4 calls relationships
 		std::vector<ProcIndex> procs;
@@ -157,7 +157,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "p");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "q");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::CALLS_T, lhsRef, rhsRef);
+		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef);
 
 		// PKB inserts 4 procs, establishes 3 calls relationships
 		std::vector<ProcIndex> procs;
@@ -218,7 +218,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "p");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "q");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::CALLS_T, lhsRef, rhsRef);
+		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef);
 
 		// PKB inserts 19 procs, establishes 18 Calls relationships
 		std::vector<ProcIndex> procs;
@@ -289,7 +289,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "p");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::CALLS_T, lhsRef, rhsRef);
+		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef);
 
 		// PKB inserts 99 procs, establishes 98 Calls relationships
 		std::vector<ProcIndex> procs;
@@ -351,7 +351,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		rhsRef = std::make_pair(PqlReferenceType::IDENT, "procedure87");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::CALLS_T, lhsRef, rhsRef);
+		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef);
 
 		// PKB inserts 99 procs, establishes 98 Calls relationships
 		std::vector<ProcIndex> procs;
@@ -398,7 +398,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::CALLS_T, lhsRef, rhsRef);
+		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef);
 
 		// PKB inserts 99 procs, establishes 98 Calls relationships
 		std::vector<ProcIndex> procs;

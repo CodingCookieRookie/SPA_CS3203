@@ -29,7 +29,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "1");
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "2");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::PARENT, lhsRef, rhsRef);
+		Instruction* instruction = new ParentInstruction(lhsRef, rhsRef);
 
 		// PKB inserts statements
 		StmtIndex stmt1 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
@@ -49,7 +49,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s2");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::PARENT_T, lhsRef, rhsRef);
+		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef);;
 
 		// PKB inserts 4 statements
 		std::vector<StmtIndex> stmts;
@@ -95,7 +95,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "4");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::PARENT_T, lhsRef, rhsRef);
+		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef);;
 
 		// PKB inserts 4 statements
 		std::vector<StmtIndex> stmts;
@@ -142,7 +142,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s2");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::PARENT_T, lhsRef, rhsRef);
+		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef);;
 
 		// PKB inserts 4 statements
 		std::vector<StmtIndex> stmts;
@@ -200,7 +200,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s2");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::PARENT_T, lhsRef, rhsRef);
+		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef);;
 
 		// PKB inserts 19 statements
 		std::vector<StmtIndex> stmts;
@@ -269,7 +269,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::PARENT_T, lhsRef, rhsRef);
+		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef);;
 
 		// PKB inserts 99 statements
 		std::vector<StmtIndex> stmts;
@@ -329,7 +329,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "87");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::PARENT_T, lhsRef, rhsRef);
+		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef);;
 
 		// PKB inserts 99 statements
 		std::vector<StmtIndex> stmts;
@@ -375,7 +375,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::PARENT_T, lhsRef, rhsRef);
+		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef);;
 
 		// PKB inserts 3 statements
 		std::vector<StmtIndex> stmts;
