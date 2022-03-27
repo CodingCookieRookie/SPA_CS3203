@@ -919,7 +919,7 @@ EvaluatedTable RelationshipInstruction::execute() {
 		//evTable = handleParent(pqlRelationshipType);
 		break;
 	case PqlRelationshipType::PARENT_T:
-		evTable = handleParentT();
+		//evTable = handleParentT();
 		break;
 	case PqlRelationshipType::CALLS:
 		evTable = handleCalls(pqlRelationshipType);

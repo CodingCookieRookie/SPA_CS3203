@@ -42,10 +42,10 @@ Instruction* ParsedRelationship::toInstruction() const {
 		//evTable = handleParent(pqlRelationshipType);
 		//instruction = new ParentInstruction(lhsRef, rhsRef);
 		break;
-		/*case PqlRelationshipType::ParentT:
-			evTable = handleParentT();
-			break;
-		case PqlRelationshipType::Calls:
+	case PqlRelationshipType::PARENT_T:
+		instruction = new ParentStarInstruction(lhsRef, rhsRef);
+		break;
+		/*case PqlRelationshipType::Calls:
 			evTable = handleCalls(pqlRelationshipType);
 			break;
 		case PqlRelationshipType::CallsT:

@@ -25,6 +25,9 @@ private:
 	/* Helper method to select columns of table in EvaluatedTable for projection based on Select-cl */
 	static EvaluatedTable selectColumnsForProjection(EvaluatedTable evaluatedTable, ParsedQuery& pq);
 
+	/* Helper method to check relationship type */
+	static bool isRelationship(ParsedRelationship& relationship);
+
 public:
 	/* Main entry method for parsing the query */
 	static EvaluatedTable evaluate(ParsedQuery& parsedQuery);

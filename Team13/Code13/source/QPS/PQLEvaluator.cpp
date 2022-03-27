@@ -46,12 +46,8 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
 		}
 	}
 
-	for (const ParsedRelationship& relationship : relationships) {
-		if (relationship.getRelationshipType() == PqlRelationshipType::MODIFIES_S ||
-			relationship.getRelationshipType() == PqlRelationshipType::MODIFIES_P ||
-			relationship.getRelationshipType() == PqlRelationshipType::USES_S ||
-			relationship.getRelationshipType() == PqlRelationshipType::USES_P ||
-			relationship.getRelationshipType() == PqlRelationshipType::PARENT) {
+	for (ParsedRelationship& relationship : relationships) {
+		if (PQLEvaluator::isRelationship(relationship)) {
 			instructions.push_back(relationship.toInstruction());
 		}
 	}
@@ -69,6 +65,15 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
 
 	// TODO: Optimisation: Sort instructions.
 	return instructions;
+}
+
+bool PQLEvaluator::isRelationship(ParsedRelationship& relationship) {
+	return relationship.getRelationshipType() == PqlRelationshipType::MODIFIES_S ||
+		relationship.getRelationshipType() == PqlRelationshipType::MODIFIES_P ||
+		relationship.getRelationshipType() == PqlRelationshipType::USES_S ||
+		relationship.getRelationshipType() == PqlRelationshipType::USES_P ||
+		relationship.getRelationshipType() == PqlRelationshipType::PARENT ||
+		relationship.getRelationshipType() == PqlRelationshipType::PARENT_T;
 }
 
 EvaluatedTable PQLEvaluator::executeInstructions(std::vector<Instruction*> instructions) {

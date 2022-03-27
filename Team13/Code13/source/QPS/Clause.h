@@ -6,6 +6,7 @@
 #include "ModifiesInstruction.h"
 #include "UsesInstruction.h"
 #include "ParentInstruction.h"
+#include "ParentStarInstruction.h"
 
 class Clause {
 public:
