@@ -28,12 +28,11 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
 
 	// Assumption: Semantically corrct ParsedQuery
 	// 1. Get all relationship results from such-that-clause
-	// TODO: Get rid of this for-loop, use the one below as part of Factory Pattern
-	for (size_t i = 0; i < relationships.size(); i++) {
-		ParsedRelationship parsedRelationship = relationships.at(i);
-		PqlReference lhsRef = parsedRelationship.getLhs();
-		PqlReference rhsRef = parsedRelationship.getRhs();
-		instructions.push_back(new RelationshipInstruction(parsedRelationship.getRelationshipType(), lhsRef, rhsRef));
+	// TODO: Apply Factory Pattern to GetAllInstruction(?)
+	for (ParsedRelationship& relationship : relationships) {
+		instructions.push_back(relationship.toInstruction());
+		PqlReference lhsRef = relationship.getLhs();
+		PqlReference rhsRef = relationship.getRhs();
 		if (isSynonymRef(lhsRef) && pq.isStmtSubtype(lhsRef)) {
 			std::string lhsVal = lhsRef.second;
 			EntityType lhsType = declarations.at(lhsVal);
@@ -44,10 +43,6 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
 			EntityType rhsType = declarations.at(rhsVal);
 			instructions.push_back(new GetAllInstruction(rhsType, rhsVal));
 		}
-	}
-
-	for (ParsedRelationship& relationship : relationships) {
-		instructions.push_back(relationship.toInstruction());
 	}
 
 	// 2. Get all pattern results from pattern-clause

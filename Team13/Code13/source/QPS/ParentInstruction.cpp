@@ -99,22 +99,6 @@ EvaluatedTable ParentInstruction::helperHandleTwoStmtsMaybeWildcard() {
 	std::unordered_map<std::string, EntityType> PQLentities;
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
 	results = Parent::getAllPredecessorSuccessorInfo();
-	//case PqlRelationshipType::Next:
-	//	results = Next::getAllPredecessorSuccessorInfo();
-	//	if (lhsRef.second == rhsRef.second) { /* Special case: Next(s1, s1) has a legitimate result */
-	//		PQLentities.insert(std::pair(lhsRef.second, EntityType::STMT)); /*just do LHS*/
-	//		std::vector<int> lhsResults = std::get<0>(results);
-	//		std::vector<int> rhsResults = std::get<1>(results);
-	//		std::vector<int> finalResults;
-	//		for (size_t i = 0; i < lhsResults.size(); i++) {
-	//			if (lhsResults[i] == rhsResults[i]) {
-	//				finalResults.emplace_back(lhsResults[i]);
-	//			}
-	//		}
-	//		PQLmap[lhsRef.second] = finalResults;
-	//		return EvaluatedTable(PQLentities, PQLmap);
-	//	}
-	//	break;
 	if (lhsRef.second == rhsRef.second) { /* Special case: Parent(s1, s1), recursive call, technically shouldn't be allowed */
 		PQLentities.insert(std::pair(lhsRef.second, EntityType::STMT));
 		/* No values populated to PQLmap for this case */

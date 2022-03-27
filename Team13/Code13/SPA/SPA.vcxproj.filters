@@ -125,7 +125,7 @@
       <Filter>Source Files\QPS</Filter>
     </ClCompile>
     <ClCompile Include="..\source\QPS\ParentInstruction.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\QPS</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
