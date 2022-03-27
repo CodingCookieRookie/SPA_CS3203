@@ -31,12 +31,12 @@ Instruction* ParsedRelationship::toInstruction() const {
 	case PqlRelationshipType::USES_P:
 		instruction = new UsesPInstruction(lhsRef, rhsRef);
 		break;
-		/*case PqlRelationshipType::Follows:
-				evTable = handleFollows();
-				break;
-			case PqlRelationshipType::FollowsT:
-				evTable = handleFollowsT();
-				break;*/
+	case PqlRelationshipType::FOLLOWS:
+		instruction = new FollowsInstruction(lhsRef, rhsRef);
+		break;
+		/* case PqlRelationshipType::FollowsT:
+			evTable = handleFollowsT();
+			break;*/
 	case PqlRelationshipType::PARENT:
 		instruction = new ParentInstruction(lhsRef, rhsRef);
 		//evTable = handleParent(pqlRelationshipType);

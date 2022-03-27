@@ -73,7 +73,8 @@ bool PQLEvaluator::isRelationship(ParsedRelationship& relationship) {
 		relationship.getRelationshipType() == PqlRelationshipType::USES_S ||
 		relationship.getRelationshipType() == PqlRelationshipType::USES_P ||
 		relationship.getRelationshipType() == PqlRelationshipType::PARENT ||
-		relationship.getRelationshipType() == PqlRelationshipType::PARENT_T;
+		relationship.getRelationshipType() == PqlRelationshipType::PARENT_T ||
+		relationship.getRelationshipType() == PqlRelationshipType::FOLLOWS;
 }
 
 EvaluatedTable PQLEvaluator::executeInstructions(std::vector<Instruction*> instructions) {

@@ -1,13 +1,13 @@
-#include "ParentStarInstruction.h"
+#include "FollowsInstruction.h"
 
-ParentStarInstruction::ParentStarInstruction(PqlReference lhsRef, PqlReference rhsRef) : lhsRef(lhsRef), rhsRef(rhsRef) {}
+FollowsInstruction::FollowsInstruction(PqlReference lhsRef, PqlReference rhsRef) : lhsRef(lhsRef), rhsRef(rhsRef) {}
 
-EvaluatedTable ParentStarInstruction::execute() {
-	// e.g Parent*(6, 7)
+EvaluatedTable FollowsInstruction::execute() {
+	// e.g Follows(6, 7)
 	if (lhsRef.first == PqlReferenceType::INTEGER && rhsRef.first == PqlReferenceType::INTEGER) {
 		return helperHandleTwoIntegers();
 	}
-	// e.g Parent*(6, s2), Parent*(6, _)
+	// e.g Follows(6, s2), Follows(6, _)
 	else if (lhsRef.first == PqlReferenceType::INTEGER) {
 		if (rhsRef.first == PqlReferenceType::SYNONYM) {
 			return helperHandleOneInt(PqlReferenceType::INTEGER, PqlReferenceType::SYNONYM);
@@ -15,7 +15,7 @@ EvaluatedTable ParentStarInstruction::execute() {
 			return helperHandleOneInt(PqlReferenceType::INTEGER, PqlReferenceType::WILDCARD);
 		}
 	}
-	// e.g. Parent*(s1, 7), Parent*(_ 7)
+	// e.g. Follows(s1, 7), Follows(_ 7)
 	else if (rhsRef.first == PqlReferenceType::INTEGER) {
 		if (lhsRef.first == PqlReferenceType::SYNONYM) {
 			return helperHandleOneInt(PqlReferenceType::SYNONYM, PqlReferenceType::INTEGER);
@@ -23,11 +23,11 @@ EvaluatedTable ParentStarInstruction::execute() {
 			return helperHandleOneInt(PqlReferenceType::WILDCARD, PqlReferenceType::INTEGER);
 		}
 	}
-	// Parent*(s1, s2), Parent*(s1, _), Parent*(_, s2)
+	// Follows(s1, s2), Follows(s1, _), Follows(_, s2)
 	else if (!(lhsRef.first == PqlReferenceType::WILDCARD && rhsRef.first == PqlReferenceType::WILDCARD)) {
 		return helperHandleTwoStmtsMaybeWildcard();
 	}
-	// Parent*(_, _)
+	// Follows(_, _)
 	else {
 		if (lhsRef.first == PqlReferenceType::WILDCARD && rhsRef.first == PqlReferenceType::WILDCARD) {
 			return helperHandleTwoWildcards();
@@ -35,7 +35,7 @@ EvaluatedTable ParentStarInstruction::execute() {
 	}
 }
 
-EvaluatedTable ParentStarInstruction::helperHandleTwoIntegers() {
+EvaluatedTable FollowsInstruction::helperHandleTwoIntegers() {
 	StmtIndex lhsStmtIndex, rhsStmtIndex;
 	bool evResult = false;
 	int lhsRefValue = stoi(lhsRef.second);
@@ -43,12 +43,12 @@ EvaluatedTable ParentStarInstruction::helperHandleTwoIntegers() {
 	if (Entity::containsStmt(lhsRefValue) && Entity::containsStmt(rhsRefValue)) {
 		lhsStmtIndex = StmtIndex(lhsRefValue);
 		rhsStmtIndex = StmtIndex(rhsRefValue);
-		evResult = ParentT::containsSuccessor(lhsStmtIndex, rhsStmtIndex);
+		evResult = Follows::containsSuccessor(lhsStmtIndex, rhsStmtIndex);
 	}
 	return EvaluatedTable(evResult);
 }
 
-EvaluatedTable ParentStarInstruction::helperHandleOneInt(PqlReferenceType lhsRefType, PqlReferenceType rhsRefType) {
+EvaluatedTable FollowsInstruction::helperHandleOneInt(PqlReferenceType lhsRefType, PqlReferenceType rhsRefType) {
 	std::vector<StmtIndex> stmts = Entity::getAllStmts();
 	std::vector<int> results;
 	int oneInt;
@@ -63,12 +63,12 @@ EvaluatedTable ParentStarInstruction::helperHandleOneInt(PqlReferenceType lhsRef
 		StmtIndex oneIntIndex = StmtIndex(oneInt);
 		for (StmtIndex STMT : stmts) {
 			if (lhsRefType == PqlReferenceType::INTEGER) {
-				if (ParentT::containsSuccessor(oneIntIndex, STMT)) {
-					results.emplace_back(STMT); /* e.g {7} if 6 is a Parent* of some s2 (e.g. 7) */
+				if (Follows::containsSuccessor(oneIntIndex, STMT)) {
+					results.emplace_back(STMT); /* e.g {7} if 6 is a Follows of some s2 (e.g. 7) */
 				}
 			} else if (rhsRefType == PqlReferenceType::INTEGER) {
-				if (ParentT::containsSuccessor(STMT, oneIntIndex)) {
-					results.emplace_back(STMT); /* e.g {6} if some s1 (e.g. 6) is a Parent* of 7 */
+				if (Follows::containsSuccessor(STMT, oneIntIndex)) {
+					results.emplace_back(STMT); /* e.g {6} if some s1 (e.g. 6) is a Follows of 7 */
 				}
 			} else {}
 		}
@@ -93,13 +93,13 @@ EvaluatedTable ParentStarInstruction::helperHandleOneInt(PqlReferenceType lhsRef
 	}
 }
 
-EvaluatedTable ParentStarInstruction::helperHandleTwoStmtsMaybeWildcard() {
+EvaluatedTable FollowsInstruction::helperHandleTwoStmtsMaybeWildcard() {
 	std::tuple<std::vector<int>, std::vector<int>> results;
 	/* e.g. {1, 2}, {2, 3}, {3, 6} */
 	std::unordered_map<std::string, EntityType> PQLentities;
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
-	results = ParentT::getAllPredecessorSuccessorInfo();
-	if (lhsRef.second == rhsRef.second) { /* Special case: Parent*(s1, s1), recursive call, technically shouldn't be allowed */
+	results = Follows::getAllPredecessorSuccessorInfo();
+	if (lhsRef.second == rhsRef.second) { /* Special case: Follows(s1, s1), recursive call, technically shouldn't be allowed */
 		PQLentities.insert(std::pair(lhsRef.second, EntityType::STMT));
 		/* No values populated to PQLmap for this case */
 		return EvaluatedTable(PQLentities, PQLmap);
@@ -115,10 +115,10 @@ EvaluatedTable ParentStarInstruction::helperHandleTwoStmtsMaybeWildcard() {
 	return EvaluatedTable(PQLentities, PQLmap);
 }
 
-EvaluatedTable ParentStarInstruction::helperHandleTwoWildcards() {
+EvaluatedTable FollowsInstruction::helperHandleTwoWildcards() {
 	bool isEmptyTable = true;
-	isEmptyTable = std::get<0>(ParentT::getAllPredecessorSuccessorInfo()).empty();
-	// No Parent* rs exists => isEmptyTable == true => EvTable.evResult == false (innerJoinMerge() can drop table)
-	// Parent* rs exists => isEmptyTable == false => EvTable.evResult == true (innerJoinMerge() can merge dummy table, preserving all rows)
+	isEmptyTable = std::get<0>(Follows::getAllPredecessorSuccessorInfo()).empty();
+	// No Follows rs exists => isEmptyTable == true => EvTable.evResult == false (innerJoinMerge() can drop table)
+	// Follows rs exists => isEmptyTable == false => EvTable.evResult == true (innerJoinMerge() can merge dummy table, preserving all rows)
 	return EvaluatedTable(!isEmptyTable);
 }

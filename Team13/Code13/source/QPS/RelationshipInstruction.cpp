@@ -910,7 +910,7 @@ EvaluatedTable RelationshipInstruction::execute() {
 		//evTable = handleUsesP();
 		break;
 	case PqlRelationshipType::FOLLOWS:
-		evTable = handleFollows();
+		//evTable = handleFollows();
 		break;
 	case PqlRelationshipType::FOLLOWS_T:
 		evTable = handleFollowsT();
