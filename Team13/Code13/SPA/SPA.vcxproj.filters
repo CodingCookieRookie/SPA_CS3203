@@ -113,6 +113,9 @@
     <ClCompile Include="..\source\QPS\FollowsInstruction.cpp">
       <Filter>Source Files\QPS</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\QPS\FollowsStarInstruction.cpp">
+      <Filter>Source Files\QPS</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\SP\ASTValidator.h">
@@ -273,6 +276,9 @@
       <Filter>Header Files\QPS</Filter>
     </ClInclude>
     <ClInclude Include="..\source\QPS\FollowsInstruction.h">
+      <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\FollowsStarInstruction.h">
       <Filter>Header Files\QPS</Filter>
     </ClInclude>
   </ItemGroup>

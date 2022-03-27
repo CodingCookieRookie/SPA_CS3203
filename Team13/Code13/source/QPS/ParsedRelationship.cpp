@@ -34,9 +34,9 @@ Instruction* ParsedRelationship::toInstruction() const {
 	case PqlRelationshipType::FOLLOWS:
 		instruction = new FollowsInstruction(lhsRef, rhsRef);
 		break;
-		/* case PqlRelationshipType::FollowsT:
-			evTable = handleFollowsT();
-			break;*/
+	case PqlRelationshipType::FOLLOWS_T:
+		instruction = new FollowsStarInstruction(lhsRef, rhsRef);
+		break;
 	case PqlRelationshipType::PARENT:
 		instruction = new ParentInstruction(lhsRef, rhsRef);
 		//evTable = handleParent(pqlRelationshipType);

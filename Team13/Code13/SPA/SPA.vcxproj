@@ -25,6 +25,7 @@
     <ClCompile Include="..\source\QPS\Clause.cpp" />
     <ClCompile Include="..\source\QPS\EvaluatedTable.cpp" />
     <ClCompile Include="..\source\QPS\FollowsInstruction.cpp" />
+    <ClCompile Include="..\source\QPS\FollowsStarInstruction.cpp" />
     <ClCompile Include="..\source\QPS\GetAllInstruction.cpp" />
     <ClCompile Include="..\source\QPS\ModifiesInstruction.cpp" />
     <ClCompile Include="..\source\QPS\ParentInstruction.cpp" />
@@ -80,6 +81,7 @@
     <ClInclude Include="..\source\QPS\Clause.h" />
     <ClInclude Include="..\source\QPS\EvaluatedTable.h" />
     <ClInclude Include="..\source\QPS\FollowsInstruction.h" />
+    <ClInclude Include="..\source\QPS\FollowsStarInstruction.h" />
     <ClInclude Include="..\source\QPS\GetAllInstruction.h" />
     <ClInclude Include="..\source\QPS\Instruction.h" />
     <ClInclude Include="..\source\QPS\ModifiesInstruction.h" />
