@@ -171,9 +171,6 @@
     <ClInclude Include="..\source\SP\Parser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\PKB\Pattern.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\QPS\PatternInstruction.h">
       <Filter>Header Files</Filter>
     </ClInclude>

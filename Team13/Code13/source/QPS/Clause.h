@@ -5,6 +5,7 @@
 #include "WithInstruction.h"
 #include "ModifiesInstruction.h"
 #include "UsesInstruction.h"
+#include "PatternInstruction.h"
 
 class Clause {
 public:
@@ -44,6 +45,7 @@ public:
 	PqlReference getEntRef() const;
 	PqlExpression getExpression() const;
 	int getNumOfArgs() const;
+	Instruction* toInstruction() const;
 };
 
 class ParsedWith : public Clause {

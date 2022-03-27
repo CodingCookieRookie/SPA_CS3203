@@ -86,6 +86,24 @@ int ParsedPattern::getNumOfArgs() const {
 	return numOfArgs;
 }
 
+Instruction* ParsedPattern::toInstruction() const {
+	Instruction* instruction = nullptr;
+	switch (patternType) {
+	case PqlPatternType::PATTERN_A:
+		instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
+		break;
+	case PqlPatternType::PATTERN_I:
+		instruction = new PatternIInstruction(synonym, entRef);
+		break;
+	case PqlPatternType::PATTERN_W:
+		instruction = new PatternWInstruction(synonym, entRef);
+		break;
+	default:
+		break;
+	}
+	return instruction;
+}
+
 /* Default constructor used while parsing
 Temporarily assign attribType as unvalidated because
 we delay type validation to the validator */

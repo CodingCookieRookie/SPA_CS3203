@@ -1,12 +1,20 @@
 #include "PatternInstruction.h"
 
 PatternInstruction::PatternInstruction(
+	std::string synonym, PqlReference entRef) :
+	synonym(synonym), entRef(entRef) {}
+
+PatternInstruction::PatternInstruction(
+	std::string synonym, PqlReference entRef, PqlExpression expressionSpec) :
+	synonym(synonym), entRef(entRef), expressionSpec(expressionSpec) {}
+
+PatternInstruction::PatternInstruction(
 	std::string synonym, PqlPatternType pqlPatternType,
 	PqlReference entRef, PqlExpression expressionSpec) :
 	synonym(synonym), pqlPatternType(pqlPatternType),
 	entRef(entRef), expressionSpec(expressionSpec) {}
 
-EvaluatedTable PatternInstruction::handlePatternA() {
+EvaluatedTable PatternAInstruction::execute() {
 	std::unordered_map<std::string, EntityType> PQLentities;
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
 	std::vector<int> allStmts;
@@ -58,7 +66,7 @@ EvaluatedTable PatternInstruction::handlePatternA() {
 	return EvaluatedTable(PQLentities, PQLmap);
 }
 
-EvaluatedTable PatternInstruction::handlePatternI() {
+EvaluatedTable PatternIInstruction::execute() {
 	std::unordered_map<std::string, EntityType> PQLentities;
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
 	std::vector<int> allStmts;
@@ -84,7 +92,7 @@ EvaluatedTable PatternInstruction::handlePatternI() {
 	return EvaluatedTable(PQLentities, PQLmap);
 }
 
-EvaluatedTable PatternInstruction::handlePatternW() {
+EvaluatedTable PatternWInstruction::execute() {
 	std::unordered_map<std::string, EntityType> PQLentities;
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
 	std::vector<int> allStmts;
@@ -108,23 +116,4 @@ EvaluatedTable PatternInstruction::handlePatternW() {
 	}
 	PQLmap[synonym] = allStmts;
 	return EvaluatedTable(PQLentities, PQLmap);
-}
-
-EvaluatedTable PatternInstruction::execute() {
-	EvaluatedTable evTable;
-	switch (pqlPatternType) {
-	case PqlPatternType::PATTERN:
-		evTable = handlePatternA();
-		break;
-	case PqlPatternType::PATTERN_A:
-		evTable = handlePatternA();
-		break;
-	case PqlPatternType::PATTERN_I:
-		evTable = handlePatternI();
-		break;
-	case PqlPatternType::PATTERN_W:
-		evTable = handlePatternW();
-		break;
-	}
-	return evTable;
 }

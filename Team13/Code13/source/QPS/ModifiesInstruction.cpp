@@ -96,6 +96,7 @@ EvaluatedTable ModifiesInstruction::handleIntegerLeft(std::unordered_map<std::st
 	default:
 		break;
 	}
+	return EvaluatedTable(PQLentities, PQLmap);
 }
 
 EvaluatedTable ModifiesInstruction::handleIdentLeft(std::unordered_map<std::string, EntityType> PQLentities, std::unordered_map<std::string, std::vector<int>> PQLmap, PqlReference lhsRef, PqlReference rhsRef, std::vector<int> allStmts, std::vector<int> varIndices) {
@@ -120,4 +121,5 @@ EvaluatedTable ModifiesInstruction::handleIdentLeft(std::unordered_map<std::stri
 	default:
 		break;
 	}
+	return EvaluatedTable(PQLentities, PQLmap);
 }

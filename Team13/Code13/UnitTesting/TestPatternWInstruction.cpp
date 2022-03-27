@@ -28,7 +28,7 @@ public:
 		PqlPatternType pqlPatternType = PqlPatternType::PATTERN_W;
 		PqlReference entRef = std::make_pair(PqlReferenceType::IDENT, "v");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::WILDCARD, "");
-		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
+		Instruction* instruction = new PatternWInstruction(synonym, entRef);
 
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::PRINT_TYPE);
@@ -53,7 +53,7 @@ public:
 		PqlPatternType pqlPatternType = PqlPatternType::PATTERN_W;
 		PqlReference entRef = std::make_pair(PqlReferenceType::SYNONYM, "v");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::WILDCARD, "");
-		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
+		Instruction* instruction = new PatternWInstruction(synonym, entRef);
 
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::PRINT_TYPE);
@@ -79,7 +79,7 @@ public:
 		PqlPatternType pqlPatternType = PqlPatternType::PATTERN_W;
 		PqlReference entRef = std::make_pair(PqlReferenceType::IDENT, "x");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::WILDCARD, "");
-		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
+		Instruction* instruction = new PatternWInstruction(synonym, entRef);
 
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::PRINT_TYPE);
@@ -105,7 +105,7 @@ public:
 		PqlPatternType pqlPatternType = PqlPatternType::PATTERN_W;
 		PqlReference entRef = std::make_pair(PqlReferenceType::WILDCARD, "");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::WILDCARD, "");
-		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
+		Instruction* instruction = new PatternWInstruction(synonym, entRef);
 
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::PRINT_TYPE);
