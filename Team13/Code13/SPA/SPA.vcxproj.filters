@@ -55,7 +55,7 @@
     <ClCompile Include="..\source\Exception\SPAException.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\PKB\TransitivePopulator.cpp">
+    <ClCompile Include="..\source\PKB\CFG.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\source\QPS\Clause.cpp">
@@ -147,6 +147,9 @@
     <ClInclude Include="..\source\SP\CFGNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\source\QPS\Clause.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\source\Common\Common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -198,7 +201,10 @@
     <ClInclude Include="..\source\PKB\Pattern.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\PKB\PKBCFG.h">
+    <ClInclude Include="..\source\QPS\PatternInstruction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\PKB\CFG.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\PKB\RS1.h">

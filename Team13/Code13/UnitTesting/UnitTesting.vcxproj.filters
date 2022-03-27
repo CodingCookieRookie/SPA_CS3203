@@ -55,10 +55,8 @@
     <ClCompile Include="TestASTValidator.cpp" />
     <ClCompile Include="TestWithInstruction.cpp" />
     <ClCompile Include="TestNext.cpp" />
-    <ClCompile Include="TestCFGNode.cpp" />
-    <ClCompile Include="TestCFG.cpp" />
     <ClCompile Include="TestInstructionNext.cpp" />
-    <ClCompile Include="TestPKBCFG.cpp" />
+    <ClCompile Include="TestCFG.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />

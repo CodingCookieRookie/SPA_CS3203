@@ -28,7 +28,8 @@ void TestWrapper::parse(std::string filename) {
 	try {
 		SourceAST ast = Parser::parse(fileContent);
 		ASTValidator::validateAST(ast);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 	} catch (ParserException& ex) {
 		std::cerr << ex.what() << std::endl;
 		exit(EXIT_FAILURE);

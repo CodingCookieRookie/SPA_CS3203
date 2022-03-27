@@ -2,6 +2,7 @@
 
 /* SourceASTNode */
 SourceASTNode::SourceASTNode() {}
+SourceASTNode::~SourceASTNode() {}
 
 /* StmtNode */
 StmtNode::StmtNode() : SourceASTNode() {}

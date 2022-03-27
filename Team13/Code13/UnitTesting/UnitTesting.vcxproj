@@ -166,8 +166,6 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="TestCFG.cpp" />
-    <ClCompile Include="TestCFGNode.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -196,7 +194,7 @@
     <ClCompile Include="TestPatternAInstruction.cpp" />
     <ClCompile Include="TestPatternIInstruction.cpp" />
     <ClCompile Include="TestPatternWInstruction.cpp" />
-    <ClCompile Include="TestPKBCFG.cpp" />
+    <ClCompile Include="TestCFG.cpp" />
     <ClCompile Include="TestTransitivePopulator.cpp" />
     <ClCompile Include="TestPQLResultProjector.cpp" />
     <ClCompile Include="TestSourceASTNode.cpp" />
