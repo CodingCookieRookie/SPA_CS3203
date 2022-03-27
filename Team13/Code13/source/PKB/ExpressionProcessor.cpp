@@ -7,11 +7,11 @@ bool ExpressionProcessor::isOperand(char currentChar) {
 
 OperatorPriority ExpressionProcessor::evaluateOperatorPrecedence(char currentChar) {
 	if (currentChar == '*' || currentChar == '/' || currentChar == '%') {
-		return OperatorPriority::high;
+		return OperatorPriority::HIGH;
 	} else if (currentChar == '+' || currentChar == '-') {
-		return OperatorPriority::medium;
+		return OperatorPriority::MEDIUM;
 	} else {
-		return OperatorPriority::low;
+		return OperatorPriority::LOW;
 	}
 }
 

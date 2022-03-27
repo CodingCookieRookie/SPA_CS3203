@@ -1,47 +1,47 @@
 #include "PQLParser.h"
 
-const std::vector<std::pair<std::string, PqlEntityType>> PQLParser::designEntityMap = {
-	{"stmt",		PqlEntityType::Stmt},
-	{"read",		PqlEntityType::Read},
-	{"print",		PqlEntityType::Print},
-	{"call",		PqlEntityType::Call},
-	{"while",		PqlEntityType::While},
-	{"if",			PqlEntityType::If},
-	{"assign",		PqlEntityType::Assign},
-	{"variable",	PqlEntityType::Variable},
-	{"constant",	PqlEntityType::Constant},
-	{"procedure",	PqlEntityType::Procedure}
+const std::vector<std::pair<std::string, EntityType>> PQLParser::designEntityMap = {
+	{"stmt",		EntityType::STMT},
+	{"read",		EntityType::READ},
+	{"print",		EntityType::PRINT},
+	{"call",		EntityType::CALL},
+	{"while",		EntityType::WHILE},
+	{"if",			EntityType::IF},
+	{"assign",		EntityType::ASSIGN},
+	{"variable",	EntityType::VARIABLE},
+	{"constant",	EntityType::CONSTANT},
+	{"procedure",	EntityType::PROCEDURE}
 };
 
 const std::vector<std::pair<std::string, PqlRelationshipType>> PQLParser::suchThatRelationshipMap = {
-	{"Follows*",	PqlRelationshipType::FollowsT},
-	{"Follows",		PqlRelationshipType::Follows},
-	{"Parent*",		PqlRelationshipType::ParentT},
-	{"Parent",		PqlRelationshipType::Parent},
-	{"Modifies",	PqlRelationshipType::Modifies},
-	{"Uses",		PqlRelationshipType::Uses},
-	{"Next*",		PqlRelationshipType::NextT},
-	{"Next",		PqlRelationshipType::Next},
-	{"Calls*",		PqlRelationshipType::CallsT},
-	{"Calls",		PqlRelationshipType::Calls},
-	{"Affects*",	PqlRelationshipType::AffectsT},
-	{"Affects",		PqlRelationshipType::Affects},
+	{"Follows*",	PqlRelationshipType::FOLLOWS_T},
+	{"Follows",		PqlRelationshipType::FOLLOWS},
+	{"Parent*",		PqlRelationshipType::PARENT_T},
+	{"Parent",		PqlRelationshipType::PARENT},
+	{"Modifies",	PqlRelationshipType::MODIFIES},
+	{"Uses",		PqlRelationshipType::USES},
+	{"Next*",		PqlRelationshipType::NEXT_T},
+	{"Next",		PqlRelationshipType::NEXT},
+	{"Calls*",		PqlRelationshipType::CALLS_T},
+	{"Calls",		PqlRelationshipType::CALLS},
+	{"Affects*",	PqlRelationshipType::AFFECTS_T},
+	{"Affects",		PqlRelationshipType::AFFECTS},
 };
 
 const std::vector<std::pair<std::string, PqlReferenceType>> PQLParser::attributeMap = {
-	{"procName",	PqlReferenceType::ProcName},
-	{"varName",		PqlReferenceType::VarName},
-	{"value",		PqlReferenceType::Value},
-	{"stmt#",		PqlReferenceType::StmtNum},
+	{"procName",	PqlReferenceType::PROC_NAME},
+	{"varName",		PqlReferenceType::VAR_NAME},
+	{"value",		PqlReferenceType::VALUE},
+	{"stmt#",		PqlReferenceType::STMT_NUM},
 };
 
 Lexer PQLParser::lexer;
 
 std::vector<PqlEntity> PQLParser::parseSingleDeclaration() {
-	PqlEntityType variableType;
+	EntityType variableType;
 	std::vector<PqlEntity> declarations;
 	bool matchedEntity = false;
-	for (const std::pair<std::string, PqlEntityType>& designEntity : designEntityMap) {
+	for (const std::pair<std::string, EntityType>& designEntity : designEntityMap) {
 		std::string designEntityString = designEntity.first;
 		if (lexer.match(designEntityString)) {
 			variableType = designEntity.second;
@@ -236,7 +236,7 @@ std::vector<ParsedWith> PQLParser::parseWith() {
 
 PqlReference PQLParser::parseRef() {
 	if (lexer.match(Common::UNDERSCORE)) {
-		return PqlReference(PqlReferenceType::Wildcard, std::string());
+		return PqlReference(PqlReferenceType::WILDCARD, std::string());
 	}
 	if (lexer.match(Common::QUOTATION)) {
 		std::string ident = lexer.nextName();
@@ -246,15 +246,15 @@ PqlReference PQLParser::parseRef() {
 		if (!lexer.match(Common::QUOTATION)) {
 			throw QPSException(QPSException::PARSER_ERROR);
 		}
-		return PqlReference(PqlReferenceType::Ident, ident);
+		return PqlReference(PqlReferenceType::IDENT, ident);
 	}
 	std::string nextToken = lexer.nextInteger();
 	if (!nextToken.empty()) {
-		return PqlReference(PqlReferenceType::Integer, nextToken);
+		return PqlReference(PqlReferenceType::INTEGER, nextToken);
 	}
 	nextToken = lexer.nextName();
 	if (!nextToken.empty()) {
-		return PqlReference(PqlReferenceType::Synonym, nextToken);
+		return PqlReference(PqlReferenceType::SYNONYM, nextToken);
 	}
 	throw QPSException(QPSException::PARSER_ERROR);
 }
@@ -266,7 +266,7 @@ PqlReference PQLParser::parseElem() {
 	}
 	std::string whitespace = lexer.nextWhitespace();
 	if (!lexer.match(Common::FULLSTOP)) {
-		return PqlReference(PqlReferenceType::Synonym, synonym);
+		return PqlReference(PqlReferenceType::SYNONYM, synonym);
 	}
 	bool matchedAttribute = false;
 	PqlReferenceType attributeType;
@@ -294,11 +294,11 @@ PqlReference PQLParser::parseAttr() {
 		if (!lexer.match(Common::QUOTATION)) {
 			throw QPSException(QPSException::PARSER_ERROR);
 		}
-		return PqlReference(PqlReferenceType::Ident, ident);
+		return PqlReference(PqlReferenceType::IDENT, ident);
 	}
 	std::string integer = lexer.nextInteger();
 	if (!integer.empty()) {
-		return PqlReference(PqlReferenceType::Integer, integer);
+		return PqlReference(PqlReferenceType::INTEGER, integer);
 	}
 	std::string synonym = lexer.nextName();
 	if (synonym.empty()) {
@@ -327,7 +327,7 @@ PqlReference PQLParser::parseAttr() {
 PqlExpression PQLParser::parseExpression() {
 	if (lexer.match(Common::UNDERSCORE)) {
 		if (!lexer.match(Common::QUOTATION)) {
-			return PqlExpression(PqlExpressionType::Wildcard, std::string());
+			return PqlExpression(PqlExpressionType::WILDCARD, std::string());
 		}
 		ExprNode* expr = ExpressionParser::matchExpr(lexer);
 		std::string pattern = expr->getPattern();
@@ -338,7 +338,7 @@ PqlExpression PQLParser::parseExpression() {
 		if (!lexer.match(Common::UNDERSCORE)) {
 			throw QPSException(QPSException::PARSER_ERROR);
 		}
-		return PqlExpression(PqlExpressionType::Partial, pattern);
+		return PqlExpression(PqlExpressionType::PARTIAL, pattern);
 	}
 	/* If the next token is not an _ or ", there is a syntax error */
 	if (!lexer.match(Common::QUOTATION)) {
@@ -350,7 +350,7 @@ PqlExpression PQLParser::parseExpression() {
 	if (!lexer.match(Common::QUOTATION)) {
 		throw QPSException(QPSException::PARSER_ERROR);
 	}
-	return PqlExpression(PqlExpressionType::Full, pattern);
+	return PqlExpression(PqlExpressionType::FULL, pattern);
 }
 
 ParsedQuery PQLParser::parseQuery(const std::string& query) {

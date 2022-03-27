@@ -123,7 +123,7 @@ AssignNode* Parser::matchAssign(std::string varName) {
 	ExprNode* expr = nullptr;
 	try {
 		expr = ExpressionParser::matchExpr(lexer);
-	} catch (ExpressionException& ex) {
+	} catch (ExpressionException&) {
 		throw ParserException(ParserException::INVALID_EXPR);
 	}
 
@@ -169,7 +169,7 @@ ExprNode* Parser::matchCondExpr() {
 			throw ParserException(ParserException::MISSING_RIGHT_BRACKET);
 		}
 
-		ExprNode* notNode = new ExprNode(ExprNodeValueType::logicalOperator, Common::NOT);
+		ExprNode* notNode = new ExprNode(ExprNodeValueType::LOGICAL_OPERATOR, Common::NOT);
 		notNode->addChild(condExpr);
 
 		return notNode;
@@ -183,9 +183,9 @@ ExprNode* Parser::matchCondExpr() {
 		}
 
 		ExprNode* logOpNode{};
-		for (const std::string op : Common::logicalOperators) {
+		for (const std::string op : Common::LOGICAL_OPERATORS) {
 			if (lexer.match(op)) {
-				logOpNode = new ExprNode(ExprNodeValueType::logicalOperator, op);
+				logOpNode = new ExprNode(ExprNodeValueType::LOGICAL_OPERATOR, op);
 				break;
 			}
 		}
@@ -219,9 +219,9 @@ ExprNode* Parser::matchRelExpr() {
 	ExprNode* leftRelFactor = matchRelFactor();
 
 	ExprNode* relOpNode{};
-	for (const std::string op : Common::relOperators) {
+	for (const std::string op : Common::REL_OPERATORS) {
 		if (lexer.match(op)) {
-			relOpNode = new ExprNode(ExprNodeValueType::relOperator, op);
+			relOpNode = new ExprNode(ExprNodeValueType::REL_OPERATOR, op);
 			break;
 		}
 	}
@@ -240,15 +240,15 @@ ExprNode* Parser::matchRelFactor() {
 	ExprNode* expr{};
 	try {
 		expr = ExpressionParser::matchExpr(lexer);
-	} catch (ExpressionException& ex) {
+	} catch (ExpressionException&) {
 		std::string varName = lexer.nextName();
 		if (!varName.empty()) {
-			return new ExprNode(ExprNodeValueType::varName, varName);
+			return new ExprNode(ExprNodeValueType::VAR_NAME, varName);
 		}
 
 		std::string constVal = lexer.nextInteger();
 		if (!constVal.empty()) {
-			return new ExprNode(ExprNodeValueType::constValue, constVal);
+			return new ExprNode(ExprNodeValueType::CONST_VALUE, constVal);
 		}
 
 		throw ParserException(ParserException::INVALID_REL_EXPR);

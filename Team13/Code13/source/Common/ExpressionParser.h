@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Common.h"
 #include "Lexer.h"
 #include "../SP/SourceASTNode.h"
 
@@ -7,11 +8,8 @@ class ExpressionParser {
 private:
 	ExpressionParser();
 
-	static const std::string LEFT_BRACKET;
-	static const std::string RIGHT_BRACKET;
-
-	static const std::vector<std::string> termOperators;
-	static const std::vector<std::string> exprOperators;
+	static const std::vector<std::string> TERM_OPERATORS;
+	static const std::vector<std::string> EXPR_OPERATORS;
 public:
 	static ExprNode* matchFactor(Lexer& lexer);
 	static ExprNode* matchTermTail(Lexer& lexer, ExprNode* lvalue);

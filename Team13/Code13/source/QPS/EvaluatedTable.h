@@ -10,7 +10,7 @@
 
 class EvaluatedTable {
 private:
-	std::unordered_map<std::string, PqlEntityType> entities;
+	std::unordered_map<std::string, EntityType> entities;
 	std::unordered_map<std::string, std::vector<int>> table;
 	bool evResult;
 
@@ -18,9 +18,9 @@ private:
 	EvaluatedTable blockNestedJoin(EvaluatedTable& otherTable,
 		std::unordered_set<std::string>& commonEntities);
 	void EvaluatedTable::prepopulate(std::unordered_map<std::string, std::vector<int>>& nextTable,
-		std::unordered_map<std::string, PqlEntityType>& nextEntities,
+		std::unordered_map<std::string, EntityType>& nextEntities,
 		std::unordered_map<std::string, std::vector<int>>& currTable,
-		std::unordered_map<std::string, PqlEntityType>& currEntities);
+		std::unordered_map<std::string, EntityType>& currEntities);
 
 public:
 	/* E.g. of an EvalauatedTable:
@@ -41,7 +41,7 @@ public:
 	EvaluatedTable();
 
 	/* Wrapper constructor for 2 fields, less boolean */
-	EvaluatedTable(std::unordered_map<std::string, PqlEntityType> newEntities,
+	EvaluatedTable(std::unordered_map<std::string, EntityType> newEntities,
 		std::unordered_map<std::string, std::vector<int>> newTable);
 
 	/* Wrapper constructor for boolean only (i.e. when the result evaluates to only a boolean) */
@@ -55,7 +55,7 @@ public:
 		std::unordered_map<std::string, std::vector<int>> resultTable);
 
 	/* Getter for entities */
-	std::unordered_map<std::string, PqlEntityType> getEntities() {
+	std::unordered_map<std::string, EntityType> getEntities() {
 		return entities;
 	}
 

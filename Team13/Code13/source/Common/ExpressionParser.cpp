@@ -1,25 +1,22 @@
 #include "ExpressionParser.h"
 
-const std::string ExpressionParser::LEFT_BRACKET = "(";
-const std::string ExpressionParser::RIGHT_BRACKET = ")";
-
-const std::vector<std::string> ExpressionParser::termOperators = { "*", "/", "%" };
-const std::vector<std::string> ExpressionParser::exprOperators = { "+", "-" };
+const std::vector<std::string> ExpressionParser::TERM_OPERATORS = { "*", "/", "%" };
+const std::vector<std::string> ExpressionParser::EXPR_OPERATORS = { "+", "-" };
 
 ExprNode* ExpressionParser::matchFactor(Lexer& lexer) {
 	std::string varName = lexer.nextName();
 	if (!varName.empty()) {
-		return new ExprNode(ExprNodeValueType::varName, varName);
+		return new ExprNode(ExprNodeValueType::VAR_NAME, varName);
 	}
 
 	std::string constVal = lexer.nextInteger();
 	if (!constVal.empty()) {
-		return new ExprNode(ExprNodeValueType::constValue, constVal);
+		return new ExprNode(ExprNodeValueType::CONST_VALUE, constVal);
 	}
 
-	if (lexer.match(LEFT_BRACKET)) {
+	if (lexer.match(Common::LEFT_BRACKET)) {
 		ExprNode* expr = matchExpr(lexer);
-		if (!lexer.match(RIGHT_BRACKET)) {
+		if (!lexer.match(Common::RIGHT_BRACKET)) {
 			throw ExpressionException(ExpressionException::INVALID_EXPR);
 		}
 		return expr;
@@ -29,10 +26,10 @@ ExprNode* ExpressionParser::matchFactor(Lexer& lexer) {
 }
 
 ExprNode* ExpressionParser::matchTermTail(Lexer& lexer, ExprNode* lvalue) {
-	for (const std::string op : termOperators) {
+	for (const std::string op : TERM_OPERATORS) {
 		if (lexer.match(op)) {
 			ExprNode* factor = matchFactor(lexer);
-			ExprNode* arithOp = new ExprNode(ExprNodeValueType::arithmeticOperator, op);
+			ExprNode* arithOp = new ExprNode(ExprNodeValueType::ARITHMETIC_OPERATOR, op);
 			arithOp->addChild(lvalue);
 			arithOp->addChild(factor);
 			return matchTermTail(lexer, arithOp);
@@ -48,10 +45,10 @@ ExprNode* ExpressionParser::matchTerm(Lexer& lexer) {
 }
 
 ExprNode* ExpressionParser::matchExprTail(Lexer& lexer, ExprNode* lvalue) {
-	for (const std::string op : exprOperators) {
+	for (const std::string op : EXPR_OPERATORS) {
 		if (lexer.match(op)) {
 			ExprNode* term = matchTerm(lexer);
-			ExprNode* arithOp = new ExprNode(ExprNodeValueType::arithmeticOperator, op);
+			ExprNode* arithOp = new ExprNode(ExprNodeValueType::ARITHMETIC_OPERATOR, op);
 			arithOp->addChild(lvalue);
 			arithOp->addChild(term);
 			return matchExprTail(lexer, arithOp);

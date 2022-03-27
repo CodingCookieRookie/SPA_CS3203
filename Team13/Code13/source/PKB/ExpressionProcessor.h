@@ -6,7 +6,7 @@
 #include "../Common/Types.h"
 
 enum class OperatorPriority {
-	low, medium, high
+	LOW, MEDIUM, HIGH
 };
 
 class ExpressionProcessor {

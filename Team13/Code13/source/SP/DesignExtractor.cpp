@@ -52,7 +52,7 @@ StmtIndex DesignExtractor::processStmtNode(
 	insertPattern(stmtNode, stmtIndex);
 
 	/* Populates callsProcNameMap only if current stmt is a call stmt */
-	if (stmtNode->getStmtType() == StatementType::callType) {
+	if (stmtNode->getStmtType() == StatementType::CALL_TYPE) {
 		callsProcNameMap[stmtIndex] = stmtNode->getProcCalled();
 	}
 
@@ -65,15 +65,15 @@ StmtIndex DesignExtractor::insertStmt(StmtNode* stmtNode) {
 	StatementType stmtType = stmtNode->getStmtType();
 
 	switch (stmtType) {
-	case StatementType::readType:
+	case StatementType::READ_TYPE:
 		nameValue = *stmtNode->getModifiesVars().begin();
 		stmtIndex = Entity::insertStmt(stmtType, nameValue);
 		break;
-	case StatementType::printType:
+	case StatementType::PRINT_TYPE:
 		nameValue = *stmtNode->getUsesVars().begin();
 		stmtIndex = Entity::insertStmt(stmtType, nameValue);
 		break;
-	case StatementType::callType:
+	case StatementType::CALL_TYPE:
 		nameValue = stmtNode->getProcCalled();
 		stmtIndex = Entity::insertStmt(stmtType, nameValue);
 		break;
@@ -86,9 +86,9 @@ StmtIndex DesignExtractor::insertStmt(StmtNode* stmtNode) {
 }
 
 void DesignExtractor::insertConst(StmtNode* stmtNode) {
-	std::unordered_set<std::string> consts = stmtNode->getConsts();
-	for (const std::string& constName : consts) {
-		Entity::insertConst(stoi(constName));
+	std::unordered_set<std::string> usesConsts = stmtNode->getUsesConsts();
+	for (const std::string& usesConst : usesConsts) {
+		Entity::insertConst(stoi(usesConst));
 	}
 }
 
@@ -124,10 +124,10 @@ void DesignExtractor::insertUses(StmtNode* stmtNode, StmtIndex& stmtIndex) {
 		VarIndex varIndex = Entity::insertVar(varName);
 		UsesS::insert(stmtIndex, varIndex);
 		switch (stmtNode->getStmtType()) {
-		case StatementType::ifType:
+		case StatementType::IF_TYPE:
 			Pattern::insertIfInfo(stmtIndex, varIndex);
 			break;
-		case StatementType::whileType:
+		case StatementType::WHILE_TYPE:
 			Pattern::insertWhileInfo(stmtIndex, varIndex);
 			break;
 		}
@@ -204,7 +204,7 @@ CFG DesignExtractor::generateCFG(StmtLstNode* stmtLstNode) {
 	CFGNode* tail = nullptr;
 	std::set<StmtIndex> stmtIndices;
 	for (StmtNode* stmtNode : stmtLstNode->getStmtNodes()) {
-		if (stmtNode->getStmtType() == StatementType::ifType) {
+		if (stmtNode->getStmtType() == StatementType::IF_TYPE) {
 			/* Add CFG node for previous non-container statements */
 			processCFGStmtIndices(stmtIndices, head, tail);
 
@@ -228,7 +228,7 @@ CFG DesignExtractor::generateCFG(StmtLstNode* stmtLstNode) {
 			thenCFG.addToEnd(dummy);
 			elseCFG.addToEnd(dummy);
 			tail = dummy;
-		} else if (stmtNode->getStmtType() == StatementType::whileType) {
+		} else if (stmtNode->getStmtType() == StatementType::WHILE_TYPE) {
 			/* Add CFG node for previous non-container statements */
 			processCFGStmtIndices(stmtIndices, head, tail);
 

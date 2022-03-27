@@ -23,9 +23,9 @@ void EvaluatedTable::removeDuplicates() {
 }
 
 void EvaluatedTable::prepopulate(std::unordered_map<std::string, std::vector<int>>& nextTable,
-	std::unordered_map<std::string, PqlEntityType>& nextEntities,
+	std::unordered_map<std::string, EntityType>& nextEntities,
 	std::unordered_map<std::string, std::vector<int>>& currTable,
-	std::unordered_map<std::string, PqlEntityType>& currEntities) {
+	std::unordered_map<std::string, EntityType>& currEntities) {
 	for (const std::pair<std::string, std::vector<int>>& column : currTable) {
 		std::string entityName = column.first;
 		if (nextTable.find(entityName) == nextTable.end()) {
@@ -38,7 +38,7 @@ void EvaluatedTable::prepopulate(std::unordered_map<std::string, std::vector<int
 EvaluatedTable EvaluatedTable::blockNestedJoin(EvaluatedTable& otherTable,
 	std::unordered_set<std::string>& commonEntities) {
 	std::unordered_map<std::string, std::vector<int>> nextTable;
-	std::unordered_map<std::string, PqlEntityType> nextEntities;
+	std::unordered_map<std::string, EntityType> nextEntities;
 	prepopulate(nextTable, nextEntities, table, entities);
 	prepopulate(nextTable, nextEntities, otherTable.table, otherTable.entities);
 
@@ -91,7 +91,7 @@ EvaluatedTable EvaluatedTable::innerJoinMerge(EvaluatedTable& otherTable) {
 		return EvaluatedTable(entities, table);
 	}
 	std::unordered_set<std::string> commonEntities;
-	for (const std::pair<std::string, PqlEntityType>& taggedEntity : entities) {
+	for (const std::pair<std::string, EntityType>& taggedEntity : entities) {
 		std::string entityName = taggedEntity.first;
 		if (otherTable.entities.find(entityName) != otherTable.entities.end()) {
 			commonEntities.insert(entityName);
@@ -118,7 +118,7 @@ bool EvaluatedTable::isNoValuesInResultTable(
 EvaluatedTable::EvaluatedTable() : EvaluatedTable(true) {}
 
 EvaluatedTable::EvaluatedTable(
-	std::unordered_map<std::string, PqlEntityType> newEntities,
+	std::unordered_map<std::string, EntityType> newEntities,
 	std::unordered_map<std::string, std::vector<int>> newTable) :
 	table(newTable),
 	entities(newEntities),

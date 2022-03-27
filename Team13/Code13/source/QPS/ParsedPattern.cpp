@@ -2,7 +2,7 @@
 
 ParsedPattern::ParsedPattern(std::string& synonym, PqlReference entRef,
 	PqlExpression expressionSpec, int numOfArgs)
-	: ParsedPattern(synonym, PqlPatternType::Pattern, entRef, expressionSpec, numOfArgs) {}
+	: ParsedPattern(synonym, PqlPatternType::PATTERN, entRef, expressionSpec, numOfArgs) {}
 
 ParsedPattern::ParsedPattern(std::string& synonym, PqlPatternType patternType,
 	PqlReference entRef, PqlExpression expressionSpec, int numOfArgs)

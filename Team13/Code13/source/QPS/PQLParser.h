@@ -14,7 +14,7 @@ private:
 	/* Prevent instantiation of a PQLParser object */
 	PQLParser();
 
-	const static std::vector<std::pair<std::string, PqlEntityType>> designEntityMap;
+	const static std::vector<std::pair<std::string, EntityType>> designEntityMap;
 	const static std::vector<std::pair<std::string, PqlRelationshipType>> suchThatRelationshipMap;
 	const static std::vector<std::pair<std::string, PqlReferenceType>> attributeMap;
 	static Lexer lexer;

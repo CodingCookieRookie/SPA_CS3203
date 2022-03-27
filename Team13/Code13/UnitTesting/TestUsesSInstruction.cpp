@@ -26,13 +26,13 @@ public:
 	TEST_METHOD(execute_lhsSynonymRhsSynonymStmt) {
 		// 1. Setup:
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::Synonym, "a1");
-		rhsRef = std::make_pair(PqlReferenceType::Synonym, "v");
+		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
+		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "v");
 		Instruction* instruction = new UsesSInstruction(lhsRef, rhsRef);
 
 		// PKB inserts uses
-		Entity::insertStmt(StatementType::printType);   // insert dummy stmt
-		StmtIndex stmt = Entity::insertStmt(StatementType::readType);
+		Entity::insertStmt(StatementType::PRINT_TYPE);   // insert dummy stmt
+		StmtIndex stmt = Entity::insertStmt(StatementType::READ_TYPE);
 		Entity::insertVar("randomVar"); // insert dummy var
 		VarIndex varIndex = Entity::insertVar("v");
 		UsesS::insert(stmt, varIndex);
@@ -47,13 +47,13 @@ public:
 	TEST_METHOD(execute_lhsSynonymRhsIdentStmt) {
 		// 1. Setup:
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::Synonym, "a1");
-		rhsRef = std::make_pair(PqlReferenceType::Ident, "x");
+		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
+		rhsRef = std::make_pair(PqlReferenceType::IDENT, "x");
 		Instruction* instruction = new UsesSInstruction(lhsRef, rhsRef);
 
 		// PKB inserts uses
-		Entity::insertStmt(StatementType::readType);
-		StmtIndex stmt = Entity::insertStmt(StatementType::assignType);
+		Entity::insertStmt(StatementType::READ_TYPE);
+		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		Entity::insertVar("randomVar");
 		VarIndex varIndex = Entity::insertVar("x");
 		UsesS::insert(stmt, varIndex);
@@ -68,13 +68,13 @@ public:
 	TEST_METHOD(execute_lhsSynonymRhsWildCardStmt) {
 		// 1. Setup:
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::Synonym, "a1");
-		rhsRef = std::make_pair(PqlReferenceType::Wildcard, "_");
+		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
+		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		Instruction* instruction = new UsesSInstruction(lhsRef, rhsRef);
 
 		// PKB inserts uses
-		Entity::insertStmt(StatementType::printType);
-		StmtIndex stmt = Entity::insertStmt(StatementType::printType);
+		Entity::insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = Entity::insertStmt(StatementType::PRINT_TYPE);
 		Entity::insertVar("randomVar");
 		VarIndex varIndex = Entity::insertVar("x");
 		VarIndex varIndex2 = Entity::insertVar("y");
@@ -91,13 +91,13 @@ public:
 	TEST_METHOD(execute_lhsConstRhsSynonym_EvTableTrue) {
 		// 1. Setup:
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::Integer, "2");
-		rhsRef = std::make_pair(PqlReferenceType::Synonym, "a1");
+		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "2");
+		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
 		Instruction* instruction = new UsesSInstruction(lhsRef, rhsRef);
 
 		// PKB inserts uses
-		Entity::insertStmt(StatementType::printType);
-		StmtIndex stmt = Entity::insertStmt(StatementType::readType);
+		Entity::insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = Entity::insertStmt(StatementType::READ_TYPE);
 		Entity::insertVar("randomVar");
 		VarIndex varIndex = Entity::insertVar("x");
 		VarIndex varIndex2 = Entity::insertVar("y");
@@ -114,13 +114,13 @@ public:
 	TEST_METHOD(execute_lhsConstRhsSynonym_EvTableFalse) {
 		// 1. Setup:
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::Integer, "2");
-		rhsRef = std::make_pair(PqlReferenceType::Synonym, "a1");
+		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "2");
+		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
 		Instruction* instruction = new UsesSInstruction(lhsRef, rhsRef);
 
 		// PKB inserts uses
-		Entity::insertStmt(StatementType::printType);
-		StmtIndex stmt = Entity::insertStmt(StatementType::readType);
+		Entity::insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = Entity::insertStmt(StatementType::READ_TYPE);
 		Entity::insertVar("randomVar");
 		VarIndex varIndex = Entity::insertVar("x");
 		VarIndex varIndex2 = Entity::insertVar("y");
@@ -135,13 +135,13 @@ public:
 	TEST_METHOD(execute_lhsConstRhsSynonym_ConstOutOfBoundsEvTableFalse) {
 		// 1. Setup:
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::Integer, "50");
-		rhsRef = std::make_pair(PqlReferenceType::Synonym, "a1");
+		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "50");
+		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
 		Instruction* instruction = new UsesSInstruction(lhsRef, rhsRef);
 
 		// PKB inserts modifies
-		Entity::insertStmt(StatementType::printType);
-		StmtIndex stmt = Entity::insertStmt(StatementType::readType);
+		Entity::insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = Entity::insertStmt(StatementType::READ_TYPE);
 		Entity::insertVar("randomVar");
 		VarIndex varIndex = Entity::insertVar("x");
 		VarIndex varIndex2 = Entity::insertVar("y");
@@ -159,13 +159,13 @@ public:
 	TEST_METHOD(execute_lhsConstRhsSynonym_VarOutOfBoundsEvTableFalse) {
 		// 1. Setup:
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::Integer, "2");
-		rhsRef = std::make_pair(PqlReferenceType::Ident, "fhg");
+		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "2");
+		rhsRef = std::make_pair(PqlReferenceType::IDENT, "fhg");
 		Instruction* instruction = new UsesSInstruction(lhsRef, rhsRef);
 
 		// PKB inserts modifies
-		Entity::insertStmt(StatementType::printType);
-		StmtIndex stmt = Entity::insertStmt(StatementType::readType);
+		Entity::insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = Entity::insertStmt(StatementType::READ_TYPE);
 		Entity::insertVar("randomVar");
 		VarIndex varIndex = Entity::insertVar("x");
 		VarIndex varIndex2 = Entity::insertVar("y");
@@ -183,13 +183,13 @@ public:
 	TEST_METHOD(execute_lhsConstRhsWildcard_EvTableTrue) {
 		// 1. Setup:
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::Integer, "2");
-		rhsRef = std::make_pair(PqlReferenceType::Wildcard, "_");
+		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "2");
+		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		Instruction* instruction = new UsesSInstruction(lhsRef, rhsRef);
 
 		// PKB inserts uses
-		Entity::insertStmt(StatementType::printType);
-		StmtIndex stmt = Entity::insertStmt(StatementType::readType);
+		Entity::insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = Entity::insertStmt(StatementType::READ_TYPE);
 		Entity::insertVar("randomVar");
 		VarIndex varIndex = Entity::insertVar("x");
 		VarIndex varIndex2 = Entity::insertVar("y");
@@ -207,13 +207,13 @@ public:
 	TEST_METHOD(execute_lhsConstRhsWildcard_EvTableFalse) {
 		// 1. Setup:
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::Integer, "2");
-		rhsRef = std::make_pair(PqlReferenceType::Wildcard, "_");
+		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "2");
+		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		Instruction* instruction = new UsesSInstruction(lhsRef, rhsRef);
 
 		// PKB inserts uses
-		Entity::insertStmt(StatementType::printType);
-		StmtIndex stmt = Entity::insertStmt(StatementType::readType);
+		Entity::insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = Entity::insertStmt(StatementType::READ_TYPE);
 		Entity::insertVar("randomVar");
 		VarIndex varIndex = Entity::insertVar("x");
 		VarIndex varIndex2 = Entity::insertVar("y");

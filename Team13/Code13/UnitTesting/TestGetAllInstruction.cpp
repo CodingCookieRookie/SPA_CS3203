@@ -22,12 +22,12 @@ public:
 	TEST_METHOD(executeGetAllInstruction_getAllStmt_evaluatedTableFormed) {
 		// 1. Setup:
 		// The 'Select s1' portion of the query
-		Instruction* instruction = new GetAllInstruction(PqlEntityType::Stmt, "s1");
+		Instruction* instruction = new GetAllInstruction(EntityType::STMT, "s1");
 
 		// PKB inserts 5 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 5; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
 		}
 
 		// 2. Main test:
@@ -40,7 +40,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("s1") != tableRef.end());
 
-		// Test Entities: std::unordered_map<std::string, PqlEntityType>
+		// Test Entities: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 1, 2, 3, 4, 5 };
 		auto actualValues = tableRef.at("s1");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -54,15 +54,15 @@ public:
 	TEST_METHOD(executeGetAllInstruction_getAllPrintsStress_evaluatedTableFormed) {
 		// 1. Setup:
 		// The 'Select pn1' portion of the query
-		Instruction* instruction = new GetAllInstruction(PqlEntityType::Print, "pn1");
+		Instruction* instruction = new GetAllInstruction(EntityType::PRINT, "pn1");
 
 		// PKB inserts 99 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 49; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::printType));
+			stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
 		}
 		for (int i = 0; i < 50; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::assignType)); // extra
+			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE)); // extra
 		}
 
 		// 2. Main test:
@@ -75,7 +75,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("pn1") != tableRef.end());
 
-		// Test Entities: std::unordered_map<std::string, PqlEntityType>
+		// Test Entities: std::unordered_map<std::string, EntityType>
 		std::vector<int> pn1values;
 		for (int i = 0; i < 49; i++) {
 			pn1values.emplace_back(i + 1);
@@ -95,7 +95,7 @@ public:
 	TEST_METHOD(executeGetAllInstruction_getAllVarStress_evaluatedTableFormed) {
 		// 1. Setup:
 		// The 'Select pn1' portion of the query
-		Instruction* instruction = new GetAllInstruction(PqlEntityType::Variable, "v1");
+		Instruction* instruction = new GetAllInstruction(EntityType::VARIABLE, "v1");
 
 		// PKB inserts 99 statements
 		std::vector<VarIndex> vars;
@@ -117,7 +117,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("v1") != tableRef.end());
 
-		// Test Entities: std::unordered_map<std::string, PqlEntityType>
+		// Test Entities: std::unordered_map<std::string, EntityType>
 		std::vector<int> v1values;
 		for (int i = 0; i < 99; i++) {
 			v1values.emplace_back(i + 1);
@@ -137,7 +137,7 @@ public:
 	TEST_METHOD(executeGetAllInstruction_getAllConstStress_evaluatedTableFormed) {
 		// 1. Setup:
 		// The 'Select pn1' portion of the query
-		Instruction* instruction = new GetAllInstruction(PqlEntityType::Constant, "c1");
+		Instruction* instruction = new GetAllInstruction(EntityType::CONSTANT, "c1");
 
 		// PKB inserts 99 statements
 		for (int i = 0; i < 99; i++) {
@@ -154,7 +154,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("c1") != tableRef.end());
 
-		// Test Entities: std::unordered_map<std::string, PqlEntityType>
+		// Test Entities: std::unordered_map<std::string, EntityType>
 		std::vector<int> c1values;
 		for (int i = 0; i < 99; i++) {
 			c1values.emplace_back(i + 1);

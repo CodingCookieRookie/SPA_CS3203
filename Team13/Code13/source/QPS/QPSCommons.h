@@ -5,53 +5,53 @@
 #include "../Common/Types.h"
 
 enum class InstructionType {
-	getAll, relationship, pattern
+	GET_ALL, RELATIONSHIP, PATTERN
 };
 
 enum class RelationshipInstructionType {
-	getFollows, getFollowsT, getParent, getParentT,
-	getUsesS, getUsesP, getModifiesS, getModifiesP,
-	getUses, getModifies
+	GET_FOLLOWS, GET_FOLLOWS_T, GET_PARENT, GET_PARENT_T,
+	GET_USES_S, GET_USES_P, GET_MODIFIES_S, GET_MODIFIES_P,
+	GET_USES, GET_MODIFIES
 };
 
 enum class PatternInstructionType {
-	getPattern
+	GET_PATTERN
 };
 
 enum class PqlRelationshipType {
-	Follows, FollowsT, Parent, ParentT,
-	UsesS, UsesP, ModifiesS, ModifiesP,
-	Calls, CallsT, Next, NextT,
-	Affects, AffectsT,
-	Uses, Modifies
+	FOLLOWS, FOLLOWS_T, PARENT, PARENT_T,
+	USES_S, USES_P, MODIFIES_S, MODIFIES_P,
+	CALLS, CALLS_T, NEXT, NEXT_T,
+	AFFECTS, AFFECTS_T,
+	USES, MODIFIES
 };
 
 enum class PqlPatternType {
-	Pattern, PatternA, PatternI, PatternW
+	PATTERN, PATTERN_A, PATTERN_I, PATTERN_W
 };
 
 enum class PqlReferenceType {
-	Synonym, Wildcard, Integer, Ident,
-	ProcName, VarName, Value, StmtNum
+	SYNONYM, WILDCARD, INTEGER, IDENT,
+	PROC_NAME, VAR_NAME, VALUE, STMT_NUM
 };
 
 enum class PqlExpressionType {
-	Full, Partial, Wildcard
+	FULL, PARTIAL, WILDCARD
 };
 
 enum class PqlAttributeType {
-	String, Integer, Unvalidated
+	STRING, INTEGER, UNVALIDATED
 };
 
 enum class ProjectionType {
-	single, tuple, boolean
+	SINGLE, TUPLE, BOOLEAN
 };
 
-typedef std::pair<PqlEntityType, std::string> PqlEntity;
+typedef std::pair<EntityType, std::string> PqlEntity;
 
 typedef std::pair<PqlReferenceType, std::string> PqlReference;
 
 typedef std::pair<PqlExpressionType, std::string> PqlExpression;
 
 bool isSynonymRef(PqlReference reference);
-bool isStatementEntity(PqlEntityType entityType);
+bool isStatementEntity(EntityType entityType);

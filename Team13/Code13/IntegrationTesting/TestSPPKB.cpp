@@ -90,7 +90,7 @@ private:
 		"         cenX = cenX / count; \n "
 		"         cenY = cenY / count; \n "
 		" 	  } \n "
-		"      normSq = cenX \ * cenX + cenY \ * cenY; \n "
+		"      normSq = cenX * cenX + cenY * cenY; \n "
 		"} \n ";
 
 	const char* mixedStmtsSource = "procedure computeCentroid { \n "
@@ -258,6 +258,7 @@ public:
 		std::string varName1 = "num1";
 		std::string varName2 = "ave";
 		std::string procName = "computeAverage";
+		VarIndex constVal = 3;
 
 		ProcIndex procIdx = ProcIndex(1);
 
@@ -268,18 +269,19 @@ public:
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
 
 		Assert::AreEqual(size_t(6), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::callType).size());
-		Assert::AreEqual(size_t(3), Entity::getStmtIdxFromType(StatementType::readType).size());
-		Assert::AreEqual(size_t(2), Entity::getStmtIdxFromType(StatementType::assignType).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::printType).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::whileType).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::ifType).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::CALL_TYPE).size());
+		Assert::AreEqual(size_t(3), Entity::getStmtIdxFromType(StatementType::READ_TYPE).size());
+		Assert::AreEqual(size_t(2), Entity::getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
+		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::PRINT_TYPE).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::WHILE_TYPE).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
 
 		Assert::AreEqual(size_t(5), Entity::getAllVars().size());
 		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[0]));
 		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[4]));
 
 		Assert::AreEqual(size_t(1), Entity::getAllConsts().size());
+		Assert::AreEqual(constVal, Entity::getAllConsts()[0]);
 
 		Assert::AreEqual(size_t(6), Entity::getAllProcStmts()[procIdx].size());
 		Assert::AreEqual(size_t(6), Entity::getStmtsFromProc(procIdx).size());
@@ -303,15 +305,15 @@ public:
 
 		Assert::AreEqual(varName1, Attribute::getAttributeNameByStmtIdx(stmtIdx1));
 		Assert::AreEqual(varName2, Attribute::getAttributeNameByStmtIdx(stmtIdx6));
-		Assert::IsTrue(std::vector{ stmtIdx1 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Read, varName1));
-		Assert::IsTrue(std::vector{ stmtIdx6 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Print, varName2));
-		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Procedure, procName));
-		Assert::IsTrue(std::vector{ 3 } == Attribute::getEqualIntegerAttributes(PqlEntityType::Constant, PqlEntityType::Stmt));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Stmt, 3));
-		Assert::IsFalse(Attribute::hasEqualIntegerAttribute(PqlEntityType::Stmt, 7));
-		Assert::IsFalse(Attribute::hasEqualIntegerAttribute(PqlEntityType::Assign, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Read, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Constant, 3));
+		Assert::IsTrue(std::vector{ stmtIdx1 } == Attribute::getEqualNameAttributesFromName(EntityType::READ, varName1));
+		Assert::IsTrue(std::vector{ stmtIdx6 } == Attribute::getEqualNameAttributesFromName(EntityType::PRINT, varName2));
+		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
+		Assert::IsTrue(std::vector{ 3 } == Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 3));
+		Assert::IsFalse(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 7));
+		Assert::IsFalse(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 3));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::READ, 3));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 3));
 	}
 
 	TEST_METHOD(blackBoxSampleSource1_checkPattern) {
@@ -419,6 +421,8 @@ public:
 		std::string varName1 = "num1";
 		std::string varName2 = "temp";
 		std::string procName = "printAscending";
+		VarIndex constVal1 = 0;
+		VarIndex constVal2 = 1;
 
 		ProcIndex procIdx = ProcIndex(1);
 
@@ -429,18 +433,20 @@ public:
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
 
 		Assert::AreEqual(size_t(11), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::callType).size());
-		Assert::AreEqual(size_t(2), Entity::getStmtIdxFromType(StatementType::readType).size());
-		Assert::AreEqual(size_t(5), Entity::getStmtIdxFromType(StatementType::assignType).size());
-		Assert::AreEqual(size_t(3), Entity::getStmtIdxFromType(StatementType::printType).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::whileType).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::ifType).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::CALL_TYPE).size());
+		Assert::AreEqual(size_t(2), Entity::getStmtIdxFromType(StatementType::READ_TYPE).size());
+		Assert::AreEqual(size_t(5), Entity::getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
+		Assert::AreEqual(size_t(3), Entity::getStmtIdxFromType(StatementType::PRINT_TYPE).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::WHILE_TYPE).size());
+		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
 
 		Assert::AreEqual(size_t(4), Entity::getAllVars().size());
 		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[0]));
 		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[3]));
 
 		Assert::AreEqual(size_t(2), Entity::getAllConsts().size());
+		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
+		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
 
 		Assert::AreEqual(size_t(11), Entity::getAllProcStmts()[procIdx].size());
 		Assert::AreEqual(size_t(11), Entity::getStmtsFromProc(procIdx).size());
@@ -469,16 +475,16 @@ public:
 		Assert::AreEqual(varName1, Attribute::getAttributeNameByStmtIdx(stmtIdx9));
 		Assert::AreEqual(varName2, Attribute::getAttributeNameByStmtIdx(stmtIdx10));
 		Assert::AreEqual(varName4, Attribute::getAttributeNameByStmtIdx(stmtIdx11));
-		Assert::IsTrue(std::vector{ stmtIdx1 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Read, varName1));
-		Assert::IsTrue(std::vector{ stmtIdx2 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Read, varName2));
-		Assert::IsTrue(std::vector{ stmtIdx9 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Print, varName1));
-		Assert::IsTrue(std::vector{ stmtIdx10 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Print, varName2));
-		Assert::IsTrue(std::vector{ stmtIdx11 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Print, varName4));
-		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Procedure, procName));
-		Assert::IsTrue(std::vector{ 1 } == Attribute::getEqualIntegerAttributes(PqlEntityType::Constant, PqlEntityType::Stmt));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Stmt, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Assign, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Constant, 1));
+		Assert::IsTrue(std::vector{ stmtIdx1 } == Attribute::getEqualNameAttributesFromName(EntityType::READ, varName1));
+		Assert::IsTrue(std::vector{ stmtIdx2 } == Attribute::getEqualNameAttributesFromName(EntityType::READ, varName2));
+		Assert::IsTrue(std::vector{ stmtIdx9 } == Attribute::getEqualNameAttributesFromName(EntityType::PRINT, varName1));
+		Assert::IsTrue(std::vector{ stmtIdx10 } == Attribute::getEqualNameAttributesFromName(EntityType::PRINT, varName2));
+		Assert::IsTrue(std::vector{ stmtIdx11 } == Attribute::getEqualNameAttributesFromName(EntityType::PRINT, varName4));
+		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
+		Assert::IsTrue(std::vector{ 1 } == Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 3));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 3));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 1));
 	}
 
 	TEST_METHOD(blackBoxSampleSource2_checkPattern) {
@@ -599,6 +605,8 @@ public:
 		std::string varName1 = "number";
 		std::string varName2 = "digit";
 		std::string procName = "sumDigits";
+		VarIndex constVal1 = 0;
+		VarIndex constVal2 = 10;
 
 		ProcIndex procIdx = ProcIndex(1);
 
@@ -609,18 +617,20 @@ public:
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
 
 		Assert::AreEqual(size_t(7), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::callType).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::readType).size());
-		Assert::AreEqual(size_t(4), Entity::getStmtIdxFromType(StatementType::assignType).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::printType).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::whileType).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::ifType).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::CALL_TYPE).size());
+		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::READ_TYPE).size());
+		Assert::AreEqual(size_t(4), Entity::getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
+		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::PRINT_TYPE).size());
+		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::WHILE_TYPE).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
 
 		Assert::AreEqual(size_t(3), Entity::getAllVars().size());
 		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[0]));
 		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[2]));
 
 		Assert::AreEqual(size_t(2), Entity::getAllConsts().size());
+		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
+		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
 
 		Assert::AreEqual(size_t(7), Entity::getAllProcStmts()[procIdx].size());
 		Assert::AreEqual(size_t(7), Entity::getStmtsFromProc(procIdx).size());
@@ -643,16 +653,16 @@ public:
 
 		Assert::AreEqual(varName1, Attribute::getAttributeNameByStmtIdx(stmtIdx1));
 		Assert::AreEqual(varName2, Attribute::getAttributeNameByStmtIdx(stmtIdx7));
-		Assert::IsTrue(std::vector{ stmtIdx1 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Read, varName1));
-		Assert::IsTrue(std::vector{ stmtIdx7 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Print, varName2));
-		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Procedure, procName));
-		Assert::AreEqual(size_t(0), Attribute::getEqualIntegerAttributes(PqlEntityType::Constant, PqlEntityType::Stmt).size());
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Stmt, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::While, 3));
-		Assert::IsFalse(Attribute::hasEqualIntegerAttribute(PqlEntityType::Assign, 0));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Constant, 0));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Constant, 10));
-		Assert::IsFalse(Attribute::hasEqualIntegerAttribute(PqlEntityType::Constant, 1));
+		Assert::IsTrue(std::vector{ stmtIdx1 } == Attribute::getEqualNameAttributesFromName(EntityType::READ, varName1));
+		Assert::IsTrue(std::vector{ stmtIdx7 } == Attribute::getEqualNameAttributesFromName(EntityType::PRINT, varName2));
+		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
+		Assert::AreEqual(size_t(0), Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT).size());
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 3));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::WHILE, 3));
+		Assert::IsFalse(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 0));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 0));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 10));
+		Assert::IsFalse(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 1));
 	}
 
 	TEST_METHOD(blackBoxSampleSource3_checkPattern) {
@@ -783,6 +793,8 @@ public:
 		std::string varName3 = "y";
 		std::string procName1 = "main";
 		std::string procName4 = "computeCentroid";
+		VarIndex constVal1 = 0;
+		VarIndex constVal2 = 1;
 
 		ProcIndex procIdx1 = ProcIndex(1);
 		ProcIndex procIdx2 = ProcIndex(2);
@@ -797,18 +809,20 @@ public:
 		Assert::AreEqual(procName4, Entity::getProcName(Entity::getAllProcs()[3]));
 
 		Assert::AreEqual(size_t(23), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(4), Entity::getStmtIdxFromType(StatementType::callType).size());
-		Assert::AreEqual(size_t(2), Entity::getStmtIdxFromType(StatementType::readType).size());
-		Assert::AreEqual(size_t(11), Entity::getStmtIdxFromType(StatementType::assignType).size());
-		Assert::AreEqual(size_t(4), Entity::getStmtIdxFromType(StatementType::printType).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::whileType).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::ifType).size());
+		Assert::AreEqual(size_t(4), Entity::getStmtIdxFromType(StatementType::CALL_TYPE).size());
+		Assert::AreEqual(size_t(2), Entity::getStmtIdxFromType(StatementType::READ_TYPE).size());
+		Assert::AreEqual(size_t(11), Entity::getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
+		Assert::AreEqual(size_t(4), Entity::getStmtIdxFromType(StatementType::PRINT_TYPE).size());
+		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::WHILE_TYPE).size());
+		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
 
 		Assert::AreEqual(size_t(7), Entity::getAllVars().size());
 		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[0]));
 		Assert::AreEqual(varName3, Entity::getVarName(Entity::getAllVars()[2]));
 
 		Assert::AreEqual(size_t(2), Entity::getAllConsts().size());
+		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
+		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
 
 		Assert::AreEqual(size_t(3), Entity::getStmtsFromProc(procIdx1).size());
 		Assert::AreEqual(size_t(2), Entity::getStmtsFromProc(procIdx2).size());
@@ -841,19 +855,19 @@ public:
 		Assert::AreEqual(varName2, Attribute::getAttributeNameByStmtIdx(stmtIdx4));
 		Assert::AreEqual(varName3, Attribute::getAttributeNameByStmtIdx(stmtIdx5));
 		Assert::AreEqual(varName1, Attribute::getAttributeNameByStmtIdx(stmtIdx6));
-		Assert::IsTrue(std::vector{ stmtIdx2 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Call, procName4));
-		Assert::IsTrue(std::vector{ stmtIdx3 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Call, procName3));
-		Assert::IsTrue(std::vector{ stmtIdx4 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Read, varName2));
-		Assert::IsTrue(std::vector{ stmtIdx5 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Read, varName3));
-		Assert::IsTrue(std::vector{ stmtIdx6 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Print, varName1));
-		Assert::IsTrue(std::vector{ procIdx1 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Procedure, procName1));
-		Assert::IsTrue(std::vector{ procIdx2 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Procedure, procName2));
-		Assert::IsTrue(std::vector{ 1 } == Attribute::getEqualIntegerAttributes(PqlEntityType::Constant, PqlEntityType::Stmt));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Stmt, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Call, 3));
-		Assert::IsFalse(Attribute::hasEqualIntegerAttribute(PqlEntityType::Assign, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Constant, 0));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Constant, 1));
+		Assert::IsTrue(std::vector{ stmtIdx2 } == Attribute::getEqualNameAttributesFromName(EntityType::CALL, procName4));
+		Assert::IsTrue(std::vector{ stmtIdx3 } == Attribute::getEqualNameAttributesFromName(EntityType::CALL, procName3));
+		Assert::IsTrue(std::vector{ stmtIdx4 } == Attribute::getEqualNameAttributesFromName(EntityType::READ, varName2));
+		Assert::IsTrue(std::vector{ stmtIdx5 } == Attribute::getEqualNameAttributesFromName(EntityType::READ, varName3));
+		Assert::IsTrue(std::vector{ stmtIdx6 } == Attribute::getEqualNameAttributesFromName(EntityType::PRINT, varName1));
+		Assert::IsTrue(std::vector{ procIdx1 } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName1));
+		Assert::IsTrue(std::vector{ procIdx2 } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName2));
+		Assert::IsTrue(std::vector{ 1 } == Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 3));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CALL, 3));
+		Assert::IsFalse(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 3));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 0));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 1));
 	}
 
 	TEST_METHOD(blackBoxSampleSource4_checkPattern) {
@@ -1039,6 +1053,10 @@ public:
 		std::string varName1 = "count";
 		std::string varName2 = "normSq";
 		std::string procName = "computeCentroid";
+		VarIndex constVal1 = 0;
+		VarIndex constVal2 = 5;
+		VarIndex constVal3 = 3;
+		VarIndex constVal4 = 1;
 
 		ProcIndex procIdx = ProcIndex(1);
 
@@ -1049,18 +1067,22 @@ public:
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
 
 		Assert::AreEqual(size_t(14), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::callType).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::readType).size());
-		Assert::AreEqual(size_t(11), Entity::getStmtIdxFromType(StatementType::assignType).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::printType).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::whileType).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::ifType).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::CALL_TYPE).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::READ_TYPE).size());
+		Assert::AreEqual(size_t(11), Entity::getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
+		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::PRINT_TYPE).size());
+		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::WHILE_TYPE).size());
+		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
 
 		Assert::AreEqual(size_t(7), Entity::getAllVars().size());
 		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[0]));
 		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[6]));
 
 		Assert::AreEqual(size_t(4), Entity::getAllConsts().size());
+		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
+		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
+		Assert::AreEqual(constVal3, Entity::getAllConsts()[2]);
+		Assert::AreEqual(constVal4, Entity::getAllConsts()[3]);
 
 		Assert::AreEqual(size_t(14), Entity::getAllProcStmts()[procIdx].size());
 		Assert::AreEqual(size_t(14), Entity::getStmtsFromProc(procIdx).size());
@@ -1079,14 +1101,14 @@ public:
 		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(varName1, Attribute::getAttributeNameByStmtIdx(stmtIdx13));
-		Assert::IsTrue(std::vector{ stmtIdx13 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Print, varName1));
-		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Procedure, procName));
-		Assert::IsTrue(std::vector{ 5, 3, 1 } == Attribute::getEqualIntegerAttributes(PqlEntityType::Constant, PqlEntityType::Stmt));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Stmt, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Assign, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Print, 13));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Constant, 1));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Constant, 5));
+		Assert::IsTrue(std::vector{ stmtIdx13 } == Attribute::getEqualNameAttributesFromName(EntityType::PRINT, varName1));
+		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
+		Assert::IsTrue(std::vector{ 5, 3, 1 } == Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 3));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 3));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::PRINT, 13));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 1));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 5));
 	}
 
 	TEST_METHOD(mixedStmtsSource_checkPattern) {
@@ -1225,6 +1247,11 @@ public:
 		std::string varName1 = "present";
 		std::string varName2 = "x";
 		std::string procName = "Peter";
+		VarIndex constVal1 = 0;
+		VarIndex constVal2 = 8;
+		VarIndex constVal3 = 4;
+		VarIndex constVal4 = 2;
+		VarIndex constVal5 = 1;
 
 		ProcIndex procIdx = ProcIndex(1);
 
@@ -1235,18 +1262,23 @@ public:
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
 
 		Assert::AreEqual(size_t(12), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::callType).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::readType).size());
-		Assert::AreEqual(size_t(8), Entity::getStmtIdxFromType(StatementType::assignType).size());
-		Assert::AreEqual(size_t(2), Entity::getStmtIdxFromType(StatementType::printType).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::whileType).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::ifType).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::CALL_TYPE).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::READ_TYPE).size());
+		Assert::AreEqual(size_t(8), Entity::getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
+		Assert::AreEqual(size_t(2), Entity::getStmtIdxFromType(StatementType::PRINT_TYPE).size());
+		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::WHILE_TYPE).size());
+		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
 
 		Assert::AreEqual(size_t(5), Entity::getAllVars().size());
 		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[0]));
 		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[4]));
 
 		Assert::AreEqual(size_t(5), Entity::getAllConsts().size());
+		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
+		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
+		Assert::AreEqual(constVal3, Entity::getAllConsts()[2]);
+		Assert::AreEqual(constVal4, Entity::getAllConsts()[3]);
+		Assert::AreEqual(constVal5, Entity::getAllConsts()[4]);
 
 		Assert::AreEqual(size_t(12), Entity::getAllProcStmts()[procIdx].size());
 		Assert::AreEqual(size_t(12), Entity::getStmtsFromProc(procIdx).size());
@@ -1265,15 +1297,15 @@ public:
 
 		Assert::AreEqual(varName1, Attribute::getAttributeNameByStmtIdx(stmtIdx1));
 		Assert::AreEqual(varName2, Attribute::getAttributeNameByStmtIdx(stmtIdx12));
-		Assert::IsTrue(std::vector{ stmtIdx1 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Print, varName1));
-		Assert::IsTrue(std::vector{ stmtIdx12 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Print, varName2));
-		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Procedure, procName));
-		Assert::IsTrue(std::vector{ 8, 4, 2, 1 } == Attribute::getEqualIntegerAttributes(PqlEntityType::Constant, PqlEntityType::Stmt));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Stmt, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Print, 1));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Print, 12));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Assign, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Constant, 8));
+		Assert::IsTrue(std::vector{ stmtIdx1 } == Attribute::getEqualNameAttributesFromName(EntityType::PRINT, varName1));
+		Assert::IsTrue(std::vector{ stmtIdx12 } == Attribute::getEqualNameAttributesFromName(EntityType::PRINT, varName2));
+		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
+		Assert::IsTrue(std::vector{ 8, 4, 2, 1 } == Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 3));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::PRINT, 1));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::PRINT, 12));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 3));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 8));
 	}
 
 	TEST_METHOD(nestedWhileIfSource_checkPattern) {
@@ -1440,6 +1472,8 @@ public:
 		std::string varName1 = "number";
 		std::string varName2 = "digit";
 		std::string procName = "sumDigits";
+		VarIndex constVal1 = 0;
+		VarIndex constVal2 = 10;
 
 		ProcIndex procIdx = ProcIndex(1);
 
@@ -1450,18 +1484,20 @@ public:
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
 
 		Assert::AreEqual(size_t(7), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::callType).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::readType).size());
-		Assert::AreEqual(size_t(4), Entity::getStmtIdxFromType(StatementType::assignType).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::printType).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::whileType).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::ifType).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::CALL_TYPE).size());
+		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::READ_TYPE).size());
+		Assert::AreEqual(size_t(4), Entity::getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
+		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::PRINT_TYPE).size());
+		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::WHILE_TYPE).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
 
 		Assert::AreEqual(size_t(3), Entity::getAllVars().size());
 		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[0]));
 		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[2]));
 
 		Assert::AreEqual(size_t(2), Entity::getAllConsts().size());
+		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
+		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
 
 		Assert::AreEqual(size_t(7), Entity::getAllProcStmts()[procIdx].size());
 		Assert::AreEqual(size_t(7), Entity::getStmtsFromProc(procIdx).size());
@@ -1482,17 +1518,17 @@ public:
 
 		Assert::AreEqual(varName1, Attribute::getAttributeNameByStmtIdx(stmtIdx1));
 		Assert::AreEqual(varName2, Attribute::getAttributeNameByStmtIdx(stmtIdx7));
-		Assert::IsTrue(std::vector{ stmtIdx1 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Read, varName1));
-		Assert::IsTrue(std::vector{ stmtIdx7 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Print, varName2));
-		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Procedure, procName));
-		Assert::AreEqual(size_t(0), Attribute::getEqualIntegerAttributes(PqlEntityType::Constant, PqlEntityType::Stmt).size());
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Stmt, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::While, 3));
-		Assert::IsFalse(Attribute::hasEqualIntegerAttribute(PqlEntityType::Assign, 3));
-		Assert::IsFalse(Attribute::hasEqualIntegerAttribute(PqlEntityType::Stmt, 8));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Read, 1));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Print, 7));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Constant, 0));
+		Assert::IsTrue(std::vector{ stmtIdx1 } == Attribute::getEqualNameAttributesFromName(EntityType::READ, varName1));
+		Assert::IsTrue(std::vector{ stmtIdx7 } == Attribute::getEqualNameAttributesFromName(EntityType::PRINT, varName2));
+		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
+		Assert::AreEqual(size_t(0), Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT).size());
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 3));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::WHILE, 3));
+		Assert::IsFalse(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 3));
+		Assert::IsFalse(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 8));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::READ, 1));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::PRINT, 7));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 0));
 	}
 
 	TEST_METHOD(multipleBracketsSource_checkPattern) {
@@ -1620,6 +1656,8 @@ public:
 		std::string varName2 = "if";
 		std::string varName3 = "procedure";
 		std::string procName = "procedure";
+		VarIndex constVal1 = 0;
+		VarIndex constVal2 = 1;
 
 		ProcIndex procIdx = ProcIndex(1);
 
@@ -1630,12 +1668,12 @@ public:
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
 
 		Assert::AreEqual(size_t(7), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::callType).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::readType).size());
-		Assert::AreEqual(size_t(5), Entity::getStmtIdxFromType(StatementType::assignType).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::printType).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::whileType).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::ifType).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::CALL_TYPE).size());
+		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::READ_TYPE).size());
+		Assert::AreEqual(size_t(5), Entity::getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
+		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::PRINT_TYPE).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::WHILE_TYPE).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
 
 		Assert::AreEqual(size_t(5), Entity::getAllVars().size());
 		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[0]));
@@ -1643,6 +1681,8 @@ public:
 		Assert::AreEqual(varName3, Entity::getVarName(Entity::getAllVars()[4]));
 
 		Assert::AreEqual(size_t(2), Entity::getAllConsts().size());
+		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
+		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
 
 		Assert::AreEqual(size_t(7), Entity::getAllProcStmts()[procIdx].size());
 		Assert::AreEqual(size_t(7), Entity::getStmtsFromProc(procIdx).size());
@@ -1662,20 +1702,20 @@ public:
 
 		Assert::AreEqual(varName1, Attribute::getAttributeNameByStmtIdx(stmtIdx1));
 		Assert::AreEqual(varName2, Attribute::getAttributeNameByStmtIdx(stmtIdx7));
-		Assert::IsTrue(std::vector{ stmtIdx1 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Read, varName1));
-		Assert::IsTrue(std::vector{ stmtIdx7 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Print, varName2));
-		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Procedure, procName));
-		Assert::IsTrue(std::vector{ 1 } == Attribute::getEqualIntegerAttributes(PqlEntityType::Constant, PqlEntityType::Stmt));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Read, 1));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Stmt, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Assign, 3));
-		Assert::IsFalse(Attribute::hasEqualIntegerAttribute(PqlEntityType::Print, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Assign, 2));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Assign, 4));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Assign, 5));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Assign, 6));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Constant, 0));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Constant, 1));
+		Assert::IsTrue(std::vector{ stmtIdx1 } == Attribute::getEqualNameAttributesFromName(EntityType::READ, varName1));
+		Assert::IsTrue(std::vector{ stmtIdx7 } == Attribute::getEqualNameAttributesFromName(EntityType::PRINT, varName2));
+		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
+		Assert::IsTrue(std::vector{ 1 } == Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::READ, 1));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 3));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 3));
+		Assert::IsFalse(Attribute::hasEqualIntegerAttribute(EntityType::PRINT, 3));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 2));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 4));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 5));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 6));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 0));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 1));
 	}
 
 	TEST_METHOD(sameKeywordNameSource_checkPattern) {
@@ -1796,8 +1836,9 @@ public:
 
 	TEST_METHOD(longAssignmentExprSource_checkEntities) {
 		std::string varName1 = "x";
-		std::string varName2 = "y";
+		std::string varName2 = "g";
 		std::string procName = "main";
+		VarIndex constVal = 9;
 
 		ProcIndex procIdx = ProcIndex(1);
 
@@ -1808,18 +1849,20 @@ public:
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
 
 		Assert::AreEqual(size_t(1), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::callType).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::readType).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::assignType).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::printType).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::whileType).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::ifType).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::CALL_TYPE).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::READ_TYPE).size());
+		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::PRINT_TYPE).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::WHILE_TYPE).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
 
+		/* ordering: x, a, y, b, z, c, d, f, g */
 		Assert::AreEqual(size_t(9), Entity::getAllVars().size());
 		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[0]));
 		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[8]));
 
 		Assert::AreEqual(size_t(1), Entity::getAllConsts().size());
+		Assert::AreEqual(constVal, Entity::getAllConsts()[0]);
 
 		Assert::AreEqual(size_t(1), Entity::getAllProcStmts()[procIdx].size());
 		Assert::AreEqual(size_t(1), Entity::getStmtsFromProc(procIdx).size());
@@ -1833,11 +1876,11 @@ public:
 		SourceAST ast = Parser::parse(longAssignmentExprSource);
 		DesignExtractor::extract(ast);
 
-		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Procedure, procName));
-		Assert::AreEqual(size_t(0), Attribute::getEqualIntegerAttributes(PqlEntityType::Constant, PqlEntityType::Stmt).size());
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Stmt, 1));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Assign, 1));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Constant, 9));
+		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
+		Assert::AreEqual(size_t(0), Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT).size());
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 1));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 1));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 9));
 	}
 
 	TEST_METHOD(longAssignmentExprSource_checkPattern) {
@@ -1921,7 +1964,7 @@ public:
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
 
 		Assert::AreEqual(size_t(1), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::readType).size());
+		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::READ_TYPE).size());
 
 		Assert::AreEqual(size_t(1), Entity::getAllVars().size());
 		Assert::AreEqual(varName, Entity::getVarName(Entity::getAllVars()[0]));
@@ -1943,10 +1986,10 @@ public:
 		DesignExtractor::extract(ast);
 
 		Assert::AreEqual(varName, Attribute::getAttributeNameByStmtIdx(stmtIdx));
-		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Procedure, procName));
-		Assert::AreEqual(size_t(0), Attribute::getEqualIntegerAttributes(PqlEntityType::Constant, PqlEntityType::Stmt).size());
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Stmt, 1));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Read, 1));
+		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
+		Assert::AreEqual(size_t(0), Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT).size());
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 1));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::READ, 1));
 	}
 
 	TEST_METHOD(longVarNameSource_checkPattern) {
@@ -2007,6 +2050,9 @@ public:
 		std::string varName1 = "present";
 		std::string varName2 = "y";
 		std::string procName = "Peter";
+		VarIndex constVal1 = 0;
+		VarIndex constVal2 = 8;
+		VarIndex constVal3 = 1;
 
 		ProcIndex procIdx = ProcIndex(1);
 
@@ -2017,18 +2063,21 @@ public:
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
 
 		Assert::AreEqual(size_t(11), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::callType).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::readType).size());
-		Assert::AreEqual(size_t(7), Entity::getStmtIdxFromType(StatementType::assignType).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::printType).size());
-		Assert::AreEqual(size_t(2), Entity::getStmtIdxFromType(StatementType::whileType).size());
-		Assert::AreEqual(size_t(2), Entity::getStmtIdxFromType(StatementType::ifType).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::CALL_TYPE).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::READ_TYPE).size());
+		Assert::AreEqual(size_t(7), Entity::getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::PRINT_TYPE).size());
+		Assert::AreEqual(size_t(2), Entity::getStmtIdxFromType(StatementType::WHILE_TYPE).size());
+		Assert::AreEqual(size_t(2), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
 
 		Assert::AreEqual(size_t(4), Entity::getAllVars().size());
 		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[0]));
 		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[3]));
 
 		Assert::AreEqual(size_t(3), Entity::getAllConsts().size());
+		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
+		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
+		Assert::AreEqual(constVal3, Entity::getAllConsts()[2]);
 
 		Assert::AreEqual(size_t(11), Entity::getAllProcStmts()[procIdx].size());
 		Assert::AreEqual(size_t(11), Entity::getStmtsFromProc(procIdx).size());
@@ -2044,15 +2093,15 @@ public:
 		SourceAST ast = Parser::parse(multipleNestingSource);
 		DesignExtractor::extract(ast);
 
-		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Procedure, procName));
-		Assert::IsTrue(std::vector{ 8, 1 } == Attribute::getEqualIntegerAttributes(PqlEntityType::Constant, PqlEntityType::Stmt));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Stmt, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::While, 1));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::If, 2));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Assign, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::While, 8));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Constant, 1));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Constant, 8));
+		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
+		Assert::IsTrue(std::vector{ 8, 1 } == Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 3));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::WHILE, 1));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::IF, 2));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 3));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::WHILE, 8));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 1));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 8));
 	}
 
 	TEST_METHOD(multipleNestingSource_checkPattern) {
@@ -2278,6 +2327,7 @@ public:
 		std::string varName1 = "v";
 		std::string varName2 = "V1";
 		std::string procName = "mAin";
+		VarIndex constVal = 1;
 
 		ProcIndex procIdx = ProcIndex(1);
 
@@ -2289,18 +2339,19 @@ public:
 		Assert::IsFalse("main" == Entity::getProcName(Entity::getAllProcs()[0]));
 
 		Assert::AreEqual(size_t(4), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::callType).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::readType).size());
-		Assert::AreEqual(size_t(4), Entity::getStmtIdxFromType(StatementType::assignType).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::printType).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::whileType).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::ifType).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::CALL_TYPE).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::READ_TYPE).size());
+		Assert::AreEqual(size_t(4), Entity::getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::PRINT_TYPE).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::WHILE_TYPE).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
 
 		Assert::AreEqual(size_t(4), Entity::getAllVars().size());
 		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[0]));
 		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[3]));
 
 		Assert::AreEqual(size_t(1), Entity::getAllConsts().size());
+		Assert::AreEqual(constVal, Entity::getAllConsts()[0]);
 
 		Assert::AreEqual(size_t(4), Entity::getAllProcStmts()[procIdx].size());
 		Assert::AreEqual(size_t(4), Entity::getStmtsFromProc(procIdx).size());
@@ -2316,12 +2367,12 @@ public:
 		SourceAST ast = Parser::parse(differentCasingNamesSource);
 		DesignExtractor::extract(ast);
 
-		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Procedure, procName));
-		Assert::IsTrue(std::vector{ 1 } == Attribute::getEqualIntegerAttributes(PqlEntityType::Constant, PqlEntityType::Stmt));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Stmt, 3));
-		Assert::IsFalse(Attribute::hasEqualIntegerAttribute(PqlEntityType::Stmt, 5));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Assign, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Constant, 1));
+		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
+		Assert::IsTrue(std::vector{ 1 } == Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 3));
+		Assert::IsFalse(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 5));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 3));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 1));
 	}
 
 	TEST_METHOD(differentCasingNamesSource_checkPattern) {
@@ -2422,6 +2473,7 @@ public:
 	TEST_METHOD(multipleWhitespacesSource_checkEntities) {
 		std::string varName = "v";
 		std::string procName = "main";
+		VarIndex constVal = 0;
 
 		ProcIndex procIdx = ProcIndex(1);
 
@@ -2432,17 +2484,18 @@ public:
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
 
 		Assert::AreEqual(size_t(3), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::readType).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::assignType).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::printType).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::callType).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::whileType).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::ifType).size());
+		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::READ_TYPE).size());
+		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
+		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::PRINT_TYPE).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::CALL_TYPE).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::WHILE_TYPE).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
 
 		Assert::AreEqual(size_t(1), Entity::getAllVars().size());
 		Assert::AreEqual(varName, Entity::getVarName(Entity::getAllVars()[0]));
 
 		Assert::AreEqual(size_t(1), Entity::getAllConsts().size());
+		Assert::AreEqual(constVal, Entity::getAllConsts()[0]);
 
 		Assert::AreEqual(size_t(3), Entity::getAllProcStmts()[procIdx].size());
 		Assert::AreEqual(size_t(3), Entity::getStmtsFromProc(procIdx).size());
@@ -2463,15 +2516,15 @@ public:
 		Assert::AreEqual(varName, Attribute::getAttributeNameByStmtIdx(stmtIdx1));
 		Assert::IsFalse(varName == Attribute::getAttributeNameByStmtIdx(stmtIdx2));
 		Assert::AreEqual(varName, Attribute::getAttributeNameByStmtIdx(stmtIdx3));
-		Assert::IsTrue(std::vector{ stmtIdx1 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Read, varName));
-		Assert::IsTrue(std::vector{ stmtIdx3 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Print, varName));
-		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Procedure, procName));
-		Assert::AreEqual(size_t(0), Attribute::getEqualIntegerAttributes(PqlEntityType::Constant, PqlEntityType::Stmt).size());
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Stmt, 2));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Read, 1));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Assign, 2));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Print, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Constant, 0));
+		Assert::IsTrue(std::vector{ stmtIdx1 } == Attribute::getEqualNameAttributesFromName(EntityType::READ, varName));
+		Assert::IsTrue(std::vector{ stmtIdx3 } == Attribute::getEqualNameAttributesFromName(EntityType::PRINT, varName));
+		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
+		Assert::AreEqual(size_t(0), Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT).size());
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 2));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::READ, 1));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 2));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::PRINT, 3));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 0));
 	}
 
 	TEST_METHOD(multipleWhitespacesSource_checkPattern) {
@@ -2561,12 +2614,12 @@ public:
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
 
 		Assert::AreEqual(size_t(6), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::readType).size());
-		Assert::AreEqual(size_t(2), Entity::getStmtIdxFromType(StatementType::assignType).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::printType).size());
-		Assert::AreEqual(size_t(3), Entity::getStmtIdxFromType(StatementType::callType).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::whileType).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::ifType).size());
+		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::READ_TYPE).size());
+		Assert::AreEqual(size_t(2), Entity::getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::PRINT_TYPE).size());
+		Assert::AreEqual(size_t(3), Entity::getStmtIdxFromType(StatementType::CALL_TYPE).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::WHILE_TYPE).size());
+		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
 
 		Assert::AreEqual(size_t(3), Entity::getAllVars().size());
 		Assert::AreEqual(varName, Entity::getVarName(Entity::getAllVars()[0]));
@@ -2602,23 +2655,23 @@ public:
 		Assert::AreEqual(procName2, Attribute::getAttributeNameByStmtIdx(stmtIdx1));
 		Assert::AreEqual(procName3, Attribute::getAttributeNameByStmtIdx(stmtIdx2));
 		Assert::AreEqual(procName4, Attribute::getAttributeNameByStmtIdx(stmtIdx3));
-		Assert::IsTrue(std::vector{ stmtIdx1 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Call, procName2));
-		Assert::IsTrue(std::vector{ stmtIdx2 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Call, procName3));
-		Assert::IsTrue(std::vector{ stmtIdx3 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Call, procName4));
-		Assert::IsTrue(std::vector{ stmtIdx5 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Read, varName));
-		Assert::IsTrue(std::vector{ procIdx1 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Procedure, procName1));
-		Assert::IsTrue(std::vector{ procIdx2 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Procedure, procName2));
-		Assert::IsTrue(std::vector{ procIdx3 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Procedure, procName3));
-		Assert::IsTrue(std::vector{ procIdx4 } == Attribute::getEqualNameAttributesFromName(PqlEntityType::Procedure, procName4));
-		Assert::IsTrue(std::vector{ 2 } == Attribute::getEqualIntegerAttributes(PqlEntityType::Constant, PqlEntityType::Stmt));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Stmt, 2));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Call, 1));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Call, 2));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Call, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Assign, 4));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Read, 5));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Assign, 6));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(PqlEntityType::Constant, 2));
+		Assert::IsTrue(std::vector{ stmtIdx1 } == Attribute::getEqualNameAttributesFromName(EntityType::CALL, procName2));
+		Assert::IsTrue(std::vector{ stmtIdx2 } == Attribute::getEqualNameAttributesFromName(EntityType::CALL, procName3));
+		Assert::IsTrue(std::vector{ stmtIdx3 } == Attribute::getEqualNameAttributesFromName(EntityType::CALL, procName4));
+		Assert::IsTrue(std::vector{ stmtIdx5 } == Attribute::getEqualNameAttributesFromName(EntityType::READ, varName));
+		Assert::IsTrue(std::vector{ procIdx1 } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName1));
+		Assert::IsTrue(std::vector{ procIdx2 } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName2));
+		Assert::IsTrue(std::vector{ procIdx3 } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName3));
+		Assert::IsTrue(std::vector{ procIdx4 } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName4));
+		Assert::IsTrue(std::vector{ 2 } == Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 2));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CALL, 1));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CALL, 2));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CALL, 3));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 4));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::READ, 5));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 6));
+		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 2));
 	}
 
 	TEST_METHOD(multipleProceduresRecursiveCallsSource_checkPattern) {
@@ -2785,7 +2838,7 @@ public:
 			"procedure Peter { \n "
 			"	read x; \n "
 			"}";
-		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast);};
+		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast); };
 		Assert::ExpectException<ASTException>(wrapperFunc);
 		try {
 			SourceAST ast = Parser::parse(source);
@@ -2824,7 +2877,7 @@ public:
 			"procedure main { \n "
 			"	read a; \n "
 			"}";
-		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast);};
+		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast); };
 		Assert::ExpectException<ASTException>(wrapperFunc);
 		try {
 			SourceAST ast = Parser::parse(source);
@@ -2862,7 +2915,7 @@ public:
 			"      if (x==y) then { read x; } else { \n"
 			"          call main; }} \n"
 			"}";
-		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast);};
+		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast); };
 		Assert::ExpectException<ASTException>(wrapperFunc);
 		try {
 			SourceAST ast = Parser::parse(source);
@@ -2906,7 +2959,7 @@ public:
 			"   }  \n "
 			"}";
 
-		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast);};
+		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast); };
 		Assert::ExpectException<ASTException>(wrapperFunc);
 		try {
 			SourceAST ast = Parser::parse(source);
@@ -2960,7 +3013,7 @@ public:
 			"	} \n "
 			"}";
 
-		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast);};
+		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast); };
 		Assert::ExpectException<ASTException>(wrapperFunc);
 		try {
 			SourceAST ast = Parser::parse(source);
@@ -3016,7 +3069,7 @@ public:
 			"	} \n"
 			"}";
 
-		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast);};
+		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast); };
 		Assert::ExpectException<ASTException>(wrapperFunc);
 		try {
 			SourceAST ast = Parser::parse(source);

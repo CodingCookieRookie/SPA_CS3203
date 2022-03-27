@@ -14,7 +14,7 @@ std::unordered_set<std::string> StmtNode::getUsesVars() {
 	return std::unordered_set<std::string>();
 }
 
-std::unordered_set<std::string> StmtNode::getConsts() {
+std::unordered_set<std::string> StmtNode::getUsesConsts() {
 	return std::unordered_set<std::string>();
 }
 
@@ -30,54 +30,35 @@ std::vector<StmtLstNode*> StmtNode::getChildStmtLst() {
 	return std::vector<StmtLstNode*>();
 }
 
-std::unordered_set<std::string> StmtNode::getUsesVarsInExpr(ExprNode* expr) {
-	std::unordered_set<std::string> usesVars;
-	std::queue<ExprNode*> queue;
-	queue.push(expr);
+std::unordered_set<std::string> StmtNode::getUses(ExprNode* expr, ExprNodeValueType valueType) {
+	std::unordered_set<std::string> uses;
+	std::stack<ExprNode*> stack;
+	ExprNode* curr = expr;
 
-	while (!queue.empty()) {
-		ExprNode* currNode = queue.front();
-		queue.pop();
-		if (currNode->getExprNodeValueType() == ExprNodeValueType::varName) {
-			usesVars.insert(currNode->getValue());
-		}
-
-		for (ExprNode* child : currNode->getChildren()) {
-			queue.push(child);
-		}
-	}
-
-	return usesVars;
-}
-
-std::unordered_set<std::string> StmtNode::getConstsInExpr(ExprNode* expr) {
-	std::unordered_set<std::string> consts;
-
-	std::queue<ExprNode*> queue;
-	queue.push(expr);
-	while (!queue.empty()) {
-		ExprNode* currNode = queue.front();
-		queue.pop();
-		if (currNode->getExprNodeValueType() == ExprNodeValueType::constValue) {
-			consts.insert(currNode->getValue());
-		}
-
-		for (ExprNode* child : currNode->getChildren()) {
-			queue.push(child);
+	while (!stack.empty() || curr != nullptr) {
+		/* Keeps traversing the left child as much as possible,
+		else pops node from stack and traverses the right child. */
+		if (curr != nullptr) {
+			stack.push(curr);
+			curr = curr->getLeftChild();
+		} else {
+			curr = stack.top();
+			stack.pop();
+			if (curr->getExprNodeValueType() == valueType) {
+				uses.insert(curr->getValue());
+			}
+			curr = curr->getRightChild();
 		}
 	}
 
-	return consts;
+	return uses;
 }
 
 /* ReadNode */
 ReadNode::ReadNode(std::string varName) : StmtNode(), varName(varName) {}
-std::string ReadNode::getVarName() {
-	return varName;
-}
 
 StatementType ReadNode::getStmtType() {
-	return StatementType::readType;
+	return StatementType::READ_TYPE;
 }
 
 std::unordered_set<std::string> ReadNode::getModifiesVars() {
@@ -87,12 +68,8 @@ std::unordered_set<std::string> ReadNode::getModifiesVars() {
 /* PrintNode */
 PrintNode::PrintNode(std::string varName) : StmtNode(), varName(varName) {}
 
-std::string PrintNode::getVarName() {
-	return varName;
-}
-
 StatementType PrintNode::getStmtType() {
-	return StatementType::printType;
+	return StatementType::PRINT_TYPE;
 }
 
 std::unordered_set<std::string> PrintNode::getUsesVars() {
@@ -102,12 +79,8 @@ std::unordered_set<std::string> PrintNode::getUsesVars() {
 /* AssignNode */
 AssignNode::AssignNode(std::string varName, ExprNode* expr) : StmtNode(), varName(varName), expr(expr) {}
 
-std::string AssignNode::getVarName() {
-	return varName;
-}
-
 StatementType AssignNode::getStmtType() {
-	return StatementType::assignType;
+	return StatementType::ASSIGN_TYPE;
 }
 
 ExprNode* AssignNode::getExpr() {
@@ -123,11 +96,11 @@ std::string AssignNode::getPattern() {
 }
 
 std::unordered_set<std::string> AssignNode::getUsesVars() {
-	return getUsesVarsInExpr(getExpr());
+	return getUses(getExpr(), ExprNodeValueType::VAR_NAME);
 }
 
-std::unordered_set<std::string> AssignNode::getConsts() {
-	return getConstsInExpr(getExpr());
+std::unordered_set<std::string> AssignNode::getUsesConsts() {
+	return getUses(getExpr(), ExprNodeValueType::CONST_VALUE);
 }
 
 /* ContainerNode */
@@ -142,32 +115,32 @@ std::vector<StmtLstNode*> ContainerNode::getChildStmtLst() {
 }
 
 std::unordered_set<std::string> ContainerNode::getUsesVars() {
-	return getUsesVarsInExpr(condExpr);
+	return getUses(condExpr, ExprNodeValueType::VAR_NAME);
 }
 
-std::unordered_set<std::string> ContainerNode::getConsts() {
-	return getConstsInExpr(condExpr);
+std::unordered_set<std::string> ContainerNode::getUsesConsts() {
+	return getUses(condExpr, ExprNodeValueType::CONST_VALUE);
 }
 
 /* WhileNode */
 WhileNode::WhileNode(ExprNode* condExpr, StmtLstNode* stmtLst) : ContainerNode(condExpr, { stmtLst }) {}
 
 StatementType WhileNode::getStmtType() {
-	return StatementType::whileType;
+	return StatementType::WHILE_TYPE;
 }
 
 /* IfNode */
 IfNode::IfNode(ExprNode* condExpr, StmtLstNode* thenStmtLst, StmtLstNode* elseStmtLst) : ContainerNode(condExpr, { thenStmtLst, elseStmtLst }) {}
 
 StatementType IfNode::getStmtType() {
-	return StatementType::ifType;
+	return StatementType::IF_TYPE;
 }
 
 /* CallNode */
 CallNode::CallNode(std::string procName) : StmtNode(), procName(procName) {}
 
 StatementType CallNode::getStmtType() {
-	return StatementType::callType;
+	return StatementType::CALL_TYPE;
 }
 
 std::string CallNode::getProcCalled() {

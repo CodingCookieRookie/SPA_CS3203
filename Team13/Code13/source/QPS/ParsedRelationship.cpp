@@ -19,16 +19,16 @@ PqlReference ParsedRelationship::getRhs() const {
 Instruction* ParsedRelationship::toInstruction() const {
 	Instruction* instruction = nullptr;
 	switch (relationshipType) {
-	case PqlRelationshipType::ModifiesS:
+	case PqlRelationshipType::MODIFIES_S:
 		instruction = new ModifiesSInstruction(lhsRef, rhsRef);
 		break;
-	case PqlRelationshipType::ModifiesP:
+	case PqlRelationshipType::MODIFIES_P:
 		instruction = new ModifiesPInstruction(lhsRef, rhsRef);
 		break;
-	case PqlRelationshipType::UsesS:
+	case PqlRelationshipType::USES_S:
 		instruction = new UsesSInstruction(lhsRef, rhsRef);
 		break;
-	case PqlRelationshipType::UsesP:
+	case PqlRelationshipType::USES_P:
 		instruction = new UsesPInstruction(lhsRef, rhsRef);
 		break;
 		/*case PqlRelationshipType::Follows:
@@ -37,7 +37,7 @@ Instruction* ParsedRelationship::toInstruction() const {
 			case PqlRelationshipType::FollowsT:
 				evTable = handleFollowsT();
 				break;*/
-	case PqlRelationshipType::Parent:
+	case PqlRelationshipType::PARENT:
 		instruction = new ParentInstruction(lhsRef, rhsRef);
 		//evTable = handleParent(pqlRelationshipType);
 		//instruction = new ParentInstruction(lhsRef, rhsRef);

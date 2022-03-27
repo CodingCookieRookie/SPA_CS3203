@@ -44,7 +44,7 @@ void TestWrapper::parse(std::string filename) {
 	}
 }
 
-std::string TestWrapper::getFileContent(std::string& filename) {
+std::string TestWrapper::getFileContent(std::string & filename) {
 	std::ifstream inputFile(filename);
 	if (!inputFile.is_open()) {
 		exit(EXIT_FAILURE);
@@ -53,7 +53,7 @@ std::string TestWrapper::getFileContent(std::string& filename) {
 }
 
 // method to evaluating a query
-void TestWrapper::evaluate(std::string query, std::list<std::string>& results) {
+void TestWrapper::evaluate(std::string query, std::list<std::string>&results) {
 	// call your evaluator to evaluate the query here
 	// ...code to evaluate query...
 	try {
@@ -61,13 +61,11 @@ void TestWrapper::evaluate(std::string query, std::list<std::string>& results) {
 		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 		EvaluatedTable projectedEvTable = PQLEvaluator::selectProjection(evTable, parsedQuery);
 		results = PQLResultProjector::resolveTableToResults(projectedEvTable, parsedQuery);
-	} catch (QPSException& ex) {
+	} catch (QPSException&) {
 		return;
-	} catch (LexerException& ex) {
+	} catch (LexerException&) {
 		return;
-	} catch (ExpressionException& ex) {
+	} catch (ExpressionException&) {
 		return;
 	}
-	// store the answers to the query in the results list (it is initially empty)
-	// each result must be a string.
 }

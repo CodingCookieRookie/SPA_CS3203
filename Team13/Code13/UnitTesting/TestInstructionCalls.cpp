@@ -26,9 +26,9 @@ public:
 		// 1. Setup:
 		// Calls("first", "second") RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::Ident, "first");
-		rhsRef = std::make_pair(PqlReferenceType::Ident, "second");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::Calls, lhsRef, rhsRef);
+		lhsRef = std::make_pair(PqlReferenceType::IDENT, "first");
+		rhsRef = std::make_pair(PqlReferenceType::IDENT, "second");
+		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::CALLS, lhsRef, rhsRef);
 
 		// PKB inserts statements
 		ProcIndex proc1 = Entity::insertProc("first");
@@ -46,9 +46,9 @@ public:
 		// 1. Setup:
 		// Calls("first", q) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::Ident, "first");
-		rhsRef = std::make_pair(PqlReferenceType::Synonym, "q");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::Calls, lhsRef, rhsRef);
+		lhsRef = std::make_pair(PqlReferenceType::IDENT, "first");
+		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "q");
+		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::CALLS, lhsRef, rhsRef);
 
 		// PKB inserts statements
 		ProcIndex proc1 = Entity::insertProc("first");
@@ -66,7 +66,7 @@ public:
 		Assert::AreEqual(true, tableRef.find("q") != tableRef.end());
 		Assert::AreEqual(false, tableRef.find("first") != tableRef.end());
 
-		// Test Entities: std::unordered_map<std::string, PqlEntityType>
+		// Test Entities: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 2 };
 		auto actualValues = tableRef.at("q");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -74,8 +74,8 @@ public:
 		auto actualEntities = evTable.getEntities();
 		Assert::AreEqual(true, actualEntities.find("q") != actualEntities.end());
 		Assert::AreEqual(false, actualEntities.find("m") != actualEntities.end());
-		bool isPqlEntityType = PqlEntityType::Procedure == actualEntities.at("q");
-		Assert::AreEqual(true, isPqlEntityType);
+		bool isEntityType = EntityType::PROCEDURE == actualEntities.at("q");
+		Assert::AreEqual(true, isEntityType);
 
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
@@ -86,9 +86,9 @@ public:
 		// 1. Setup:
 		// Calls(p, "second") RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::Synonym, "p");
-		rhsRef = std::make_pair(PqlReferenceType::Ident, "second");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::Calls, lhsRef, rhsRef);
+		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "p");
+		rhsRef = std::make_pair(PqlReferenceType::IDENT, "second");
+		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::CALLS, lhsRef, rhsRef);
 
 		// PKB inserts statements
 		ProcIndex proc1 = Entity::insertProc("first");
@@ -108,7 +108,7 @@ public:
 		Assert::AreEqual(true, tableRef.find("p") != tableRef.end());
 		Assert::AreEqual(false, tableRef.find("q") != tableRef.end());
 
-		// Test Entities: std::unordered_map<std::string, PqlEntityType>
+		// Test Entities: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 1, 3 };
 		auto actualValues = tableRef.at("p");
 		std::sort(actualValues.begin(), actualValues.end());
@@ -117,8 +117,8 @@ public:
 		auto actualEntities = evTable.getEntities();
 		Assert::AreEqual(true, actualEntities.find("p") != actualEntities.end());
 		Assert::AreEqual(false, actualEntities.find("m") != actualEntities.end());
-		bool isPqlEntityType = PqlEntityType::Procedure == actualEntities.at("p");
-		Assert::AreEqual(true, isPqlEntityType);
+		bool isEntityType = EntityType::PROCEDURE == actualEntities.at("p");
+		Assert::AreEqual(true, isEntityType);
 
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
@@ -129,9 +129,9 @@ public:
 		// 1. Setup:
 		// Calls(p, q) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::Synonym, "p");
-		rhsRef = std::make_pair(PqlReferenceType::Synonym, "q");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::Calls, lhsRef, rhsRef);
+		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "p");
+		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "q");
+		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::CALLS, lhsRef, rhsRef);
 
 		// PKB inserts 4 procs
 		std::vector<ProcIndex> procs;
@@ -155,7 +155,7 @@ public:
 		Assert::AreEqual(true, tableRef.find("p") != tableRef.end());
 		Assert::AreEqual(false, tableRef.find("r") != tableRef.end());
 
-		// Test Entities: std::unordered_map<std::string, PqlEntityType>
+		// Test Entities: std::unordered_map<std::string, EntityType>
 		std::vector<int> pvalues{ 1, 2, 3 };
 		auto actualpValues = tableRef.at("p");
 		bool areVecEqual = std::equal(pvalues.begin(), pvalues.end(), actualpValues.begin());
@@ -169,10 +169,10 @@ public:
 		Assert::AreEqual(true, actualEntities.find("p") != actualEntities.end());
 		Assert::AreEqual(true, actualEntities.find("q") != actualEntities.end());
 		Assert::AreEqual(false, actualEntities.find("r") != actualEntities.end());
-		bool isPqlEntityType = PqlEntityType::Procedure == actualEntities.at("p");
-		bool isPqlEntityType2 = PqlEntityType::Procedure == actualEntities.at("q");
-		Assert::AreEqual(true, isPqlEntityType);
-		Assert::AreEqual(true, isPqlEntityType2);
+		bool isEntityType = EntityType::PROCEDURE == actualEntities.at("p");
+		bool isEntityType2 = EntityType::PROCEDURE == actualEntities.at("q");
+		Assert::AreEqual(true, isEntityType);
+		Assert::AreEqual(true, isEntityType2);
 
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
@@ -183,9 +183,9 @@ public:
 		// 1. Setup:
 		// Calls(p, _) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::Synonym, "p");
-		rhsRef = std::make_pair(PqlReferenceType::Wildcard, "_");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::Calls, lhsRef, rhsRef);
+		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "p");
+		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
+		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::CALLS, lhsRef, rhsRef);
 
 		// PKB inserts 19 procedures
 		std::vector<ProcIndex> procs;
@@ -212,7 +212,7 @@ public:
 		// Test Table size:
 		Assert::AreEqual(size_t(1), tableRef.size()); // RHS wildcard will not have column (not of concern)
 
-		// Test Entities: std::unordered_map<std::string, PqlEntityType>
+		// Test Entities: std::unordered_map<std::string, EntityType>
 		std::vector<int> pvalues, wildcardValues;
 		for (int i = 0; i < 18; i++) {
 			pvalues.emplace_back(i + 1);
@@ -226,8 +226,8 @@ public:
 		Assert::AreEqual(true, actualEntities.find("p") != actualEntities.end());
 		Assert::AreEqual(false, actualEntities.find("_") != actualEntities.end());
 		Assert::AreEqual(false, actualEntities.find("r") != actualEntities.end());
-		bool isPqlEntityType = PqlEntityType::Procedure == actualEntities.at("p");
-		Assert::AreEqual(true, isPqlEntityType);
+		bool isEntityType = EntityType::PROCEDURE == actualEntities.at("p");
+		Assert::AreEqual(true, isEntityType);
 
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
@@ -238,9 +238,9 @@ public:
 		// 1. Setup:
 		// Calls(_, _) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::Wildcard, "_");
-		rhsRef = std::make_pair(PqlReferenceType::Wildcard, "_");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::Calls, lhsRef, rhsRef);
+		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
+		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
+		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::CALLS, lhsRef, rhsRef);
 
 		// PKB inserts 19 procedures
 		std::vector<ProcIndex> procs;
@@ -267,7 +267,7 @@ public:
 		// Test Table size:
 		Assert::AreEqual(size_t(0), tableRef.size()); // Two wildcards will have no columns => only have boolean
 
-		// Test Entities: std::unordered_map<std::string, PqlEntityType>
+		// Test Entities: std::unordered_map<std::string, EntityType>
 		auto actualEntities = evTable.getEntities();
 		Assert::AreEqual(false, actualEntities.find("_") != actualEntities.end());
 		Assert::AreEqual(false, actualEntities.find("q") != actualEntities.end());

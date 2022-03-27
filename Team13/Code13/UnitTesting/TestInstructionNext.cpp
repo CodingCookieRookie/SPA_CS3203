@@ -25,13 +25,13 @@ public:
 		// 1. Setup:
 		// Next (1, 2) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::Integer, "1");
-		rhsRef = std::make_pair(PqlReferenceType::Integer, "2");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::Next, lhsRef, rhsRef);
+		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "1");
+		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "2");
+		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::NEXT, lhsRef, rhsRef);
 
 		// PKB inserts statements
-		StmtIndex stmt1 = Entity::insertStmt(StatementType::assignType);
-		StmtIndex stmt2 = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmt1 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
+		StmtIndex stmt2 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		Next::insert(stmt1, stmt2);
 
 		// 2. Main test:
@@ -45,13 +45,13 @@ public:
 		// 1. Setup:
 		// Next(1, s2) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::Integer, "1");
-		rhsRef = std::make_pair(PqlReferenceType::Synonym, "s2");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::Next, lhsRef, rhsRef);
+		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "1");
+		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s2");
+		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::NEXT, lhsRef, rhsRef);
 
 		// PKB inserts statements
-		StmtIndex stmt1 = Entity::insertStmt(StatementType::assignType);
-		StmtIndex stmt2 = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmt1 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
+		StmtIndex stmt2 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		Next::insert(stmt1, stmt2);
 
 		// 2. Main test:
@@ -65,7 +65,7 @@ public:
 		Assert::AreEqual(true, tableRef.find("s2") != tableRef.end());
 		Assert::AreEqual(false, tableRef.find("s3") != tableRef.end());
 
-		// Test Entities: std::unordered_map<std::string, PqlEntityType>
+		// Test Entities: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 2 };
 		auto actualValues = tableRef.at("s2");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -73,8 +73,8 @@ public:
 		auto actualEntities = evTable.getEntities();
 		Assert::AreEqual(true, actualEntities.find("s2") != actualEntities.end());
 		Assert::AreEqual(false, actualEntities.find("s3") != actualEntities.end());
-		bool isPqlEntityType = PqlEntityType::Stmt == actualEntities.at("s2");
-		Assert::AreEqual(true, isPqlEntityType);
+		bool isEntityType = EntityType::STMT == actualEntities.at("s2");
+		Assert::AreEqual(true, isEntityType);
 
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
@@ -85,13 +85,13 @@ public:
 		// 1. Setup:
 		// Next(s1, 2) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::Synonym, "s1");
-		rhsRef = std::make_pair(PqlReferenceType::Integer, "2");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::Next, lhsRef, rhsRef);
+		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
+		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "2");
+		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::NEXT, lhsRef, rhsRef);
 
 		// PKB inserts statements
-		StmtIndex stmt1 = Entity::insertStmt(StatementType::assignType);
-		StmtIndex stmt2 = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmt1 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
+		StmtIndex stmt2 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		Next::insert(stmt1, stmt2);
 
 		// 2. Main test:
@@ -105,7 +105,7 @@ public:
 		Assert::AreEqual(true, tableRef.find("s1") != tableRef.end());
 		Assert::AreEqual(false, tableRef.find("s7") != tableRef.end());
 
-		// Test Entities: std::unordered_map<std::string, PqlEntityType>
+		// Test Entities: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 1 };
 		auto actualValues = tableRef.at("s1");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
@@ -113,8 +113,8 @@ public:
 		auto actualEntities = evTable.getEntities();
 		Assert::AreEqual(true, actualEntities.find("s1") != actualEntities.end());
 		Assert::AreEqual(false, actualEntities.find("s7") != actualEntities.end());
-		bool isPqlEntityType = PqlEntityType::Stmt == actualEntities.at("s1");
-		Assert::AreEqual(true, isPqlEntityType);
+		bool isEntityType = EntityType::STMT == actualEntities.at("s1");
+		Assert::AreEqual(true, isEntityType);
 
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
@@ -125,14 +125,14 @@ public:
 		// 1. Setup:
 		// Next(s1, s2) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::Synonym, "s1");
-		rhsRef = std::make_pair(PqlReferenceType::Synonym, "s2");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::Next, lhsRef, rhsRef);
+		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
+		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s2");
+		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::NEXT, lhsRef, rhsRef);
 
 		// PKB inserts 5 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 5; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
 		}
 		for (int i = 0; i < 4; i++) {
 			Next::insert(stmts[i], stmts[i + 1]);
@@ -149,7 +149,7 @@ public:
 		Assert::AreEqual(true, tableRef.find("s1") != tableRef.end());
 		Assert::AreEqual(false, tableRef.find("s6") != tableRef.end());
 
-		// Test Entities: std::unordered_map<std::string, PqlEntityType>
+		// Test Entities: std::unordered_map<std::string, EntityType>
 		std::vector<int> s1values{ 1, 2, 3, 4 };
 		auto actuals1Values = tableRef.at("s1");
 		bool areVecEqual = std::equal(s1values.begin(), s1values.end(), actuals1Values.begin());
@@ -163,10 +163,10 @@ public:
 		Assert::AreEqual(true, actualEntities.find("s1") != actualEntities.end());
 		Assert::AreEqual(true, actualEntities.find("s2") != actualEntities.end());
 		Assert::AreEqual(false, actualEntities.find("s6") != actualEntities.end());
-		bool isPqlEntityType = PqlEntityType::Stmt == actualEntities.at("s1");
-		bool isPqlEntityType2 = PqlEntityType::Stmt == actualEntities.at("s2");
-		Assert::AreEqual(true, isPqlEntityType);
-		Assert::AreEqual(true, isPqlEntityType2);
+		bool isEntityType = EntityType::STMT == actualEntities.at("s1");
+		bool isEntityType2 = EntityType::STMT == actualEntities.at("s2");
+		Assert::AreEqual(true, isEntityType);
+		Assert::AreEqual(true, isEntityType2);
 
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
@@ -177,14 +177,14 @@ public:
 		// 1. Setup:
 		// Next(s1, s1) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::Synonym, "s1");
-		rhsRef = std::make_pair(PqlReferenceType::Synonym, "s1");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::Next, lhsRef, rhsRef);
+		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
+		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
+		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::NEXT, lhsRef, rhsRef);
 
 		// PKB inserts 5 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 6; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
 		}
 		for (int i = 0; i < 4; i++) {
 			Next::insert(stmts[i], stmts[i + 1]);
@@ -202,7 +202,7 @@ public:
 		Assert::AreEqual(true, tableRef.find("s1") != tableRef.end());
 		Assert::AreEqual(false, tableRef.find("s6") != tableRef.end());
 
-		// Test Entities: std::unordered_map<std::string, PqlEntityType>
+		// Test Entities: std::unordered_map<std::string, EntityType>
 		std::vector<int> s1values{ 6 };
 		auto actuals1Values = tableRef.at("s1");
 		bool areVecEqual = std::equal(s1values.begin(), s1values.end(), actuals1Values.begin());
@@ -212,8 +212,8 @@ public:
 		Assert::AreEqual(true, actualEntities.find("s1") != actualEntities.end());
 		Assert::AreEqual(false, actualEntities.find("s2") != actualEntities.end());
 		Assert::AreEqual(false, actualEntities.find("s6") != actualEntities.end());
-		bool isPqlEntityType = PqlEntityType::Stmt == actualEntities.at("s1");
-		Assert::AreEqual(true, isPqlEntityType);
+		bool isEntityType = EntityType::STMT == actualEntities.at("s1");
+		Assert::AreEqual(true, isEntityType);
 
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
@@ -224,14 +224,14 @@ public:
 		// 1. Setup:
 		// Next(s1, _) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::Synonym, "s1");
-		rhsRef = std::make_pair(PqlReferenceType::Wildcard, "_");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::Next, lhsRef, rhsRef);
+		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
+		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
+		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::NEXT, lhsRef, rhsRef);
 
 		// PKB inserts 37213 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 37213; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
 		}
 		for (int i = 0; i < 37213 - 1; i++) {
 			Next::insert(stmts[i], stmts[i + 1]);
@@ -251,7 +251,7 @@ public:
 		// Test Table size:
 		Assert::AreEqual(size_t(1), tableRef.size()); // RHS wildcard will still have column (innerJoinMerge() will drop it during merge)
 
-		// Test Entities: std::unordered_map<std::string, PqlEntityType>
+		// Test Entities: std::unordered_map<std::string, EntityType>
 		std::vector<int> s1values;
 		for (int i = 0; i < 37213 - 1; i++) {
 			s1values.emplace_back(i + 1);
@@ -267,8 +267,8 @@ public:
 		Assert::AreEqual(true, actualEntities.find("s1") != actualEntities.end());
 		Assert::AreEqual(false, actualEntities.find("_") != actualEntities.end());
 		Assert::AreEqual(false, actualEntities.find("stress") != actualEntities.end());
-		bool isPqlEntityType = PqlEntityType::Stmt == actualEntities.at("s1");
-		Assert::AreEqual(true, isPqlEntityType);
+		bool isEntityType = EntityType::STMT == actualEntities.at("s1");
+		Assert::AreEqual(true, isEntityType);
 
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
@@ -279,14 +279,14 @@ public:
 		// 1. Setup:
 		// Next(_, 3) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::Wildcard, "_");
-		rhsRef = std::make_pair(PqlReferenceType::Integer, "3");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::Next, lhsRef, rhsRef);
+		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
+		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "3");
+		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::NEXT, lhsRef, rhsRef);
 
 		// PKB inserts 3 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 3; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
 		}
 		for (int i = 0; i < 2; i++) {
 			Next::insert(stmts[i], stmts[i + 1]);
@@ -306,7 +306,7 @@ public:
 		// Test Table size:
 		Assert::AreEqual(size_t(0), tableRef.size()); // RHS wildcard will still have column (innerJoinMerge() will drop it during merge)
 
-		// Test Entities: std::unordered_map<std::string, PqlEntityType>
+		// Test Entities: std::unordered_map<std::string, EntityType>
 		// No entities to test
 
 		auto actualEntities = evTable.getEntities();
@@ -322,14 +322,14 @@ public:
 		// 1. Setup:
 		// Next(_, 28) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::Wildcard, "_");
-		rhsRef = std::make_pair(PqlReferenceType::Integer, "28");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::Next, lhsRef, rhsRef);
+		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
+		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "28");
+		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::NEXT, lhsRef, rhsRef);
 
 		// PKB inserts 976 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 976; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
 		}
 		for (int i = 0; i < 976 - 1; i++) {
 			Next::insert(stmts[i], stmts[i + 1]);
@@ -349,7 +349,7 @@ public:
 		// Test Table size:
 		Assert::AreEqual(size_t(0), tableRef.size()); // RHS wildcard will still have column (innerJoinMerge() will drop it during merge)
 
-		// Test Entities: std::unordered_map<std::string, PqlEntityType>
+		// Test Entities: std::unordered_map<std::string, EntityType>
 		// No Entities populated
 
 		auto actualEntities = evTable.getEntities();
@@ -366,14 +366,14 @@ public:
 		// 1. Setup:
 		// Next(_, _) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
-		lhsRef = std::make_pair(PqlReferenceType::Wildcard, "_");
-		rhsRef = std::make_pair(PqlReferenceType::Wildcard, "_");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::Next, lhsRef, rhsRef);
+		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
+		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
+		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::NEXT, lhsRef, rhsRef);
 
 		// PKB inserts 3 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 3; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::assignType));
+			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
 		}
 		for (int i = 0; i < 2; i++) {
 			Next::insert(stmts[i], stmts[i + 1]);
@@ -393,7 +393,7 @@ public:
 		// Test Table size:
 		Assert::AreEqual(size_t(0), tableRef.size()); // Two wildcards will have no columns => only have boolean
 
-		// Test Entities: std::unordered_map<std::string, PqlEntityType>
+		// Test Entities: std::unordered_map<std::string, EntityType>
 		auto actualEntities = evTable.getEntities();
 		Assert::AreEqual(false, actualEntities.find("_") != actualEntities.end());
 		Assert::AreEqual(false, actualEntities.find("s2") != actualEntities.end());

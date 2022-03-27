@@ -35,8 +35,8 @@ public:
 		/* proc1 { stmt1; stmt2; } */
 		ProcIndex procIdx1 = Entity::insertProc("proc1");
 
-		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::assignType);
-		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
+		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 
 		UsesS::insert(stmtIdx1, varIdx1);
 		UsesS::insert(stmtIdx2, varIdx2);
@@ -60,10 +60,10 @@ public:
 		ProcIndex procIdx1 = Entity::insertProc("proc1");
 		ProcIndex procIdx2 = Entity::insertProc("proc2");
 
-		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::assignType);
-		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::assignType);
-		StmtIndex stmtIdx3 = Entity::insertStmt(StatementType::callType, std::string("proc2"));
-		StmtIndex stmtIdx4 = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
+		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
+		StmtIndex stmtIdx3 = Entity::insertStmt(StatementType::CALL_TYPE, std::string("proc2"));
+		StmtIndex stmtIdx4 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 
 		Calls::insert(procIdx1, procIdx2);
 
@@ -90,10 +90,10 @@ public:
 
 	TEST_METHOD(populateRecursiveInfo_singleProc_bothStmtsInIfWhileEmpty) {
 		/* if { stmt2; stmt3; while(){}; } */
-		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::ifType);
-		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::assignType);
-		StmtIndex stmtIdx3 = Entity::insertStmt(StatementType::assignType);
-		StmtIndex stmtIdx4 = Entity::insertStmt(StatementType::whileType);
+		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::IF_TYPE);
+		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
+		StmtIndex stmtIdx3 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
+		StmtIndex stmtIdx4 = Entity::insertStmt(StatementType::WHILE_TYPE);
 
 		Container::insertStmtInContainer(stmtIdx1, stmtIdx2);
 		Container::insertStmtInContainer(stmtIdx1, stmtIdx3);
@@ -134,10 +134,10 @@ public:
 
 	TEST_METHOD(populateRecursiveInfo_singleProc_oneStmtInIfOneStmtInWhile) {
 		/* if { stmt2; while(){ stmt4; }; } */
-		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::ifType);
-		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::assignType);
-		StmtIndex stmtIdx3 = Entity::insertStmt(StatementType::whileType);
-		StmtIndex stmtIdx4 = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::IF_TYPE);
+		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
+		StmtIndex stmtIdx3 = Entity::insertStmt(StatementType::WHILE_TYPE);
+		StmtIndex stmtIdx4 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 
 		Container::insertStmtInContainer(stmtIdx1, stmtIdx2);
 		Container::insertStmtInContainer(stmtIdx1, stmtIdx3);
@@ -176,10 +176,10 @@ public:
 
 	TEST_METHOD(populateRecursiveInfo_singleProc_allStmtsInWhile) {
 		/* if { while(){ stmt3; stmt4; }; } */
-		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::ifType);
-		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::whileType);
-		StmtIndex stmtIdx3 = Entity::insertStmt(StatementType::assignType);
-		StmtIndex stmtIdx4 = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::IF_TYPE);
+		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::WHILE_TYPE);
+		StmtIndex stmtIdx3 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
+		StmtIndex stmtIdx4 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 
 		Container::insertStmtInContainer(stmtIdx1, stmtIdx2);
 		Container::insertStmtInContainer(stmtIdx2, stmtIdx3);
@@ -222,9 +222,9 @@ public:
 		ProcIndex procIdx2 = Entity::insertProc("proc2");
 		ProcIndex procIdx3 = Entity::insertProc("proc3");
 
-		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::callType, std::string("proc2"));
-		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::callType, std::string("proc3"));
-		StmtIndex stmtIdx3 = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::CALL_TYPE, std::string("proc2"));
+		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::CALL_TYPE, std::string("proc3"));
+		StmtIndex stmtIdx3 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 
 		Calls::insert(procIdx1, procIdx2);
 		Calls::insert(procIdx2, procIdx3);
@@ -251,12 +251,12 @@ public:
 		ProcIndex procIdx2 = Entity::insertProc("proc2");
 		ProcIndex procIdx3 = Entity::insertProc("proc3");
 
-		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::callType, std::string("proc2"));
-		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::callType, std::string("proc3"));
-		StmtIndex stmtIdx3 = Entity::insertStmt(StatementType::ifType);
-		StmtIndex stmtIdx4 = Entity::insertStmt(StatementType::assignType);
-		StmtIndex stmtIdx5 = Entity::insertStmt(StatementType::whileType);
-		StmtIndex stmtIdx6 = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::CALL_TYPE, std::string("proc2"));
+		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::CALL_TYPE, std::string("proc3"));
+		StmtIndex stmtIdx3 = Entity::insertStmt(StatementType::IF_TYPE);
+		StmtIndex stmtIdx4 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
+		StmtIndex stmtIdx5 = Entity::insertStmt(StatementType::WHILE_TYPE);
+		StmtIndex stmtIdx6 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 
 		Entity::insertStmtFromProc(procIdx1, stmtIdx1);
 		Entity::insertStmtFromProc(procIdx2, stmtIdx2);
@@ -317,10 +317,10 @@ public:
 		ProcIndex procIdx2 = Entity::insertProc("proc2");
 		ProcIndex procIdx3 = Entity::insertProc("proc3");
 
-		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::callType, std::string("proc2"));
-		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::printType, std::string("x"));
-		StmtIndex stmtIdx3 = Entity::insertStmt(StatementType::callType, std::string("proc3"));
-		StmtIndex stmtIdx4 = Entity::insertStmt(StatementType::printType, std::string("y"));
+		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::CALL_TYPE, std::string("proc2"));
+		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::PRINT_TYPE, std::string("x"));
+		StmtIndex stmtIdx3 = Entity::insertStmt(StatementType::CALL_TYPE, std::string("proc3"));
+		StmtIndex stmtIdx4 = Entity::insertStmt(StatementType::PRINT_TYPE, std::string("y"));
 
 		Calls::insert(procIdx1, procIdx2);
 		Calls::insert(procIdx2, procIdx3);
@@ -346,10 +346,10 @@ public:
 		ProcIndex procIdx2 = Entity::insertProc("proc2");
 		ProcIndex procIdx3 = Entity::insertProc("proc3");
 
-		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::callType, std::string("proc2"));
-		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::readType, std::string("x"));
-		StmtIndex stmtIdx3 = Entity::insertStmt(StatementType::callType, std::string("proc3"));
-		StmtIndex stmtIdx4 = Entity::insertStmt(StatementType::readType, std::string("y"));
+		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::CALL_TYPE, std::string("proc2"));
+		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::READ_TYPE, std::string("x"));
+		StmtIndex stmtIdx3 = Entity::insertStmt(StatementType::CALL_TYPE, std::string("proc3"));
+		StmtIndex stmtIdx4 = Entity::insertStmt(StatementType::READ_TYPE, std::string("y"));
 
 		Calls::insert(procIdx1, procIdx2);
 		Calls::insert(procIdx2, procIdx3);
@@ -375,12 +375,12 @@ public:
 		ProcIndex procIdx2 = Entity::insertProc("proc2");
 		ProcIndex procIdx3 = Entity::insertProc("proc3");
 
-		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::callType, std::string("proc2"));
-		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::printType, std::string("x"));
-		StmtIndex stmtIdx3 = Entity::insertStmt(StatementType::callType, std::string("proc3"));
-		StmtIndex stmtIdx4 = Entity::insertStmt(StatementType::readType, std::string("p"));
-		StmtIndex stmtIdx5 = Entity::insertStmt(StatementType::printType, std::string("y"));
-		StmtIndex stmtIdx6 = Entity::insertStmt(StatementType::readType, std::string("r"));
+		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::CALL_TYPE, std::string("proc2"));
+		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::PRINT_TYPE, std::string("x"));
+		StmtIndex stmtIdx3 = Entity::insertStmt(StatementType::CALL_TYPE, std::string("proc3"));
+		StmtIndex stmtIdx4 = Entity::insertStmt(StatementType::READ_TYPE, std::string("p"));
+		StmtIndex stmtIdx5 = Entity::insertStmt(StatementType::PRINT_TYPE, std::string("y"));
+		StmtIndex stmtIdx6 = Entity::insertStmt(StatementType::READ_TYPE, std::string("r"));
 
 		Calls::insert(procIdx1, procIdx2);
 		Calls::insert(procIdx2, procIdx3);
@@ -413,9 +413,9 @@ public:
 		ProcIndex procIdx1 = Entity::insertProc("p");
 		ProcIndex procIdx2 = Entity::insertProc("q");
 
-		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::whileType);
-		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::callType, std::string("q"));
-		StmtIndex stmtIdx3 = Entity::insertStmt(StatementType::assignType);
+		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::WHILE_TYPE);
+		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::CALL_TYPE, std::string("q"));
+		StmtIndex stmtIdx3 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 
 		VarIndex varIdx1 = Entity::insertVar("x");
 

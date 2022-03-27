@@ -6,12 +6,12 @@ class ParsedWith : public Clause {
 private:
 	PqlReference lhs;
 	PqlReference rhs;
-	PqlEntityType lhsEntity;
-	PqlEntityType rhsEntity;
+	EntityType lhsEntity;
+	EntityType rhsEntity;
 	PqlAttributeType attribType;
 public:
 	ParsedWith(PqlReference lhs, PqlReference rhs);
-	ParsedWith(PqlReference lhs, PqlReference rhs, PqlEntityType lhsEntity, PqlEntityType rhsEntity, PqlAttributeType attribType);
+	ParsedWith(PqlReference lhs, PqlReference rhs, EntityType lhsEntity, EntityType rhsEntity, PqlAttributeType attribType);
 	PqlReference getLhs() const;
 	PqlReference getRhs() const;
 	PqlAttributeType getAttribType() const;

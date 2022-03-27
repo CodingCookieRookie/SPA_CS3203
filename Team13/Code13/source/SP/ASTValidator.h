@@ -7,7 +7,7 @@
 #include "SourceAST.h"
 
 enum class CallNodeState {
-	notVisited, inStack, done
+	NOT_VISITED, IN_STACK, DONE
 };
 
 class ASTValidator {

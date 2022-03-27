@@ -55,7 +55,7 @@ void TransitivePopulator::populateRS1ProcsFromNestedCalls() {
 }
 
 void TransitivePopulator::populateRS1TransitiveCallsStmts() {
-	auto callStmtsIndices = Entity::getStmtIdxFromType(StatementType::callType);
+	auto callStmtsIndices = Entity::getStmtIdxFromType(StatementType::CALL_TYPE);
 	for (auto callStmtIndex : callStmtsIndices) {
 		std::string procName = Attribute::getAttributeNameByStmtIdx(callStmtIndex);
 		ProcIndex procIndex = Entity::getProcIdx(procName);

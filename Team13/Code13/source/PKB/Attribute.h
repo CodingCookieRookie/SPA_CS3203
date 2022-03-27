@@ -13,7 +13,7 @@
 class Attribute {
 protected:
 	static size_t getNameIdxTableSize();
-	static std::vector<EntityAttributeRef> processIntegerAttributeArgVector(PqlEntityType entityType);
+	static std::vector<EntityAttributeRef> processIntegerAttributeArgVector(EntityType entityType);
 
 	static std::unordered_map<std::string, NameIndex> nameIdxTable;
 	static std::unordered_map<NameIndex, std::string> idxNameTable;
@@ -39,10 +39,10 @@ public:
 	static void insertStmtByName(StmtIndex& stmtIdx, StatementType stmtType, std::string& nameValue);
 
 	static std::string getAttributeNameByStmtIdx(StmtIndex& stmtIdx);
-	static std::tuple<std::vector<EntityAttributeRef>, std::vector<EntityAttributeRef>> getEqualNameAttributes(PqlEntityType leftEntityType, PqlEntityType rightEntityType);
-	static std::vector<EntityAttributeRef> getEqualIntegerAttributes(PqlEntityType leftEntityType, PqlEntityType rightEntityType);
-	static std::vector<EntityAttributeRef> getEqualNameAttributesFromName(PqlEntityType entityType, std::string& nameValue);
-	static bool hasEqualIntegerAttribute(PqlEntityType entityType, ConstValue integerValue);
+	static std::tuple<std::vector<EntityAttributeRef>, std::vector<EntityAttributeRef>> getEqualNameAttributes(EntityType leftEntityType, EntityType rightEntityType);
+	static std::vector<EntityAttributeRef> getEqualIntegerAttributes(EntityType leftEntityType, EntityType rightEntityType);
+	static std::vector<EntityAttributeRef> getEqualNameAttributesFromName(EntityType entityType, std::string& nameValue);
+	static bool hasEqualIntegerAttribute(EntityType entityType, ConstValue integerValue);
 
 	static void performCleanUp();
 };

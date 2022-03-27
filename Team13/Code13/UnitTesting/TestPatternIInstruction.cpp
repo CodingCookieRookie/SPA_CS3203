@@ -25,14 +25,14 @@ public:
 		// Pattern if("v", "_", "_")
 		// 1. Setup:
 		std::string synonym = "ifs";
-		PqlPatternType pqlPatternType = PqlPatternType::PatternI;
-		PqlReference entRef = std::make_pair(PqlReferenceType::Ident, "v");
-		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::Wildcard, "");
+		PqlPatternType pqlPatternType = PqlPatternType::PATTERN_I;
+		PqlReference entRef = std::make_pair(PqlReferenceType::IDENT, "v");
+		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::WILDCARD, "");
 		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
 
 		// PKB inserts pattern
-		Entity::insertStmt(StatementType::printType);
-		StmtIndex stmt = Entity::insertStmt(StatementType::ifType);
+		Entity::insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = Entity::insertStmt(StatementType::IF_TYPE);
 		Entity::insertVar("y");
 		VarIndex varIndex = Entity::insertVar("x");
 		Pattern::insertIfInfo(stmt, varIndex);
@@ -52,14 +52,14 @@ public:
 		// Pattern if(v, "_", "_")
 		// 1. Setup:
 		std::string synonym = "ifs";
-		PqlPatternType pqlPatternType = PqlPatternType::PatternI;
-		PqlReference entRef = std::make_pair(PqlReferenceType::Synonym, "v");
-		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::Wildcard, "");
+		PqlPatternType pqlPatternType = PqlPatternType::PATTERN_I;
+		PqlReference entRef = std::make_pair(PqlReferenceType::SYNONYM, "v");
+		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::WILDCARD, "");
 		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
 
 		// PKB inserts pattern
-		Entity::insertStmt(StatementType::printType);
-		StmtIndex stmt = Entity::insertStmt(StatementType::ifType);
+		Entity::insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = Entity::insertStmt(StatementType::IF_TYPE);
 		Entity::insertVar("y");
 		VarIndex varIndex = Entity::insertVar("x");
 		Pattern::insertIfInfo(stmt, varIndex);
@@ -80,14 +80,14 @@ public:
 		// Pattern if("x", "_", "_")
 		// 1. Setup:
 		std::string synonym = "ifs";
-		PqlPatternType pqlPatternType = PqlPatternType::PatternI;
-		PqlReference entRef = std::make_pair(PqlReferenceType::Ident, "x");
-		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::Wildcard, "");
+		PqlPatternType pqlPatternType = PqlPatternType::PATTERN_I;
+		PqlReference entRef = std::make_pair(PqlReferenceType::IDENT, "x");
+		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::WILDCARD, "");
 		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
 
 		// PKB inserts pattern
-		Entity::insertStmt(StatementType::printType);
-		StmtIndex stmt = Entity::insertStmt(StatementType::ifType);
+		Entity::insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = Entity::insertStmt(StatementType::IF_TYPE);
 		Entity::insertVar("y");
 		VarIndex varIndex = Entity::insertVar("x");
 		Pattern::insertIfInfo(stmt, varIndex);
@@ -108,14 +108,14 @@ public:
 		// Pattern if("x", "_", "_")
 		// 1. Setup:
 		std::string synonym = "ifs";
-		PqlPatternType pqlPatternType = PqlPatternType::PatternI;
-		PqlReference entRef = std::make_pair(PqlReferenceType::Wildcard, "");
-		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::Wildcard, "");
+		PqlPatternType pqlPatternType = PqlPatternType::PATTERN_I;
+		PqlReference entRef = std::make_pair(PqlReferenceType::WILDCARD, "");
+		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::WILDCARD, "");
 		Instruction* instruction = new PatternInstruction(synonym, pqlPatternType, entRef, expressionSpec);
 
 		// PKB inserts pattern
-		Entity::insertStmt(StatementType::printType);
-		StmtIndex stmt = Entity::insertStmt(StatementType::ifType);
+		Entity::insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = Entity::insertStmt(StatementType::IF_TYPE);
 		Entity::insertVar("y");
 		VarIndex varIndex = Entity::insertVar("x");
 		Pattern::insertIfInfo(stmt, varIndex);
