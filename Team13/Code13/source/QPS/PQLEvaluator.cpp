@@ -6,7 +6,6 @@
 #include "Instruction.h"
 #include "PQLEvaluator.h"
 #include "QPSCommons.h"
-#include "ParsedRelationship.h"
 
 EvaluatedTable PQLEvaluator::evaluate(ParsedQuery& parsedQuery) {
 	std::vector<Instruction*> instructions = PQLEvaluator::evaluateToInstructions(parsedQuery);

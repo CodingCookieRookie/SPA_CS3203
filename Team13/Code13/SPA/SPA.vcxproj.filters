@@ -103,6 +103,9 @@
     <ClCompile Include="..\source\QPS\ParsedPattern.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\QPS\ParsedWith.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\SP\ASTValidator.h">
@@ -255,6 +258,9 @@
     <ClInclude Include="..\source\QPS\ParsedPattern.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\source\QPS\ParsedWith.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
@@ -262,6 +268,9 @@
     </Filter>
     <Filter Include="Source Files">
       <UniqueIdentifier>{fd7d43fe-96f4-466a-b366-553e8416e9fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\QPS">
+      <UniqueIdentifier>{193ffbd2-f0ab-40ab-b8b9-dadaef0b99c7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

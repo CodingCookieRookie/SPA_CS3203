@@ -8,6 +8,7 @@
 #include "Clause.h"
 #include "ParsedRelationship.h"
 #include "ParsedPattern.h"
+#include "ParsedWith.h"
 #include "QPSCommons.h"
 
 class ParsedQuery {
