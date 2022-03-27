@@ -12,6 +12,7 @@
 #include "CallsInstruction.h"
 #include "CallsStarInstruction.h"
 #include "NextInstruction.h"
+#include "PatternInstruction.h"
 
 class Clause {
 public:

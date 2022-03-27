@@ -7,12 +7,6 @@
     <ClCompile Include="..\source\PKB\Attribute.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\SP\CFG.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\SP\CFGNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\Common\Common.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -41,9 +35,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\source\PKB\Pattern.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\PKB\PKBCFG.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\source\SP\SourceAST.cpp">
@@ -127,6 +118,9 @@
     <ClCompile Include="..\source\QPS\ParentInstruction.cpp">
       <Filter>Source Files\QPS</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\PKB\TransitivePopulator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\SP\ASTValidator.h">
@@ -139,12 +133,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\PKB\CallsT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\SP\CFG.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\SP\CFGNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\QPS\Clause.h">
@@ -196,9 +184,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\SP\Parser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\Pattern.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\QPS\PatternInstruction.h">
@@ -308,6 +293,9 @@
     </ClInclude>
     <ClInclude Include="..\source\QPS\ParentInstruction.h">
       <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\PKB\Pattern.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
