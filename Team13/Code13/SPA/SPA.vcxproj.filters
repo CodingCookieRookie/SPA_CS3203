@@ -13,9 +13,6 @@
     <ClCompile Include="..\source\SP\CFGNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\QPS\Clause.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\Common\Common.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -28,9 +25,6 @@
     <ClCompile Include="..\source\PKB\Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\QPS\EvaluatedTable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\Common\ExpressionParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -40,16 +34,7 @@
     <ClCompile Include="..\source\Common\ExprNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\QPS\GetAllInstruction.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\Common\Lexer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\ModifiesInstruction.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\ParsedQuery.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\source\SP\Parser.cpp">
@@ -58,25 +43,7 @@
     <ClCompile Include="..\source\PKB\Pattern.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\QPS\PatternInstruction.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\PKB\PKBCFG.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\PQLEvaluator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\PQLParser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\PQLResultProjector.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\QPSCommons.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\RelationshipInstruction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\source\SP\SourceAST.cpp">
@@ -91,20 +58,53 @@
     <ClCompile Include="..\source\PKB\TransitivePopulator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\QPS\UsesInstruction.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\source\QPS\Clause.cpp">
+      <Filter>Source Files\QPS</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\QPS\WithInstruction.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\source\QPS\EvaluatedTable.cpp">
+      <Filter>Source Files\QPS</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\QPS\ParsedRelationship.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\source\QPS\GetAllInstruction.cpp">
+      <Filter>Source Files\QPS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\ModifiesInstruction.cpp">
+      <Filter>Source Files\QPS</Filter>
     </ClCompile>
     <ClCompile Include="..\source\QPS\ParsedPattern.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\QPS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\ParsedQuery.cpp">
+      <Filter>Source Files\QPS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\ParsedRelationship.cpp">
+      <Filter>Source Files\QPS</Filter>
     </ClCompile>
     <ClCompile Include="..\source\QPS\ParsedWith.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\QPS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\PatternInstruction.cpp">
+      <Filter>Source Files\QPS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\PQLEvaluator.cpp">
+      <Filter>Source Files\QPS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\PQLParser.cpp">
+      <Filter>Source Files\QPS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\PQLResultProjector.cpp">
+      <Filter>Source Files\QPS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\QPSCommons.cpp">
+      <Filter>Source Files\QPS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\RelationshipInstruction.cpp">
+      <Filter>Source Files\QPS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\UsesInstruction.cpp">
+      <Filter>Source Files\QPS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\WithInstruction.cpp">
+      <Filter>Source Files\QPS</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -126,9 +126,6 @@
     <ClInclude Include="..\source\SP\CFGNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\QPS\Clause.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\Common\Common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -139,9 +136,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\PKB\Entity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\EvaluatedTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\Common\ExpressionParser.h">
@@ -156,16 +150,7 @@
     <ClInclude Include="..\source\PKB\FollowsT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\QPS\GetAllInstruction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\Instruction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\Common\Lexer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\ModifiesInstruction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\PKB\ModifiesP.h">
@@ -186,34 +171,13 @@
     <ClInclude Include="..\source\PKB\ParentT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\QPS\ParsedQuery.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\SP\Parser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\PKB\Pattern.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\QPS\PatternInstruction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\PKB\PKBCFG.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\PQLEvaluator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\PQLParser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\PQLResultProjector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\QPSCommons.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\RelationshipInstruction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\PKB\RS1.h">
@@ -240,26 +204,62 @@
     <ClInclude Include="..\source\Common\Types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\QPS\UsesInstruction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\PKB\UsesP.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\PKB\UsesS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\QPS\WithInstruction.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\source\QPS\Clause.h">
+      <Filter>Header Files\QPS</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\QPS\ParsedRelationship.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\source\QPS\EvaluatedTable.h">
+      <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\GetAllInstruction.h">
+      <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\Instruction.h">
+      <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\ModifiesInstruction.h">
+      <Filter>Header Files\QPS</Filter>
     </ClInclude>
     <ClInclude Include="..\source\QPS\ParsedPattern.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\ParsedQuery.h">
+      <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\ParsedRelationship.h">
+      <Filter>Header Files\QPS</Filter>
     </ClInclude>
     <ClInclude Include="..\source\QPS\ParsedWith.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\PatternInstruction.h">
+      <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\PQLEvaluator.h">
+      <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\PQLParser.h">
+      <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\PQLResultProjector.h">
+      <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\QPSCommons.h">
+      <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\RelationshipInstruction.h">
+      <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\UsesInstruction.h">
+      <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\WithInstruction.h">
+      <Filter>Header Files\QPS</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -271,6 +271,9 @@
     </Filter>
     <Filter Include="Header Files\QPS">
       <UniqueIdentifier>{193ffbd2-f0ab-40ab-b8b9-dadaef0b99c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\QPS">
+      <UniqueIdentifier>{2d909d9f-1e12-4709-9f97-988b6d3e4fa8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
