@@ -100,6 +100,9 @@
     <ClCompile Include="..\source\QPS\ParsedRelationship.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\QPS\ParsedPattern.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\SP\ASTValidator.h">
@@ -247,6 +250,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\QPS\ParsedRelationship.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\ParsedPattern.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
