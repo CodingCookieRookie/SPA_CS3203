@@ -25,18 +25,19 @@ private:
 	EvaluatedTable handleIdentLeft(std::unordered_map<std::string, PqlEntityType> PQLentities, std::unordered_map<std::string, std::vector<int>> PQLmap, PqlReference lhsRef, PqlReference rhsRef, std::vector<int> allStmts, std::vector<int> varIndices);
 	*/
 	/* Helper Handle methods */
-	EvaluatedTable RelationshipInstruction::helperHandleTwoIntegers(PqlRelationshipType pqlRsType);
+	EvaluatedTable helperHandleTwoIntegers(PqlRelationshipType pqlRsType);
 	EvaluatedTable helperHandleTwoIdents(PqlRelationshipType pqlRsType);
 	EvaluatedTable helperHandleOneInt(
 		PqlRelationshipType pqlRsType, PqlReferenceType lhsRefType, PqlReferenceType rhsRefType);
-	EvaluatedTable RelationshipInstruction::helperHandleOneIdent(
+	EvaluatedTable helperHandleOneIdent(
 		PqlRelationshipType pqlRsType, PqlReferenceType lhsRefType, PqlReferenceType rhsRefType);
-	EvaluatedTable RelationshipInstruction::helperHandleTwoStmtsMaybeWildcard(PqlRelationshipType pqlRsType);
-	EvaluatedTable RelationshipInstruction::helperHandleTwoProcMaybeWildcard(PqlRelationshipType pqlRsType);
-	EvaluatedTable RelationshipInstruction::helperHandleTwoWildcards(PqlRelationshipType pqlRsType);
+	EvaluatedTable helperHandleTwoStmtsMaybeWildcard(PqlRelationshipType pqlRsType);
+	EvaluatedTable helperHandleTwoProcMaybeWildcard(PqlRelationshipType pqlRsType);
+	EvaluatedTable helperHandleTwoWildcards(PqlRelationshipType pqlRsType);
 
 public:
 	RelationshipInstruction();
 	RelationshipInstruction(PqlRelationshipType pqlRSType, PqlReference lhs, PqlReference rhs);
 	EvaluatedTable execute() override;
+	EvaluatedTable helperHandleTwoIntegers();
 };

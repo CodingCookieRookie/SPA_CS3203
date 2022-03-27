@@ -50,7 +50,8 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
 		if (relationship.getRelationshipType() == PqlRelationshipType::ModifiesS ||
 			relationship.getRelationshipType() == PqlRelationshipType::ModifiesP ||
 			relationship.getRelationshipType() == PqlRelationshipType::UsesS ||
-			relationship.getRelationshipType() == PqlRelationshipType::UsesP)
+			relationship.getRelationshipType() == PqlRelationshipType::UsesP ||
+			relationship.getRelationshipType() == PqlRelationshipType::Parent)
 			instructions.push_back(relationship.toInstruction());
 	}
 

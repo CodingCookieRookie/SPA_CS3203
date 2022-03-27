@@ -426,45 +426,45 @@ EvaluatedTable RelationshipInstruction::handleFollowsT() {
 	}
 }
 
-EvaluatedTable RelationshipInstruction::handleParent(PqlRelationshipType pqlRsType) {
-	EvaluatedTable evTable;
-	std::vector<StmtIndex> stmts = Entity::getAllStmts();
-
-	// e.g Parent(6, 7)
-	if (lhsRef.first == PqlReferenceType::Integer && rhsRef.first == PqlReferenceType::Integer) {
-		return helperHandleTwoIntegers(pqlRsType);
-	}
-	// e.g Parent(6, s2), Parent(6, _)
-	else if (lhsRef.first == PqlReferenceType::Integer) {
-		if (rhsRef.first == PqlReferenceType::Synonym) {
-			return helperHandleOneInt(pqlRsType, PqlReferenceType::Integer, PqlReferenceType::Synonym);
-		} else {
-			return helperHandleOneInt(pqlRsType, PqlReferenceType::Integer, PqlReferenceType::Wildcard);
-		}
-	}
-	// e.g. Parent(s1, 7), Parent(_ 7)
-	else if (rhsRef.first == PqlReferenceType::Integer) {
-		if (lhsRef.first == PqlReferenceType::Synonym) {
-			return helperHandleOneInt(pqlRsType, PqlReferenceType::Synonym, PqlReferenceType::Integer);
-		} else {
-			return helperHandleOneInt(pqlRsType, PqlReferenceType::Wildcard, PqlReferenceType::Integer);
-		}
-	}
-	// Parent(s1, s2), Parent(s1, _), Parent(_, s2)
-	else if (!(lhsRef.first == PqlReferenceType::Wildcard && rhsRef.first == PqlReferenceType::Wildcard)) {
-		return helperHandleTwoStmtsMaybeWildcard(pqlRsType);
-	}
-	// Parent(_, _)
-	else {
-		bool isEmptyTable = true;
-		if (lhsRef.first == PqlReferenceType::Wildcard && rhsRef.first == PqlReferenceType::Wildcard) {
-			isEmptyTable = std::get<0>(Parent::getAllPredecessorSuccessorInfo()).empty();
-		}
-		// No Parent rs exists => isEmptyTable == true => EvTable.evResult == false (innerJoinMerge() can drop table)
-		// Parent rs exists => isEmptyTable == false => EvTable.evResult == true (innerJoinMerge() can merge dummy table, preserving all rows)
-		return EvaluatedTable(!isEmptyTable);
-	}
-}
+//EvaluatedTable RelationshipInstruction::handleParent(PqlRelationshipType pqlRsType) {
+//	EvaluatedTable evTable;
+//	std::vector<StmtIndex> stmts = Entity::getAllStmts();
+//
+//	// e.g Parent(6, 7)
+//	if (lhsRef.first == PqlReferenceType::Integer && rhsRef.first == PqlReferenceType::Integer) {
+//		return helperHandleTwoIntegers(pqlRsType);
+//	}
+//	// e.g Parent(6, s2), Parent(6, _)
+//	else if (lhsRef.first == PqlReferenceType::Integer) {
+//		if (rhsRef.first == PqlReferenceType::Synonym) {
+//			return helperHandleOneInt(pqlRsType, PqlReferenceType::Integer, PqlReferenceType::Synonym);
+//		} else {
+//			return helperHandleOneInt(pqlRsType, PqlReferenceType::Integer, PqlReferenceType::Wildcard);
+//		}
+//	}
+//	// e.g. Parent(s1, 7), Parent(_ 7)
+//	else if (rhsRef.first == PqlReferenceType::Integer) {
+//		if (lhsRef.first == PqlReferenceType::Synonym) {
+//			return helperHandleOneInt(pqlRsType, PqlReferenceType::Synonym, PqlReferenceType::Integer);
+//		} else {
+//			return helperHandleOneInt(pqlRsType, PqlReferenceType::Wildcard, PqlReferenceType::Integer);
+//		}
+//	}
+//	// Parent(s1, s2), Parent(s1, _), Parent(_, s2)
+//	else if (!(lhsRef.first == PqlReferenceType::Wildcard && rhsRef.first == PqlReferenceType::Wildcard)) {
+//		return helperHandleTwoStmtsMaybeWildcard(pqlRsType);
+//	}
+//	// Parent(_, _)
+//	else {
+//		bool isEmptyTable = true;
+//		if (lhsRef.first == PqlReferenceType::Wildcard && rhsRef.first == PqlReferenceType::Wildcard) {
+//			isEmptyTable = std::get<0>(Parent::getAllPredecessorSuccessorInfo()).empty();
+//		}
+//		// No Parent rs exists => isEmptyTable == true => EvTable.evResult == false (innerJoinMerge() can drop table)
+//		// Parent rs exists => isEmptyTable == false => EvTable.evResult == true (innerJoinMerge() can merge dummy table, preserving all rows)
+//		return EvaluatedTable(!isEmptyTable);
+//	}
+//}
 
 EvaluatedTable RelationshipInstruction::handleParentT() {
 	EvaluatedTable evTable;
@@ -916,7 +916,7 @@ EvaluatedTable RelationshipInstruction::execute() {
 		evTable = handleFollowsT();
 		break;
 	case PqlRelationshipType::Parent:
-		evTable = handleParent(pqlRelationshipType);
+		//evTable = handleParent(pqlRelationshipType);
 		break;
 	case PqlRelationshipType::ParentT:
 		evTable = handleParentT();
