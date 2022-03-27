@@ -90,7 +90,7 @@ private:
 		"         cenX = cenX / count; \n "
 		"         cenY = cenY / count; \n "
 		" 	  } \n "
-		"      normSq = cenX \ * cenX + cenY \ * cenY; \n "
+		"      normSq = cenX * cenX + cenY * cenY; \n "
 		"} \n ";
 
 	const char* mixedStmtsSource = "procedure computeCentroid { \n "
@@ -2838,7 +2838,7 @@ public:
 			"procedure Peter { \n "
 			"	read x; \n "
 			"}";
-		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast);};
+		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast); };
 		Assert::ExpectException<ASTException>(wrapperFunc);
 		try {
 			SourceAST ast = Parser::parse(source);
@@ -2877,7 +2877,7 @@ public:
 			"procedure main { \n "
 			"	read a; \n "
 			"}";
-		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast);};
+		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast); };
 		Assert::ExpectException<ASTException>(wrapperFunc);
 		try {
 			SourceAST ast = Parser::parse(source);
@@ -2915,7 +2915,7 @@ public:
 			"      if (x==y) then { read x; } else { \n"
 			"          call main; }} \n"
 			"}";
-		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast);};
+		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast); };
 		Assert::ExpectException<ASTException>(wrapperFunc);
 		try {
 			SourceAST ast = Parser::parse(source);
@@ -2959,7 +2959,7 @@ public:
 			"   }  \n "
 			"}";
 
-		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast);};
+		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast); };
 		Assert::ExpectException<ASTException>(wrapperFunc);
 		try {
 			SourceAST ast = Parser::parse(source);
@@ -3013,7 +3013,7 @@ public:
 			"	} \n "
 			"}";
 
-		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast);};
+		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast); };
 		Assert::ExpectException<ASTException>(wrapperFunc);
 		try {
 			SourceAST ast = Parser::parse(source);
@@ -3069,7 +3069,7 @@ public:
 			"	} \n"
 			"}";
 
-		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast);};
+		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast); };
 		Assert::ExpectException<ASTException>(wrapperFunc);
 		try {
 			SourceAST ast = Parser::parse(source);
