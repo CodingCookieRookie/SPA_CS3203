@@ -20,7 +20,7 @@
     <ClCompile Include="..\source\PKB\Entity.cpp" />
     <ClCompile Include="..\source\PKB\ExpressionProcessor.cpp" />
     <ClCompile Include="..\source\PKB\Pattern.cpp" />
-    <ClCompile Include="..\source\PKB\PKBCFG.cpp" />
+    <ClCompile Include="..\source\PKB\CFG.cpp" />
     <ClCompile Include="..\source\PKB\TransitivePopulator.cpp" />
     <ClCompile Include="..\source\QPS\Clause.cpp" />
     <ClCompile Include="..\source\QPS\EvaluatedTable.cpp" />
@@ -36,8 +36,6 @@
     <ClCompile Include="..\source\QPS\UsesInstruction.cpp" />
     <ClCompile Include="..\source\QPS\WithInstruction.cpp" />
     <ClCompile Include="..\source\SP\ASTValidator.cpp" />
-    <ClCompile Include="..\source\SP\CFG.cpp" />
-    <ClCompile Include="..\source\SP\CFGNode.cpp" />
     <ClCompile Include="..\source\SP\DesignExtractor.cpp" />
     <ClCompile Include="..\source\SP\Parser.cpp" />
     <ClCompile Include="..\source\SP\SourceAST.cpp" />
@@ -64,7 +62,7 @@
     <ClInclude Include="..\source\PKB\Parent.h" />
     <ClInclude Include="..\source\PKB\ParentT.h" />
     <ClInclude Include="..\source\PKB\Pattern.h" />
-    <ClInclude Include="..\source\PKB\PKBCFG.h" />
+    <ClInclude Include="..\source\PKB\CFG.h" />
     <ClInclude Include="..\source\PKB\TransitivePopulator.h" />
     <ClInclude Include="..\source\PKB\RS1.h" />
     <ClInclude Include="..\source\PKB\RS2.h" />
@@ -87,8 +85,6 @@
     <ClInclude Include="..\source\QPS\WithInstruction.h" />
     <ClInclude Include="..\source\SP\ASTValidator.h" />
     <ClInclude Include="..\source\SP\DesignExtractor.h" />
-    <ClInclude Include="..\source\SP\CFG.h" />
-    <ClInclude Include="..\source\SP\CFGNode.h" />
     <ClInclude Include="..\source\SP\Parser.h" />
     <ClInclude Include="..\source\SP\SourceAST.h" />
     <ClInclude Include="..\source\SP\SourceASTNode.h" />

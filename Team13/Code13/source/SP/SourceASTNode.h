@@ -15,6 +15,7 @@ class ExprNode;
 class SourceASTNode {
 public:
 	SourceASTNode();
+	~SourceASTNode();
 };
 
 class StmtNode : public SourceASTNode {

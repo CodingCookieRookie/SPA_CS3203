@@ -7,12 +7,6 @@
     <ClCompile Include="..\source\PKB\Attribute.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\SP\CFG.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\SP\CFGNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\QPS\Clause.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -61,7 +55,7 @@
     <ClCompile Include="..\source\QPS\PatternInstruction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\PKB\PKBCFG.cpp">
+    <ClCompile Include="..\source\PKB\CFG.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\source\QPS\PQLEvaluator.cpp">
@@ -109,12 +103,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\PKB\CallsT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\SP\CFG.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\SP\CFGNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\QPS\Clause.h">
@@ -189,7 +177,7 @@
     <ClInclude Include="..\source\QPS\PatternInstruction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\PKB\PKBCFG.h">
+    <ClInclude Include="..\source\PKB\CFG.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\QPS\PQLEvaluator.h">

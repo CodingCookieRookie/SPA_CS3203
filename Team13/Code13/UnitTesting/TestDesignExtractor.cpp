@@ -20,7 +20,6 @@ private:
 		Pattern::performCleanUp();
 		Parent::performCleanUp();
 		ParentT::performCleanUp();
-		PKBCFG::performCleanUp();
 		Follows::performCleanUp();
 		FollowsT::performCleanUp();
 		Calls::performCleanUp();
@@ -41,7 +40,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
 		Assert::AreEqual(size_t(1), Entity::getAllStmts().size());
@@ -63,7 +63,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
 		Assert::AreEqual(size_t(1), Entity::getAllStmts().size());
@@ -88,7 +89,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
 		Assert::AreEqual(size_t(2), Entity::getAllStmts().size());
@@ -121,7 +123,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		Assert::AreEqual(size_t(2), std::get<0>(Follows::getAllPredecessorSuccessorInfo()).size());
 		/* We expect (3 choose 2) = 3 relationships in Follows T */
@@ -154,7 +157,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		/* We expect two Parent relationships to be captured, one from the print statement in the then-block,
 		   and one from the read statement in the else-block. */
@@ -183,7 +187,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		/* We expect one Parent relationships to be captured, from the read statement in the while-block */
 		Assert::AreEqual(size_t(1), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());
@@ -221,7 +226,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		/* We expect two Parent relationships to be captured,
 		   one from the outer while to inner while, and one from the inner while to read x; */
@@ -290,7 +296,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		/* We expect five Parent relationships to be captured: (1, 2), (1, 4), (2, 3), (4, 5) and (4, 6). */
 		Assert::AreEqual(size_t(5), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());
@@ -341,7 +348,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		/* We expect three Parent relationships to be captured: (1, 2), (2, 3), and (2, 4). */
 		Assert::AreEqual(size_t(3), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());
@@ -390,7 +398,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		Assert::AreEqual(size_t(2), Entity::getAllVars().size());
 		Assert::AreEqual(size_t(3), Entity::getAllConsts().size());
@@ -427,7 +436,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		VarIndex x = Entity::getVarIdx("x");
 		VarIndex y = Entity::getVarIdx("y");
@@ -469,7 +479,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		VarIndex x = Entity::getVarIdx("x");
 		VarIndex y = Entity::getVarIdx("y");
@@ -533,7 +544,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		VarIndex x = Entity::getVarIdx("x");
 		VarIndex y = Entity::getVarIdx("y");
@@ -569,7 +581,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		VarIndex x = Entity::getVarIdx("x");
 		VarIndex y = Entity::getVarIdx("y");
@@ -607,7 +620,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		VarIndex x = Entity::getVarIdx("x");
 		VarIndex y = Entity::getVarIdx("y");
@@ -663,7 +677,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		VarIndex x = Entity::getVarIdx("x");
 		VarIndex y = Entity::getVarIdx("y");
@@ -682,8 +697,6 @@ public:
 		   procedure main {
 				read x; } }
 		*/
-		StmtIndex stmtIdx = StmtIndex(1);
-		std::set<StmtIndex> expectedStmtIndices = { stmtIdx };
 
 		std::string varName = "x";
 		std::string procName = "main";
@@ -695,18 +708,11 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
-		CFG cfg = DesignExtractor::generateCFG(stmtLstNode);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
-		CFGNode* headNode = cfg.getHead();
-		std::set<StmtIndex> headNodeStmtIndices = headNode->getStmtIndices();
-		Assert::IsTrue(expectedStmtIndices == headNodeStmtIndices);
-
-		CFGNode* tailNode = cfg.getTail();
-		std::set<StmtIndex> tailNodeStmtIndices = tailNode->getStmtIndices();
-		Assert::IsTrue(expectedStmtIndices == tailNodeStmtIndices);
-
-		Assert::AreEqual(size_t(1), cfg.size());
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = cfg->getCFGTable();
+		Assert::IsTrue(size_t(0) == cfgTable.size());
 	}
 
 	TEST_METHOD(generateCFG_printStatementOnly) {
@@ -714,8 +720,6 @@ public:
 		   procedure main {
 				print x; } }
 		*/
-		StmtIndex stmtIdx = StmtIndex(1);
-		std::set<StmtIndex> expectedStmtIndices = { stmtIdx };
 
 		std::string varName = "x";
 		std::string procName = "main";
@@ -727,18 +731,11 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
-		CFG cfg = DesignExtractor::generateCFG(stmtLstNode);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
-		CFGNode* headNode = cfg.getHead();
-		std::set<StmtIndex> headNodeStmtIndices = headNode->getStmtIndices();
-		Assert::IsTrue(expectedStmtIndices == headNodeStmtIndices);
-
-		CFGNode* tailNode = cfg.getTail();
-		std::set<StmtIndex> tailNodeStmtIndices = tailNode->getStmtIndices();
-		Assert::IsTrue(expectedStmtIndices == tailNodeStmtIndices);
-
-		Assert::AreEqual(size_t(1), cfg.size());
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = cfg->getCFGTable();
+		Assert::IsTrue(size_t(0) == cfgTable.size());
 	}
 
 	TEST_METHOD(generateCFG_readAndPrintStatementOnly) {
@@ -749,7 +746,8 @@ public:
 		*/
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
-		std::set<StmtIndex> expectedStmtIndices = { stmtIdx1, stmtIdx2 };
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> expectedCfg;
+		expectedCfg[stmtIdx1].insert(stmtIdx2);
 
 		std::string varNameX = "x";
 		std::string varNameY = "y";
@@ -765,18 +763,13 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
-		CFG cfg = DesignExtractor::generateCFG(stmtLstNode);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
-		CFGNode* headNode = cfg.getHead();
-		std::set<StmtIndex> headNodeStmtIndices = headNode->getStmtIndices();
-		Assert::IsTrue(expectedStmtIndices == headNodeStmtIndices);
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = cfg->getCFGTable();
+		Assert::IsTrue(size_t(1) == cfgTable.size());
 
-		CFGNode* tailNode = cfg.getTail();
-		std::set<StmtIndex> tailNodeStmtIndices = tailNode->getStmtIndices();
-		Assert::IsTrue(expectedStmtIndices == tailNodeStmtIndices);
-
-		Assert::AreEqual(size_t(1), cfg.size());
+		Assert::IsTrue(expectedCfg == cfgTable);
 	}
 
 	TEST_METHOD(generateCFG_multipleStatements) {
@@ -789,7 +782,9 @@ public:
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		StmtIndex stmtIdx3 = StmtIndex(3);
-		std::set<StmtIndex> expectedStmtIndices = { stmtIdx1, stmtIdx2, stmtIdx3 };
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> expectedCfg;
+		expectedCfg[stmtIdx1].insert(stmtIdx2);
+		expectedCfg[stmtIdx2].insert(stmtIdx3);
 
 		std::string varNameX = "x";
 		std::string varNameY = "y";
@@ -808,18 +803,13 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
-		CFG cfg = DesignExtractor::generateCFG(stmtLstNode);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
-		CFGNode* headNode = cfg.getHead();
-		std::set<StmtIndex> headNodeStmtIndices = headNode->getStmtIndices();
-		Assert::IsTrue(expectedStmtIndices == headNodeStmtIndices);
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = cfg->getCFGTable();
+		Assert::IsTrue(size_t(2) == cfgTable.size());
 
-		CFGNode* tailNode = cfg.getTail();
-		std::set<StmtIndex> tailNodeStmtIndices = tailNode->getStmtIndices();
-		Assert::IsTrue(expectedStmtIndices == tailNodeStmtIndices);
-
-		Assert::AreEqual(size_t(1), cfg.size());
+		Assert::IsTrue(expectedCfg == cfgTable);
 	}
 
 	TEST_METHOD(generateCFG_singleIfStatement) {
@@ -832,8 +822,9 @@ public:
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		StmtIndex stmtIdx3 = StmtIndex(3);
-		std::set<StmtIndex> expectedHeadNodeStmtIndices = { stmtIdx1 };
-		std::set<StmtIndex> expectedMidNodeStmtIndices = { stmtIdx2, stmtIdx3 };
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> expectedCfg;
+		expectedCfg[stmtIdx1].insert(stmtIdx2);
+		expectedCfg[stmtIdx1].insert(stmtIdx3);
 
 		PrintNode* printNode = new PrintNode("x");
 		StmtLstNode* thenStmtLstNode = new StmtLstNode();
@@ -854,22 +845,13 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
-		CFG cfg = DesignExtractor::generateCFG(outerStmtLstNode);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
-		CFGNode* headNode = cfg.getHead();
-		std::set<StmtIndex> headNodeStmtIndices = headNode->getStmtIndices();
-		std::unordered_set<CFGNode*> headNodeNextNodes = headNode->getNextNodes();
-		Assert::IsTrue(expectedHeadNodeStmtIndices == headNodeStmtIndices);
-		Assert::IsTrue(2 == headNodeNextNodes.size());
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = cfg->getCFGTable();
+		Assert::IsTrue(size_t(1) == cfgTable.size());
 
-		CFGNode* tailNode = cfg.getTail();
-		std::set<StmtIndex> tailNodeStmtIndices = tailNode->getStmtIndices();
-		std::unordered_set<CFGNode*> tailNodeNextNodes = tailNode->getNextNodes();
-		Assert::IsTrue(0 == tailNodeStmtIndices.size());
-		Assert::IsTrue(0 == tailNodeNextNodes.size());
-
-		Assert::AreEqual(size_t(4), cfg.size());
+		Assert::IsTrue(expectedCfg == cfgTable);
 	}
 
 	TEST_METHOD(generateCFG_singleWhileStatement) {
@@ -880,8 +862,9 @@ public:
 		*/
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
-		std::set<StmtIndex> expectedHeadNodeStmtIndices = { stmtIdx1 };
-		std::set<StmtIndex> expectedMidNodeStmtIndices = { stmtIdx2 };
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> expectedCfg;
+		expectedCfg[stmtIdx1].insert(stmtIdx2);
+		expectedCfg[stmtIdx2].insert(stmtIdx1);
 
 		PrintNode* printNode = new PrintNode("x");
 		StmtLstNode* stmtLstNode = new StmtLstNode();
@@ -899,27 +882,13 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
-		CFG cfg = DesignExtractor::generateCFG(outerStmtLstNode);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
-		CFGNode* headNode = cfg.getHead();
-		CFGNode* tailNode = cfg.getTail();
-		/* We expect the head node to be the tail node, since the code terminates at evaluation of the while statement condition. */
-		Assert::IsTrue(headNode == tailNode);
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = cfg->getCFGTable();
+		Assert::IsTrue(size_t(2) == cfgTable.size());
 
-		std::set<StmtIndex> headNodeStmtIndices = headNode->getStmtIndices();
-		std::unordered_set<CFGNode*> headNodeNextNodes = headNode->getNextNodes();
-		Assert::IsTrue(expectedHeadNodeStmtIndices == headNodeStmtIndices);
-		Assert::IsTrue(1 == headNodeNextNodes.size());
-
-		CFGNode* midNode = *headNodeNextNodes.begin();
-		std::set<StmtIndex> midNodeStmtIndices = midNode->getStmtIndices();
-		std::unordered_set<CFGNode*> midNodeNextNodes = midNode->getNextNodes();
-		Assert::IsTrue(expectedMidNodeStmtIndices == midNodeStmtIndices);
-		Assert::IsTrue(1 == midNodeNextNodes.size());
-		Assert::IsTrue(headNode == *midNodeNextNodes.begin());
-
-		Assert::AreEqual(size_t(2), cfg.size());
+		Assert::IsTrue(expectedCfg == cfgTable);
 	}
 
 	TEST_METHOD(generateCFG_whileInWhile) {
@@ -932,9 +901,11 @@ public:
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		StmtIndex stmtIdx3 = StmtIndex(3);
-		std::set<StmtIndex> expectedHeadNodeStmtIndices = { stmtIdx1 };
-		std::set<StmtIndex> expectedSecondNodeStmtIndices = { stmtIdx2 };
-		std::set<StmtIndex> expectedThirdNodeStmtIndices = { stmtIdx3 };
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> expectedCfg;
+		expectedCfg[stmtIdx1].insert(stmtIdx2);
+		expectedCfg[stmtIdx2].insert(stmtIdx3);
+		expectedCfg[stmtIdx3].insert(stmtIdx2);
+		expectedCfg[stmtIdx2].insert(stmtIdx1);
 
 		PrintNode* printNode = new PrintNode("x");
 		StmtLstNode* innerStmtLstNode = new StmtLstNode();
@@ -960,35 +931,13 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
-		CFG cfg = DesignExtractor::generateCFG(outerStmtLstNode);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
-		CFGNode* headNode = cfg.getHead();
-		CFGNode* tailNode = cfg.getTail();
-		/* We expect the head node to be the tail node, since the code terminates at evaluation of the while statement condition. */
-		Assert::IsTrue(headNode == tailNode);
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = cfg->getCFGTable();
+		Assert::IsTrue(size_t(3) == cfgTable.size());
 
-		std::set<StmtIndex> headNodeStmtIndices = headNode->getStmtIndices();
-		std::unordered_set<CFGNode*> headNodeNextNodes = headNode->getNextNodes();
-		Assert::IsTrue(expectedHeadNodeStmtIndices == headNodeStmtIndices);
-		Assert::IsTrue(1 == headNodeNextNodes.size());
-
-		CFGNode* secondNode = *headNodeNextNodes.begin();
-		std::set<StmtIndex> secondNodeStmtIndices = secondNode->getStmtIndices();
-		std::unordered_set<CFGNode*> secondNodeNextNodes = secondNode->getNextNodes();
-		Assert::IsTrue(expectedSecondNodeStmtIndices == secondNodeStmtIndices);
-		Assert::IsTrue(2 == secondNodeNextNodes.size());
-
-		CFGNode* thirdNode = *secondNodeNextNodes.begin();
-		std::set<StmtIndex> thirdNodeStmtIndices = thirdNode->getStmtIndices();
-		std::unordered_set<CFGNode*> thirdNodeNextNodes = thirdNode->getNextNodes();
-		Assert::IsTrue(expectedThirdNodeStmtIndices == thirdNodeStmtIndices);
-		Assert::IsTrue(1 == thirdNodeNextNodes.size());
-		Assert::IsTrue(secondNode == *thirdNodeNextNodes.begin());
-
-		Assert::IsTrue(headNode == *std::next(secondNodeNextNodes.begin()));
-
-		Assert::AreEqual(size_t(3), cfg.size());
+		Assert::IsTrue(expectedCfg == cfgTable);
 	}
 
 	TEST_METHOD(generateCFG_whileAndIfInIf) {
@@ -1003,14 +952,17 @@ public:
 		*/
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
+		StmtIndex stmtIdx3 = StmtIndex(3);
 		StmtIndex stmtIdx4 = StmtIndex(4);
 		StmtIndex stmtIdx5 = StmtIndex(5);
 		StmtIndex stmtIdx6 = StmtIndex(6);
-		std::set<StmtIndex> expectedHeadNodeStmtIndices = { stmtIdx1 };
-		std::set<StmtIndex> expectedSecondNodeStmtIndices = { stmtIdx2 };
-		std::set<StmtIndex> expectedFourthNodeStmtIndices = { stmtIdx4 };
-		std::set<StmtIndex> expectedFifthNodeStmtIndices = { stmtIdx5 };
-		std::set<StmtIndex> expectedSixthNodeStmtIndices = { stmtIdx6 };
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> expectedCfg;
+		expectedCfg[stmtIdx1].insert(stmtIdx2);
+		expectedCfg[stmtIdx1].insert(stmtIdx4);
+		expectedCfg[stmtIdx2].insert(stmtIdx3);
+		expectedCfg[stmtIdx3].insert(stmtIdx2);
+		expectedCfg[stmtIdx4].insert(stmtIdx5);
+		expectedCfg[stmtIdx4].insert(stmtIdx6);
 
 		/* Handle then-block */
 		PrintNode* printNode = new PrintNode("x");
@@ -1059,48 +1011,13 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
-		CFG cfg = DesignExtractor::generateCFG(outerStmtLstNode);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
-		CFGNode* headNode = cfg.getHead();
-		CFGNode* tailNode = cfg.getTail();
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = cfg->getCFGTable();
+		Assert::IsTrue(size_t(4) == cfgTable.size());
 
-		std::set<StmtIndex> headNodeStmtIndices = headNode->getStmtIndices();
-		std::unordered_set<CFGNode*> headNodeNextNodes = headNode->getNextNodes();
-		Assert::IsTrue(expectedHeadNodeStmtIndices == headNodeStmtIndices);
-		Assert::IsTrue(2 == headNodeNextNodes.size());
-
-		CFGNode* secondNode = *headNodeNextNodes.begin();
-		std::set<StmtIndex> secondNodeStmtIndices = secondNode->getStmtIndices();
-		std::unordered_set<CFGNode*> secondNodeNextNodes = secondNode->getNextNodes();
-		Assert::IsTrue(expectedSecondNodeStmtIndices == secondNodeStmtIndices);
-		Assert::IsTrue(2 == secondNodeNextNodes.size());
-		Assert::IsTrue(tailNode == *std::next(secondNodeNextNodes.begin()));
-
-		CFGNode* fourthNode = *std::next(headNodeNextNodes.begin());
-		std::set<StmtIndex> fourthNodeStmtIndices = fourthNode->getStmtIndices();
-		std::unordered_set<CFGNode*> fourthNodeNextNodes = fourthNode->getNextNodes();
-		Assert::IsTrue(expectedFourthNodeStmtIndices == fourthNodeStmtIndices);
-		Assert::IsTrue(2 == fourthNodeNextNodes.size());
-
-		CFGNode* fifthNode = *fourthNodeNextNodes.begin();
-		std::set<StmtIndex> fifthNodeStmtIndices = fifthNode->getStmtIndices();
-		std::unordered_set<CFGNode*> fifthNodeNextNodes = fifthNode->getNextNodes();
-		Assert::IsTrue(expectedFifthNodeStmtIndices == fifthNodeStmtIndices);
-		Assert::IsTrue(1 == fifthNodeNextNodes.size());
-
-		CFGNode* sixthNode = *std::next(fourthNodeNextNodes.begin());
-		std::set<StmtIndex> sixthNodeStmtIndices = sixthNode->getStmtIndices();
-		std::unordered_set<CFGNode*> sixthNodeNextNodes = sixthNode->getNextNodes();
-		Assert::IsTrue(expectedSixthNodeStmtIndices == sixthNodeStmtIndices);
-		Assert::IsTrue(1 == sixthNodeNextNodes.size());
-
-		CFGNode* innerIfLoopDummyNode = *fifthNodeNextNodes.begin();
-		Assert::IsTrue(innerIfLoopDummyNode == *sixthNodeNextNodes.begin());
-
-		Assert::IsTrue(tailNode == *innerIfLoopDummyNode->getNextNodes().begin());
-
-		Assert::AreEqual(size_t(8), cfg.size());
+		Assert::IsTrue(expectedCfg == cfgTable);
 	}
 
 	TEST_METHOD(generateCFG_ifInWhile) {
@@ -1115,10 +1032,12 @@ public:
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		StmtIndex stmtIdx3 = StmtIndex(3);
 		StmtIndex stmtIdx4 = StmtIndex(4);
-		std::set<StmtIndex> expectedHeadNodeStmtIndices = { stmtIdx1 };
-		std::set<StmtIndex> expectedSecondNodeStmtIndices = { stmtIdx2 };
-		std::set<StmtIndex> expectedThirdNodeStmtIndices = { stmtIdx3 };
-		std::set<StmtIndex> expectedFourthNodeStmtIndices = { stmtIdx4 };
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> expectedCfg;
+		expectedCfg[stmtIdx1].insert(stmtIdx2);
+		expectedCfg[stmtIdx2].insert(stmtIdx3);
+		expectedCfg[stmtIdx2].insert(stmtIdx4);
+		expectedCfg[stmtIdx3].insert(stmtIdx1);
+		expectedCfg[stmtIdx4].insert(stmtIdx1);
 
 		/* Handle then-block */
 		PrintNode* printNode = new PrintNode("x");
@@ -1152,53 +1071,24 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
-		CFG cfg = DesignExtractor::generateCFG(outerStmtLstNode);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
-		CFGNode* headNode = cfg.getHead();
-		CFGNode* tailNode = cfg.getTail();
-		/* We expect the head node to be the tail node, since the code terminates at evaluation of the while statement condition. */
-		Assert::IsTrue(headNode == tailNode);
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = cfg->getCFGTable();
+		Assert::IsTrue(size_t(4) == cfgTable.size());
 
-		std::set<StmtIndex> headNodeStmtIndices = headNode->getStmtIndices();
-		std::unordered_set<CFGNode*> headNodeNextNodes = headNode->getNextNodes();
-		Assert::IsTrue(expectedHeadNodeStmtIndices == headNodeStmtIndices);
-		Assert::IsTrue(1 == headNodeNextNodes.size());
-
-		CFGNode* secondNode = *headNodeNextNodes.begin();
-		std::set<StmtIndex> secondNodeStmtIndices = secondNode->getStmtIndices();
-		std::unordered_set<CFGNode*> secondNodeNextNodes = secondNode->getNextNodes();
-		Assert::IsTrue(expectedSecondNodeStmtIndices == secondNodeStmtIndices);
-		Assert::IsTrue(2 == secondNodeNextNodes.size());
-
-		CFGNode* thirdNode = *secondNodeNextNodes.begin();
-		std::set<StmtIndex> thirdNodeStmtIndices = thirdNode->getStmtIndices();
-		std::unordered_set<CFGNode*> thirdNodeNextNodes = thirdNode->getNextNodes();
-		Assert::IsTrue(expectedThirdNodeStmtIndices == thirdNodeStmtIndices);
-		Assert::IsTrue(1 == thirdNodeNextNodes.size());
-
-		CFGNode* ifLoopDummyNode = *thirdNodeNextNodes.begin();
-		Assert::IsTrue(headNode == *ifLoopDummyNode->getNextNodes().begin());
-
-		CFGNode* fourthNode = *std::next(secondNodeNextNodes.begin());
-		std::set<StmtIndex> fourthNodeStmtIndices = fourthNode->getStmtIndices();
-		std::unordered_set<CFGNode*> fourthNodeNextNodes = fourthNode->getNextNodes();
-		Assert::IsTrue(expectedFourthNodeStmtIndices == fourthNodeStmtIndices);
-		Assert::IsTrue(1 == fourthNodeNextNodes.size());
-		Assert::IsTrue(ifLoopDummyNode == *fourthNodeNextNodes.begin());
-
-		Assert::AreEqual(size_t(5), cfg.size());
+		Assert::IsTrue(expectedCfg == cfgTable);
 	}
 
 	TEST_METHOD(generateCFG_multIfStatements) {
 		/* AST is equivalent to the SIMPLE program
 		   procedure main {
-			   if ((x == y) && (z > 0)) then {
-				   print a; } else {
-				   read y; }
-				if (x != z) then {
-				   print x; } else {
-				   read a; }
+			   1. if ((x == y) && (z > 0)) then {
+			   2.    print a; } else {
+			   3.   read y; }
+			   4. if (x != z) then {
+			   5.    print x; } else {
+			   6.    read a; }
 			}
 		*/
 		StmtIndex stmtIdx1 = StmtIndex(1);
@@ -1207,12 +1097,13 @@ public:
 		StmtIndex stmtIdx4 = StmtIndex(4);
 		StmtIndex stmtIdx5 = StmtIndex(5);
 		StmtIndex stmtIdx6 = StmtIndex(6);
-		std::set<StmtIndex> expectedHeadNodeStmtIndices = { stmtIdx1 };
-		std::set<StmtIndex> expectedSecondNodeStmtIndices = { stmtIdx2 };
-		std::set<StmtIndex> expectedThirdNodeStmtIndices = { stmtIdx3 };
-		std::set<StmtIndex> expectedFourthNodeStmtIndices = { stmtIdx4 };
-		std::set<StmtIndex> expectedFifthNodeStmtIndices = { stmtIdx5 };
-		std::set<StmtIndex> expectedSixthNodeStmtIndices = { stmtIdx6 };
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> expectedCfg;
+		expectedCfg[stmtIdx1].insert(stmtIdx2);
+		expectedCfg[stmtIdx1].insert(stmtIdx3);
+		expectedCfg[stmtIdx2].insert(stmtIdx4);
+		expectedCfg[stmtIdx3].insert(stmtIdx4);
+		expectedCfg[stmtIdx4].insert(stmtIdx5);
+		expectedCfg[stmtIdx4].insert(stmtIdx6);
 
 		PrintNode* printNode1 = new PrintNode("a");
 		StmtLstNode* thenStmtLstNode1 = new StmtLstNode();
@@ -1253,74 +1144,34 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
-		CFG cfg = DesignExtractor::generateCFG(outerStmtLstNode);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
-		CFGNode* headNode = cfg.getHead();
-		CFGNode* tailNode = cfg.getTail();
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = cfg->getCFGTable();
+		Assert::IsTrue(size_t(4) == cfgTable.size());
 
-		std::set<StmtIndex> headNodeStmtIndices = headNode->getStmtIndices();
-		std::unordered_set<CFGNode*> headNodeNextNodes = headNode->getNextNodes();
-		Assert::IsTrue(expectedHeadNodeStmtIndices == headNodeStmtIndices);
-		Assert::IsTrue(2 == headNodeNextNodes.size());
-
-		CFGNode* secondNode = *headNodeNextNodes.begin();
-		std::set<StmtIndex> secondNodeStmtIndices = secondNode->getStmtIndices();
-		std::unordered_set<CFGNode*> secondNodeNextNodes = secondNode->getNextNodes();
-		Assert::IsTrue(expectedSecondNodeStmtIndices == secondNodeStmtIndices);
-		Assert::IsTrue(1 == secondNodeNextNodes.size());
-
-		CFGNode* thirdNode = *std::next(headNodeNextNodes.begin());
-		std::set<StmtIndex> thirdNodeStmtIndices = thirdNode->getStmtIndices();
-		std::unordered_set<CFGNode*> thirdNodeNextNodes = thirdNode->getNextNodes();
-		Assert::IsTrue(expectedThirdNodeStmtIndices == thirdNodeStmtIndices);
-		Assert::IsTrue(1 == thirdNodeNextNodes.size());
-
-		CFGNode* firstIfLoopDummyNode = *secondNodeNextNodes.begin();
-		Assert::IsTrue(firstIfLoopDummyNode == *thirdNodeNextNodes.begin());
-
-		CFGNode* fourthNode = *firstIfLoopDummyNode->getNextNodes().begin();
-		std::set<StmtIndex> fourthNodeStmtIndices = fourthNode->getStmtIndices();
-		std::unordered_set<CFGNode*> fourthNodeNextNodes = fourthNode->getNextNodes();
-		Assert::IsTrue(expectedFourthNodeStmtIndices == fourthNodeStmtIndices);
-		Assert::IsTrue(2 == fourthNodeNextNodes.size());
-
-		CFGNode* fifthNode = *fourthNodeNextNodes.begin();
-		std::set<StmtIndex> fifthNodeStmtIndices = fifthNode->getStmtIndices();
-		std::unordered_set<CFGNode*> fifthNodeNextNodes = fifthNode->getNextNodes();
-		Assert::IsTrue(expectedFifthNodeStmtIndices == fifthNodeStmtIndices);
-		Assert::IsTrue(1 == fifthNodeNextNodes.size());
-
-		CFGNode* sixthNode = *std::next(fourthNodeNextNodes.begin());
-		std::set<StmtIndex> sixthNodeStmtIndices = sixthNode->getStmtIndices();
-		std::unordered_set<CFGNode*> sixthNodeNextNodes = sixthNode->getNextNodes();
-		Assert::IsTrue(expectedSixthNodeStmtIndices == sixthNodeStmtIndices);
-		Assert::IsTrue(1 == sixthNodeNextNodes.size());
-
-		CFGNode* secondIfLoopDummyNode = *fifthNodeNextNodes.begin();
-		Assert::IsTrue(secondIfLoopDummyNode == *sixthNodeNextNodes.begin());
-		Assert::IsTrue(tailNode == secondIfLoopDummyNode);
-
-		Assert::AreEqual(size_t(8), cfg.size());
+		Assert::IsTrue(expectedCfg == cfgTable);
 	}
 
 	TEST_METHOD(generateCFG_multWhileStatements) {
 		/* AST is equivalent to the SIMPLE program
 		   procedure main {
-			   while ((x == y) && (z > 0)) {
-				   print a; }
-				while (x != z)  {
-				   print a; }
+			1.   while ((x == y) && (z > 0)) {
+			2.	   print a; }
+			3.	while (x != z)  {
+			4.	   print a; }
 			}
 		*/
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		StmtIndex stmtIdx3 = StmtIndex(3);
 		StmtIndex stmtIdx4 = StmtIndex(4);
-		std::set<StmtIndex> expectedHeadNodeStmtIndices = { stmtIdx1 };
-		std::set<StmtIndex> expectedSecondNodeStmtIndices = { stmtIdx2 };
-		std::set<StmtIndex> expectedThirdNodeStmtIndices = { stmtIdx3 };
-		std::set<StmtIndex> expectedFourthNodeStmtIndices = { stmtIdx4 };
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> expectedCfg;
+		expectedCfg[stmtIdx1].insert(stmtIdx2);
+		expectedCfg[stmtIdx2].insert(stmtIdx1);
+		expectedCfg[stmtIdx1].insert(stmtIdx3);
+		expectedCfg[stmtIdx3].insert(stmtIdx4);
+		expectedCfg[stmtIdx4].insert(stmtIdx3);
 
 		PrintNode* printNode1 = new PrintNode("a");
 		StmtLstNode* stmtLstNode1 = new StmtLstNode();
@@ -1355,38 +1206,13 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
-		CFG cfg = DesignExtractor::generateCFG(outerStmtLstNode);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
-		CFGNode* headNode = cfg.getHead();
-		CFGNode* tailNode = cfg.getTail();
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = cfg->getCFGTable();
+		Assert::IsTrue(size_t(4) == cfgTable.size());
 
-		std::set<StmtIndex> headNodeStmtIndices = headNode->getStmtIndices();
-		std::unordered_set<CFGNode*> headNodeNextNodes = headNode->getNextNodes();
-		Assert::IsTrue(expectedHeadNodeStmtIndices == headNodeStmtIndices);
-		Assert::IsTrue(2 == headNodeNextNodes.size());
-
-		CFGNode* secondNode = *headNodeNextNodes.begin();
-		std::set<StmtIndex> secondNodeStmtIndices = secondNode->getStmtIndices();
-		std::unordered_set<CFGNode*> secondNodeNextNodes = secondNode->getNextNodes();
-		Assert::IsTrue(expectedSecondNodeStmtIndices == secondNodeStmtIndices);
-		Assert::IsTrue(1 == secondNodeNextNodes.size());
-		Assert::IsTrue(headNode == *secondNodeNextNodes.begin());
-
-		CFGNode* thirdNode = *std::next(headNodeNextNodes.begin());
-		std::set<StmtIndex> thirdNodeStmtIndices = thirdNode->getStmtIndices();
-		std::unordered_set<CFGNode*> thirdNodeNextNodes = thirdNode->getNextNodes();
-		Assert::IsTrue(expectedThirdNodeStmtIndices == thirdNodeStmtIndices);
-		Assert::IsTrue(1 == thirdNodeNextNodes.size());
-
-		CFGNode* fourthNode = *thirdNodeNextNodes.begin();
-		std::set<StmtIndex> fourthNodeStmtIndices = fourthNode->getStmtIndices();
-		std::unordered_set<CFGNode*> fourthNodeNextNodes = fourthNode->getNextNodes();
-		Assert::IsTrue(expectedFourthNodeStmtIndices == fourthNodeStmtIndices);
-		Assert::IsTrue(1 == fourthNodeNextNodes.size());
-		Assert::IsTrue(thirdNode == *fourthNodeNextNodes.begin());
-
-		Assert::AreEqual(size_t(4), cfg.size());
+		Assert::IsTrue(expectedCfg == cfgTable);
 	}
 
 	TEST_METHOD(extract_multProcs_insertStmt_attributesPopulated) {
@@ -1466,7 +1292,8 @@ public:
 		programNode->addProcedure(procedureNode1);
 		programNode->addProcedure(procedureNode2);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		/* Check stmts and attributes population */
 		Assert::AreEqual(size_t(9), Entity::getAllStmts().size());
@@ -1517,7 +1344,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -1549,7 +1377,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -1585,7 +1414,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -1617,7 +1447,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -1658,7 +1489,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -1728,7 +1560,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -1786,7 +1619,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -1851,7 +1685,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -1911,7 +1746,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -1960,9 +1796,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
-
-		std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> test = Next::getAllPredecessorSuccessorInfo();
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -2015,7 +1850,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -2071,7 +1907,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -2122,7 +1959,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -2172,10 +2010,8 @@ public:
 		programNode->addProcedure(firstProcedureNode);
 		programNode->addProcedure(secondProcedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
-
-		std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> pep = Next::getAllPredecessorSuccessorInfo();
-		std::vector<CFG> res1 = PKBCFG::getCFGTable();
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -2251,7 +2087,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -2401,7 +2238,8 @@ public:
 		programNode->addProcedure(procedureNode4);
 		programNode->addProcedure(procedureNode5);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		/* Check Calls population */
 		/* We expect three Calls relationships to be captured: (1, 2), (2, 3), and (5, 4). */
@@ -2473,7 +2311,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		ProcIndex procIndex = Entity::getProcIdx(procName);
 
@@ -2573,7 +2412,8 @@ public:
 		programNode->addProcedure(procedureNode1);
 		programNode->addProcedure(procedureNode2);
 		SourceAST ast(programNode);
-		DesignExtractor::extract(ast);
+		CFG* cfg = new CFG();
+		DesignExtractor::extract(ast, cfg);
 
 		ProcIndex procIndex1 = Entity::getProcIdx(procName1);
 		ProcIndex procIndex2 = Entity::getProcIdx(procName2);
