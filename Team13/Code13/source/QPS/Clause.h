@@ -9,6 +9,7 @@
 #include "ParentStarInstruction.h"
 #include "FollowsInstruction.h"
 #include "FollowsStarInstruction.h"
+#include "CallsInstruction.h"
 
 class Clause {
 public:

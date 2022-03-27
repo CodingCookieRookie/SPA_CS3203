@@ -889,7 +889,7 @@ EvaluatedTable RelationshipInstruction::helperHandleTwoWildcards(PqlRelationship
 	return EvaluatedTable(!isEmptyTable);
 }
 
-RelationshipInstruction::RelationshipInstruction() {};
+RelationshipInstruction::RelationshipInstruction() {}
 
 RelationshipInstruction::RelationshipInstruction(PqlRelationshipType pqlRSType, PqlReference lhs, PqlReference rhs) :
 	pqlRelationshipType(pqlRSType), lhsRef(lhs), rhsRef(rhs) {}
@@ -922,7 +922,7 @@ EvaluatedTable RelationshipInstruction::execute() {
 		//evTable = handleParentT();
 		break;
 	case PqlRelationshipType::CALLS:
-		evTable = handleCalls(pqlRelationshipType);
+		//evTable = handleCalls(pqlRelationshipType);
 		break;
 	case PqlRelationshipType::CALLS_T:
 		evTable = handleCalls(pqlRelationshipType);
