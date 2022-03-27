@@ -27,6 +27,7 @@
     <ClCompile Include="..\source\QPS\GetAllInstruction.cpp" />
     <ClCompile Include="..\source\QPS\ModifiesInstruction.cpp" />
     <ClCompile Include="..\source\QPS\ParsedQuery.cpp" />
+    <ClCompile Include="..\source\QPS\ParsedRelationship.cpp" />
     <ClCompile Include="..\source\QPS\PatternInstruction.cpp" />
     <ClCompile Include="..\source\QPS\PQLEvaluator.cpp" />
     <ClCompile Include="..\source\QPS\PQLParser.cpp" />
@@ -77,6 +78,7 @@
     <ClInclude Include="..\source\QPS\Instruction.h" />
     <ClInclude Include="..\source\QPS\ModifiesInstruction.h" />
     <ClInclude Include="..\source\QPS\ParsedQuery.h" />
+    <ClInclude Include="..\source\QPS\ParsedRelationship.h" />
     <ClInclude Include="..\source\QPS\PatternInstruction.h" />
     <ClInclude Include="..\source\QPS\PQLEvaluator.h" />
     <ClInclude Include="..\source\QPS\PQLParser.h" />

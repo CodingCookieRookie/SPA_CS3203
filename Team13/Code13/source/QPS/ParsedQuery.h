@@ -6,6 +6,7 @@
 
 #include "../Exception/SPAException.h"
 #include "Clause.h"
+#include "ParsedRelationship.h"
 #include "QPSCommons.h"
 
 class ParsedQuery {

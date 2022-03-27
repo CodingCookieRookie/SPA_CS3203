@@ -6,6 +6,7 @@
 #include "Instruction.h"
 #include "PQLEvaluator.h"
 #include "QPSCommons.h"
+#include "ParsedRelationship.h"
 
 EvaluatedTable PQLEvaluator::evaluate(ParsedQuery& parsedQuery) {
 	std::vector<Instruction*> instructions = PQLEvaluator::evaluateToInstructions(parsedQuery);
@@ -28,6 +29,7 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
 
 	// Assumption: Semantically corrct ParsedQuery
 	// 1. Get all relationship results from such-that-clause
+	// TODO: Get rid of this for-loop, use the one below as part of Factory Pattern
 	for (size_t i = 0; i < relationships.size(); i++) {
 		ParsedRelationship parsedRelationship = relationships.at(i);
 		PqlReference lhsRef = parsedRelationship.getLhs();
