@@ -119,6 +119,9 @@
     <ClCompile Include="..\source\QPS\CallsInstruction.cpp">
       <Filter>Source Files\QPS</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\QPS\CallsStarInstruction.cpp">
+      <Filter>Source Files\QPS</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\SP\ASTValidator.h">
@@ -285,6 +288,9 @@
       <Filter>Header Files\QPS</Filter>
     </ClInclude>
     <ClInclude Include="..\source\QPS\CallsInstruction.h">
+      <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\CallsStarInstruction.h">
       <Filter>Header Files\QPS</Filter>
     </ClInclude>
   </ItemGroup>

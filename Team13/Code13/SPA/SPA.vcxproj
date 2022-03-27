@@ -23,6 +23,7 @@
     <ClCompile Include="..\source\PKB\PKBCFG.cpp" />
     <ClCompile Include="..\source\PKB\TransitivePopulator.cpp" />
     <ClCompile Include="..\source\QPS\CallsInstruction.cpp" />
+    <ClCompile Include="..\source\QPS\CallsStarInstruction.cpp" />
     <ClCompile Include="..\source\QPS\Clause.cpp" />
     <ClCompile Include="..\source\QPS\EvaluatedTable.cpp" />
     <ClCompile Include="..\source\QPS\FollowsInstruction.cpp" />
@@ -80,6 +81,7 @@
     <ClInclude Include="..\source\PKB\UsesP.h" />
     <ClInclude Include="..\source\PKB\UsesS.h" />
     <ClInclude Include="..\source\QPS\CallsInstruction.h" />
+    <ClInclude Include="..\source\QPS\CallsStarInstruction.h" />
     <ClInclude Include="..\source\QPS\Clause.h" />
     <ClInclude Include="..\source\QPS\EvaluatedTable.h" />
     <ClInclude Include="..\source\QPS\FollowsInstruction.h" />

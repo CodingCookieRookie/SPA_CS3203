@@ -925,7 +925,7 @@ EvaluatedTable RelationshipInstruction::execute() {
 		//evTable = handleCalls(pqlRelationshipType);
 		break;
 	case PqlRelationshipType::CALLS_T:
-		evTable = handleCalls(pqlRelationshipType);
+		//evTable = handleCalls(pqlRelationshipType);
 		break;
 	case PqlRelationshipType::NEXT:
 		evTable = handleNext(pqlRelationshipType);
