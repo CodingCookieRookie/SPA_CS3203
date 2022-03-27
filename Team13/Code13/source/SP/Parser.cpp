@@ -123,7 +123,7 @@ AssignNode* Parser::matchAssign(std::string varName) {
 	ExprNode* expr = nullptr;
 	try {
 		expr = ExpressionParser::matchExpr(lexer);
-	} catch (ExpressionException& ex) {
+	} catch (ExpressionException&) {
 		throw ParserException(ParserException::INVALID_EXPR);
 	}
 
@@ -240,7 +240,7 @@ ExprNode* Parser::matchRelFactor() {
 	ExprNode* expr{};
 	try {
 		expr = ExpressionParser::matchExpr(lexer);
-	} catch (ExpressionException& ex) {
+	} catch (ExpressionException&) {
 		std::string varName = lexer.nextName();
 		if (!varName.empty()) {
 			return new ExprNode(ExprNodeValueType::VAR_NAME, varName);
