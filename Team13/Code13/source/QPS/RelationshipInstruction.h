@@ -11,5 +11,5 @@ private:
 public:
 	RelationshipInstruction();
 	RelationshipInstruction(PqlRelationshipType pqlRSType, PqlReference lhs, PqlReference rhs);
-	EvaluatedTable execute() override;
+	virtual EvaluatedTable execute() = 0;
 };

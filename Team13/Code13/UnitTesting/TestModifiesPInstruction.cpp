@@ -110,7 +110,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::IDENT, "p");
 		rhsRef = std::make_pair(PqlReferenceType::IDENT, "x");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::MODIFIES_P, lhsRef, rhsRef);
+		Instruction* instruction = new ModifiesPInstruction(lhsRef, rhsRef);
 
 		// PKB inserts modifies
 		Entity::insertProc("randomProc");

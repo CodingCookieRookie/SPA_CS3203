@@ -29,7 +29,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "1");
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "2");
-		Instruction* instruction = new RelationshipInstruction(PqlRelationshipType::PARENT, lhsRef, rhsRef);
+		Instruction* instruction = new ParentInstruction(lhsRef, rhsRef);
 
 		// PKB inserts statements
 		StmtIndex stmt1 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
