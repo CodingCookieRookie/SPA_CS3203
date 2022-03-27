@@ -71,7 +71,6 @@ EvaluatedTable ParentInstruction::helperHandleOneInt(PqlReferenceType lhsRefType
 					results.emplace_back(STMT); /* e.g {6} if some s1 (e.g. 6) is a Parent of 7 */
 				}
 			} else {}
-			break;
 		}
 		/* Handle final output, wildcards => boolean, synonyms => table */
 		if (lhsRefType == PqlReferenceType::WILDCARD || rhsRefType == PqlReferenceType::WILDCARD) {
@@ -134,7 +133,7 @@ EvaluatedTable ParentInstruction::helperHandleTwoStmtsMaybeWildcard() {
 
 EvaluatedTable ParentInstruction::helperHandleTwoWildcards() {
 	bool isEmptyTable = true;
-	isEmptyTable = std::get<0>(Next::getAllPredecessorSuccessorInfo()).empty();
+	isEmptyTable = std::get<0>(Parent::getAllPredecessorSuccessorInfo()).empty();
 	// No Parent rs exists => isEmptyTable == true => EvTable.evResult == false (innerJoinMerge() can drop table)
 	// Parent rs exists => isEmptyTable == false => EvTable.evResult == true (innerJoinMerge() can merge dummy table, preserving all rows)
 	return EvaluatedTable(!isEmptyTable);
