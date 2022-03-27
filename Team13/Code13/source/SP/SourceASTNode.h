@@ -49,7 +49,6 @@ private:
 	std::string varName;
 public:
 	ReadNode(std::string varName);
-	std::string getVarName();
 	StatementType getStmtType();
 	std::unordered_set<std::string> getModifiesVars();
 
@@ -61,7 +60,6 @@ private:
 	std::string varName;
 public:
 	PrintNode(std::string varName);
-	std::string getVarName();
 	StatementType getStmtType();
 	std::unordered_set<std::string> getUsesVars();
 
@@ -77,7 +75,6 @@ private:
 	std::string pattern;
 public:
 	AssignNode(std::string varName, ExprNode* expr);
-	std::string getVarName();
 	ExprNode* getExpr();
 	StatementType getStmtType();
 	std::unordered_set<std::string> getUsesVars();

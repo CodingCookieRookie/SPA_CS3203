@@ -56,9 +56,6 @@ std::unordered_set<std::string> StmtNode::getUses(ExprNode* expr, ExprNodeValueT
 
 /* ReadNode */
 ReadNode::ReadNode(std::string varName) : StmtNode(), varName(varName) {}
-std::string ReadNode::getVarName() {
-	return varName;
-}
 
 StatementType ReadNode::getStmtType() {
 	return StatementType::READ_TYPE;
@@ -71,10 +68,6 @@ std::unordered_set<std::string> ReadNode::getModifiesVars() {
 /* PrintNode */
 PrintNode::PrintNode(std::string varName) : StmtNode(), varName(varName) {}
 
-std::string PrintNode::getVarName() {
-	return varName;
-}
-
 StatementType PrintNode::getStmtType() {
 	return StatementType::PRINT_TYPE;
 }
@@ -85,10 +78,6 @@ std::unordered_set<std::string> PrintNode::getUsesVars() {
 
 /* AssignNode */
 AssignNode::AssignNode(std::string varName, ExprNode* expr) : StmtNode(), varName(varName), expr(expr) {}
-
-std::string AssignNode::getVarName() {
-	return varName;
-}
 
 StatementType AssignNode::getStmtType() {
 	return StatementType::ASSIGN_TYPE;

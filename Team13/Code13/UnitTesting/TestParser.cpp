@@ -34,19 +34,19 @@ public:
 		/* read read; */
 		ReadNode* readNode = (ReadNode*)statements[0];
 		Assert::IsTrue(StatementType::READ_TYPE == readNode->getStmtType());
-		Assert::AreEqual(std::string("read"), readNode->getVarName());
+		Assert::AreEqual(std::string("read"), *readNode->getModifiesVars().begin());
 
 		/* Test print stmt */
 		/* print y123; */
 		PrintNode* printNode = (PrintNode*)statements[1];
 		Assert::IsTrue(StatementType::PRINT_TYPE == printNode->getStmtType());
-		Assert::AreEqual(std::string("y123"), printNode->getVarName());
+		Assert::AreEqual(std::string("y123"), *printNode->getUsesVars().begin());
 
 		/* Test assign stmt */
 		/* x = (y + 1) * 3 */
 		AssignNode* assignNode = (AssignNode*)statements[2];
 		Assert::IsTrue(StatementType::ASSIGN_TYPE == assignNode->getStmtType());
-		Assert::AreEqual(std::string("x"), assignNode->getVarName());
+		Assert::AreEqual(std::string("x"), *assignNode->getModifiesVars().begin());
 		ExprNode* multOp = assignNode->getExpr();
 		Assert::AreEqual(std::string("*"), multOp->getValue());
 		Assert::IsTrue(ExprNodeValueType::ARITHMETIC_OPERATOR == multOp->getExprNodeValueType());
@@ -121,7 +121,7 @@ public:
 		Assert::AreEqual(size_t(1), stmtsInWhile.size());
 		ReadNode* whileReadNode = (ReadNode*)stmtsInWhile[0];
 		Assert::IsTrue(StatementType::READ_TYPE == whileReadNode->getStmtType());
-		Assert::AreEqual(std::string("print"), whileReadNode->getVarName());
+		Assert::AreEqual(std::string("print"), *whileReadNode->getModifiesVars().begin());
 
 		/* Test if stmt */
 		/*if ( 2 > 2147483648) \n then \n
@@ -150,7 +150,7 @@ public:
 		Assert::AreEqual(size_t(1), thenStmts.size());
 		AssignNode* thenAssignNode = (AssignNode*)thenStmts[0];
 		Assert::IsTrue(StatementType::ASSIGN_TYPE == thenAssignNode->getStmtType());
-		Assert::AreEqual(std::string("Re123ad"), thenAssignNode->getVarName());
+		Assert::AreEqual(std::string("Re123ad"), *thenAssignNode->getModifiesVars().begin());
 		ExprNode* allUpperCase = thenAssignNode->getExpr();
 		Assert::AreEqual(std::string("ALLUPPERCASE"), allUpperCase->getValue());
 		Assert::IsTrue(ExprNodeValueType::VAR_NAME == allUpperCase->getExprNodeValueType());
@@ -163,7 +163,7 @@ public:
 		Assert::AreEqual(size_t(1), elseStmts.size());
 		AssignNode* elseAssignNode = (AssignNode*)elseStmts[0];
 		Assert::IsTrue(StatementType::ASSIGN_TYPE == elseAssignNode->getStmtType());
-		Assert::AreEqual(std::string("if"), elseAssignNode->getVarName());
+		Assert::AreEqual(std::string("if"), *elseAssignNode->getModifiesVars().begin());
 		ExprNode* five = elseAssignNode->getExpr();
 		Assert::AreEqual(std::string("5"), five->getValue());
 		Assert::IsTrue(ExprNodeValueType::CONST_VALUE == five->getExprNodeValueType());
@@ -195,7 +195,7 @@ public:
 		Assert::AreEqual(size_t(1), proc1Stmts.size());
 		ReadNode* proc1ReadNode = (ReadNode*)proc1Stmts[0];
 		Assert::IsTrue(StatementType::READ_TYPE == proc1ReadNode->getStmtType());
-		Assert::AreEqual(std::string("proc1"), proc1ReadNode->getVarName());
+		Assert::AreEqual(std::string("proc1"), *proc1ReadNode->getModifiesVars().begin());
 
 		/* 2nd procedure */
 		/* procedure aRelativelyLongProcedureName ... */
@@ -210,19 +210,19 @@ public:
 		/* read read; */
 		ReadNode* readNode = (ReadNode*)proc2Stmts[0];
 		Assert::IsTrue(StatementType::READ_TYPE == readNode->getStmtType());
-		Assert::AreEqual(std::string("read"), readNode->getVarName());
+		Assert::AreEqual(std::string("read"), *readNode->getModifiesVars().begin());
 
 		/* Test print stmt */
 		/* print y123; */
 		PrintNode* printNode = (PrintNode*)proc2Stmts[1];
 		Assert::IsTrue(StatementType::PRINT_TYPE == printNode->getStmtType());
-		Assert::AreEqual(std::string("y123"), printNode->getVarName());
+		Assert::AreEqual(std::string("y123"), *printNode->getUsesVars().begin());
 
 		/* Test assign stmt */
 		/* x = (y + 1) * 3 */
 		AssignNode* assignNode = (AssignNode*)proc2Stmts[2];
 		Assert::IsTrue(StatementType::ASSIGN_TYPE == assignNode->getStmtType());
-		Assert::AreEqual(std::string("x"), assignNode->getVarName());
+		Assert::AreEqual(std::string("x"), *assignNode->getModifiesVars().begin());
 		ExprNode* multOp = assignNode->getExpr();
 		Assert::AreEqual(std::string("*"), multOp->getValue());
 		Assert::IsTrue(ExprNodeValueType::ARITHMETIC_OPERATOR == multOp->getExprNodeValueType());
@@ -297,7 +297,7 @@ public:
 		Assert::AreEqual(size_t(1), stmtsInWhile.size());
 		ReadNode* whileReadNode = (ReadNode*)stmtsInWhile[0];
 		Assert::IsTrue(StatementType::READ_TYPE == whileReadNode->getStmtType());
-		Assert::AreEqual(std::string("print"), whileReadNode->getVarName());
+		Assert::AreEqual(std::string("print"), *whileReadNode->getModifiesVars().begin());
 
 		/* Test if stmt */
 		/*if ( 2 > 2147483648) \n then \n
@@ -326,7 +326,7 @@ public:
 		Assert::AreEqual(size_t(1), thenStmts.size());
 		AssignNode* thenAssignNode = (AssignNode*)thenStmts[0];
 		Assert::IsTrue(StatementType::ASSIGN_TYPE == thenAssignNode->getStmtType());
-		Assert::AreEqual(std::string("Re123ad"), thenAssignNode->getVarName());
+		Assert::AreEqual(std::string("Re123ad"), *thenAssignNode->getModifiesVars().begin());
 		ExprNode* allUpperCase = thenAssignNode->getExpr();
 		Assert::AreEqual(std::string("ALLUPPERCASE"), allUpperCase->getValue());
 		Assert::IsTrue(ExprNodeValueType::VAR_NAME == allUpperCase->getExprNodeValueType());
@@ -339,7 +339,7 @@ public:
 		Assert::AreEqual(size_t(1), elseStmts.size());
 		AssignNode* elseAssignNode = (AssignNode*)elseStmts[0];
 		Assert::IsTrue(StatementType::ASSIGN_TYPE == elseAssignNode->getStmtType());
-		Assert::AreEqual(std::string("if"), elseAssignNode->getVarName());
+		Assert::AreEqual(std::string("if"), *elseAssignNode->getModifiesVars().begin());
 		ExprNode* five = elseAssignNode->getExpr();
 		Assert::AreEqual(std::string("5"), five->getValue());
 		Assert::IsTrue(ExprNodeValueType::CONST_VALUE == five->getExprNodeValueType());
@@ -353,7 +353,7 @@ public:
 		Assert::AreEqual(size_t(1), proc3Stmts.size());
 		AssignNode* proc3AssignNode = (AssignNode*)proc3Stmts[0];
 		Assert::IsTrue(StatementType::ASSIGN_TYPE == proc3AssignNode->getStmtType());
-		Assert::AreEqual(std::string("read"), proc3AssignNode->getVarName());
+		Assert::AreEqual(std::string("read"), *proc3AssignNode->getModifiesVars().begin());
 		ExprNode* proc3Expr = proc3AssignNode->getExpr();
 		Assert::AreEqual(std::string("read"), proc3Expr->getValue());
 		Assert::IsTrue(ExprNodeValueType::VAR_NAME == proc3Expr->getExprNodeValueType());
@@ -386,7 +386,7 @@ public:
 		Assert::AreEqual(size_t(1), proc1Stmts.size());
 		ReadNode* proc1ReadNode = (ReadNode*)proc1Stmts[0];
 		Assert::IsTrue(StatementType::READ_TYPE == proc1ReadNode->getStmtType());
-		Assert::AreEqual(std::string("proc1"), proc1ReadNode->getVarName());
+		Assert::AreEqual(std::string("proc1"), *proc1ReadNode->getModifiesVars().begin());
 
 		/* 2nd procedure */
 		/* procedure aRelativelyLongProcedureName ... */
@@ -401,19 +401,19 @@ public:
 		/* read read; */
 		ReadNode* readNode = (ReadNode*)proc2Stmts[0];
 		Assert::IsTrue(StatementType::READ_TYPE == readNode->getStmtType());
-		Assert::AreEqual(std::string("read"), readNode->getVarName());
+		Assert::AreEqual(std::string("read"), *readNode->getModifiesVars().begin());
 
 		/* Test print stmt */
 		/* print y123; */
 		PrintNode* printNode = (PrintNode*)proc2Stmts[1];
 		Assert::IsTrue(StatementType::PRINT_TYPE == printNode->getStmtType());
-		Assert::AreEqual(std::string("y123"), printNode->getVarName());
+		Assert::AreEqual(std::string("y123"), *printNode->getUsesVars().begin());
 
 		/* Test assign stmt */
 		/* x = (y + 1) * 3 */
 		AssignNode* assignNode = (AssignNode*)proc2Stmts[2];
 		Assert::IsTrue(StatementType::ASSIGN_TYPE == assignNode->getStmtType());
-		Assert::AreEqual(std::string("x"), assignNode->getVarName());
+		Assert::AreEqual(std::string("x"), *assignNode->getModifiesVars().begin());
 		ExprNode* multOp = assignNode->getExpr();
 		Assert::AreEqual(std::string("*"), multOp->getValue());
 		Assert::IsTrue(ExprNodeValueType::ARITHMETIC_OPERATOR == multOp->getExprNodeValueType());
@@ -488,7 +488,7 @@ public:
 		Assert::AreEqual(size_t(1), stmtsInWhile.size());
 		ReadNode* whileReadNode = (ReadNode*)stmtsInWhile[0];
 		Assert::IsTrue(StatementType::READ_TYPE == whileReadNode->getStmtType());
-		Assert::AreEqual(std::string("print"), whileReadNode->getVarName());
+		Assert::AreEqual(std::string("print"), *whileReadNode->getModifiesVars().begin());
 
 		/* Test if stmt */
 		/*if ( 2 > 2147483648) \n then \n
@@ -517,7 +517,7 @@ public:
 		Assert::AreEqual(size_t(1), thenStmts.size());
 		AssignNode* thenAssignNode = (AssignNode*)thenStmts[0];
 		Assert::IsTrue(StatementType::ASSIGN_TYPE == thenAssignNode->getStmtType());
-		Assert::AreEqual(std::string("Re123ad"), thenAssignNode->getVarName());
+		Assert::AreEqual(std::string("Re123ad"), *thenAssignNode->getModifiesVars().begin());
 		ExprNode* allUpperCase = thenAssignNode->getExpr();
 		Assert::AreEqual(std::string("ALLUPPERCASE"), allUpperCase->getValue());
 		Assert::IsTrue(ExprNodeValueType::VAR_NAME == allUpperCase->getExprNodeValueType());
@@ -530,7 +530,7 @@ public:
 		Assert::AreEqual(size_t(1), elseStmts.size());
 		AssignNode* elseAssignNode = (AssignNode*)elseStmts[0];
 		Assert::IsTrue(StatementType::ASSIGN_TYPE == elseAssignNode->getStmtType());
-		Assert::AreEqual(std::string("if"), elseAssignNode->getVarName());
+		Assert::AreEqual(std::string("if"), *elseAssignNode->getModifiesVars().begin());
 		ExprNode* five = elseAssignNode->getExpr();
 		Assert::AreEqual(std::string("5"), five->getValue());
 		Assert::IsTrue(ExprNodeValueType::CONST_VALUE == five->getExprNodeValueType());
@@ -545,7 +545,7 @@ public:
 		Assert::AreEqual(size_t(1), proc3Stmts.size());
 		AssignNode* proc3AssignNode = (AssignNode*)proc3Stmts[0];
 		Assert::IsTrue(StatementType::ASSIGN_TYPE == proc3AssignNode->getStmtType());
-		Assert::AreEqual(std::string("read"), proc3AssignNode->getVarName());
+		Assert::AreEqual(std::string("read"), *proc3AssignNode->getModifiesVars().begin());
 		ExprNode* proc3Expr = proc3AssignNode->getExpr();
 		Assert::AreEqual(std::string("read"), proc3Expr->getValue());
 		Assert::IsTrue(ExprNodeValueType::VAR_NAME == proc3Expr->getExprNodeValueType());
@@ -944,7 +944,7 @@ public:
 		/* Test assign nodes*/
 		/* flag    = 123; */
 		AssignNode* assignNode1 = (AssignNode*)statements[0];
-		Assert::AreEqual(std::string("flag"), assignNode1->getVarName());
+		Assert::AreEqual(std::string("flag"), *assignNode1->getModifiesVars().begin());
 
 		ExprNode* expr1 = assignNode1->getExpr();
 		Assert::AreEqual(std::string("123"), expr1->getValue());
@@ -952,7 +952,7 @@ public:
 
 		/* count =    someVar123	; */
 		AssignNode* assignNode2 = (AssignNode*)statements[1];
-		Assert::AreEqual(std::string("count"), assignNode2->getVarName());
+		Assert::AreEqual(std::string("count"), *assignNode2->getModifiesVars().begin());
 
 		ExprNode* expr2 = assignNode2->getExpr();
 		Assert::AreEqual(std::string("someVar123"), expr2->getValue());
@@ -980,7 +980,7 @@ public:
 		/* Test assign nodes*/
 		/* CenX = 9 + CenX; */
 		AssignNode* assignNode1 = (AssignNode*)statements[0];
-		Assert::AreEqual(std::string("CenX"), assignNode1->getVarName());
+		Assert::AreEqual(std::string("CenX"), *assignNode1->getModifiesVars().begin());
 
 		ExprNode* expr1 = assignNode1->getExpr();
 		Assert::AreEqual(std::string("+"), expr1->getValue());
@@ -991,7 +991,7 @@ public:
 
 		/* count = COUNT % 2   ; */
 		AssignNode* assignNode2 = (AssignNode*)statements[1];
-		Assert::AreEqual(std::string("count"), assignNode2->getVarName());
+		Assert::AreEqual(std::string("count"), *assignNode2->getModifiesVars().begin());
 
 		ExprNode* expr2 = assignNode2->getExpr();
 		Assert::AreEqual(std::string("%"), expr2->getValue());
@@ -1002,7 +1002,7 @@ public:
 
 		/* x = x + z * 5 ; */
 		AssignNode* assignNode3 = (AssignNode*)statements[2];
-		Assert::AreEqual(std::string("x"), assignNode3->getVarName());
+		Assert::AreEqual(std::string("x"), *assignNode3->getModifiesVars().begin());
 
 		ExprNode* expr3 = assignNode3->getExpr();
 		Assert::AreEqual(std::string("+"), expr3->getValue());
@@ -1018,7 +1018,7 @@ public:
 
 		/* y = y / w - 1; */
 		AssignNode* assignNode4 = (AssignNode*)statements[3];
-		Assert::AreEqual(std::string("y"), assignNode4->getVarName());
+		Assert::AreEqual(std::string("y"), *assignNode4->getModifiesVars().begin());
 
 		ExprNode* expr4 = assignNode4->getExpr();
 		Assert::AreEqual(std::string("-"), expr4->getValue());
@@ -1034,7 +1034,7 @@ public:
 
 		/* z = z + a123 / b0b - c  ; */
 		AssignNode* assignNode5 = (AssignNode*)statements[4];
-		Assert::AreEqual(std::string("z"), assignNode5->getVarName());
+		Assert::AreEqual(std::string("z"), *assignNode5->getModifiesVars().begin());
 
 		ExprNode* expr5 = assignNode5->getExpr();
 		Assert::AreEqual(std::string("-"), expr5->getValue());
@@ -1075,7 +1075,7 @@ public:
 		/* Test assign nodes*/
 		/* CenX = (9 + CenX); */
 		AssignNode* assignNode1 = (AssignNode*)statements[0];
-		Assert::AreEqual(std::string("CenX"), assignNode1->getVarName());
+		Assert::AreEqual(std::string("CenX"), *assignNode1->getModifiesVars().begin());
 
 		ExprNode* expr1 = assignNode1->getExpr();
 		Assert::AreEqual(std::string("+"), expr1->getValue());
@@ -1086,7 +1086,7 @@ public:
 
 		/* count = (COUNT % 2)   ; */
 		AssignNode* assignNode2 = (AssignNode*)statements[1];
-		Assert::AreEqual(std::string("count"), assignNode2->getVarName());
+		Assert::AreEqual(std::string("count"), *assignNode2->getModifiesVars().begin());
 
 		ExprNode* expr2 = assignNode2->getExpr();
 		Assert::AreEqual(std::string("%"), expr2->getValue());
@@ -1097,7 +1097,7 @@ public:
 
 		/* x = (x + z) * 5 ; */
 		AssignNode* assignNode3 = (AssignNode*)statements[2];
-		Assert::AreEqual(std::string("x"), assignNode3->getVarName());
+		Assert::AreEqual(std::string("x"), *assignNode3->getModifiesVars().begin());
 
 		ExprNode* expr3 = assignNode3->getExpr();
 		Assert::AreEqual(std::string("*"), expr3->getValue());
@@ -1113,7 +1113,7 @@ public:
 
 		/* y = y / (w - 1); */
 		AssignNode* assignNode4 = (AssignNode*)statements[3];
-		Assert::AreEqual(std::string("y"), assignNode4->getVarName());
+		Assert::AreEqual(std::string("y"), *assignNode4->getModifiesVars().begin());
 
 		ExprNode* expr4 = assignNode4->getExpr();
 		Assert::AreEqual(std::string("/"), expr4->getValue());
@@ -1129,7 +1129,7 @@ public:
 
 		/* z = (z + a123) / (b0b - c)  ; */
 		AssignNode* assignNode5 = (AssignNode*)statements[4];
-		Assert::AreEqual(std::string("z"), assignNode5->getVarName());
+		Assert::AreEqual(std::string("z"), *assignNode5->getModifiesVars().begin());
 
 		ExprNode* expr5 = assignNode5->getExpr();
 		Assert::AreEqual(std::string("/"), expr5->getValue());
@@ -1177,7 +1177,7 @@ public:
 		/* z = (( (z + a123) / (b0b - (c * 10 - ALL %( Z + (1*0)) )	) )) ; */
 		AssignNode* assignNode = (AssignNode*)statements[0];
 		Assert::IsTrue(StatementType::ASSIGN_TYPE == assignNode->getStmtType());
-		Assert::AreEqual(std::string("z"), assignNode->getVarName());
+		Assert::AreEqual(std::string("z"), *assignNode->getModifiesVars().begin());
 
 		ExprNode* divideOp = assignNode->getExpr();
 		Assert::AreEqual(std::string("/"), divideOp->getValue());
@@ -1280,7 +1280,7 @@ public:
 		/* Test assign nodes*/
 		/* if = 9 + read; */
 		AssignNode* assignNode1 = (AssignNode*)statements[0];
-		Assert::AreEqual(std::string("if"), assignNode1->getVarName());
+		Assert::AreEqual(std::string("if"), *assignNode1->getModifiesVars().begin());
 
 		ExprNode* expr1 = assignNode1->getExpr();
 		Assert::AreEqual(std::string("+"), expr1->getValue());
@@ -1291,7 +1291,7 @@ public:
 
 		/* read = print % 2   ; */
 		AssignNode* assignNode2 = (AssignNode*)statements[1];
-		Assert::AreEqual(std::string("read"), assignNode2->getVarName());
+		Assert::AreEqual(std::string("read"), *assignNode2->getModifiesVars().begin());
 
 		ExprNode* expr2 = assignNode2->getExpr();
 		Assert::AreEqual(std::string("%"), expr2->getValue());
@@ -1302,7 +1302,7 @@ public:
 
 		/* while = x + z * 5 ; */
 		AssignNode* assignNode3 = (AssignNode*)statements[2];
-		Assert::AreEqual(std::string("while"), assignNode3->getVarName());
+		Assert::AreEqual(std::string("while"), *assignNode3->getModifiesVars().begin());
 
 		ExprNode* expr3 = assignNode3->getExpr();
 		Assert::AreEqual(std::string("+"), expr3->getValue());
@@ -1318,7 +1318,7 @@ public:
 
 		/* print = y / w - 1; */
 		AssignNode* assignNode4 = (AssignNode*)statements[3];
-		Assert::AreEqual(std::string("print"), assignNode4->getVarName());
+		Assert::AreEqual(std::string("print"), *assignNode4->getModifiesVars().begin());
 
 		ExprNode* expr4 = assignNode4->getExpr();
 		Assert::AreEqual(std::string("-"), expr4->getValue());
@@ -1334,7 +1334,7 @@ public:
 
 		/* then = z + a123 / b0b - c  ; */
 		AssignNode* assignNode5 = (AssignNode*)statements[4];
-		Assert::AreEqual(std::string("then"), assignNode5->getVarName());
+		Assert::AreEqual(std::string("then"), *assignNode5->getModifiesVars().begin());
 
 		ExprNode* expr5 = assignNode5->getExpr();
 		Assert::AreEqual(std::string("-"), expr5->getValue());
@@ -1710,7 +1710,7 @@ public:
 
 		/* flag    = 123; */
 		AssignNode* assignNode1 = (AssignNode*)stmtsInWhile[0];
-		Assert::AreEqual(std::string("flag"), assignNode1->getVarName());
+		Assert::AreEqual(std::string("flag"), *assignNode1->getModifiesVars().begin());
 
 		ExprNode* expr1 = assignNode1->getExpr();
 		Assert::AreEqual(std::string("123"), expr1->getValue());
@@ -1718,7 +1718,7 @@ public:
 
 		/* count =  ((  someVar123 )  )	; */
 		AssignNode* assignNode2 = (AssignNode*)stmtsInWhile[1];
-		Assert::AreEqual(std::string("count"), assignNode2->getVarName());
+		Assert::AreEqual(std::string("count"), *assignNode2->getModifiesVars().begin());
 
 		ExprNode* expr2 = assignNode2->getExpr();
 		Assert::AreEqual(std::string("someVar123"), expr2->getValue());
@@ -1726,11 +1726,11 @@ public:
 
 		/* read flag ; */
 		ReadNode* readNode = (ReadNode*)stmtsInWhile[2];
-		Assert::AreEqual(std::string("flag"), readNode->getVarName());
+		Assert::AreEqual(std::string("flag"), *readNode->getModifiesVars().begin());
 
 		/* print COUNT	; */
 		PrintNode* printNode = (PrintNode*)stmtsInWhile[3];
-		Assert::AreEqual(std::string("COUNT"), printNode->getVarName());
+		Assert::AreEqual(std::string("COUNT"), *printNode->getUsesVars().begin());
 	}
 
 	TEST_METHOD(parse_matchWhile_oneRelExprCondExpr_veryNestedExpr_success) {
@@ -1844,7 +1844,7 @@ public:
 		/* flag    = 123; */
 		AssignNode* assignNode = (AssignNode*)stmtsInWhile[0];
 		Assert::IsTrue(StatementType::ASSIGN_TYPE == assignNode->getStmtType());
-		Assert::AreEqual(std::string("flag"), assignNode->getVarName());
+		Assert::AreEqual(std::string("flag"), *assignNode->getModifiesVars().begin());
 
 		ExprNode* expr = assignNode->getExpr();
 		Assert::AreEqual(std::string("123"), expr->getValue());
@@ -1897,7 +1897,7 @@ public:
 
 		/* flag    = 123; */
 		AssignNode* assignNode1 = (AssignNode*)stmtsInWhile[0];
-		Assert::AreEqual(std::string("flag"), assignNode1->getVarName());
+		Assert::AreEqual(std::string("flag"), *assignNode1->getModifiesVars().begin());
 
 		ExprNode* expr1 = assignNode1->getExpr();
 		Assert::AreEqual(std::string("123"), expr1->getValue());
@@ -1905,7 +1905,7 @@ public:
 
 		/* count =  ((  someVar123 )  )	; */
 		AssignNode* assignNode2 = (AssignNode*)stmtsInWhile[1];
-		Assert::AreEqual(std::string("count"), assignNode2->getVarName());
+		Assert::AreEqual(std::string("count"), *assignNode2->getModifiesVars().begin());
 
 		ExprNode* expr2 = assignNode2->getExpr();
 		Assert::AreEqual(std::string("someVar123"), expr2->getValue());
@@ -1913,11 +1913,11 @@ public:
 
 		/* read flag ; */
 		ReadNode* readNode = (ReadNode*)stmtsInWhile[2];
-		Assert::AreEqual(std::string("flag"), readNode->getVarName());
+		Assert::AreEqual(std::string("flag"), *readNode->getModifiesVars().begin());
 
 		/* print COUNT	; */
 		PrintNode* printNode = (PrintNode*)stmtsInWhile[3];
-		Assert::AreEqual(std::string("COUNT"), printNode->getVarName());
+		Assert::AreEqual(std::string("COUNT"), *printNode->getUsesVars().begin());
 	}
 
 	TEST_METHOD(parse_matchWhile_nestedNOTOpCondExpr_success) {
@@ -1975,7 +1975,7 @@ public:
 		/* flag    = 123; */
 		AssignNode* assignNode = (AssignNode*)stmtsInWhile[0];
 		Assert::IsTrue(StatementType::ASSIGN_TYPE == assignNode->getStmtType());
-		Assert::AreEqual(std::string("flag"), assignNode->getVarName());
+		Assert::AreEqual(std::string("flag"), *assignNode->getModifiesVars().begin());
 		ExprNode* expr = assignNode->getExpr();
 		Assert::AreEqual(std::string("123"), expr->getValue());
 		Assert::IsTrue(expr->getChildren().empty());
@@ -2055,7 +2055,7 @@ public:
 
 		/* read fl123ag ; */
 		ReadNode* readNode = (ReadNode*)stmtsInWhile[0];
-		Assert::AreEqual(std::string("fl123ag"), readNode->getVarName());
+		Assert::AreEqual(std::string("fl123ag"), *readNode->getModifiesVars().begin());
 	}
 
 	TEST_METHOD(parse_matchWhile_OROpCondExpr_success) {
@@ -2135,7 +2135,7 @@ public:
 
 		/* read fl123ag ; */
 		ReadNode* readNode = (ReadNode*)stmtsInWhile[0];
-		Assert::AreEqual(std::string("fl123ag"), readNode->getVarName());
+		Assert::AreEqual(std::string("fl123ag"), *readNode->getModifiesVars().begin());
 	}
 
 	TEST_METHOD(parse_matchWhile_OROpNestedInNOTOpCondExpr_success) {
@@ -2221,7 +2221,7 @@ public:
 
 		/* read fl123ag ; */
 		ReadNode* readNode = (ReadNode*)stmtsInWhile[0];
-		Assert::AreEqual(std::string("fl123ag"), readNode->getVarName());
+		Assert::AreEqual(std::string("fl123ag"), *readNode->getModifiesVars().begin());
 	}
 
 	TEST_METHOD(parse_matchWhile_veryNestedCondExpr_success) {
@@ -2371,7 +2371,7 @@ public:
 		/* read fl123ag ; */
 		ReadNode* readNode = (ReadNode*)stmtsInWhile[0];
 		Assert::IsTrue(StatementType::READ_TYPE == readNode->getStmtType());
-		Assert::AreEqual(std::string("fl123ag"), readNode->getVarName());
+		Assert::AreEqual(std::string("fl123ag"), *readNode->getModifiesVars().begin());
 	}
 
 	TEST_METHOD(parse_matchWhile_nestedWhile_success) {
@@ -2407,7 +2407,7 @@ public:
 
 		ReadNode* readNode1 = (ReadNode*)stmtsInOuterWhile[0];
 		Assert::IsTrue(StatementType::READ_TYPE == readNode1->getStmtType());
-		Assert::AreEqual(std::string("r"), readNode1->getVarName());
+		Assert::AreEqual(std::string("r"), *readNode1->getModifiesVars().begin());
 
 		WhileNode* innerWhileNode = (WhileNode*)stmtsInOuterWhile[1];
 		Assert::IsTrue(StatementType::WHILE_TYPE == innerWhileNode->getStmtType());
@@ -2419,12 +2419,12 @@ public:
 
 		PrintNode* printNode = (PrintNode*)stmtsInInnerWhile[0];
 		Assert::IsTrue(StatementType::PRINT_TYPE == printNode->getStmtType());
-		Assert::AreEqual(std::string("print"), printNode->getVarName());
+		Assert::AreEqual(std::string("print"), *printNode->getUsesVars().begin());
 
 		/* read fl123ag ; */
 		ReadNode* readNode2 = (ReadNode*)statements[1];
 		Assert::IsTrue(StatementType::READ_TYPE == readNode2->getStmtType());
-		Assert::AreEqual(std::string("fl123ag"), readNode2->getVarName());
+		Assert::AreEqual(std::string("fl123ag"), *readNode2->getModifiesVars().begin());
 	}
 
 	TEST_METHOD(parse_matchWhile_containsIfStmt_success) {
@@ -2461,7 +2461,7 @@ public:
 
 		ReadNode* readNode1 = (ReadNode*)stmtsInWhile[0];
 		Assert::IsTrue(StatementType::READ_TYPE == readNode1->getStmtType());
-		Assert::AreEqual(std::string("r"), readNode1->getVarName());
+		Assert::AreEqual(std::string("r"), *readNode1->getModifiesVars().begin());
 
 		IfNode* ifNode = (IfNode*)stmtsInWhile[1];
 		Assert::IsTrue(StatementType::IF_TYPE == ifNode->getStmtType());
@@ -2476,7 +2476,7 @@ public:
 
 		PrintNode* printNode1 = (PrintNode*)thenStmts[0];
 		Assert::IsTrue(StatementType::PRINT_TYPE == printNode1->getStmtType());
-		Assert::AreEqual(std::string("print"), printNode1->getVarName());
+		Assert::AreEqual(std::string("print"), *printNode1->getUsesVars().begin());
 
 		/* Test else clause */
 		/*  print pretty	; */
@@ -2486,12 +2486,12 @@ public:
 
 		PrintNode* printNode2 = (PrintNode*)elseStmts[0];
 		Assert::IsTrue(StatementType::PRINT_TYPE == printNode2->getStmtType());
-		Assert::AreEqual(std::string("pretty"), printNode2->getVarName());
+		Assert::AreEqual(std::string("pretty"), *printNode2->getUsesVars().begin());
 
 		/* read fl123ag ; */
 		ReadNode* readNode2 = (ReadNode*)statements[1];
 		Assert::IsTrue(StatementType::READ_TYPE == readNode2->getStmtType());
-		Assert::AreEqual(std::string("fl123ag"), readNode2->getVarName());
+		Assert::AreEqual(std::string("fl123ag"), *readNode2->getModifiesVars().begin());
 	}
 
 	TEST_METHOD(parse_matchWhile_condExprMissingLeftBracket_parserExceptionThrown) {
@@ -2882,10 +2882,10 @@ public:
 		Assert::AreEqual(size_t(2), stmtsThen.size());
 
 		ReadNode* readNode = (ReadNode*)stmtsThen[0];
-		Assert::AreEqual(std::string("fl123ag"), readNode->getVarName());
+		Assert::AreEqual(std::string("fl123ag"), *readNode->getModifiesVars().begin());
 
 		AssignNode* assignNode = (AssignNode*)stmtsThen[1];
-		Assert::AreEqual(std::string("cenX"), assignNode->getVarName());
+		Assert::AreEqual(std::string("cenX"), *assignNode->getModifiesVars().begin());
 
 		ExprNode* expr = assignNode->getExpr();
 		Assert::AreEqual(std::string("99"), expr->getValue());
@@ -2898,7 +2898,7 @@ public:
 		Assert::AreEqual(size_t(1), stmtsElse.size());
 
 		PrintNode* printNode = (PrintNode*)stmtsElse[0];
-		Assert::AreEqual(std::string("COUNT"), printNode->getVarName());
+		Assert::AreEqual(std::string("COUNT"), *printNode->getUsesVars().begin());
 	}
 
 	TEST_METHOD(parse_matchIf_nestedIf_success) {
@@ -2974,7 +2974,7 @@ public:
 		Assert::AreEqual(size_t(1), innerThenStmts.size());
 		PrintNode* thenPrintNode = (PrintNode*)innerThenStmts[0];
 		Assert::IsTrue(StatementType::PRINT_TYPE == thenPrintNode->getStmtType());
-		Assert::AreEqual(std::string("print"), thenPrintNode->getVarName());
+		Assert::AreEqual(std::string("print"), *thenPrintNode->getUsesVars().begin());
 
 		/* Test INNER else clause */
 		/* print p; */
@@ -2984,7 +2984,7 @@ public:
 
 		PrintNode* elsePrintNode = (PrintNode*)innerElseStmts[0];
 		Assert::IsTrue(StatementType::PRINT_TYPE == elsePrintNode->getStmtType());
-		Assert::AreEqual(std::string("p"), elsePrintNode->getVarName());
+		Assert::AreEqual(std::string("p"), *elsePrintNode->getUsesVars().begin());
 
 		/* Test OUTER else clause */
 		/* read fl123ag 	; */
@@ -2993,7 +2993,7 @@ public:
 		Assert::AreEqual(size_t(1), outerElseStmts.size());
 		ReadNode* readNode = (ReadNode*)outerElseStmts[0];
 		Assert::IsTrue(StatementType::READ_TYPE == readNode->getStmtType());
-		Assert::AreEqual(std::string("fl123ag"), readNode->getVarName());
+		Assert::AreEqual(std::string("fl123ag"), *readNode->getModifiesVars().begin());
 	}
 
 	TEST_METHOD(parse_matchIf_containsWhileStmt_success) {
@@ -3031,7 +3031,7 @@ public:
 
 		PrintNode* printNode = (PrintNode*)thenStmts[0];
 		Assert::IsTrue(StatementType::PRINT_TYPE == printNode->getStmtType());
-		Assert::AreEqual(std::string("print"), printNode->getVarName());
+		Assert::AreEqual(std::string("print"), *printNode->getUsesVars().begin());
 
 		/* Test else clause */
 		/*  while ( x==1	 )\n {
@@ -3052,12 +3052,12 @@ public:
 
 		ReadNode* readNode1 = (ReadNode*)stmtsInWhile[0];
 		Assert::IsTrue(StatementType::READ_TYPE == readNode1->getStmtType());
-		Assert::AreEqual(std::string("r"), readNode1->getVarName());
+		Assert::AreEqual(std::string("r"), *readNode1->getModifiesVars().begin());
 
 		/* read fl123ag ; */
 		ReadNode* readNode2 = (ReadNode*)elseStmts[1];
 		Assert::IsTrue(StatementType::READ_TYPE == readNode2->getStmtType());
-		Assert::AreEqual(std::string("fl123ag"), readNode2->getVarName());
+		Assert::AreEqual(std::string("fl123ag"), *readNode2->getModifiesVars().begin());
 	}
 	TEST_METHOD(parse_matchIf_invalidCond_condExprMissingLeftBracket_parserExceptionThrown) {
 		const char* source = "   procedure procedure123name \n "
@@ -3406,7 +3406,7 @@ public:
 		Assert::AreEqual(size_t(1), proc2Stmts.size());
 		ReadNode* readNode = (ReadNode*)proc2Stmts[0];
 		Assert::IsTrue(StatementType::READ_TYPE == readNode->getStmtType());
-		Assert::AreEqual(std::string("x"), readNode->getVarName());
+		Assert::AreEqual(std::string("x"), *readNode->getModifiesVars().begin());
 	}
 
 	TEST_METHOD(parse_matchCall_syntacticallyValid_semanticallyInvalid_nonExistentProc_success) {
