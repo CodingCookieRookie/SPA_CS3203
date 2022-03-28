@@ -18,6 +18,8 @@ public:
 
 	/* Main entry method for executing instruction */
 	EvaluatedTable execute() override;
+
+	std::unordered_set<std::string> getSynonyms();
 };
 
 class WithStringInstruction : public WithInstruction {

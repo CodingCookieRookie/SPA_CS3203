@@ -50,7 +50,12 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::VAR_NAME, "read");
 		rhsRef = std::make_pair(PqlReferenceType::PROC_NAME, "proc");
-		Instruction* instruction = new WithInstruction(lhsRef, rhsRef, EntityType::READ, EntityType::PROCEDURE, PqlAttributeType::STRING);
+		Instruction* instruction = new WithStringInstruction(lhsRef, rhsRef, EntityType::READ, EntityType::PROCEDURE);
+
+		/* Test getSynonyms() */
+		std::unordered_set<std::string> synonyms = instruction->getSynonyms();
+		Assert::IsTrue(synonyms.find("read") != synonyms.end());
+		Assert::IsTrue(synonyms.find("proc") != synonyms.end());
 
 		/* 2. Check result of EvTable */
 		EvaluatedTable evTable = instruction->execute();
@@ -90,7 +95,12 @@ public:
 		lhsRef = std::make_pair(PqlReferenceType::VAR_NAME, "print");
 		rhsRef = std::make_pair(PqlReferenceType::IDENT, "read");
 		/* TODO: Redesign WithInstruction*/
-		Instruction* instruction = new WithInstruction(lhsRef, rhsRef, EntityType::PRINT, EntityType::CONSTANT, PqlAttributeType::STRING);
+		Instruction* instruction = new WithStringInstruction(lhsRef, rhsRef, EntityType::PRINT, EntityType::CONSTANT);
+
+		/* Test getSynonyms() */
+		std::unordered_set<std::string> synonyms = instruction->getSynonyms();
+		Assert::IsTrue(synonyms.find("read") == synonyms.end());
+		Assert::IsTrue(synonyms.find("print") != synonyms.end());
 
 		/* 2. Check result of EvTable */
 		EvaluatedTable evTable = instruction->execute();
@@ -129,7 +139,12 @@ public:
 		lhsRef = std::make_pair(PqlReferenceType::IDENT, "print");
 		rhsRef = std::make_pair(PqlReferenceType::IDENT, "read");
 		/* TODO: Redesign WithInstruction*/
-		Instruction* instruction = new WithInstruction(lhsRef, rhsRef, EntityType::CONSTANT, EntityType::CONSTANT, PqlAttributeType::STRING);
+		Instruction* instruction = new WithStringInstruction(lhsRef, rhsRef, EntityType::CONSTANT, EntityType::CONSTANT);
+
+		/* Test getSynonyms() */
+		std::unordered_set<std::string> synonyms = instruction->getSynonyms();
+		Assert::IsTrue(synonyms.find("read") == synonyms.end());
+		Assert::IsTrue(synonyms.find("print") == synonyms.end());
 
 		/* 2. Check result of EvTable */
 		EvaluatedTable evTable = instruction->execute();
@@ -167,7 +182,12 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::STMT_NUM, "stmt");
 		rhsRef = std::make_pair(PqlReferenceType::VALUE, "constant");
-		Instruction* instruction = new WithInstruction(lhsRef, rhsRef, EntityType::STMT, EntityType::CONSTANT, PqlAttributeType::INTEGER);
+		Instruction* instruction = new WithIntegerInstruction(lhsRef, rhsRef, EntityType::STMT, EntityType::CONSTANT);
+
+		/* Test getSynonyms() */
+		std::unordered_set<std::string> synonyms = instruction->getSynonyms();
+		Assert::IsTrue(synonyms.find("stmt") != synonyms.end());
+		Assert::IsTrue(synonyms.find("constant") != synonyms.end());
 
 		/* 2. Check result of EvTable */
 		EvaluatedTable evTable = instruction->execute();
@@ -207,7 +227,12 @@ public:
 		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "1");
 		rhsRef = std::make_pair(PqlReferenceType::STMT_NUM, "read");
 		/* TODO: Redesign WithInstruction*/
-		Instruction* instruction = new WithInstruction(lhsRef, rhsRef, EntityType::CONSTANT, EntityType::READ, PqlAttributeType::INTEGER);
+		Instruction* instruction = new WithIntegerInstruction(lhsRef, rhsRef, EntityType::CONSTANT, EntityType::READ);
+
+		/* Test getSynonyms() */
+		std::unordered_set<std::string> synonyms = instruction->getSynonyms();
+		Assert::IsTrue(synonyms.find("read") != synonyms.end());
+		Assert::IsTrue(synonyms.find("1") == synonyms.end());
 
 		/* 2. Check result of EvTable */
 		EvaluatedTable evTable = instruction->execute();
@@ -246,7 +271,12 @@ public:
 		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "3");
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "0");
 		/* TODO: Redesign WithInstruction*/
-		Instruction* instruction = new WithInstruction(lhsRef, rhsRef, EntityType::CONSTANT, EntityType::CONSTANT, PqlAttributeType::INTEGER);
+		Instruction* instruction = new WithIntegerInstruction(lhsRef, rhsRef, EntityType::CONSTANT, EntityType::CONSTANT);
+
+		/* Test getSynonyms() */
+		std::unordered_set<std::string> synonyms = instruction->getSynonyms();
+		Assert::IsTrue(synonyms.find("3") == synonyms.end());
+		Assert::IsTrue(synonyms.find("0") == synonyms.end());
 
 		/* 2. Check result of EvTable */
 		EvaluatedTable evTable = instruction->execute();

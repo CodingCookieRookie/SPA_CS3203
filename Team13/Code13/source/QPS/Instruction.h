@@ -25,4 +25,10 @@
 class Instruction {
 public:
 	virtual EvaluatedTable execute() = 0;
+	virtual std::unordered_set<std::string> getSynonyms() {
+		return std::unordered_set<std::string>();
+	};
+	virtual int getDifficultyScore() {
+		return 0;
+	};
 };

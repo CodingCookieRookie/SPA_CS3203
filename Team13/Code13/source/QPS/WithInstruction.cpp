@@ -67,6 +67,17 @@ EvaluatedTable WithInstruction::execute() {
 	return evTable;
 }
 
+std::unordered_set<std::string> WithInstruction::getSynonyms() {
+	std::unordered_set<std::string> synonyms;
+	if (isSynonymRef(lhs)) {
+		synonyms.insert(lhs.second);
+	}
+	if (isSynonymRef(rhs)) {
+		synonyms.insert(rhs.second);
+	}
+	return synonyms;
+}
+
 WithStringInstruction::WithStringInstruction(PqlReference lhs, PqlReference rhs, EntityType lhsEntity, EntityType rhsEntity) :
 	WithInstruction(lhs, rhs, lhsEntity, rhsEntity, PqlAttributeType::UNVALIDATED) {}
 
