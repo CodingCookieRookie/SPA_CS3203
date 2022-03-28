@@ -83,24 +83,19 @@ EvaluatedTable NextInstruction::helperHandleOneInt(PqlReferenceType lhsRefType, 
 				otherSynonym = lhsRef.second;
 			}
 		}
-		std::unordered_map<std::string, EntityType> PQLentities;
-		PQLentities.insert(std::pair(otherSynonym, EntityType::STMT));
-
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLmap[otherSynonym] = results;
 
-		return EvaluatedTable(PQLentities, PQLmap);
+		return EvaluatedTable(PQLmap);
 	}
 }
 
 EvaluatedTable NextInstruction::helperHandleTwoStmtsMaybeWildcard() {
 	std::tuple<std::vector<int>, std::vector<int>> results;
 	/* e.g. {1, 2}, {2, 3}, {3, 6} */
-	std::unordered_map<std::string, EntityType> PQLentities;
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
 	results = Next::getAllPredecessorSuccessorInfo();
 	if (lhsRef.second == rhsRef.second) { /* Special case: Next(s1, s1) has a legitimate result */
-		PQLentities.insert(std::pair(lhsRef.second, EntityType::STMT)); /*just do LHS*/
 		std::vector<int> lhsResults = std::get<0>(results);
 		std::vector<int> rhsResults = std::get<1>(results);
 		std::vector<int> finalResults;
@@ -110,17 +105,15 @@ EvaluatedTable NextInstruction::helperHandleTwoStmtsMaybeWildcard() {
 			}
 		}
 		PQLmap[lhsRef.second] = finalResults;
-		return EvaluatedTable(PQLentities, PQLmap);
+		return EvaluatedTable(PQLmap);
 	}
 	if (lhsRef.first == PqlReferenceType::SYNONYM) {
-		PQLentities.insert(std::pair(lhsRef.second, EntityType::STMT));
 		PQLmap[lhsRef.second] = std::get<0>(results); /* if RHS is WILDCARD, LHS may have duplicate values */
 	}
 	if (rhsRef.first == PqlReferenceType::SYNONYM) {
-		PQLentities.insert(std::pair(rhsRef.second, EntityType::STMT));
 		PQLmap[rhsRef.second] = std::get<1>(results); /* if LHS is WILDCARD, RHS may have duplicate values */
 	}
-	return EvaluatedTable(PQLentities, PQLmap);
+	return EvaluatedTable(PQLmap);
 }
 
 EvaluatedTable NextInstruction::helperHandleTwoWildcards() {

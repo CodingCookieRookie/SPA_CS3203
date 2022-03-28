@@ -23,14 +23,11 @@ void EvaluatedTable::removeDuplicates() {
 }
 
 void EvaluatedTable::prepopulate(std::unordered_map<std::string, std::vector<int>>& nextTable,
-	std::unordered_map<std::string, EntityType>& nextEntities,
-	std::unordered_map<std::string, std::vector<int>>& currTable,
-	std::unordered_map<std::string, EntityType>& currEntities) {
+	const std::unordered_map<std::string, std::vector<int>>& currTable) {
 	for (const std::pair<std::string, std::vector<int>>& column : currTable) {
 		std::string entityName = column.first;
 		if (nextTable.find(entityName) == nextTable.end()) {
 			nextTable[entityName] = std::vector<int>();
-			nextEntities[entityName] = currEntities[entityName];
 		}
 	}
 }
@@ -38,9 +35,8 @@ void EvaluatedTable::prepopulate(std::unordered_map<std::string, std::vector<int
 EvaluatedTable EvaluatedTable::blockNestedJoin(EvaluatedTable& otherTable,
 	std::unordered_set<std::string>& commonEntities) {
 	std::unordered_map<std::string, std::vector<int>> nextTable;
-	std::unordered_map<std::string, EntityType> nextEntities;
-	prepopulate(nextTable, nextEntities, table, entities);
-	prepopulate(nextTable, nextEntities, otherTable.table, otherTable.entities);
+	prepopulate(nextTable, table);
+	prepopulate(nextTable, otherTable.table);
 
 	for (size_t i = 0; i < getNumRow(); i++) {
 		for (size_t j = 0; j < otherTable.getNumRow(); j++) {
@@ -73,7 +69,7 @@ EvaluatedTable EvaluatedTable::blockNestedJoin(EvaluatedTable& otherTable,
 			}
 		}
 	}
-	return EvaluatedTable(nextEntities, nextTable);
+	return EvaluatedTable(nextTable);
 }
 
 /* Joins the current table with otherTable, returning a new EvaluatedTable object */
@@ -83,18 +79,17 @@ EvaluatedTable EvaluatedTable::innerJoinMerge(EvaluatedTable& otherTable) {
 		return EvaluatedTable(false);
 	}
 	/* If this table is "true", return the other table */
-	if (entities.size() == 0) {
-		return EvaluatedTable(otherTable.entities, otherTable.table);
+	if (table.size() == 0) {
+		return EvaluatedTable(otherTable.table);
 	}
 	/* Likewise, if otherTable is "true", return this table */
-	if (otherTable.entities.size() == 0) {
-		return EvaluatedTable(entities, table);
+	if (otherTable.table.size() == 0) {
+		return EvaluatedTable(table);
 	}
 	std::unordered_set<std::string> commonEntities;
-	for (const std::pair<std::string, EntityType>& taggedEntity : entities) {
-		std::string entityName = taggedEntity.first;
-		if (otherTable.entities.find(entityName) != otherTable.entities.end()) {
-			commonEntities.insert(entityName);
+	for (const auto& [synonym, values] : table) {
+		if (otherTable.table.find(synonym) != otherTable.table.end()) {
+			commonEntities.insert(synonym);
 		}
 	}
 	/* Perform an block nested join -- To update to a inner hash join where possible */
@@ -117,14 +112,10 @@ bool EvaluatedTable::isNoValuesInResultTable(
 
 EvaluatedTable::EvaluatedTable() : EvaluatedTable(true) {}
 
-EvaluatedTable::EvaluatedTable(
-	std::unordered_map<std::string, EntityType> newEntities,
-	std::unordered_map<std::string, std::vector<int>> newTable) :
+EvaluatedTable::EvaluatedTable(std::unordered_map<std::string, std::vector<int>> newTable) :
 	table(newTable),
-	entities(newEntities),
 	evResult(true) {}
 
 EvaluatedTable::EvaluatedTable(bool evResult) :
 	table(),
-	entities(),
 	evResult(evResult) {}

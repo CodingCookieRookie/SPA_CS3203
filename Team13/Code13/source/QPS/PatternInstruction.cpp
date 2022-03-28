@@ -15,10 +15,8 @@ PatternInstruction::PatternInstruction(
 	entRef(entRef), expressionSpec(expressionSpec) {}
 
 EvaluatedTable PatternAInstruction::execute() {
-	std::unordered_map<std::string, EntityType> PQLentities;
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
 	std::vector<int> allStmts;
-	PQLentities.insert(std::pair(synonym, EntityType::ASSIGN));
 	switch (entRef.first) {
 	case PqlReferenceType::IDENT:
 		if (Entity::containsVar(entRef.second)) {
@@ -58,19 +56,16 @@ EvaluatedTable PatternAInstruction::execute() {
 		if (entRef.first == PqlReferenceType::SYNONYM) {
 			std::vector<int> varIndices = std::get<1>(allPatternStmtInfo);
 			PQLmap[entRef.second] = varIndices;
-			PQLentities.insert(std::pair(entRef.second, EntityType::VARIABLE));
 		}
 		allStmts = std::get<0>(allPatternStmtInfo);
 	}
 	PQLmap[synonym] = allStmts;
-	return EvaluatedTable(PQLentities, PQLmap);
+	return EvaluatedTable(PQLmap);
 }
 
 EvaluatedTable PatternIInstruction::execute() {
-	std::unordered_map<std::string, EntityType> PQLentities;
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
 	std::vector<int> allStmts;
-	PQLentities.insert(std::pair(synonym, EntityType::IF));
 	switch (entRef.first) {
 	case PqlReferenceType::IDENT:
 		if (Entity::containsVar(entRef.second)) {
@@ -84,19 +79,16 @@ EvaluatedTable PatternIInstruction::execute() {
 		if (entRef.first == PqlReferenceType::SYNONYM) {
 			std::vector<int> varIndices = std::get<1>(allPatternStmtInfo);
 			PQLmap[entRef.second] = varIndices;
-			PQLentities.insert(std::pair(entRef.second, EntityType::VARIABLE));
 		}
 		allStmts = std::get<0>(allPatternStmtInfo);
 	}
 	PQLmap[synonym] = allStmts;
-	return EvaluatedTable(PQLentities, PQLmap);
+	return EvaluatedTable(PQLmap);
 }
 
 EvaluatedTable PatternWInstruction::execute() {
-	std::unordered_map<std::string, EntityType> PQLentities;
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
 	std::vector<int> allStmts;
-	PQLentities.insert(std::pair(synonym, EntityType::WHILE));
 	switch (entRef.first) {
 	case PqlReferenceType::IDENT:
 		if (Entity::containsVar(entRef.second)) {
@@ -110,10 +102,9 @@ EvaluatedTable PatternWInstruction::execute() {
 		if (entRef.first == PqlReferenceType::SYNONYM) {
 			std::vector<int> varIndices = std::get<1>(allPatternStmtInfo);
 			PQLmap[entRef.second] = varIndices;
-			PQLentities.insert(std::pair(entRef.second, EntityType::VARIABLE));
 		}
 		allStmts = std::get<0>(allPatternStmtInfo);
 	}
 	PQLmap[synonym] = allStmts;
-	return EvaluatedTable(PQLentities, PQLmap);
+	return EvaluatedTable(PQLmap);
 }

@@ -83,36 +83,30 @@ EvaluatedTable ParentStarInstruction::helperHandleOneInt(PqlReferenceType lhsRef
 				otherSynonym = lhsRef.second;
 			}
 		}
-		std::unordered_map<std::string, EntityType> PQLentities;
-		PQLentities.insert(std::pair(otherSynonym, EntityType::STMT));
-
 		std::unordered_map<std::string, std::vector<int>> PQLmap;
 		PQLmap[otherSynonym] = results;
 
-		return EvaluatedTable(PQLentities, PQLmap);
+		return EvaluatedTable(PQLmap);
 	}
 }
 
 EvaluatedTable ParentStarInstruction::helperHandleTwoStmtsMaybeWildcard() {
 	std::tuple<std::vector<int>, std::vector<int>> results;
 	/* e.g. {1, 2}, {2, 3}, {3, 6} */
-	std::unordered_map<std::string, EntityType> PQLentities;
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
 	results = ParentT::getAllPredecessorSuccessorInfo();
 	if (lhsRef.second == rhsRef.second) { /* Special case: Parent*(s1, s1), recursive call, technically shouldn't be allowed */
-		PQLentities.insert(std::pair(lhsRef.second, EntityType::STMT));
 		/* No values populated to PQLmap for this case */
-		return EvaluatedTable(PQLentities, PQLmap);
+		PQLmap[lhsRef.second] = std::vector<int>();
+		return EvaluatedTable(PQLmap);
 	}
 	if (lhsRef.first == PqlReferenceType::SYNONYM) {
-		PQLentities.insert(std::pair(lhsRef.second, EntityType::STMT));
 		PQLmap[lhsRef.second] = std::get<0>(results); /* if RHS is WILDCARD, LHS may have duplicate values */
 	}
 	if (rhsRef.first == PqlReferenceType::SYNONYM) {
-		PQLentities.insert(std::pair(rhsRef.second, EntityType::STMT));
 		PQLmap[rhsRef.second] = std::get<1>(results); /* if LHS is WILDCARD, RHS may have duplicate values */
 	}
-	return EvaluatedTable(PQLentities, PQLmap);
+	return EvaluatedTable(PQLmap);
 }
 
 EvaluatedTable ParentStarInstruction::helperHandleTwoWildcards() {

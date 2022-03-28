@@ -60,10 +60,10 @@ public:
 		/* 2. Check result of EvTable */
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
-		std::unordered_map<std::string, EntityType> entities = evTable.getEntities();
-		Assert::AreEqual(size_t(2), entities.size());
-		Assert::IsTrue(entities.find("read") != entities.end());
-		Assert::IsTrue(entities.find("proc") != entities.end());
+		std::unordered_map<std::string, std::vector<int>> table = evTable.getTableRef();
+		Assert::AreEqual(size_t(2), table.size());
+		Assert::IsTrue(table.find("read") != table.end());
+		Assert::IsTrue(table.find("proc") != table.end());
 	}
 
 	TEST_METHOD(withInstruction_testStringAttributeIdentComparison_successful) {
@@ -105,9 +105,9 @@ public:
 		/* 2. Check result of EvTable */
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
-		std::unordered_map<std::string, EntityType> entities = evTable.getEntities();
-		Assert::AreEqual(size_t(1), entities.size());
-		Assert::IsTrue(entities.find("print") != entities.end());
+		std::unordered_map<std::string, std::vector<int>> table = evTable.getTableRef();
+		Assert::AreEqual(size_t(1), table.size());
+		Assert::IsTrue(table.find("print") != table.end());
 	}
 
 	TEST_METHOD(withInstruction_testStringTwoIdentComparison_successful) {
@@ -149,8 +149,8 @@ public:
 		/* 2. Check result of EvTable */
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
-		std::unordered_map<std::string, EntityType> entities = evTable.getEntities();
-		Assert::AreEqual(size_t(0), entities.size());
+		std::unordered_map<std::string, std::vector<int>> table = evTable.getTableRef();
+		Assert::AreEqual(size_t(0), table.size());
 		Assert::AreEqual(false, evTable.getEvResult());
 	}
 
@@ -192,10 +192,10 @@ public:
 		/* 2. Check result of EvTable */
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
-		std::unordered_map<std::string, EntityType> entities = evTable.getEntities();
-		Assert::AreEqual(size_t(2), entities.size());
-		Assert::IsTrue(entities.find("stmt") != entities.end());
-		Assert::IsTrue(entities.find("constant") != entities.end());
+		std::unordered_map<std::string, std::vector<int>> table = evTable.getTableRef();
+		Assert::AreEqual(size_t(2), table.size());
+		Assert::IsTrue(table.find("stmt") != table.end());
+		Assert::IsTrue(table.find("constant") != table.end());
 	}
 
 	TEST_METHOD(withInstruction_testIntegerAttributeIntegerComparison_successful) {
@@ -237,9 +237,9 @@ public:
 		/* 2. Check result of EvTable */
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
-		std::unordered_map<std::string, EntityType> entities = evTable.getEntities();
-		Assert::AreEqual(size_t(1), entities.size());
-		Assert::IsTrue(entities.find("read") != entities.end());
+		std::unordered_map<std::string, std::vector<int>> table = evTable.getTableRef();
+		Assert::AreEqual(size_t(1), table.size());
+		Assert::IsTrue(table.find("read") != table.end());
 	}
 
 	TEST_METHOD(withInstruction_testIntegerTwoIntegerComparison_successful) {
@@ -281,8 +281,8 @@ public:
 		/* 2. Check result of EvTable */
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
-		std::unordered_map<std::string, EntityType> entities = evTable.getEntities();
-		Assert::AreEqual(size_t(0), entities.size());
+		std::unordered_map<std::string, std::vector<int>> table = evTable.getTableRef();
+		Assert::AreEqual(size_t(0), table.size());
 		Assert::AreEqual(false, evTable.getEvResult());
 	}
 	};

@@ -10,7 +10,6 @@
 
 class EvaluatedTable {
 private:
-	std::unordered_map<std::string, EntityType> entities;
 	std::unordered_map<std::string, std::vector<int>> table;
 	bool evResult;
 
@@ -18,9 +17,7 @@ private:
 	EvaluatedTable blockNestedJoin(EvaluatedTable& otherTable,
 		std::unordered_set<std::string>& commonEntities);
 	void EvaluatedTable::prepopulate(std::unordered_map<std::string, std::vector<int>>& nextTable,
-		std::unordered_map<std::string, EntityType>& nextEntities,
-		std::unordered_map<std::string, std::vector<int>>& currTable,
-		std::unordered_map<std::string, EntityType>& currEntities);
+		const std::unordered_map<std::string, std::vector<int>>& currTable);
 
 public:
 	/* E.g. of an EvalauatedTable:
@@ -39,10 +36,9 @@ public:
 
 	/* Dummy default constructor */
 	EvaluatedTable();
-
-	/* Wrapper constructor for 2 fields, less boolean */
-	EvaluatedTable(std::unordered_map<std::string, EntityType> newEntities,
-		std::unordered_map<std::string, std::vector<int>> newTable);
+	
+	/* Wrapper constructor for table only */
+	EvaluatedTable(std::unordered_map<std::string, std::vector<int>> newTable);
 
 	/* Wrapper constructor for boolean only (i.e. when the result evaluates to only a boolean) */
 	EvaluatedTable(bool evResult);
@@ -53,11 +49,6 @@ public:
 	/* Checks if table field has no values */
 	static bool EvaluatedTable::isNoValuesInResultTable(
 		std::unordered_map<std::string, std::vector<int>> resultTable);
-
-	/* Getter for entities */
-	std::unordered_map<std::string, EntityType> getEntities() {
-		return entities;
-	}
 
 	/* Getter for numRow */
 	size_t getNumRow() {

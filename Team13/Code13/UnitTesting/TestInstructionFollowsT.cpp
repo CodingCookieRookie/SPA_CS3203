@@ -78,17 +78,6 @@ public:
 		Assert::AreEqual(true, tableRef.find("s2") != tableRef.end());
 		Assert::AreEqual(false, tableRef.find("s3") != tableRef.end());
 
-		// Test Entities: std::unordered_map<std::string, EntityType>
-		std::vector<int> values{ 3, 4 };
-		auto actualValues = tableRef.at("s2");
-		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
-		Assert::AreEqual(true, areVecEqual);
-		auto actualEntities = evTable.getEntities();
-		Assert::AreEqual(true, actualEntities.find("s2") != actualEntities.end());
-		Assert::AreEqual(false, actualEntities.find("s3") != actualEntities.end());
-		bool isEntityType = EntityType::STMT == actualEntities.at("s2");
-		Assert::AreEqual(true, isEntityType);
-
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult);
@@ -130,11 +119,6 @@ public:
 		auto actualValues = tableRef.at("s1");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
 		Assert::AreEqual(true, areVecEqual);
-		auto actualEntities = evTable.getEntities();
-		Assert::AreEqual(true, actualEntities.find("s1") != actualEntities.end());
-		Assert::AreEqual(false, actualEntities.find("s5") != actualEntities.end());
-		bool isEntityType = EntityType::STMT == actualEntities.at("s1");
-		Assert::AreEqual(true, isEntityType);
 
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
@@ -171,6 +155,8 @@ public:
 		// Test Table: std::unordered_map<std::string, std::vector<int>>
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("s1") != tableRef.end());
+		Assert::AreEqual(true, tableRef.find("s2") != tableRef.end());
+		Assert::AreEqual(false, tableRef.find("s5") != tableRef.end());
 		Assert::AreEqual(false, tableRef.find("s12") != tableRef.end());
 
 		// Test Entities: std::unordered_map<std::string, EntityType>
@@ -184,15 +170,6 @@ public:
 		std::sort(actuals2Values.begin(), actuals2Values.end());
 		bool areVecEqual2 = std::equal(s2values.begin(), s2values.end(), actuals2Values.begin());
 		Assert::AreEqual(true, areVecEqual2);
-
-		auto actualEntities = evTable.getEntities();
-		Assert::AreEqual(true, actualEntities.find("s1") != actualEntities.end());
-		Assert::AreEqual(true, actualEntities.find("s2") != actualEntities.end());
-		Assert::AreEqual(false, actualEntities.find("s5") != actualEntities.end());
-		bool isEntityType = EntityType::STMT == actualEntities.at("s1");
-		bool isEntityType2 = EntityType::STMT == actualEntities.at("s2");
-		Assert::AreEqual(true, isEntityType);
-		Assert::AreEqual(true, isEntityType2);
 
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
@@ -228,6 +205,7 @@ public:
 		// Test Table: std::unordered_map<std::string, std::vector<int>>
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("s1") != tableRef.end());
+		Assert::AreEqual(false, tableRef.find("_") != tableRef.end());
 		Assert::AreEqual(false, tableRef.find("s207") != tableRef.end());
 
 		// Test Table size:
@@ -256,13 +234,6 @@ public:
 		std::sort(wildcardValues.begin(), wildcardValues.end());
 		bool areVecEqual2 = std::equal(wildcardValues.begin(), wildcardValues.end(), actuals2Values.begin());
 		Assert::AreEqual(true, areVecEqual2); // wildcardValues == {2-19, 3-19, ..., 18, 19, 19}
-
-		auto actualEntities = evTable.getEntities();
-		Assert::AreEqual(true, actualEntities.find("s1") != actualEntities.end());
-		Assert::AreEqual(false, actualEntities.find("_") != actualEntities.end());
-		Assert::AreEqual(false, actualEntities.find("s207") != actualEntities.end());
-		bool isEntityType = EntityType::STMT == actualEntities.at("s2");
-		Assert::AreEqual(true, isEntityType);
 
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
@@ -298,6 +269,7 @@ public:
 		// Test Table: std::unordered_map<std::string, std::vector<int>>
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("s1") != tableRef.end());
+		Assert::AreEqual(false, tableRef.find("_") != tableRef.end());
 		Assert::AreEqual(false, tableRef.find("s207") != tableRef.end());
 
 		// Test Table size:
@@ -316,13 +288,6 @@ public:
 		std::sort(s1values.begin(), s1values.end());
 		bool areVecEqual = std::equal(s1values.begin(), s1values.end(), actuals1Values.begin());
 		Assert::AreEqual(true, areVecEqual); // s1values == {19 1s, 18 2s, ... 1 19}
-
-		auto actualEntities = evTable.getEntities();
-		Assert::AreEqual(true, actualEntities.find("s1") != actualEntities.end());
-		Assert::AreEqual(false, actualEntities.find("_") != actualEntities.end());
-		Assert::AreEqual(false, actualEntities.find("s207") != actualEntities.end());
-		bool isEntityType = EntityType::STMT == actualEntities.at("s1");
-		Assert::AreEqual(true, isEntityType);
 
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
@@ -360,14 +325,10 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(false, tableRef.find("_") != tableRef.end());
 		Assert::AreEqual(false, tableRef.find("s1") != tableRef.end());
+		Assert::AreEqual(false, tableRef.find("s2") != tableRef.end());
 
 		// Test Table size:
 		Assert::AreEqual(size_t(0), tableRef.size()); // Two wildcards will have no columns => only have boolean
-
-		// Test Entities: std::unordered_map<std::string, EntityType>
-		auto actualEntities = evTable.getEntities();
-		Assert::AreEqual(false, actualEntities.find("_") != actualEntities.end());
-		Assert::AreEqual(false, actualEntities.find("s2") != actualEntities.end());
 
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();

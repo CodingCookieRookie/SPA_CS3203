@@ -90,11 +90,6 @@ public:
 		std::sort(actualValues.begin(), actualValues.end());
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
 		Assert::AreEqual(true, areVecEqual);
-		auto actualEntities = evTable.getEntities();
-		Assert::AreEqual(true, actualEntities.find("q") != actualEntities.end());
-		Assert::AreEqual(false, actualEntities.find("r") != actualEntities.end());
-		bool isEntityType = EntityType::PROCEDURE == actualEntities.at("q");
-		Assert::AreEqual(true, isEntityType);
 
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
@@ -140,11 +135,6 @@ public:
 		std::sort(actualValues.begin(), actualValues.end());
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
 		Assert::AreEqual(true, areVecEqual);
-		auto actualEntities = evTable.getEntities();
-		Assert::AreEqual(true, actualEntities.find("p") != actualEntities.end());
-		Assert::AreEqual(false, actualEntities.find("t") != actualEntities.end());
-		bool isEntityType = EntityType::PROCEDURE == actualEntities.at("p");
-		Assert::AreEqual(true, isEntityType);
 
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
@@ -184,6 +174,7 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("p") != tableRef.end());
 		Assert::AreEqual(true, tableRef.find("q") != tableRef.end());
+		Assert::AreEqual(false, tableRef.find("r") != tableRef.end());
 		Assert::AreEqual(false, tableRef.find("t") != tableRef.end());
 
 		// Test Entities: std::unordered_map<std::string, EntityType>
@@ -197,15 +188,6 @@ public:
 		std::sort(actuals2Values.begin(), actuals2Values.end());
 		bool areVecEqual2 = std::equal(s2values.begin(), s2values.end(), actuals2Values.begin());
 		Assert::AreEqual(true, areVecEqual2);
-
-		auto actualEntities = evTable.getEntities();
-		Assert::AreEqual(true, actualEntities.find("p") != actualEntities.end());
-		Assert::AreEqual(true, actualEntities.find("q") != actualEntities.end());
-		Assert::AreEqual(false, actualEntities.find("r") != actualEntities.end());
-		bool isEntityType = EntityType::PROCEDURE == actualEntities.at("p");
-		bool isEntityType2 = EntityType::PROCEDURE == actualEntities.at("q");
-		Assert::AreEqual(true, isEntityType);
-		Assert::AreEqual(true, isEntityType2);
 
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
@@ -243,6 +225,8 @@ public:
 		// Test Table: std::unordered_map<std::string, std::vector<int>>
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("p") != tableRef.end());
+		Assert::AreEqual(true, tableRef.find("q") != tableRef.end());
+		Assert::AreEqual(false, tableRef.find("_") != tableRef.end());
 		Assert::AreEqual(false, tableRef.find("r") != tableRef.end());
 
 		// Test Table size:
@@ -270,13 +254,6 @@ public:
 		std::sort(qValues.begin(), qValues.end());
 		bool areVecEqual2 = std::equal(qValues.begin(), qValues.end(), actualqValues.begin());
 		Assert::AreEqual(true, areVecEqual2); // qValues == {2-19, 3-19, ..., 18, 19, 19}
-
-		auto actualEntities = evTable.getEntities();
-		Assert::AreEqual(true, actualEntities.find("q") != actualEntities.end());
-		Assert::AreEqual(false, actualEntities.find("_") != actualEntities.end());
-		Assert::AreEqual(false, actualEntities.find("r") != actualEntities.end());
-		bool isEntityType = EntityType::PROCEDURE == actualEntities.at("q");
-		Assert::AreEqual(true, isEntityType);
 
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
@@ -314,6 +291,7 @@ public:
 		// Test Table: std::unordered_map<std::string, std::vector<int>>
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("p") != tableRef.end());
+		Assert::AreEqual(false, tableRef.find("r") != tableRef.end());
 		Assert::AreEqual(false, tableRef.find("_") != tableRef.end());
 
 		// Test Table size:
@@ -332,13 +310,6 @@ public:
 		std::sort(pValues.begin(), pValues.end());
 		bool areVecEqual = std::equal(pValues.begin(), pValues.end(), actualspValues.begin());
 		Assert::AreEqual(true, areVecEqual); // s1values == {99 1s, 98 2s, ... 1 99}
-
-		auto actualEntities = evTable.getEntities();
-		Assert::AreEqual(true, actualEntities.find("p") != actualEntities.end());
-		Assert::AreEqual(false, actualEntities.find("_") != actualEntities.end());
-		Assert::AreEqual(false, actualEntities.find("r") != actualEntities.end());
-		bool isEntityType = EntityType::PROCEDURE == actualEntities.at("p");
-		Assert::AreEqual(true, isEntityType);
 
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
@@ -380,13 +351,6 @@ public:
 		// Test Table size:
 		Assert::AreEqual(size_t(0), tableRef.size()); // LHS wildcard will still have column (innerJoinMerge() will drop it during merge)
 
-		// Test Entities: std::unordered_map<std::string, EntityType>
-		// No entities
-
-		auto actualEntities = evTable.getEntities();
-		Assert::AreEqual(false, actualEntities.find("_") != actualEntities.end());
-		Assert::AreEqual(false, actualEntities.find("procedure87") != actualEntities.end());
-
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
 		Assert::AreEqual(true, actualEvResult); // there exists a procedure which calls* of 87
@@ -423,14 +387,10 @@ public:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(false, tableRef.find("_") != tableRef.end());
 		Assert::AreEqual(false, tableRef.find("p") != tableRef.end());
+		Assert::AreEqual(false, tableRef.find("q") != tableRef.end());
 
 		// Test Table size:
 		Assert::AreEqual(size_t(0), tableRef.size()); // Two wildcards will have no columns => only have boolean
-
-		// Test Entities: std::unordered_map<std::string, EntityType>
-		auto actualEntities = evTable.getEntities();
-		Assert::AreEqual(false, actualEntities.find("_") != actualEntities.end());
-		Assert::AreEqual(false, actualEntities.find("q") != actualEntities.end());
 
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();

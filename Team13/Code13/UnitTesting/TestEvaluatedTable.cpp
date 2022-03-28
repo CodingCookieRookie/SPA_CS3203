@@ -11,136 +11,104 @@ namespace UnitTesting {
 	TEST_CLASS(TestEvaluatedTable) {
 public:
 	TEST_METHOD(innerJoinMerge_noCommonColumns_crossProduct) {
-		std::unordered_map<std::string, EntityType> leftEntities = {
-			{"s1", EntityType::STMT},
-			{"v1", EntityType::VARIABLE}
-		};
 		std::unordered_map<std::string, std::vector<int>> leftTable = {
 			{"s1", { 1, 3 } },
 			{"v1", { 2, 4 } },
 		};
-		EvaluatedTable leftEvTable(leftEntities, leftTable);
+		EvaluatedTable leftEvTable(leftTable);
 
-		std::unordered_map<std::string, EntityType> rightEntities = {
-			{"s2", EntityType::STMT},
-			{"v2", EntityType::VARIABLE}
-		};
 		std::unordered_map<std::string, std::vector<int>> rightTable = {
 			{"s2", { 5, 7, 9} },
 			{"v2", { 6, 8, 10} },
 		};
-		EvaluatedTable rightEvTable(rightEntities, rightTable);
+		EvaluatedTable rightEvTable(rightTable);
 
 		EvaluatedTable mergedTable = leftEvTable.innerJoinMerge(rightEvTable);
-		Assert::AreEqual(size_t(4), mergedTable.getEntities().size());
-		std::unordered_map<std::string, EntityType> entities = mergedTable.getEntities();
-		Assert::IsTrue(entities.find(std::string("s1")) != entities.end());
-		Assert::IsTrue(entities.find(std::string("v1")) != entities.end());
-		Assert::IsTrue(entities.find(std::string("s2")) != entities.end());
-		Assert::IsTrue(entities.find(std::string("v2")) != entities.end());
+		Assert::AreEqual(size_t(4), mergedTable.getTableRef().size());
+		std::unordered_map<std::string, std::vector<int>> table = mergedTable.getTableRef();
+		Assert::IsTrue(table.find(std::string("s1")) != table.end());
+		Assert::IsTrue(table.find(std::string("v1")) != table.end());
+		Assert::IsTrue(table.find(std::string("s2")) != table.end());
+		Assert::IsTrue(table.find(std::string("v2")) != table.end());
 		Assert::AreEqual(size_t(6), mergedTable.getNumRow());
 	}
 
 	TEST_METHOD(innerJoinMerge_commonColumnExists_innerJoin) {
-		std::unordered_map<std::string, EntityType> leftEntities = {
-			{"s", EntityType::STMT},
-			{"v1", EntityType::VARIABLE}
-		};
 		std::unordered_map<std::string, std::vector<int>> leftTable = {
 			{"s", { 1, 3, 4} },
 			{"v1", { 2, 4, 4} },
 		};
-		EvaluatedTable leftEvTable(leftEntities, leftTable);
+		EvaluatedTable leftEvTable(leftTable);
 
-		std::unordered_map<std::string, EntityType> rightEntities = {
-			{"s", EntityType::STMT},
-			{"v2", EntityType::VARIABLE}
-		};
 		std::unordered_map<std::string, std::vector<int>> rightTable = {
 			{"s", { 1, 3, 5} },
 			{"v2", { 6, 8, 10} },
 		};
-		EvaluatedTable rightEvTable(rightEntities, rightTable);
+		EvaluatedTable rightEvTable(rightTable);
 
 		EvaluatedTable mergedTable = leftEvTable.innerJoinMerge(rightEvTable);
-		Assert::AreEqual(size_t(3), mergedTable.getEntities().size());
-		std::unordered_map<std::string, EntityType> entities = mergedTable.getEntities();
-		Assert::IsTrue(entities.find(std::string("s")) != entities.end());
-		Assert::IsTrue(entities.find(std::string("v1")) != entities.end());
-		Assert::IsTrue(entities.find(std::string("v2")) != entities.end());
+		Assert::AreEqual(size_t(3), mergedTable.getTableRef().size());
+		std::unordered_map<std::string, std::vector<int>> table = mergedTable.getTableRef();
+		Assert::IsTrue(table.find(std::string("s")) != table.end());
+		Assert::IsTrue(table.find(std::string("v1")) != table.end());
+		Assert::IsTrue(table.find(std::string("v2")) != table.end());
 		Assert::AreEqual(size_t(2), mergedTable.getNumRow());
 	}
 
 	TEST_METHOD(innerJoinMerge_falseLHS_returnsEmptyTable) {
 		EvaluatedTable leftEvTable(false);
 
-		std::unordered_map<std::string, EntityType> rightEntities = {
-			{"s", EntityType::STMT},
-			{"v2", EntityType::VARIABLE}
-		};
 		std::unordered_map<std::string, std::vector<int>> rightTable = {
 			{"s", { 1, 3, 5} },
 			{"v2", { 6, 8, 10} },
 		};
-		EvaluatedTable rightEvTable(rightEntities, rightTable);
+		EvaluatedTable rightEvTable(rightTable);
 
 		EvaluatedTable mergedTable = leftEvTable.innerJoinMerge(rightEvTable);
-		Assert::AreEqual(size_t(0), mergedTable.getEntities().size());
+		Assert::AreEqual(size_t(0), mergedTable.getTableRef().size());
 		Assert::IsFalse(mergedTable.getEvResult());
 	}
 
 	TEST_METHOD(innerJoinMerge_falseRHS_returnsEmptyTable) {
-		std::unordered_map<std::string, EntityType> leftEntities = {
-			{"s", EntityType::STMT},
-			{"v1", EntityType::VARIABLE}
-		};
 		std::unordered_map<std::string, std::vector<int>> leftTable = {
 			{"s", { 1, 3, 4} },
 			{"v1", { 2, 4, 4} },
 		};
-		EvaluatedTable leftEvTable(leftEntities, leftTable);
+		EvaluatedTable leftEvTable(leftTable);
 
 		EvaluatedTable rightEvTable(false);
 
 		EvaluatedTable mergedTable = leftEvTable.innerJoinMerge(rightEvTable);
-		Assert::AreEqual(size_t(0), mergedTable.getEntities().size());
+		Assert::AreEqual(size_t(0), mergedTable.getTableRef().size());
 		Assert::IsFalse(mergedTable.getEvResult());
 	}
 
 	TEST_METHOD(innerJoinMerge_trueLHS_returnsRHS) {
 		EvaluatedTable leftEvTable(true);
 
-		std::unordered_map<std::string, EntityType> rightEntities = {
-			{"s", EntityType::STMT},
-			{"v2", EntityType::VARIABLE}
-		};
 		std::unordered_map<std::string, std::vector<int>> rightTable = {
 			{"s", { 1, 3, 5} },
 			{"v2", { 6, 8, 10} },
 		};
-		EvaluatedTable rightEvTable(rightEntities, rightTable);
+		EvaluatedTable rightEvTable(rightTable);
 
 		EvaluatedTable mergedTable = leftEvTable.innerJoinMerge(rightEvTable);
 		Assert::AreEqual(size_t(3), mergedTable.getNumRow());
-		Assert::AreEqual(size_t(2), mergedTable.getEntities().size());
+		Assert::AreEqual(size_t(2), mergedTable.getTableRef().size());
 	}
 
 	TEST_METHOD(innerJoinMerge_trueRHS_returnsLHS) {
-		std::unordered_map<std::string, EntityType> leftEntities = {
-			{"s", EntityType::STMT},
-			{"v1", EntityType::VARIABLE}
-		};
 		std::unordered_map<std::string, std::vector<int>> leftTable = {
 			{"s", { 1, 3, 4} },
 			{"v1", { 2, 4, 4} },
 		};
-		EvaluatedTable leftEvTable(leftEntities, leftTable);
+		EvaluatedTable leftEvTable(leftTable);
 
 		EvaluatedTable rightEvTable(true);
 
 		EvaluatedTable mergedTable = leftEvTable.innerJoinMerge(rightEvTable);
 		Assert::AreEqual(size_t(3), mergedTable.getNumRow());
-		Assert::AreEqual(size_t(2), mergedTable.getEntities().size());
+		Assert::AreEqual(size_t(2), mergedTable.getTableRef().size());
 	}
 
 	TEST_METHOD(innerJoinMerge_trueLHSAndRHS_returnsTrue) {

@@ -77,7 +77,6 @@ EvaluatedTable PQLEvaluator::selectColumnsForProjection(
 	std::vector<PqlReference> attributesProjected = pq.getAttributes();
 	std::unordered_map<std::string, EntityType> declarations = pq.getDeclarations();
 	std::unordered_map<std::string, std::vector<int>> table = evaluatedTable.getTableRef();
-	std::unordered_map<std::string, EntityType> resultEntities;
 	std::unordered_map<std::string, std::vector<int>> resultTable;
 	EvaluatedTable resultEvTable;
 
@@ -104,13 +103,12 @@ EvaluatedTable PQLEvaluator::selectColumnsForProjection(
 	/* For each column that already exists in the final EvTable, take it from the evaluatedTable */
 	for (const std::string& column : columnsProjected) {
 		if (table.find(column) != table.end()) {
-			resultEntities[column] = declarations[column];
 			resultTable[column] = table[column];
 		}
 	}
 
 	/* If the evaluated table is false or an empty table, use a false table */
-	resultEvTable = EvaluatedTable(resultEntities, resultTable);
+	resultEvTable = EvaluatedTable(resultTable);
 	if (evaluatedTable.getEvResult() == false
 		|| (table.size() > 0 && evaluatedTable.getNumRow() == 0)) {
 		resultEvTable = EvaluatedTable(false);

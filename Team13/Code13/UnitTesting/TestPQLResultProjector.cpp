@@ -24,14 +24,12 @@ public:
 
 	TEST_METHOD(resolveTableToResults_oneColumnStatement_projectOneColumn) {
 		// 1. Set-up:
-		std::unordered_map<std::string, EntityType> entities;
 		std::unordered_map<std::string, std::vector<int>> testTable;
 		std::vector<PqlReference> attributesProjected;
 		std::vector<int> vec;
 		vec.push_back(1);
 		vec.push_back(3);
 		vec.push_back(5);
-		entities["s"] = EntityType::STMT;
 		testTable["s"] = vec;
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "s");
 
@@ -44,7 +42,7 @@ public:
 			noRelationships, noPatterns, noWiths);
 
 		// 2. Main test:
-		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
+		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected;
 		expected.push_back("1");
 		expected.push_back("3");
@@ -62,7 +60,6 @@ public:
 
 	TEST_METHOD(resolveTableToResults_oneColumnVariable_projectOneColumn) {
 		// 1. Set-up:
-		std::unordered_map<std::string, EntityType> entities;
 		std::unordered_map<std::string, std::vector<int>> testTable;
 		std::vector<PqlReference> attributesProjected;
 		std::vector<int> vec;
@@ -72,7 +69,6 @@ public:
 		Entity::insertVar("a");
 		Entity::insertVar("b");
 		Entity::insertVar("c");
-		entities["v"] = EntityType::VARIABLE;
 		testTable["v"] = vec;
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "v");
 
@@ -85,7 +81,7 @@ public:
 			noRelationships, noPatterns, noWiths);
 
 		// 2. Main test:
-		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
+		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected;
 		expected.push_back("a");
 		expected.push_back("b");
@@ -103,7 +99,6 @@ public:
 
 	TEST_METHOD(resolveTableToResults_oneColumnProcedure_projectOneColumn) {
 		// 1. Set-up:
-		std::unordered_map<std::string, EntityType> entities;
 		std::unordered_map<std::string, std::vector<int>> testTable;
 		std::vector<PqlReference> attributesProjected;
 		std::vector<int> vec;
@@ -113,7 +108,6 @@ public:
 		Entity::insertProc("proc1");
 		Entity::insertProc("proc2");
 		Entity::insertProc("proc3");
-		entities["p"] = EntityType::PROCEDURE;
 		testTable["p"] = vec;
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "p");
 
@@ -126,7 +120,7 @@ public:
 			noRelationships, noPatterns, noWiths);
 
 		// 2. Main test:
-		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
+		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected;
 		expected.push_back("proc1");
 		expected.push_back("proc2");
@@ -144,11 +138,9 @@ public:
 
 	TEST_METHOD(resolveTableToResults_oneColumnConstantRepeated_projectOneColumnUnique) {
 		// 1. Set-up:
-		std::unordered_map<std::string, EntityType> entities;
 		std::unordered_map<std::string, std::vector<int>> testTable;
 		std::vector<PqlReference> attributesProjected;
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "c1");
-		entities["c1"] = EntityType::CONSTANT;
 		testTable["c1"] = std::vector<int>{ 1, 1, 1, 2, 2, 3, 3, 4 };
 
 		std::vector <std::pair<EntityType, std::string>> declarations;
@@ -160,7 +152,7 @@ public:
 			noRelationships, noPatterns, noWiths);
 
 		// 2. Main test:
-		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
+		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{ "1", "2", "3", "4" };
 		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
 		Assert::AreEqual(expected.size(), results.size());
@@ -175,11 +167,9 @@ public:
 
 	TEST_METHOD(resolveTableToResults_oneColumnStatementRepeated_projectOneColumnUnique) {
 		// 1. Set-up:
-		std::unordered_map<std::string, EntityType> entities;
 		std::unordered_map<std::string, std::vector<int>> testTable;
 		std::vector<PqlReference> attributesProjected;
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "s1");
-		entities["s1"] = EntityType::STMT;
 		testTable["s1"] = std::vector<int>{ 1, 1, 1, 2, 2, 3, 3, 4 };
 
 		std::vector <std::pair<EntityType, std::string>> declarations;
@@ -191,7 +181,7 @@ public:
 			noRelationships, noPatterns, noWiths);
 
 		// 2. Main test:
-		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
+		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{ "1", "2", "3", "4" };
 		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
 		Assert::AreEqual(expected.size(), results.size());
@@ -206,13 +196,10 @@ public:
 
 	TEST_METHOD(resolveTableToResults_twoColumnStatement_projectTwoColumns) {
 		// 1. Set-up:
-		std::unordered_map<std::string, EntityType> entities;
 		std::unordered_map<std::string, std::vector<int>> testTable;
 		std::vector<PqlReference> attributesProjected;
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "s1");
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "s2");
-		entities["s1"] = EntityType::STMT;
-		entities["s2"] = EntityType::STMT;
 		testTable["s1"] = std::vector<int>{ 1, 2, 3 };
 		testTable["s2"] = std::vector<int>{ 4, 5, 6 };
 
@@ -226,7 +213,7 @@ public:
 			noRelationships, noPatterns, noWiths);
 
 		// 2. Main test:
-		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
+		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{ "1 4", "2 5", "3 6" };
 		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
 		Assert::AreEqual(expected.size(), results.size());
@@ -241,13 +228,10 @@ public:
 
 	TEST_METHOD(resolveTableToResults_twoColumnStatementEachColWithRepeats_projectTwoColumns) {
 		// 1. Set-up:
-		std::unordered_map<std::string, EntityType> entities;
 		std::unordered_map<std::string, std::vector<int>> testTable;
 		std::vector<PqlReference> attributesProjected;
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "s1");
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "s2");
-		entities["s1"] = EntityType::STMT;
-		entities["s2"] = EntityType::STMT;
 		testTable["s1"] = std::vector<int>{ 1, 1, 2, 2, 3 };
 		testTable["s2"] = std::vector<int>{ 4, 5, 5, 6, 6 };
 
@@ -261,7 +245,7 @@ public:
 			noRelationships, noPatterns, noWiths);
 
 		// 2. Main test:
-		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
+		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{ "1 4", "1 5", "2 5", "2 6", "3 6" };
 		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
 		Assert::AreEqual(expected.size(), results.size());
@@ -276,13 +260,10 @@ public:
 
 	TEST_METHOD(resolveTableToResults_twoColumnStatementWithRepeatsInBoth_projectTwoColumnsUnique) {
 		// 1. Set-up:
-		std::unordered_map<std::string, EntityType> entities;
 		std::unordered_map<std::string, std::vector<int>> testTable;
 		std::vector<PqlReference> attributesProjected;
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "s1");
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "s2");
-		entities["s1"] = EntityType::STMT;
-		entities["s2"] = EntityType::STMT;
 		testTable["s1"] = std::vector<int>{ 1, 1, 2, 2, 3, 3, 4, 4, 4 };
 		testTable["s2"] = std::vector<int>{ 4, 5, 5, 6, 6, 6, 7, 7, 7 };
 
@@ -296,7 +277,7 @@ public:
 			noRelationships, noPatterns, noWiths);
 
 		// 2. Main test:
-		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
+		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{ "1 4", "1 5", "2 5", "2 6", "3 6", "4 7" };
 		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
 		Assert::AreEqual(expected.size(), results.size());
@@ -311,12 +292,9 @@ public:
 
 	TEST_METHOD(resolveTableToResults_twoColumnStatement_projectOneColumn) {
 		// 1. Set-up:
-		std::unordered_map<std::string, EntityType> entities;
 		std::unordered_map<std::string, std::vector<int>> testTable;
 		std::vector<PqlReference> attributesProjected;
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "s1");
-		entities["s1"] = EntityType::STMT;
-		entities["s2"] = EntityType::STMT;
 		testTable["s1"] = std::vector<int>{ 1, 2, 3 };
 		testTable["s2"] = std::vector<int>{ 4, 5, 6 };
 
@@ -330,7 +308,7 @@ public:
 			noRelationships, noPatterns, noWiths);
 
 		// 2. Main test:
-		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
+		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{ "1", "2", "3" };
 		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
 		Assert::AreEqual(expected.size(), results.size());
@@ -345,19 +323,12 @@ public:
 
 	TEST_METHOD(resolveTableToResults_sixColumnsMixed_projectFourColumns) {
 		// 1. Set-up:
-		std::unordered_map<std::string, EntityType> entities;
 		std::unordered_map<std::string, std::vector<int>> testTable;
 		std::vector<PqlReference> attributesProjected;
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "s1");
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "v1");
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "a1");
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "p1");
-		entities["s1"] = EntityType::STMT;
-		entities["s2"] = EntityType::STMT;
-		entities["v1"] = EntityType::VARIABLE;
-		entities["v2"] = EntityType::VARIABLE;
-		entities["a1"] = EntityType::STMT;
-		entities["p1"] = EntityType::PROCEDURE;
 		testTable["s1"] = std::vector<int>{ 1, 2, 3 };
 		testTable["s2"] = std::vector<int>{ 4, 5, 6 };
 		testTable["v1"] = std::vector<int>{ 1, 2, 3 };
@@ -385,7 +356,7 @@ public:
 			noRelationships, noPatterns, noWiths);
 
 		// 2. Main test:
-		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
+		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{ "1 var1 13 proc1", "2 var2 14 proc2", "3 var3 15 proc3" };
 		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
 		Assert::AreEqual(expected.size(), results.size());
@@ -400,19 +371,12 @@ public:
 
 	TEST_METHOD(resolveTableToResults_sixColumnsMixed_projectFourWithProcName) {
 		// 1. Set-up:
-		std::unordered_map<std::string, EntityType> entities;
 		std::unordered_map<std::string, std::vector<int>> testTable;
 		std::vector<PqlReference> attributesProjected;
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "s1");
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "v1");
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "a1");
 		attributesProjected.emplace_back(PqlReferenceType::PROC_NAME, "p1");
-		entities["s1"] = EntityType::STMT;
-		entities["s2"] = EntityType::STMT;
-		entities["v1"] = EntityType::VARIABLE;
-		entities["v2"] = EntityType::VARIABLE;
-		entities["a2"] = EntityType::STMT;
-		entities["p1"] = EntityType::PROCEDURE;
 		testTable["s1"] = std::vector<int>{ 1, 2, 3 };
 		testTable["s2"] = std::vector<int>{ 4, 5, 6 };
 		testTable["v1"] = std::vector<int>{ 1, 2, 3 };
@@ -439,7 +403,7 @@ public:
 			noRelationships, noPatterns, noWiths);
 
 		// 2. Main test:
-		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
+		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{ "1 var1 13 proc1", "2 var2 14 proc2", "3 var3 15 proc3" };
 		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
 		Assert::AreEqual(expected.size(), results.size());
@@ -454,15 +418,12 @@ public:
 
 	TEST_METHOD(resolveTableToResults_sixColumnsMixed_projectMultipleProcName) {
 		// 1. Set-up:
-		std::unordered_map<std::string, EntityType> entities;
 		std::unordered_map<std::string, std::vector<int>> testTable;
 		std::vector<PqlReference> attributesProjected;
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "cl");
 		attributesProjected.emplace_back(PqlReferenceType::PROC_NAME, "cl");
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "p");
 		attributesProjected.emplace_back(PqlReferenceType::PROC_NAME, "p");
-		entities["cl"] = EntityType::CALL;
-		entities["p"] = EntityType::PROCEDURE;
 		testTable["cl"] = std::vector<int>{ 1, 2 };
 		testTable["p"] = std::vector<int>{ 1, 2, 3 };
 		StmtIndex CallIdx1 = Entity::insertStmt(StatementType::CALL_TYPE);
@@ -489,7 +450,7 @@ public:
 		// procedure p; call cl; Select <cl, cl.procName, p, p.procName>
 
 		// 2. Main test:
-		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
+		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{
 			"1 proc2 proc1 proc1", "2 proc3 proc2 proc2" };
 		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
@@ -505,7 +466,6 @@ public:
 
 	TEST_METHOD(resolveTableToResults_sixColumnsMixed_projectMultipleVarName) {
 		// 1. Set-up:
-		std::unordered_map<std::string, EntityType> entities;
 		std::unordered_map<std::string, std::vector<int>> testTable;
 		std::vector<PqlReference> attributesProjected;
 		attributesProjected.emplace_back(PqlReferenceType::VAR_NAME, "v");
@@ -514,9 +474,6 @@ public:
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "v");
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "r");
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "pn");
-		entities["v"] = EntityType::VARIABLE;
-		entities["r"] = EntityType::READ;
-		entities["pn"] = EntityType::PRINT;
 		testTable["v"] = std::vector<int>{ 1, 2, 3 };
 		testTable["r"] = std::vector<int>{ 1, 2, 3 };
 		testTable["pn"] = std::vector<int>{ 4, 5, 6 };
@@ -552,7 +509,7 @@ public:
 		// print pn; read r; variable v; Select <v.varName, r.varName, pn.varName, v, r, pn>
 
 		// 2. Main test:
-		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
+		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{
 			"var1 var1 var1 var1 1 4",
 			"var2 var2 var2 var2 2 5",
@@ -570,16 +527,12 @@ public:
 
 	TEST_METHOD(resolveTableToResults_sixColumnsMixed_projectConstantValue) {
 		// 1. Set-up:
-		std::unordered_map<std::string, EntityType> entities;
 		std::unordered_map<std::string, std::vector<int>> testTable;
 		std::vector<PqlReference> attributesProjected;
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "s1");
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "c1");
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "c2");
 		attributesProjected.emplace_back(PqlReferenceType::VALUE, "c2");
-		entities["s1"] = EntityType::STMT;
-		entities["c1"] = EntityType::CONSTANT;
-		entities["c2"] = EntityType::CONSTANT;
 		testTable["s1"] = std::vector<int>{ 1, 2 };
 		testTable["c1"] = std::vector<int>{ 10, 20 };
 		testTable["c2"] = std::vector<int>{ 99, 88 };
@@ -597,7 +550,7 @@ public:
 		// stmt s1; constant c1, c2; Select <s1, c1, c2, c2.value>
 
 		// 2. Main test:
-		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
+		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{
 			"1 10 99 99", "2 20 88 88" };
 		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
@@ -613,7 +566,6 @@ public:
 
 	TEST_METHOD(resolveTableToResults_sixColumnsMixed_projectAllStmtNumbers) {
 		// 1. Set-up:
-		std::unordered_map<std::string, EntityType> entities;
 		std::unordered_map<std::string, std::vector<int>> testTable;
 		std::vector<PqlReference> attributesProjected;
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "s1");
@@ -624,14 +576,6 @@ public:
 		attributesProjected.emplace_back(PqlReferenceType::STMT_NUM, "w1");
 		attributesProjected.emplace_back(PqlReferenceType::STMT_NUM, "if1");
 		attributesProjected.emplace_back(PqlReferenceType::STMT_NUM, "a1");
-		entities["s1"] = EntityType::STMT;
-		entities["s2"] = EntityType::STMT;
-		entities["r1"] = EntityType::READ;
-		entities["pn1"] = EntityType::PRINT;
-		entities["cl1"] = EntityType::CALL;
-		entities["w1"] = EntityType::WHILE;
-		entities["if1"] = EntityType::IF;
-		entities["a1"] = EntityType::ASSIGN;
 		testTable["s1"] = std::vector<int>{ 1, 2 };
 		testTable["s2"] = std::vector<int>{ 3, 4 };
 		testTable["r1"] = std::vector<int>{ 5, 6 };
@@ -659,7 +603,7 @@ public:
 		// Select <s1, s2.stmt#, r1.stmt#, pn1.stmt#, cl1.stmt#, w1.stmt#, if1.stmt#, a1.stmt#>
 
 		// 2. Main test:
-		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
+		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{
 			"1 3 5 7 9 11 13 15",
 			"2 4 6 8 10 12 14 16" };
@@ -676,17 +620,8 @@ public:
 
 	TEST_METHOD(resolveTableToResults_sixColumnsMixed_projectBooleanTrue) {
 		// 1. Set-up:
-		std::unordered_map<std::string, EntityType> entities;
 		std::unordered_map<std::string, std::vector<int>> testTable;
 		std::vector<PqlReference> attributesProjected; // Empty attributesProjected table
-		entities["s1"] = EntityType::STMT;
-		entities["s2"] = EntityType::STMT;
-		entities["r1"] = EntityType::READ;
-		entities["pn1"] = EntityType::PRINT;
-		entities["cl1"] = EntityType::CALL;
-		entities["w1"] = EntityType::WHILE;
-		entities["if1"] = EntityType::IF;
-		entities["a1"] = EntityType::ASSIGN;
 		testTable["s1"] = std::vector<int>{ 1, 2 };
 		testTable["s2"] = std::vector<int>{ 3, 4 };
 		testTable["r1"] = std::vector<int>{ 5, 6 };
@@ -714,7 +649,7 @@ public:
 		// Select <s1, s2.stmt#, r1.stmt#, pn1.stmt#, cl1.stmt#, w1.stmt#, if1.stmt#, a1.stmt#>
 
 		// 2. Main test:
-		EvaluatedTable evTestTable = EvaluatedTable(entities, testTable);
+		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{ "TRUE" };
 		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
 		Assert::AreEqual(expected.size(), results.size());
@@ -729,7 +664,6 @@ public:
 
 	TEST_METHOD(resolveTableToResults_sixColumnsMixed_projectBooleanFalse) {
 		// 1. Set-up:
-		std::unordered_map<std::string, EntityType> entities;
 		std::unordered_map<std::string, std::vector<int>> testTable;
 		std::vector<PqlReference> attributesProjected; // Empty attributesProjected table
 

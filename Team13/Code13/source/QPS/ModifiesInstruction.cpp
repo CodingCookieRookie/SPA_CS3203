@@ -13,17 +13,14 @@ ModifiesInstruction::ModifiesInstruction(PqlReference lhsRef, PqlReference rhsRe
 EvaluatedTable ModifiesSInstruction::execute() {
 	/* Modifies (1, v)	or Modifies(1, "x")  => true or Modifies (1, _ ) (under statement) */
 	EvaluatedTable evTable;
-	std::unordered_map<std::string, EntityType> PQLentities;
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
 	std::vector<int> allStmts;
 	std::vector<int> varIndices;
-	PQLentities.insert(std::pair(lhsRef.second, EntityType::STMT));
-	PQLentities.insert(std::pair(rhsRef.second, EntityType::VARIABLE));
 	switch (lhsRef.first) {
 	case PqlReferenceType::SYNONYM:
-		return ModifiesInstruction::handleSynonymLeft(PQLentities, PQLmap, lhsRef, rhsRef, allStmts, varIndices, PqlRelationshipType::MODIFIES_S);
+		return ModifiesInstruction::handleSynonymLeft(PQLmap, lhsRef, rhsRef, allStmts, varIndices, PqlRelationshipType::MODIFIES_S);
 	case PqlReferenceType::INTEGER:
-		return ModifiesInstruction::handleIntegerLeft(PQLentities, PQLmap, lhsRef, rhsRef, allStmts, varIndices);
+		return ModifiesInstruction::handleIntegerLeft(PQLmap, lhsRef, rhsRef, allStmts, varIndices);
 	default:
 		break;
 	}
@@ -33,24 +30,21 @@ EvaluatedTable ModifiesSInstruction::execute() {
 EvaluatedTable ModifiesPInstruction::execute() {
 	/* Modifies(p / p1, v) or Modifies(p / p1, _)	Modifies(p / p1, "x") */
 	/* Modifies("p", v) or Modifies("p" , _)	Modifies("p", "x") */
-	std::unordered_map<std::string, EntityType> PQLentities;
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
 	std::vector<int> allStmts;
 	std::vector<int> varIndices;
-	PQLentities.insert(std::pair(lhsRef.second, EntityType::PROCEDURE));
-	PQLentities.insert(std::pair(rhsRef.second, EntityType::VARIABLE));
 	switch (lhsRef.first) {
 	case PqlReferenceType::SYNONYM:
 		// same as handleModfiesS
-		return handleSynonymLeft(PQLentities, PQLmap, lhsRef, rhsRef, allStmts, varIndices, PqlRelationshipType::MODIFIES_P);
+		return handleSynonymLeft(PQLmap, lhsRef, rhsRef, allStmts, varIndices, PqlRelationshipType::MODIFIES_P);
 	case PqlReferenceType::IDENT:
-		return handleIdentLeft(PQLentities, PQLmap, lhsRef, rhsRef, allStmts, varIndices);
+		return handleIdentLeft(PQLmap, lhsRef, rhsRef, allStmts, varIndices);
 	default:
 		break;
 	}
 }
 
-EvaluatedTable ModifiesInstruction::handleSynonymLeft(std::unordered_map<std::string, EntityType> PQLentities, std::unordered_map<std::string, std::vector<int>> PQLmap, PqlReference lhsRef, PqlReference rhsRef, std::vector<int> allStmts, std::vector<int> varIndices, PqlRelationshipType pqlRelationshipType) {
+EvaluatedTable ModifiesInstruction::handleSynonymLeft(std::unordered_map<std::string, std::vector<int>> PQLmap, PqlReference lhsRef, PqlReference rhsRef, std::vector<int> allStmts, std::vector<int> varIndices, PqlRelationshipType pqlRelationshipType) {
 	std::tuple<std::vector<int>, std::vector<int>> allStmtVarInfos = pqlRelationshipType == PqlRelationshipType::MODIFIES_S ? ModifiesS::getAllSynonymVarInfo() : ModifiesP::getAllSynonymVarInfo();
 	switch (rhsRef.first) {
 	case PqlReferenceType::SYNONYM:
@@ -70,10 +64,10 @@ EvaluatedTable ModifiesInstruction::handleSynonymLeft(std::unordered_map<std::st
 		break;
 	}
 	PQLmap[lhsRef.second] = allStmts;
-	return EvaluatedTable(PQLentities, PQLmap);
+	return EvaluatedTable(PQLmap);
 }
 
-EvaluatedTable ModifiesInstruction::handleIntegerLeft(std::unordered_map<std::string, EntityType> PQLentities, std::unordered_map<std::string, std::vector<int>> PQLmap, PqlReference lhsRef, PqlReference rhsRef, std::vector<int> allStmts, std::vector<int> varIndices) {
+EvaluatedTable ModifiesInstruction::handleIntegerLeft(std::unordered_map<std::string, std::vector<int>> PQLmap, PqlReference lhsRef, PqlReference rhsRef, std::vector<int> allStmts, std::vector<int> varIndices) {
 	int lhsRefValue = stoi(lhsRef.second);
 	if (!Entity::containsStmt(lhsRefValue)) {
 		return EvaluatedTable(false);
@@ -84,7 +78,7 @@ EvaluatedTable ModifiesInstruction::handleIntegerLeft(std::unordered_map<std::st
 	case PqlReferenceType::SYNONYM:
 		varIndices = ModifiesS::getVariables(stmtIndex);
 		PQLmap[rhsRef.second] = varIndices;
-		return EvaluatedTable(PQLentities, PQLmap);
+		return EvaluatedTable(PQLmap);
 	case PqlReferenceType::WILDCARD:
 		return EvaluatedTable(ModifiesS::getVariables(stmtIndex).size() > 0);
 	case PqlReferenceType::IDENT:
@@ -96,10 +90,10 @@ EvaluatedTable ModifiesInstruction::handleIntegerLeft(std::unordered_map<std::st
 	default:
 		break;
 	}
-	return EvaluatedTable(PQLentities, PQLmap);
+	return EvaluatedTable(PQLmap);
 }
 
-EvaluatedTable ModifiesInstruction::handleIdentLeft(std::unordered_map<std::string, EntityType> PQLentities, std::unordered_map<std::string, std::vector<int>> PQLmap, PqlReference lhsRef, PqlReference rhsRef, std::vector<int> allStmts, std::vector<int> varIndices) {
+EvaluatedTable ModifiesInstruction::handleIdentLeft(std::unordered_map<std::string, std::vector<int>> PQLmap, PqlReference lhsRef, PqlReference rhsRef, std::vector<int> allStmts, std::vector<int> varIndices) {
 	if (!Entity::containsProc(lhsRef.second)) {
 		return EvaluatedTable(false);
 	}
@@ -109,7 +103,7 @@ EvaluatedTable ModifiesInstruction::handleIdentLeft(std::unordered_map<std::stri
 	case PqlReferenceType::SYNONYM:
 		varIndices = ModifiesP::getVariables(procIndex);
 		PQLmap[rhsRef.second] = varIndices;
-		return EvaluatedTable(PQLentities, PQLmap);
+		return EvaluatedTable(PQLmap);
 	case PqlReferenceType::WILDCARD:
 		return EvaluatedTable(ModifiesP::getVariables(procIndex).size() > 0);
 	case PqlReferenceType::IDENT:
@@ -121,5 +115,5 @@ EvaluatedTable ModifiesInstruction::handleIdentLeft(std::unordered_map<std::stri
 	default:
 		break;
 	}
-	return EvaluatedTable(PQLentities, PQLmap);
+	return EvaluatedTable(PQLmap);
 }
