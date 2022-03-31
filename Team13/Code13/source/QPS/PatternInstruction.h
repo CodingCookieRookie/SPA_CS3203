@@ -3,16 +3,13 @@
 #include "Instruction.h"
 
 class PatternInstruction : public Instruction {
-private:
-	PqlPatternType pqlPatternType;
-
 protected:
 	std::string synonym;
 	PqlReference entRef;
 	PqlExpression expressionSpec;
 	PatternInstruction(std::string synonym, PqlReference entRef);
 	PatternInstruction(std::string synonym, PqlReference entRef, PqlExpression expressionSpec);
-	PatternInstruction(std::string synonym, PqlPatternType pqlPatternType, PqlReference entRef, PqlExpression expressionSpec);
+	std::unordered_set<std::string> getSynonyms() override;
 };
 
 class PatternAInstruction : public PatternInstruction {

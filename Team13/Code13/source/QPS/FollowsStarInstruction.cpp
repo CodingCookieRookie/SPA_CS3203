@@ -1,6 +1,6 @@
 #include "FollowsStarInstruction.h"
 
-FollowsStarInstruction::FollowsStarInstruction(PqlReference lhsRef, PqlReference rhsRef) : lhsRef(lhsRef), rhsRef(rhsRef) {}
+FollowsStarInstruction::FollowsStarInstruction(PqlReference lhsRef, PqlReference rhsRef) : RelationshipInstruction(lhsRef, rhsRef) {}
 
 EvaluatedTable FollowsStarInstruction::execute() {
 	// e.g Follows*(6, 7)

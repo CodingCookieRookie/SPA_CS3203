@@ -32,6 +32,9 @@ public:
 		rhsRef = std::make_pair(PqlReferenceType::IDENT, "procedure3");
 		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef);
 
+		std::unordered_set<std::string> expectedSynonyms{};
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts 4 procs, establishes 3 calls relationships
 		std::vector<ProcIndex> procs;
 		std::string procName;
@@ -59,6 +62,9 @@ public:
 		lhsRef = std::make_pair(PqlReferenceType::IDENT, "procedure1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "q");
 		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef);
+
+		std::unordered_set<std::string> expectedSynonyms{ "q" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts 4 procs, establishes 3 calls relationships
 		std::vector<ProcIndex> procs;
@@ -104,6 +110,9 @@ public:
 		rhsRef = std::make_pair(PqlReferenceType::IDENT, "procedure4");
 		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef);
 
+		std::unordered_set<std::string> expectedSynonyms{ "p" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts 4 procs, establishes 4 calls relationships
 		std::vector<ProcIndex> procs;
 		std::string procName;
@@ -148,6 +157,9 @@ public:
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "p");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "q");
 		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef);
+
+		std::unordered_set<std::string> expectedSynonyms{ "p", "q"};
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts 4 procs, establishes 3 calls relationships
 		std::vector<ProcIndex> procs;
@@ -201,6 +213,9 @@ public:
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "p");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "q");
 		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef);
+
+		std::unordered_set<std::string> expectedSynonyms{ "p", "q"};
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts 19 procs, establishes 18 Calls relationships
 		std::vector<ProcIndex> procs;
@@ -268,6 +283,9 @@ public:
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef);
 
+		std::unordered_set<std::string> expectedSynonyms{ "p" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts 99 procs, establishes 98 Calls relationships
 		std::vector<ProcIndex> procs;
 		std::string procName;
@@ -324,6 +342,9 @@ public:
 		rhsRef = std::make_pair(PqlReferenceType::IDENT, "procedure87");
 		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef);
 
+		std::unordered_set<std::string> expectedSynonyms{};
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts 99 procs, establishes 98 Calls relationships
 		std::vector<ProcIndex> procs;
 		std::string procName;
@@ -363,6 +384,9 @@ public:
 		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef);
+
+		std::unordered_set<std::string> expectedSynonyms{};
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts 99 procs, establishes 98 Calls relationships
 		std::vector<ProcIndex> procs;

@@ -3,13 +3,12 @@
 #include "Instruction.h"
 
 class RelationshipInstruction : public Instruction {
-private:
-	PqlRelationshipType pqlRelationshipType;
+protected:
 	PqlReference lhsRef;
 	PqlReference rhsRef;
 
 public:
-	RelationshipInstruction();
-	RelationshipInstruction(PqlRelationshipType pqlRSType, PqlReference lhs, PqlReference rhs);
+	RelationshipInstruction(PqlReference lhs, PqlReference rhs);
 	virtual EvaluatedTable execute() = 0;
+	std::unordered_set<std::string> getSynonyms() override;
 };

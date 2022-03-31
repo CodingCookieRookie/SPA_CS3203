@@ -32,6 +32,9 @@ public:
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::PARTIAL, " 12345 ");
 		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
 
+		std::unordered_set<std::string> expectedSynonyms{ "a1", "v" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::PRINT_TYPE);
 		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
@@ -60,6 +63,9 @@ public:
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::PARTIAL, " xx ");
 		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
 
+		std::unordered_set<std::string> expectedSynonyms{ "a1" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::PRINT_TYPE);
 		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
@@ -86,6 +92,9 @@ public:
 		PqlReference entRef = std::make_pair(PqlReferenceType::SYNONYM, "v");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::PARTIAL, " xx ");
 		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
+
+		std::unordered_set<std::string> expectedSynonyms{ "a1", "v"};
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::PRINT_TYPE);
@@ -114,6 +123,9 @@ public:
 		PqlReference entRef = std::make_pair(PqlReferenceType::SYNONYM, "v");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::PARTIAL, " x ");
 		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
+
+		std::unordered_set<std::string> expectedSynonyms{ "a1", "v"};
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::PRINT_TYPE);
@@ -144,6 +156,9 @@ public:
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::PARTIAL, " x ");
 		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
 
+		std::unordered_set<std::string> expectedSynonyms{ "a1", "v" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::PRINT_TYPE);
 		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
@@ -170,6 +185,9 @@ public:
 		PqlReference entRef = std::make_pair(PqlReferenceType::SYNONYM, "v");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::PARTIAL, " 123 ");
 		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
+
+		std::unordered_set<std::string> expectedSynonyms{ "a1", "v" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::PRINT_TYPE);
@@ -199,6 +217,9 @@ public:
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::PARTIAL, " x ");
 		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
 
+		std::unordered_set<std::string> expectedSynonyms{ "a1" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::PRINT_TYPE);
 		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
@@ -226,6 +247,9 @@ public:
 		PqlReference entRef = std::make_pair(PqlReferenceType::IDENT, "assign1");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::PARTIAL, " 123 ");
 		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
+
+		std::unordered_set<std::string> expectedSynonyms{ "a1" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::PRINT_TYPE);
@@ -256,6 +280,9 @@ public:
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::WILDCARD, "");
 		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
 
+		std::unordered_set<std::string> expectedSynonyms{ "a1", "v" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::PRINT_TYPE);
 		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
@@ -282,6 +309,9 @@ public:
 		PqlReference entRef = std::make_pair(PqlReferenceType::IDENT, "assign1");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::WILDCARD, "");
 		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
+
+		std::unordered_set<std::string> expectedSynonyms{ "a1" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::PRINT_TYPE);
@@ -310,6 +340,9 @@ public:
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::PARTIAL, " x ");
 		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
 
+		std::unordered_set<std::string> expectedSynonyms{ "a1" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::PRINT_TYPE);
 		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
@@ -336,6 +369,9 @@ public:
 		PqlReference entRef = std::make_pair(PqlReferenceType::WILDCARD, "");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::WILDCARD, "");
 		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
+
+		std::unordered_set<std::string> expectedSynonyms{ "a1" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::PRINT_TYPE);
@@ -369,6 +405,9 @@ public:
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::FULL, postFixExpression);
 		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
 
+		std::unordered_set<std::string> expectedSynonyms{ "a1", "v" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::PRINT_TYPE);
 		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
@@ -396,6 +435,9 @@ public:
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x+y");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::FULL, postFixExpression);
 		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
+
+		std::unordered_set<std::string> expectedSynonyms{ "a1", "v" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::PRINT_TYPE);
@@ -425,6 +467,9 @@ public:
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::FULL, postFixExpression);
 		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
 
+		std::unordered_set<std::string> expectedSynonyms{ "a1" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::PRINT_TYPE);
 		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
@@ -452,6 +497,9 @@ public:
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x+y");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::FULL, postFixExpression);
 		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
+
+		std::unordered_set<std::string> expectedSynonyms{ "a1" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::PRINT_TYPE);

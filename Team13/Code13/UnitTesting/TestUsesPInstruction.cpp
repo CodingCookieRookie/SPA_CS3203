@@ -27,6 +27,9 @@ public:
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "v");
 		Instruction* instruction = new UsesPInstruction(lhsRef, rhsRef);
 
+		std::unordered_set<std::string> expectedSynonyms{ "p", "v" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts uses
 		Entity::insertProc("randomProc");
 		ProcIndex procIndex = Entity::insertProc("p");
@@ -48,6 +51,9 @@ public:
 		rhsRef = std::make_pair(PqlReferenceType::IDENT, "x");
 		Instruction* instruction = new UsesPInstruction(lhsRef, rhsRef);
 
+		std::unordered_set<std::string> expectedSynonyms{ "p" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts uses
 		Entity::insertProc("randomProc");
 		ProcIndex procIndex = Entity::insertProc("p");
@@ -68,6 +74,9 @@ public:
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "p");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		Instruction* instruction = new UsesPInstruction(lhsRef, rhsRef);
+
+		std::unordered_set<std::string> expectedSynonyms{ "p" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts uses
 		Entity::insertProc("randomProc");
@@ -91,6 +100,9 @@ public:
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "v");
 		Instruction* instruction = new UsesPInstruction(lhsRef, rhsRef);
 
+		std::unordered_set<std::string> expectedSynonyms{ "v" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts uses
 		Entity::insertProc("randomProc");
 		ProcIndex procIndex = Entity::insertProc("p");
@@ -112,6 +124,9 @@ public:
 		rhsRef = std::make_pair(PqlReferenceType::IDENT, "x");
 		Instruction* instruction = new UsesPInstruction(lhsRef, rhsRef);
 
+		std::unordered_set<std::string> expectedSynonyms{};
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts uses
 		Entity::insertProc("randomProc");
 		ProcIndex procIndex = Entity::insertProc("p");
@@ -132,6 +147,9 @@ public:
 		lhsRef = std::make_pair(PqlReferenceType::IDENT, "p");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		Instruction* instruction = new UsesPInstruction(lhsRef, rhsRef);
+
+		std::unordered_set<std::string> expectedSynonyms{};
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts uses
 		Entity::insertProc("randomProc");

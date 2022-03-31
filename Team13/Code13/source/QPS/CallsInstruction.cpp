@@ -1,6 +1,6 @@
 #include "CallsInstruction.h"
 
-CallsInstruction::CallsInstruction(PqlReference lhsRef, PqlReference rhsRef) : lhsRef(lhsRef), rhsRef(rhsRef) {}
+CallsInstruction::CallsInstruction(PqlReference lhsRef, PqlReference rhsRef) : RelationshipInstruction(lhsRef, rhsRef) {}
 
 EvaluatedTable CallsInstruction::execute() {
 	EvaluatedTable evTable;

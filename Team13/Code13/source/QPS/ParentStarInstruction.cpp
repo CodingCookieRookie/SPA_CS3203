@@ -1,6 +1,6 @@
 #include "ParentStarInstruction.h"
 
-ParentStarInstruction::ParentStarInstruction(PqlReference lhsRef, PqlReference rhsRef) : lhsRef(lhsRef), rhsRef(rhsRef) {}
+ParentStarInstruction::ParentStarInstruction(PqlReference lhsRef, PqlReference rhsRef) : RelationshipInstruction(lhsRef, rhsRef) {}
 
 EvaluatedTable ParentStarInstruction::execute() {
 	// e.g Parent*(6, 7)

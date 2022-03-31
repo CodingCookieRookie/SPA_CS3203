@@ -29,6 +29,9 @@ public:
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "2");
 		Instruction* instruction = new NextInstruction(lhsRef, rhsRef);
 
+		std::unordered_set<std::string> expectedSynonyms{};
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts statements
 		StmtIndex stmt1 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		StmtIndex stmt2 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
@@ -48,6 +51,9 @@ public:
 		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s2");
 		Instruction* instruction = new NextInstruction(lhsRef, rhsRef);
+
+		std::unordered_set<std::string> expectedSynonyms{ "s2" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts statements
 		StmtIndex stmt1 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
@@ -84,6 +90,9 @@ public:
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "2");
 		Instruction* instruction = new NextInstruction(lhsRef, rhsRef);
 
+		std::unordered_set<std::string> expectedSynonyms{ "s1" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts statements
 		StmtIndex stmt1 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		StmtIndex stmt2 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
@@ -118,6 +127,9 @@ public:
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s2");
 		Instruction* instruction = new NextInstruction(lhsRef, rhsRef);
+
+		std::unordered_set<std::string> expectedSynonyms{ "s1", "s2" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts 5 statements
 		std::vector<StmtIndex> stmts;
@@ -163,6 +175,9 @@ public:
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		Instruction* instruction = new NextInstruction(lhsRef, rhsRef);
 
+		std::unordered_set<std::string> expectedSynonyms{ "s1" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts 5 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 6; i++) {
@@ -203,6 +218,9 @@ public:
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		Instruction* instruction = new NextInstruction(lhsRef, rhsRef);
+
+		std::unordered_set<std::string> expectedSynonyms{ "s1" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts 37213 statements
 		std::vector<StmtIndex> stmts;
@@ -253,6 +271,9 @@ public:
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "3");
 		Instruction* instruction = new NextInstruction(lhsRef, rhsRef);
 
+		std::unordered_set<std::string> expectedSynonyms{};
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts 3 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 3; i++) {
@@ -290,6 +311,9 @@ public:
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "28");
 		Instruction* instruction = new NextInstruction(lhsRef, rhsRef);
 
+		std::unordered_set<std::string> expectedSynonyms{};
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts 976 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 976; i++) {
@@ -326,6 +350,9 @@ public:
 		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		Instruction* instruction = new NextInstruction(lhsRef, rhsRef);
+
+		std::unordered_set<std::string> expectedSynonyms{};
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts 3 statements
 		std::vector<StmtIndex> stmts;

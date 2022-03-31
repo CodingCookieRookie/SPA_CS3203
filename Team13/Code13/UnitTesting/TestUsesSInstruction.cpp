@@ -30,6 +30,9 @@ public:
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "v");
 		Instruction* instruction = new UsesSInstruction(lhsRef, rhsRef);
 
+		std::unordered_set<std::string> expectedSynonyms{ "a1", "v" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts uses
 		Entity::insertStmt(StatementType::PRINT_TYPE);   // insert dummy stmt
 		StmtIndex stmt = Entity::insertStmt(StatementType::READ_TYPE);
@@ -51,6 +54,9 @@ public:
 		rhsRef = std::make_pair(PqlReferenceType::IDENT, "x");
 		Instruction* instruction = new UsesSInstruction(lhsRef, rhsRef);
 
+		std::unordered_set<std::string> expectedSynonyms{ "a1" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts uses
 		Entity::insertStmt(StatementType::READ_TYPE);
 		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
@@ -71,6 +77,9 @@ public:
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		Instruction* instruction = new UsesSInstruction(lhsRef, rhsRef);
+
+		std::unordered_set<std::string> expectedSynonyms{ "a1" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts uses
 		Entity::insertStmt(StatementType::PRINT_TYPE);
@@ -95,6 +104,9 @@ public:
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
 		Instruction* instruction = new UsesSInstruction(lhsRef, rhsRef);
 
+		std::unordered_set<std::string> expectedSynonyms{ "a1" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts uses
 		Entity::insertStmt(StatementType::PRINT_TYPE);
 		StmtIndex stmt = Entity::insertStmt(StatementType::READ_TYPE);
@@ -118,6 +130,9 @@ public:
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
 		Instruction* instruction = new UsesSInstruction(lhsRef, rhsRef);
 
+		std::unordered_set<std::string> expectedSynonyms{ "a1" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts uses
 		Entity::insertStmt(StatementType::PRINT_TYPE);
 		StmtIndex stmt = Entity::insertStmt(StatementType::READ_TYPE);
@@ -138,6 +153,9 @@ public:
 		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "50");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
 		Instruction* instruction = new UsesSInstruction(lhsRef, rhsRef);
+
+		std::unordered_set<std::string> expectedSynonyms{ "a1" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts modifies
 		Entity::insertStmt(StatementType::PRINT_TYPE);
@@ -163,6 +181,9 @@ public:
 		rhsRef = std::make_pair(PqlReferenceType::IDENT, "fhg");
 		Instruction* instruction = new UsesSInstruction(lhsRef, rhsRef);
 
+		std::unordered_set<std::string> expectedSynonyms{};
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts modifies
 		Entity::insertStmt(StatementType::PRINT_TYPE);
 		StmtIndex stmt = Entity::insertStmt(StatementType::READ_TYPE);
@@ -187,6 +208,9 @@ public:
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		Instruction* instruction = new UsesSInstruction(lhsRef, rhsRef);
 
+		std::unordered_set<std::string> expectedSynonyms{};
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts uses
 		Entity::insertStmt(StatementType::PRINT_TYPE);
 		StmtIndex stmt = Entity::insertStmt(StatementType::READ_TYPE);
@@ -210,6 +234,9 @@ public:
 		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "2");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		Instruction* instruction = new UsesSInstruction(lhsRef, rhsRef);
+
+		std::unordered_set<std::string> expectedSynonyms{};
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts uses
 		Entity::insertStmt(StatementType::PRINT_TYPE);

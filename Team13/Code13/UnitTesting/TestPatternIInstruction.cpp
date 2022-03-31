@@ -29,6 +29,9 @@ public:
 		PqlReference entRef = std::make_pair(PqlReferenceType::IDENT, "v");
 		Instruction* instruction = new PatternIInstruction(synonym, entRef);
 
+		std::unordered_set<std::string> expectedSynonyms{ "ifs" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::PRINT_TYPE);
 		StmtIndex stmt = Entity::insertStmt(StatementType::IF_TYPE);
@@ -55,6 +58,9 @@ public:
 		PqlReference entRef = std::make_pair(PqlReferenceType::SYNONYM, "v");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::WILDCARD, "");
 		Instruction* instruction = new PatternIInstruction(synonym, entRef);
+
+		std::unordered_set<std::string> expectedSynonyms{ "ifs", "v" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::PRINT_TYPE);
@@ -84,6 +90,9 @@ public:
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::WILDCARD, "");
 		Instruction* instruction = new PatternIInstruction(synonym, entRef);
 
+		std::unordered_set<std::string> expectedSynonyms{ "ifs" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::PRINT_TYPE);
 		StmtIndex stmt = Entity::insertStmt(StatementType::IF_TYPE);
@@ -111,6 +120,9 @@ public:
 		PqlReference entRef = std::make_pair(PqlReferenceType::WILDCARD, "");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::WILDCARD, "");
 		Instruction* instruction = new PatternIInstruction(synonym, entRef);
+
+		std::unordered_set<std::string> expectedSynonyms{ "ifs" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
 		Entity::insertStmt(StatementType::PRINT_TYPE);

@@ -31,6 +31,9 @@ public:
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "2");
 		Instruction* instruction = new ParentInstruction(lhsRef, rhsRef);
 
+		std::unordered_set<std::string> expectedSynonyms{};
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
+
 		// PKB inserts statements
 		StmtIndex stmt1 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
 		StmtIndex stmt2 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
@@ -49,7 +52,10 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s2");
-		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef);;
+		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef);
+
+		std::unordered_set<std::string> expectedSynonyms{ "s2" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts 4 statements
 		std::vector<StmtIndex> stmts;
@@ -90,7 +96,10 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "4");
-		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef);;
+		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef);
+
+		std::unordered_set<std::string> expectedSynonyms{ "s1" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts 4 statements
 		std::vector<StmtIndex> stmts;
@@ -132,7 +141,10 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s2");
-		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef);;
+		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef);
+
+		std::unordered_set<std::string> expectedSynonyms{ "s1", "s2" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts 4 statements
 		std::vector<StmtIndex> stmts;
@@ -183,7 +195,10 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s2");
-		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef);;
+		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef);
+
+		std::unordered_set<std::string> expectedSynonyms{ "s1", "s2" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts 19 statements
 		std::vector<StmtIndex> stmts;
@@ -246,7 +261,10 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
-		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef);;
+		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef);
+
+		std::unordered_set<std::string> expectedSynonyms{ "s1" };
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts 99 statements
 		std::vector<StmtIndex> stmts;
@@ -300,7 +318,10 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "87");
-		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef);;
+		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef);
+
+		std::unordered_set<std::string> expectedSynonyms{};
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts 99 statements
 		std::vector<StmtIndex> stmts;
@@ -339,7 +360,10 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
-		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef);;
+		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef);
+
+		std::unordered_set<std::string> expectedSynonyms{};
+		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts 3 statements
 		std::vector<StmtIndex> stmts;

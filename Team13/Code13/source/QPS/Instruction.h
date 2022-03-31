@@ -28,7 +28,7 @@ public:
 	virtual std::unordered_set<std::string> getSynonyms() {
 		return std::unordered_set<std::string>();
 	};
-	virtual int getDifficultyScore() {
+	virtual QueryScore getDifficultyScore() {
 		return 0;
 	};
 };

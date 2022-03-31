@@ -8,11 +8,13 @@ PatternInstruction::PatternInstruction(
 	std::string synonym, PqlReference entRef, PqlExpression expressionSpec) :
 	synonym(synonym), entRef(entRef), expressionSpec(expressionSpec) {}
 
-PatternInstruction::PatternInstruction(
-	std::string synonym, PqlPatternType pqlPatternType,
-	PqlReference entRef, PqlExpression expressionSpec) :
-	synonym(synonym), pqlPatternType(pqlPatternType),
-	entRef(entRef), expressionSpec(expressionSpec) {}
+std::unordered_set<std::string> PatternInstruction::getSynonyms() {
+	std::unordered_set<std::string> results{synonym};
+	if (isSynonymRef(entRef)) {
+		results.insert(entRef.second);
+	}
+	return results;
+}
 
 EvaluatedTable PatternAInstruction::execute() {
 	std::unordered_map<std::string, std::vector<int>> PQLmap;

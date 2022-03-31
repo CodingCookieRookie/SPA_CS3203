@@ -53,5 +53,7 @@ typedef std::pair<PqlReferenceType, std::string> PqlReference;
 
 typedef std::pair<PqlExpressionType, std::string> PqlExpression;
 
+typedef int QueryScore;
+
 bool isSynonymRef(PqlReference reference);
 bool isStatementEntity(EntityType entityType);

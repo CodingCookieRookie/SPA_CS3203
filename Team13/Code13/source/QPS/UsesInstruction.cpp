@@ -1,6 +1,6 @@
 #include "UsesInstruction.h"
 
-UsesInstruction::UsesInstruction(PqlReference lhsRef, PqlReference rhsRef) : lhsRef(lhsRef), rhsRef(rhsRef) {}
+UsesInstruction::UsesInstruction(PqlReference lhsRef, PqlReference rhsRef) : RelationshipInstruction(lhsRef, rhsRef) {}
 
 EvaluatedTable UsesSInstruction::execute() {
 	/* Uses (a/r/s/a1, v) or Uses(a/r/s/a1, "x") or Uses (a/r/s/a1, _ ) or Uses (1, v)	=> true or Uses (1, _ ) (under statement) */

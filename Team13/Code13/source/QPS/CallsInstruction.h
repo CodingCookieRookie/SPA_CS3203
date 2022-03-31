@@ -4,8 +4,6 @@
 
 class CallsInstruction : public RelationshipInstruction {
 protected:
-	PqlReference lhsRef;
-	PqlReference rhsRef;
 	EvaluatedTable execute() override;
 	EvaluatedTable helperHandleTwoIdents();
 	EvaluatedTable helperHandleOneIdent(PqlReferenceType lhsRefType, PqlReferenceType rhsRefType);

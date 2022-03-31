@@ -1,6 +1,6 @@
 #include "ParentInstruction.h"
 
-ParentInstruction::ParentInstruction(PqlReference lhsRef, PqlReference rhsRef) : lhsRef(lhsRef), rhsRef(rhsRef) {}
+ParentInstruction::ParentInstruction(PqlReference lhsRef, PqlReference rhsRef) : RelationshipInstruction(lhsRef, rhsRef) {}
 
 EvaluatedTable ParentInstruction::execute() {
 	// e.g Parent(6, 7)

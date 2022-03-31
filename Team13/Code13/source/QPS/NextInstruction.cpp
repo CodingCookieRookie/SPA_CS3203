@@ -1,6 +1,6 @@
 #include "NextInstruction.h"
 
-NextInstruction::NextInstruction(PqlReference lhsRef, PqlReference rhsRef) : lhsRef(lhsRef), rhsRef(rhsRef) {}
+NextInstruction::NextInstruction(PqlReference lhsRef, PqlReference rhsRef) : RelationshipInstruction(lhsRef, rhsRef) {}
 
 EvaluatedTable NextInstruction::execute() {
 	/* e.g Next/Next*(6, 7) */

@@ -1,6 +1,6 @@
 #include "ModifiesInstruction.h"
 
-ModifiesInstruction::ModifiesInstruction(PqlReference lhsRef, PqlReference rhsRef) : lhsRef(lhsRef), rhsRef(rhsRef) {}
+ModifiesInstruction::ModifiesInstruction(PqlReference lhsRef, PqlReference rhsRef) : RelationshipInstruction(lhsRef, rhsRef) {}
 
 //ModifiesSInstruction::ModifiesSInstruction(PqlReference lhsRef, PqlReference rhsRef) : lhsRef(lhsRef), rhsRef(rhsRef) {}
 //
