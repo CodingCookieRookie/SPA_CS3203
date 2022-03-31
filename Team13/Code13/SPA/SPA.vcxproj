@@ -59,6 +59,7 @@
     <ClInclude Include="..\source\Common\Lexer.h" />
     <ClInclude Include="..\source\Common\Types.h" />
     <ClInclude Include="..\source\PKB\Attribute.h" />
+    <ClInclude Include="..\source\PKB\BidirectionalTable.h" />
     <ClInclude Include="..\source\PKB\Calls.h" />
     <ClInclude Include="..\source\PKB\CallsT.h" />
     <ClInclude Include="..\source\PKB\Container.h" />

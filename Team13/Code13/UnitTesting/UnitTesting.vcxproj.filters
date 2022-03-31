@@ -57,6 +57,7 @@
     <ClCompile Include="TestNext.cpp" />
     <ClCompile Include="TestInstructionNext.cpp" />
     <ClCompile Include="TestCFG.cpp" />
+    <ClCompile Include="TestBidirectionalTable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />

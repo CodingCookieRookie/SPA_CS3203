@@ -297,6 +297,9 @@
     <ClInclude Include="..\source\PKB\Pattern.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\source\PKB\BidirectionalTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
