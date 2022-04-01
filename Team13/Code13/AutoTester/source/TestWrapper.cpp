@@ -15,6 +15,9 @@ AbstractWrapper::~AbstractWrapper() = default;
 TestWrapper::TestWrapper() {
 	// create any objects here as instance variables of this class
 	// as well as any initialization required for your spa program
+	pkb = new PKB();
+	pkbGetter = new PKBGetter(pkb);
+	pkbInserter = new PKBInserter(pkb);
 }
 
 TestWrapper::~TestWrapper() = default;
@@ -28,8 +31,7 @@ void TestWrapper::parse(std::string filename) {
 	try {
 		SourceAST ast = Parser::parse(fileContent);
 		ASTValidator::validateAST(ast);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		DesignExtractor::extract(ast, pkbInserter);
 	} catch (ParserException& ex) {
 		std::cerr << ex.what() << std::endl;
 		exit(EXIT_FAILURE);

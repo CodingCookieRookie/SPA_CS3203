@@ -40,8 +40,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
 		Assert::AreEqual(size_t(1), Entity::getAllStmts().size());
@@ -63,8 +64,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
 		Assert::AreEqual(size_t(1), Entity::getAllStmts().size());
@@ -89,8 +91,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
 		Assert::AreEqual(size_t(2), Entity::getAllStmts().size());
@@ -123,8 +126,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(2), std::get<0>(Follows::getAllPredecessorSuccessorInfo()).size());
 		/* We expect (3 choose 2) = 3 relationships in Follows T */
@@ -157,8 +161,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		/* We expect two Parent relationships to be captured, one from the print statement in the then-block,
 		   and one from the read statement in the else-block. */
@@ -187,8 +192,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		/* We expect one Parent relationships to be captured, from the read statement in the while-block */
 		Assert::AreEqual(size_t(1), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());
@@ -226,8 +232,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		/* We expect two Parent relationships to be captured,
 		   one from the outer while to inner while, and one from the inner while to read x; */
@@ -296,8 +303,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		/* We expect five Parent relationships to be captured: (1, 2), (1, 4), (2, 3), (4, 5) and (4, 6). */
 		Assert::AreEqual(size_t(5), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());
@@ -348,8 +356,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		/* We expect three Parent relationships to be captured: (1, 2), (2, 3), and (2, 4). */
 		Assert::AreEqual(size_t(3), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());
@@ -398,8 +407,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(2), Entity::getAllVars().size());
 		Assert::AreEqual(size_t(3), Entity::getAllConsts().size());
@@ -436,8 +446,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		VarIndex x = Entity::getVarIdx("x");
 		VarIndex y = Entity::getVarIdx("y");
@@ -479,8 +490,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		VarIndex x = Entity::getVarIdx("x");
 		VarIndex y = Entity::getVarIdx("y");
@@ -544,8 +556,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		VarIndex x = Entity::getVarIdx("x");
 		VarIndex y = Entity::getVarIdx("y");
@@ -581,8 +594,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		VarIndex x = Entity::getVarIdx("x");
 		VarIndex y = Entity::getVarIdx("y");
@@ -620,8 +634,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		VarIndex x = Entity::getVarIdx("x");
 		VarIndex y = Entity::getVarIdx("y");
@@ -677,8 +692,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		VarIndex x = Entity::getVarIdx("x");
 		VarIndex y = Entity::getVarIdx("y");
@@ -708,10 +724,11 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = cfg->getCFGTable();
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = pkbInserter->getCFGTable();
 		Assert::IsTrue(size_t(0) == cfgTable.size());
 	}
 
@@ -731,10 +748,11 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = cfg->getCFGTable();
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = pkbInserter->getCFGTable();
 		Assert::IsTrue(size_t(0) == cfgTable.size());
 	}
 
@@ -763,10 +781,11 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = cfg->getCFGTable();
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = pkbInserter->getCFGTable();
 		Assert::IsTrue(size_t(1) == cfgTable.size());
 
 		Assert::IsTrue(expectedCfg == cfgTable);
@@ -803,10 +822,11 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = cfg->getCFGTable();
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = pkbInserter->getCFGTable();
 		Assert::IsTrue(size_t(2) == cfgTable.size());
 
 		Assert::IsTrue(expectedCfg == cfgTable);
@@ -845,10 +865,11 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = cfg->getCFGTable();
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = pkbInserter->getCFGTable();
 		Assert::IsTrue(size_t(1) == cfgTable.size());
 
 		Assert::IsTrue(expectedCfg == cfgTable);
@@ -882,10 +903,11 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = cfg->getCFGTable();
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = pkbInserter->getCFGTable();
 		Assert::IsTrue(size_t(2) == cfgTable.size());
 
 		Assert::IsTrue(expectedCfg == cfgTable);
@@ -931,10 +953,11 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = cfg->getCFGTable();
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = pkbInserter->getCFGTable();
 		Assert::IsTrue(size_t(3) == cfgTable.size());
 
 		Assert::IsTrue(expectedCfg == cfgTable);
@@ -1011,10 +1034,11 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = cfg->getCFGTable();
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = pkbInserter->getCFGTable();
 		Assert::IsTrue(size_t(4) == cfgTable.size());
 
 		Assert::IsTrue(expectedCfg == cfgTable);
@@ -1071,10 +1095,11 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = cfg->getCFGTable();
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = pkbInserter->getCFGTable();
 		Assert::IsTrue(size_t(4) == cfgTable.size());
 
 		Assert::IsTrue(expectedCfg == cfgTable);
@@ -1144,10 +1169,11 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = cfg->getCFGTable();
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = pkbInserter->getCFGTable();
 		Assert::IsTrue(size_t(4) == cfgTable.size());
 
 		Assert::IsTrue(expectedCfg == cfgTable);
@@ -1206,10 +1232,11 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = cfg->getCFGTable();
+		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = pkbInserter->getCFGTable();
 		Assert::IsTrue(size_t(4) == cfgTable.size());
 
 		Assert::IsTrue(expectedCfg == cfgTable);
@@ -1292,8 +1319,9 @@ public:
 		programNode->addProcedure(procedureNode1);
 		programNode->addProcedure(procedureNode2);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		/* Check stmts and attributes population */
 		Assert::AreEqual(size_t(9), Entity::getAllStmts().size());
@@ -1344,8 +1372,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -1377,8 +1406,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -1414,8 +1444,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -1447,8 +1478,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -1489,8 +1521,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -1560,8 +1593,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -1619,8 +1653,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -1685,8 +1720,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -1746,8 +1782,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -1796,8 +1833,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -1850,8 +1888,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -1907,8 +1946,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -1959,8 +1999,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -2010,8 +2051,9 @@ public:
 		programNode->addProcedure(firstProcedureNode);
 		programNode->addProcedure(secondProcedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -2087,8 +2129,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -2238,8 +2281,9 @@ public:
 		programNode->addProcedure(procedureNode4);
 		programNode->addProcedure(procedureNode5);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		/* Check Calls population */
 		/* We expect three Calls relationships to be captured: (1, 2), (2, 3), and (5, 4). */
@@ -2311,8 +2355,9 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		ProcIndex procIndex = Entity::getProcIdx(procName);
 
@@ -2412,8 +2457,9 @@ public:
 		programNode->addProcedure(procedureNode1);
 		programNode->addProcedure(procedureNode2);
 		SourceAST ast(programNode);
-		CFG* cfg = new CFG();
-		DesignExtractor::extract(ast, cfg);
+		PKB* pkb = new PKB();
+		PKBInserter* pkbInserter = new PKBInserter(pkb);
+		DesignExtractor::extract(ast, pkbInserter);
 
 		ProcIndex procIndex1 = Entity::getProcIdx(procName1);
 		ProcIndex procIndex2 = Entity::getProcIdx(procName2);

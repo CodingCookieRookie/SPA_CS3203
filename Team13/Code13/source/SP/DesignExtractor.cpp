@@ -153,8 +153,8 @@ void DesignExtractor::insertParent(
 	}
 }
 
-void DesignExtractor::insertNext(CFG* cfg) {
-	for (auto cfgEntry : cfg->getCFGTable()) {
+void DesignExtractor::insertNext(PKBInserter* pkb) {
+	for (auto cfgEntry : pkb->getCFGTable()) {
 		int keyStmtIdx = cfgEntry.first;
 		for (int nextStmtIdx : cfgEntry.second) {
 			Next::insert(keyStmtIdx, nextStmtIdx);
@@ -199,20 +199,20 @@ void DesignExtractor::processCallsProcNameMap(std::unordered_map<StmtIndex, std:
 
 void DesignExtractor::generateCFG(
 	StmtLstNode* stmtLstNode,
-	CFG* cfg,
+	PKBInserter* pkb,
 	std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap) {
 	std::vector<StmtNode*> stmtNodes = stmtLstNode->getStmtNodes();
 	for (size_t i = 0; i < stmtNodes.size(); i++) {
 		StmtNode* currNode = stmtNodes.at(i);
 		int currStmtIdx = stmtNodeIndexMap[currNode];
 		int nextStmtIdx = i == stmtNodes.size() - 1 ? EXIT_NODE_IDX : stmtNodeIndexMap[stmtNodes.at(i + 1)];
-		generateCFGFromStmt(currNode, cfg, stmtNodeIndexMap, currStmtIdx, nextStmtIdx);
+		generateCFGFromStmt(currNode, pkb, stmtNodeIndexMap, currStmtIdx, nextStmtIdx);
 	}
 }
 
 void DesignExtractor::generateCFGFromStmt(
 	StmtNode* currNode,
-	CFG* cfg,
+	PKBInserter* pkb,
 	std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap,
 	int currStmtIdx,
 	int nextStmtIdx) {
@@ -223,51 +223,51 @@ void DesignExtractor::generateCFGFromStmt(
 			StmtNode* firstChildStmtNode = childStmtLst->getStmtNodes().at(0);
 			int firstChildStmtIdx = stmtNodeIndexMap[firstChildStmtNode];
 
-			cfg->insert(currStmtIdx, firstChildStmtIdx);
+			pkb->insertToCFG(currStmtIdx, firstChildStmtIdx);
 
-			generateCFG(childStmtLst, cfg, stmtNodeIndexMap);
+			generateCFG(childStmtLst, pkb, stmtNodeIndexMap);
 
 			StmtNode* lastChildStmtNode = childStmtLst->getStmtNodes().at(childStmtLst->getStmtNodes().size() - 1);
 			int lastChildStmtIdx = stmtNodeIndexMap[lastChildStmtNode];
 
-			generateCFGFromStmt(lastChildStmtNode, cfg, stmtNodeIndexMap, lastChildStmtIdx, nextStmtIdx);
+			generateCFGFromStmt(lastChildStmtNode, pkb, stmtNodeIndexMap, lastChildStmtIdx, nextStmtIdx);
 		}
 	} else if (currNode->getStmtType() == StatementType::WHILE_TYPE) {
 		if (nextStmtIdx != EXIT_NODE_IDX) {
-			cfg->insert(currStmtIdx, nextStmtIdx);
+			pkb->insertToCFG(currStmtIdx, nextStmtIdx);
 		}
 
 		StmtLstNode* childStmtLst = currNode->getChildStmtLst()[0];
 		StmtNode* firstChildStmtNode = childStmtLst->getStmtNodes().at(0);
 		int firstChildStmtIdx = stmtNodeIndexMap[firstChildStmtNode];
 
-		cfg->insert(currStmtIdx, firstChildStmtIdx);
+		pkb->insertToCFG(currStmtIdx, firstChildStmtIdx);
 
-		generateCFG(childStmtLst, cfg, stmtNodeIndexMap);
+		generateCFG(childStmtLst, pkb, stmtNodeIndexMap);
 
 		StmtNode* lastChildStmtNode = childStmtLst->getStmtNodes().at(childStmtLst->getStmtNodes().size() - 1);
 		int lastChildStmtIdx = stmtNodeIndexMap[lastChildStmtNode];
 
-		generateCFGFromStmt(lastChildStmtNode, cfg, stmtNodeIndexMap, lastChildStmtIdx, currStmtIdx);
+		generateCFGFromStmt(lastChildStmtNode, pkb, stmtNodeIndexMap, lastChildStmtIdx, currStmtIdx);
 	} else {
 		if (nextStmtIdx != EXIT_NODE_IDX) {
-			cfg->insert(currStmtIdx, nextStmtIdx);
+			pkb->insertToCFG(currStmtIdx, nextStmtIdx);
 		}
 	}
 }
 
 void DesignExtractor::processCFGs(
 	ProgramNode* programNode,
-	CFG* cfg,
+	PKBInserter* pkb,
 	std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap) {
 	for (ProcedureNode* procedureNode : programNode->getProcedureNodes()) {
 		StmtLstNode* stmtLstNode = procedureNode->getStmtLstNode();
-		generateCFG(stmtLstNode, cfg, stmtNodeIndexMap);
+		generateCFG(stmtLstNode, pkb, stmtNodeIndexMap);
 	}
-	insertNext(cfg);
+	insertNext(pkb);
 }
 
-void DesignExtractor::extract(SourceAST& ast, CFG* cfg) {
+void DesignExtractor::extract(SourceAST& ast, PKBInserter* pkb) {
 	/* Maps procedure index to its direct stmt indices */
 	std::unordered_map<ProcIndex, std::vector<StmtIndex>> procStmtMap;
 
@@ -283,5 +283,5 @@ void DesignExtractor::extract(SourceAST& ast, CFG* cfg) {
 	processCallsProcNameMap(callsProcNameMap);
 	TransitivePopulator::populateRecursiveInfo();
 
-	processCFGs(programNode, cfg, stmtNodeIndexMap);
+	processCFGs(programNode, pkb, stmtNodeIndexMap);
 }

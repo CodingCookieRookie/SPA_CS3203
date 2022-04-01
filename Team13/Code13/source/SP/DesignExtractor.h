@@ -4,6 +4,7 @@
 #include "../PKB/TransitivePopulator.h"
 #include "../PKB/Pattern.h"
 #include "../PKB/CFG.h"
+#include "../PKB/PKBInserter.h"
 #include "SourceAST.h"
 
 class DesignExtractor {
@@ -41,7 +42,7 @@ private:
 		StmtIndex& stmtIndex,
 		std::unordered_map<StmtIndex, std::string>& callsProcNameMap,
 		std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap);
-	static void insertNext(CFG* cfg);
+	static void insertNext(PKBInserter* pkb);
 
 	static void processProcStmtMap(std::unordered_map<ProcIndex, std::vector<StmtIndex>>& procStmtMap);
 	static void insertStmtFromProc(ProcIndex& procIndex, StmtIndex& stmtIndex);
@@ -51,19 +52,19 @@ private:
 	/* Constructs and processes CFGs */
 	static void processCFGs(
 		ProgramNode* programNode,
-		CFG* cfg,
+		PKBInserter* pkb,
 		std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap);
 	static void generateCFG(
 		StmtLstNode* stmtLstNode,
-		CFG* cfg,
+		PKBInserter* pkb,
 		std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap);
 	static void generateCFGFromStmt(
 		StmtNode* currNode,
-		CFG* cfg,
+		PKBInserter* pkb,
 		std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap,
 		int currStmtIdx,
 		int nextStmtIdx);
 
 public:
-	static void extract(SourceAST& ast, CFG* cfg);
+	static void extract(SourceAST& ast, PKBInserter* pkb);
 };

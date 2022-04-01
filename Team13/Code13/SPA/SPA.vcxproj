@@ -21,6 +21,9 @@
     <ClCompile Include="..\source\PKB\ExpressionProcessor.cpp" />
     <ClCompile Include="..\source\PKB\Pattern.cpp" />
     <ClCompile Include="..\source\PKB\CFG.cpp" />
+    <ClCompile Include="..\source\PKB\PKB.cpp" />
+    <ClCompile Include="..\source\PKB\PKBInserter.cpp" />
+    <ClCompile Include="..\source\PKB\PKBGetter.cpp" />
     <ClCompile Include="..\source\PKB\TransitivePopulator.cpp" />
     <ClCompile Include="..\source\QPS\CallsInstruction.cpp" />
     <ClCompile Include="..\source\QPS\CallsStarInstruction.cpp" />
@@ -67,6 +70,8 @@
     <ClInclude Include="..\source\PKB\ExpressionProcessor.h" />
     <ClInclude Include="..\source\PKB\Follows.h" />
     <ClInclude Include="..\source\PKB\FollowsT.h" />
+    <ClInclude Include="..\source\PKB\PKB.h" />
+    <ClInclude Include="..\source\PKB\PKBGetter.h" />
     <ClInclude Include="..\source\PKB\ModifiesP.h" />
     <ClInclude Include="..\source\PKB\ModifiesS.h" />
     <ClInclude Include="..\source\PKB\Next.h" />
@@ -74,6 +79,7 @@
     <ClInclude Include="..\source\PKB\ParentT.h" />
     <ClInclude Include="..\source\PKB\Pattern.h" />
     <ClInclude Include="..\source\PKB\CFG.h" />
+    <ClInclude Include="..\source\PKB\PKBInserter.h" />
     <ClInclude Include="..\source\PKB\TransitivePopulator.h" />
     <ClInclude Include="..\source\PKB\RS1.h" />
     <ClInclude Include="..\source\PKB\RS2.h" />

@@ -9,6 +9,9 @@
 
 // include your other headers here
 #include "AbstractWrapper.h"
+#include "PKB/PKB.h"
+#include "PKB/PKBGetter.h"
+#include "PKB/PKBInserter.h"
 #include "SP/ASTValidator.h"
 #include "SP/DesignExtractor.h"
 #include "SP/Parser.h"
@@ -18,7 +21,11 @@
 
 class TestWrapper : public AbstractWrapper {
 private:
+	PKB* pkb;
+	PKBGetter* pkbGetter;
+	PKBInserter* pkbInserter;
 	std::string getFileContent(std::string& filename);
+
 public:
 	// default constructor
 	TestWrapper();
