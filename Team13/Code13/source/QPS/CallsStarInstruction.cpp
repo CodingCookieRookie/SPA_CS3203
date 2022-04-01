@@ -3,37 +3,36 @@
 CallsStarInstruction::CallsStarInstruction(PqlReference lhsRef, PqlReference rhsRef) : RelationshipInstruction(lhsRef, rhsRef) {}
 
 EvaluatedTable CallsStarInstruction::execute() {
-	EvaluatedTable evTable;
-	std::vector<ProcIndex> procs = Entity::getAllProcs();
-
+	EvaluatedTable resultTable;
 	/* e.g Calls/Calls*("first", "second") */
 	if (lhsRef.first == PqlReferenceType::IDENT && rhsRef.first == PqlReferenceType::IDENT) {
-		return helperHandleTwoIdents();
+		resultTable = helperHandleTwoIdents();
 	}
 	/* e.g Calls/Calls*("first", q), Calls/Calls*("first", _) */
 	else if (lhsRef.first == PqlReferenceType::IDENT) {
 		if (rhsRef.first == PqlReferenceType::SYNONYM) {
-			return helperHandleOneIdent(PqlReferenceType::IDENT, PqlReferenceType::SYNONYM);
+			resultTable = helperHandleOneIdent(PqlReferenceType::IDENT, PqlReferenceType::SYNONYM);
 		} else {
-			return helperHandleOneIdent(PqlReferenceType::IDENT, PqlReferenceType::WILDCARD);
+			resultTable = helperHandleOneIdent(PqlReferenceType::IDENT, PqlReferenceType::WILDCARD);
 		}
 	}
 	/*  e.g.Calls/Calls*(p, "second"), Calls/Calls*(_, "second") */
 	else if (rhsRef.first == PqlReferenceType::IDENT) {
 		if (lhsRef.first == PqlReferenceType::SYNONYM) {
-			return helperHandleOneIdent(PqlReferenceType::SYNONYM, PqlReferenceType::IDENT);
+			resultTable = helperHandleOneIdent(PqlReferenceType::SYNONYM, PqlReferenceType::IDENT);
 		} else {
-			return helperHandleOneIdent(PqlReferenceType::WILDCARD, PqlReferenceType::IDENT);
+			resultTable = helperHandleOneIdent(PqlReferenceType::WILDCARD, PqlReferenceType::IDENT);
 		}
 	}
 	/* Calls/Calls*(p, q), Calls/Calls*(p, _), Calls/Calls*(_, q) */
 	else if (!(lhsRef.first == PqlReferenceType::WILDCARD && rhsRef.first == PqlReferenceType::WILDCARD)) {
-		return helperHandleTwoProcMaybeWildcard();
+		resultTable = helperHandleTwoProcMaybeWildcard();
 	}
 	// Calls/Calls*(_, _)
 	else {
-		return helperHandleTwoWildcards();
+		resultTable = helperHandleTwoWildcards();
 	}
+	return resultTable;
 }
 
 EvaluatedTable CallsStarInstruction::helperHandleTwoIdents() {

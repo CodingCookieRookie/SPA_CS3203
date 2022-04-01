@@ -3,36 +3,38 @@
 FollowsStarInstruction::FollowsStarInstruction(PqlReference lhsRef, PqlReference rhsRef) : RelationshipInstruction(lhsRef, rhsRef) {}
 
 EvaluatedTable FollowsStarInstruction::execute() {
+	EvaluatedTable resultTable;
 	// e.g Follows*(6, 7)
 	if (lhsRef.first == PqlReferenceType::INTEGER && rhsRef.first == PqlReferenceType::INTEGER) {
-		return helperHandleTwoIntegers();
+		resultTable = helperHandleTwoIntegers();
 	}
 	// e.g Follows*(6, s2), Follows*(6, _)
 	else if (lhsRef.first == PqlReferenceType::INTEGER) {
 		if (rhsRef.first == PqlReferenceType::SYNONYM) {
-			return helperHandleOneInt(PqlReferenceType::INTEGER, PqlReferenceType::SYNONYM);
+			resultTable = helperHandleOneInt(PqlReferenceType::INTEGER, PqlReferenceType::SYNONYM);
 		} else {
-			return helperHandleOneInt(PqlReferenceType::INTEGER, PqlReferenceType::WILDCARD);
+			resultTable = helperHandleOneInt(PqlReferenceType::INTEGER, PqlReferenceType::WILDCARD);
 		}
 	}
 	// e.g. Follows*(s1, 7), Follows*(_ 7)
 	else if (rhsRef.first == PqlReferenceType::INTEGER) {
 		if (lhsRef.first == PqlReferenceType::SYNONYM) {
-			return helperHandleOneInt(PqlReferenceType::SYNONYM, PqlReferenceType::INTEGER);
+			resultTable = helperHandleOneInt(PqlReferenceType::SYNONYM, PqlReferenceType::INTEGER);
 		} else {
-			return helperHandleOneInt(PqlReferenceType::WILDCARD, PqlReferenceType::INTEGER);
+			resultTable = helperHandleOneInt(PqlReferenceType::WILDCARD, PqlReferenceType::INTEGER);
 		}
 	}
 	// Follows*(s1, s2), Follows*(s1, _), Follows*(_, s2)
 	else if (!(lhsRef.first == PqlReferenceType::WILDCARD && rhsRef.first == PqlReferenceType::WILDCARD)) {
-		return helperHandleTwoStmtsMaybeWildcard();
+		resultTable = helperHandleTwoStmtsMaybeWildcard();
 	}
 	// Follows*(_, _)
 	else {
 		if (lhsRef.first == PqlReferenceType::WILDCARD && rhsRef.first == PqlReferenceType::WILDCARD) {
-			return helperHandleTwoWildcards();
+			resultTable = helperHandleTwoWildcards();
 		}
 	}
+	return resultTable;
 }
 
 EvaluatedTable FollowsStarInstruction::helperHandleTwoIntegers() {
@@ -72,23 +74,23 @@ EvaluatedTable FollowsStarInstruction::helperHandleOneInt(PqlReferenceType lhsRe
 				}
 			} else {}
 		}
-		/* Handle final output, wildcards => boolean, synonyms => table */
-		if (lhsRefType == PqlReferenceType::WILDCARD || rhsRefType == PqlReferenceType::WILDCARD) {
-			bool evTable = !results.empty();
-			return EvaluatedTable(evTable);
-		} else {
-			if (lhsRefType == PqlReferenceType::INTEGER) {
-				otherSynonym = rhsRef.second;
-			} else {
-				otherSynonym = lhsRef.second;
-			}
-		}
-
-		std::unordered_map<std::string, std::vector<int>> PQLmap;
-		PQLmap[otherSynonym] = results;
-
-		return EvaluatedTable(PQLmap);
 	}
+	/* Handle final output, wildcards => boolean, synonyms => table */
+	if (lhsRefType == PqlReferenceType::WILDCARD || rhsRefType == PqlReferenceType::WILDCARD) {
+		bool evTable = !results.empty();
+		return EvaluatedTable(evTable);
+	} else {
+		if (lhsRefType == PqlReferenceType::INTEGER) {
+			otherSynonym = rhsRef.second;
+		} else {
+			otherSynonym = lhsRef.second;
+		}
+	}
+
+	std::unordered_map<std::string, std::vector<int>> PQLmap;
+	PQLmap[otherSynonym] = results;
+
+	return EvaluatedTable(PQLmap);
 }
 
 EvaluatedTable FollowsStarInstruction::helperHandleTwoStmtsMaybeWildcard() {

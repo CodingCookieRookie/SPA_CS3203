@@ -5,7 +5,7 @@
 
 #include "../Exception/SPAException.h"
 #include "Instruction.h"
-#include "GetAllInstruction.h"
+#include "Instructions/GetAllInstructions/GetAllInstruction.h"
 #include "RelationshipInstruction.h"
 #include "PatternInstruction.h"
 #include "WithInstruction.h"
@@ -16,8 +16,11 @@ class PQLEvaluator {
 private:
 	ParsedQuery parsedQuery;
 
-	/* Helper method to break down parsedQuery into isntructions to call in PKB */
+	/* Helper method to break down parsedQuery into instructions to call in PKB */
 	static std::vector<Instruction*> evaluateToInstructions(ParsedQuery pq);
+
+	/* Helper method to break down to insert GetAll instructions to call in PKB */
+	static void insertGetAllInstr(PqlReference pqlRef, ParsedQuery& pq, std::vector<Instruction*>& instructions);
 
 	/* Helper method to execute all instructions */
 	static EvaluatedTable executeInstructions(std::vector<Instruction*> instructions);

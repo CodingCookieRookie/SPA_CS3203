@@ -145,6 +145,45 @@
     <ClCompile Include="..\source\QPS\ParsedWith.cpp">
       <Filter>Source Files\QPS</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\PKB\TransitivePopulator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllAssignInstruction.cpp">
+      <Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllCallInstruction.cpp">
+      <Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllConstInstruction.cpp">
+      <Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllIfInstruction.cpp">
+      <Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllPrintInstruction.cpp">
+      <Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllProcInstruction.cpp">
+      <Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllReadInstruction.cpp">
+      <Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllStmtInstruction.cpp">
+      <Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllVarInstruction.cpp">
+      <Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllWhileInstruction.cpp">
+      <Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllInstruction.cpp">
+      <Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\ParsedGetAll.cpp">
+      <Filter>Source Files\QPS</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\SP\ASTValidator.h">
@@ -345,6 +384,48 @@
     <ClInclude Include="..\source\QPS\ParsedWith.h">
       <Filter>Header Files\QPS</Filter>
     </ClInclude>
+    <ClInclude Include="..\source\PKB\Pattern.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllAssignInstruction.h">
+      <Filter>Header Files\QPS\Instruction\GetAllInstruction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllCallInstruction.h">
+      <Filter>Header Files\QPS\Instruction\GetAllInstruction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllConstInstruction.h">
+      <Filter>Header Files\QPS\Instruction\GetAllInstruction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllIfInstruction.h">
+      <Filter>Header Files\QPS\Instruction\GetAllInstruction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllPrintInstruction.h">
+      <Filter>Header Files\QPS\Instruction\GetAllInstruction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllProcInstruction.h">
+      <Filter>Header Files\QPS\Instruction\GetAllInstruction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllReadInstruction.h">
+      <Filter>Header Files\QPS\Instruction\GetAllInstruction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllStmtInstruction.h">
+      <Filter>Header Files\QPS\Instruction\GetAllInstruction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllVarInstruction.h">
+      <Filter>Header Files\QPS\Instruction\GetAllInstruction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllWhileInstruction.h">
+      <Filter>Header Files\QPS\Instruction\GetAllInstruction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\ParsedGetAll.h">
+      <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllInstruction.h">
+      <Filter>Header Files\QPS\Instruction\GetAllInstruction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\PKB\BidirectionalTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
@@ -358,6 +439,18 @@
     </Filter>
     <Filter Include="Source Files\QPS">
       <UniqueIdentifier>{951d237a-62c0-4e89-b5b6-2b3107a60735}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\QPS\Instruction">
+      <UniqueIdentifier>{6bf9a0d8-b9e4-45fa-b247-53d76f7ab06c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\QPS\Instruction\GetAllInstruction">
+      <UniqueIdentifier>{4ea8f71f-c53b-43cb-9549-fd9381c86f3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\QPS\Instruction">
+      <UniqueIdentifier>{62c379f5-f787-49dc-8610-2f132f4c59bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\QPS\Instruction\GetAllInstruction">
+      <UniqueIdentifier>{b9ce447d-c8f9-4e05-b12c-5f44c6aec3df}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

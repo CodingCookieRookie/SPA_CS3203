@@ -50,7 +50,7 @@ Instruction* ParsedRelationship::toInstruction() const {
 		instruction = new CallsStarInstruction(lhsRef, rhsRef);
 		break;
 	case PqlRelationshipType::NEXT:
-		instruction = new CallsStarInstruction(lhsRef, rhsRef);
+		instruction = new NextInstruction(lhsRef, rhsRef);
 		break;
 	default:
 		break;

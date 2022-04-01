@@ -22,7 +22,8 @@ public:
 	TEST_METHOD(executeGetAllInstruction_getAllStmt_evaluatedTableFormed) {
 		// 1. Setup:
 		// The 'Select s1' portion of the query
-		Instruction* instruction = new GetAllInstruction(EntityType::STMT, "s1");
+		ParsedGetAll getAllSynonym = ParsedGetAll(EntityType::STMT, "s1");
+		Instruction* instruction = getAllSynonym.toInstruction();
 
 		// PKB inserts 5 statements
 		std::vector<StmtIndex> stmts;
@@ -51,10 +52,59 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 	}
 
+	TEST_METHOD(executeGetAllInstruction_getAllStmtsStress_evaluatedTableFormed) {
+		// 1. Setup:
+		// The 'Select pn1' portion of the query
+		ParsedGetAll getAllSynonym = ParsedGetAll(EntityType::STMT, "stress1");
+		Instruction* instruction = getAllSynonym.toInstruction();
+
+		// PKB inserts 100 statements of all kinds
+		std::vector<StmtIndex> stmts;
+		for (int i = 0; i < 10; i++) {
+			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+			stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+			stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+			stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+			stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
+			stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+			stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+			stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+			stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
+			stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+		}
+
+		// 2. Main test:
+		EvaluatedTable evTable = instruction->execute();
+
+		// Test numRow:
+		Assert::AreEqual(size_t(100), evTable.getNumRow());
+
+		// Test Table: std::unordered_map<std::string, std::vector<int>>
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("stress1") != tableRef.end());
+
+		// Test Entities: std::unordered_map<std::string, EntityType>
+		std::vector<int> stress1values;
+		for (int i = 0; i < 100; i++) {
+			stress1values.emplace_back(i + 1);
+		}
+		auto actualValues = tableRef.at("stress1");
+		// Cannot check equality due to unordering (actuals1Values is not {1, 2, ..., 100}), this is PKB's optimisation.
+		// Instead sort, and check for equality
+		std::sort(actualValues.begin(), actualValues.end());
+		bool areVecEqual = std::equal(stress1values.begin(), stress1values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// Test EvResult:
+		bool actualEvResult = evTable.getEvResult();
+		Assert::AreEqual(true, actualEvResult);
+	}
+
 	TEST_METHOD(executeGetAllInstruction_getAllPrintsStress_evaluatedTableFormed) {
 		// 1. Setup:
 		// The 'Select pn1' portion of the query
-		Instruction* instruction = new GetAllInstruction(EntityType::PRINT, "pn1");
+		ParsedGetAll getAllSynonym = ParsedGetAll(EntityType::PRINT, "pn1");
+		Instruction* instruction = getAllSynonym.toInstruction();
 
 		// PKB inserts 99 statements
 		std::vector<StmtIndex> stmts;
@@ -92,10 +142,220 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 	}
 
+	TEST_METHOD(executeGetAllInstruction_getAllCallsStress_evaluatedTableFormed) {
+		// 1. Setup:
+		// The 'Select pn1' portion of the query
+		ParsedGetAll getAllSynonym = ParsedGetAll(EntityType::CALL, "cl1");
+		Instruction* instruction = getAllSynonym.toInstruction();
+
+		// PKB inserts 99 statements
+		std::vector<StmtIndex> stmts;
+		for (int i = 0; i < 49; i++) {
+			stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+		}
+		for (int i = 0; i < 50; i++) {
+			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE)); // extra
+		}
+
+		// 2. Main test:
+		EvaluatedTable evTable = instruction->execute();
+
+		// Test numRow:
+		Assert::AreEqual(size_t(49), evTable.getNumRow());
+
+		// Test Table: std::unordered_map<std::string, std::vector<int>>
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("cl1") != tableRef.end());
+
+		// Test Entities: std::unordered_map<std::string, EntityType>
+		std::vector<int> cl1values;
+		for (int i = 0; i < 49; i++) {
+			cl1values.emplace_back(i + 1);
+		}
+		auto actualValues = tableRef.at("cl1");
+		// Cannot check equality due to unordering (actuals1Values is not {1, 2, ..., 49}), this is PKB's optimisation.
+		// Instead sort, and check for equality
+		std::sort(actualValues.begin(), actualValues.end());
+		bool areVecEqual = std::equal(cl1values.begin(), cl1values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// Test EvResult:
+		bool actualEvResult = evTable.getEvResult();
+		Assert::AreEqual(true, actualEvResult);
+	}
+
+	TEST_METHOD(executeGetAllInstruction_getAllReadsStress_evaluatedTableFormed) {
+		// 1. Setup:
+		// The 'Select pn1' portion of the query
+		ParsedGetAll getAllSynonym = ParsedGetAll(EntityType::READ, "r1");
+		Instruction* instruction = getAllSynonym.toInstruction();
+
+		// PKB inserts 99 statements
+		std::vector<StmtIndex> stmts;
+		for (int i = 0; i < 49; i++) {
+			stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
+		}
+		for (int i = 0; i < 50; i++) {
+			stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE)); // extra
+		}
+
+		// 2. Main test:
+		EvaluatedTable evTable = instruction->execute();
+
+		// Test numRow:
+		Assert::AreEqual(size_t(49), evTable.getNumRow());
+
+		// Test Table: std::unordered_map<std::string, std::vector<int>>
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("r1") != tableRef.end());
+
+		// Test Entities: std::unordered_map<std::string, EntityType>
+		std::vector<int> r1values;
+		for (int i = 0; i < 49; i++) {
+			r1values.emplace_back(i + 1);
+		}
+		auto actualValues = tableRef.at("r1");
+		// Cannot check equality due to unordering (actuals1Values is not {1, 2, ..., 49}), this is PKB's optimisation.
+		// Instead sort, and check for equality
+		std::sort(actualValues.begin(), actualValues.end());
+		bool areVecEqual = std::equal(r1values.begin(), r1values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// Test EvResult:
+		bool actualEvResult = evTable.getEvResult();
+		Assert::AreEqual(true, actualEvResult);
+	}
+
+	TEST_METHOD(executeGetAllInstruction_getAllIfsStress_evaluatedTableFormed) {
+		// 1. Setup:
+		// The 'Select pn1' portion of the query
+		ParsedGetAll getAllSynonym = ParsedGetAll(EntityType::IF, "if1");
+		Instruction* instruction = getAllSynonym.toInstruction();
+
+		// PKB inserts 99 statements
+		std::vector<StmtIndex> stmts;
+		for (int i = 0; i < 49; i++) {
+			stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+		}
+		for (int i = 0; i < 50; i++) {
+			stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE)); // extra
+		}
+
+		// 2. Main test:
+		EvaluatedTable evTable = instruction->execute();
+
+		// Test numRow:
+		Assert::AreEqual(size_t(49), evTable.getNumRow());
+
+		// Test Table: std::unordered_map<std::string, std::vector<int>>
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("if1") != tableRef.end());
+
+		// Test Entities: std::unordered_map<std::string, EntityType>
+		std::vector<int> if1values;
+		for (int i = 0; i < 49; i++) {
+			if1values.emplace_back(i + 1);
+		}
+		auto actualValues = tableRef.at("if1");
+		// Cannot check equality due to unordering (actuals1Values is not {1, 2, ..., 49}), this is PKB's optimisation.
+		// Instead sort, and check for equality
+		std::sort(actualValues.begin(), actualValues.end());
+		bool areVecEqual = std::equal(if1values.begin(), if1values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// Test EvResult:
+		bool actualEvResult = evTable.getEvResult();
+		Assert::AreEqual(true, actualEvResult);
+	}
+
+	TEST_METHOD(executeGetAllInstruction_getAllWhilesStress_evaluatedTableFormed) {
+		// 1. Setup:
+		// The 'Select pn1' portion of the query
+		ParsedGetAll getAllSynonym = ParsedGetAll(EntityType::WHILE, "w1");
+		Instruction* instruction = getAllSynonym.toInstruction();
+
+		// PKB inserts 99 statements
+		std::vector<StmtIndex> stmts;
+		for (int i = 0; i < 49; i++) {
+			stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+		}
+		for (int i = 0; i < 50; i++) {
+			stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE)); // extra
+		}
+
+		// 2. Main test:
+		EvaluatedTable evTable = instruction->execute();
+
+		// Test numRow:
+		Assert::AreEqual(size_t(49), evTable.getNumRow());
+
+		// Test Table: std::unordered_map<std::string, std::vector<int>>
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("w1") != tableRef.end());
+
+		// Test Entities: std::unordered_map<std::string, EntityType>
+		std::vector<int> w1values;
+		for (int i = 0; i < 49; i++) {
+			w1values.emplace_back(i + 1);
+		}
+		auto actualValues = tableRef.at("w1");
+		// Cannot check equality due to unordering (actuals1Values is not {1, 2, ..., 49}), this is PKB's optimisation.
+		// Instead sort, and check for equality
+		std::sort(actualValues.begin(), actualValues.end());
+		bool areVecEqual = std::equal(w1values.begin(), w1values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// Test EvResult:
+		bool actualEvResult = evTable.getEvResult();
+		Assert::AreEqual(true, actualEvResult);
+	}
+
+	TEST_METHOD(executeGetAllInstruction_getAllAssignsStress_evaluatedTableFormed) {
+		// 1. Setup:
+		// The 'Select pn1' portion of the query
+		ParsedGetAll getAllSynonym = ParsedGetAll(EntityType::ASSIGN, "a1");
+		Instruction* instruction = getAllSynonym.toInstruction();
+
+		// PKB inserts 99 statements
+		std::vector<StmtIndex> stmts;
+		for (int i = 0; i < 49; i++) {
+			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+		}
+		for (int i = 0; i < 50; i++) {
+			stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE)); // extra
+		}
+
+		// 2. Main test:
+		EvaluatedTable evTable = instruction->execute();
+
+		// Test numRow:
+		Assert::AreEqual(size_t(49), evTable.getNumRow());
+
+		// Test Table: std::unordered_map<std::string, std::vector<int>>
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("a1") != tableRef.end());
+
+		// Test Entities: std::unordered_map<std::string, EntityType>
+		std::vector<int> a1values;
+		for (int i = 0; i < 49; i++) {
+			a1values.emplace_back(i + 1);
+		}
+		auto actualValues = tableRef.at("a1");
+		// Cannot check equality due to unordering (actuals1Values is not {1, 2, ..., 49}), this is PKB's optimisation.
+		// Instead sort, and check for equality
+		std::sort(actualValues.begin(), actualValues.end());
+		bool areVecEqual = std::equal(a1values.begin(), a1values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// Test EvResult:
+		bool actualEvResult = evTable.getEvResult();
+		Assert::AreEqual(true, actualEvResult);
+	}
 	TEST_METHOD(executeGetAllInstruction_getAllVarStress_evaluatedTableFormed) {
 		// 1. Setup:
 		// The 'Select pn1' portion of the query
-		Instruction* instruction = new GetAllInstruction(EntityType::VARIABLE, "v1");
+		ParsedGetAll getAllSynonym = ParsedGetAll(EntityType::VARIABLE, "v1");
+		Instruction* instruction = getAllSynonym.toInstruction();
 
 		// PKB inserts 99 statements
 		std::vector<VarIndex> vars;
@@ -134,10 +394,54 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 	}
 
+	TEST_METHOD(executeGetAllInstruction_getAllProcStress_evaluatedTableFormed) {
+		// 1. Setup:
+		// The 'Select pn1' portion of the query
+		ParsedGetAll getAllSynonym = ParsedGetAll(EntityType::PROCEDURE, "p1");
+		Instruction* instruction = getAllSynonym.toInstruction();
+
+		// PKB inserts 99 statements
+		std::vector<VarIndex> procs;
+		std::vector<std::string> procNames;
+		for (int i = 0; i < 99; i++) {
+			std::string procName = "proc" + std::to_string(i);
+			ProcIndex proc = Entity::insertProc(procName);
+			procs.emplace_back(proc);
+			procNames.emplace_back(procName);
+		}
+
+		// 2. Main test:
+		EvaluatedTable evTable = instruction->execute();
+
+		// Test numRow:
+		Assert::AreEqual(size_t(99), evTable.getNumRow());
+
+		// Test Table: std::unordered_map<std::string, std::vector<int>>
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("p1") != tableRef.end());
+
+		// Test Entities: std::unordered_map<std::string, EntityType>
+		std::vector<int> p1values;
+		for (int i = 0; i < 99; i++) {
+			p1values.emplace_back(i + 1);
+		}
+		auto actualValues = tableRef.at("p1");
+		// Cannot check equality due to unordering (actuals1Values is not {1, 2, ..., 99}), this is PKB's optimisation.
+		// Instead sort, and check for equality
+		std::sort(actualValues.begin(), actualValues.end());
+		bool areVecEqual = std::equal(p1values.begin(), p1values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// Test EvResult:
+		bool actualEvResult = evTable.getEvResult();
+		Assert::AreEqual(true, actualEvResult);
+	}
+
 	TEST_METHOD(executeGetAllInstruction_getAllConstStress_evaluatedTableFormed) {
 		// 1. Setup:
 		// The 'Select pn1' portion of the query
-		Instruction* instruction = new GetAllInstruction(EntityType::CONSTANT, "c1");
+		ParsedGetAll getAllSynonym = ParsedGetAll(EntityType::CONSTANT, "c1");
+		Instruction* instruction = getAllSynonym.toInstruction();
 
 		// PKB inserts 99 statements
 		for (int i = 0; i < 99; i++) {
