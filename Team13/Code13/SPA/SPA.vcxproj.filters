@@ -121,6 +121,20 @@
     <ClCompile Include="..\source\PKB\TransitivePopulator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\QPS\NextTProcessor.cpp">
+      <Filter>Source Files\QPS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\CacheStorage.cpp">
+      <Filter>Source Files\QPS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\AffectsProcessor.cpp">
+      <Filter>Source Files\QPS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\AffectsTProcessor.cpp">
+      <Filter>Source Files\QPS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\CFGProcessor.cpp">
+      <Filter>Source Files\QPS</Filter>
     <ClCompile Include="..\source\PKB\PKBInserter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -306,6 +320,21 @@
     <ClInclude Include="..\source\PKB\Pattern.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\source\QPS\NextTProcessor.h">
+      <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\CacheStorage.h">
+      <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\AffectsProcessor.h">
+      <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\AffectsTProcessor.h">
+      <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\CacheStorageTypes.h" />
+    <ClInclude Include="..\source\QPS\CFGProcessor.h">
+      <Filter>Header Files\QPS</Filter>
     <ClInclude Include="..\source\PKB\BidirectionalTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -13,6 +13,7 @@ std::unordered_set<ConstValue> Entity::constTable;
 std::unordered_map<StmtIndex, StatementType> Entity::stmtTypeTable;
 std::unordered_map<StatementType, std::unordered_set<StmtIndex>> Entity::stmtIdxFromTypeTable;
 std::unordered_map<ProcIndex, std::unordered_set<StmtIndex>> Entity::procStmtTable;
+std::unordered_map<StmtIndex, ProcIndex> Entity::stmtProcTable;
 
 size_t Entity::getVarTableSize() {
 	return varNameTable.size();
@@ -150,6 +151,10 @@ std::vector<StmtIndex> Entity::getStmtIdxFromType(StatementType stmtType) {
 	return res;
 }
 
+StatementType Entity::getTypeFromStmtIdx(StmtIndex stmtIdx) {
+	return stmtTypeTable[stmtIdx];
+};
+
 std::vector<StmtIndex> Entity::getAllStmts() {
 	std::vector<StmtIndex> res;
 
@@ -175,11 +180,16 @@ std::vector<StmtIndex> Entity::getAllContainerStmts() {
 
 void Entity::insertStmtFromProc(ProcIndex procIdx, StmtIndex stmtIdx) {
 	procStmtTable[procIdx].insert(stmtIdx);
+	stmtProcTable[stmtIdx] = procIdx;
 }
 
 std::unordered_set<StmtIndex> Entity::getStmtsFromProc(ProcIndex& procIdx) {
 	return procStmtTable[procIdx];
 }
+
+ProcIndex Entity::getProcFromStmt(StmtIndex stmtIdx) {
+	return stmtProcTable[stmtIdx];
+};
 
 std::unordered_map<ProcIndex, std::unordered_set<StmtIndex>> Entity::getAllProcStmts() {
 	return procStmtTable;
@@ -192,4 +202,5 @@ void Entity::performCleanUp() {
 	stmtTypeTable = {};
 	stmtIdxFromTypeTable = {};
 	procStmtTable = {};
+	stmtProcTable = {};
 }

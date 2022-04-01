@@ -166,6 +166,9 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="TestAffectsProcessor.cpp" />
+    <ClCompile Include="TestAffectsTProcessor.cpp" />
+    <ClCompile Include="TestCFG.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -174,6 +177,7 @@
     </ClCompile>
     <ClCompile Include="TestASTValidator.cpp" />
     <ClCompile Include="TestAttribute.cpp" />
+    <ClCompile Include="TestCacheStorage.cpp" />
     <ClCompile Include="TestBidirectionalTable.cpp" />
     <ClCompile Include="TestCalls.cpp" />
     <ClCompile Include="TestCallsT.cpp" />
@@ -192,10 +196,10 @@
     <ClCompile Include="TestModifiesP.cpp" />
     <ClCompile Include="TestModifiesS.cpp" />
     <ClCompile Include="TestNext.cpp" />
+    <ClCompile Include="TestNextTProcessor.cpp" />
     <ClCompile Include="TestPatternAInstruction.cpp" />
     <ClCompile Include="TestPatternIInstruction.cpp" />
     <ClCompile Include="TestPatternWInstruction.cpp" />
-    <ClCompile Include="TestCFG.cpp" />
     <ClCompile Include="TestTransitivePopulator.cpp" />
     <ClCompile Include="TestPQLResultProjector.cpp" />
     <ClCompile Include="TestSourceASTNode.cpp" />

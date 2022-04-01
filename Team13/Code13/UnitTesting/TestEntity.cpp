@@ -244,6 +244,29 @@ public:
 		Assert::IsTrue(expectedRes2 == res2);
 	}
 
+	TEST_METHOD(insertStmt_getTypeFromStmtIdx) {
+		StmtIndex stmtIdx1 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
+		StmtIndex stmtIdx2 = Entity::insertStmt(StatementType::CALL_TYPE);
+		StmtIndex stmtIdx3 = Entity::insertStmt(StatementType::IF_TYPE);
+		StmtIndex stmtIdx4 = Entity::insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmtIdx5 = Entity::insertStmt(StatementType::READ_TYPE);
+		StmtIndex stmtIdx6 = Entity::insertStmt(StatementType::WHILE_TYPE);
+
+		StatementType res1 = Entity::getTypeFromStmtIdx(stmtIdx1);
+		StatementType res2 = Entity::getTypeFromStmtIdx(stmtIdx2);
+		StatementType res3 = Entity::getTypeFromStmtIdx(stmtIdx3);
+		StatementType res4 = Entity::getTypeFromStmtIdx(stmtIdx4);
+		StatementType res5 = Entity::getTypeFromStmtIdx(stmtIdx5);
+		StatementType res6 = Entity::getTypeFromStmtIdx(stmtIdx6);
+
+		Assert::IsTrue(StatementType::ASSIGN_TYPE == res1);
+		Assert::IsTrue(StatementType::CALL_TYPE == Entity::getTypeFromStmtIdx(stmtIdx2));
+		Assert::IsTrue(StatementType::IF_TYPE == Entity::getTypeFromStmtIdx(stmtIdx3));
+		Assert::IsTrue(StatementType::PRINT_TYPE == Entity::getTypeFromStmtIdx(stmtIdx4));
+		Assert::IsTrue(StatementType::READ_TYPE == Entity::getTypeFromStmtIdx(stmtIdx5));
+		Assert::IsTrue(StatementType::WHILE_TYPE == Entity::getTypeFromStmtIdx(stmtIdx6));
+	}
+
 	TEST_METHOD(insertStmt_getAllStmts_differentStmts) {
 		std::vector<StmtIndex> expectedRes;
 		expectedRes.push_back(stmtIdx1);
@@ -317,6 +340,16 @@ public:
 		std::unordered_set<StmtIndex> res2 = Entity::getStmtsFromProc(procIdx2);
 		Assert::IsTrue(expectedRes1 == res1);
 		Assert::IsTrue(expectedRes2 == res2);
+	}
+
+	TEST_METHOD(insertStmtFromProc_getProcFromStmt) {
+		Entity::insertStmtFromProc(procIdx1, stmtIdx1);
+		Entity::insertStmtFromProc(procIdx2, stmtIdx2);
+
+		ProcIndex res1 = Entity::getProcFromStmt(stmtIdx1);
+		ProcIndex res2 = Entity::getProcFromStmt(stmtIdx2);
+		Assert::IsTrue(procIdx1 == res1);
+		Assert::IsTrue(procIdx2 == res2);
 	}
 
 	TEST_METHOD(insertStmtFromProc_getAllProcStmts_multipleProcAndStmt) {

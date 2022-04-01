@@ -22,6 +22,7 @@ protected:
 	static std::unordered_map<StmtIndex, StatementType> stmtTypeTable;
 	static std::unordered_map<StatementType, std::unordered_set<StmtIndex>> stmtIdxFromTypeTable;
 	static std::unordered_map<ProcIndex, std::unordered_set<StmtIndex>> procStmtTable;
+	static std::unordered_map<StmtIndex, ProcIndex> stmtProcTable;
 
 public:
 	static VarIndex insertVar(std::string varName);
@@ -43,11 +44,13 @@ public:
 	static StmtIndex insertStmt(StatementType stmtType, std::string& nameValue);
 	static bool containsStmt(StmtIndex stmtNo);
 	static std::vector<StmtIndex> getStmtIdxFromType(StatementType stmtType);
+	static StatementType getTypeFromStmtIdx(StmtIndex stmtIdx);
 	static std::vector<StmtIndex> getAllStmts();
 	static std::vector<StmtIndex> getAllContainerStmts();
 
 	static void insertStmtFromProc(ProcIndex procIdx, StmtIndex stmtIdx);
 	static std::unordered_set<StmtIndex> getStmtsFromProc(ProcIndex& procIdx);
+	static ProcIndex getProcFromStmt(StmtIndex stmtIdx);
 	static std::unordered_map<ProcIndex, std::unordered_set<StmtIndex>> getAllProcStmts();
 
 	static void performCleanUp();

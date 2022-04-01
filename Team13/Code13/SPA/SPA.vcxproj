@@ -25,8 +25,12 @@
     <ClCompile Include="..\source\PKB\PKBInserter.cpp" />
     <ClCompile Include="..\source\PKB\PKBGetter.cpp" />
     <ClCompile Include="..\source\PKB\TransitivePopulator.cpp" />
+    <ClCompile Include="..\source\QPS\AffectsTProcessor.cpp" />
+    <ClCompile Include="..\source\QPS\CacheStorage.cpp" />
+    <ClCompile Include="..\source\QPS\AffectsProcessor.cpp" />
     <ClCompile Include="..\source\QPS\CallsInstruction.cpp" />
     <ClCompile Include="..\source\QPS\CallsStarInstruction.cpp" />
+    <ClCompile Include="..\source\QPS\CFGProcessor.cpp" />
     <ClCompile Include="..\source\QPS\Clause.cpp" />
     <ClCompile Include="..\source\QPS\EvaluatedTable.cpp" />
     <ClCompile Include="..\source\QPS\FollowsInstruction.cpp" />
@@ -37,6 +41,7 @@
     <ClCompile Include="..\source\QPS\ParentInstruction.cpp" />
     <ClCompile Include="..\source\QPS\ParentStarInstruction.cpp" />
     <ClCompile Include="..\source\QPS\ParsedPattern.cpp" />
+    <ClCompile Include="..\source\QPS\NextTProcessor.cpp" />
     <ClCompile Include="..\source\QPS\ParsedQuery.cpp" />
     <ClCompile Include="..\source\QPS\ParsedRelationship.cpp" />
     <ClCompile Include="..\source\QPS\ParsedWith.cpp" />
@@ -86,8 +91,13 @@
     <ClInclude Include="..\source\PKB\RS2T.h" />
     <ClInclude Include="..\source\PKB\UsesP.h" />
     <ClInclude Include="..\source\PKB\UsesS.h" />
+    <ClInclude Include="..\source\QPS\AffectsTProcessor.h" />
+    <ClInclude Include="..\source\QPS\CacheStorage.h" />
+    <ClInclude Include="..\source\QPS\AffectsProcessor.h" />
+    <ClInclude Include="..\source\QPS\CacheStorageTypes.h" />
     <ClInclude Include="..\source\QPS\CallsInstruction.h" />
     <ClInclude Include="..\source\QPS\CallsStarInstruction.h" />
+    <ClInclude Include="..\source\QPS\CFGProcessor.h" />
     <ClInclude Include="..\source\QPS\Clause.h" />
     <ClInclude Include="..\source\QPS\EvaluatedTable.h" />
     <ClInclude Include="..\source\QPS\FollowsInstruction.h" />
@@ -99,6 +109,7 @@
     <ClInclude Include="..\source\QPS\ParentInstruction.h" />
     <ClInclude Include="..\source\QPS\ParentStarInstruction.h" />
     <ClInclude Include="..\source\QPS\ParsedPattern.h" />
+    <ClInclude Include="..\source\QPS\NextTProcessor.h" />
     <ClInclude Include="..\source\QPS\ParsedQuery.h" />
     <ClInclude Include="..\source\QPS\ParsedRelationship.h" />
     <ClInclude Include="..\source\QPS\ParsedWith.h" />
