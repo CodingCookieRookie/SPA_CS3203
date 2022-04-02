@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <map>
 #include <string>
 #include <unordered_map>
@@ -8,16 +9,33 @@
 
 #include "QPSCommons.h"
 
+/* Helper class to hash a vector of integers */
+class IntVectorHasher {
+private:
+	static const std::hash<int> hasher;
+public:
+	size_t operator()(const std::vector<int>& vi) const {
+		size_t result = 0;
+		/* Hash function taken from:
+		https://stackoverflow.com/questions/20511347/a-good-hash-function-for-a-vector
+		which itself is taken from the Boost library */
+		for (const int& i : vi) {
+			result ^= i + 0x9e3779b9 + (result << 6) + (result >> 2);
+		}
+		return result;
+	}
+};
+
 class EvaluatedTable {
 private:
 	std::unordered_map<std::string, std::vector<int>> table;
 	bool evResult;
 
 	void removeDuplicates();
-	EvaluatedTable blockNestedJoin(EvaluatedTable& otherTable,
+	EvaluatedTable hashJoin(EvaluatedTable& otherTable,
 		std::unordered_set<std::string>& commonEntities);
-	void EvaluatedTable::prepopulate(std::unordered_map<std::string, std::vector<int>>& nextTable,
-		const std::unordered_map<std::string, std::vector<int>>& currTable);
+	void EvaluatedTable::prepopulate(std::unordered_map<std::string, std::vector<int>>& resultTable,
+		const std::vector<std::string>& cols);
 
 public:
 	/* E.g. of an EvalauatedTable:
