@@ -1,28 +1,14 @@
 #include "./Pattern.h"
 
-std::unordered_map<VarIndex, std::vector<std::tuple<StmtIndex, std::string>>> Pattern::varPostFixTable;
-std::unordered_map<std::string, std::vector<std::tuple<StmtIndex, VarIndex>>> Pattern::postFixVarTable;
+BidirectionalTableOneWaySet<VarIndex, StmtIndex> Pattern::assignedVarStmtBidirectionalTable;
+BidirectionalTableOneWaySet<std::string, StmtIndex> Pattern::postfixExprStmtBidirectionalTable;
+
 std::unordered_map<VarIndex, std::unordered_set<StmtIndex>> Pattern::ifVarTable;
 std::unordered_map<VarIndex, std::unordered_set<StmtIndex>> Pattern::whileVarTable;
 
 void Pattern::insertAssignInfo(VarIndex& varIdx, std::string& postFixExpression, StmtIndex& stmtIdx) {
-	std::tuple<StmtIndex, std::string> varPostFixTuple = std::make_tuple(stmtIdx, postFixExpression);
-	std::tuple<StmtIndex, VarIndex> postFixVarTuple = std::make_tuple(stmtIdx, varIdx);
-	if (varPostFixTable.find(varIdx) == varPostFixTable.end()) {
-		std::vector<std::tuple<StmtIndex, std::string>> value;
-		value.push_back(varPostFixTuple);
-		varPostFixTable[varIdx] = value;
-	} else {
-		varPostFixTable[varIdx].push_back(varPostFixTuple);
-	}
-
-	if (postFixVarTable.find(postFixExpression) == postFixVarTable.end()) {
-		std::vector<std::tuple<StmtIndex, VarIndex>> value;
-		value.push_back(postFixVarTuple);
-		postFixVarTable[postFixExpression] = value;
-	} else {
-		postFixVarTable[postFixExpression].push_back(postFixVarTuple);
-	}
+	assignedVarStmtBidirectionalTable.insert(varIdx, stmtIdx);
+	postfixExprStmtBidirectionalTable.insert(postFixExpression, stmtIdx);
 }
 
 void Pattern::insertIfInfo(StmtIndex& stmtIdx, VarIndex& varIdx) {
@@ -35,19 +21,16 @@ void Pattern::insertWhileInfo(StmtIndex& stmtIdx, VarIndex& varIdx) {
 
 std::vector<StmtIndex> Pattern::getAssignStmtsFromVarExprFullMatch(VarIndex varIdx, std::string& expression) {
 	std::vector<StmtIndex> res;
-	std::unordered_set<StmtIndex> stmtSet;
 
-	std::vector<std::tuple<StmtIndex, std::string>> value = varPostFixTable[varIdx];
-	for (auto& varPostFixTuple : value) {
-		std::string storedExpression = std::get<1>(varPostFixTuple);
-		if (storedExpression == expression) {
-			StmtIndex stmtIdx = std::get<0>(varPostFixTuple);
-			stmtSet.insert(stmtIdx);
+	std::vector<StmtIndex> stmtsFromVar = assignedVarStmtBidirectionalTable.getFromLeftArg(varIdx);
+	std::vector<StmtIndex> stmtsFromExpr = postfixExprStmtBidirectionalTable.getFromLeftArg(expression);
+
+	for (auto& stmtIdxFromVar : stmtsFromVar) {
+		for (auto& stmtIdxFromExpr : stmtsFromExpr) {
+			if (stmtIdxFromVar == stmtIdxFromExpr) {
+				res.push_back(stmtIdxFromVar);
+			}
 		}
-	}
-
-	for (auto& stmtIdx : stmtSet) {
-		res.push_back(stmtIdx);
 	}
 
 	return res;
@@ -55,70 +38,57 @@ std::vector<StmtIndex> Pattern::getAssignStmtsFromVarExprFullMatch(VarIndex varI
 
 std::vector<StmtIndex> Pattern::getAssignStmtsFromVarExprPartialMatch(VarIndex varIdx, std::string& expression) {
 	std::vector<StmtIndex> res;
-	std::unordered_set<StmtIndex> stmtSet;
 
-	std::vector<std::tuple<StmtIndex, std::string>> value = varPostFixTable[varIdx];
-	for (auto& varPostFixTuple : value) {
-		std::string storedExpression = std::get<1>(varPostFixTuple);
+	std::vector<StmtIndex> stmtsFromVar = assignedVarStmtBidirectionalTable.getFromLeftArg(varIdx);
+
+	for (auto& stmtIdxFromVar : stmtsFromVar) {
+		std::string storedExpression = postfixExprStmtBidirectionalTable.getFromRightArg(stmtIdxFromVar);
 		if (storedExpression.find(expression) != std::string::npos) {
-			StmtIndex stmtIdx = std::get<0>(varPostFixTuple);
-			stmtSet.insert(stmtIdx);
+			res.push_back(stmtIdxFromVar);
 		}
-	}
-
-	for (auto& stmtIdx : stmtSet) {
-		res.push_back(stmtIdx);
 	}
 
 	return res;
 }
 
-std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> Pattern::getAssignStmtsFromExprFullMatch(std::string& expression) {
+std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> Pattern::getAssignStmtsFromExprFullMatch(std::string& expression) {
 	std::vector<StmtIndex> stmtIndices;
 	std::vector<VarIndex> varIndices;
 
-	std::vector<std::tuple<StmtIndex, VarIndex>> value = postFixVarTable[expression];
-	for (auto& postFixVarTuple : value) {
-		stmtIndices.push_back(std::get<0>(postFixVarTuple));
-		varIndices.push_back(std::get<1>(postFixVarTuple));
+	std::vector<StmtIndex> stmtsFromExpr = postfixExprStmtBidirectionalTable.getFromLeftArg(expression);
+
+	for (auto& stmtIdxFromExpr : stmtsFromExpr) {
+		VarIndex varIdx = assignedVarStmtBidirectionalTable.getFromRightArg(stmtIdxFromExpr);
+		stmtIndices.push_back(stmtIdxFromExpr);
+		varIndices.push_back(varIdx);
 	}
 
-	return std::make_tuple(stmtIndices, varIndices);
+	return std::make_tuple(varIndices, stmtIndices);
 }
 
-std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> Pattern::getAssignStmtsFromExprPartialMatch(std::string& expression) {
+std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> Pattern::getAssignStmtsFromExprPartialMatch(std::string& expression) {
 	std::vector<StmtIndex> stmtIndices;
 	std::vector<VarIndex> varIndices;
 
-	for (auto& postFixVarInfo : postFixVarTable) {
-		std::string postFixExpression = postFixVarInfo.first;
-		if (postFixExpression.find(expression) == std::string::npos) {
+	std::tuple<std::vector<std::string>, std::vector<StmtIndex>> postFixExprStmtInfo = postfixExprStmtBidirectionalTable.getAll();
+
+	for (size_t vectorIdx = 0; vectorIdx < std::get<0>(postFixExprStmtInfo).size(); vectorIdx++) {
+		std::string storedExpression = std::get<0>(postFixExprStmtInfo).at(vectorIdx);
+		if (storedExpression.find(expression) == std::string::npos) {
 			continue;
 		}
-		std::vector<std::tuple<StmtIndex, VarIndex>> value = postFixVarTable[postFixExpression];
-		for (auto& postFixVarTuple : value) {
-			stmtIndices.push_back(std::get<0>(postFixVarTuple));
-			varIndices.push_back(std::get<1>(postFixVarTuple));
-		}
+
+		StmtIndex stmtIdx = std::get<1>(postFixExprStmtInfo).at(vectorIdx);
+		VarIndex varIdx = assignedVarStmtBidirectionalTable.getFromRightArg(stmtIdx);
+		stmtIndices.push_back(stmtIdx);
+		varIndices.push_back(varIdx);
 	}
 
-	return std::make_tuple(stmtIndices, varIndices);
+	return std::make_tuple(varIndices, stmtIndices);
 }
 
 std::vector<StmtIndex> Pattern::getAssignStmtsFromVar(VarIndex& varIdx) {
-	std::vector<StmtIndex> res;
-	std::unordered_set<StmtIndex> stmtSet;
-
-	std::vector<std::tuple<StmtIndex, std::string>> value = varPostFixTable[varIdx];
-	for (auto& varPostFixTuple : value) {
-		stmtSet.insert(std::get<0>(varPostFixTuple));
-	}
-
-	for (auto& stmtIdx : stmtSet) {
-		res.push_back(stmtIdx);
-	}
-
-	return res;
+	return assignedVarStmtBidirectionalTable.getFromLeftArg(varIdx);
 }
 
 std::vector<StmtIndex> Pattern::getIfStmtsFromVar(VarIndex& varIndex) {
@@ -141,23 +111,11 @@ std::vector<StmtIndex> Pattern::getWhileStmtsFromVar(VarIndex& varIndex) {
 	return res;
 }
 
-std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> Pattern::getAllAssignPatternInfo() {
-	std::vector<StmtIndex> stmtIndices;
-	std::vector<VarIndex> varIndices;
-
-	for (auto& varPostFixInfo : varPostFixTable) {
-		VarIndex varIdx = varPostFixInfo.first;
-		std::vector<std::tuple<StmtIndex, std::string>> value = varPostFixTable[varIdx];
-		for (auto& varPostFixTuple : value) {
-			stmtIndices.push_back(std::get<0>(varPostFixTuple));
-			varIndices.push_back(varIdx);
-		}
-	}
-
-	return std::make_tuple(stmtIndices, varIndices);
+std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> Pattern::getAllAssignPatternInfo() {
+	return assignedVarStmtBidirectionalTable.getAll();
 }
 
-std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> Pattern::getAllIfPatternInfo() {
+std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> Pattern::getAllIfPatternInfo() {
 	std::vector<StmtIndex> stmtIndices;
 	std::vector<VarIndex> varIndices;
 
@@ -169,9 +127,9 @@ std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> Pattern::getAllIfPatte
 		}
 	}
 
-	return std::make_tuple(stmtIndices, varIndices);
+	return std::make_tuple(varIndices, stmtIndices);
 }
-std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> Pattern::getAllWhilePatternInfo() {
+std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> Pattern::getAllWhilePatternInfo() {
 	std::vector<StmtIndex> stmtIndices;
 	std::vector<VarIndex> varIndices;
 
@@ -183,12 +141,12 @@ std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> Pattern::getAllWhilePa
 		}
 	}
 
-	return std::make_tuple(stmtIndices, varIndices);
+	return std::make_tuple(varIndices, stmtIndices);
 }
 
 void Pattern::performCleanUp() {
-	varPostFixTable = {};
-	postFixVarTable = {};
+	assignedVarStmtBidirectionalTable = BidirectionalTableOneWaySet<VarIndex, StmtIndex>();
+	postfixExprStmtBidirectionalTable = BidirectionalTableOneWaySet<std::string, StmtIndex>();
 	ifVarTable = {};
 	whileVarTable = {};
 }

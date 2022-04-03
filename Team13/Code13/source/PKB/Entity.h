@@ -8,21 +8,18 @@
 
 #include "../Common/Types.h"
 #include "./Attribute.h"
+#include "./BidirectionalTable/BidirectionalTableOneWaySet.h"
 
 class Entity {
 protected:
-	static size_t getVarTableSize();
-	static size_t getProcTableSize();
 	static size_t getStmtTypeTableSize();
 	static bool isContainerStmt(StmtIndex& stmtIdx);
 
-	static std::unordered_map<VarIndex, std::string> varNameTable;
-	static std::unordered_map<ProcIndex, std::string> procNameTable;
+	static BidirectionalIndexTable<VarIndex> varIdxBidirectionalTable;
+	static BidirectionalIndexTable<ProcIndex> procIdxBidirectionalTable;
 	static std::unordered_set<ConstValue> constTable;
-	static std::unordered_map<StmtIndex, StatementType> stmtTypeTable;
-	static std::unordered_map<StatementType, std::unordered_set<StmtIndex>> stmtIdxFromTypeTable;
-	static std::unordered_map<ProcIndex, std::unordered_set<StmtIndex>> procStmtTable;
-	static std::unordered_map<StmtIndex, ProcIndex> stmtProcTable;
+	static BidirectionalTableOneWaySet<StatementType, StmtIndex> stmtBidirectionalTable;
+	static BidirectionalTableOneWaySet<ProcIndex, StmtIndex> procStmtBidirectionalTable;
 
 public:
 	static VarIndex insertVar(std::string varName);
@@ -49,9 +46,9 @@ public:
 	static std::vector<StmtIndex> getAllContainerStmts();
 
 	static void insertStmtFromProc(ProcIndex procIdx, StmtIndex stmtIdx);
-	static std::unordered_set<StmtIndex> getStmtsFromProc(ProcIndex& procIdx);
+	static std::vector<StmtIndex> getStmtsFromProc(ProcIndex& procIdx);
 	static ProcIndex getProcFromStmt(StmtIndex stmtIdx);
-	static std::unordered_map<ProcIndex, std::unordered_set<StmtIndex>> getAllProcStmts();
+	static std::tuple<std::vector<ProcIndex>, std::vector<StmtIndex>> getAllProcStmts();
 
 	static void performCleanUp();
 };

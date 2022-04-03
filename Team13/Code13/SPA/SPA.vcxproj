@@ -80,7 +80,9 @@
     <ClInclude Include="..\source\Common\Lexer.h" />
     <ClInclude Include="..\source\Common\Types.h" />
     <ClInclude Include="..\source\PKB\Attribute.h" />
-    <ClInclude Include="..\source\PKB\BidirectionalTable.h" />
+    <ClInclude Include="..\source\PKB\BidirectionalTable\BidirectionalIndexTable.h" />
+    <ClInclude Include="..\source\PKB\BidirectionalTable\BidirectionalTableOneWaySet.h" />
+    <ClInclude Include="..\source\PKB\BidirectionalTable\BidirectionalTableTwoWaySet.h" />
     <ClInclude Include="..\source\PKB\Calls.h" />
     <ClInclude Include="..\source\PKB\CallsT.h" />
     <ClInclude Include="..\source\PKB\Container.h" />
@@ -98,12 +100,12 @@
     <ClInclude Include="..\source\PKB\Pattern.h" />
     <ClInclude Include="..\source\PKB\CFG.h" />
     <ClInclude Include="..\source\PKB\PKBInserter.h" />
-    <ClInclude Include="..\source\PKB\RS.h" />
-    <ClInclude Include="..\source\PKB\TransitivePopulator.h" />
-    <ClInclude Include="..\source\PKB\RS1.h" />
+	<ClInclude Include="..\source\PKB\RS.h" />
+	<ClInclude Include="..\source\PKB\RS1.h" />
     <ClInclude Include="..\source\PKB\RS2.h" />
     <ClInclude Include="..\source\PKB\RS2T.h" />
-    <ClInclude Include="..\source\PKB\UsesP.h" />
+	<ClInclude Include="..\source\PKB\TransitivePopulator.h" />
+	<ClInclude Include="..\source\PKB\UsesP.h" />
     <ClInclude Include="..\source\PKB\UsesS.h" />
     <ClInclude Include="..\source\QPS\AffectsInstruction.h" />
     <ClInclude Include="..\source\QPS\AffectsStarInstruction.h" />

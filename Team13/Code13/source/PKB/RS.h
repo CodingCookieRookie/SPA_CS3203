@@ -4,12 +4,13 @@
 #include <unordered_set>
 #include <vector>
 
-#include "BidirectionalTable.h"
+#include "../Common/Types.h"
+#include "./BidirectionalTable/BidirectionalTableTwoWaySet.h"
 
 template<class T, typename LeftIndexType, typename RightIndexType>
 class RS {
 protected:
-	static BidirectionalTable<LeftIndexType, RightIndexType> bidirectionalTable;
+	static BidirectionalTableTwoWaySet<LeftIndexType, RightIndexType> bidirectionalTable;
 	static std::unordered_map<LeftIndexType, std::unordered_set<RightIndexType>> leftRightSynonymTable;
 	static std::unordered_map<RightIndexType, std::unordered_set<LeftIndexType>> rightLeftSynonymTable;
 
@@ -23,8 +24,8 @@ public:
 };
 
 template<class T, typename LeftIndexType, typename RightIndexType>
-BidirectionalTable<LeftIndexType, RightIndexType> RS<T, LeftIndexType, RightIndexType>::bidirectionalTable
-= BidirectionalTable<RightIndexType, LeftIndexType>();
+BidirectionalTableTwoWaySet<LeftIndexType, RightIndexType> RS<T, LeftIndexType, RightIndexType>::bidirectionalTable
+= BidirectionalTableTwoWaySet<LeftIndexType, RightIndexType>();
 
 template<class T, typename LeftIndexType, typename RightIndexType>
 std::unordered_map<RightIndexType, std::unordered_set<LeftIndexType>> RS<T, LeftIndexType, RightIndexType>::rightLeftSynonymTable = {};
@@ -38,7 +39,7 @@ void RS<T, LeftIndexType, RightIndexType>::insert(LeftIndexType leftIndex, Right
 	rightLeftSynonymTable[rightIndex].insert(leftIndex);
 	leftRightSynonymTable[leftIndex].insert(rightIndex);
 
-	bidirectionalTable.insert(rightIndex, leftIndex);
+	bidirectionalTable.insert(leftIndex, rightIndex);
 };
 
 template<class T, typename LeftIndexType, typename RightIndexType>
@@ -48,17 +49,17 @@ bool RS<T, LeftIndexType, RightIndexType>::contains(LeftIndexType leftIndex, Rig
 	std::unordered_set<RightIndexType> variables = leftRightSynonymTable[leftIndex];
 	return variables.find(rightIndex) != variables.end();
 
-	//return bidirectionalTable.contains(rightIndex, leftIndex);
+	//return bidirectionalTable.contains(leftIndex, rightIndex);
 };
 
 template<class T, typename LeftIndexType, typename RightIndexType>
 std::vector<RightIndexType> RS<T, LeftIndexType, RightIndexType>::getFromLeftArg(LeftIndexType leftIndex) {
-	return bidirectionalTable.getFromRightArg(leftIndex);
+	return bidirectionalTable.getFromLeftArg(leftIndex);
 };
 
 template<class T, typename LeftIndexType, typename RightIndexType>
 std::vector<LeftIndexType> RS<T, LeftIndexType, RightIndexType>::getFromRightArg(RightIndexType rightIndex) {
-	return bidirectionalTable.getFromLeftArg(rightIndex);
+	return bidirectionalTable.getFromRightArg(rightIndex);
 };
 
 template<class T, typename LeftIndexType, typename RightIndexType>
@@ -83,5 +84,5 @@ template<class T, typename LeftIndexType, typename RightIndexType>
 void RS<T, LeftIndexType, RightIndexType>::performCleanUp() {
 	rightLeftSynonymTable = {};
 	leftRightSynonymTable = {};
-	bidirectionalTable = BidirectionalTable<LeftIndexType, RightIndexType>();
+	bidirectionalTable = BidirectionalTableTwoWaySet<LeftIndexType, RightIndexType>();
 }

@@ -7,32 +7,21 @@
 
 #include "./Entity.h"
 
-std::unordered_map<VarIndex, std::string> Entity::varNameTable;
-std::unordered_map<ProcIndex, std::string> Entity::procNameTable;
+BidirectionalIndexTable<VarIndex> Entity::varIdxBidirectionalTable;
+BidirectionalIndexTable<ProcIndex> Entity::procIdxBidirectionalTable;
 std::unordered_set<ConstValue> Entity::constTable;
-std::unordered_map<StmtIndex, StatementType> Entity::stmtTypeTable;
-std::unordered_map<StatementType, std::unordered_set<StmtIndex>> Entity::stmtIdxFromTypeTable;
-std::unordered_map<ProcIndex, std::unordered_set<StmtIndex>> Entity::procStmtTable;
-std::unordered_map<StmtIndex, ProcIndex> Entity::stmtProcTable;
-
-size_t Entity::getVarTableSize() {
-	return varNameTable.size();
-}
-
-size_t Entity::getProcTableSize() {
-	return procNameTable.size();
-}
+BidirectionalTableOneWaySet<StatementType, StmtIndex> Entity::stmtBidirectionalTable;
+BidirectionalTableOneWaySet<ProcIndex, StmtIndex> Entity::procStmtBidirectionalTable;
 
 size_t Entity::getStmtTypeTableSize() {
-	return stmtTypeTable.size();
+	return stmtBidirectionalTable.getSize();
 }
 
 VarIndex Entity::insertVar(std::string varName) {
 	NameIndex nameIdx = Attribute::insertNameValue(varName);
 
-	if (!Attribute::containsVarName(varName)) {
-		VarIndex varIdx = VarIndex(getVarTableSize() + 1);
-		varNameTable[varIdx] = varName;
+	if (!varIdxBidirectionalTable.contains(varName)) {
+		VarIndex varIdx = varIdxBidirectionalTable.insert(varName);
 		Attribute::insertVarIdxByName(varIdx, nameIdx);
 		return varIdx;
 	}
@@ -41,36 +30,26 @@ VarIndex Entity::insertVar(std::string varName) {
 }
 
 bool Entity::containsVar(std::string& varName) {
-	if (!Attribute::containsName(varName)) return false;
-
-	return Attribute::containsVarName(varName);
+	return varIdxBidirectionalTable.contains(varName);
 }
 
 std::string Entity::getVarName(VarIndex varIdx) {
-	return varNameTable[varIdx];
+	return varIdxBidirectionalTable.getStringFromIndex(varIdx);
 }
 
 VarIndex Entity::getVarIdx(std::string varName) {
-	std::unordered_set<VarIndex> varIdxSet = Attribute::getVarIdxSet(varName);
-	return VarIndex(*varIdxSet.begin());
+	return varIdxBidirectionalTable.getIndexFromString(varName);
 }
 
 std::vector<VarIndex> Entity::getAllVars() {
-	std::vector<VarIndex> res;
-
-	for (auto& varInfo : varNameTable) {
-		res.push_back(varInfo.first);
-	}
-
-	return res;
+	return varIdxBidirectionalTable.getAll();
 }
 
 ProcIndex Entity::insertProc(std::string procName) {
 	NameIndex nameIdx = Attribute::insertNameValue(procName);
 
-	if (!Attribute::containsProcName(procName)) {
-		ProcIndex procIdx = ProcIndex(getProcTableSize() + 1);
-		procNameTable[procIdx] = procName;
+	if (!procIdxBidirectionalTable.contains(procName)) {
+		ProcIndex procIdx = procIdxBidirectionalTable.insert(procName);
 		Attribute::insertProcIdxByName(procIdx, nameIdx);
 		return procIdx;
 	}
@@ -79,28 +58,19 @@ ProcIndex Entity::insertProc(std::string procName) {
 }
 
 bool Entity::containsProc(std::string& procName) {
-	if (!Attribute::containsName(procName)) return false;
-
-	return Attribute::containsProcName(procName);
+	return procIdxBidirectionalTable.contains(procName);
 }
 
 std::string Entity::getProcName(ProcIndex procIdx) {
-	return procNameTable[procIdx];
+	return procIdxBidirectionalTable.getStringFromIndex(procIdx);
 }
 
 ProcIndex Entity::getProcIdx(std::string procName) {
-	std::unordered_set<ProcIndex> procIdxSet = Attribute::getProcIdxSet(procName);
-	return ProcIndex(*procIdxSet.begin());
+	return procIdxBidirectionalTable.getIndexFromString(procName);
 }
 
 std::vector<ProcIndex> Entity::getAllProcs() {
-	std::vector<ProcIndex> res;
-
-	for (auto& procInfo : procNameTable) {
-		res.push_back(procInfo.first);
-	}
-
-	return res;
+	return procIdxBidirectionalTable.getAll();
 }
 
 void Entity::insertConst(ConstValue constant) {
@@ -119,8 +89,7 @@ std::vector<ConstValue> Entity::getAllConsts() {
 
 StmtIndex Entity::insertStmt(StatementType stmtType) {
 	StmtIndex stmtIdx = StmtIndex(getStmtTypeTableSize() + 1);
-	stmtTypeTable[stmtIdx] = stmtType;
-	stmtIdxFromTypeTable[stmtType].insert(stmtIdx);
+	stmtBidirectionalTable.insert(stmtType, stmtIdx);
 
 	return stmtIdx;
 }
@@ -133,33 +102,27 @@ StmtIndex Entity::insertStmt(StatementType stmtType, std::string& nameValue) {
 }
 
 bool Entity::isContainerStmt(StmtIndex& stmtIdx) {
-	StatementType stmtType = stmtTypeTable[stmtIdx];
+	StatementType stmtType = stmtBidirectionalTable.getFromRightArg(stmtIdx);
 	return stmtType == StatementType::WHILE_TYPE || stmtType == StatementType::IF_TYPE;
 }
 
 bool Entity::containsStmt(StmtIndex stmtNo) {
-	return stmtTypeTable.find(StmtIndex(stmtNo)) != stmtTypeTable.end();
+	return stmtBidirectionalTable.contains(stmtNo);
 }
 
 std::vector<StmtIndex> Entity::getStmtIdxFromType(StatementType stmtType) {
-	std::vector<StmtIndex> res;
-
-	for (auto& stmtIdx : stmtIdxFromTypeTable[stmtType]) {
-		res.push_back(stmtIdx);
-	}
-
-	return res;
+	return stmtBidirectionalTable.getFromLeftArg(stmtType);
 }
 
 StatementType Entity::getTypeFromStmtIdx(StmtIndex stmtIdx) {
-	return stmtTypeTable[stmtIdx];
+	return stmtBidirectionalTable.getFromRightArg(stmtIdx);
 };
 
 std::vector<StmtIndex> Entity::getAllStmts() {
 	std::vector<StmtIndex> res;
 
-	for (auto& stmtTypeEntry : stmtTypeTable) {
-		res.push_back(stmtTypeEntry.first);
+	for (size_t stmtIdx = 1; stmtIdx <= getStmtTypeTableSize(); stmtIdx++) {
+		res.push_back(StmtIndex(stmtIdx));
 	}
 
 	return res;
@@ -168,10 +131,11 @@ std::vector<StmtIndex> Entity::getAllStmts() {
 std::vector<StmtIndex> Entity::getAllContainerStmts() {
 	std::vector<StmtIndex> res;
 
-	for (auto& stmtTypeEntry : stmtTypeTable) {
-		StmtIndex stmtIdx = stmtTypeEntry.first;
+	std::vector<StmtIndex> stmts = getAllStmts();
+
+	for (auto& stmtIdx : stmts) {
 		if (Entity::isContainerStmt(stmtIdx)) {
-			res.push_back(stmtTypeEntry.first);
+			res.push_back(stmtIdx);
 		}
 	}
 
@@ -179,28 +143,25 @@ std::vector<StmtIndex> Entity::getAllContainerStmts() {
 }
 
 void Entity::insertStmtFromProc(ProcIndex procIdx, StmtIndex stmtIdx) {
-	procStmtTable[procIdx].insert(stmtIdx);
-	stmtProcTable[stmtIdx] = procIdx;
+	procStmtBidirectionalTable.insert(procIdx, stmtIdx);
 }
 
-std::unordered_set<StmtIndex> Entity::getStmtsFromProc(ProcIndex& procIdx) {
-	return procStmtTable[procIdx];
+std::vector<StmtIndex> Entity::getStmtsFromProc(ProcIndex& procIdx) {
+	return procStmtBidirectionalTable.getFromLeftArg(procIdx);
 }
 
 ProcIndex Entity::getProcFromStmt(StmtIndex stmtIdx) {
-	return stmtProcTable[stmtIdx];
+	return procStmtBidirectionalTable.getFromRightArg(stmtIdx);
 };
 
-std::unordered_map<ProcIndex, std::unordered_set<StmtIndex>> Entity::getAllProcStmts() {
-	return procStmtTable;
+std::tuple<std::vector<ProcIndex>, std::vector<StmtIndex>> Entity::getAllProcStmts() {
+	return procStmtBidirectionalTable.getAll();
 }
 
 void Entity::performCleanUp() {
-	varNameTable = {};
-	procNameTable = {};
+	varIdxBidirectionalTable = BidirectionalIndexTable<VarIndex>();
+	procIdxBidirectionalTable = BidirectionalIndexTable<ProcIndex>();
 	constTable = {};
-	stmtTypeTable = {};
-	stmtIdxFromTypeTable = {};
-	procStmtTable = {};
-	stmtProcTable = {};
+	stmtBidirectionalTable = BidirectionalTableOneWaySet<StatementType, StmtIndex>();
+	procStmtBidirectionalTable = BidirectionalTableOneWaySet<ProcIndex, StmtIndex>();
 }

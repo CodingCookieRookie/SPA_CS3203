@@ -1963,7 +1963,7 @@ public:
 		VarIndex varIndex2 = Entity::insertVar("d");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix(" abc + d ");
 		Pattern::insertAssignInfo(varIndex, postFixExpression, stmt);
-		Pattern::insertAssignInfo(varIndex2, postFixExpression, stmt);
+		Pattern::insertAssignInfo(varIndex2, postFixExpression, stmt2);
 		Follows::insert(readStmt, stmt);
 
 		// Check PKB population
@@ -1982,7 +1982,7 @@ public:
 		EvaluatedTable evTable = PQLEvaluator::evaluate(parsedQuery);
 
 		// Test numRow:
-		Assert::AreEqual(size_t(2), evTable.getNumRow()); // { {"a", { 7, 7 }}, {"r", { 6, 6 }}, {"v", { 2, 3 }}}
+		Assert::AreEqual(size_t(1), evTable.getNumRow()); // { {"a", { 7 }}, {"r", { 6 }}, {"v", { 2 }}}
 
 		// Test Table:
 		auto tableRef = evTable.getTableRef();

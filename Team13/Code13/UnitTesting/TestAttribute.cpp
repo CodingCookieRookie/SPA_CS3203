@@ -625,6 +625,7 @@ public:
 		Assert::IsTrue(expectedRes1 == res1);
 
 		std::vector<EntityAttributeRef> expectedRes2{ 3 };
+
 		std::vector<EntityAttributeRef> res2 = Attribute::getEqualNameAttributesFromName(EntityType::READ, name1);
 		Assert::IsTrue(expectedRes2 == res2);
 

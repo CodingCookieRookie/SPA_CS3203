@@ -315,29 +315,29 @@ public:
 	}
 
 	TEST_METHOD(insertStmtFromProc_getStmtsFromProc_singleProcAndStmt) {
-		std::unordered_set<StmtIndex> expectedRes;
-		expectedRes.insert(stmtIdx1);
+		std::vector<StmtIndex> expectedRes;
+		expectedRes.push_back(stmtIdx1);
 
 		Entity::insertStmtFromProc(procIdx1, stmtIdx1);
 
-		std::unordered_set<StmtIndex> res = Entity::getStmtsFromProc(procIdx1);
+		std::vector<StmtIndex> res = Entity::getStmtsFromProc(procIdx1);
 		Assert::IsTrue(expectedRes == res);
 	}
 
 	TEST_METHOD(insertStmtFromProc_getStmtsFromProc_multipleProcAndStmt) {
-		std::unordered_set<StmtIndex> expectedRes1;
-		expectedRes1.insert(stmtIdx1);
-		expectedRes1.insert(stmtIdx2);
+		std::vector<StmtIndex> expectedRes1;
+		expectedRes1.push_back(stmtIdx1);
+		expectedRes1.push_back(stmtIdx2);
 
-		std::unordered_set<StmtIndex> expectedRes2;
-		expectedRes2.insert(stmtIdx2);
+		std::vector<StmtIndex> expectedRes2;
+		expectedRes2.push_back(stmtIdx2);
 
 		Entity::insertStmtFromProc(procIdx1, stmtIdx1);
 		Entity::insertStmtFromProc(procIdx1, stmtIdx2);
 		Entity::insertStmtFromProc(procIdx2, stmtIdx2);
 
-		std::unordered_set<StmtIndex> res1 = Entity::getStmtsFromProc(procIdx1);
-		std::unordered_set<StmtIndex> res2 = Entity::getStmtsFromProc(procIdx2);
+		std::vector<StmtIndex> res1 = Entity::getStmtsFromProc(procIdx1);
+		std::vector<StmtIndex> res2 = Entity::getStmtsFromProc(procIdx2);
 		Assert::IsTrue(expectedRes1 == res1);
 		Assert::IsTrue(expectedRes2 == res2);
 	}
@@ -353,20 +353,22 @@ public:
 	}
 
 	TEST_METHOD(insertStmtFromProc_getAllProcStmts_multipleProcAndStmt) {
-		std::unordered_map<ProcIndex, std::unordered_set<StmtIndex>> expectedRes;
-		expectedRes[procIdx1].insert(stmtIdx1);
-		expectedRes[procIdx1].insert(stmtIdx2);
+		std::vector<ProcIndex> expectedProcIdxLst{ procIdx1 , procIdx1 };
+		std::vector<StmtIndex> expectedStmtIdxLst{ stmtIdx1 , stmtIdx2 };
+		std::tuple<std::vector<ProcIndex>, std::vector<StmtIndex>> expectedRes =
+			std::make_tuple(expectedProcIdxLst, expectedStmtIdxLst);
 
 		Entity::insertStmtFromProc(procIdx1, stmtIdx1);
 		Entity::insertStmtFromProc(procIdx1, stmtIdx2);
 
-		std::unordered_map<ProcIndex, std::unordered_set<StmtIndex>>  res1 = Entity::getAllProcStmts();
+		std::tuple<std::vector<ProcIndex>, std::vector<StmtIndex>>  res1 = Entity::getAllProcStmts();
 		Assert::IsTrue(expectedRes == res1);
 
-		expectedRes[procIdx2].insert(stmtIdx2);
+		std::get<0>(expectedRes).push_back(procIdx2);
+		std::get<1>(expectedRes).push_back(stmtIdx2);
 		Entity::insertStmtFromProc(procIdx2, stmtIdx2);
 
-		std::unordered_map<ProcIndex, std::unordered_set<StmtIndex>>  res2 = Entity::getAllProcStmts();
+		std::tuple<std::vector<ProcIndex>, std::vector<StmtIndex>>  res2 = Entity::getAllProcStmts();
 		Assert::IsTrue(expectedRes == res2);
 	}
 

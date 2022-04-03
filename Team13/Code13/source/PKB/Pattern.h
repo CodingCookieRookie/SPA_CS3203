@@ -7,11 +7,12 @@
 #include <vector>
 
 #include "../Common/Types.h"
+#include "./BidirectionalTable/BidirectionalTableOneWaySet.h"
 
 class Pattern {
 protected:
-	static std::unordered_map<VarIndex, std::vector<std::tuple<StmtIndex, std::string>>> varPostFixTable;
-	static std::unordered_map<std::string, std::vector<std::tuple<StmtIndex, VarIndex>>> postFixVarTable;
+	static BidirectionalTableOneWaySet<VarIndex, StmtIndex> assignedVarStmtBidirectionalTable;
+	static BidirectionalTableOneWaySet<std::string, StmtIndex> postfixExprStmtBidirectionalTable;
 	static std::unordered_map<VarIndex, std::unordered_set<StmtIndex>> ifVarTable;
 	static std::unordered_map<VarIndex, std::unordered_set<StmtIndex>> whileVarTable;
 
@@ -21,13 +22,13 @@ public:
 	static void insertWhileInfo(StmtIndex& stmtIdx, VarIndex& varIdx);
 	static std::vector<StmtIndex> getAssignStmtsFromVarExprFullMatch(VarIndex varIdx, std::string& expression);
 	static std::vector<StmtIndex> getAssignStmtsFromVarExprPartialMatch(VarIndex varIdx, std::string& expression);
-	static std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> getAssignStmtsFromExprFullMatch(std::string& expression);
-	static std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> getAssignStmtsFromExprPartialMatch(std::string& expression);
+	static std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> getAssignStmtsFromExprFullMatch(std::string& expression);
+	static std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> getAssignStmtsFromExprPartialMatch(std::string& expression);
 	static std::vector<StmtIndex> getAssignStmtsFromVar(VarIndex& varIdx);
 	static std::vector<StmtIndex> getIfStmtsFromVar(VarIndex& varIndex);
 	static std::vector<StmtIndex> getWhileStmtsFromVar(VarIndex& varIndex);
-	static std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> getAllAssignPatternInfo();
-	static std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> getAllIfPatternInfo();
-	static std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> getAllWhilePatternInfo();
+	static std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> getAllAssignPatternInfo();
+	static std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> getAllIfPatternInfo();
+	static std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> getAllWhilePatternInfo();
 	static void performCleanUp();
 };

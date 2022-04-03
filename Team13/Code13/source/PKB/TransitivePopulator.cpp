@@ -22,21 +22,19 @@ void TransitivePopulator::populateTransitiveStmtsInfo() {
 }
 
 void TransitivePopulator::populateRS1ProcsFromStmts() {
-	auto procStmtsTable = Entity::getAllProcStmts();
-	for (auto entry : procStmtsTable) {
-		auto procIndex = entry.first;
-		auto stmtIndices = entry.second;
+	auto procStmtsInfo = Entity::getAllProcStmts();
+	for (size_t idx = 0; idx < std::get<0>(procStmtsInfo).size(); idx++) {
+		auto procIndex = std::get<0>(procStmtsInfo).at(idx);
+		auto stmtIndex = std::get<1>(procStmtsInfo).at(idx);
 
-		for (auto stmtIndex : stmtIndices) {
-			std::vector<VarIndex> usesVarIndices = UsesS::getFromLeftArg(stmtIndex);
-			for (VarIndex varIndex : usesVarIndices) {
-				UsesP::insert(procIndex, varIndex);
-			}
+		std::vector<VarIndex> usesVarIndices = UsesS::getFromLeftArg(stmtIndex);
+		for (VarIndex varIndex : usesVarIndices) {
+			UsesP::insert(procIndex, varIndex);
+		}
 
-			std::vector<VarIndex> modifiesVarIndices = ModifiesS::getFromLeftArg(stmtIndex);
-			for (VarIndex varIndex : modifiesVarIndices) {
-				ModifiesP::insert(procIndex, varIndex);
-			}
+		std::vector<VarIndex> modifiesVarIndices = ModifiesS::getFromLeftArg(stmtIndex);
+		for (VarIndex varIndex : modifiesVarIndices) {
+			ModifiesP::insert(procIndex, varIndex);
 		}
 	}
 }

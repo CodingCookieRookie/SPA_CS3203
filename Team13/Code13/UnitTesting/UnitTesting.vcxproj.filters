@@ -62,9 +62,11 @@
     <ClCompile Include="TestNextTProcessor.cpp" />
     <ClCompile Include="TestCFG.cpp" />
     <ClCompile Include="TestCacheStorage.cpp" />
-    <ClCompile Include="TestBidirectionalTable.cpp" />
     <ClCompile Include="TestAffectsInstruction.cpp" />
     <ClCompile Include="TestAffectsStarInstruction.cpp" />
+    <ClCompile Include="TestBidirectionalTableTwoWaySet.cpp" />
+    <ClCompile Include="TestBidirectionalIndexTable.cpp" />
+    <ClCompile Include="TestBidirectionalTableOneWaySet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />

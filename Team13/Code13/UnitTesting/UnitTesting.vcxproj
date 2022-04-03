@@ -170,6 +170,9 @@
     <ClCompile Include="TestAffectsProcessor.cpp" />
     <ClCompile Include="TestAffectsStarInstruction.cpp" />
     <ClCompile Include="TestAffectsTProcessor.cpp" />
+    <ClCompile Include="TestBidirectionalIndexTable.cpp" />
+    <ClCompile Include="TestBidirectionalTableOneWaySet.cpp" />
+    <ClCompile Include="TestBidirectionalTableTwoWaySet.cpp" />
     <ClCompile Include="TestCFG.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -180,7 +183,6 @@
     <ClCompile Include="TestASTValidator.cpp" />
     <ClCompile Include="TestAttribute.cpp" />
     <ClCompile Include="TestCacheStorage.cpp" />
-    <ClCompile Include="TestBidirectionalTable.cpp" />
     <ClCompile Include="TestCalls.cpp" />
     <ClCompile Include="TestCallsT.cpp" />
     <ClCompile Include="TestEvaluatedTable.cpp" />

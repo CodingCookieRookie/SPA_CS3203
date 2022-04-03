@@ -9,7 +9,7 @@ PatternInstruction::PatternInstruction(
 	synonym(synonym), entRef(entRef), expressionSpec(expressionSpec) {}
 
 std::unordered_set<std::string> PatternInstruction::getSynonyms() {
-	std::unordered_set<std::string> results{synonym};
+	std::unordered_set<std::string> results{ synonym };
 	if (isSynonymRef(entRef)) {
 		results.insert(entRef.second);
 	}
@@ -56,10 +56,10 @@ EvaluatedTable PatternAInstruction::execute() {
 			break;
 		}
 		if (entRef.first == PqlReferenceType::SYNONYM) {
-			std::vector<int> varIndices = std::get<1>(allPatternStmtInfo);
+			std::vector<int> varIndices = std::get<0>(allPatternStmtInfo);
 			PQLmap[entRef.second] = varIndices;
 		}
-		allStmts = std::get<0>(allPatternStmtInfo);
+		allStmts = std::get<1>(allPatternStmtInfo);
 	}
 	PQLmap[synonym] = allStmts;
 	return EvaluatedTable(PQLmap);
@@ -79,10 +79,10 @@ EvaluatedTable PatternIInstruction::execute() {
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo;
 		allPatternStmtInfo = Pattern::getAllIfPatternInfo();
 		if (entRef.first == PqlReferenceType::SYNONYM) {
-			std::vector<int> varIndices = std::get<1>(allPatternStmtInfo);
+			std::vector<int> varIndices = std::get<0>(allPatternStmtInfo);
 			PQLmap[entRef.second] = varIndices;
 		}
-		allStmts = std::get<0>(allPatternStmtInfo);
+		allStmts = std::get<1>(allPatternStmtInfo);
 	}
 	PQLmap[synonym] = allStmts;
 	return EvaluatedTable(PQLmap);
@@ -102,10 +102,10 @@ EvaluatedTable PatternWInstruction::execute() {
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo;
 		allPatternStmtInfo = Pattern::getAllWhilePatternInfo();
 		if (entRef.first == PqlReferenceType::SYNONYM) {
-			std::vector<int> varIndices = std::get<1>(allPatternStmtInfo);
+			std::vector<int> varIndices = std::get<0>(allPatternStmtInfo);
 			PQLmap[entRef.second] = varIndices;
 		}
-		allStmts = std::get<0>(allPatternStmtInfo);
+		allStmts = std::get<1>(allPatternStmtInfo);
 	}
 	PQLmap[synonym] = allStmts;
 	return EvaluatedTable(PQLmap);

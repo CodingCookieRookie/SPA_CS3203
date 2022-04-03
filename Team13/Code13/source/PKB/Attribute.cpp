@@ -1,7 +1,6 @@
 #include "./Attribute.h"
 
-std::unordered_map<std::string, NameIndex> Attribute::nameIdxTable;
-std::unordered_map<NameIndex, std::string> Attribute::idxNameTable;
+BidirectionalIndexTable<NameIndex> Attribute::nameIdxBidirectionalTable;
 std::unordered_map<NameIndex, std::unordered_set<VarIndex>> Attribute::nameVarIdxTable;
 std::unordered_map<NameIndex, std::unordered_set<ProcIndex>> Attribute::nameProcIdxTable;
 std::unordered_map<NameIndex, std::unordered_set<StmtIndex>> Attribute::nameCallProcIdxTable;
@@ -9,43 +8,16 @@ std::unordered_map<NameIndex, std::unordered_set<StmtIndex>> Attribute::nameRead
 std::unordered_map<NameIndex, std::unordered_set<StmtIndex>> Attribute::namePrintVarIdxTable;
 std::unordered_map<StmtIndex, NameIndex> Attribute::stmtIdxAttributeNameTable;
 
-std::unordered_set<VarIndex> Attribute::getVarIdxSet(std::string& varName) {
-	return nameVarIdxTable[getNameIdx(varName)];
-}
-
-std::unordered_set<ProcIndex> Attribute::getProcIdxSet(std::string& procName) {
-	return nameProcIdxTable[getNameIdx(procName)];
-}
-
 bool Attribute::containsName(std::string& nameValue) {
-	return nameIdxTable.find(nameValue) != nameIdxTable.end();
-}
-
-bool Attribute::containsVarName(std::string& varName) {
-	NameIndex nameIdx = getNameIdx(varName);
-	return nameVarIdxTable.find(nameIdx) != nameVarIdxTable.end();
-}
-
-bool Attribute::containsProcName(std::string& procName) {
-	NameIndex nameIdx = getNameIdx(procName);
-	return nameProcIdxTable.find(nameIdx) != nameProcIdxTable.end();
-}
-
-size_t Attribute::getNameIdxTableSize() {
-	return nameIdxTable.size();
+	return nameIdxBidirectionalTable.contains(nameValue);
 }
 
 NameIndex Attribute::insertNameValue(std::string nameValue) {
-	if (!containsName(nameValue)) {
-		NameIndex nameIdx = NameIndex(getNameIdxTableSize()) + 1;
-		nameIdxTable[nameValue] = nameIdx;
-		idxNameTable[nameIdx] = nameValue;
-	}
-	return nameIdxTable[nameValue];
+	return nameIdxBidirectionalTable.insert(nameValue);
 }
 
 NameIndex Attribute::getNameIdx(std::string& nameValue) {
-	return nameIdxTable[nameValue];
+	return nameIdxBidirectionalTable.getIndexFromString(nameValue);
 }
 
 void Attribute::insertVarIdxByName(VarIndex& varIdx, NameIndex nameIdx) {
@@ -74,7 +46,7 @@ void Attribute::insertStmtByName(StmtIndex& stmtIdx, StatementType stmtType, std
 }
 
 std::string Attribute::getAttributeNameByStmtIdx(StmtIndex& stmtIdx) {
-	return idxNameTable[stmtIdxAttributeNameTable[stmtIdx]];
+	return nameIdxBidirectionalTable.getStringFromIndex(stmtIdxAttributeNameTable[stmtIdx]);
 }
 
 std::tuple<std::vector<EntityAttributeRef>, std::vector<EntityAttributeRef>> Attribute::getEqualNameAttributes(EntityType leftEntityType, EntityType rightEntityType) {
@@ -178,10 +150,11 @@ bool Attribute::hasEqualIntegerAttribute(EntityType entityType, ConstValue integ
 }
 
 void Attribute::performCleanUp() {
-	nameIdxTable = {};
+	nameIdxBidirectionalTable = BidirectionalIndexTable<NameIndex>();
 	nameVarIdxTable = {};
 	nameProcIdxTable = {};
 	nameCallProcIdxTable = {};
 	nameReadVarIdxTable = {};
 	namePrintVarIdxTable = {};
+	stmtIdxAttributeNameTable = {};
 }

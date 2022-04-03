@@ -286,7 +286,7 @@ public:
 		Assert::AreEqual(size_t(1), Entity::getAllConsts().size());
 		Assert::AreEqual(constVal, Entity::getAllConsts()[0]);
 
-		Assert::AreEqual(size_t(6), Entity::getAllProcStmts()[procIdx].size());
+		Assert::AreEqual(size_t(6), std::get<0>(Entity::getAllProcStmts()).size());
 		Assert::AreEqual(size_t(6), Entity::getStmtsFromProc(procIdx).size());
 	}
 
@@ -463,7 +463,7 @@ public:
 		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
 		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
 
-		Assert::AreEqual(size_t(11), Entity::getAllProcStmts()[procIdx].size());
+		Assert::AreEqual(size_t(11), std::get<0>(Entity::getAllProcStmts()).size());
 		Assert::AreEqual(size_t(11), Entity::getStmtsFromProc(procIdx).size());
 	}
 
@@ -659,7 +659,7 @@ public:
 		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
 		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
 
-		Assert::AreEqual(size_t(7), Entity::getAllProcStmts()[procIdx].size());
+		Assert::AreEqual(size_t(7), std::get<0>(Entity::getAllProcStmts()).size());
 		Assert::AreEqual(size_t(7), Entity::getStmtsFromProc(procIdx).size());
 	}
 
@@ -1135,7 +1135,7 @@ public:
 		Assert::AreEqual(constVal3, Entity::getAllConsts()[2]);
 		Assert::AreEqual(constVal4, Entity::getAllConsts()[3]);
 
-		Assert::AreEqual(size_t(14), Entity::getAllProcStmts()[procIdx].size());
+		Assert::AreEqual(size_t(14), std::get<0>(Entity::getAllProcStmts()).size());
 		Assert::AreEqual(size_t(14), Entity::getStmtsFromProc(procIdx).size());
 	}
 
@@ -1344,7 +1344,7 @@ public:
 		Assert::AreEqual(constVal4, Entity::getAllConsts()[3]);
 		Assert::AreEqual(constVal5, Entity::getAllConsts()[4]);
 
-		Assert::AreEqual(size_t(12), Entity::getAllProcStmts()[procIdx].size());
+		Assert::AreEqual(size_t(12), std::get<0>(Entity::getAllProcStmts()).size());
 		Assert::AreEqual(size_t(12), Entity::getStmtsFromProc(procIdx).size());
 	}
 	TEST_METHOD(nestedWhileIfSource_checkAttributes) {
@@ -1575,7 +1575,7 @@ public:
 		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
 		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
 
-		Assert::AreEqual(size_t(7), Entity::getAllProcStmts()[procIdx].size());
+		Assert::AreEqual(size_t(7), std::get<0>(Entity::getAllProcStmts()).size());
 		Assert::AreEqual(size_t(7), Entity::getStmtsFromProc(procIdx).size());
 	}
 
@@ -1772,7 +1772,7 @@ public:
 		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
 		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
 
-		Assert::AreEqual(size_t(7), Entity::getAllProcStmts()[procIdx].size());
+		Assert::AreEqual(size_t(7), std::get<0>(Entity::getAllProcStmts()).size());
 		Assert::AreEqual(size_t(7), Entity::getStmtsFromProc(procIdx).size());
 	}
 
@@ -1964,7 +1964,7 @@ public:
 		Assert::AreEqual(size_t(1), Entity::getAllConsts().size());
 		Assert::AreEqual(constVal, Entity::getAllConsts()[0]);
 
-		Assert::AreEqual(size_t(1), Entity::getAllProcStmts()[procIdx].size());
+		Assert::AreEqual(size_t(1), std::get<0>(Entity::getAllProcStmts()).size());
 		Assert::AreEqual(size_t(1), Entity::getStmtsFromProc(procIdx).size());
 	}
 
@@ -2083,7 +2083,7 @@ public:
 
 		Assert::AreEqual(size_t(0), Entity::getAllConsts().size());
 
-		Assert::AreEqual(size_t(1), Entity::getAllProcStmts()[procIdx].size());
+		Assert::AreEqual(size_t(1), std::get<0>(Entity::getAllProcStmts()).size());
 		Assert::AreEqual(size_t(1), Entity::getStmtsFromProc(procIdx).size());
 	}
 
@@ -2203,7 +2203,7 @@ public:
 		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
 		Assert::AreEqual(constVal3, Entity::getAllConsts()[2]);
 
-		Assert::AreEqual(size_t(11), Entity::getAllProcStmts()[procIdx].size());
+		Assert::AreEqual(size_t(11), std::get<0>(Entity::getAllProcStmts()).size());
 		Assert::AreEqual(size_t(11), Entity::getStmtsFromProc(procIdx).size());
 	}
 
@@ -2487,7 +2487,7 @@ public:
 		Assert::AreEqual(size_t(1), Entity::getAllConsts().size());
 		Assert::AreEqual(constVal, Entity::getAllConsts()[0]);
 
-		Assert::AreEqual(size_t(4), Entity::getAllProcStmts()[procIdx].size());
+		Assert::AreEqual(size_t(4), std::get<0>(Entity::getAllProcStmts()).size());
 		Assert::AreEqual(size_t(4), Entity::getStmtsFromProc(procIdx).size());
 	}
 
@@ -2643,7 +2643,7 @@ public:
 		Assert::AreEqual(size_t(1), Entity::getAllConsts().size());
 		Assert::AreEqual(constVal, Entity::getAllConsts()[0]);
 
-		Assert::AreEqual(size_t(3), Entity::getAllProcStmts()[procIdx].size());
+		Assert::AreEqual(size_t(3), std::get<0>(Entity::getAllProcStmts()).size());
 		Assert::AreEqual(size_t(3), Entity::getStmtsFromProc(procIdx).size());
 	}
 
@@ -2983,7 +2983,7 @@ public:
 		Assert::AreEqual(size_t(0), Entity::getAllStmts().size());
 		Assert::AreEqual(size_t(0), Entity::getAllVars().size());
 		Assert::AreEqual(size_t(0), Entity::getAllConsts().size());
-		Assert::AreEqual(size_t(0), Entity::getAllProcStmts().size());
+		Assert::AreEqual(size_t(0), std::get<0>(Entity::getAllProcStmts()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(ModifiesS::getAllInfo()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(UsesS::getAllInfo()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(ModifiesP::getAllInfo()).size());
@@ -3029,7 +3029,7 @@ public:
 		Assert::AreEqual(size_t(0), Entity::getAllStmts().size());
 		Assert::AreEqual(size_t(0), Entity::getAllVars().size());
 		Assert::AreEqual(size_t(0), Entity::getAllConsts().size());
-		Assert::AreEqual(size_t(0), Entity::getAllProcStmts().size());
+		Assert::AreEqual(size_t(0), std::get<0>(Entity::getAllProcStmts()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(ModifiesS::getAllInfo()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(UsesS::getAllInfo()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(ModifiesP::getAllInfo()).size());
@@ -3075,7 +3075,7 @@ public:
 		Assert::AreEqual(size_t(0), Entity::getAllStmts().size());
 		Assert::AreEqual(size_t(0), Entity::getAllVars().size());
 		Assert::AreEqual(size_t(0), Entity::getAllConsts().size());
-		Assert::AreEqual(size_t(0), Entity::getAllProcStmts().size());
+		Assert::AreEqual(size_t(0), std::get<0>(Entity::getAllProcStmts()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(ModifiesS::getAllInfo()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(UsesS::getAllInfo()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(ModifiesP::getAllInfo()).size());
@@ -3120,7 +3120,7 @@ public:
 		Assert::AreEqual(size_t(0), Entity::getAllStmts().size());
 		Assert::AreEqual(size_t(0), Entity::getAllVars().size());
 		Assert::AreEqual(size_t(0), Entity::getAllConsts().size());
-		Assert::AreEqual(size_t(0), Entity::getAllProcStmts().size());
+		Assert::AreEqual(size_t(0), std::get<0>(Entity::getAllProcStmts()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(ModifiesS::getAllInfo()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(UsesS::getAllInfo()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(ModifiesP::getAllInfo()).size());
@@ -3171,7 +3171,7 @@ public:
 		Assert::AreEqual(size_t(0), Entity::getAllStmts().size());
 		Assert::AreEqual(size_t(0), Entity::getAllVars().size());
 		Assert::AreEqual(size_t(0), Entity::getAllConsts().size());
-		Assert::AreEqual(size_t(0), Entity::getAllProcStmts().size());
+		Assert::AreEqual(size_t(0), std::get<0>(Entity::getAllProcStmts()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(ModifiesS::getAllInfo()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(UsesS::getAllInfo()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(ModifiesP::getAllInfo()).size());
@@ -3232,7 +3232,7 @@ public:
 		Assert::AreEqual(size_t(0), Entity::getAllStmts().size());
 		Assert::AreEqual(size_t(0), Entity::getAllVars().size());
 		Assert::AreEqual(size_t(0), Entity::getAllConsts().size());
-		Assert::AreEqual(size_t(0), Entity::getAllProcStmts().size());
+		Assert::AreEqual(size_t(0), std::get<0>(Entity::getAllProcStmts()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(ModifiesS::getAllInfo()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(UsesS::getAllInfo()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(ModifiesP::getAllInfo()).size());
@@ -3295,7 +3295,7 @@ public:
 		Assert::AreEqual(size_t(0), Entity::getAllStmts().size());
 		Assert::AreEqual(size_t(0), Entity::getAllVars().size());
 		Assert::AreEqual(size_t(0), Entity::getAllConsts().size());
-		Assert::AreEqual(size_t(0), Entity::getAllProcStmts().size());
+		Assert::AreEqual(size_t(0), std::get<0>(Entity::getAllProcStmts()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(ModifiesS::getAllInfo()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(UsesS::getAllInfo()).size());
 		Assert::AreEqual(size_t(0), std::get<0>(ModifiesP::getAllInfo()).size());

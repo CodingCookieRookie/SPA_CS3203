@@ -26,6 +26,8 @@ private:
 	StmtIndex stmtIdx1 = StmtIndex(1);
 	StmtIndex stmtIdx2 = StmtIndex(2);
 	StmtIndex stmtIdx3 = StmtIndex(3);
+	StmtIndex stmtIdx4 = StmtIndex(4);
+	StmtIndex stmtIdx5 = StmtIndex(5);
 
 	TEST_METHOD_CLEANUP(cleanUpPatternInfo) {
 		Pattern::performCleanUp();
@@ -157,13 +159,13 @@ public:
 		std::vector<StmtIndex> stmtIndices{ 1, 2, 3 };
 		std::vector<VarIndex> varIndices{ 1, 1, 2 };
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> expectedRes = std::make_tuple(stmtIndices, varIndices);
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> expectedRes = std::make_tuple(varIndices, stmtIndices);
 
 		Pattern::insertAssignInfo(varIdx1, postFix1, stmtIdx1);
 		Pattern::insertAssignInfo(varIdx1, postFix1, stmtIdx2);
 		Pattern::insertAssignInfo(varIdx2, postFix1, stmtIdx3);
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> res = Pattern::getAssignStmtsFromExprFullMatch(postFix1);
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> res = Pattern::getAssignStmtsFromExprFullMatch(postFix1);
 
 		Assert::IsTrue(expectedRes == res);
 	}
@@ -172,14 +174,14 @@ public:
 		std::vector<StmtIndex> stmtIndices{ 2, 3 };
 		std::vector<VarIndex> varIndices{ 1, 2 };
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> expectedRes = std::make_tuple(stmtIndices, varIndices);
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> expectedRes = std::make_tuple(varIndices, stmtIndices);
 
 		Pattern::insertAssignInfo(varIdx1, postFix1, stmtIdx1);
 		Pattern::insertAssignInfo(varIdx1, postFix2, stmtIdx2);
 		Pattern::insertAssignInfo(varIdx2, postFix1, stmtIdx3);
 		Pattern::insertAssignInfo(varIdx2, postFix2, stmtIdx3);
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> res = Pattern::getAssignStmtsFromExprFullMatch(postFix2);
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> res = Pattern::getAssignStmtsFromExprFullMatch(postFix2);
 
 		Assert::IsTrue(expectedRes == res);
 	}
@@ -188,15 +190,15 @@ public:
 		std::vector<StmtIndex> stmtIndices{ 1, 2, 3 };
 		std::vector<VarIndex> varIndices{ 1, 1, 2 };
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> expectedRes = std::make_tuple(stmtIndices, varIndices);
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> expectedRes = std::make_tuple(varIndices, stmtIndices);
 
 		Pattern::insertAssignInfo(varIdx1, postFix4, stmtIdx1);
 		Pattern::insertAssignInfo(varIdx1, postFix4, stmtIdx2);
 		Pattern::insertAssignInfo(varIdx2, postFix4, stmtIdx3);
 
 		/* postFix3 is a subexpression of postFix4 */
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> res1 = Pattern::getAssignStmtsFromExprPartialMatch(postFix3);
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> res2 = Pattern::getAssignStmtsFromExprPartialMatch(postFix4);
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> res1 = Pattern::getAssignStmtsFromExprPartialMatch(postFix3);
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> res2 = Pattern::getAssignStmtsFromExprPartialMatch(postFix4);
 		Assert::IsTrue(expectedRes == res1);
 		Assert::IsTrue(expectedRes == res2);
 	}
@@ -205,7 +207,7 @@ public:
 		std::vector<StmtIndex> stmtIndices{ 2 };
 		std::vector<VarIndex> varIndices{ 3 };
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> expectedRes = std::make_tuple(stmtIndices, varIndices);
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> expectedRes = std::make_tuple(varIndices, stmtIndices);
 
 		Pattern::insertAssignInfo(varIdx1, postFix1, stmtIdx1);
 		Pattern::insertAssignInfo(varIdx1, postFix1, stmtIdx2);
@@ -213,37 +215,37 @@ public:
 		Pattern::insertAssignInfo(varIdx3, postFix4, stmtIdx2);
 
 		/* postFix1 is a not subexpression of postFix4 */
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> res = Pattern::getAssignStmtsFromExprPartialMatch(postFix4);
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> res = Pattern::getAssignStmtsFromExprPartialMatch(postFix4);
 
 		Assert::IsTrue(expectedRes == res);
 	}
 
 	TEST_METHOD(insertAssignInfo_getAssignStmtsFromExpr_differentExpression_subExpression) {
-		std::vector<StmtIndex> stmtIndices{ 1, 2, 3 };
+		std::vector<StmtIndex> stmtIndices{ 1, 2, 4 };
 		std::vector<VarIndex> varIndices{ 1, 1, 2 };
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> expectedRes = std::make_tuple(stmtIndices, varIndices);
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> expectedRes = std::make_tuple(varIndices, stmtIndices);
 
 		Pattern::insertAssignInfo(varIdx1, postFix4, stmtIdx1);
 		Pattern::insertAssignInfo(varIdx1, postFix4, stmtIdx2);
 		Pattern::insertAssignInfo(varIdx1, postFix2, stmtIdx3);
-		Pattern::insertAssignInfo(varIdx2, postFix4, stmtIdx3);
+		Pattern::insertAssignInfo(varIdx2, postFix4, stmtIdx4);
 
 		/* postFix3 is a subexpression of postFix4 */
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> res1 = Pattern::getAssignStmtsFromExprPartialMatch(postFix3);
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> res2 = Pattern::getAssignStmtsFromExprPartialMatch(postFix4);
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> res1 = Pattern::getAssignStmtsFromExprPartialMatch(postFix3);
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> res2 = Pattern::getAssignStmtsFromExprPartialMatch(postFix4);
 		Assert::IsTrue(expectedRes == res1);
 		Assert::IsTrue(expectedRes == res2);
 
 		/* Add subexpression postFix3 */
-		stmtIndices.insert(stmtIndices.begin(), 3);
+		stmtIndices.insert(stmtIndices.begin(), 5);
 		varIndices.insert(varIndices.begin(), 3);
-		expectedRes = std::make_tuple(stmtIndices, varIndices);
+		expectedRes = std::make_tuple(varIndices, stmtIndices);
 
-		Pattern::insertAssignInfo(varIdx3, postFix3, stmtIdx3);
+		Pattern::insertAssignInfo(varIdx3, postFix3, stmtIdx5);
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> res3 = Pattern::getAssignStmtsFromExprPartialMatch(postFix3);
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> res4 = Pattern::getAssignStmtsFromExprPartialMatch(postFix4);
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> res3 = Pattern::getAssignStmtsFromExprPartialMatch(postFix3);
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> res4 = Pattern::getAssignStmtsFromExprPartialMatch(postFix4);
 
 		Assert::IsTrue(expectedRes == res3);
 		Assert::IsFalse(expectedRes == res4);
@@ -305,14 +307,14 @@ public:
 		std::vector<StmtIndex> stmtIndices{ 1, 2, 3, 3 };
 		std::vector<VarIndex> varIndices{ 1, 1, 1, 2 };
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> expectedRes = std::make_tuple(stmtIndices, varIndices);
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> expectedRes = std::make_tuple(varIndices, stmtIndices);
 
 		Pattern::insertAssignInfo(varIdx1, postFix4, stmtIdx1);
 		Pattern::insertAssignInfo(varIdx1, postFix1, stmtIdx2);
 		Pattern::insertAssignInfo(varIdx1, postFix2, stmtIdx3);
 		Pattern::insertAssignInfo(varIdx2, postFix4, stmtIdx3);
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> res = Pattern::getAllAssignPatternInfo();
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> res = Pattern::getAllAssignPatternInfo();
 
 		Assert::IsTrue(expectedRes == res);
 	}
@@ -323,15 +325,15 @@ public:
 		std::vector<StmtIndex> stmtIndices{ 1 };
 		std::vector<VarIndex> varIndices{ 1 };
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> expectedRes = std::make_tuple(stmtIndices, varIndices);
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> expectedRes = std::make_tuple(varIndices, stmtIndices);
 
 		Pattern::insertIfInfo(stmtIdx1, varIdx1);
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> res1 = Pattern::getAllIfPatternInfo();
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> res1 = Pattern::getAllIfPatternInfo();
 
 		Assert::IsTrue(expectedRes == res1);
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> res2 = Pattern::getAllWhilePatternInfo();
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> res2 = Pattern::getAllWhilePatternInfo();
 		Assert::IsTrue(0 == std::get<0>(res2).size());
 	}
 
@@ -341,18 +343,18 @@ public:
 		std::vector<StmtIndex> stmtIndices{ 1, 1, 1, 1 };
 		std::vector<VarIndex> varIndices{ 1, 2, 3, 4 };
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> expectedRes = std::make_tuple(stmtIndices, varIndices);
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> expectedRes = std::make_tuple(varIndices, stmtIndices);
 
 		Pattern::insertIfInfo(stmtIdx1, varIdx1);
 		Pattern::insertIfInfo(stmtIdx1, varIdx2);
 		Pattern::insertIfInfo(stmtIdx1, varIdx3);
 		Pattern::insertIfInfo(stmtIdx1, varIdx4);
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> res1 = Pattern::getAllIfPatternInfo();
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> res1 = Pattern::getAllIfPatternInfo();
 
 		Assert::IsTrue(expectedRes == res1);
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> res2 = Pattern::getAllWhilePatternInfo();
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> res2 = Pattern::getAllWhilePatternInfo();
 		Assert::IsTrue(0 == std::get<0>(res2).size());
 	}
 
@@ -363,7 +365,7 @@ public:
 		std::vector<StmtIndex> stmtIndices{ 1, 1, 2, 1, 2, 1 };
 		std::vector<VarIndex> varIndices{ 1, 2, 2, 3, 3, 4 };
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> expectedRes = std::make_tuple(stmtIndices, varIndices);
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> expectedRes = std::make_tuple(varIndices, stmtIndices);
 
 		Pattern::insertIfInfo(stmtIdx1, varIdx1);
 		Pattern::insertIfInfo(stmtIdx1, varIdx2);
@@ -372,11 +374,11 @@ public:
 		Pattern::insertIfInfo(stmtIdx2, varIdx2);
 		Pattern::insertIfInfo(stmtIdx2, varIdx3);
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> res1 = Pattern::getAllIfPatternInfo();
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> res1 = Pattern::getAllIfPatternInfo();
 
 		Assert::IsTrue(expectedRes == res1);
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> res2 = Pattern::getAllWhilePatternInfo();
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> res2 = Pattern::getAllWhilePatternInfo();
 		Assert::IsTrue(0 == std::get<0>(res2).size());
 	}
 
@@ -386,15 +388,15 @@ public:
 		std::vector<StmtIndex> stmtIndices{ 1 };
 		std::vector<VarIndex> varIndices{ 1 };
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> expectedRes = std::make_tuple(stmtIndices, varIndices);
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> expectedRes = std::make_tuple(varIndices, stmtIndices);
 
 		Pattern::insertWhileInfo(stmtIdx1, varIdx1);
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> res1 = Pattern::getAllWhilePatternInfo();
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> res1 = Pattern::getAllWhilePatternInfo();
 
 		Assert::IsTrue(expectedRes == res1);
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> res2 = Pattern::getAllIfPatternInfo();
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> res2 = Pattern::getAllIfPatternInfo();
 		Assert::IsTrue(0 == std::get<0>(res2).size());
 	}
 
@@ -404,18 +406,18 @@ public:
 		std::vector<StmtIndex> stmtIndices{ 1, 1, 1, 1 };
 		std::vector<VarIndex> varIndices{ 1, 2, 3, 4 };
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> expectedRes = std::make_tuple(stmtIndices, varIndices);
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> expectedRes = std::make_tuple(varIndices, stmtIndices);
 
 		Pattern::insertWhileInfo(stmtIdx1, varIdx1);
 		Pattern::insertWhileInfo(stmtIdx1, varIdx2);
 		Pattern::insertWhileInfo(stmtIdx1, varIdx3);
 		Pattern::insertWhileInfo(stmtIdx1, varIdx4);
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> res1 = Pattern::getAllWhilePatternInfo();
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> res1 = Pattern::getAllWhilePatternInfo();
 
 		Assert::IsTrue(expectedRes == res1);
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> res2 = Pattern::getAllIfPatternInfo();
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> res2 = Pattern::getAllIfPatternInfo();
 		Assert::IsTrue(0 == std::get<0>(res2).size());
 	}
 
@@ -426,7 +428,7 @@ public:
 		std::vector<StmtIndex> stmtIndices{ 1, 1, 2, 1, 2, 1 };
 		std::vector<VarIndex> varIndices{ 1, 2, 2, 3, 3, 4 };
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> expectedRes = std::make_tuple(stmtIndices, varIndices);
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> expectedRes = std::make_tuple(varIndices, stmtIndices);
 
 		Pattern::insertWhileInfo(stmtIdx1, varIdx1);
 		Pattern::insertWhileInfo(stmtIdx1, varIdx2);
@@ -435,11 +437,11 @@ public:
 		Pattern::insertWhileInfo(stmtIdx2, varIdx2);
 		Pattern::insertWhileInfo(stmtIdx2, varIdx3);
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> res1 = Pattern::getAllWhilePatternInfo();
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> res1 = Pattern::getAllWhilePatternInfo();
 
 		Assert::IsTrue(expectedRes == res1);
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> res2 = Pattern::getAllIfPatternInfo();
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> res2 = Pattern::getAllIfPatternInfo();
 		Assert::IsTrue(0 == std::get<0>(res2).size());
 	}
 
@@ -453,8 +455,8 @@ public:
 		std::vector<StmtIndex> whileStmtIndices{ 2, 2 };
 		std::vector<VarIndex> whileVarIndices{ 2, 3 };
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> expectedRes1 = std::make_tuple(ifStmtIndices, ifVarIndices);
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> expectedRes2 = std::make_tuple(whileStmtIndices, whileVarIndices);
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> expectedRes1 = std::make_tuple(ifVarIndices, ifStmtIndices);
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> expectedRes2 = std::make_tuple(whileVarIndices, whileStmtIndices);
 
 		Pattern::insertIfInfo(stmtIdx1, varIdx1);
 		Pattern::insertIfInfo(stmtIdx1, varIdx2);
@@ -463,8 +465,8 @@ public:
 		Pattern::insertWhileInfo(stmtIdx2, varIdx3);
 		Pattern::insertIfInfo(stmtIdx3, varIdx4);
 
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> res1 = Pattern::getAllIfPatternInfo();
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> res2 = Pattern::getAllWhilePatternInfo();
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> res1 = Pattern::getAllIfPatternInfo();
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> res2 = Pattern::getAllWhilePatternInfo();
 
 		Assert::IsTrue(expectedRes1 == res1);
 		Assert::IsTrue(expectedRes2 == res2);
