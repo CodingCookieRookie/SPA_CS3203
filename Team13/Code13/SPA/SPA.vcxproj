@@ -20,7 +20,6 @@
     <ClCompile Include="..\source\PKB\Entity.cpp" />
     <ClCompile Include="..\source\PKB\ExpressionProcessor.cpp" />
     <ClCompile Include="..\source\PKB\Pattern.cpp" />
-    <ClCompile Include="..\source\PKB\CFG.cpp" />
     <ClCompile Include="..\source\PKB\PKB.cpp" />
     <ClCompile Include="..\source\PKB\PKBInserter.cpp" />
     <ClCompile Include="..\source\PKB\PKBGetter.cpp" />
@@ -67,6 +66,7 @@
     <ClCompile Include="..\source\QPS\UsesInstruction.cpp" />
     <ClCompile Include="..\source\QPS\WithInstruction.cpp" />
     <ClCompile Include="..\source\SP\ASTValidator.cpp" />
+    <ClCompile Include="..\source\SP\CFG.cpp" />
     <ClCompile Include="..\source\SP\DesignExtractor.cpp" />
     <ClCompile Include="..\source\SP\Parser.cpp" />
     <ClCompile Include="..\source\SP\SourceAST.cpp" />
@@ -98,14 +98,13 @@
     <ClInclude Include="..\source\PKB\Parent.h" />
     <ClInclude Include="..\source\PKB\ParentT.h" />
     <ClInclude Include="..\source\PKB\Pattern.h" />
-    <ClInclude Include="..\source\PKB\CFG.h" />
     <ClInclude Include="..\source\PKB\PKBInserter.h" />
-	<ClInclude Include="..\source\PKB\RS.h" />
-	<ClInclude Include="..\source\PKB\RS1.h" />
+    <ClInclude Include="..\source\PKB\RS.h" />
+    <ClInclude Include="..\source\PKB\RS1.h" />
     <ClInclude Include="..\source\PKB\RS2.h" />
     <ClInclude Include="..\source\PKB\RS2T.h" />
-	<ClInclude Include="..\source\PKB\TransitivePopulator.h" />
-	<ClInclude Include="..\source\PKB\UsesP.h" />
+    <ClInclude Include="..\source\PKB\TransitivePopulator.h" />
+    <ClInclude Include="..\source\PKB\UsesP.h" />
     <ClInclude Include="..\source\PKB\UsesS.h" />
     <ClInclude Include="..\source\QPS\AffectsInstruction.h" />
     <ClInclude Include="..\source\QPS\AffectsStarInstruction.h" />
@@ -151,6 +150,7 @@
     <ClInclude Include="..\source\QPS\UsesInstruction.h" />
     <ClInclude Include="..\source\QPS\WithInstruction.h" />
     <ClInclude Include="..\source\SP\ASTValidator.h" />
+    <ClInclude Include="..\source\SP\CFG.h" />
     <ClInclude Include="..\source\SP\DesignExtractor.h" />
     <ClInclude Include="..\source\SP\Parser.h" />
     <ClInclude Include="..\source\SP\RsEntitiesMapsTypes.h" />

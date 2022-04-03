@@ -266,7 +266,8 @@ public:
 		SourceAST ast = parser.parse(sampleSource1);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
@@ -307,7 +308,8 @@ public:
 		SourceAST ast = parser.parse(sampleSource1);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(varName1, Attribute::getAttributeNameByStmtIdx(stmtIdx1));
 		Assert::AreEqual(varName2, Attribute::getAttributeNameByStmtIdx(stmtIdx6));
@@ -333,7 +335,8 @@ public:
 		SourceAST ast = parser.parse(sampleSource1);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
 
@@ -390,7 +393,8 @@ public:
 		SourceAST ast = parser.parse(sampleSource1);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(5), std::get<0>(ModifiesS::getAllInfo()).size());
 		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
@@ -442,7 +446,8 @@ public:
 		SourceAST ast = parser.parse(sampleSource2);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
@@ -486,7 +491,8 @@ public:
 		SourceAST ast = parser.parse(sampleSource2);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(varName1, Attribute::getAttributeNameByStmtIdx(stmtIdx1));
 		Assert::AreEqual(varName2, Attribute::getAttributeNameByStmtIdx(stmtIdx2));
@@ -517,7 +523,8 @@ public:
 		SourceAST ast = parser.parse(sampleSource2);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(5), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
 
@@ -569,7 +576,8 @@ public:
 		SourceAST ast = parser.parse(sampleSource2);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(11), std::get<0>(ModifiesS::getAllInfo()).size());
 		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
@@ -638,7 +646,8 @@ public:
 		SourceAST ast = parser.parse(sampleSource3);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
@@ -679,7 +688,8 @@ public:
 		SourceAST ast = parser.parse(sampleSource3);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(varName1, Attribute::getAttributeNameByStmtIdx(stmtIdx1));
 		Assert::AreEqual(varName2, Attribute::getAttributeNameByStmtIdx(stmtIdx7));
@@ -706,7 +716,8 @@ public:
 		SourceAST ast = parser.parse(sampleSource3);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(4), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
 
@@ -759,7 +770,8 @@ public:
 		SourceAST ast = parser.parse(sampleSource3);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(8), std::get<0>(ModifiesS::getAllInfo()).size());
 		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
@@ -841,7 +853,8 @@ public:
 		SourceAST ast = parser.parse(sampleSource4);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(4), Entity::getAllProcs().size());
 		Assert::AreEqual(procName1, Entity::getProcName(Entity::getAllProcs()[0]));
@@ -890,7 +903,8 @@ public:
 		SourceAST ast = parser.parse(sampleSource4);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(procName4, Attribute::getAttributeNameByStmtIdx(stmtIdx2));
 		Assert::AreEqual(procName3, Attribute::getAttributeNameByStmtIdx(stmtIdx3));
@@ -923,7 +937,8 @@ public:
 		SourceAST ast = parser.parse(sampleSource4);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(11), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
 
@@ -990,7 +1005,8 @@ public:
 		SourceAST ast = parser.parse(sampleSource4);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(32), std::get<0>(ModifiesS::getAllInfo()).size());
 		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
@@ -1112,7 +1128,8 @@ public:
 		SourceAST ast = parser.parse(mixedStmtsSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
@@ -1152,7 +1169,8 @@ public:
 		SourceAST ast = parser.parse(mixedStmtsSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(varName1, Attribute::getAttributeNameByStmtIdx(stmtIdx13));
 		Assert::IsTrue(std::vector{ stmtIdx13 } == Attribute::getEqualNameAttributesFromName(EntityType::PRINT, varName1));
@@ -1175,7 +1193,8 @@ public:
 		SourceAST ast = parser.parse(mixedStmtsSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(11), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
 
@@ -1238,7 +1257,8 @@ public:
 		SourceAST ast = parser.parse(mixedStmtsSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(16), std::get<0>(ModifiesS::getAllInfo()).size());
 		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
@@ -1320,7 +1340,8 @@ public:
 		SourceAST ast = parser.parse(nestedWhileIfSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
@@ -1360,7 +1381,8 @@ public:
 		SourceAST ast = parser.parse(nestedWhileIfSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(varName1, Attribute::getAttributeNameByStmtIdx(stmtIdx1));
 		Assert::AreEqual(varName2, Attribute::getAttributeNameByStmtIdx(stmtIdx12));
@@ -1386,7 +1408,8 @@ public:
 		SourceAST ast = parser.parse(nestedWhileIfSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(8), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
 
@@ -1457,7 +1480,8 @@ public:
 		SourceAST ast = parser.parse(nestedWhileIfSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(14), std::get<0>(ModifiesS::getAllInfo()).size());
 		Assert::IsTrue(ModifiesS::contains(stmtIdx2, Entity::getVarIdx(varName2)));
@@ -1554,7 +1578,8 @@ public:
 		SourceAST ast = parser.parse(multipleBracketsSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
@@ -1593,7 +1618,8 @@ public:
 		SourceAST ast = parser.parse(multipleBracketsSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(varName1, Attribute::getAttributeNameByStmtIdx(stmtIdx1));
 		Assert::AreEqual(varName2, Attribute::getAttributeNameByStmtIdx(stmtIdx7));
@@ -1621,7 +1647,8 @@ public:
 		SourceAST ast = parser.parse(multipleBracketsSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(4), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
 
@@ -1678,7 +1705,8 @@ public:
 		SourceAST ast = parser.parse(multipleBracketsSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(8), std::get<0>(ModifiesS::getAllInfo()).size());
 		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
@@ -1750,7 +1778,8 @@ public:
 		SourceAST ast = parser.parse(sameKeywordNameSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
@@ -1789,7 +1818,8 @@ public:
 		SourceAST ast = parser.parse(sameKeywordNameSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(varName1, Attribute::getAttributeNameByStmtIdx(stmtIdx1));
 		Assert::AreEqual(varName2, Attribute::getAttributeNameByStmtIdx(stmtIdx7));
@@ -1822,7 +1852,8 @@ public:
 		SourceAST ast = parser.parse(sameKeywordNameSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(5), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
 
@@ -1874,7 +1905,8 @@ public:
 		SourceAST ast = parser.parse(sameKeywordNameSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(6), std::get<0>(ModifiesS::getAllInfo()).size());
 		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
@@ -1943,7 +1975,8 @@ public:
 		SourceAST ast = parser.parse(longAssignmentExprSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
@@ -1977,7 +2010,8 @@ public:
 		SourceAST ast = parser.parse(longAssignmentExprSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
 		Assert::AreEqual(size_t(0), Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT).size());
@@ -1996,7 +2030,8 @@ public:
 		SourceAST ast = parser.parse(longAssignmentExprSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
 
@@ -2030,7 +2065,8 @@ public:
 		SourceAST ast = parser.parse(longAssignmentExprSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(1), std::get<0>(ModifiesS::getAllInfo()).size());
 		Assert::IsTrue(ModifiesS::contains(stmtIdx, Entity::getVarIdx(varName1)));
@@ -2070,7 +2106,8 @@ public:
 		SourceAST ast = parser.parse(longVarNameSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
@@ -2098,7 +2135,8 @@ public:
 		SourceAST ast = parser.parse(longVarNameSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(varName, Attribute::getAttributeNameByStmtIdx(stmtIdx));
 		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
@@ -2116,7 +2154,8 @@ public:
 		SourceAST ast = parser.parse(longVarNameSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
 		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName), ExpressionProcessor::convertInfixToPostFix(varName)).size());
@@ -2141,7 +2180,8 @@ public:
 		SourceAST ast = parser.parse(longVarNameSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(1), std::get<0>(ModifiesS::getAllInfo()).size());
 		Assert::IsTrue(ModifiesS::contains(stmtIdx, Entity::getVarIdx(varName)));
@@ -2181,7 +2221,8 @@ public:
 		SourceAST ast = parser.parse(multipleNestingSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
@@ -2218,7 +2259,8 @@ public:
 		SourceAST ast = parser.parse(multipleNestingSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
 		Assert::IsTrue(std::vector{ 8, 1 } == Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
@@ -2244,7 +2286,8 @@ public:
 		SourceAST ast = parser.parse(multipleNestingSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(7), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
 
@@ -2308,7 +2351,8 @@ public:
 		SourceAST ast = parser.parse(multipleNestingSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(17), std::get<0>(ModifiesS::getAllInfo()).size());
 		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
@@ -2466,7 +2510,8 @@ public:
 		SourceAST ast = parser.parse(differentCasingNamesSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
@@ -2502,7 +2547,8 @@ public:
 		SourceAST ast = parser.parse(differentCasingNamesSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
 		Assert::IsTrue(std::vector{ 1 } == Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
@@ -2524,7 +2570,8 @@ public:
 		SourceAST ast = parser.parse(differentCasingNamesSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(4), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
 
@@ -2566,7 +2613,8 @@ public:
 		SourceAST ast = parser.parse(differentCasingNamesSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(4), std::get<0>(ModifiesS::getAllInfo()).size());
 		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
@@ -2624,7 +2672,8 @@ public:
 		SourceAST ast = parser.parse(multipleWhitespacesSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
@@ -2660,7 +2709,8 @@ public:
 		SourceAST ast = parser.parse(multipleWhitespacesSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(varName, Attribute::getAttributeNameByStmtIdx(stmtIdx1));
 		Assert::IsFalse(varName == Attribute::getAttributeNameByStmtIdx(stmtIdx2));
@@ -2685,7 +2735,8 @@ public:
 		SourceAST ast = parser.parse(multipleWhitespacesSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
 
@@ -2720,7 +2771,8 @@ public:
 		SourceAST ast = parser.parse(multipleWhitespacesSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(2), std::get<0>(ModifiesS::getAllInfo()).size());
 		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName)));
@@ -2766,7 +2818,8 @@ public:
 		SourceAST ast = parser.parse(multipleProceduresRecursiveCallsSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(4), Entity::getAllProcs().size());
 		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
@@ -2811,7 +2864,8 @@ public:
 		SourceAST ast = parser.parse(multipleProceduresRecursiveCallsSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(procName2, Attribute::getAttributeNameByStmtIdx(stmtIdx1));
 		Assert::AreEqual(procName3, Attribute::getAttributeNameByStmtIdx(stmtIdx2));
@@ -2846,7 +2900,8 @@ public:
 		SourceAST ast = parser.parse(multipleProceduresRecursiveCallsSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
 
@@ -2889,7 +2944,8 @@ public:
 		SourceAST ast = parser.parse(multipleProceduresRecursiveCallsSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor::extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor();
+		designExtractor->extract(ast, pkbInserter);
 
 		Assert::AreEqual(size_t(7), std::get<0>(ModifiesS::getAllInfo()).size());
 		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
@@ -2974,7 +3030,8 @@ public:
 			SourceAST ast = parser.parse(source);
 			PKB* pkb = new PKB();
 			PKBInserter* pkbInserter = new PKBInserter(pkb);
-			DesignExtractor::extract(ast, pkbInserter);
+			DesignExtractor* designExtractor = new DesignExtractor();
+			designExtractor->extract(ast, pkbInserter);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
@@ -3020,7 +3077,8 @@ public:
 			ASTValidator::validateAST(ast);
 			PKB* pkb = new PKB();
 			PKBInserter* pkbInserter = new PKBInserter(pkb);
-			DesignExtractor::extract(ast, pkbInserter);
+			DesignExtractor* designExtractor = new DesignExtractor();
+			designExtractor->extract(ast, pkbInserter);
 		} catch (ASTException& ex) {
 			Assert::AreEqual(ASTException::CALL_NON_EXISTENT_PROC_NAME_ERROR.c_str(), ex.what());
 		}
@@ -3066,7 +3124,8 @@ public:
 			ASTValidator::validateAST(ast);
 			PKB* pkb = new PKB();
 			PKBInserter* pkbInserter = new PKBInserter(pkb);
-			DesignExtractor::extract(ast, pkbInserter);
+			DesignExtractor* designExtractor = new DesignExtractor();
+			designExtractor->extract(ast, pkbInserter);
 		} catch (ASTException& ex) {
 			Assert::AreEqual(ASTException::DUPLICATE_PROC_NAMES_ERROR.c_str(), ex.what());
 		}
@@ -3111,7 +3170,8 @@ public:
 			ASTValidator::validateAST(ast);
 			PKB* pkb = new PKB();
 			PKBInserter* pkbInserter = new PKBInserter(pkb);
-			DesignExtractor::extract(ast, pkbInserter);
+			DesignExtractor* designExtractor = new DesignExtractor();
+			designExtractor->extract(ast, pkbInserter);
 		} catch (ASTException& ex) {
 			Assert::AreEqual(ASTException::CYCLIC_CALL_ERROR.c_str(), ex.what());
 		}
@@ -3162,7 +3222,8 @@ public:
 			ASTValidator::validateAST(ast);
 			PKB* pkb = new PKB();
 			PKBInserter* pkbInserter = new PKBInserter(pkb);
-			DesignExtractor::extract(ast, pkbInserter);
+			DesignExtractor* designExtractor = new DesignExtractor();
+			designExtractor->extract(ast, pkbInserter);
 		} catch (ASTException& ex) {
 			Assert::AreEqual(ASTException::CYCLIC_CALL_ERROR.c_str(), ex.what());
 		}
@@ -3223,7 +3284,8 @@ public:
 			ASTValidator::validateAST(ast);
 			PKB* pkb = new PKB();
 			PKBInserter* pkbInserter = new PKBInserter(pkb);
-			DesignExtractor::extract(ast, pkbInserter);
+			DesignExtractor* designExtractor = new DesignExtractor();
+			designExtractor->extract(ast, pkbInserter);
 		} catch (ASTException& ex) {
 			Assert::AreEqual(ASTException::CYCLIC_CALL_ERROR.c_str(), ex.what());
 		}
@@ -3286,7 +3348,8 @@ public:
 			ASTValidator::validateAST(ast);
 			PKB* pkb = new PKB();
 			PKBInserter* pkbInserter = new PKBInserter(pkb);
-			DesignExtractor::extract(ast, pkbInserter);
+			DesignExtractor* designExtractor = new DesignExtractor();
+			designExtractor->extract(ast, pkbInserter);
 		} catch (ASTException& ex) {
 			Assert::AreEqual(ASTException::CYCLIC_CALL_ERROR.c_str(), ex.what());
 		}

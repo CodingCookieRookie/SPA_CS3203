@@ -173,7 +173,6 @@
     <ClCompile Include="TestBidirectionalIndexTable.cpp" />
     <ClCompile Include="TestBidirectionalTableOneWaySet.cpp" />
     <ClCompile Include="TestBidirectionalTableTwoWaySet.cpp" />
-    <ClCompile Include="TestCFG.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -185,6 +184,7 @@
     <ClCompile Include="TestCacheStorage.cpp" />
     <ClCompile Include="TestCalls.cpp" />
     <ClCompile Include="TestCallsT.cpp" />
+    <ClCompile Include="TestCFG.cpp" />
     <ClCompile Include="TestEvaluatedTable.cpp" />
     <ClCompile Include="TestContainer.cpp" />
     <ClCompile Include="TestGetAllInstruction.cpp" />

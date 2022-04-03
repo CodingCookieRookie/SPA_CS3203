@@ -1,18 +1,17 @@
 #pragma once
 
-#include "CFGNode.h"
+#include <unordered_map>
+#include <unordered_set>
+
+#include "../Common/Types.h"
 
 class CFG {
 private:
-	CFGNode* head;
-	CFGNode* tail;
-	size_t getSizeHelper(CFGNode*& node, std::unordered_set<CFGNode*>& cfgNodes);
+	std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable;
 
 public:
-	CFG(CFGNode* head, CFGNode* tail);
-
-	size_t size();
-	CFGNode* getHead();
-	CFGNode* getTail();
-	void addToEnd(CFGNode* node);
+	CFG();
+	~CFG();
+	void insert(StmtIndex predecessor, StmtIndex successor);
+	std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> getCFGTable();
 };

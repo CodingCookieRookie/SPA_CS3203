@@ -2,6 +2,12 @@
 
 static const int EXIT_NODE_IDX;
 
+DesignExtractor::DesignExtractor() {
+	this->cfg = new CFG();
+}
+
+DesignExtractor::~DesignExtractor() {}
+
 void DesignExtractor::insertFollows(SourceAST& ast) {
 	FollowsMap followsMap = ast.getFollowsMap();
 	for (auto& follows : followsMap) {
@@ -61,7 +67,7 @@ void DesignExtractor::insertCalls(SourceAST& ast) {
 }
 
 void DesignExtractor::insertNext(PKBInserter* pkb) {
-	for (auto cfgEntry : pkb->getCFGTable()) {
+	for (auto cfgEntry : cfg->getCFGTable()) {
 		int keyStmtIdx = cfgEntry.first;
 		for (int nextStmtIdx : cfgEntry.second) {
 			Next::insert(keyStmtIdx, nextStmtIdx);
@@ -164,7 +170,7 @@ void DesignExtractor::generateCFGFromStmt(
 			StmtNode* firstChildStmtNode = childStmtLst->getStmtNodes().at(0);
 			int firstChildStmtIdx = stmtNodeIndexMap[firstChildStmtNode];
 
-			pkb->insertToCFG(currStmtIdx, firstChildStmtIdx);
+			cfg->insert(currStmtIdx, firstChildStmtIdx);
 
 			generateCFG(childStmtLst, pkb, stmtNodeIndexMap);
 
@@ -175,14 +181,14 @@ void DesignExtractor::generateCFGFromStmt(
 		}
 	} else if (currNode->getStmtType() == StatementType::WHILE_TYPE) {
 		if (nextStmtIdx != EXIT_NODE_IDX) {
-			pkb->insertToCFG(currStmtIdx, nextStmtIdx);
+			cfg->insert(currStmtIdx, nextStmtIdx);
 		}
 
 		StmtLstNode* childStmtLst = currNode->getChildStmtLst()[0];
 		StmtNode* firstChildStmtNode = childStmtLst->getStmtNodes().at(0);
 		int firstChildStmtIdx = stmtNodeIndexMap[firstChildStmtNode];
 
-		pkb->insertToCFG(currStmtIdx, firstChildStmtIdx);
+		cfg->insert(currStmtIdx, firstChildStmtIdx);
 
 		generateCFG(childStmtLst, pkb, stmtNodeIndexMap);
 
@@ -192,7 +198,7 @@ void DesignExtractor::generateCFGFromStmt(
 		generateCFGFromStmt(lastChildStmtNode, pkb, stmtNodeIndexMap, lastChildStmtIdx, currStmtIdx);
 	} else {
 		if (nextStmtIdx != EXIT_NODE_IDX) {
-			pkb->insertToCFG(currStmtIdx, nextStmtIdx);
+			cfg->insert(currStmtIdx, nextStmtIdx);
 		}
 	}
 }
@@ -232,4 +238,8 @@ void DesignExtractor::extract(SourceAST& ast, PKBInserter* pkb) {
 
 	/* Construct CFGs and populates Next relationship */
 	processCFGs(ast.getRoot(), pkb, stmtNodeIndexMap);
+}
+
+std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> DesignExtractor::getCFG() {
+	return cfg->getCFGTable();
 }

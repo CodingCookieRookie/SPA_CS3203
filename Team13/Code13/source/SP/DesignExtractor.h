@@ -3,21 +3,21 @@
 #include "../PKB/Next.h"
 #include "../PKB/TransitivePopulator.h"
 #include "../PKB/Pattern.h"
-#include "../PKB/CFG.h"
 #include "../PKB/PKBInserter.h"
+#include "../SP/CFG.h"
 #include "SourceAST.h"
 
 class DesignExtractor {
 private:
-	DesignExtractor() {}
+	CFG* cfg;
 
 	/* Populates relationships */
-	static void insertFollows(SourceAST& ast);
-	static void insertModifies(SourceAST& ast);
-	static void insertUses(SourceAST& ast);
-	static void insertParent(SourceAST& ast);
-	static void insertCalls(SourceAST& ast);
-	static void insertNext(PKBInserter* pkb);
+	void insertFollows(SourceAST& ast);
+	void insertModifies(SourceAST& ast);
+	void insertUses(SourceAST& ast);
+	void insertParent(SourceAST& ast);
+	void insertCalls(SourceAST& ast);
+	void insertNext(PKBInserter* pkb);
 
 	/* Populates entities */
 	static void insertStmt(SourceAST& ast, std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap);
@@ -27,15 +27,15 @@ private:
 	static void insertStmtFromProc(SourceAST& ast);
 
 	/* Constructs and processes CFGs */
-	static void processCFGs(
+	void processCFGs(
 		ProgramNode* programNode,
 		PKBInserter* pkb,
 		std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap);
-	static void generateCFG(
+	void generateCFG(
 		StmtLstNode* stmtLstNode,
 		PKBInserter* pkb,
 		std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap);
-	static void generateCFGFromStmt(
+	void generateCFGFromStmt(
 		StmtNode* currNode,
 		PKBInserter* pkb,
 		std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap,
@@ -43,5 +43,8 @@ private:
 		int nextStmtIdx);
 
 public:
-	static void extract(SourceAST& ast, PKBInserter* pkb);
+	DesignExtractor();
+	~DesignExtractor();
+	void extract(SourceAST& ast, PKBInserter* pkb);
+	std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> getCFG();
 };

@@ -18,6 +18,7 @@ TestWrapper::TestWrapper() {
 	pkb = new PKB();
 	pkbGetter = new PKBGetter(pkb);
 	pkbInserter = new PKBInserter(pkb);
+	designExtractor = new DesignExtractor();
 }
 
 TestWrapper::~TestWrapper() = default;
@@ -29,10 +30,9 @@ void TestWrapper::parse(std::string filename) {
 	std::string fileContent = getFileContent(filename);
 
 	try {
-		Parser parser;
 		SourceAST ast = parser.parse(fileContent);
 		ASTValidator::validateAST(ast);
-		DesignExtractor::extract(ast, pkbInserter);
+		designExtractor->extract(ast, pkbInserter);
 	} catch (ParserException& ex) {
 		std::cerr << ex.what() << std::endl;
 		exit(EXIT_FAILURE);
