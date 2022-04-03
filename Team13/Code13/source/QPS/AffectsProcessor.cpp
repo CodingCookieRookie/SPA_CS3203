@@ -13,12 +13,12 @@ AffectsProcessor::~AffectsProcessor() { affectsCache->performCleanUp(); }
 bool AffectsProcessor::isBasicAffectsRequirementsFulfilled(StmtIndex leftIdx, StmtIndex rightIdx) {
 	return Entity::getTypeFromStmtIdx(leftIdx) == StatementType::ASSIGN_TYPE
 		&& Entity::getTypeFromStmtIdx(rightIdx) == StatementType::ASSIGN_TYPE
-		&& UsesS::getVariables(rightIdx).size() > 0
+		&& UsesS::getFromLeftArg(rightIdx).size() > 0
 		&& Entity::getProcFromStmt(leftIdx) == Entity::getProcFromStmt(rightIdx);
 }
 
 bool AffectsProcessor::checkRsHoldsFromTraversal(StmtIndex leftIdx, StmtIndex rightIdx) {
-	VarIndex modifiedVar = ModifiesS::getVariables(leftIdx).front();
+	VarIndex modifiedVar = ModifiesS::getFromLeftArg(leftIdx).front();
 	std::unordered_set<StmtIndex> visited;
 	std::queue<StmtIndex> queue;
 	queue.push(leftIdx);
@@ -27,7 +27,7 @@ bool AffectsProcessor::checkRsHoldsFromTraversal(StmtIndex leftIdx, StmtIndex ri
 		StmtIndex stmtIdx = queue.front();
 		queue.pop();
 
-		for (StmtIndex successor : Next::getSuccessors(stmtIdx)) {
+		for (StmtIndex successor : Next::getFromLeftArg(stmtIdx)) {
 			if (successor == rightIdx) {
 				return true;
 			}
@@ -56,7 +56,7 @@ bool AffectsProcessor::doesRsHold(StmtIndex leftIdx, StmtIndex rightIdx) {
 		return false;
 	}
 
-	VarIndex modifiedVar = ModifiesS::getVariables(leftIdx).front();
+	VarIndex modifiedVar = ModifiesS::getFromLeftArg(leftIdx).front();
 	if (!UsesS::contains(rightIdx, modifiedVar)) {
 		return false; // ensures that rightStmt var indeed uses the modifiedVar
 	}
@@ -111,24 +111,24 @@ std::vector<StmtIndex> AffectsProcessor::getStmtsFromComputationHelper(StmtIndex
 std::vector<StmtIndex> AffectsProcessor::getUsingLeftStmtIndex(StmtIndex leftIdx) {
 	// if AffectsProcessor has already been computed FULLY for a leftIdx, use it directly
 	if (affectsCache->isPredecessorFullyComputed(leftIdx)) {
-		return affectsCache->getSuccessors(leftIdx);
+		return affectsCache->getFromLeftArg(leftIdx);
 	}
 
 	return getStmtsFromComputationHelper(leftIdx,
 		std::bind(&AffectsProcessor::doesRsHold, this, leftIdx, std::placeholders::_1),
-		&Next::getSuccessors,
+		&Next::getFromLeftArg,
 		std::bind(&AffectsCache::insertSuccessors, affectsCache, std::placeholders::_1, std::placeholders::_2));
 };
 
 std::vector<StmtIndex> AffectsProcessor::getUsingRightStmtIndex(StmtIndex rightIdx) {
 	// if AffectsProcessor has already been computed FULLY for a rightIdx, use it directly
 	if (affectsCache->isSuccessorFullyComputed(rightIdx)) {
-		return affectsCache->getPredecessors(rightIdx);
+		return affectsCache->getFromRightArg(rightIdx);
 	}
 
 	return getStmtsFromComputationHelper(rightIdx,
 		std::bind(&AffectsProcessor::doesRsHold, this, std::placeholders::_1, rightIdx),
-		&Next::getPredecessors,
+		&Next::getFromRightArg,
 		std::bind(&AffectsCache::insertPredecessors, affectsCache, std::placeholders::_1, std::placeholders::_2));
 };
 

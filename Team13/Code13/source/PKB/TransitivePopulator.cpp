@@ -28,12 +28,12 @@ void TransitivePopulator::populateRS1ProcsFromStmts() {
 		auto stmtIndices = entry.second;
 
 		for (auto stmtIndex : stmtIndices) {
-			std::vector<VarIndex> usesVarIndices = UsesS::getVariables(stmtIndex);
+			std::vector<VarIndex> usesVarIndices = UsesS::getFromLeftArg(stmtIndex);
 			for (VarIndex varIndex : usesVarIndices) {
 				UsesP::insert(procIndex, varIndex);
 			}
 
-			std::vector<VarIndex> modifiesVarIndices = ModifiesS::getVariables(stmtIndex);
+			std::vector<VarIndex> modifiesVarIndices = ModifiesS::getFromLeftArg(stmtIndex);
 			for (VarIndex varIndex : modifiesVarIndices) {
 				ModifiesP::insert(procIndex, varIndex);
 			}
@@ -60,12 +60,12 @@ void TransitivePopulator::populateRS1TransitiveCallsStmts() {
 		std::string procName = Attribute::getAttributeNameByStmtIdx(callStmtIndex);
 		ProcIndex procIndex = Entity::getProcIdx(procName);
 
-		std::vector<VarIndex> usesVarIndices = UsesP::getVariables(procIndex);
+		std::vector<VarIndex> usesVarIndices = UsesP::getFromLeftArg(procIndex);
 		for (VarIndex varIndex : usesVarIndices) {
 			UsesS::insert(callStmtIndex, varIndex);
 		}
 
-		std::vector<VarIndex> modifiesVarIndices = ModifiesP::getVariables(procIndex);
+		std::vector<VarIndex> modifiesVarIndices = ModifiesP::getFromLeftArg(procIndex);
 		for (VarIndex varIndex : modifiesVarIndices) {
 			ModifiesS::insert(callStmtIndex, varIndex);
 		}

@@ -19,96 +19,77 @@ private:
 	}
 
 public:
-	TEST_METHOD(insert_getSuccessors_onePredOneSuc) {
+	TEST_METHOD(insert_getFromLeftArg_onePredOneSuc) {
 		Next::insert(predecessor1, successor1);
 		Next::insert(predecessor2, successor2);
 
-		auto statements = Next::getSuccessors(predecessor1);
+		auto statements = Next::getFromLeftArg(predecessor1);
 		Assert::IsTrue(std::vector<StmtIndex> { successor1 } == statements);
 
-		statements = Next::getSuccessors(predecessor2);
+		statements = Next::getFromLeftArg(predecessor2);
 		Assert::IsTrue(std::vector<StmtIndex> { successor2 } == statements);
 
-		statements = Next::getSuccessors(successor1);
+		statements = Next::getFromLeftArg(successor1);
 		Assert::IsTrue(0 == statements.size());
 	};
 
-	TEST_METHOD(insert_getSuccessors_onePredMultSuc) {
+	TEST_METHOD(insert_getFromLeftArg_onePredMultSuc) {
 		Next::insert(predecessor1, successor1);
 		Next::insert(predecessor1, successor2);
 
-		auto statements = Next::getSuccessors(predecessor1);
+		auto statements = Next::getFromLeftArg(predecessor1);
 		Assert::IsTrue(std::vector<StmtIndex> { successor1, successor2 } == statements);
 
-		statements = Next::getSuccessors(successor1);
+		statements = Next::getFromLeftArg(successor1);
 		Assert::IsTrue(0 == statements.size());
 	};
 
-	TEST_METHOD(insert_getPredecessors_onePredOneSuc) {
+	TEST_METHOD(insert_getFromRightArg_onePredOneSuc) {
 		Next::insert(predecessor1, successor1);
 		Next::insert(predecessor2, successor2);
 
-		auto statements = Next::getPredecessors(successor1);
+		auto statements = Next::getFromRightArg(successor1);
 		Assert::IsTrue(std::vector<StmtIndex> {predecessor1} == statements);
 
-		statements = Next::getPredecessors(successor2);
+		statements = Next::getFromRightArg(successor2);
 		Assert::IsTrue(std::vector<StmtIndex> {predecessor2} == statements);
 
-		statements = Next::getPredecessors(predecessor1);
+		statements = Next::getFromRightArg(predecessor1);
 		Assert::IsTrue(0 == statements.size());
 	};
 
-	TEST_METHOD(insert_getPredecessors_multPredOneSuc) {
+	TEST_METHOD(insert_getFromRightArg_multPredOneSuc) {
 		std::vector<StmtIndex> expectedAns{ predecessor1, predecessor2 };
 
 		Next::insert(predecessor1, successor1);
 		Next::insert(predecessor2, successor1);
-		auto statements = Next::getPredecessors(successor1);
+		auto statements = Next::getFromRightArg(successor1);
 		Assert::IsTrue(std::vector<StmtIndex> { predecessor1, predecessor2 } == statements);
 
-		statements = Next::getPredecessors(predecessor1);
+		statements = Next::getFromRightArg(predecessor1);
 		Assert::IsTrue(0 == statements.size());
 	};
 
-	TEST_METHOD(insert_containsPredecessor_onePredOneSuc) {
+	TEST_METHOD(insert_contains_onePredOneSuc) {
 		Next::insert(predecessor1, successor1);
 
-		Assert::IsTrue(Next::containsPredecessor(predecessor1, successor1));
-		Assert::IsFalse(Next::containsPredecessor(successor1, predecessor1));
-		Assert::IsFalse(Next::containsPredecessor(predecessor2, successor1));
-		Assert::IsFalse(Next::containsPredecessor(predecessor1, successor2));
+		Assert::IsTrue(Next::contains(predecessor1, successor1));
+		Assert::IsFalse(Next::contains(successor1, predecessor1));
+		Assert::IsFalse(Next::contains(predecessor2, successor1));
+		Assert::IsFalse(Next::contains(predecessor1, successor2));
 	};
 
-	TEST_METHOD(insert_containsPredecessor_onePredMultSuc) {
-		Next::insert(predecessor1, successor1);
-		Next::insert(predecessor1, successor2);
-
-		Assert::IsTrue(Next::containsPredecessor(predecessor1, successor1));
-		Assert::IsFalse(Next::containsPredecessor(successor1, predecessor1));
-		Assert::IsFalse(Next::containsPredecessor(predecessor2, successor1));
-		Assert::IsTrue(Next::containsPredecessor(predecessor1, successor2));
-	};
-
-	TEST_METHOD(insert_containsSuccessor_onePredOneSuc) {
-		Next::insert(predecessor1, successor1);
-
-		Assert::IsTrue(Next::containsSuccessor(predecessor1, successor1));
-		Assert::IsFalse(Next::containsSuccessor(successor1, predecessor1));
-		Assert::IsFalse(Next::containsSuccessor(predecessor2, successor1));
-		Assert::IsFalse(Next::containsSuccessor(predecessor1, successor2));
-	};
-
-	TEST_METHOD(insert_containsSuccessor_onePredMultSuc) {
+	TEST_METHOD(insert_contains_onePredMultSuc) {
 		Next::insert(predecessor1, successor1);
 		Next::insert(predecessor1, successor2);
 
-		Assert::IsTrue(Next::containsSuccessor(predecessor1, successor1));
-		Assert::IsFalse(Next::containsSuccessor(successor1, predecessor1));
-		Assert::IsFalse(Next::containsSuccessor(predecessor2, successor1));
-		Assert::IsTrue(Next::containsSuccessor(predecessor1, successor2));
+		Assert::IsTrue(Next::contains(predecessor1, successor1));
+		Assert::IsFalse(Next::contains(successor1, predecessor1));
+		Assert::IsFalse(Next::contains(predecessor2, successor1));
+		Assert::IsTrue(Next::contains(predecessor1, successor2));
 	};
 
-	TEST_METHOD(insert_getAllPredecessorSuccessorInfo_onePredOneSuc) {
+	TEST_METHOD(insert_getAllInfo_onePredOneSuc) {
 		std::vector<StmtIndex> predecessors{ predecessor1, predecessor2 };
 		std::vector<StmtIndex> successors{ successor1, successor2 };
 		std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> expectedAns = std::make_tuple(predecessors, successors);
@@ -116,11 +97,11 @@ public:
 		Next::insert(predecessor1, successor1);
 		Next::insert(predecessor2, successor2);
 
-		auto predSucInfo = Next::getAllPredecessorSuccessorInfo();
+		auto predSucInfo = Next::getAllInfo();
 		Assert::IsTrue(expectedAns == predSucInfo);
 	};
 
-	TEST_METHOD(insert_getAllPredecessorSuccessorInfo_onePredMultSuc) {
+	TEST_METHOD(insert_getAllInfo_onePredMultSuc) {
 		std::vector<StmtIndex> predecessors{ predecessor1, predecessor1 };
 		std::vector<StmtIndex> successors{ successor1, successor2 };
 		std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> expectedAns = std::make_tuple(predecessors, successors);
@@ -128,11 +109,11 @@ public:
 		Next::insert(predecessor1, successor1);
 		Next::insert(predecessor1, successor2);
 
-		auto predSucInfo = Next::getAllPredecessorSuccessorInfo();
+		auto predSucInfo = Next::getAllInfo();
 		Assert::IsTrue(expectedAns == predSucInfo);
 	};
 
-	TEST_METHOD(insert_getAllPredecessorSuccessorInfo_multPredOneSuc) {
+	TEST_METHOD(insert_getAllInfo_multPredOneSuc) {
 		std::vector<StmtIndex> predecessors{ predecessor1, predecessor2 };
 		std::vector<StmtIndex> successors{ successor1, successor1 };
 		std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> expectedAns = std::make_tuple(predecessors, successors);
@@ -140,7 +121,7 @@ public:
 		Next::insert(predecessor1, successor1);
 		Next::insert(predecessor2, successor1);
 
-		auto predSucInfo = Next::getAllPredecessorSuccessorInfo();
+		auto predSucInfo = Next::getAllInfo();
 		Assert::IsTrue(expectedAns == predSucInfo);
 	};
 

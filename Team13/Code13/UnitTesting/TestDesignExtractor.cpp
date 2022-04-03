@@ -49,7 +49,7 @@ public:
 		Assert::AreEqual(size_t(1), Entity::getAllVars().size());
 		Assert::AreEqual(varName, Entity::getVarName(Entity::getAllVars()[0]));
 
-		Assert::AreEqual(size_t(1), std::get<0>(ModifiesS::getAllSynonymVarInfo()).size());
+		Assert::AreEqual(size_t(1), std::get<0>(ModifiesS::getAllInfo()).size());
 	}
 
 	TEST_METHOD(extract_printStatementOnly_success) {
@@ -73,7 +73,7 @@ public:
 		Assert::AreEqual(size_t(1), Entity::getAllVars().size());
 		Assert::AreEqual(varName, Entity::getVarName(Entity::getAllVars()[0]));
 
-		Assert::AreEqual(size_t(1), std::get<0>(UsesS::getAllSynonymVarInfo()).size());
+		Assert::AreEqual(size_t(1), std::get<0>(UsesS::getAllInfo()).size());
 	}
 
 	TEST_METHOD(extract_readandPrintStatement_success) {
@@ -101,11 +101,11 @@ public:
 		Assert::AreEqual(varNameX, Entity::getVarName(Entity::getAllVars()[0]));
 		Assert::AreEqual(varNameY, Entity::getVarName(Entity::getAllVars()[1]));
 
-		Assert::AreEqual(size_t(1), std::get<0>(ModifiesS::getAllSynonymVarInfo()).size());
-		Assert::AreEqual(size_t(1), std::get<0>(UsesS::getAllSynonymVarInfo()).size());
+		Assert::AreEqual(size_t(1), std::get<0>(ModifiesS::getAllInfo()).size());
+		Assert::AreEqual(size_t(1), std::get<0>(UsesS::getAllInfo()).size());
 
-		Assert::AreEqual(size_t(1), std::get<0>(Follows::getAllPredecessorSuccessorInfo()).size());
-		Assert::AreEqual(size_t(1), std::get<0>(FollowsT::getAllPredecessorSuccessorInfo()).size());
+		Assert::AreEqual(size_t(1), std::get<0>(Follows::getAllInfo()).size());
+		Assert::AreEqual(size_t(1), std::get<0>(FollowsT::getAllInfo()).size());
 	}
 
 	TEST_METHOD(extract_multipleStatements_allFollowsFollowsTCaptured) {
@@ -130,9 +130,9 @@ public:
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
 
-		Assert::AreEqual(size_t(2), std::get<0>(Follows::getAllPredecessorSuccessorInfo()).size());
+		Assert::AreEqual(size_t(2), std::get<0>(Follows::getAllInfo()).size());
 		/* We expect (3 choose 2) = 3 relationships in Follows T */
-		Assert::AreEqual(size_t(3), std::get<0>(FollowsT::getAllPredecessorSuccessorInfo()).size());
+		Assert::AreEqual(size_t(3), std::get<0>(FollowsT::getAllInfo()).size());
 	}
 
 	TEST_METHOD(extract_singleIfStatement_parentCaptured) {
@@ -167,7 +167,7 @@ public:
 
 		/* We expect two Parent relationships to be captured, one from the print statement in the then-block,
 		   and one from the read statement in the else-block. */
-		Assert::AreEqual(size_t(2), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());
+		Assert::AreEqual(size_t(2), std::get<0>(Parent::getAllInfo()).size());
 	}
 
 	TEST_METHOD(extract_singleWhileStatement_parentCaptured) {
@@ -197,7 +197,7 @@ public:
 		DesignExtractor::extract(ast, pkbInserter);
 
 		/* We expect one Parent relationships to be captured, from the read statement in the while-block */
-		Assert::AreEqual(size_t(1), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());
+		Assert::AreEqual(size_t(1), std::get<0>(Parent::getAllInfo()).size());
 	}
 
 	TEST_METHOD(extract_whileInWhile_parentAndParentTCaptured) {
@@ -238,11 +238,11 @@ public:
 
 		/* We expect two Parent relationships to be captured,
 		   one from the outer while to inner while, and one from the inner while to read x; */
-		Assert::AreEqual(size_t(2), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());
+		Assert::AreEqual(size_t(2), std::get<0>(Parent::getAllInfo()).size());
 		/* We expect three Parent relationships to be captured,
 		   one from the outer while to inner while, one from the inner while to read x;,
 		   and one from the outer while to read x; */
-		Assert::AreEqual(size_t(3), std::get<0>(ParentT::getAllPredecessorSuccessorInfo()).size());
+		Assert::AreEqual(size_t(3), std::get<0>(ParentT::getAllInfo()).size());
 	}
 
 	TEST_METHOD(extract_whileAndIfInIf_parentAndParentTCaptured) {
@@ -308,11 +308,11 @@ public:
 		DesignExtractor::extract(ast, pkbInserter);
 
 		/* We expect five Parent relationships to be captured: (1, 2), (1, 4), (2, 3), (4, 5) and (4, 6). */
-		Assert::AreEqual(size_t(5), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());
+		Assert::AreEqual(size_t(5), std::get<0>(Parent::getAllInfo()).size());
 
 		/* We expect eight ParentT relationships to be captured:
 		   (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (2, 3), (4, 5) and (4, 6). */
-		Assert::AreEqual(size_t(8), std::get<0>(ParentT::getAllPredecessorSuccessorInfo()).size());
+		Assert::AreEqual(size_t(8), std::get<0>(ParentT::getAllInfo()).size());
 	}
 
 	TEST_METHOD(extract_ifInWhile_parentAndParentTCaptured) {
@@ -361,11 +361,11 @@ public:
 		DesignExtractor::extract(ast, pkbInserter);
 
 		/* We expect three Parent relationships to be captured: (1, 2), (2, 3), and (2, 4). */
-		Assert::AreEqual(size_t(3), std::get<0>(Parent::getAllPredecessorSuccessorInfo()).size());
+		Assert::AreEqual(size_t(3), std::get<0>(Parent::getAllInfo()).size());
 
 		/* We expect five ParentT relationships to be captured:
 		   (1, 2), (1, 3), (1, 4), (2, 3), and (2, 4). */
-		Assert::AreEqual(size_t(5), std::get<0>(ParentT::getAllPredecessorSuccessorInfo()).size());
+		Assert::AreEqual(size_t(5), std::get<0>(ParentT::getAllInfo()).size());
 	}
 
 	TEST_METHOD(extract_assign_postfixExpressionExtracted) {
@@ -1378,8 +1378,8 @@ public:
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx1, stmtIdx2));
-		Assert::AreEqual(size_t(1), std::get<0>(Next::getAllPredecessorSuccessorInfo()).size());
+		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
+		Assert::AreEqual(size_t(1), std::get<0>(Next::getAllInfo()).size());
 	}
 
 	TEST_METHOD(extract_multipleStatements_nextCaptured) {
@@ -1413,9 +1413,9 @@ public:
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		StmtIndex stmtIdx3 = StmtIndex(3);
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx2, stmtIdx3));
-		Assert::AreEqual(size_t(2), std::get<0>(Next::getAllPredecessorSuccessorInfo()).size());
+		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
+		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx3));
+		Assert::AreEqual(size_t(2), std::get<0>(Next::getAllInfo()).size());
 	}
 
 	TEST_METHOD(extract_singleIfStatement_nextCaptured) {
@@ -1451,9 +1451,9 @@ public:
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		StmtIndex stmtIdx3 = StmtIndex(3);
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx1, stmtIdx3));
-		Assert::AreEqual(size_t(2), std::get<0>(Next::getAllPredecessorSuccessorInfo()).size());
+		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
+		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx3));
+		Assert::AreEqual(size_t(2), std::get<0>(Next::getAllInfo()).size());
 	}
 
 	TEST_METHOD(extract_singleWhileStatement_nextCaptured) {
@@ -1484,9 +1484,9 @@ public:
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx2, stmtIdx1));
-		Assert::AreEqual(size_t(2), std::get<0>(Next::getAllPredecessorSuccessorInfo()).size());
+		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
+		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx1));
+		Assert::AreEqual(size_t(2), std::get<0>(Next::getAllInfo()).size());
 	}
 
 	TEST_METHOD(extract_whileInWhile_nextCaptured) {
@@ -1528,11 +1528,11 @@ public:
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		StmtIndex stmtIdx3 = StmtIndex(3);
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx2, stmtIdx1));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx2, stmtIdx3));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx3, stmtIdx2));
-		Assert::AreEqual(size_t(4), std::get<0>(Next::getAllPredecessorSuccessorInfo()).size());
+		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
+		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx1));
+		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx3));
+		Assert::IsTrue(Next::contains(stmtIdx3, stmtIdx2));
+		Assert::AreEqual(size_t(4), std::get<0>(Next::getAllInfo()).size());
 	}
 
 	TEST_METHOD(extract_whileAndIfInIf_nextCaptured) {
@@ -1603,13 +1603,13 @@ public:
 		StmtIndex stmtIdx4 = StmtIndex(4);
 		StmtIndex stmtIdx5 = StmtIndex(5);
 		StmtIndex stmtIdx6 = StmtIndex(6);
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx1, stmtIdx4));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx2, stmtIdx3));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx3, stmtIdx2));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx4, stmtIdx5));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx4, stmtIdx6));
-		Assert::AreEqual(size_t(6), std::get<0>(Next::getAllPredecessorSuccessorInfo()).size());
+		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
+		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx4));
+		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx3));
+		Assert::IsTrue(Next::contains(stmtIdx3, stmtIdx2));
+		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx5));
+		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx6));
+		Assert::AreEqual(size_t(6), std::get<0>(Next::getAllInfo()).size());
 	}
 
 	TEST_METHOD(extract_ifInWhile_nextCaptured) {
@@ -1661,12 +1661,12 @@ public:
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		StmtIndex stmtIdx3 = StmtIndex(3);
 		StmtIndex stmtIdx4 = StmtIndex(4);
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx2, stmtIdx3));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx2, stmtIdx4));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx3, stmtIdx1));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx4, stmtIdx1));
-		Assert::AreEqual(size_t(5), std::get<0>(Next::getAllPredecessorSuccessorInfo()).size());
+		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
+		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx3));
+		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx4));
+		Assert::IsTrue(Next::contains(stmtIdx3, stmtIdx1));
+		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx1));
+		Assert::AreEqual(size_t(5), std::get<0>(Next::getAllInfo()).size());
 	}
 
 	TEST_METHOD(extract_multIfStatements_nextCaptured) {
@@ -1730,13 +1730,13 @@ public:
 		StmtIndex stmtIdx4 = StmtIndex(4);
 		StmtIndex stmtIdx5 = StmtIndex(5);
 		StmtIndex stmtIdx6 = StmtIndex(6);
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx1, stmtIdx3));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx2, stmtIdx4));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx3, stmtIdx4));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx4, stmtIdx5));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx4, stmtIdx6));
-		Assert::AreEqual(size_t(6), std::get<0>(Next::getAllPredecessorSuccessorInfo()).size());
+		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
+		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx3));
+		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx4));
+		Assert::IsTrue(Next::contains(stmtIdx3, stmtIdx4));
+		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx5));
+		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx6));
+		Assert::AreEqual(size_t(6), std::get<0>(Next::getAllInfo()).size());
 	}
 
 	TEST_METHOD(extract_multWhileStatements_nextCaptured) {
@@ -1790,12 +1790,12 @@ public:
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		StmtIndex stmtIdx3 = StmtIndex(3);
 		StmtIndex stmtIdx4 = StmtIndex(4);
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx2, stmtIdx1));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx1, stmtIdx3));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx3, stmtIdx4));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx4, stmtIdx3));
-		Assert::AreEqual(size_t(5), std::get<0>(Next::getAllPredecessorSuccessorInfo()).size());
+		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
+		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx1));
+		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx3));
+		Assert::IsTrue(Next::contains(stmtIdx3, stmtIdx4));
+		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx3));
+		Assert::AreEqual(size_t(5), std::get<0>(Next::getAllInfo()).size());
 	}
 
 	TEST_METHOD(extract_ifStatementThenNonContainerStatments_nextCaptured) {
@@ -1842,13 +1842,13 @@ public:
 		StmtIndex stmtIdx3 = StmtIndex(3);
 		StmtIndex stmtIdx4 = StmtIndex(4);
 		StmtIndex stmtIdx5 = StmtIndex(5);
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx1, stmtIdx3));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx2, stmtIdx4));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx3, stmtIdx4));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx4, stmtIdx5));
+		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
+		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx3));
+		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx4));
+		Assert::IsTrue(Next::contains(stmtIdx3, stmtIdx4));
+		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx5));
 
-		Assert::AreEqual(size_t(5), std::get<0>(Next::getAllPredecessorSuccessorInfo()).size());
+		Assert::AreEqual(size_t(5), std::get<0>(Next::getAllInfo()).size());
 	}
 
 	TEST_METHOD(extract_whileStatementThenNonContainerStatments_nextCaptured) {
@@ -1896,11 +1896,11 @@ public:
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		StmtIndex stmtIdx3 = StmtIndex(3);
 		StmtIndex stmtIdx4 = StmtIndex(4);
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx2, stmtIdx1));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx1, stmtIdx3));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx3, stmtIdx4));
-		Assert::AreEqual(size_t(4), std::get<0>(Next::getAllPredecessorSuccessorInfo()).size());
+		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
+		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx1));
+		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx3));
+		Assert::IsTrue(Next::contains(stmtIdx3, stmtIdx4));
+		Assert::AreEqual(size_t(4), std::get<0>(Next::getAllInfo()).size());
 	}
 
 	TEST_METHOD(extract_ifStatementMultipleStatementsInStmtLst_nextCaptured) {
@@ -1955,11 +1955,11 @@ public:
 		StmtIndex stmtIdx3 = StmtIndex(3);
 		StmtIndex stmtIdx4 = StmtIndex(4);
 		StmtIndex stmtIdx5 = StmtIndex(5);
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx2, stmtIdx3));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx1, stmtIdx4));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx4, stmtIdx5));
-		Assert::AreEqual(size_t(4), std::get<0>(Next::getAllPredecessorSuccessorInfo()).size());
+		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
+		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx3));
+		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx4));
+		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx5));
+		Assert::AreEqual(size_t(4), std::get<0>(Next::getAllInfo()).size());
 	}
 
 	TEST_METHOD(extract_whileStatementMultipleStatementsInStmtLst_nextCaptured) {
@@ -2007,11 +2007,11 @@ public:
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		StmtIndex stmtIdx3 = StmtIndex(3);
 		StmtIndex stmtIdx4 = StmtIndex(4);
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx2, stmtIdx3));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx3, stmtIdx4));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx4, stmtIdx1));
-		Assert::AreEqual(size_t(4), std::get<0>(Next::getAllPredecessorSuccessorInfo()).size());
+		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
+		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx3));
+		Assert::IsTrue(Next::contains(stmtIdx3, stmtIdx4));
+		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx1));
+		Assert::AreEqual(size_t(4), std::get<0>(Next::getAllInfo()).size());
 	}
 
 	TEST_METHOD(extract_multipleProc_nextCaptured) {
@@ -2059,9 +2059,9 @@ public:
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		StmtIndex stmtIdx3 = StmtIndex(3);
 		StmtIndex stmtIdx4 = StmtIndex(4);
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx3, stmtIdx4));
-		Assert::AreEqual(size_t(2), std::get<0>(Next::getAllPredecessorSuccessorInfo()).size());
+		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
+		Assert::IsTrue(Next::contains(stmtIdx3, stmtIdx4));
+		Assert::AreEqual(size_t(2), std::get<0>(Next::getAllInfo()).size());
 	}
 
 	TEST_METHOD(extract_mixedCode_nextCaptured) {
@@ -2140,15 +2140,15 @@ public:
 		StmtIndex stmtIdx5 = StmtIndex(5);
 		StmtIndex stmtIdx6 = StmtIndex(6);
 		StmtIndex stmtIdx7 = StmtIndex(7);
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx2, stmtIdx3));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx2, stmtIdx4));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx3, stmtIdx6));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx4, stmtIdx5));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx5, stmtIdx6));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx6, stmtIdx1));
-		Assert::IsTrue(Next::containsPredecessor(stmtIdx1, stmtIdx7));
-		Assert::AreEqual(size_t(8), std::get<0>(Next::getAllPredecessorSuccessorInfo()).size());
+		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
+		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx3));
+		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx4));
+		Assert::IsTrue(Next::contains(stmtIdx3, stmtIdx6));
+		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx5));
+		Assert::IsTrue(Next::contains(stmtIdx5, stmtIdx6));
+		Assert::IsTrue(Next::contains(stmtIdx6, stmtIdx1));
+		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx7));
+		Assert::AreEqual(size_t(8), std::get<0>(Next::getAllInfo()).size());
 	}
 
 	TEST_METHOD(extract_insertCalls_callsAndCallsTCaptured) {
@@ -2287,11 +2287,11 @@ public:
 
 		/* Check Calls population */
 		/* We expect three Calls relationships to be captured: (1, 2), (2, 3), and (5, 4). */
-		Assert::AreEqual(size_t(3), std::get<0>(Calls::getAllPredecessorSuccessorInfo()).size());
+		Assert::AreEqual(size_t(3), std::get<0>(Calls::getAllInfo()).size());
 
 		/* We expect four CallsT relationships to be captured:
 		   (1, 2), (1, 3), (2, 3), and (5, 4). */
-		Assert::AreEqual(size_t(4), std::get<0>(CallsT::getAllPredecessorSuccessorInfo()).size());
+		Assert::AreEqual(size_t(4), std::get<0>(CallsT::getAllInfo()).size());
 	}
 
 	TEST_METHOD(extract_singleProc_insertStmtFromProc_usesPAndModifiesPCaptured) {
@@ -2364,7 +2364,7 @@ public:
 		/* Check UsesP (vars might not be in order) */
 		/* Vars used: u, v, b, c, m, n, y */
 		std::vector<VarIndex> expectedResultUsesP{ 1, 2, 4, 5, 6, 7, 9 };
-		std::vector<EntityAttributeRef> resultUsesP = UsesP::getVariables(procIndex);
+		std::vector<EntityAttributeRef> resultUsesP = UsesP::getFromLeftArg(procIndex);
 		Assert::AreEqual(size_t(7), resultUsesP.size());
 		for (VarIndex varIndex : resultUsesP) {
 			Assert::IsTrue(std::find(expectedResultUsesP.begin(), expectedResultUsesP.end(), varIndex) != expectedResultUsesP.end());
@@ -2373,7 +2373,7 @@ public:
 		/* Check ModifiesP (vars might not be in order) */
 		/* Vars modified: a, x, y */
 		std::vector<VarIndex> expectedResultModifiesP{ 3, 8, 9 };
-		std::vector<EntityAttributeRef> resultModifiesP = ModifiesP::getVariables(procIndex);
+		std::vector<EntityAttributeRef> resultModifiesP = ModifiesP::getFromLeftArg(procIndex);
 		Assert::AreEqual(size_t(3), resultModifiesP.size());
 		for (VarIndex varIndex : resultModifiesP) {
 			Assert::IsTrue(std::find(expectedResultModifiesP.begin(), expectedResultModifiesP.end(), varIndex) != expectedResultModifiesP.end());
@@ -2467,7 +2467,7 @@ public:
 		/* Check UsesP for 1st proc (vars might not be in order) */
 		/* Vars used: u, v, b, c, m, n, y */
 		std::vector<VarIndex> expectedResultUsesP1{ 1, 2, 4, 5, 6, 7, 9 };
-		std::vector<EntityAttributeRef> resultUsesP1 = UsesP::getVariables(procIndex1);
+		std::vector<EntityAttributeRef> resultUsesP1 = UsesP::getFromLeftArg(procIndex1);
 		Assert::AreEqual(size_t(7), resultUsesP1.size());
 		for (VarIndex varIndex : resultUsesP1) {
 			Assert::IsTrue(std::find(expectedResultUsesP1.begin(), expectedResultUsesP1.end(), varIndex) != expectedResultUsesP1.end());
@@ -2476,7 +2476,7 @@ public:
 		/* Check ModifiesP for 1st proc (vars might not be in order) */
 		/* Vars modified: a, x, y */
 		std::vector<VarIndex> expectedResultModifiesP1{ 3, 8, 9 };
-		std::vector<EntityAttributeRef> resultModifiesP1 = ModifiesP::getVariables(procIndex1);
+		std::vector<EntityAttributeRef> resultModifiesP1 = ModifiesP::getFromLeftArg(procIndex1);
 		Assert::AreEqual(size_t(3), resultModifiesP1.size());
 		for (VarIndex varIndex : resultModifiesP1) {
 			Assert::IsTrue(std::find(expectedResultModifiesP1.begin(), expectedResultModifiesP1.end(), varIndex) != expectedResultModifiesP1.end());
@@ -2485,7 +2485,7 @@ public:
 		/* Check UsesP for 2nd proc (vars might not be in order) */
 		/* Vars used: b, c */
 		std::vector<VarIndex> expectedResultUsesP2{ 4, 5 };
-		std::vector<EntityAttributeRef> resultUsesP2 = UsesP::getVariables(procIndex2);
+		std::vector<EntityAttributeRef> resultUsesP2 = UsesP::getFromLeftArg(procIndex2);
 		Assert::AreEqual(size_t(2), resultUsesP2.size());
 		for (VarIndex varIndex : resultUsesP2) {
 			Assert::IsTrue(std::find(expectedResultUsesP2.begin(), expectedResultUsesP2.end(), varIndex) != expectedResultUsesP2.end());
@@ -2494,7 +2494,7 @@ public:
 		/* Check ModifiesP for 2nd proc (vars might not be in order) */
 		/* Vars modified: u, a */
 		std::vector<VarIndex> expectedResultModifiesP2{ 1, 3 };
-		std::vector<EntityAttributeRef> resultModifiesP2 = ModifiesP::getVariables(procIndex2);
+		std::vector<EntityAttributeRef> resultModifiesP2 = ModifiesP::getFromLeftArg(procIndex2);
 		Assert::AreEqual(size_t(2), resultModifiesP2.size());
 		for (VarIndex varIndex : resultModifiesP2) {
 			Assert::IsTrue(std::find(expectedResultModifiesP2.begin(), expectedResultModifiesP2.end(), varIndex) != expectedResultModifiesP2.end());

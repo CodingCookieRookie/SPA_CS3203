@@ -45,7 +45,7 @@ EvaluatedTable ParentInstruction::helperHandleTwoIntegers() {
 	if (Entity::containsStmt(lhsRefValue) && Entity::containsStmt(rhsRefValue)) {
 		lhsStmtIndex = StmtIndex(lhsRefValue);
 		rhsStmtIndex = StmtIndex(rhsRefValue);
-		evResult = Parent::containsSuccessor(lhsStmtIndex, rhsStmtIndex);
+		evResult = Parent::contains(lhsStmtIndex, rhsStmtIndex);
 	}
 	return EvaluatedTable(evResult);
 }
@@ -65,11 +65,11 @@ EvaluatedTable ParentInstruction::helperHandleOneInt(PqlReferenceType lhsRefType
 		StmtIndex oneIntIndex = StmtIndex(oneInt);
 		for (StmtIndex STMT : stmts) {
 			if (lhsRefType == PqlReferenceType::INTEGER) {
-				if (Parent::containsSuccessor(oneIntIndex, STMT)) {
+				if (Parent::contains(oneIntIndex, STMT)) {
 					results.emplace_back(STMT); /* e.g {7} if 6 is a Parent of some s2 (e.g. 7) */
 				}
 			} else if (rhsRefType == PqlReferenceType::INTEGER) {
-				if (Parent::containsSuccessor(STMT, oneIntIndex)) {
+				if (Parent::contains(STMT, oneIntIndex)) {
 					results.emplace_back(STMT); /* e.g {6} if some s1 (e.g. 6) is a Parent of 7 */
 				}
 			} else {}
@@ -96,7 +96,7 @@ EvaluatedTable ParentInstruction::helperHandleTwoStmtsMaybeWildcard() {
 	std::tuple<std::vector<int>, std::vector<int>> results;
 	/* e.g. {1, 2}, {2, 3}, {3, 6} */
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
-	results = Parent::getAllPredecessorSuccessorInfo();
+	results = Parent::getAllInfo();
 	if (lhsRef.second == rhsRef.second) { /* Special case: Parent(s1, s1), recursive call, technically shouldn't be allowed */
 		/* No values populated to PQLmap for this case */
 		PQLmap[lhsRef.second] = std::vector<int>();
@@ -113,7 +113,7 @@ EvaluatedTable ParentInstruction::helperHandleTwoStmtsMaybeWildcard() {
 
 EvaluatedTable ParentInstruction::helperHandleTwoWildcards() {
 	bool isEmptyTable = true;
-	isEmptyTable = std::get<0>(Parent::getAllPredecessorSuccessorInfo()).empty();
+	isEmptyTable = std::get<0>(Parent::getAllInfo()).empty();
 	// No Parent rs exists => isEmptyTable == true => EvTable.evResult == false (innerJoinMerge() can drop table)
 	// Parent rs exists => isEmptyTable == false => EvTable.evResult == true (innerJoinMerge() can merge dummy table, preserving all rows)
 	return EvaluatedTable(!isEmptyTable);

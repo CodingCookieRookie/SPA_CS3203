@@ -21,7 +21,7 @@ private:
 	}
 
 public:
-	TEST_METHOD(populate_getSuccessors_branched) {
+	TEST_METHOD(populate_getFromLeftArg_branched) {
 		std::vector<ProcIndex> callsTExpAns{ procIdx2, procIdx3, procIdx4, procIdx5 };
 
 		Calls::insert(procIdx1, procIdx2);
@@ -30,14 +30,14 @@ public:
 		Calls::insert(procIdx2, procIdx4);
 		CallsT::populate();
 
-		auto callsTStmts = CallsT::getSuccessors(procIdx1);
+		auto callsTStmts = CallsT::getFromLeftArg(procIdx1);
 		Assert::IsTrue(callsTExpAns == callsTStmts);
 
-		auto callsTEmptyStmts = CallsT::getSuccessors(procIdx5);
+		auto callsTEmptyStmts = CallsT::getFromLeftArg(procIdx5);
 		Assert::IsTrue(0 == callsTEmptyStmts.size());
 	};
 
-	TEST_METHOD(populate_getSuccessors_linear) {
+	TEST_METHOD(populate_getFromLeftArg_linear) {
 		std::vector<ProcIndex> callsTExpAns{ procIdx1, procIdx2, procIdx3, procIdx4 };
 
 		Calls::insert(procIdx1, procIdx2);
@@ -46,14 +46,14 @@ public:
 		Calls::insert(procIdx5, procIdx1);
 		CallsT::populate();
 
-		auto callsTStmts = CallsT::getSuccessors(procIdx5);
+		auto callsTStmts = CallsT::getFromLeftArg(procIdx5);
 		Assert::IsTrue(callsTExpAns == callsTStmts);
 
-		auto callsTEmptyStmts = CallsT::getSuccessors(procIdx4);
+		auto callsTEmptyStmts = CallsT::getFromLeftArg(procIdx4);
 		Assert::IsTrue(0 == callsTEmptyStmts.size());
 	};
 
-	TEST_METHOD(populate_getPredecessors_branched) {
+	TEST_METHOD(populate_getFromRightArg_branched) {
 		std::vector<ProcIndex> callsTExpAns{ procIdx4, procIdx2, procIdx1 };
 
 		Calls::insert(procIdx1, procIdx2);
@@ -62,14 +62,14 @@ public:
 		Calls::insert(procIdx4, procIdx5);
 		CallsT::populate();
 
-		auto callsTStmts = CallsT::getPredecessors(procIdx5);
+		auto callsTStmts = CallsT::getFromRightArg(procIdx5);
 		Assert::IsTrue(callsTExpAns == callsTStmts);
 
-		auto callsTEmptyStmts = CallsT::getPredecessors(procIdx1);
+		auto callsTEmptyStmts = CallsT::getFromRightArg(procIdx1);
 		Assert::IsTrue(0 == callsTEmptyStmts.size());
 	};
 
-	TEST_METHOD(populate_getPredecessors_linear) {
+	TEST_METHOD(populate_getFromRightArg_linear) {
 		std::vector<ProcIndex> callsTExpAns{ procIdx3, procIdx2, procIdx1, procIdx5 };
 
 		Calls::insert(procIdx1, procIdx2);
@@ -78,36 +78,25 @@ public:
 		Calls::insert(procIdx5, procIdx1);
 		CallsT::populate();
 
-		auto callsTStmts = CallsT::getPredecessors(procIdx4);
+		auto callsTStmts = CallsT::getFromRightArg(procIdx4);
 		Assert::IsTrue(callsTExpAns == callsTStmts);
 
-		auto callsTEmptyStmts = CallsT::getPredecessors(procIdx5);
+		auto callsTEmptyStmts = CallsT::getFromRightArg(procIdx5);
 		Assert::IsTrue(0 == callsTEmptyStmts.size());
 	};
 
-	TEST_METHOD(containsSuccessor) {
+	TEST_METHOD(contains) {
 		Calls::insert(procIdx1, procIdx2);
 		Calls::insert(procIdx2, procIdx3);
 		Calls::insert(procIdx2, procIdx4);
 		CallsT::populate();
 
-		Assert::IsTrue(CallsT::containsSuccessor(procIdx1, procIdx4));
-		Assert::IsFalse(CallsT::containsSuccessor(procIdx4, procIdx1));
-		Assert::IsFalse(CallsT::containsSuccessor(procIdx3, procIdx4)); /* siblings */
+		Assert::IsTrue(CallsT::contains(procIdx1, procIdx4));
+		Assert::IsFalse(CallsT::contains(procIdx4, procIdx1));
+		Assert::IsFalse(CallsT::contains(procIdx3, procIdx4)); /* siblings */
 	};
 
-	TEST_METHOD(containsPredecessor) {
-		Calls::insert(procIdx1, procIdx2);
-		Calls::insert(procIdx2, procIdx3);
-		Calls::insert(procIdx2, procIdx4);
-		CallsT::populate();
-
-		Assert::IsTrue(CallsT::containsPredecessor(procIdx1, procIdx4));
-		Assert::IsFalse(CallsT::containsPredecessor(procIdx4, procIdx1));
-		Assert::IsFalse(CallsT::containsPredecessor(procIdx3, procIdx4)); /* siblings */
-	};
-
-	TEST_METHOD(getAllPredecessorSuccessorInfo) {
+	TEST_METHOD(getAllInfo) {
 		std::vector<ProcIndex> callsTpredecessors{ procIdx2, procIdx1, procIdx1 };
 		std::vector<ProcIndex> callsTsuccessors{ procIdx3, procIdx2, procIdx3 };
 		std::tuple<std::vector<ProcIndex>, std::vector<ProcIndex>> callsTExpAns =
@@ -117,7 +106,7 @@ public:
 		Calls::insert(procIdx2, procIdx3);
 		CallsT::populate();
 
-		auto callsTInfo = CallsT::getAllPredecessorSuccessorInfo();
+		auto callsTInfo = CallsT::getAllInfo();
 		Assert::IsTrue(callsTExpAns == callsTInfo);
 	};
 

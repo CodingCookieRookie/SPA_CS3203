@@ -63,7 +63,7 @@ public:
 		Entity::insertVar("randomVar");
 		VarIndex varIndex = Entity::insertVar("x");
 		UsesS::insert(stmt, varIndex);
-		std::vector<int> allstmts = UsesS::getFromVariable(varIndex);
+		std::vector<int> allstmts = UsesS::getFromRightArg(varIndex);
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());

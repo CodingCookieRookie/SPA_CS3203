@@ -22,7 +22,7 @@ private:
 	}
 
 public:
-	TEST_METHOD(populate_getSuccessors_branched) {
+	TEST_METHOD(populate_getFromLeftArg_branched) {
 		std::vector<StmtIndex> parentTExpAns{ stmtIdx2, stmtIdx3, stmtIdx4, stmtIdx5 };
 
 		Parent::insert(stmtIdx1, stmtIdx2);
@@ -31,19 +31,19 @@ public:
 		Parent::insert(stmtIdx2, stmtIdx4);
 		ParentT::populate();
 
-		auto parentTStmts = ParentT::getSuccessors(stmtIdx1);
+		auto parentTStmts = ParentT::getFromLeftArg(stmtIdx1);
 		Assert::IsTrue(parentTExpAns == parentTStmts);
 
-		auto parentTEmptyStmts = ParentT::getSuccessors(stmtIdx5);
+		auto parentTEmptyStmts = ParentT::getFromLeftArg(stmtIdx5);
 		Assert::IsTrue(0 == parentTEmptyStmts.size());
 
 		/* Check ParentT data does not get affected */
-		auto followsTStmts = FollowsT::getSuccessors(stmtIdx1);
+		auto followsTStmts = FollowsT::getFromLeftArg(stmtIdx1);
 		Assert::IsTrue(0 == followsTStmts.size());
 		FollowsT::performCleanUp();
 	};
 
-	TEST_METHOD(populate_getSuccessors_linear) {
+	TEST_METHOD(populate_getFromLeftArg_linear) {
 		std::vector<StmtIndex> parentTExpAns{ stmtIdx1, stmtIdx2, stmtIdx3, stmtIdx4 };
 
 		Parent::insert(stmtIdx1, stmtIdx2);
@@ -52,19 +52,19 @@ public:
 		Parent::insert(stmtIdx5, stmtIdx1);
 		ParentT::populate();
 
-		auto parentTStmts = ParentT::getSuccessors(stmtIdx5);
+		auto parentTStmts = ParentT::getFromLeftArg(stmtIdx5);
 		Assert::IsTrue(parentTExpAns == parentTStmts);
 
-		auto parentTEmptyStmts = ParentT::getSuccessors(stmtIdx4);
+		auto parentTEmptyStmts = ParentT::getFromLeftArg(stmtIdx4);
 		Assert::IsTrue(0 == parentTEmptyStmts.size());
 
 		/* Check ParentT data does not get affected */
-		auto followsTStmts = FollowsT::getSuccessors(stmtIdx5);
+		auto followsTStmts = FollowsT::getFromLeftArg(stmtIdx5);
 		Assert::IsTrue(0 == followsTStmts.size());
 		FollowsT::performCleanUp();
 	};
 
-	TEST_METHOD(populate_getPredecessors_branched) {
+	TEST_METHOD(populate_getFromRightArg_branched) {
 		std::vector<StmtIndex> parentTExpAns{ stmtIdx4, stmtIdx2, stmtIdx1 };
 
 		Parent::insert(stmtIdx1, stmtIdx2);
@@ -73,19 +73,19 @@ public:
 		Parent::insert(stmtIdx4, stmtIdx5);
 		ParentT::populate();
 
-		auto parentTStmts = ParentT::getPredecessors(stmtIdx5);
+		auto parentTStmts = ParentT::getFromRightArg(stmtIdx5);
 		Assert::IsTrue(parentTExpAns == parentTStmts);
 
-		auto parentTEmptyStmts = ParentT::getPredecessors(stmtIdx1);
+		auto parentTEmptyStmts = ParentT::getFromRightArg(stmtIdx1);
 		Assert::IsTrue(0 == parentTEmptyStmts.size());
 
 		/* Check ParentT data does not get affected */
-		auto followsTStmts = FollowsT::getSuccessors(stmtIdx5);
+		auto followsTStmts = FollowsT::getFromLeftArg(stmtIdx5);
 		Assert::IsTrue(0 == followsTStmts.size());
 		FollowsT::performCleanUp();
 	};
 
-	TEST_METHOD(populate_getPredecessors_linear) {
+	TEST_METHOD(populate_getFromRightArg_linear) {
 		std::vector<StmtIndex> parentTExpAns{ stmtIdx3, stmtIdx2, stmtIdx1, stmtIdx5 };
 
 		Parent::insert(stmtIdx1, stmtIdx2);
@@ -94,41 +94,30 @@ public:
 		Parent::insert(stmtIdx5, stmtIdx1);
 		ParentT::populate();
 
-		auto parentTStmts = ParentT::getPredecessors(stmtIdx4);
+		auto parentTStmts = ParentT::getFromRightArg(stmtIdx4);
 		Assert::IsTrue(parentTExpAns == parentTStmts);
 
-		auto parentTEmptyStmts = ParentT::getPredecessors(stmtIdx5);
+		auto parentTEmptyStmts = ParentT::getFromRightArg(stmtIdx5);
 		Assert::IsTrue(0 == parentTEmptyStmts.size());
 
 		/* Check ParentT data does not get affected */
-		auto followsTStmts = FollowsT::getSuccessors(stmtIdx4);
+		auto followsTStmts = FollowsT::getFromLeftArg(stmtIdx4);
 		Assert::IsTrue(0 == followsTStmts.size());
 		FollowsT::performCleanUp();
 	};
 
-	TEST_METHOD(containsSuccessor) {
+	TEST_METHOD(contains) {
 		Parent::insert(stmtIdx1, stmtIdx2);
 		Parent::insert(stmtIdx2, stmtIdx3);
 		Parent::insert(stmtIdx2, stmtIdx4);
 		ParentT::populate();
 
-		Assert::IsTrue(ParentT::containsSuccessor(stmtIdx1, stmtIdx4));
-		Assert::IsFalse(ParentT::containsSuccessor(stmtIdx4, stmtIdx1));
-		Assert::IsFalse(ParentT::containsSuccessor(stmtIdx3, stmtIdx4)); /* siblings */
+		Assert::IsTrue(ParentT::contains(stmtIdx1, stmtIdx4));
+		Assert::IsFalse(ParentT::contains(stmtIdx4, stmtIdx1));
+		Assert::IsFalse(ParentT::contains(stmtIdx3, stmtIdx4)); /* siblings */
 	};
 
-	TEST_METHOD(containsPredecessor) {
-		Parent::insert(stmtIdx1, stmtIdx2);
-		Parent::insert(stmtIdx2, stmtIdx3);
-		Parent::insert(stmtIdx2, stmtIdx4);
-		ParentT::populate();
-
-		Assert::IsTrue(ParentT::containsPredecessor(stmtIdx1, stmtIdx4));
-		Assert::IsFalse(ParentT::containsPredecessor(stmtIdx4, stmtIdx1));
-		Assert::IsFalse(ParentT::containsPredecessor(stmtIdx3, stmtIdx4)); /* siblings */
-	};
-
-	TEST_METHOD(getAllPredecessorSuccessorInfo) {
+	TEST_METHOD(getAllInfo) {
 		std::vector<StmtIndex> parentTpredecessors{ stmtIdx2, stmtIdx1, stmtIdx1 };
 		std::vector<StmtIndex> parentTsuccessors{ stmtIdx3, stmtIdx2, stmtIdx3 };
 		std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> parentTExpAns =
@@ -138,7 +127,7 @@ public:
 		Parent::insert(stmtIdx2, stmtIdx3);
 		ParentT::populate();
 
-		auto parentTInfo = ParentT::getAllPredecessorSuccessorInfo();
+		auto parentTInfo = ParentT::getAllInfo();
 		Assert::IsTrue(parentTExpAns == parentTInfo);
 	};
 

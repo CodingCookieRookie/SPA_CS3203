@@ -176,7 +176,7 @@ void DesignExtractor::insertStmtFromProc(ProcIndex& procIndex, StmtIndex& stmtIn
 	Entity::insertStmtFromProc(procIndex, stmtIndex);
 
 	/* Recursively insert statements in container stmts */
-	std::vector<StmtIndex> nestedStmtIndices = Parent::getSuccessors(stmtIndex);
+	std::vector<StmtIndex> nestedStmtIndices = Parent::getFromLeftArg(stmtIndex);
 	for (StmtIndex nestedStmtIndex : nestedStmtIndices) {
 		insertStmtFromProc(procIndex, nestedStmtIndex);
 	}

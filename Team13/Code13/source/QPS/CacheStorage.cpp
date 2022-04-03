@@ -36,7 +36,7 @@ bool CacheStorage::contains(StmtIndex predecessor, StmtIndex successor) {
 	return successors.find(successor) != successors.end();
 };
 
-std::vector<StmtIndex> CacheStorage::getSuccessors(StmtIndex predecessor) {
+std::vector<StmtIndex> CacheStorage::getFromLeftArg(StmtIndex predecessor) {
 	std::vector<StmtIndex> successors;
 	for (auto successor : predSucTable[predecessor]) {
 		successors.push_back(successor);
@@ -44,7 +44,7 @@ std::vector<StmtIndex> CacheStorage::getSuccessors(StmtIndex predecessor) {
 	return successors;
 };
 
-std::vector<StmtIndex> CacheStorage::getPredecessors(StmtIndex successor) {
+std::vector<StmtIndex> CacheStorage::getFromRightArg(StmtIndex successor) {
 	std::vector<StmtIndex> predecessors;
 	for (auto predecessor : sucPredTable[successor]) {
 		predecessors.push_back(predecessor);

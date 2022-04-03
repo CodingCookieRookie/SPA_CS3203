@@ -21,15 +21,15 @@ private:
 	}
 
 public:
-	TEST_METHOD(insert_getFromVariable) {
+	TEST_METHOD(insert_getFromRightArg) {
 		std::vector<StmtIndex> expectedAns{ stmtIndex1 };
 
 		ModifiesS::insert(stmtIndex1, varIndex1);
-		auto statements = ModifiesS::getFromVariable(varIndex1);
+		auto statements = ModifiesS::getFromRightArg(varIndex1);
 		Assert::IsTrue(expectedAns == statements);
 
 		/* Check if other relationship gets affected */
-		auto statements2 = UsesS::getFromVariable(varIndex1);
+		auto statements2 = UsesS::getFromRightArg(varIndex1);
 		Assert::IsTrue(0 == statements2.size());
 		UsesS::performCleanUp();
 	};
@@ -42,16 +42,16 @@ public:
 		Assert::AreEqual(false, ModifiesS::contains(stmtIndex2, varIndex2));
 	};
 
-	TEST_METHOD(insert_getVariables) {
+	TEST_METHOD(insert_getFromLeftArg) {
 		std::vector<VarIndex> expectedAns{ varIndex1, varIndex2 };
 
 		ModifiesS::insert(stmtIndex1, varIndex1);
 		ModifiesS::insert(stmtIndex1, varIndex2);
-		auto variables = ModifiesS::getVariables(stmtIndex1);
+		auto variables = ModifiesS::getFromLeftArg(stmtIndex1);
 		Assert::IsTrue(expectedAns == variables);
 	};
 
-	TEST_METHOD(getAllSynonymVarInfo) {
+	TEST_METHOD(getAllInfo) {
 		std::vector<StmtIndex> statements{ stmtIndex1, stmtIndex1, stmtIndex2, stmtIndex2 };
 		std::vector<VarIndex> variables{ varIndex1, varIndex2, varIndex1, varIndex2 };
 		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> expectedAns = std::make_tuple(statements, variables);
@@ -61,7 +61,7 @@ public:
 		ModifiesS::insert(stmtIndex2, varIndex1);
 		ModifiesS::insert(stmtIndex2, varIndex2);
 
-		auto procVarInfo = ModifiesS::getAllSynonymVarInfo();
+		auto procVarInfo = ModifiesS::getAllInfo();
 		Assert::IsTrue(expectedAns == procVarInfo);
 	};
 
@@ -73,7 +73,7 @@ public:
 		ModifiesS::insert(stmtIndex1, varIndex2);
 		ModifiesS::populateFromSubSynonyms(stmtIndex2, subStmts);
 
-		auto variables = ModifiesS::getVariables(stmtIndex2);
+		auto variables = ModifiesS::getFromLeftArg(stmtIndex2);
 		Assert::IsTrue(expectedAns == variables);
 	};
 	};

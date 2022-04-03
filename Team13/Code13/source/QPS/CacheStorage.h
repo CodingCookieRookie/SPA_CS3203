@@ -20,7 +20,7 @@ public:
 	bool contains(StmtIndex predecessor, StmtIndex successor);
 	bool isPredecessorFullyComputed(StmtIndex predecessor);
 	bool isSuccessorFullyComputed(StmtIndex predecessor);
-	std::vector<StmtIndex> getSuccessors(StmtIndex predecessor);
-	std::vector<StmtIndex> getPredecessors(StmtIndex successors);
+	std::vector<StmtIndex> getFromLeftArg(StmtIndex predecessor);
+	std::vector<StmtIndex> getFromRightArg(StmtIndex successors);
 	void performCleanUp();
 };

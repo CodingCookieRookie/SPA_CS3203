@@ -24,18 +24,18 @@ private:
 	}
 
 public:
-	TEST_METHOD(insertSuccessors_getSuccessors) {
+	TEST_METHOD(insertSuccessors_getFromLeftArg) {
 		cacheStorage->insertSuccessors(stmtIndex1, std::unordered_set<StmtIndex>{stmtIndex2, stmtIndex4});
 		cacheStorage->insertSuccessors(stmtIndex2, std::unordered_set<StmtIndex>{stmtIndex3, stmtIndex4});
-		Assert::IsTrue(std::vector<StmtIndex>{stmtIndex2, stmtIndex4} == cacheStorage->getSuccessors(stmtIndex1));
-		Assert::IsTrue(std::vector<StmtIndex>{stmtIndex3, stmtIndex4} == cacheStorage->getSuccessors(stmtIndex2));
+		Assert::IsTrue(std::vector<StmtIndex>{stmtIndex2, stmtIndex4} == cacheStorage->getFromLeftArg(stmtIndex1));
+		Assert::IsTrue(std::vector<StmtIndex>{stmtIndex3, stmtIndex4} == cacheStorage->getFromLeftArg(stmtIndex2));
 	};
 
-	TEST_METHOD(insertPredecesors_getPredecessors) {
+	TEST_METHOD(insertPredecesors_getFromRightArg) {
 		cacheStorage->insertPredecessors(stmtIndex1, std::unordered_set<StmtIndex>{stmtIndex2, stmtIndex4});
 		cacheStorage->insertPredecessors(stmtIndex2, std::unordered_set<StmtIndex>{stmtIndex3, stmtIndex4});
-		Assert::IsTrue(std::vector<StmtIndex>{stmtIndex2, stmtIndex4} == cacheStorage->getPredecessors(stmtIndex1));
-		Assert::IsTrue(std::vector<StmtIndex>{stmtIndex3, stmtIndex4} == cacheStorage->getPredecessors(stmtIndex2));
+		Assert::IsTrue(std::vector<StmtIndex>{stmtIndex2, stmtIndex4} == cacheStorage->getFromRightArg(stmtIndex1));
+		Assert::IsTrue(std::vector<StmtIndex>{stmtIndex3, stmtIndex4} == cacheStorage->getFromRightArg(stmtIndex2));
 	};
 
 	TEST_METHOD(insertSuccessors_isPredecessorFullyComputed) {

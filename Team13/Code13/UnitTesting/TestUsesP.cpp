@@ -21,15 +21,15 @@ private:
 	}
 
 public:
-	TEST_METHOD(insert_getFromVariable) {
+	TEST_METHOD(insert_getFromRightArg) {
 		std::vector<ProcIndex> expectedAns{ procIndex1 };
 
 		UsesP::insert(procIndex1, varIndex1);
-		auto procedures = UsesP::getFromVariable(varIndex1);
+		auto procedures = UsesP::getFromRightArg(varIndex1);
 		Assert::IsTrue(expectedAns == procedures);
 
 		/* Check if other relationship gets affected */
-		auto procedures2 = ModifiesP::getFromVariable(varIndex1);
+		auto procedures2 = ModifiesP::getFromRightArg(varIndex1);
 		Assert::IsTrue(0 == procedures2.size());
 		ModifiesP::performCleanUp();
 	};
@@ -42,16 +42,16 @@ public:
 		Assert::AreEqual(false, UsesP::contains(procIndex2, varIndex2));
 	};
 
-	TEST_METHOD(insert_getVariables) {
+	TEST_METHOD(insert_getFromLeftArg) {
 		std::vector<VarIndex> expectedAns{ varIndex1, varIndex2 };
 
 		UsesP::insert(procIndex1, varIndex1);
 		UsesP::insert(procIndex1, varIndex2);
-		auto variables = UsesP::getVariables(procIndex1);
+		auto variables = UsesP::getFromLeftArg(procIndex1);
 		Assert::IsTrue(expectedAns == variables);
 	};
 
-	TEST_METHOD(getAllSynonymVarInfo) {
+	TEST_METHOD(getAllInfo) {
 		std::vector<ProcIndex> procedures{ procIndex1, procIndex1, procIndex2, procIndex2 };
 		std::vector<VarIndex> variables{ varIndex1, varIndex2, varIndex1, varIndex2 };
 		std::tuple<std::vector<ProcIndex>, std::vector<VarIndex>> expectedAns = std::make_tuple(procedures, variables);
@@ -61,7 +61,7 @@ public:
 		UsesP::insert(procIndex2, varIndex1);
 		UsesP::insert(procIndex2, varIndex2);
 
-		auto procVarInfo = UsesP::getAllSynonymVarInfo();
+		auto procVarInfo = UsesP::getAllInfo();
 		Assert::IsTrue(expectedAns == procVarInfo);
 	};
 
@@ -73,7 +73,7 @@ public:
 		UsesP::insert(procIndex1, varIndex2);
 		UsesP::populateFromSubSynonyms(procIndex2, subStmts);
 
-		auto variables = UsesP::getVariables(procIndex2);
+		auto variables = UsesP::getFromLeftArg(procIndex2);
 		Assert::IsTrue(expectedAns == variables);
 	};
 	};

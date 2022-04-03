@@ -36,7 +36,7 @@ EvaluatedTable UsesPInstruction::execute() {
 }
 
 EvaluatedTable UsesInstruction::handleSynonymLeft(std::unordered_map<std::string, std::vector<int>> PQLmap, PqlReference lhsRef, PqlReference rhsRef, std::vector<int> allStmts, std::vector<int> varIndices, PqlRelationshipType pqlRelationshipType) {
-	std::tuple<std::vector<int>, std::vector<int>> allStmtVarInfos = pqlRelationshipType == PqlRelationshipType::USES_S ? UsesS::getAllSynonymVarInfo() : UsesP::getAllSynonymVarInfo();
+	std::tuple<std::vector<int>, std::vector<int>> allStmtVarInfos = pqlRelationshipType == PqlRelationshipType::USES_S ? UsesS::getAllInfo() : UsesP::getAllInfo();
 	switch (rhsRef.first) {
 	case PqlReferenceType::SYNONYM:
 		varIndices = std::get<1>(allStmtVarInfos);
@@ -48,7 +48,7 @@ EvaluatedTable UsesInstruction::handleSynonymLeft(std::unordered_map<std::string
 	case PqlReferenceType::IDENT:
 		if (Entity::containsVar(rhsRef.second)) {
 			VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
-			allStmts = pqlRelationshipType == PqlRelationshipType::USES_S ? UsesS::getFromVariable(varIndex) : UsesP::getFromVariable(varIndex);
+			allStmts = pqlRelationshipType == PqlRelationshipType::USES_S ? UsesS::getFromRightArg(varIndex) : UsesP::getFromRightArg(varIndex);
 		}
 		break;
 	default:
@@ -67,11 +67,11 @@ EvaluatedTable UsesInstruction::handleIntegerLeft(std::unordered_map<std::string
 	StmtIndex stmtIndex = { lhsRefValue };
 	switch (rhsRef.first) {
 	case PqlReferenceType::SYNONYM:
-		varIndices = UsesS::getVariables(stmtIndex);
+		varIndices = UsesS::getFromLeftArg(stmtIndex);
 		PQLmap[rhsRef.second] = varIndices;
 		return EvaluatedTable(PQLmap);
 	case PqlReferenceType::WILDCARD:
-		return EvaluatedTable(UsesS::getVariables(stmtIndex).size() > 0);
+		return EvaluatedTable(UsesS::getFromLeftArg(stmtIndex).size() > 0);
 	case PqlReferenceType::IDENT:
 		if (!Entity::containsVar(rhsRef.second)) {
 			return EvaluatedTable(false);
@@ -91,11 +91,11 @@ EvaluatedTable UsesInstruction::handleIdentLeft(std::unordered_map<std::string, 
 	VarIndex varIndex;
 	switch (rhsRef.first) {
 	case PqlReferenceType::SYNONYM:
-		varIndices = UsesP::getVariables(procIndex);
+		varIndices = UsesP::getFromLeftArg(procIndex);
 		PQLmap[rhsRef.second] = varIndices;
 		return EvaluatedTable(PQLmap);
 	case PqlReferenceType::WILDCARD:
-		return EvaluatedTable(UsesP::getVariables(procIndex).size() > 0);
+		return EvaluatedTable(UsesP::getFromLeftArg(procIndex).size() > 0);
 	case PqlReferenceType::IDENT:
 		if (!Entity::containsVar(rhsRef.second)) {
 			return EvaluatedTable(false);

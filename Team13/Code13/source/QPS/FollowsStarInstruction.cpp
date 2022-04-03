@@ -45,7 +45,7 @@ EvaluatedTable FollowsStarInstruction::helperHandleTwoIntegers() {
 	if (Entity::containsStmt(lhsRefValue) && Entity::containsStmt(rhsRefValue)) {
 		lhsStmtIndex = StmtIndex(lhsRefValue);
 		rhsStmtIndex = StmtIndex(rhsRefValue);
-		evResult = FollowsT::containsSuccessor(lhsStmtIndex, rhsStmtIndex);
+		evResult = FollowsT::contains(lhsStmtIndex, rhsStmtIndex);
 	}
 	return EvaluatedTable(evResult);
 }
@@ -65,11 +65,11 @@ EvaluatedTable FollowsStarInstruction::helperHandleOneInt(PqlReferenceType lhsRe
 		StmtIndex oneIntIndex = StmtIndex(oneInt);
 		for (StmtIndex STMT : stmts) {
 			if (lhsRefType == PqlReferenceType::INTEGER) {
-				if (FollowsT::containsSuccessor(oneIntIndex, STMT)) {
+				if (FollowsT::contains(oneIntIndex, STMT)) {
 					results.emplace_back(STMT); /* e.g {7} if 6 is a Follows* of some s2 (e.g. 7) */
 				}
 			} else if (rhsRefType == PqlReferenceType::INTEGER) {
-				if (FollowsT::containsSuccessor(STMT, oneIntIndex)) {
+				if (FollowsT::contains(STMT, oneIntIndex)) {
 					results.emplace_back(STMT); /* e.g {6} if some s1 (e.g. 6) is a Follows* of 7 */
 				}
 			} else {}
@@ -97,7 +97,7 @@ EvaluatedTable FollowsStarInstruction::helperHandleTwoStmtsMaybeWildcard() {
 	std::tuple<std::vector<int>, std::vector<int>> results;
 	/* e.g. {1, 2}, {2, 3}, {3, 6} */
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
-	results = FollowsT::getAllPredecessorSuccessorInfo();
+	results = FollowsT::getAllInfo();
 	if (lhsRef.second == rhsRef.second) { /* Special case: Follows*(s1, s1), recursive call, technically shouldn't be allowed */
 		/* No values populated to PQLmap for this case */
 		PQLmap[lhsRef.second] = std::vector<int>();
@@ -114,7 +114,7 @@ EvaluatedTable FollowsStarInstruction::helperHandleTwoStmtsMaybeWildcard() {
 
 EvaluatedTable FollowsStarInstruction::helperHandleTwoWildcards() {
 	bool isEmptyTable = true;
-	isEmptyTable = std::get<0>(FollowsT::getAllPredecessorSuccessorInfo()).empty();
+	isEmptyTable = std::get<0>(FollowsT::getAllInfo()).empty();
 	// No Follows* rs exists => isEmptyTable == true => EvTable.evResult == false (innerJoinMerge() can drop table)
 	// Follows* rs exists => isEmptyTable == false => EvTable.evResult == true (innerJoinMerge() can merge dummy table, preserving all rows)
 	return EvaluatedTable(!isEmptyTable);

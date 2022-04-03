@@ -41,7 +41,7 @@ EvaluatedTable CallsStarInstruction::helperHandleTwoIdents() {
 	if (Entity::containsProc(lhsRef.second) && Entity::containsProc(rhsRef.second)) {
 		lhsProcIndex = Entity::getProcIdx(lhsRef.second);
 		rhsProcIndex = Entity::getProcIdx(rhsRef.second);
-		evResult = CallsT::containsSuccessor(lhsProcIndex, rhsProcIndex);
+		evResult = CallsT::contains(lhsProcIndex, rhsProcIndex);
 	}
 	return EvaluatedTable(evResult); /* e.g evResult == true, if "first" calls "second" */
 }
@@ -61,11 +61,11 @@ EvaluatedTable CallsStarInstruction::helperHandleOneIdent(PqlReferenceType lhsRe
 		ProcIndex oneIdentRef = Entity::getProcIdx(oneIdent);
 		for (ProcIndex proc : procs) {
 			if (lhsRefType == PqlReferenceType::IDENT) {
-				if (CallsT::containsSuccessor(oneIdentRef, proc)) {
+				if (CallsT::contains(oneIdentRef, proc)) {
 					results.emplace_back(proc); /* e.g {"first"} if "first" calls some q */
 				}
 			} else if (rhsRefType == PqlReferenceType::IDENT) {
-				if (CallsT::containsSuccessor(proc, oneIdentRef)) {
+				if (CallsT::contains(proc, oneIdentRef)) {
 					results.emplace_back(proc); /* e.g {"second"} if some p calls "second" */
 				}
 			} else {
@@ -92,7 +92,7 @@ EvaluatedTable CallsStarInstruction::helperHandleOneIdent(PqlReferenceType lhsRe
 EvaluatedTable CallsStarInstruction::helperHandleTwoProcMaybeWildcard() {
 	/* Assumption: Different synonym names(i.e. Calls(p, q), not Calls(p, p)) */
 	std::tuple<std::vector<int>, std::vector<int>> results;
-	results = CallsT::getAllPredecessorSuccessorInfo();
+	results = CallsT::getAllInfo();
 
 	/* e.g. {1, 2}, {2, 3}, {3, 6} */
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
@@ -115,7 +115,7 @@ EvaluatedTable CallsStarInstruction::helperHandleTwoProcMaybeWildcard() {
 EvaluatedTable CallsStarInstruction::helperHandleTwoWildcards() {
 	bool isEmptyTable = true;
 	if (lhsRef.first == PqlReferenceType::WILDCARD && rhsRef.first == PqlReferenceType::WILDCARD) {
-		isEmptyTable = std::get<0>(CallsT::getAllPredecessorSuccessorInfo()).empty();
+		isEmptyTable = std::get<0>(CallsT::getAllInfo()).empty();
 	}
 	// No Calls rs exists => isEmptyTable == true => EvTable.evResult == false (innerJoinMerge() can drop table)
 	// Calls rs exists => isEmptyTable == false => EvTable.evResult == true (innerJoinMerge() can merge dummy table, preserving all rows)

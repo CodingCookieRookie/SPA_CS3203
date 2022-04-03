@@ -15,7 +15,7 @@ bool NextTProcessor::checkRsHoldsFromTraversal(StmtIndex leftIdx, StmtIndex righ
 		StmtIndex stmtIdx = queue.front();
 		queue.pop();
 
-		for (StmtIndex successor : Next::getSuccessors(stmtIdx)) {
+		for (StmtIndex successor : Next::getFromLeftArg(stmtIdx)) {
 			if (successor == rightIdx) {
 				return true;
 			}
@@ -88,26 +88,26 @@ std::vector<StmtIndex> NextTProcessor::getStmtsFromComputationHelper(StmtIndex i
 std::vector<StmtIndex> NextTProcessor::getUsingLeftStmtIndex(StmtIndex leftIdx) {
 	// if NextTProcessor has already been computed FULLY for a leftIdx, use it directly
 	if (nextTCache->isPredecessorFullyComputed(leftIdx)) {
-		return nextTCache->getSuccessors(leftIdx);
+		return nextTCache->getFromLeftArg(leftIdx);
 	}
 
 	return getStmtsFromComputationHelper(leftIdx,
 		std::bind(&NextTCache::isPredecessorFullyComputed, nextTCache, std::placeholders::_1),
-		std::bind(&NextTCache::getSuccessors, nextTCache, std::placeholders::_1),
-		&Next::getSuccessors,
+		std::bind(&NextTCache::getFromLeftArg, nextTCache, std::placeholders::_1),
+		&Next::getFromLeftArg,
 		std::bind(&NextTCache::insertSuccessors, nextTCache, std::placeholders::_1, std::placeholders::_2));
 };
 
 std::vector<StmtIndex> NextTProcessor::getUsingRightStmtIndex(StmtIndex rightIdx) {
 	// if NextTProcessor has already been computed FULLY for a rightIdx, use it directly
 	if (nextTCache->isSuccessorFullyComputed(rightIdx)) {
-		return nextTCache->getPredecessors(rightIdx);
+		return nextTCache->getFromRightArg(rightIdx);
 	}
 
 	return getStmtsFromComputationHelper(rightIdx,
 		std::bind(&NextTCache::isSuccessorFullyComputed, nextTCache, std::placeholders::_1),
-		std::bind(&NextTCache::getPredecessors, nextTCache, std::placeholders::_1),
-		&Next::getPredecessors,
+		std::bind(&NextTCache::getFromRightArg, nextTCache, std::placeholders::_1),
+		&Next::getFromRightArg,
 		std::bind(&NextTCache::insertPredecessors, nextTCache, std::placeholders::_1, std::placeholders::_2));
 };
 

@@ -45,7 +45,7 @@ EvaluatedTable NextInstruction::helperHandleTwoIntegers() {
 	if (Entity::containsStmt(lhsRefValue) && Entity::containsStmt(rhsRefValue)) {
 		lhsStmtIndex = StmtIndex(lhsRefValue);
 		rhsStmtIndex = StmtIndex(rhsRefValue);
-		evResult = Next::containsSuccessor(lhsStmtIndex, rhsStmtIndex);
+		evResult = Next::contains(lhsStmtIndex, rhsStmtIndex);
 	}
 	return EvaluatedTable(evResult);
 }
@@ -65,11 +65,11 @@ EvaluatedTable NextInstruction::helperHandleOneInt(PqlReferenceType lhsRefType, 
 		StmtIndex oneIntIndex = StmtIndex(oneInt);
 		for (StmtIndex STMT : stmts) {
 			if (lhsRefType == PqlReferenceType::INTEGER) {
-				if (Next::containsSuccessor(oneIntIndex, STMT)) {
+				if (Next::contains(oneIntIndex, STMT)) {
 					results.emplace_back(STMT); /* e.g {7} if 6 is a Next of some s2 (e.g. 7) */
 				}
 			} else if (rhsRefType == PqlReferenceType::INTEGER) {
-				if (Next::containsSuccessor(STMT, oneIntIndex)) {
+				if (Next::contains(STMT, oneIntIndex)) {
 					results.emplace_back(STMT); /* e.g {6} if some s1 (e.g. 6) is a Next of 7 */
 				}
 			} else {}
@@ -96,7 +96,7 @@ EvaluatedTable NextInstruction::helperHandleTwoStmtsMaybeWildcard() {
 	std::tuple<std::vector<int>, std::vector<int>> results;
 	/* e.g. {1, 2}, {2, 3}, {3, 6} */
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
-	results = Next::getAllPredecessorSuccessorInfo();
+	results = Next::getAllInfo();
 	if (lhsRef.second == rhsRef.second) { /* Special case: Next(s1, s1) has a legitimate result */
 		std::vector<int> lhsResults = std::get<0>(results);
 		std::vector<int> rhsResults = std::get<1>(results);
@@ -120,7 +120,7 @@ EvaluatedTable NextInstruction::helperHandleTwoStmtsMaybeWildcard() {
 
 EvaluatedTable NextInstruction::helperHandleTwoWildcards() {
 	bool isEmptyTable = true;
-	isEmptyTable = std::get<0>(Next::getAllPredecessorSuccessorInfo()).empty();
+	isEmptyTable = std::get<0>(Next::getAllInfo()).empty();
 	// No Next rs exists => isEmptyTable == true => EvTable.evResult == false (innerJoinMerge() can drop table)
 	// Next rs exists => isEmptyTable == false => EvTable.evResult == true (innerJoinMerge() can merge dummy table, preserving all rows)
 	return EvaluatedTable(!isEmptyTable);

@@ -49,10 +49,10 @@ public:
 		TransitivePopulator::populateRecursiveInfo();
 
 		/* Check Uses */
-		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2 } == UsesP::getVariables(procIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2 } == UsesP::getFromLeftArg(procIdx1));
 
 		/* Check Modifies */
-		Assert::IsTrue(std::vector<VarIndex>{ varIdx3, varIdx4 } == ModifiesP::getVariables(procIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx3, varIdx4 } == ModifiesP::getFromLeftArg(procIdx1));
 	};
 
 	TEST_METHOD(populateRecursiveInfo_populateRS1ProcsFromNestedCalls) {
@@ -82,10 +82,10 @@ public:
 		TransitivePopulator::populateRecursiveInfo();
 
 		/* Check Uses */
-		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2, varIdx3 } == UsesP::getVariables(procIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2, varIdx3 } == UsesP::getFromLeftArg(procIdx1));
 
 		/* Check Modifies */
-		Assert::IsTrue(std::vector<VarIndex>{ varIdx3, varIdx4, varIdx1 } == ModifiesP::getVariables(procIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx3, varIdx4, varIdx1 } == ModifiesP::getFromLeftArg(procIdx1));
 	};
 
 	TEST_METHOD(populateRecursiveInfo_singleProc_bothStmtsInIfWhileEmpty) {
@@ -112,12 +112,12 @@ public:
 		TransitivePopulator::populateRecursiveInfo();
 
 		/* Check Uses */
-		Assert::IsTrue(std::vector<VarIndex>{ varIdx1 } == UsesS::getVariables(stmtIdx1));
-		Assert::IsTrue(0 == UsesS::getVariables(stmtIdx4).size());
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx1 } == UsesS::getFromLeftArg(stmtIdx1));
+		Assert::IsTrue(0 == UsesS::getFromLeftArg(stmtIdx4).size());
 
 		/* Check Modifies */
-		Assert::IsTrue(std::vector<VarIndex>{varIdx2} == ModifiesS::getVariables(stmtIdx1));
-		Assert::IsTrue(0 == ModifiesS::getVariables(stmtIdx4).size());
+		Assert::IsTrue(std::vector<VarIndex>{varIdx2} == ModifiesS::getFromLeftArg(stmtIdx1));
+		Assert::IsTrue(0 == ModifiesS::getFromLeftArg(stmtIdx4).size());
 
 		/* Check Container */
 		Assert::IsTrue(std::unordered_set<StmtIndex>{stmtIdx2, stmtIdx3, stmtIdx4} ==
@@ -125,11 +125,11 @@ public:
 
 		/* Check FollowsT */
 		Assert::IsTrue(std::vector<StmtIndex>{stmtIdx3, stmtIdx4} ==
-			FollowsT::getSuccessors(stmtIdx2));
+			FollowsT::getFromLeftArg(stmtIdx2));
 
 		/* Check ParentT */
 		Assert::IsTrue(std::vector<StmtIndex>{stmtIdx2, stmtIdx3, stmtIdx4} ==
-			ParentT::getSuccessors(stmtIdx1));
+			ParentT::getFromLeftArg(stmtIdx1));
 	};
 
 	TEST_METHOD(populateRecursiveInfo_singleProc_oneStmtInIfOneStmtInWhile) {
@@ -157,21 +157,21 @@ public:
 		TransitivePopulator::populateRecursiveInfo();
 
 		/* Check Uses */
-		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2 } == UsesS::getVariables(stmtIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2 } == UsesS::getFromLeftArg(stmtIdx1));
 
 		/* Check Modifies */
-		Assert::IsTrue(std::vector<VarIndex>{varIdx2, varIdx1} == ModifiesS::getVariables(stmtIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{varIdx2, varIdx1} == ModifiesS::getFromLeftArg(stmtIdx1));
 
 		/* Check Container */
 		Assert::IsTrue(std::unordered_set<StmtIndex>{stmtIdx2, stmtIdx3, stmtIdx4} ==
 			Container::getStmtsInContainer(stmtIdx1));
 
 		/* Check FollowsT */
-		Assert::IsTrue(std::vector<StmtIndex>{stmtIdx3} == FollowsT::getSuccessors(stmtIdx2));
+		Assert::IsTrue(std::vector<StmtIndex>{stmtIdx3} == FollowsT::getFromLeftArg(stmtIdx2));
 
 		/* Check ParentT */
 		Assert::IsTrue(std::vector<StmtIndex>{stmtIdx2, stmtIdx3, stmtIdx4} ==
-			ParentT::getSuccessors(stmtIdx1));
+			ParentT::getFromLeftArg(stmtIdx1));
 	};
 
 	TEST_METHOD(populateRecursiveInfo_singleProc_allStmtsInWhile) {
@@ -199,21 +199,21 @@ public:
 		TransitivePopulator::populateRecursiveInfo();
 
 		/* Check Uses */
-		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2 } == UsesS::getVariables(stmtIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2 } == UsesS::getFromLeftArg(stmtIdx1));
 
 		/* Check Modifies */
-		Assert::IsTrue(std::vector<VarIndex>{varIdx2, varIdx1} == ModifiesS::getVariables(stmtIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{varIdx2, varIdx1} == ModifiesS::getFromLeftArg(stmtIdx1));
 
 		/* Check Container */
 		Assert::IsTrue(std::unordered_set<StmtIndex>{stmtIdx2, stmtIdx3, stmtIdx4} ==
 			Container::getStmtsInContainer(stmtIdx1));
 
 		/* Check FollowsT */
-		Assert::IsTrue(std::vector<StmtIndex>{stmtIdx4} == FollowsT::getSuccessors(stmtIdx3));
+		Assert::IsTrue(std::vector<StmtIndex>{stmtIdx4} == FollowsT::getFromLeftArg(stmtIdx3));
 
 		/* Check ParentT */
 		Assert::IsTrue(std::vector<StmtIndex>{stmtIdx2, stmtIdx3, stmtIdx4} ==
-			ParentT::getSuccessors(stmtIdx1));
+			ParentT::getFromLeftArg(stmtIdx1));
 	};
 
 	TEST_METHOD(populateRecursiveInfo_multipleProcs_nestedProcCalls) {
@@ -239,10 +239,10 @@ public:
 		TransitivePopulator::populateRecursiveInfo();
 
 		/* Check Uses */
-		Assert::IsTrue(std::vector<VarIndex>{ varIdx1 } == UsesP::getVariables(procIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx1 } == UsesP::getFromLeftArg(procIdx1));
 
 		/* Check Modifies */
-		Assert::IsTrue(std::vector<VarIndex>{varIdx2} == ModifiesP::getVariables(procIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{varIdx2} == ModifiesP::getFromLeftArg(procIdx1));
 	};
 
 	TEST_METHOD(populateRecursiveInfo_multipleProcs_containerStmts) {
@@ -286,29 +286,29 @@ public:
 		TransitivePopulator::populateRecursiveInfo();
 
 		/* Check Uses */
-		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2 } == UsesS::getVariables(stmtIdx3));
-		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2 } == UsesP::getVariables(procIdx1));
-		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2 } == UsesP::getVariables(procIdx2));
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2 } == UsesS::getFromLeftArg(stmtIdx3));
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2 } == UsesP::getFromLeftArg(procIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2 } == UsesP::getFromLeftArg(procIdx2));
 		Assert::IsTrue(std::vector<StmtIndex>{stmtIdx6, stmtIdx3, stmtIdx5, stmtIdx1, stmtIdx2} ==
-			UsesS::getFromVariable(varIdx2)); // calls stmt uses var
+			UsesS::getFromRightArg(varIdx2)); // calls stmt uses var
 
 		/* Check Modifies */
-		Assert::IsTrue(std::vector<VarIndex>{varIdx2, varIdx1} == ModifiesS::getVariables(stmtIdx3));
-		Assert::IsTrue(std::vector<VarIndex>{varIdx2, varIdx1} == ModifiesP::getVariables(procIdx1));
-		Assert::IsTrue(std::vector<VarIndex>{varIdx2, varIdx1} == ModifiesP::getVariables(procIdx2));
+		Assert::IsTrue(std::vector<VarIndex>{varIdx2, varIdx1} == ModifiesS::getFromLeftArg(stmtIdx3));
+		Assert::IsTrue(std::vector<VarIndex>{varIdx2, varIdx1} == ModifiesP::getFromLeftArg(procIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{varIdx2, varIdx1} == ModifiesP::getFromLeftArg(procIdx2));
 		Assert::IsTrue(std::vector<StmtIndex>{stmtIdx6, stmtIdx3, stmtIdx5, stmtIdx1, stmtIdx2} ==
-			ModifiesS::getFromVariable(varIdx1)); // calls stmt modifies var
+			ModifiesS::getFromRightArg(varIdx1)); // calls stmt modifies var
 
 		/* Check Container */
 		Assert::IsTrue(std::unordered_set<StmtIndex>{stmtIdx4, stmtIdx5, stmtIdx6} ==
 			Container::getStmtsInContainer(stmtIdx3));
 
 		/* Check FollowsT */
-		Assert::IsTrue(std::vector<StmtIndex>{stmtIdx5} == FollowsT::getSuccessors(stmtIdx4));
+		Assert::IsTrue(std::vector<StmtIndex>{stmtIdx5} == FollowsT::getFromLeftArg(stmtIdx4));
 
 		/* Check ParentT */
 		Assert::IsTrue(std::vector<StmtIndex>{stmtIdx4, stmtIdx5, stmtIdx6} ==
-			ParentT::getSuccessors(stmtIdx3));
+			ParentT::getFromLeftArg(stmtIdx3));
 	};
 
 	TEST_METHOD(populateRecursiveInfo_multipleProcs_readStmts) {
@@ -336,8 +336,8 @@ public:
 		TransitivePopulator::populateRecursiveInfo();
 
 		/* Check Uses */
-		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2 } == UsesS::getVariables(stmtIdx1));
-		Assert::IsTrue(std::vector<VarIndex>{varIdx2} == UsesS::getVariables(stmtIdx3));
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2 } == UsesS::getFromLeftArg(stmtIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{varIdx2} == UsesS::getFromLeftArg(stmtIdx3));
 	};
 
 	TEST_METHOD(populateRecursiveInfo_multipleProcs_printStmts) {
@@ -365,8 +365,8 @@ public:
 		TransitivePopulator::populateRecursiveInfo();
 
 		/* Check Uses */
-		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2 } == ModifiesS::getVariables(stmtIdx1));
-		Assert::IsTrue(std::vector<VarIndex>{varIdx2} == ModifiesS::getVariables(stmtIdx3));
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx2 } == ModifiesS::getFromLeftArg(stmtIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{varIdx2} == ModifiesS::getFromLeftArg(stmtIdx3));
 	};
 
 	TEST_METHOD(populateRecursiveInfo_multipleProcs_readAndPrintStmts) {
@@ -400,12 +400,12 @@ public:
 		TransitivePopulator::populateRecursiveInfo();
 
 		/* Check Uses */
-		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx3 } == UsesS::getVariables(stmtIdx1));
-		Assert::IsTrue(std::vector<VarIndex>{varIdx3} == UsesS::getVariables(stmtIdx3));
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx1, varIdx3 } == UsesS::getFromLeftArg(stmtIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{varIdx3} == UsesS::getFromLeftArg(stmtIdx3));
 
 		/* Check Modifies */
-		Assert::IsTrue(std::vector<VarIndex>{ varIdx2, varIdx4 } == ModifiesS::getVariables(stmtIdx1));
-		Assert::IsTrue(std::vector<VarIndex>{ varIdx4 } == ModifiesS::getVariables(stmtIdx3));
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx2, varIdx4 } == ModifiesS::getFromLeftArg(stmtIdx1));
+		Assert::IsTrue(std::vector<VarIndex>{ varIdx4 } == ModifiesS::getFromLeftArg(stmtIdx3));
 	};
 
 	TEST_METHOD(populateRecursiveInfo_multipleProcs_callInWhile) {
@@ -432,8 +432,8 @@ public:
 
 		TransitivePopulator::populateRecursiveInfo();
 
-		Assert::IsTrue(std::vector<StmtIndex> { stmtIdx3, stmtIdx2, stmtIdx1 } == ModifiesS::getFromVariable(varIdx1));
-		Assert::IsTrue(std::vector<StmtIndex> { stmtIdx3, stmtIdx2, stmtIdx1 } == UsesS::getFromVariable(varIdx1));
+		Assert::IsTrue(std::vector<StmtIndex> { stmtIdx3, stmtIdx2, stmtIdx1 } == ModifiesS::getFromRightArg(varIdx1));
+		Assert::IsTrue(std::vector<StmtIndex> { stmtIdx3, stmtIdx2, stmtIdx1 } == UsesS::getFromRightArg(varIdx1));
 	}
 	};
 }

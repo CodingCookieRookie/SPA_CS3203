@@ -20,8 +20,8 @@ RS2T<T, U, SynonymIndex>::RS2T() {};
 template<class T, class U, typename SynonymIndex>
 std::unordered_set<SynonymIndex> RS2T<T, U, SynonymIndex>::getAllSuccessors(SynonymIndex& predecessor,
 	std::unordered_map<SynonymIndex, std::unordered_set<SynonymIndex>> uPredSucTable) {
-	if (predSucTable.find(predecessor) != predSucTable.end()) {
-		return predSucTable[predecessor];
+	if (leftRightSynonymTable.find(predecessor) != leftRightSynonymTable.end()) {
+		return leftRightSynonymTable[predecessor];
 	}
 
 	std::unordered_set<SynonymIndex> successors;
@@ -46,7 +46,7 @@ void RS2T<T, U, SynonymIndex>::populate() {
 
 	for (auto uPredSucEntry : uPredSucTable) {
 		SynonymIndex predecessor = uPredSucEntry.first;
-		if (predSucTable.find(predecessor) != predSucTable.end()) {
+		if (leftRightSynonymTable.find(predecessor) != leftRightSynonymTable.end()) {
 			continue;
 		}
 
