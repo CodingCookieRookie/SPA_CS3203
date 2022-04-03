@@ -1,5 +1,7 @@
 #include "RelationshipInstruction.h"
 
+RelationshipInstruction::RelationshipInstruction() {}
+
 RelationshipInstruction::RelationshipInstruction(PqlReference lhs, PqlReference rhs) :
 	lhsRef(lhs), rhsRef(rhs) {}
 

@@ -231,6 +231,12 @@
     <ClCompile Include="..\source\QPS\ParsedGetAll.cpp">
       <Filter>Source Files\QPS</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\QPS\AffectsStarInstruction.cpp">
+      <Filter>Source Files\QPS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\AffectsInstruction.cpp">
+      <Filter>Source Files\QPS</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\SP\ASTValidator.h">
@@ -535,6 +541,12 @@
     </ClInclude>
     <ClInclude Include="..\source\SP\RsEntitiesMapsTypes.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\AffectsStarInstruction.h">
+      <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\AffectsInstruction.h">
+      <Filter>Header Files\QPS</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

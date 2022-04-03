@@ -33,6 +33,7 @@ EvaluatedTable UsesPInstruction::execute() {
 	default:
 		break;
 	}
+	return EvaluatedTable(PQLmap);
 }
 
 EvaluatedTable UsesInstruction::handleSynonymLeft(std::unordered_map<std::string, std::vector<int>> PQLmap, PqlReference lhsRef, PqlReference rhsRef, std::vector<int> allStmts, std::vector<int> varIndices, PqlRelationshipType pqlRelationshipType) {
@@ -41,7 +42,8 @@ EvaluatedTable UsesInstruction::handleSynonymLeft(std::unordered_map<std::string
 	case PqlReferenceType::SYNONYM:
 		varIndices = std::get<1>(allStmtVarInfos);
 		PQLmap[rhsRef.second] = varIndices;
-		/* fall through */
+		allStmts = std::get<0>(allStmtVarInfos);
+		break;
 	case PqlReferenceType::WILDCARD:
 		allStmts = std::get<0>(allStmtVarInfos);
 		break;
@@ -81,6 +83,7 @@ EvaluatedTable UsesInstruction::handleIntegerLeft(std::unordered_map<std::string
 	default:
 		break;
 	}
+	return EvaluatedTable(PQLmap);
 }
 
 EvaluatedTable UsesInstruction::handleIdentLeft(std::unordered_map<std::string, std::vector<int>> PQLmap, PqlReference lhsRef, PqlReference rhsRef, std::vector<int> allStmts, std::vector<int> varIndices) {
@@ -105,4 +108,5 @@ EvaluatedTable UsesInstruction::handleIdentLeft(std::unordered_map<std::string, 
 	default:
 		break;
 	}
+	return EvaluatedTable(PQLmap);
 }

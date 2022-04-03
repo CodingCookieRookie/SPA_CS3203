@@ -166,7 +166,9 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="TestAffectsInstruction.cpp" />
     <ClCompile Include="TestAffectsProcessor.cpp" />
+    <ClCompile Include="TestAffectsStarInstruction.cpp" />
     <ClCompile Include="TestAffectsTProcessor.cpp" />
     <ClCompile Include="TestCFG.cpp" />
     <ClCompile Include="stdafx.cpp">

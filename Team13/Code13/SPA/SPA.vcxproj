@@ -25,6 +25,8 @@
     <ClCompile Include="..\source\PKB\PKBInserter.cpp" />
     <ClCompile Include="..\source\PKB\PKBGetter.cpp" />
     <ClCompile Include="..\source\PKB\TransitivePopulator.cpp" />
+    <ClCompile Include="..\source\QPS\AffectsInstruction.cpp" />
+    <ClCompile Include="..\source\QPS\AffectsStarInstruction.cpp" />
     <ClCompile Include="..\source\QPS\AffectsTProcessor.cpp" />
     <ClCompile Include="..\source\QPS\CacheStorage.cpp" />
     <ClCompile Include="..\source\QPS\AffectsProcessor.cpp" />
@@ -103,6 +105,8 @@
     <ClInclude Include="..\source\PKB\RS2T.h" />
     <ClInclude Include="..\source\PKB\UsesP.h" />
     <ClInclude Include="..\source\PKB\UsesS.h" />
+    <ClInclude Include="..\source\QPS\AffectsInstruction.h" />
+    <ClInclude Include="..\source\QPS\AffectsStarInstruction.h" />
     <ClInclude Include="..\source\QPS\AffectsTProcessor.h" />
     <ClInclude Include="..\source\QPS\CacheStorage.h" />
     <ClInclude Include="..\source\QPS\AffectsProcessor.h" />

@@ -2,14 +2,6 @@
 
 ModifiesInstruction::ModifiesInstruction(PqlReference lhsRef, PqlReference rhsRef) : RelationshipInstruction(lhsRef, rhsRef) {}
 
-//ModifiesSInstruction::ModifiesSInstruction(PqlReference lhsRef, PqlReference rhsRef) : lhsRef(lhsRef), rhsRef(rhsRef) {}
-//
-//ModifiesPInstruction::ModifiesPInstruction(PqlReference lhsRef, PqlReference rhsRef) : lhsRef(lhsRef), rhsRef(rhsRef) {}
-
-//ModifiesSInstruction::ModifiesSInstruction(PqlReference lhsRef, PqlReference rhsRef) {}
-//
-//ModifiesPInstruction::ModifiesPInstruction(PqlReference lhsRef, PqlReference rhsRef) {}
-
 EvaluatedTable ModifiesSInstruction::execute() {
 	/* Modifies (1, v)	or Modifies(1, "x")  => true or Modifies (1, _ ) (under statement) */
 	EvaluatedTable evTable;
@@ -42,6 +34,7 @@ EvaluatedTable ModifiesPInstruction::execute() {
 	default:
 		break;
 	}
+	return EvaluatedTable(PQLmap);
 }
 
 EvaluatedTable ModifiesInstruction::handleSynonymLeft(std::unordered_map<std::string, std::vector<int>> PQLmap, PqlReference lhsRef, PqlReference rhsRef, std::vector<int> allStmts, std::vector<int> varIndices, PqlRelationshipType pqlRelationshipType) {
@@ -50,7 +43,8 @@ EvaluatedTable ModifiesInstruction::handleSynonymLeft(std::unordered_map<std::st
 	case PqlReferenceType::SYNONYM:
 		varIndices = std::get<1>(allStmtVarInfos);
 		PQLmap[rhsRef.second] = varIndices;
-		/* fall through */
+		allStmts = std::get<0>(allStmtVarInfos);
+		break;
 	case PqlReferenceType::WILDCARD:
 		allStmts = std::get<0>(allStmtVarInfos);
 		break;

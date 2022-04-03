@@ -8,6 +8,7 @@ protected:
 	PqlReference rhsRef;
 
 public:
+	RelationshipInstruction();
 	RelationshipInstruction(PqlReference lhs, PqlReference rhs);
 	virtual EvaluatedTable execute() = 0;
 	std::unordered_set<std::string> getSynonyms() override;

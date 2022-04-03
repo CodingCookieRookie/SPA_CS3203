@@ -37,5 +37,4 @@ public:
 
 	/* Entry method for selecting projected columns from the EvTable */
 	static EvaluatedTable selectProjection(EvaluatedTable& resultingEvTable, ParsedQuery& parsedQuery);
-
 };
