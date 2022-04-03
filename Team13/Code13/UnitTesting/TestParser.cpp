@@ -18,7 +18,8 @@ public:
 			"if ( 2 > 2147483648) \n then \n"
 			" { Re123ad = ALLUPPERCASE;}else{ if = 5; }"
 			" } ";
-		SourceAST ast = Parser::parse(source);
+		Parser parser;
+		SourceAST ast = parser.parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
 		/* Test procedureNodes */
@@ -181,7 +182,8 @@ public:
 			" { Re123ad = ALLUPPERCASE;}else{ if = 5; }"
 			" } "
 			" procedure proc3 {read=read;}";
-		SourceAST ast = Parser::parse(source);
+		Parser parser;
+		SourceAST ast = parser.parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
 		/* Test procedureNodes */
@@ -372,7 +374,8 @@ public:
 			" { Re123ad = ALLUPPERCASE;}else{ if = 5; }"
 			" } "
 			" procedure proc1 {read=read;}";
-		SourceAST ast = Parser::parse(source);
+		Parser parser;
+		SourceAST ast = parser.parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
 		/* Test procedureNodes */
@@ -556,10 +559,11 @@ public:
 		const char* source = "procedure proc {read=read;}"
 			"   procedure 1procName  "
 			"{ read x1; print y  ; } ";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_PROC_NAME.c_str(), ex.what());
 		}
@@ -569,10 +573,11 @@ public:
 		const char* source = "procedure proc {read=read;}"
 			"   proc procName  "
 			"{ read x1; print y  ; } ";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_PROC_KEYWORD.c_str(), ex.what());
 		}
@@ -581,20 +586,22 @@ public:
 	TEST_METHOD(parse_matchRead_missingReadVarName_parserExceptionThrown) {
 		const char* source = "   procedure proc1  "
 			"{ print x1;print y1 ; read } ";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_VAR_NAME.c_str(), ex.what());
 		}
 
 		const char* source1 = "   procedure proc1  "
 			"{ print x1;print y1 ; read		; print V; }";
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_VAR_NAME.c_str(), ex.what());
 		}
@@ -603,20 +610,22 @@ public:
 	TEST_METHOD(parse_matchRead_invalidReadVarName_parserExceptionThrown) {
 		const char* source = "   procedure proc  "
 			"{ print x1; read 1invalidName ; } ";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_VAR_NAME.c_str(), ex.what());
 		}
 
 		const char* source1 = "   procedure proc1  "
 			"{ print x1;print y1 ; read invalid_name; }";
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
@@ -625,20 +634,22 @@ public:
 	TEST_METHOD(parse_matchRead_missingSemicolon_parserExceptionThrown) {
 		const char* source = "   procedure proc  "
 			"{ print x1; read vAliD123nAmE read vAliD123nAmEaGAIN ;}  ";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
 
 		const char* source1 = "   procedure proc  "
 			"{ print x1; read vAliD123nAmE ; read vAliD123nAmEaGAIN  } ";
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
@@ -647,20 +658,22 @@ public:
 	TEST_METHOD(parse_matchRead_tooManySemicolon_parserExceptionThrown) {
 		const char* source = "   procedure proc  "
 			"{ print x1; read vAliD123nAmE ; ; } ";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 
 		const char* source1 = "   procedure proc  "
 			"{ print x1; read vAliD123nAmE ;; read x1 ; }";
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
@@ -669,20 +682,22 @@ public:
 	TEST_METHOD(parse_matchPrint_missingPrintVarName_parserExceptionThrown) {
 		const char* source = "   procedure proc1  "
 			"{ read x1;read y1 ; print  }";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_VAR_NAME.c_str(), ex.what());
 		}
 
 		const char* source1 = "   procedure proc1  "
 			"{ read x1;read y1 ; print  ; read x; }";
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_VAR_NAME.c_str(), ex.what());
 		}
@@ -691,20 +706,22 @@ public:
 	TEST_METHOD(parse_matchPrint_invalidPrintVarName_parserExceptionThrown) {
 		const char* source = "   procedure proc  "
 			"{ read x1; print 0invalidName ; } ";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_VAR_NAME.c_str(), ex.what());
 		}
 
 		const char* source1 = "   procedure proc1  "
 			"{ read x1;read y1 ; print invalid_name; read y1	;}";
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
@@ -713,20 +730,22 @@ public:
 	TEST_METHOD(parse_matchPrint_missingSemicolon_parserExceptionThrown) {
 		const char* source = "   procedure proc  "
 			"{ read x1; print vAliD123nAmE  } ";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
 
 		const char* source1 = "   procedure proc  "
 			"{ read x1; print vAliD123nAmE  print p ; } ";
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
@@ -735,20 +754,22 @@ public:
 	TEST_METHOD(parse_matchPrint_tooManySemicolon_parserExceptionThrown) {
 		const char* source = "   procedure proc  "
 			"{ print x1 ;; read vAliD123nAmE ; } ";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 
 		const char* source1 = "   procedure proc  "
 			"{ print x1 ; read vAliD123nAmE ; ;; }";
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
@@ -757,10 +778,11 @@ public:
 	TEST_METHOD(parse_matchStmt_invalidStmtOneStmt_parserExceptionThrown) {
 		const char* source = "   procedure proc  "
 			"{ r3ad x1;  } ";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
@@ -769,10 +791,11 @@ public:
 	TEST_METHOD(parse_matchStmt_invalidStmtInMultipleStmts_parserExceptionThrown) {
 		const char* source = "   procedure proc  "
 			"{ read x1; print yadayadayada  ; assign 1; x = 123	;  } ";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
@@ -781,20 +804,22 @@ public:
 	TEST_METHOD(parse_matchProcedure_missingProcKeyword_parserExceptionThrown) {
 		const char* source = "   proc procName  "
 			"{ read x1; print y  ; } ";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_PROC_KEYWORD.c_str(), ex.what());
 		}
 
 		const char* source1 = "   Procedure procName  "
 			"{ read x1; print y  ; } ";
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_PROC_KEYWORD.c_str(), ex.what());
 		}
@@ -803,29 +828,32 @@ public:
 	TEST_METHOD(parse_matchProcedure_missingProcName_parserExceptionThrown) {
 		const char* source = "   procedure  "
 			"{ read x1; print y  ; } ";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_PROC_NAME.c_str(), ex.what());
 		}
 
 		const char* source1 = "   procedure !invalidProcName  "
 			"{ read x1; print y  ; } ";
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_PROC_NAME.c_str(), ex.what());
 		}
 
-		const char* source3 = "   procedure   ";
-		auto wrapperFunc3 = [&source3] { Parser::parse(source3); };
-		Assert::ExpectException<ParserException>(wrapperFunc3);
+		const char* source2 = "   procedure   ";
+		auto wrapperFunc2 = [&source2] { Parser parser2; parser2.parse(source2); };
+		Assert::ExpectException<ParserException>(wrapperFunc2);
 		try {
-			Parser::parse(source3);
+			Parser parser2;
+			parser2.parse(source2);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_PROC_NAME.c_str(), ex.what());
 		}
@@ -834,19 +862,21 @@ public:
 	TEST_METHOD(parse_matchProcedure_missingLeftCurly_parserExceptionThrown) {
 		const char* source = "   procedure proc "
 			" read x1; print y  ; } ";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_CURLY.c_str(), ex.what());
 		}
 
 		const char* source1 = "   procedure validProcName }; ";
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_CURLY.c_str(), ex.what());
 		}
@@ -855,10 +885,11 @@ public:
 	TEST_METHOD(parse_matchProcedure_missingRightCurly_parserExceptionThrown) {
 		const char* source = "   procedure proc "
 			"  {read x1; print y  ;  ";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
@@ -867,10 +898,11 @@ public:
 	TEST_METHOD(parse_matchProcedure_tooManyLeftCurly_parserExceptionThrown) {
 		const char* source = "   procedure proc "
 			"  { {{ read x1; print y  ; } ";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
@@ -879,10 +911,11 @@ public:
 	TEST_METHOD(parse_matchProcedure_tooManyRightCurly_parserExceptionThrown) {
 		const char* source = "   procedure proc "
 			"  {read x1; print y  ; }} } ";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_PROC_KEYWORD.c_str(), ex.what());
 		}
@@ -891,10 +924,11 @@ public:
 	TEST_METHOD(parse_matchProcedure_missingStmtLst_parserExceptionThrown) {
 		const char* source = "   procedure procName  "
 			"{ } ";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
@@ -902,10 +936,11 @@ public:
 
 	TEST_METHOD(parse_matchProgram_noProc_parserExceptionThrown) {
 		const char* source = "		 ";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_PROG.c_str(), ex.what());
 		}
@@ -917,10 +952,11 @@ public:
 			" \n procedure proc2  \n"
 			" print y123;  \n "
 			" read Y1Yy ; } ";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_CURLY.c_str(), ex.what());
 		}
@@ -929,7 +965,8 @@ public:
 	TEST_METHOD(parse_matchAssign_noMathOp_success) {
 		const char* source = "   procedure procedure123name \n "
 			"{ flag    = 123;   count =    someVar123	; }  \n ";
-		SourceAST ast = Parser::parse(source);
+		Parser parser;
+		SourceAST ast = parser.parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
 		/* Test procedureNodes */
@@ -965,7 +1002,8 @@ public:
 			" x = x + z * 5 ; "
 			" y = y / w - 1; "
 			" z = z + a123 / b0b - c  ;}";
-		SourceAST ast = Parser::parse(source);
+		Parser parser;
+		SourceAST ast = parser.parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
 		/* Test procedureNodes */
@@ -1060,7 +1098,8 @@ public:
 			"   x = ((x + z) * 5 ) ; "
 			" y = y / (((w - 1))); "
 			" z = (( (z + a123) / (b0b - c) )) ;}";
-		SourceAST ast = Parser::parse(source);
+		Parser parser;
+		SourceAST ast = parser.parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
 		/* Test procedureNodes */
@@ -1161,7 +1200,8 @@ public:
 		*/
 		const char* source = "   procedure procedure123name \n "
 			"{ z = (( (z + a123) / (b0b - (c * 10 - ALL %( Z + (1*0)) )	) )) ;}";
-		SourceAST ast = Parser::parse(source);
+		Parser parser;
+		SourceAST ast = parser.parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
 		/* Test procedureNodes */
@@ -1265,7 +1305,8 @@ public:
 			" while = x + z * 5 ; "
 			" print = y / w - 1; "
 			" then = z + a123 / b0b - c  ;}";
-		SourceAST ast = Parser::parse(source);
+		Parser parser;
+		SourceAST ast = parser.parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
 		/* Test procedureNodes */
@@ -1357,10 +1398,11 @@ public:
 	TEST_METHOD(parse_matchAssign_missingVarname_parserExceptionThrown) {
 		const char* source = "   procedure procedure123name \n "
 			"{    = (x + z) * 5  }";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
@@ -1369,10 +1411,11 @@ public:
 	TEST_METHOD(parse_matchAssign_invalidVarname_parserExceptionThrown) {
 		const char* source = "   procedure procedure123name \n "
 			"{  !invalid_var_name  = (x + z) * 5 ; }";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
@@ -1381,10 +1424,11 @@ public:
 	TEST_METHOD(parse_matchAssign_missingEqualSign_parserExceptionThrown) {
 		const char* source = "   procedure procedure123name \n "
 			"{  x   (x + z) * 5 ; }";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
@@ -1393,10 +1437,11 @@ public:
 	TEST_METHOD(parse_matchAssign_missingExpr_parserExceptionThrown) {
 		const char* source = "   procedure procedure123name \n "
 			"{  x  =  ; }";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
@@ -1407,10 +1452,11 @@ public:
 			"   x = (x + z) * 5  "
 			" y = y / (w - 1); "
 			" z = (z + a123) / (b0b - c)  ;}";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
@@ -1422,10 +1468,11 @@ public:
 			"   x = (x + z) * 5 ; ; "
 			" y = y / (w - 1); "
 			" z = (z + a123) / (b0b - c)  ;}";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
@@ -1435,10 +1482,11 @@ public:
 			"   x = (x + z) * 5 ;  "
 			" y = y / (w - 1); "
 			" z = (z + a123) / (b0b - c)  ;;}";
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
@@ -1447,10 +1495,11 @@ public:
 	TEST_METHOD(parse_matchAssign_invalidInteger_lexerExceptionThrown) {
 		const char* source = "   procedure procedure123name \n "
 			" {  x = (x + 01) * 5 ; }";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<LexerException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (LexerException& ex) {
 			Assert::AreEqual(LexerException::INVALID_INT.c_str(), ex.what());
 		}
@@ -1459,20 +1508,22 @@ public:
 	TEST_METHOD(parse_matchAssign_missingFactor_parserExceptionThrown) {
 		const char* source = "   procedure procedure123name \n "
 			" {  x = (x + 1) *  ; }";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 
 		const char* source1 = "   procedure procedure123name \n "
 			" {  x =  * 5 ; }";
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
@@ -1481,30 +1532,33 @@ public:
 	TEST_METHOD(parse_matchAssign_invalidFactor_parserExceptionThrown) {
 		const char* source = "   procedure procedure123name \n "
 			" {  x = (x + 1) * ! ; }";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 
 		const char* source1 = "   procedure procedure123name \n "
 			" {  x = ^ * 5 ; }";
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 
 		const char* source2 = "   procedure procedure123name \n "
 			" {  x = (x + 1a) * 5 ; }";
-		auto wrapperFunc2 = [&source2] { Parser::parse(source2); };
+		auto wrapperFunc2 = [&source2] { Parser parser2; parser2.parse(source2); };
 		Assert::ExpectException<ParserException>(wrapperFunc2);
 		try {
-			Parser::parse(source2);
+			Parser parser2;
+			parser2.parse(source2);
 		} catch (ParserException& ex) {
 			/* '1' will be taken as a valid const_value, but "a" will be taken as invalid right bracket */
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
@@ -1513,20 +1567,22 @@ public:
 		const char* source3 = "   procedure procedure123name \n "
 			"{  y = !y / (w - 1); "
 			" z = (z + a123) / (b0b - c)  ;}";
-		auto wrapperFunc3 = [&source3] { Parser::parse(source3); };
+		auto wrapperFunc3 = [&source3] { Parser parser3; parser3.parse(source3); };
 		Assert::ExpectException<ParserException>(wrapperFunc3);
 		try {
-			Parser::parse(source3);
+			Parser parser3;
+			parser3.parse(source3);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 
 		const char* source4 = "   procedure procedure123name \n "
 			"{  z = (z + 0a123) / (b0b - c)  ;}";
-		auto wrapperFunc4 = [&source4] { Parser::parse(source4); };
+		auto wrapperFunc4 = [&source4] { Parser parser4; parser4.parse(source4); };
 		Assert::ExpectException<ParserException>(wrapperFunc4);
 		try {
-			Parser::parse(source4);
+			Parser parser4;
+			parser4.parse(source4);
 		} catch (ParserException& ex) {
 			/* '0' will be taken as a valid const_value, but "a" will be taken as invalid right bracket */
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
@@ -1536,20 +1592,22 @@ public:
 	TEST_METHOD(parse_matchAssign_missingOp_parserExceptionThrown) {
 		const char* source = "   procedure procedure123name \n "
 			" {  x = (x  1) * 5 ; }";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 
 		const char* source1 = "   procedure procedure123name \n "
 			" {  x = (x + 1)  5 ; }";
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			/* Since '5' is not a term or expr operator, "x = (x + 1)" is regarded as a valid stmt.
 			Thus, the parser is expecting a semicolon next. */
@@ -1560,10 +1618,11 @@ public:
 	TEST_METHOD(parse_matchAssign_invalidOp_parserExceptionThrown) {
 		const char* source = "   procedure procedure123name \n "
 			" {  x = (x + 1) ? 4 ; }";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			/* Since '?' is not a term or expr operator, "x = (x + 1)" is regarded as a valid stmt.
 			Thus, the parser is expecting a semicolon next. */
@@ -1573,30 +1632,33 @@ public:
 		const char* source1 = "   procedure procedure123name \n "
 			"{  y = y / (w ( 1); "
 			" z = (z + a123) / (b0b - c)  ;}";
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 
 		const char* source2 = "   procedure procedure123name \n "
 			"{  z = (z + a123) / (b0b & c)  ;}";
-		auto wrapperFunc2 = [&source2] { Parser::parse(source2); };
+		auto wrapperFunc2 = [&source2] { Parser parser2; parser2.parse(source2); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser2;
+			parser2.parse(source2);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
 
 		const char* source3 = "   procedure procedure123name \n "
 			" {  x = 2 @ 5 ; }";
-		auto wrapperFunc3 = [&source3] { Parser::parse(source3); };
+		auto wrapperFunc3 = [&source3] { Parser parser3; parser3.parse(source3); };
 		Assert::ExpectException<ParserException>(wrapperFunc3);
 		try {
-			Parser::parse(source3);
+			Parser parser3;
+			parser3.parse(source3);
 		} catch (ParserException& ex) {
 			/* Since '&' is not a term or expr operator, "x = 2" is regarded as a valid stmt.
 				Thus, the parser is expecting a semicolon next. */
@@ -1610,10 +1672,11 @@ public:
 			"   x = (x + 1) * 5 ; "
 			" y = y / (w - 1); "
 			" z = (z + a123) / (b0b - c)  ;}";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
@@ -1622,10 +1685,11 @@ public:
 			"{ CenX = (9 + CenX); count = (COUNT % 2)   ;"
 			" y = y / ((w - 1); "
 			" z = (z + a123) / (b0b - c)  ;}";
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_EXPR.c_str(), ex.what());
 		}
@@ -1637,10 +1701,11 @@ public:
 			"   x = (x + 1) * 5 ) ; "
 			" y = y / (w - 1); "
 			" z = (z + a123) / (b0b - c)  ;}";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
@@ -1649,10 +1714,11 @@ public:
 			"{ CenX = (9 + CenX); count = (COUNT % 2)   ;"
 			" y = y / ((w - 1)); "
 			" z =( (z + a123) / (b0b - c)  )  ) ;}";
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
@@ -1664,8 +1730,8 @@ public:
 			"{ flag    = 123;   count =    someVar123	; "
 			" read flag ; print COUNT	; } "
 			"} \n ";
-
-		SourceAST ast = Parser::parse(source);
+		Parser parser;
+		SourceAST ast = parser.parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
 		/* Test procedureNodes */
@@ -1738,8 +1804,8 @@ public:
 			"{ while ( y + 2 > (b0b - (c * 10 - ALL %( Z + (1*0)) )	)) "
 			"{ flag    = 123;   } "
 			"} \n ";
-
-		SourceAST ast = Parser::parse(source);
+		Parser parser;
+		SourceAST ast = parser.parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
 		/* Test procedureNodes */
@@ -1857,7 +1923,8 @@ public:
 			"{ flag    = 123;   count =    someVar123	; "
 			" read flag ; print COUNT	; } "
 			"} \n ";
-		SourceAST ast = Parser::parse(source);
+		Parser parser;
+		SourceAST ast = parser.parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
 		/* Test procedureNodes */
@@ -1925,7 +1992,8 @@ public:
 			"{ while (!(	!(x >= 0)	)	) "
 			"{ flag    = 123;  } "
 			"} \n ";
-		SourceAST ast = Parser::parse(source);
+		Parser parser;
+		SourceAST ast = parser.parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
 		/* Test procedureNodes */
@@ -1986,8 +2054,8 @@ public:
 			"{ while ( ( !(x >= 0) ) && ( y < 5 - z )    ) "
 			"{ read fl123ag 	; } "
 			"} \n ";
-
-		SourceAST ast = Parser::parse(source);
+		Parser parser;
+		SourceAST ast = parser.parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
 		/* Test procedureNodes */
@@ -2064,8 +2132,8 @@ public:
 			" (y * 1 == 5 - z)    ) "
 			"{ read fl123ag 	; } "
 			"} \n ";
-
-		SourceAST ast = Parser::parse(source);
+		Parser parser;
+		SourceAST ast = parser.parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
 		/* Test procedureNodes */
@@ -2143,8 +2211,8 @@ public:
 			"{ while ( !( (y * 1 == 5 - z) || (x != 0)  )    ) "
 			"{ read fl123ag 	; } "
 			"} \n ";
-
-		SourceAST ast = Parser::parse(source);
+		Parser parser;
+		SourceAST ast = parser.parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
 		/* Test procedureNodes */
@@ -2229,8 +2297,8 @@ public:
 			"{ while ( !(   ((ALLUPPERCASE > 123 + (4567*0)) && (!(1-2147483647 % 3 != MiXeDcAsE)) ) ||   (1<999 / 888)	 )    ) "
 			"{ read fl123ag 	; } "
 			"} \n ";
-
-		SourceAST ast = Parser::parse(source);
+		Parser parser;
+		SourceAST ast = parser.parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
 		/* Test procedureNodes */
@@ -2383,8 +2451,8 @@ public:
 			" }  \n"
 			" read fl123ag 	;  "
 			"} \n ";
-
-		SourceAST ast = Parser::parse(source);
+		Parser parser;
+		SourceAST ast = parser.parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
 		/* Test procedureNodes */
@@ -2437,8 +2505,8 @@ public:
 			" }  \n"
 			" read fl123ag 	;  "
 			"} \n ";
-
-		SourceAST ast = Parser::parse(source);
+		Parser parser;
+		SourceAST ast = parser.parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
 		/* Test procedureNodes */
@@ -2501,10 +2569,11 @@ public:
 			" read flag ; print COUNT	; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_BRACKET.c_str(), ex.what());
 		}
@@ -2515,10 +2584,11 @@ public:
 			" read flag ; print COUNT	; } "
 			"} \n ";
 
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_BRACKET.c_str(), ex.what());
 		}
@@ -2531,10 +2601,11 @@ public:
 			" read flag ; print COUNT	; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_RIGHT_BRACKET.c_str(), ex.what());
 		}
@@ -2547,10 +2618,11 @@ public:
 			" read flag ; print COUNT	; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_CURLY.c_str(), ex.what());
 		}
@@ -2563,10 +2635,11 @@ public:
 			" read flag ; print COUNT	;  "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			// The last right curly (for procedure) is taken as the while's right curly
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
@@ -2579,10 +2652,11 @@ public:
 			"{  } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
@@ -2594,10 +2668,11 @@ public:
 			"{ print x; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
 		}
@@ -2609,10 +2684,11 @@ public:
 			"{ print x; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
 		}
@@ -2622,10 +2698,11 @@ public:
 			"{ print x; } "
 			"} \n ";
 
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
 		}
@@ -2637,10 +2714,11 @@ public:
 			"{ print x; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_BRACKET.c_str(), ex.what());
 		}
@@ -2652,10 +2730,11 @@ public:
 			"{ print x; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
 		}
@@ -2667,10 +2746,11 @@ public:
 			"{ print x; } "
 			"} \n ";
 
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
 		}
@@ -2682,10 +2762,11 @@ public:
 			"{ print x; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_RIGHT_BRACKET.c_str(), ex.what());
 		}
@@ -2697,10 +2778,11 @@ public:
 			"{ print x; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
 		}
@@ -2712,10 +2794,11 @@ public:
 			"{ print x; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
 		}
@@ -2727,10 +2810,11 @@ public:
 			"{ print x; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_RIGHT_BRACKET.c_str(), ex.what());
 		}
@@ -2742,10 +2826,11 @@ public:
 			"{ print x; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_COND_EXPR.c_str(), ex.what());
 		}
@@ -2757,10 +2842,11 @@ public:
 			"{ print x; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_COND_EXPR.c_str(), ex.what());
 		}
@@ -2772,10 +2858,11 @@ public:
 			"{ print x; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_BRACKET.c_str(), ex.what());
 		}
@@ -2787,10 +2874,11 @@ public:
 			"{ print x; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
 		}
@@ -2802,10 +2890,11 @@ public:
 			"{ print x; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_REL_EXPR.c_str(), ex.what());
 		}
@@ -2817,10 +2906,11 @@ public:
 			"{ print x; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_RIGHT_BRACKET.c_str(), ex.what());
 		}
@@ -2832,8 +2922,8 @@ public:
 			"{ read fl123ag \n	; cenX = 99 ; } "
 			" else { print COUNT; } "
 			"} \n ";
-
-		SourceAST ast = Parser::parse(source);
+		Parser parser;
+		SourceAST ast = parser.parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
 		/* Test procedureNodes */
@@ -2909,8 +2999,8 @@ public:
 			" }else{  \n"
 			" read fl123ag 	; } "
 			"} \n ";
-
-		SourceAST ast = Parser::parse(source);
+		Parser parser;
+		SourceAST ast = parser.parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
 		/* Test procedureNodes */
@@ -3005,8 +3095,8 @@ public:
 			" read r; }"
 			" read fl123ag	;}"
 			"} \n ";
-
-		SourceAST ast = Parser::parse(source);
+		Parser parser;
+		SourceAST ast = parser.parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
 		/* Test procedureNodes */
@@ -3066,10 +3156,11 @@ public:
 			" else { print COUNT; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_BRACKET.c_str(), ex.what());
 		}
@@ -3082,10 +3173,11 @@ public:
 			" else { print COUNT; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_RIGHT_BRACKET.c_str(), ex.what());
 		}
@@ -3098,10 +3190,11 @@ public:
 			" else { print COUNT; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_THEN.c_str(), ex.what());
 		}
@@ -3110,10 +3203,11 @@ public:
 			"{ if  (y == 5 * 2)   "
 			"} \n ";
 
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_THEN.c_str(), ex.what());
 		}
@@ -3126,10 +3220,11 @@ public:
 			" else { print COUNT; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_THEN.c_str(), ex.what());
 		}
@@ -3142,10 +3237,11 @@ public:
 			" else { print COUNT; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_CURLY.c_str(), ex.what());
 		}
@@ -3158,10 +3254,11 @@ public:
 			" else { print COUNT; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
@@ -3171,10 +3268,11 @@ public:
 			" else { print COUNT; } "
 			"} \n ";
 
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_CURLY.c_str(), ex.what());
 		}
@@ -3187,10 +3285,11 @@ public:
 			" else { print COUNT; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			/* Since '&' is not a term or expr operator, "x = x" is regarded as a valid stmt.
 				Thus, the parser is expecting a semicolon next. */
@@ -3203,10 +3302,11 @@ public:
 			" else { print COUNT; } "
 			"} \n ";
 
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
@@ -3220,10 +3320,11 @@ public:
 			" else { print COUNT; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			/* Since the parser hasn't encountered a right curly,
 				it would assume that "else ..." is the next stmt. */
@@ -3239,10 +3340,11 @@ public:
 			"  { print COUNT; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_ELSE.c_str(), ex.what());
 		}
@@ -3253,10 +3355,11 @@ public:
 			" read fl123ag \n	; cenX = 99 ;  }"
 			"} \n ";
 
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_ELSE.c_str(), ex.what());
 		}
@@ -3269,10 +3372,11 @@ public:
 			" ELSE { print COUNT; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_ELSE.c_str(), ex.what());
 		}
@@ -3285,10 +3389,11 @@ public:
 			" else  print COUNT; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_CURLY.c_str(), ex.what());
 		}
@@ -3301,10 +3406,11 @@ public:
 			" else {  } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
@@ -3314,10 +3420,11 @@ public:
 			" else  "
 			"} \n ";
 
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_LEFT_CURLY.c_str(), ex.what());
 		}
@@ -3330,10 +3437,11 @@ public:
 			" else {  x = x & 1; } "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			/* Since '&' is not a term or expr operator, "x = x" is regarded as a valid stmt.
 				Thus, the parser is expecting a semicolon next. */
@@ -3346,10 +3454,11 @@ public:
 			" else {  wh1le  123;} "
 			"} \n ";
 
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
@@ -3363,10 +3472,11 @@ public:
 			" else { print COUNT;  "
 			"} \n ";
 
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			/* The if stmt is parsed successfully,
 				but since the parser has not found a right curly to close off the procedure,
@@ -3381,8 +3491,8 @@ public:
 		const char* source =
 			" procedure proc1 {call proc2;}\n"
 			"procedure proc2 {read x;}";
-
-		SourceAST ast = Parser::parse(source);
+		Parser parser;
+		SourceAST ast = parser.parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
 		/* Test procedureNodes */
@@ -3411,7 +3521,8 @@ public:
 
 	TEST_METHOD(parse_matchCall_syntacticallyValid_semanticallyInvalid_nonExistentProc_success) {
 		const char* source = "procedure proc1 {call proc2;}";
-		SourceAST ast = Parser::parse(source);
+		Parser parser;
+		SourceAST ast = parser.parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
 		/* Test procedureNodes */
@@ -3429,7 +3540,8 @@ public:
 
 	TEST_METHOD(parse_matchCall_syntacticallyValid_semanticallyInvalid_selfCall_success) {
 		const char* source = "procedure proc1 {call proc1;}";
-		SourceAST ast = Parser::parse(source);
+		Parser parser;
+		SourceAST ast = parser.parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
 		/* Test procedureNodes */
@@ -3449,7 +3561,8 @@ public:
 		const char* source =
 			" procedure proc1 {call proc2;}\n"
 			"procedure proc2 {call proc1;}";
-		SourceAST ast = Parser::parse(source);
+		Parser parser;
+		SourceAST ast = parser.parse(source);
 		std::vector<ProcedureNode*> procNodes = ast.getRoot()->getProcedureNodes();
 
 		/* Test procedureNodes */
@@ -3481,20 +3594,22 @@ public:
 	TEST_METHOD(parse_matchCall_missingProcName_parserExceptionThrown) {
 		const char* source = "   procedure proc1  "
 			"{ print x1;print y1 ; call } ";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_PROC_NAME_IN_CALL_STMT.c_str(), ex.what());
 		}
 
 		const char* source1 = "   procedure proc1  "
 			"{ print x1;print y1 ; call		; print V; }";
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_PROC_NAME_IN_CALL_STMT.c_str(), ex.what());
 		}
@@ -3503,20 +3618,22 @@ public:
 	TEST_METHOD(parse_matchCall_invalidProcName_parserExceptionThrown) {
 		const char* source = "   procedure proc  "
 			"{ print x1; call 1invalidName ; } ";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_PROC_NAME_IN_CALL_STMT.c_str(), ex.what());
 		}
 
 		const char* source1 = "   procedure proc1  "
 			"{ print x1;print y1 ; call invalid_name; }";
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
@@ -3525,20 +3642,22 @@ public:
 	TEST_METHOD(parse_matchCall_missingSemicolon_parserExceptionThrown) {
 		const char* source = "   procedure proc  "
 			"{ print x1; call vAliD123nAmE call vAliD123nAmEaGAIN ;}  ";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
 
 		const char* source1 = "   procedure proc  "
 			"{ print x1; call vAliD123nAmE ; call vAliD123nAmEaGAIN  } ";
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
@@ -3547,20 +3666,22 @@ public:
 	TEST_METHOD(parse_matchCall_tooManySemicolon_parserExceptionThrown) {
 		const char* source = "   procedure proc  "
 			"{ print x1; call vAliD123nAmE ; ; } ";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			Parser::parse(source);
+			Parser parser;
+			parser.parse(source);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}
 
 		const char* source1 = "   procedure proc  "
 			"{ print x1; call vAliD123nAmE ;; read x1 ; }";
-		auto wrapperFunc1 = [&source1] { Parser::parse(source1); };
+		auto wrapperFunc1 = [&source1] { Parser parser1; parser1.parse(source1); };
 		Assert::ExpectException<ParserException>(wrapperFunc1);
 		try {
-			Parser::parse(source1);
+			Parser parser1;
+			parser1.parse(source1);
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::INVALID_STMT.c_str(), ex.what());
 		}

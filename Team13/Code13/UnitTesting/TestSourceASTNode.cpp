@@ -17,7 +17,7 @@ public:
 		ExprNode* root = new ExprNode(ExprNodeValueType::ARITHMETIC_OPERATOR, "+");
 		root->addChild(new ExprNode(ExprNodeValueType::VAR_NAME, "countA"));
 		root->addChild(new ExprNode(ExprNodeValueType::CONST_VALUE, "1"));
-		AssignNode* assignNode = new AssignNode("count", root);
+		AssignNode* assignNode = new AssignNode("count", root, 1);
 
 		/* getUsesVars */
 		std::unordered_set<std::string> usesVars = assignNode->getUsesVars();
@@ -64,7 +64,7 @@ public:
 		minus->addChild(new ExprNode(ExprNodeValueType::CONST_VALUE, "100"));
 		minus->addChild(new ExprNode(ExprNodeValueType::VAR_NAME, "b0b"));
 
-		AssignNode* assignNode = new AssignNode("z", root);
+		AssignNode* assignNode = new AssignNode("z", root, 1);
 
 		/* getUsesVars */
 		std::unordered_set<std::string> usesVars = assignNode->getUsesVars();
@@ -88,10 +88,10 @@ public:
 
 	TEST_METHOD(whileNode_getUsesVarsAndConsts_oneUsesVar_oneConst_success) {
 		/*
-			while (cenX != 0) {
-				z = (z + a123 * 2) % ((100 - b0b) / 3);
-				read readVar;
-				print printVar;
+			1. while (cenX != 0) {
+				2. z = (z + a123 * 2) % ((100 - b0b) / 3);
+				3. read readVar;
+				4. print printVar;
 			}
 		*/
 
@@ -118,12 +118,12 @@ public:
 		minus->addChild(new ExprNode(ExprNodeValueType::CONST_VALUE, "100"));
 		minus->addChild(new ExprNode(ExprNodeValueType::VAR_NAME, "b0b"));
 
-		AssignNode* assignNode = new AssignNode("z", root);
+		AssignNode* assignNode = new AssignNode("z", root, 2);
 
 		StmtLstNode* stmtLstNode = new StmtLstNode();
 		stmtLstNode->addStmtNode(assignNode);
-		stmtLstNode->addStmtNode(new ReadNode("readVar"));
-		stmtLstNode->addStmtNode(new PrintNode("printVar"));
+		stmtLstNode->addStmtNode(new ReadNode("readVar", 3));
+		stmtLstNode->addStmtNode(new PrintNode("printVar", 4));
 
 		/* Cond expr */
 		/* while (cenX != 0) */
@@ -131,7 +131,7 @@ public:
 		condExpr->addChild(new ExprNode(ExprNodeValueType::VAR_NAME, "cenX"));
 		condExpr->addChild(new ExprNode(ExprNodeValueType::CONST_VALUE, "0"));
 
-		WhileNode* whileNode = new WhileNode(condExpr, stmtLstNode);
+		WhileNode* whileNode = new WhileNode(condExpr, stmtLstNode, 1);
 
 		/* getUsesVars */
 		std::unordered_set<std::string> usesVars = whileNode->getUsesVars();
@@ -174,9 +174,9 @@ public:
 		/* StmtLstNode */
 		/* print printVar; */
 		StmtLstNode* stmtLstNode = new StmtLstNode();
-		stmtLstNode->addStmtNode(new PrintNode("printVar"));
+		stmtLstNode->addStmtNode(new PrintNode("printVar", 2));
 
-		WhileNode* whileNode = new WhileNode(andOp, stmtLstNode);
+		WhileNode* whileNode = new WhileNode(andOp, stmtLstNode, 1);
 
 		/* getUsesVars */
 		std::unordered_set<std::string> usesVars = whileNode->getUsesVars();
@@ -201,7 +201,7 @@ public:
 		neqOp->addChild(new ExprNode(ExprNodeValueType::CONST_VALUE, "1"));
 		neqOp->addChild(new ExprNode(ExprNodeValueType::CONST_VALUE, "0"));
 
-		WhileNode* whileNode1 = new WhileNode(neqOp, new StmtLstNode());
+		WhileNode* whileNode1 = new WhileNode(neqOp, new StmtLstNode(), 1);
 		Assert::AreEqual(size_t(0), whileNode1->getUsesVars().size());
 
 		/* One variable */
@@ -210,7 +210,7 @@ public:
 		eqOp->addChild(new ExprNode(ExprNodeValueType::VAR_NAME, "i"));
 		eqOp->addChild(new ExprNode(ExprNodeValueType::CONST_VALUE, "0"));
 
-		WhileNode* whileNode2 = new WhileNode(eqOp, new StmtLstNode());
+		WhileNode* whileNode2 = new WhileNode(eqOp, new StmtLstNode(), 1);
 		std::unordered_set<std::string> usesVars2 = whileNode2->getUsesVars();
 		Assert::AreEqual(size_t(1), usesVars2.size());
 		Assert::IsTrue(usesVars2.find("i") != usesVars2.end());
@@ -221,7 +221,7 @@ public:
 		gtOp->addChild(new ExprNode(ExprNodeValueType::VAR_NAME, "i"));
 		gtOp->addChild(new ExprNode(ExprNodeValueType::VAR_NAME, "i"));
 
-		WhileNode* whileNode3 = new WhileNode(gtOp, new StmtLstNode());
+		WhileNode* whileNode3 = new WhileNode(gtOp, new StmtLstNode(), 1);
 		std::unordered_set<std::string> usesVars3 = whileNode3->getUsesVars();
 		Assert::AreEqual(size_t(1), usesVars3.size());
 		Assert::IsTrue(usesVars3.find("i") != usesVars3.end());
@@ -232,7 +232,7 @@ public:
 		ltOp->addChild(new ExprNode(ExprNodeValueType::VAR_NAME, "i"));
 		ltOp->addChild(new ExprNode(ExprNodeValueType::VAR_NAME, "j"));
 
-		WhileNode* whileNode4 = new WhileNode(ltOp, new StmtLstNode());
+		WhileNode* whileNode4 = new WhileNode(ltOp, new StmtLstNode(), 1);
 		std::unordered_set<std::string> usesVars4 = whileNode4->getUsesVars();
 		Assert::AreEqual(size_t(2), usesVars4.size());
 		Assert::IsTrue(usesVars4.find("i") != usesVars4.end());
@@ -251,7 +251,7 @@ public:
 
 		/* Note that the semantic check for (empty) stmtLstNode is not done in SourceASTNode.
 		Thus, assigning an empty stmtLstNode to a whileNode's condExpr will not raise any error here. */
-		WhileNode* whileNode = new WhileNode(neqOp, new StmtLstNode());
+		WhileNode* whileNode = new WhileNode(neqOp, new StmtLstNode(), 1);
 		std::unordered_set<std::string> usesVars = whileNode->getUsesVars();
 		Assert::AreEqual(size_t(2), usesVars.size());
 		Assert::IsTrue(usesVars.find("y") != usesVars.end());
@@ -299,7 +299,7 @@ public:
 
 		/* Note that the semantic check for (empty) stmtLstNode is not done in SourceASTNode.
 		Thus, assigning an empty stmtLstNode to an ifNode's condExpr will not raise any error here. */
-		IfNode* ifNode = new IfNode(gtOp, new StmtLstNode(), new StmtLstNode());
+		IfNode* ifNode = new IfNode(gtOp, new StmtLstNode(), new StmtLstNode(), 1);
 		std::unordered_set<std::string> usesVars = ifNode->getUsesVars();
 		Assert::AreEqual(size_t(5), usesVars.size());
 		Assert::IsTrue(usesVars.find("y") != usesVars.end());
@@ -318,7 +318,7 @@ public:
 		innerNotOp->getChildren()[0]->addChild(new ExprNode(ExprNodeValueType::VAR_NAME, "x"));
 		innerNotOp->getChildren()[0]->addChild(new ExprNode(ExprNodeValueType::CONST_VALUE, "0"));
 
-		WhileNode* whileNode = new WhileNode(outerNotOp, new StmtLstNode());
+		WhileNode* whileNode = new WhileNode(outerNotOp, new StmtLstNode(), 1);
 		std::unordered_set<std::string> usesVars = whileNode->getUsesVars();
 		Assert::AreEqual(size_t(1), usesVars.size());
 		Assert::IsTrue(usesVars.find("x") != usesVars.end());
@@ -348,7 +348,7 @@ public:
 
 		/* Note that the semantic check for (empty) stmtLstNode is not done in SourceASTNode.
 		Thus, assigning an empty stmtLstNode to an ifNode's condExpr will not raise any error here. */
-		IfNode* ifNode = new IfNode(notOp, new StmtLstNode(), new StmtLstNode());
+		IfNode* ifNode = new IfNode(notOp, new StmtLstNode(), new StmtLstNode(), 1);
 		std::unordered_set<std::string> usesVars = ifNode->getUsesVars();
 		Assert::AreEqual(size_t(3), usesVars.size());
 		Assert::IsTrue(usesVars.find("y") != usesVars.end());
@@ -359,12 +359,12 @@ public:
 	TEST_METHOD(assignNode_getPattern_differentExpressions_success) {
 		/* Test expression tree containing a single node */
 		ExprNode* leafNode1 = new ExprNode(ExprNodeValueType::CONST_VALUE, "1");
-		AssignNode* assignNode = new AssignNode("y", leafNode1);
-		Assert::AreEqual(std::string(" 1 "), assignNode->getPattern());
+		AssignNode* assignNode = new AssignNode("y", leafNode1, 1);
+		Assert::AreEqual(std::string(" 1 "), *assignNode->getPattern().begin());
 
 		ExprNode* leafNodeX = new ExprNode(ExprNodeValueType::VAR_NAME, "x");
-		assignNode = new AssignNode("hello", leafNodeX);
-		Assert::AreEqual(std::string(" x "), assignNode->getPattern());
+		assignNode = new AssignNode("hello", leafNodeX, 1);
+		Assert::AreEqual(std::string(" x "), *assignNode->getPattern().begin());
 
 		/* Test expression trees containing only one operator */
 		ExprNode* leafNode2 = new ExprNode(ExprNodeValueType::CONST_VALUE, "2");
@@ -372,16 +372,16 @@ public:
 		ExprNode* plusNode = new ExprNode(ExprNodeValueType::ARITHMETIC_OPERATOR, "+");
 		plusNode->addChild(leafNode2);
 		plusNode->addChild(leafNodeA);
-		assignNode = new AssignNode("y", plusNode);
-		Assert::AreEqual(std::string(" 2 asdf + "), assignNode->getPattern());
+		assignNode = new AssignNode("y", plusNode, 1);
+		Assert::AreEqual(std::string(" 2 asdf + "), *assignNode->getPattern().begin());
 
 		ExprNode* leafNodeXyz = new ExprNode(ExprNodeValueType::VAR_NAME, "xyz");
 		ExprNode* leafNode123 = new ExprNode(ExprNodeValueType::CONST_VALUE, "123");
 		ExprNode* modNode = new ExprNode(ExprNodeValueType::ARITHMETIC_OPERATOR, "%");
 		modNode->addChild(leafNodeXyz);
 		modNode->addChild(leafNode123);
-		assignNode = new AssignNode("qwerty", modNode);
-		Assert::AreEqual(std::string(" xyz 123 % "), assignNode->getPattern());
+		assignNode = new AssignNode("qwerty", modNode, 1);
+		Assert::AreEqual(std::string(" xyz 123 % "), *assignNode->getPattern().begin());
 
 		/* Test expression trees that can have more than one operator */
 		ExprNode* leafNodeAbc = new ExprNode(ExprNodeValueType::VAR_NAME, "abc");
@@ -393,8 +393,8 @@ public:
 		ExprNode* divNode = new ExprNode(ExprNodeValueType::ARITHMETIC_OPERATOR, "/");
 		divNode->addChild(multiplyNode);
 		divNode->addChild(leafNode436474);
-		assignNode = new AssignNode("abc123", divNode);
-		Assert::AreEqual(std::string(" abc 12345 * 436474 / "), assignNode->getPattern());
+		assignNode = new AssignNode("abc123", divNode, 1);
+		Assert::AreEqual(std::string(" abc 12345 * 436474 / "), *assignNode->getPattern().begin());
 
 		ExprNode* leafNodeAlice = new ExprNode(ExprNodeValueType::VAR_NAME, "alice");
 		ExprNode* leafNodeBob = new ExprNode(ExprNodeValueType::VAR_NAME, "bob");
@@ -405,8 +405,8 @@ public:
 		ExprNode* minusNode = new ExprNode(ExprNodeValueType::ARITHMETIC_OPERATOR, "-");
 		minusNode->addChild(leafNodeCharlie);
 		minusNode->addChild(plusNode2);
-		assignNode = new AssignNode("david", minusNode);
-		Assert::AreEqual(std::string(" charlie alice bob + - "), assignNode->getPattern());
+		assignNode = new AssignNode("david", minusNode, 1);
+		Assert::AreEqual(std::string(" charlie alice bob + - "), *assignNode->getPattern().begin());
 	}
 	};
 }

@@ -1,6 +1,6 @@
 #include "Parser.h"
 
-Parser::Parser() {}
+Parser::Parser() : stmtIdx(1) {}
 
 Lexer Parser::lexer;
 
@@ -103,7 +103,7 @@ ReadNode* Parser::matchRead() {
 		throw ParserException(ParserException::MISSING_SEMICOLON);
 	}
 
-	return new ReadNode(varName);
+	return new ReadNode(varName, stmtIdx++);
 }
 
 PrintNode* Parser::matchPrint() {
@@ -116,7 +116,7 @@ PrintNode* Parser::matchPrint() {
 		throw ParserException(ParserException::MISSING_SEMICOLON);
 	}
 
-	return new PrintNode(varName);
+	return new PrintNode(varName, stmtIdx++);
 }
 
 AssignNode* Parser::matchAssign(std::string varName) {
@@ -130,10 +130,11 @@ AssignNode* Parser::matchAssign(std::string varName) {
 	if (!lexer.match(Common::SEMICOLON)) {
 		throw ParserException(ParserException::MISSING_SEMICOLON);
 	}
-	return new AssignNode(varName, expr);
+	return new AssignNode(varName, expr, stmtIdx++);
 }
 
 WhileNode* Parser::matchWhile() {
+	int whileStmtIdx = stmtIdx++;
 	if (!lexer.match(Common::LEFT_BRACKET)) {
 		throw ParserException(ParserException::MISSING_LEFT_BRACKET);
 	}
@@ -154,7 +155,7 @@ WhileNode* Parser::matchWhile() {
 		throw ParserException(ParserException::MISSING_RIGHT_CURLY);
 	}
 
-	return new WhileNode(condNode, stmtLstNode);
+	return new WhileNode(condNode, stmtLstNode, whileStmtIdx);
 }
 
 ExprNode* Parser::matchCondExpr() {
@@ -258,6 +259,7 @@ ExprNode* Parser::matchRelFactor() {
 }
 
 IfNode* Parser::matchIf() {
+	int ifStmtIdx = stmtIdx++;
 	if (!lexer.match(Common::LEFT_BRACKET)) {
 		throw ParserException(ParserException::MISSING_LEFT_BRACKET);
 	}
@@ -296,7 +298,7 @@ IfNode* Parser::matchIf() {
 		throw ParserException(ParserException::MISSING_RIGHT_CURLY);
 	}
 
-	return new IfNode(condNode, thenStmtLst, elseStmtLst);
+	return new IfNode(condNode, thenStmtLst, elseStmtLst, ifStmtIdx);
 }
 
 CallNode* Parser::matchCall() {
@@ -309,5 +311,5 @@ CallNode* Parser::matchCall() {
 		throw ParserException(ParserException::MISSING_SEMICOLON);
 	}
 
-	return new CallNode(procName);
+	return new CallNode(procName, stmtIdx++);
 }

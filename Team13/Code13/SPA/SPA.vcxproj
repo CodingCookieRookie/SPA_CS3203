@@ -147,6 +147,7 @@
     <ClInclude Include="..\source\SP\ASTValidator.h" />
     <ClInclude Include="..\source\SP\DesignExtractor.h" />
     <ClInclude Include="..\source\SP\Parser.h" />
+    <ClInclude Include="..\source\SP\RsEntitiesMapsTypes.h" />
     <ClInclude Include="..\source\SP\SourceAST.h" />
     <ClInclude Include="..\source\SP\SourceASTNode.h" />
     <ClInclude Include="..\source\Exception\SPAException.h" />

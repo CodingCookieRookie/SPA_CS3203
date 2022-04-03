@@ -262,7 +262,8 @@ public:
 
 		ProcIndex procIdx = ProcIndex(1);
 
-		SourceAST ast = Parser::parse(sampleSource1);
+		Parser parser;
+		SourceAST ast = parser.parse(sampleSource1);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -302,7 +303,8 @@ public:
 		StmtIndex stmtIdx5 = StmtIndex(5);
 		StmtIndex stmtIdx6 = StmtIndex(6);
 
-		SourceAST ast = Parser::parse(sampleSource1);
+		Parser parser;
+		SourceAST ast = parser.parse(sampleSource1);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -327,7 +329,8 @@ public:
 
 		VarIndex varIdx = VarIndex(1);
 
-		SourceAST ast = Parser::parse(sampleSource1);
+		Parser parser;
+		SourceAST ast = parser.parse(sampleSource1);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -383,7 +386,8 @@ public:
 		StmtIndex stmtIdx4 = StmtIndex(4);
 		StmtIndex stmtIdx5 = StmtIndex(5);
 
-		SourceAST ast = Parser::parse(sampleSource1);
+		Parser parser;
+		SourceAST ast = parser.parse(sampleSource1);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -434,7 +438,8 @@ public:
 
 		ProcIndex procIdx = ProcIndex(1);
 
-		SourceAST ast = Parser::parse(sampleSource2);
+		Parser parser;
+		SourceAST ast = parser.parse(sampleSource2);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -477,7 +482,8 @@ public:
 		StmtIndex stmtIdx10 = StmtIndex(10);
 		StmtIndex stmtIdx11 = StmtIndex(11);
 
-		SourceAST ast = Parser::parse(sampleSource2);
+		Parser parser;
+		SourceAST ast = parser.parse(sampleSource2);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -507,7 +513,8 @@ public:
 		VarIndex varIdx1 = VarIndex(1);
 		VarIndex varIdx2 = VarIndex(2);
 
-		SourceAST ast = Parser::parse(sampleSource2);
+		Parser parser;
+		SourceAST ast = parser.parse(sampleSource2);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -558,7 +565,8 @@ public:
 		StmtIndex stmtIdx8 = StmtIndex(8);
 		StmtIndex stmtIdx9 = StmtIndex(9);
 
-		SourceAST ast = Parser::parse(sampleSource2);
+		Parser parser;
+		SourceAST ast = parser.parse(sampleSource2);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -626,7 +634,8 @@ public:
 
 		ProcIndex procIdx = ProcIndex(1);
 
-		SourceAST ast = Parser::parse(sampleSource3);
+		Parser parser;
+		SourceAST ast = parser.parse(sampleSource3);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -666,7 +675,8 @@ public:
 		StmtIndex stmtIdx3 = StmtIndex(3);
 		StmtIndex stmtIdx7 = StmtIndex(7);
 
-		SourceAST ast = Parser::parse(sampleSource3);
+		Parser parser;
+		SourceAST ast = parser.parse(sampleSource3);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -692,7 +702,8 @@ public:
 		VarIndex varIdx1 = VarIndex(1);
 		VarIndex varIdx2 = VarIndex(2);
 
-		SourceAST ast = Parser::parse(sampleSource3);
+		Parser parser;
+		SourceAST ast = parser.parse(sampleSource3);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -744,7 +755,8 @@ public:
 		StmtIndex stmtIdx6 = StmtIndex(6);
 		StmtIndex stmtIdx7 = StmtIndex(7);
 
-		SourceAST ast = Parser::parse(sampleSource3);
+		Parser parser;
+		SourceAST ast = parser.parse(sampleSource3);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -825,7 +837,8 @@ public:
 		ProcIndex procIdx3 = ProcIndex(3);
 		ProcIndex procIdx4 = ProcIndex(4);
 
-		SourceAST ast = Parser::parse(sampleSource4);
+		Parser parser;
+		SourceAST ast = parser.parse(sampleSource4);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -844,7 +857,7 @@ public:
 
 		Assert::AreEqual(size_t(7), Entity::getAllVars().size());
 		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[0]));
-		Assert::AreEqual(varName3, Entity::getVarName(Entity::getAllVars()[2]));
+		Assert::AreEqual(varName3, Entity::getVarName(Entity::getAllVars()[3]));
 
 		Assert::AreEqual(size_t(2), Entity::getAllConsts().size());
 		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
@@ -873,7 +886,8 @@ public:
 		StmtIndex stmtIdx5 = StmtIndex(5);
 		StmtIndex stmtIdx6 = StmtIndex(6);
 
-		SourceAST ast = Parser::parse(sampleSource4);
+		Parser parser;
+		SourceAST ast = parser.parse(sampleSource4);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -905,10 +919,8 @@ public:
 		std::string varName4 = "cenX";
 		std::string varName5 = "cenY";
 
-		VarIndex varIdx1 = VarIndex(1);
-		VarIndex varIdx2 = VarIndex(2);
-
-		SourceAST ast = Parser::parse(sampleSource4);
+		Parser parser;
+		SourceAST ast = parser.parse(sampleSource4);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -934,6 +946,9 @@ public:
 
 		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName2))).size());
 		Assert::AreEqual(size_t(4), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("0"))).size());
+
+		VarIndex varIdx1 = Entity::getVarIdx(varName1);
+		VarIndex varIdx2 = Entity::getVarIdx(varName2);
 
 		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAllIfPatternInfo()).size());
 		Assert::AreEqual(size_t(0), Pattern::getIfStmtsFromVar(varIdx1).size());
@@ -971,7 +986,8 @@ public:
 		StmtIndex stmtIdx20 = StmtIndex(20);
 		StmtIndex stmtIdx23 = StmtIndex(23);
 
-		SourceAST ast = Parser::parse(sampleSource4);
+		Parser parser;
+		SourceAST ast = parser.parse(sampleSource4);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -1092,7 +1108,8 @@ public:
 
 		ProcIndex procIdx = ProcIndex(1);
 
-		SourceAST ast = Parser::parse(mixedStmtsSource);
+		Parser parser;
+		SourceAST ast = parser.parse(mixedStmtsSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -1109,8 +1126,8 @@ public:
 		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
 
 		Assert::AreEqual(size_t(7), Entity::getAllVars().size());
-		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[0]));
-		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[6]));
+		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[1]));
+		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[5]));
 
 		Assert::AreEqual(size_t(4), Entity::getAllConsts().size());
 		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
@@ -1131,7 +1148,8 @@ public:
 		StmtIndex stmtIdx12 = StmtIndex(12);
 		StmtIndex stmtIdx13 = StmtIndex(13);
 
-		SourceAST ast = Parser::parse(mixedStmtsSource);
+		Parser parser;
+		SourceAST ast = parser.parse(mixedStmtsSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -1151,12 +1169,10 @@ public:
 		std::string varName1 = "count";
 		std::string varName2 = "x";
 		std::string varName3 = "flag";
+		std::string varName4 = "y";
 
-		VarIndex varIdx1 = VarIndex(1);
-		VarIndex varIdx4 = VarIndex(4);
-		VarIndex varIdx5 = VarIndex(5);
-
-		SourceAST ast = Parser::parse(mixedStmtsSource);
+		Parser parser;
+		SourceAST ast = parser.parse(mixedStmtsSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -1187,12 +1203,16 @@ public:
 		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("3+x"))).size());
 		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("cenX*cenX"))).size());
 
+		VarIndex varIdx1 = Entity::getVarIdx(varName1);
+		VarIndex varIdx2 = Entity::getVarIdx(varName2);
+		VarIndex varIdx4 = Entity::getVarIdx(varName4);
+
 		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAllIfPatternInfo()).size());
 		Assert::AreEqual(size_t(1), Pattern::getIfStmtsFromVar(varIdx1).size());
 
 		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getAllWhilePatternInfo()).size());
+		Assert::AreEqual(size_t(1), Pattern::getWhileStmtsFromVar(varIdx2).size());
 		Assert::AreEqual(size_t(1), Pattern::getWhileStmtsFromVar(varIdx4).size());
-		Assert::AreEqual(size_t(1), Pattern::getWhileStmtsFromVar(varIdx5).size());
 	}
 
 	TEST_METHOD(mixedStmtsSource_checkRelationships) {
@@ -1214,7 +1234,8 @@ public:
 		StmtIndex stmtIdx13 = StmtIndex(13);
 		StmtIndex stmtIdx14 = StmtIndex(14);
 
-		SourceAST ast = Parser::parse(mixedStmtsSource);
+		Parser parser;
+		SourceAST ast = parser.parse(mixedStmtsSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -1295,7 +1316,8 @@ public:
 
 		ProcIndex procIdx = ProcIndex(1);
 
-		SourceAST ast = Parser::parse(nestedWhileIfSource);
+		Parser parser;
+		SourceAST ast = parser.parse(nestedWhileIfSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -1312,8 +1334,8 @@ public:
 		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
 
 		Assert::AreEqual(size_t(5), Entity::getAllVars().size());
-		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[0]));
-		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[4]));
+		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[4]));
+		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[3]));
 
 		Assert::AreEqual(size_t(5), Entity::getAllConsts().size());
 		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
@@ -1334,7 +1356,8 @@ public:
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx12 = StmtIndex(12);
 
-		SourceAST ast = Parser::parse(nestedWhileIfSource);
+		Parser parser;
+		SourceAST ast = parser.parse(nestedWhileIfSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -1359,11 +1382,8 @@ public:
 		std::string varName4 = "z";
 		std::string varName5 = "x";
 
-		VarIndex varIdx1 = VarIndex(1);
-		VarIndex varIdx2 = VarIndex(2);
-		VarIndex varIdx5 = VarIndex(5);
-
-		SourceAST ast = Parser::parse(nestedWhileIfSource);
+		Parser parser;
+		SourceAST ast = parser.parse(nestedWhileIfSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -1400,6 +1420,10 @@ public:
 		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("8*present"))).size());
 		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("x-1"))).size());
 
+		VarIndex varIdx1 = Entity::getVarIdx(varName1);
+		VarIndex varIdx2 = Entity::getVarIdx(varName2);
+		VarIndex varIdx5 = Entity::getVarIdx(varName5);
+
 		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getAllIfPatternInfo()).size());
 		Assert::AreEqual(size_t(1), Pattern::getIfStmtsFromVar(varIdx1).size());
 		Assert::AreEqual(size_t(0), Pattern::getIfStmtsFromVar(varIdx2).size());
@@ -1429,7 +1453,8 @@ public:
 		StmtIndex stmtIdx11 = StmtIndex(11);
 		StmtIndex stmtIdx12 = StmtIndex(12);
 
-		SourceAST ast = Parser::parse(nestedWhileIfSource);
+		Parser parser;
+		SourceAST ast = parser.parse(nestedWhileIfSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -1525,7 +1550,8 @@ public:
 
 		ProcIndex procIdx = ProcIndex(1);
 
-		SourceAST ast = Parser::parse(multipleBracketsSource);
+		Parser parser;
+		SourceAST ast = parser.parse(multipleBracketsSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -1563,7 +1589,8 @@ public:
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx7 = StmtIndex(7);
 
-		SourceAST ast = Parser::parse(multipleBracketsSource);
+		Parser parser;
+		SourceAST ast = parser.parse(multipleBracketsSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -1590,7 +1617,8 @@ public:
 
 		VarIndex varIdx = VarIndex(1);
 
-		SourceAST ast = Parser::parse(multipleBracketsSource);
+		Parser parser;
+		SourceAST ast = parser.parse(multipleBracketsSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -1646,7 +1674,8 @@ public:
 		StmtIndex stmtIdx6 = StmtIndex(6);
 		StmtIndex stmtIdx7 = StmtIndex(7);
 
-		SourceAST ast = Parser::parse(multipleBracketsSource);
+		Parser parser;
+		SourceAST ast = parser.parse(multipleBracketsSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -1717,7 +1746,8 @@ public:
 
 		ProcIndex procIdx = ProcIndex(1);
 
-		SourceAST ast = Parser::parse(sameKeywordNameSource);
+		Parser parser;
+		SourceAST ast = parser.parse(sameKeywordNameSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -1755,7 +1785,8 @@ public:
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx7 = StmtIndex(7);
 
-		SourceAST ast = Parser::parse(sameKeywordNameSource);
+		Parser parser;
+		SourceAST ast = parser.parse(sameKeywordNameSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -1787,7 +1818,8 @@ public:
 
 		VarIndex varIdx = VarIndex(1);
 
-		SourceAST ast = Parser::parse(sameKeywordNameSource);
+		Parser parser;
+		SourceAST ast = parser.parse(sameKeywordNameSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -1838,7 +1870,8 @@ public:
 		StmtIndex stmtIdx6 = StmtIndex(6);
 		StmtIndex stmtIdx7 = StmtIndex(7);
 
-		SourceAST ast = Parser::parse(sameKeywordNameSource);
+		Parser parser;
+		SourceAST ast = parser.parse(sameKeywordNameSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -1906,7 +1939,8 @@ public:
 
 		ProcIndex procIdx = ProcIndex(1);
 
-		SourceAST ast = Parser::parse(longAssignmentExprSource);
+		Parser parser;
+		SourceAST ast = parser.parse(longAssignmentExprSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -1939,7 +1973,8 @@ public:
 
 		ProcIndex procIdx = ProcIndex(1);
 
-		SourceAST ast = Parser::parse(longAssignmentExprSource);
+		Parser parser;
+		SourceAST ast = parser.parse(longAssignmentExprSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -1957,7 +1992,8 @@ public:
 
 		VarIndex varIdx = VarIndex(1);
 
-		SourceAST ast = Parser::parse(longAssignmentExprSource);
+		Parser parser;
+		SourceAST ast = parser.parse(longAssignmentExprSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -1990,7 +2026,8 @@ public:
 		ProcIndex procIdx = ProcIndex(1);
 		StmtIndex stmtIdx = StmtIndex(1);
 
-		SourceAST ast = Parser::parse(longAssignmentExprSource);
+		Parser parser;
+		SourceAST ast = parser.parse(longAssignmentExprSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -2029,7 +2066,8 @@ public:
 
 		ProcIndex procIdx = ProcIndex(1);
 
-		SourceAST ast = Parser::parse(longVarNameSource);
+		Parser parser;
+		SourceAST ast = parser.parse(longVarNameSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -2056,7 +2094,8 @@ public:
 		ProcIndex procIdx = ProcIndex(1);
 		StmtIndex stmtIdx = StmtIndex(1);
 
-		SourceAST ast = Parser::parse(longVarNameSource);
+		Parser parser;
+		SourceAST ast = parser.parse(longVarNameSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -2073,7 +2112,8 @@ public:
 
 		VarIndex varIdx = VarIndex(1);
 
-		SourceAST ast = Parser::parse(longVarNameSource);
+		Parser parser;
+		SourceAST ast = parser.parse(longVarNameSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -2097,7 +2137,8 @@ public:
 		ProcIndex procIdx = ProcIndex(1);
 		StmtIndex stmtIdx = StmtIndex(1);
 
-		SourceAST ast = Parser::parse(longVarNameSource);
+		Parser parser;
+		SourceAST ast = parser.parse(longVarNameSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -2128,7 +2169,7 @@ public:
 
 	TEST_METHOD(multipleNestingSource_checkEntities) {
 		std::string varName1 = "present";
-		std::string varName2 = "y";
+		std::string varName2 = "x";
 		std::string procName = "Peter";
 		VarIndex constVal1 = 0;
 		VarIndex constVal2 = 8;
@@ -2136,7 +2177,8 @@ public:
 
 		ProcIndex procIdx = ProcIndex(1);
 
-		SourceAST ast = Parser::parse(multipleNestingSource);
+		Parser parser;
+		SourceAST ast = parser.parse(multipleNestingSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -2154,7 +2196,7 @@ public:
 
 		Assert::AreEqual(size_t(4), Entity::getAllVars().size());
 		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[0]));
-		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[3]));
+		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[2]));
 
 		Assert::AreEqual(size_t(3), Entity::getAllConsts().size());
 		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
@@ -2172,7 +2214,8 @@ public:
 
 		ProcIndex procIdx = ProcIndex(1);
 
-		SourceAST ast = Parser::parse(multipleNestingSource);
+		Parser parser;
+		SourceAST ast = parser.parse(multipleNestingSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -2197,7 +2240,8 @@ public:
 		VarIndex varIdx1 = VarIndex(1);
 		VarIndex varIdx2 = VarIndex(1);
 
-		SourceAST ast = Parser::parse(multipleNestingSource);
+		Parser parser;
+		SourceAST ast = parser.parse(multipleNestingSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -2260,7 +2304,8 @@ public:
 		StmtIndex stmtIdx10 = StmtIndex(10);
 		StmtIndex stmtIdx11 = StmtIndex(11);
 
-		SourceAST ast = Parser::parse(multipleNestingSource);
+		Parser parser;
+		SourceAST ast = parser.parse(multipleNestingSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -2417,7 +2462,8 @@ public:
 
 		ProcIndex procIdx = ProcIndex(1);
 
-		SourceAST ast = Parser::parse(differentCasingNamesSource);
+		Parser parser;
+		SourceAST ast = parser.parse(differentCasingNamesSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -2452,7 +2498,8 @@ public:
 
 		ProcIndex procIdx = ProcIndex(1);
 
-		SourceAST ast = Parser::parse(differentCasingNamesSource);
+		Parser parser;
+		SourceAST ast = parser.parse(differentCasingNamesSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -2473,7 +2520,8 @@ public:
 
 		VarIndex varIdx = VarIndex(1);
 
-		SourceAST ast = Parser::parse(differentCasingNamesSource);
+		Parser parser;
+		SourceAST ast = parser.parse(differentCasingNamesSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -2514,7 +2562,8 @@ public:
 		StmtIndex stmtIdx3 = StmtIndex(3);
 		StmtIndex stmtIdx4 = StmtIndex(4);
 
-		SourceAST ast = Parser::parse(differentCasingNamesSource);
+		Parser parser;
+		SourceAST ast = parser.parse(differentCasingNamesSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -2571,7 +2620,8 @@ public:
 
 		ProcIndex procIdx = ProcIndex(1);
 
-		SourceAST ast = Parser::parse(multipleWhitespacesSource);
+		Parser parser;
+		SourceAST ast = parser.parse(multipleWhitespacesSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -2606,7 +2656,8 @@ public:
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		StmtIndex stmtIdx3 = StmtIndex(3);
 
-		SourceAST ast = Parser::parse(multipleWhitespacesSource);
+		Parser parser;
+		SourceAST ast = parser.parse(multipleWhitespacesSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -2630,7 +2681,8 @@ public:
 
 		VarIndex varIdx = VarIndex(1);
 
-		SourceAST ast = Parser::parse(multipleWhitespacesSource);
+		Parser parser;
+		SourceAST ast = parser.parse(multipleWhitespacesSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -2664,7 +2716,8 @@ public:
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		StmtIndex stmtIdx3 = StmtIndex(3);
 
-		SourceAST ast = Parser::parse(multipleWhitespacesSource);
+		Parser parser;
+		SourceAST ast = parser.parse(multipleWhitespacesSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -2709,7 +2762,8 @@ public:
 		ProcIndex procIdx3 = ProcIndex(3);
 		ProcIndex procIdx4 = ProcIndex(4);
 
-		SourceAST ast = Parser::parse(multipleProceduresRecursiveCallsSource);
+		Parser parser;
+		SourceAST ast = parser.parse(multipleProceduresRecursiveCallsSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -2753,7 +2807,8 @@ public:
 		StmtIndex stmtIdx4 = StmtIndex(4);
 		StmtIndex stmtIdx5 = StmtIndex(5);
 
-		SourceAST ast = Parser::parse(multipleProceduresRecursiveCallsSource);
+		Parser parser;
+		SourceAST ast = parser.parse(multipleProceduresRecursiveCallsSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -2787,7 +2842,8 @@ public:
 
 		VarIndex varIdx = VarIndex(1);
 
-		SourceAST ast = Parser::parse(multipleProceduresRecursiveCallsSource);
+		Parser parser;
+		SourceAST ast = parser.parse(multipleProceduresRecursiveCallsSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -2829,7 +2885,8 @@ public:
 		StmtIndex stmtIdx5 = StmtIndex(5);
 		StmtIndex stmtIdx6 = StmtIndex(6);
 
-		SourceAST ast = Parser::parse(multipleProceduresRecursiveCallsSource);
+		Parser parser;
+		SourceAST ast = parser.parse(multipleProceduresRecursiveCallsSource);
 		PKB* pkb = new PKB();
 		PKBInserter* pkbInserter = new PKBInserter(pkb);
 		DesignExtractor::extract(ast, pkbInserter);
@@ -2910,10 +2967,11 @@ public:
 			"	read v; \n "
 			"	print v \n "
 			"}";
-		auto wrapperFunc = [&source] { Parser::parse(source); };
+		auto wrapperFunc = [&source] { Parser parser; parser.parse(source); };
 		Assert::ExpectException<ParserException>(wrapperFunc);
 		try {
-			SourceAST ast = Parser::parse(source);
+			Parser parser;
+			SourceAST ast = parser.parse(source);
 			PKB* pkb = new PKB();
 			PKBInserter* pkbInserter = new PKBInserter(pkb);
 			DesignExtractor::extract(ast, pkbInserter);
@@ -2950,10 +3008,15 @@ public:
 			"procedure Peter { \n "
 			"	read x; \n "
 			"}";
-		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast); };
+		auto wrapperFunc = [&source] {
+			Parser parser;
+			SourceAST ast = parser.parse(source);
+			ASTValidator::validateAST(ast);
+		};
 		Assert::ExpectException<ASTException>(wrapperFunc);
 		try {
-			SourceAST ast = Parser::parse(source);
+			Parser parser;
+			SourceAST ast = parser.parse(source);
 			ASTValidator::validateAST(ast);
 			PKB* pkb = new PKB();
 			PKBInserter* pkbInserter = new PKBInserter(pkb);
@@ -2991,10 +3054,15 @@ public:
 			"procedure main { \n "
 			"	read a; \n "
 			"}";
-		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast); };
+		auto wrapperFunc = [&source] {
+			Parser parser;
+			SourceAST ast = parser.parse(source);
+			ASTValidator::validateAST(ast);
+		};
 		Assert::ExpectException<ASTException>(wrapperFunc);
 		try {
-			SourceAST ast = Parser::parse(source);
+			Parser parser;
+			SourceAST ast = parser.parse(source);
 			ASTValidator::validateAST(ast);
 			PKB* pkb = new PKB();
 			PKBInserter* pkbInserter = new PKBInserter(pkb);
@@ -3031,10 +3099,15 @@ public:
 			"      if (x==y) then { read x; } else { \n"
 			"          call main; }} \n"
 			"}";
-		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast); };
+		auto wrapperFunc = [&source] {
+			Parser parser;
+			SourceAST ast = parser.parse(source);
+			ASTValidator::validateAST(ast);
+		};
 		Assert::ExpectException<ASTException>(wrapperFunc);
 		try {
-			SourceAST ast = Parser::parse(source);
+			Parser parser;
+			SourceAST ast = parser.parse(source);
 			ASTValidator::validateAST(ast);
 			PKB* pkb = new PKB();
 			PKBInserter* pkbInserter = new PKBInserter(pkb);
@@ -3077,10 +3150,15 @@ public:
 			"   }  \n "
 			"}";
 
-		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast); };
+		auto wrapperFunc = [&source] {
+			Parser parser;
+			SourceAST ast = parser.parse(source);
+			ASTValidator::validateAST(ast);
+		};
 		Assert::ExpectException<ASTException>(wrapperFunc);
 		try {
-			SourceAST ast = Parser::parse(source);
+			Parser parser;
+			SourceAST ast = parser.parse(source);
 			ASTValidator::validateAST(ast);
 			PKB* pkb = new PKB();
 			PKBInserter* pkbInserter = new PKBInserter(pkb);
@@ -3133,10 +3211,15 @@ public:
 			"	} \n "
 			"}";
 
-		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast); };
+		auto wrapperFunc = [&source] {
+			Parser parser;
+			SourceAST ast = parser.parse(source);
+			ASTValidator::validateAST(ast);
+		};
 		Assert::ExpectException<ASTException>(wrapperFunc);
 		try {
-			SourceAST ast = Parser::parse(source);
+			Parser parser;
+			SourceAST ast = parser.parse(source);
 			ASTValidator::validateAST(ast);
 			PKB* pkb = new PKB();
 			PKBInserter* pkbInserter = new PKBInserter(pkb);
@@ -3191,10 +3274,15 @@ public:
 			"	} \n"
 			"}";
 
-		auto wrapperFunc = [&source] { SourceAST ast = Parser::parse(source); ASTValidator::validateAST(ast); };
+		auto wrapperFunc = [&source] {
+			Parser parser;
+			SourceAST ast = parser.parse(source);
+			ASTValidator::validateAST(ast);
+		};
 		Assert::ExpectException<ASTException>(wrapperFunc);
 		try {
-			SourceAST ast = Parser::parse(source);
+			Parser parser;
+			SourceAST ast = parser.parse(source);
 			ASTValidator::validateAST(ast);
 			PKB* pkb = new PKB();
 			PKBInserter* pkbInserter = new PKBInserter(pkb);

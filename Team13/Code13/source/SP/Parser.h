@@ -14,21 +14,23 @@ class Parser {
 private:
 	static Lexer lexer;
 
-	static ProgramNode* matchProgram();
-	static ProcedureNode* matchProcedure();
-	static StmtLstNode* matchStmtLst();
-	static StmtNode* matchStmt();
-	static ReadNode* matchRead();
-	static PrintNode* matchPrint();
-	static AssignNode* matchAssign(std::string varName);
-	static WhileNode* matchWhile();
-	static ExprNode* matchCondExpr();
-	static ExprNode* matchRelExpr();
-	static ExprNode* matchRelFactor();
-	static IfNode* matchIf();
-	static CallNode* matchCall();
+	ProgramNode* matchProgram();
+	ProcedureNode* matchProcedure();
+	StmtLstNode* matchStmtLst();
+	StmtNode* matchStmt();
+	ReadNode* matchRead();
+	PrintNode* matchPrint();
+	AssignNode* matchAssign(std::string varName);
+	WhileNode* matchWhile();
+	ExprNode* matchCondExpr();
+	ExprNode* matchRelExpr();
+	ExprNode* matchRelFactor();
+	IfNode* matchIf();
+	CallNode* matchCall();
+
+	StmtIndex stmtIdx;
 
 public:
 	Parser();
-	static SourceAST parse(const std::string& source);
+	SourceAST parse(const std::string& source);
 };

@@ -29,7 +29,8 @@ void TestWrapper::parse(std::string filename) {
 	std::string fileContent = getFileContent(filename);
 
 	try {
-		SourceAST ast = Parser::parse(fileContent);
+		Parser parser;
+		SourceAST ast = parser.parse(fileContent);
 		ASTValidator::validateAST(ast);
 		DesignExtractor::extract(ast, pkbInserter);
 	} catch (ParserException& ex) {

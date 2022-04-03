@@ -533,6 +533,9 @@
     <ClInclude Include="..\source\PKB\BidirectionalTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\source\SP\RsEntitiesMapsTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
