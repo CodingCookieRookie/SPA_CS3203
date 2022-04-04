@@ -21,6 +21,7 @@ private:
 	TEST_METHOD_CLEANUP(cleanUpTables) {
 		Attribute::performCleanUp();
 		Entity::performCleanUp();
+		affectsProcessor->performCleanUp();
 	}
 
 	TEST_METHOD_INITIALIZE(init) {
@@ -50,12 +51,9 @@ public:
 		ModifiesS::insert(stmt, varIndex);
 		UsesS::insert(stmt2, varIndex);
 		std::unordered_set<StmtIndex> successors;
-		std::unordered_set<StmtIndex> predecessors;
 		successors.insert(stmt2);
-		predecessors.insert(stmt);
 
 		cacheStorage->insertSuccessors(stmt, successors);
-		cacheStorage->insertPredecessors(stmt2, predecessors);
 		Assert::IsTrue(cacheStorage->contains(stmt, stmt2));
 
 		// 2. Main test:
@@ -87,17 +85,15 @@ public:
 		ModifiesS::insert(stmt, varIndex);
 		UsesS::insert(stmt2, varIndex);
 		std::unordered_set<StmtIndex> successors;
-		std::unordered_set<StmtIndex> predecessors;
 		successors.insert(stmt2);
-		predecessors.insert(stmt);
-
 		cacheStorage->insertSuccessors(stmt, successors);
-		cacheStorage->insertPredecessors(stmt2, predecessors);
 		Assert::IsTrue(cacheStorage->contains(stmt, stmt2));
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
-		Assert::IsFalse(evTable.getEvResult());
+		Assert::AreEqual(size_t(0), evTable.getNumRow());
+		std::string expected = "Table String: size: 1\nSynonym: a1 Values: \n";
+		Assert::AreEqual(expected, evTable.getTableString());
 	}
 
 	TEST_METHOD(execute_lhsSynonymRhsSynonym3) {
@@ -123,11 +119,8 @@ public:
 		ModifiesS::insert(stmt, varIndex);
 		UsesS::insert(stmt, varIndex);
 		std::unordered_set<StmtIndex> successors;
-		std::unordered_set<StmtIndex> predecessors;
 		successors.insert(stmt);
-		predecessors.insert(stmt);
 		cacheStorage->insertSuccessors(stmt, successors);
-		cacheStorage->insertPredecessors(stmt, predecessors);
 		Assert::IsTrue(cacheStorage->contains(stmt, stmt));
 
 		// 2. Main test:
@@ -197,12 +190,9 @@ public:
 		ModifiesS::insert(stmt, varIndex);
 		UsesS::insert(stmt2, varIndex);
 		std::unordered_set<StmtIndex> successors;
-		std::unordered_set<StmtIndex> predecessors;
 		successors.insert(stmt2);
-		predecessors.insert(stmt);
 
 		cacheStorage->insertSuccessors(stmt, successors);
-		cacheStorage->insertPredecessors(stmt2, predecessors);
 		Assert::IsTrue(cacheStorage->contains(stmt, stmt2));
 
 		// 2. Main test:
@@ -234,12 +224,9 @@ public:
 		ModifiesS::insert(stmt, varIndex);
 		UsesS::insert(stmt2, varIndex);
 		std::unordered_set<StmtIndex> successors;
-		std::unordered_set<StmtIndex> predecessors;
 		successors.insert(stmt2);
-		predecessors.insert(stmt);
 
 		cacheStorage->insertSuccessors(stmt, successors);
-		cacheStorage->insertPredecessors(stmt2, predecessors);
 		Assert::IsTrue(cacheStorage->contains(stmt, stmt2));
 
 		// 2. Main test:
@@ -281,7 +268,7 @@ public:
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
-		Assert::AreEqual(true, evTable.getEvResult());
+		Assert::IsTrue(evTable.getEvResult());
 		std::string expected = "Table String: size: 0\n";
 		Assert::AreEqual(expected, evTable.getTableString());
 	}
@@ -308,12 +295,9 @@ public:
 		ModifiesS::insert(stmt, varIndex);
 		UsesS::insert(stmt2, varIndex);
 		std::unordered_set<StmtIndex> successors;
-		std::unordered_set<StmtIndex> predecessors;
 		successors.insert(stmt2);
-		predecessors.insert(stmt);
 
 		cacheStorage->insertSuccessors(stmt, successors);
-		cacheStorage->insertPredecessors(stmt2, predecessors);
 		Assert::IsTrue(cacheStorage->contains(stmt, stmt2));
 
 		// 2. Main test:

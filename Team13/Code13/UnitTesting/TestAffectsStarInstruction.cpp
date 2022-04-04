@@ -62,10 +62,7 @@ public:
 		successors2.insert(stmt3);
 		cacheStorage->insertSuccessors(stmt, successors);
 		cacheStorage->insertSuccessors(stmt2, successors2);
-		//std::unordered_set<StmtIndex> predecessors;
-		//predecessors.insert(stmt);
-		//predecessors.insert(stmt2);
-		//cacheStorage->insertPredecessors(stmt3, predecessors);
+
 		Assert::IsTrue(cacheStorage->contains(stmt, stmt2));
 		Assert::IsTrue(cacheStorage->contains(stmt2, stmt3));
 

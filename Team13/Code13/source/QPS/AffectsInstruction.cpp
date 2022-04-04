@@ -16,7 +16,7 @@ EvaluatedTable AffectsInstruction::handleWildCardLeft(std::unordered_map<std::st
 		return EvaluatedTable(allStmts.size() > 0);
 	case PqlReferenceType::INTEGER:
 		rhsRefValue = stoi(rhsRef.second);
-		allStmts = affectsProcessor->getUsingRightStmtIndex(rhsRefValue);
+		allStmts = affectsProcessor->getUsingRightStmtIndex(StmtIndex(rhsRefValue));
 		return EvaluatedTable(allStmts.size() > 0);
 	default:
 		break;
@@ -31,7 +31,7 @@ EvaluatedTable AffectsInstruction::handleSynonymLeft(std::unordered_map<std::str
 	int rhsRefValue;
 	switch (rhsRef.first) {
 	case PqlReferenceType::SYNONYM:
-		if (lhsRef.second == rhsRef.second) { /* Special case: Next(s1, s1) has a legitimate result */
+		if (lhsRef.second == rhsRef.second) { /* Special case: Affects(s1, s1) has a legitimate result */
 			std::vector<int> lhsAssigns = std::get<0>(allStmtVarInfos);
 			std::vector<int> rhsAssigns = std::get<1>(allStmtVarInfos);
 			std::vector<int> finalAssigns;
@@ -52,7 +52,7 @@ EvaluatedTable AffectsInstruction::handleSynonymLeft(std::unordered_map<std::str
 		break;
 	case PqlReferenceType::INTEGER:
 		rhsRefValue = stoi(rhsRef.second);
-		allStmts = affectsProcessor->getUsingRightStmtIndex(rhsRefValue);
+		allStmts = affectsProcessor->getUsingRightStmtIndex(StmtIndex(rhsRefValue));
 		break;
 	default:
 		break;
@@ -66,12 +66,12 @@ EvaluatedTable AffectsInstruction::handleIntegerLeft(std::unordered_map<std::str
 	std::vector<int> allStmts, std::vector<int> varIndices) {
 	int lhsRefValue = stoi(lhsRef.second);
 	int rhsRefValue;
-	if (!Entity::containsStmt(lhsRefValue)) {
+	if (!Entity::containsStmt(StmtIndex(lhsRefValue))) {
 		return EvaluatedTable(false);
 	}
 	VarIndex varIndex;
-	StmtIndex stmtIndex = { lhsRefValue };
-	allStmts = affectsProcessor->getUsingLeftStmtIndex(lhsRefValue);
+	StmtIndex leftStmtIndex = { lhsRefValue };
+	allStmts = affectsProcessor->getUsingLeftStmtIndex(leftStmtIndex);
 	switch (rhsRef.first) {
 	case PqlReferenceType::SYNONYM:
 		PQLmap[rhsRef.second] = allStmts;
@@ -80,7 +80,7 @@ EvaluatedTable AffectsInstruction::handleIntegerLeft(std::unordered_map<std::str
 		return EvaluatedTable(allStmts.size() > 0);
 	case PqlReferenceType::INTEGER:
 		rhsRefValue = stoi(rhsRef.second);
-		return EvaluatedTable(affectsProcessor->doesRsHold(lhsRefValue, rhsRefValue));
+		return EvaluatedTable(affectsProcessor->doesRsHold(leftStmtIndex, StmtIndex(rhsRefValue)));
 	default:
 		break;
 	}
