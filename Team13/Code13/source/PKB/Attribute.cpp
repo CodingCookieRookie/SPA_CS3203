@@ -20,6 +20,14 @@ NameIndex Attribute::getNameIdx(std::string& nameValue) {
 	return nameIdxBidirectionalTable.getIndexFromString(nameValue);
 }
 
+void Attribute::insertNameIdxEntityByName(EntityType entityType, NameIdxEntityIndex entityIdx, NameIndex nameIdx) {
+	if (entityType == EntityType::PROCEDURE) {
+		nameProcIdxTable[nameIdx].insert(entityIdx);
+	} else if (entityType == EntityType::VARIABLE) {
+		nameVarIdxTable[nameIdx].insert(entityIdx);
+	}
+}
+
 void Attribute::insertVarIdxByName(VarIndex& varIdx, NameIndex nameIdx) {
 	nameVarIdxTable[nameIdx].insert(varIdx);
 }

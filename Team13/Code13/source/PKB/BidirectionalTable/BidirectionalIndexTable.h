@@ -4,34 +4,34 @@
 #include <unordered_map>
 #include <vector>
 
-template<typename T>
+template<typename Index>
 class BidirectionalIndexTable {
 private:
 	size_t getTableSize();
-	std::unordered_map<std::string, T> stringIndexTable;
-	std::unordered_map<T, std::string> indexStringTable;
+	std::unordered_map<std::string, Index> stringIndexTable;
+	std::unordered_map<Index, std::string> indexStringTable;
 
 public:
 	BidirectionalIndexTable();
-	T insert(std::string& string);
+	Index insert(std::string& string);
 	bool contains(std::string& string);
-	std::string getStringFromIndex(T element);
-	T getIndexFromString(std::string string);
-	std::vector<T> getAll();
+	std::string getStringFromIndex(Index element);
+	Index getIndexFromString(std::string string);
+	std::vector<Index> getAll();
 };
 
-template<typename T>
-BidirectionalIndexTable<T>::BidirectionalIndexTable() {};
+template<typename Index>
+BidirectionalIndexTable<Index>::BidirectionalIndexTable() {};
 
-template<typename T>
-size_t BidirectionalIndexTable<T>::getTableSize() {
+template<typename Index>
+size_t BidirectionalIndexTable<Index>::getTableSize() {
 	return stringIndexTable.size();
 }
 
-template<typename T>
-T BidirectionalIndexTable<T>::insert(std::string& string) {
+template<typename Index>
+Index BidirectionalIndexTable<Index>::insert(std::string& string) {
 	if (stringIndexTable.find(string) == stringIndexTable.end()) {
-		T nextIndex = T(getTableSize() + 1);
+		Index nextIndex = Index(getTableSize() + 1);
 		stringIndexTable[string] = nextIndex;
 		indexStringTable[nextIndex] = string;
 	}
@@ -39,24 +39,24 @@ T BidirectionalIndexTable<T>::insert(std::string& string) {
 	return stringIndexTable[string];
 }
 
-template<typename T>
-bool BidirectionalIndexTable<T>::contains(std::string& string) {
+template<typename Index>
+bool BidirectionalIndexTable<Index>::contains(std::string& string) {
 	return stringIndexTable.find(string) != stringIndexTable.end();
 }
 
-template<typename T>
-std::string BidirectionalIndexTable<T>::getStringFromIndex(T element) {
+template<typename Index>
+std::string BidirectionalIndexTable<Index>::getStringFromIndex(Index element) {
 	return indexStringTable[element];
 }
 
-template<typename T>
-T BidirectionalIndexTable<T>::getIndexFromString(std::string string) {
+template<typename Index>
+Index BidirectionalIndexTable<Index>::getIndexFromString(std::string string) {
 	return stringIndexTable[string];
 }
 
-template<typename T>
-std::vector<T> BidirectionalIndexTable<T>::getAll() {
-	std::vector<T> res;
+template<typename Index>
+std::vector<Index> BidirectionalIndexTable<Index>::getAll() {
+	std::vector<Index> res;
 
 	for (auto& entry : indexStringTable) {
 		res.push_back(entry.first);

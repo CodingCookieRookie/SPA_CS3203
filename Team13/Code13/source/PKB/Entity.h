@@ -11,7 +11,7 @@
 #include "./BidirectionalTable/BidirectionalTableOneWaySet.h"
 
 class Entity {
-protected:
+private:
 	static size_t getStmtTypeTableSize();
 	static bool isContainerStmt(StmtIndex& stmtIdx);
 

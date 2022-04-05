@@ -10,9 +10,10 @@
 #include "../Common/Types.h"
 #include "./BidirectionalTable/BidirectionalIndexTable.h"
 #include "./Entity.h"
+#include "./NameIndexEntity.h"
 
 class Attribute {
-protected:
+private:
 	static std::vector<EntityAttributeRef> processIntegerAttributeArgVector(EntityType entityType);
 
 	static BidirectionalIndexTable<NameIndex> nameIdxBidirectionalTable;
@@ -28,8 +29,12 @@ public:
 	static NameIndex getNameIdx(std::string& nameValue);
 	static bool containsName(std::string& nameValue);
 
+	static void insertNameIdxEntityByName(EntityType entityType, NameIdxEntityIndex entityIdx, NameIndex nameIdx);
+
+	/* TO BE REMOVED */
 	static void insertVarIdxByName(VarIndex& varIdx, NameIndex nameIdx);
 	static void insertProcIdxByName(ProcIndex& procIdx, NameIndex nameIdx);
+
 	static void insertStmtByName(StmtIndex& stmtIdx, StatementType stmtType, std::string& nameValue);
 
 	static std::string getAttributeNameByStmtIdx(StmtIndex& stmtIdx);

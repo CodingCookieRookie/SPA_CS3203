@@ -14,6 +14,7 @@ enum class EntityType {
 };
 
 typedef int EntityAttributeRef;
+typedef int NameIdxEntityIndex;
 typedef int VarIndex;
 typedef int ProcIndex;
 typedef int StmtIndex;

@@ -7,7 +7,7 @@
 #include "../Common/Types.h"
 
 class Container {
-protected:
+private:
 	static std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> containerStmtTable;
 	static std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> containedStmtTable;
 	static void insert(StmtIndex& containerStmtIdx, std::unordered_set<StmtIndex>& containedStmts);

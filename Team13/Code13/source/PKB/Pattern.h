@@ -10,7 +10,7 @@
 #include "./BidirectionalTable/BidirectionalTableOneWaySet.h"
 
 class Pattern {
-protected:
+private:
 	static BidirectionalTableOneWaySet<VarIndex, StmtIndex> assignedVarStmtBidirectionalTable;
 	static BidirectionalTableOneWaySet<std::string, StmtIndex> postfixExprStmtBidirectionalTable;
 	static std::unordered_map<VarIndex, std::unordered_set<StmtIndex>> ifVarTable;
