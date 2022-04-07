@@ -47,7 +47,8 @@ public:
 		expected.push_back("1");
 		expected.push_back("3");
 		expected.push_back("5");
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -86,7 +87,8 @@ public:
 		expected.push_back("a");
 		expected.push_back("b");
 		expected.push_back("c");
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -125,7 +127,8 @@ public:
 		expected.push_back("proc1");
 		expected.push_back("proc2");
 		expected.push_back("proc3");
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -154,7 +157,8 @@ public:
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{ "1", "2", "3", "4" };
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -183,7 +187,8 @@ public:
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{ "1", "2", "3", "4" };
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -215,7 +220,8 @@ public:
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{ "1 4", "2 5", "3 6" };
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -247,7 +253,8 @@ public:
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{ "1 4", "1 5", "2 5", "2 6", "3 6" };
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -279,7 +286,8 @@ public:
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{ "1 4", "1 5", "2 5", "2 6", "3 6", "4 7" };
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -310,7 +318,8 @@ public:
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{ "1", "2", "3" };
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -358,7 +367,8 @@ public:
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{ "1 var1 13 proc1", "2 var2 14 proc2", "3 var3 15 proc3" };
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -405,7 +415,8 @@ public:
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{ "1 var1 13 proc1", "2 var2 14 proc2", "3 var3 15 proc3" };
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -453,7 +464,8 @@ public:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{
 			"1 proc2 proc1 proc1", "2 proc3 proc2 proc2" };
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -514,7 +526,8 @@ public:
 			"var1 var1 var1 var1 1 4",
 			"var2 var2 var2 var2 2 5",
 			"var3 var3 var3 var3 3 6" };
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -553,7 +566,8 @@ public:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{
 			"1 10 99 99", "2 20 88 88" };
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -607,7 +621,8 @@ public:
 		std::list<std::string> expected{
 			"1 3 5 7 9 11 13 15",
 			"2 4 6 8 10 12 14 16" };
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -651,7 +666,8 @@ public:
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{ "TRUE" };
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -677,7 +693,8 @@ public:
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(false);
 		std::list<std::string> expected{ "FALSE" };
-		std::list<std::string> results = PQLResultProjector::resolveTableToResults(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();

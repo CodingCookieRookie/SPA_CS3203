@@ -53,6 +53,7 @@
     <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllVarInstruction.cpp" />
     <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllWhileInstruction.cpp" />
     <ClCompile Include="..\source\QPS\ModifiesInstruction.cpp" />
+    <ClCompile Include="..\source\QPS\NestStarInstruction.cpp" />
     <ClCompile Include="..\source\QPS\NextInstruction.cpp" />
     <ClCompile Include="..\source\QPS\ParentInstruction.cpp" />
     <ClCompile Include="..\source\QPS\ParentStarInstruction.cpp" />
@@ -66,6 +67,7 @@
     <ClCompile Include="..\source\QPS\PQLEvaluator.cpp" />
     <ClCompile Include="..\source\QPS\PQLParser.cpp" />
     <ClCompile Include="..\source\QPS\PQLResultProjector.cpp" />
+    <ClCompile Include="..\source\QPS\Processors.cpp" />
     <ClCompile Include="..\source\QPS\QPSCommons.cpp" />
     <ClCompile Include="..\source\QPS\RelationshipInstruction.cpp" />
     <ClCompile Include="..\source\QPS\UsesInstruction.cpp" />
@@ -147,6 +149,7 @@
     <ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllWhileInstruction.h" />
     <ClInclude Include="..\source\QPS\ModifiesInstruction.h" />
     <ClInclude Include="..\source\QPS\NextInstruction.h" />
+    <ClInclude Include="..\source\QPS\NextStarInstruction.h" />
     <ClInclude Include="..\source\QPS\ParentInstruction.h" />
     <ClInclude Include="..\source\QPS\ParentStarInstruction.h" />
     <ClInclude Include="..\source\QPS\ParsedGetAll.h" />
@@ -159,6 +162,7 @@
     <ClInclude Include="..\source\QPS\PQLEvaluator.h" />
     <ClInclude Include="..\source\QPS\PQLParser.h" />
     <ClInclude Include="..\source\QPS\PQLResultProjector.h" />
+    <ClInclude Include="..\source\QPS\Processors.h" />
     <ClInclude Include="..\source\QPS\QPSCommons.h" />
     <ClInclude Include="..\source\QPS\RelationshipInstruction.h" />
     <ClInclude Include="..\source\QPS\UsesInstruction.h" />

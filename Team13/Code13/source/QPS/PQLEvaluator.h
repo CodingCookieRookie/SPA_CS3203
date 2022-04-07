@@ -11,30 +11,35 @@
 #include "WithInstruction.h"
 #include "ParsedQuery.h"
 #include "QPSCommons.h"
+#include "Processors.h"
 
 class PQLEvaluator {
 private:
-	ParsedQuery parsedQuery;
+	ParsedQuery& parsedQuery;
+	Processors processors;
 
 	/* Helper method to break down parsedQuery into instructions to call in PKB */
-	static std::vector<Instruction*> evaluateToInstructions(ParsedQuery pq);
+	std::vector<Instruction*> evaluateToInstructions();
 
 	/* Helper method to break down to insert GetAll instructions to call in PKB */
-	static void insertGetAllInstr(PqlReference pqlRef, ParsedQuery& pq, std::vector<Instruction*>& instructions);
+	void insertGetAllInstr(PqlReference pqlRef, std::vector<Instruction*>& instructions);
 
 	/* Helper method to execute all instructions */
-	static EvaluatedTable executeInstructions(std::vector<Instruction*> instructions);
+	EvaluatedTable executeInstructions(std::vector<Instruction*> instructions);
 
 	/* Helper method to select columns of table in EvaluatedTable for projection based on Select-cl */
-	static EvaluatedTable selectColumnsForProjection(EvaluatedTable evaluatedTable, ParsedQuery& pq);
+	EvaluatedTable selectColumnsForProjection(EvaluatedTable& evaluatedTable);
 
-	/* Helper method to check relationship type */
-	static bool isRelationship(ParsedRelationship& relationship);
+	/* Helper to instantiate processors */
+	Processors instantiateProcessors();
 
 public:
+	/* Constructor */
+	PQLEvaluator(ParsedQuery& parsedQuery);
+
 	/* Main entry method for parsing the query */
-	static EvaluatedTable evaluate(ParsedQuery& parsedQuery);
+	EvaluatedTable evaluate();
 
 	/* Entry method for selecting projected columns from the EvTable */
-	static EvaluatedTable selectProjection(EvaluatedTable& resultingEvTable, ParsedQuery& parsedQuery);
+	EvaluatedTable selectProjection(EvaluatedTable& resultingEvTable);
 };

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "./CFGProcessor.h"
 #include "./CacheStorage.h"
 #include "../PKB/Next.h"

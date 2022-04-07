@@ -194,6 +194,7 @@
     <ClCompile Include="TestInstructionFollows.cpp" />
     <ClCompile Include="TestInstructionFollowsT.cpp" />
     <ClCompile Include="TestInstructionNext.cpp" />
+    <ClCompile Include="TestInstructionNextT.cpp" />
     <ClCompile Include="TestInstructionParent.cpp" />
     <ClCompile Include="TestInstructionParentT.cpp" />
     <ClCompile Include="TestModifiesSInstruction.cpp" />

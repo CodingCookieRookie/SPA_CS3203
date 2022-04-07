@@ -54,6 +54,8 @@
     <ClCompile Include="TestWithInstruction.cpp" />
     <ClCompile Include="TestNext.cpp" />
     <ClCompile Include="TestInstructionNext.cpp" />
+    <ClCompile Include="TestNextT.cpp" />
+    <ClCompile Include="TestCFG.cpp" />
     <ClCompile Include="TestAffectsProcessor.cpp" />
     <ClCompile Include="TestAffectsTProcessor.cpp" />
     <ClCompile Include="TestNextTProcessor.cpp" />
@@ -73,6 +75,8 @@
     <ClCompile Include="TestVariable.cpp" />
     <ClCompile Include="TestPatternIf.cpp" />
     <ClCompile Include="TestPatternWhile.cpp" />
+    <ClCompile Include="TestBidirectionalTable.cpp" />
+    <ClCompile Include="TestInstructionNextT.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />

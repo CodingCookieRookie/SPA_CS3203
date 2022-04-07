@@ -13,5 +13,5 @@ public:
 	PqlRelationshipType getRelationshipType() const;
 	PqlReference getLhs() const;
 	PqlReference getRhs() const;
-	Instruction* toInstruction() const;
+	Instruction* toInstruction(Processors processors) const;
 };

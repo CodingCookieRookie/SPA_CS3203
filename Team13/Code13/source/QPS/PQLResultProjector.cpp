@@ -8,8 +8,10 @@
 #include "PQLResultProjector.h"
 #include "QPSCommons.h"
 
-std::list<std::string> PQLResultProjector::resolveTableToResults(
-	EvaluatedTable evaluatedTable, ParsedQuery& parsedQuery) {
+PQLResultProjector::PQLResultProjector(EvaluatedTable& evaluatedTable, ParsedQuery& parsedQuery) :
+	evaluatedTable(evaluatedTable), parsedQuery(parsedQuery) {}
+
+std::list<std::string> PQLResultProjector::resolveTableToResults() {
 	std::vector<PqlReference> attributes = parsedQuery.getAttributes();
 	std::unordered_map<std::string, EntityType> declarations = parsedQuery.getDeclarations();
 	std::list<std::string> resList;

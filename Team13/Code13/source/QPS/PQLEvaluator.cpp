@@ -3,37 +3,46 @@
 #include <unordered_set>
 
 #include "../PKB/Entity.h"
-#include "Instruction.h"
 #include "PQLEvaluator.h"
-#include "QPSCommons.h"
 
-EvaluatedTable PQLEvaluator::evaluate(ParsedQuery& parsedQuery) {
-	std::vector<Instruction*> instructions = PQLEvaluator::evaluateToInstructions(parsedQuery);
+Processors PQLEvaluator::instantiateProcessors() {
+	NextTProcessor* nextTProcessor = new NextTProcessor(new NextTCache());
+	AffectsProcessor* affectsProcessor = new AffectsProcessor();
+	AffectsTProcessor* affectsTProcessor = new AffectsTProcessor(new AffectsTCache(), affectsProcessor);
+	Processors processors = Processors(nextTProcessor, affectsProcessor, affectsTProcessor);
+	return processors;
+}
+
+PQLEvaluator::PQLEvaluator(ParsedQuery& parsedQuery) :
+	parsedQuery(parsedQuery), processors(PQLEvaluator::instantiateProcessors()) {}
+
+EvaluatedTable PQLEvaluator::evaluate() {
+	std::vector<Instruction*> instructions = PQLEvaluator::evaluateToInstructions();
 	EvaluatedTable resultingEvTable = PQLEvaluator::executeInstructions(instructions);
 	return resultingEvTable;
 }
 
-EvaluatedTable PQLEvaluator::selectProjection(EvaluatedTable& resultingEvTable, ParsedQuery& parsedQuery) {
-	EvaluatedTable projectingEvTable = PQLEvaluator::selectColumnsForProjection(resultingEvTable, parsedQuery);
+EvaluatedTable PQLEvaluator::selectProjection(EvaluatedTable& resultingEvTable) {
+	EvaluatedTable projectingEvTable = PQLEvaluator::selectColumnsForProjection(resultingEvTable);
 	return projectingEvTable;
 }
 
-std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
+std::vector<Instruction*> PQLEvaluator::evaluateToInstructions() {
 	std::vector<Instruction*> instructions = std::vector<Instruction*>();
-	std::unordered_map<std::string, EntityType> declarations = pq.getDeclarations();
-	std::unordered_set<std::string> columns = pq.getColumns();
-	std::vector<ParsedRelationship> relationships = pq.getRelationships();
-	std::vector<ParsedPattern> patterns = pq.getPatterns();
-	std::vector<ParsedWith> withs = pq.getWiths();
+	std::unordered_map<std::string, EntityType> declarations = parsedQuery.getDeclarations();
+	std::unordered_set<std::string> columns = parsedQuery.getColumns();
+	std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
+	std::vector<ParsedPattern> patterns = parsedQuery.getPatterns();
+	std::vector<ParsedWith> withs = parsedQuery.getWiths();
 
 	// Assumption: Semantically corrct ParsedQuery
 	// 1. Get all relationship results from such-that-clause
 	for (ParsedRelationship& relationship : relationships) {
-		instructions.push_back(relationship.toInstruction());
+		instructions.push_back(relationship.toInstruction(processors));
 		PqlReference lhsRef = relationship.getLhs();
 		PqlReference rhsRef = relationship.getRhs();
-		PQLEvaluator::insertGetAllInstr(lhsRef, pq, instructions);
-		PQLEvaluator::insertGetAllInstr(rhsRef, pq, instructions);
+		PQLEvaluator::insertGetAllInstr(lhsRef, instructions);
+		PQLEvaluator::insertGetAllInstr(rhsRef, instructions);
 	}
 
 	// 2. Get all pattern results from pattern-clause
@@ -51,9 +60,9 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
 	return instructions;
 }
 
-void PQLEvaluator::insertGetAllInstr(PqlReference pqlRef, ParsedQuery& pq, std::vector<Instruction*>& instructions) {
-	std::unordered_map<std::string, EntityType> declarations = pq.getDeclarations();
-	if (isSynonymRef(pqlRef) && pq.isStmtSubtype(pqlRef)) {
+void PQLEvaluator::insertGetAllInstr(PqlReference pqlRef, std::vector<Instruction*>& instructions) {
+	std::unordered_map<std::string, EntityType> declarations = parsedQuery.getDeclarations();
+	if (isSynonymRef(pqlRef) && parsedQuery.isStmtSubtype(pqlRef)) {
 		std::string value = pqlRef.second;
 		EntityType entType = declarations.at(value);
 		ParsedGetAll getAllSynonym = ParsedGetAll(entType, value);
@@ -73,10 +82,10 @@ EvaluatedTable PQLEvaluator::executeInstructions(std::vector<Instruction*> instr
 }
 
 EvaluatedTable PQLEvaluator::selectColumnsForProjection(
-	EvaluatedTable evaluatedTable, ParsedQuery& pq) {
-	std::unordered_set<std::string> columnsProjected = pq.getColumns();
-	std::vector<PqlReference> attributesProjected = pq.getAttributes();
-	std::unordered_map<std::string, EntityType> declarations = pq.getDeclarations();
+	EvaluatedTable& evaluatedTable) {
+	std::unordered_set<std::string> columnsProjected = parsedQuery.getColumns();
+	std::vector<PqlReference> attributesProjected = parsedQuery.getAttributes();
+	std::unordered_map<std::string, EntityType> declarations = parsedQuery.getDeclarations();
 	std::unordered_map<std::string, std::vector<int>> table = evaluatedTable.getTableRef();
 	std::unordered_map<std::string, std::vector<int>> resultTable;
 	EvaluatedTable resultEvTable;
@@ -86,7 +95,7 @@ EvaluatedTable PQLEvaluator::selectColumnsForProjection(
 	if (projType == ProjectionType::BOOLEAN) {
 		/* Existence of clauses means clauses determine boolean result,
 		=> short circuit and go straight to PQLResultProjector */
-		if (ParsedQuery::isClausePresent(pq)) {
+		if (ParsedQuery::isClausePresent(parsedQuery)) {
 			return evaluatedTable;
 		} else {
 			/* No Clauses, existence of declared synonyms determine boolean result

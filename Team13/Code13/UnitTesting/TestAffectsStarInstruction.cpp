@@ -38,7 +38,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a2");
-		Instruction* instruction = new AffectsStarInstruction(lhsRef, rhsRef, affectsProcessor, affectsTProcessor);
+		Instruction* instruction = new AffectsStarInstruction(lhsRef, rhsRef, affectsTProcessor);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1", "a2" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);

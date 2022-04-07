@@ -18,6 +18,7 @@
 #include "../PKB/Calls.h"
 #include "../PKB/CallsT.h"
 #include "../PKB/Next.h"
+#include "NextTProcessor.h"
 #include "EvaluatedTable.h"
 #include "QPSCommons.h"
 #include "../Common/Types.h"

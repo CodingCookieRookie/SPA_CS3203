@@ -7,13 +7,11 @@
 class PQLResultProjector {
 private:
 	EvaluatedTable evaluatedTable;
-	std::vector<std::string> columnsProjected;
-	std::unordered_map<std::string, EntityType> declarations;
-
-	static bool isClausePresent(ParsedQuery& parsedQuery);
+	ParsedQuery& parsedQuery;
 
 public:
+	PQLResultProjector(EvaluatedTable& evaluatedTable, ParsedQuery& parsedQuery);
+
 	/* Resolves the EvaluatedTable results into a list of strings to present the results of the query. */
-	static std::list<std::string> PQLResultProjector::resolveTableToResults(
-		EvaluatedTable evTable, ParsedQuery& parsedQuery);
+	std::list<std::string> PQLResultProjector::resolveTableToResults();
 };

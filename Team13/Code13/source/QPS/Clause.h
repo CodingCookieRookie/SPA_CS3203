@@ -2,6 +2,7 @@
 
 #include "Instruction.h"
 #include "QPSCommons.h"
+#include "Processors.h"
 #include "WithInstruction.h"
 #include "ModifiesInstruction.h"
 #include "UsesInstruction.h"
@@ -12,7 +13,10 @@
 #include "CallsInstruction.h"
 #include "CallsStarInstruction.h"
 #include "NextInstruction.h"
+#include "NextStarInstruction.h"
 #include "PatternInstruction.h"
+#include "AffectsInstruction.h"
+#include "AffectsStarInstruction.h"
 #include "Instructions\GetAllInstructions\GetAllAssignInstruction.h"
 #include "Instructions\GetAllInstructions\GetAllCallInstruction.h"
 #include "Instructions\GetAllInstructions\GetAllConstInstruction.h"

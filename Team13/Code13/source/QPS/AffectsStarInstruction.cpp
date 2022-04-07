@@ -76,6 +76,9 @@ EvaluatedTable AffectsStarInstruction::handleIntegerLeft(std::unordered_map<std:
 	return EvaluatedTable(PQLmap);
 }
 
+AffectsStarInstruction::AffectsStarInstruction(PqlReference lhsRef, PqlReference rhsRef, AffectsTProcessor* affectsTProcessor) :
+	RelationshipInstruction(lhsRef, rhsRef, affectsTProcessor) {}
+
 EvaluatedTable AffectsStarInstruction::execute() {
 	EvaluatedTable evTable;
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
