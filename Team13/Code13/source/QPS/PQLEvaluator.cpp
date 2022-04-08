@@ -12,8 +12,13 @@ PQLEvaluator::PQLEvaluator(ParsedQuery& parsedQuery, PKBGetter* pkbGetter) :
 	parsedQuery(parsedQuery), pkbGetter(pkbGetter), processors(PQLEvaluator::instantiateProcessors()) {}
 
 EvaluatedTable PQLEvaluator::evaluate() {
-	std::vector<Instruction*> instructions = PQLEvaluator::evaluateToInstructions(parsedQuery);
-	EvaluatedTable resultingEvTable = PQLEvaluator::executeInstructions(instructions);
+	std::vector<Instruction*> instructions;
+	try {
+		instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
+	} catch (QPSException&) {
+		return EvaluatedTable(false);
+	}
+	EvaluatedTable resultingEvTable = executeInstructions(instructions);
 	return resultingEvTable;
 }
 
@@ -24,44 +29,10 @@ EvaluatedTable PQLEvaluator::selectProjection(EvaluatedTable& resultingEvTable) 
 
 std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
 	std::vector<Instruction*> instructions = std::vector<Instruction*>();
-	std::unordered_map<std::string, EntityType> declarations = pq.getDeclarations();
-	std::unordered_set<std::string> columns = pq.getColumns();
-	std::vector<ParsedRelationship> relationships = pq.getRelationships();
-	std::vector<ParsedPattern> patterns = pq.getPatterns();
-	std::vector<ParsedWith> withs = pq.getWiths();
-
-	// Assumption: Semantically corrct ParsedQuery
-	// 1. Get all relationship results from such-that-clause
-	for (ParsedRelationship& relationship : relationships) {
-		instructions.push_back(relationship.toInstruction(pkbGetter, processors));
-		PqlReference lhsRef = relationship.getLhs();
-		PqlReference rhsRef = relationship.getRhs();
-		PQLEvaluator::insertGetAllInstr(lhsRef, pq, instructions);
-		PQLEvaluator::insertGetAllInstr(rhsRef, pq, instructions);
-	}
-
-	// 2. Get all pattern results from pattern-clause
-	for (size_t i = 0; i < patterns.size(); i++) {
-		ParsedPattern parsedPattern = patterns.at(i);
-		instructions.push_back(parsedPattern.toInstruction(pkbGetter));
-	}
-
-	// 3. Get all with results for with-clause
-	for (const ParsedWith& with : withs) {
-		instructions.push_back(with.toInstruction(pkbGetter));
-	}
-
 	return instructions;
 }
 
 void PQLEvaluator::insertGetAllInstr(PqlReference pqlRef, ParsedQuery& pq, std::vector<Instruction*>& instructions) {
-	std::unordered_map<std::string, EntityType> declarations = pq.getDeclarations();
-	if (isSynonymRef(pqlRef) && pq.isStmtSubtype(pqlRef)) {
-		std::string value = pqlRef.second;
-		EntityType entType = declarations.at(value);
-		ParsedGetAll getAllSynonym = ParsedGetAll(entType, value);
-		instructions.push_back(getAllSynonym.toInstruction(pkbGetter));
-	}
 }
 
 EvaluatedTable PQLEvaluator::executeInstructions(std::vector<Instruction*> instructions) {

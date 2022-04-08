@@ -3,6 +3,6 @@
 GetAllInstruction::GetAllInstruction(std::string synonym, PKBGetter* pkbGetter) :
 	synonym(synonym), pkbGetter(pkbGetter) {};
 
-EvaluatedTable GetAllInstruction::execute() {
-	return EvaluatedTable();
+std::unordered_set<std::string> GetAllInstruction::getSynonyms() {
+	return { synonym };
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <unordered_set>
 
 #include "../Common/Types.h"
 #include "OnTheFlyRSProcessor.h"
@@ -56,5 +57,11 @@ typedef std::pair<PqlExpressionType, std::string> PqlExpression;
 
 typedef int QueryScore;
 
-bool isSynonymRef(PqlReference reference);
+class QPSCommons {
+private:
+	static const std::unordered_set<PqlReferenceType> SYNONYM_REFERENCE_TYPES;
+public:
+	static bool isSynonymRef(const PqlReference& reference);
+};
+
 bool isStatementEntity(EntityType entityType);

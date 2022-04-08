@@ -32,13 +32,18 @@ public:
 		std::vector<ParsedRelationship> relationships;
 		std::vector<ParsedPattern> patterns;
 		std::vector<ParsedWith> withs;
-		ParsedQuery pq1 = ParsedQuery(declarations, columns, relationships, patterns, withs);
+		bool tupleSelect = false;
+		ParsedQuery pq1 = ParsedQuery(declarations, columns, relationships, patterns, withs, tupleSelect);
 
-		Assert::AreEqual(size_t(2), pq1.getDeclarations().size());
-		Assert::IsFalse(pq1.getColumns().empty());
+		Assert::IsFalse(pq1.getAttributes().empty());
 
-		std::unordered_set<std::string> selects = pq1.getColumns();
-		Assert::IsTrue(selects.find("s") != selects.end());
+		PKBGetter* pkbGetter = nullptr;
+		std::vector<Instruction*> selectInstructions = pq1.getSelectInstructions(pkbGetter);
+		Assert::AreEqual(size_t(1), selectInstructions.size());
+		Assert::IsTrue(std::any_of(selectInstructions.begin(), selectInstructions.end(), [](Instruction* instruction) {
+			std::unordered_set<std::string> synonyms = instruction->getSynonyms();
+			return synonyms.find("s") != synonyms.end();
+			}));
 	}
 	};
 }

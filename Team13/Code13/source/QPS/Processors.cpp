@@ -6,14 +6,14 @@ Processors::Processors(
 	affectsProcessor(affectsProcessor),
 	affectsTProcessor(affectsTProcessor) {}
 
-NextTProcessor* Processors::getNextTProcessor() {
+NextTProcessor* Processors::getNextTProcessor() const {
 	return nextTProcessor;
 }
 
-AffectsProcessor* Processors::getAffectsProcessor() {
+AffectsProcessor* Processors::getAffectsProcessor() const {
 	return affectsProcessor;
 }
 
-AffectsTProcessor* Processors::getAffectsTProcessor() {
+AffectsTProcessor* Processors::getAffectsTProcessor() const {
 	return affectsTProcessor;
 }

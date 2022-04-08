@@ -10,7 +10,7 @@ PatternInstruction::PatternInstruction(
 
 std::unordered_set<std::string> PatternInstruction::getSynonyms() {
 	std::unordered_set<std::string> results{ synonym };
-	if (isSynonymRef(entRef)) {
+	if (QPSCommons::isSynonymRef(entRef)) {
 		results.insert(entRef.second);
 	}
 	return results;

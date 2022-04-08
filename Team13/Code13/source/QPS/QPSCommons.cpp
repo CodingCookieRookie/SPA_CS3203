@@ -1,11 +1,12 @@
 #include "QPSCommons.h"
 
-bool isSynonymRef(PqlReference reference) {
-	return reference.first == PqlReferenceType::SYNONYM
-		|| reference.first == PqlReferenceType::PROC_NAME
-		|| reference.first == PqlReferenceType::STMT_NUM
-		|| reference.first == PqlReferenceType::VAR_NAME
-		|| reference.first == PqlReferenceType::VALUE;
+const std::unordered_set<PqlReferenceType> QPSCommons::SYNONYM_REFERENCE_TYPES = {
+	PqlReferenceType::SYNONYM, PqlReferenceType::PROC_NAME, PqlReferenceType::STMT_NUM,
+	PqlReferenceType::VAR_NAME, PqlReferenceType::VALUE
+};
+
+bool QPSCommons::isSynonymRef(const PqlReference& reference) {
+	return SYNONYM_REFERENCE_TYPES.find(reference.first) != SYNONYM_REFERENCE_TYPES.end();
 }
 
 bool isStatementEntity(EntityType entityType) {

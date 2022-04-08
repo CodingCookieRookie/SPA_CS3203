@@ -110,7 +110,6 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::VAR_NAME, "print");
 		rhsRef = std::make_pair(PqlReferenceType::IDENT, "read");
-		/* TODO: Redesign WithInstruction*/
 		Instruction* instruction = new WithStringInstruction(lhsRef, rhsRef, EntityType::PRINT, EntityType::VARIABLE, pkbGetter);
 
 		/* Test getSynonyms() */
@@ -154,7 +153,6 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::IDENT, "print");
 		rhsRef = std::make_pair(PqlReferenceType::IDENT, "read");
-		/* TODO: Redesign WithInstruction*/
 		Instruction* instruction = new WithStringInstruction(lhsRef, rhsRef, EntityType::CONSTANT, EntityType::CONSTANT, pkbGetter);
 
 		/* Test getSynonyms() */
@@ -242,7 +240,6 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "1");
 		rhsRef = std::make_pair(PqlReferenceType::STMT_NUM, "read");
-		/* TODO: Redesign WithInstruction*/
 		Instruction* instruction = new WithIntegerInstruction(lhsRef, rhsRef, EntityType::CONSTANT, EntityType::READ, pkbGetter);
 
 		/* Test getSynonyms() */
@@ -286,7 +283,6 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "3");
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "0");
-		/* TODO: Redesign WithInstruction*/
 		Instruction* instruction = new WithIntegerInstruction(lhsRef, rhsRef, EntityType::CONSTANT, EntityType::CONSTANT, pkbGetter);
 
 		/* Test getSynonyms() */

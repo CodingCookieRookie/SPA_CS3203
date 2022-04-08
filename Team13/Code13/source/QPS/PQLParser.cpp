@@ -86,13 +86,15 @@ std::vector<PqlEntity> PQLParser::parseDeclarations() {
 	return allDeclarations;
 }
 
-std::vector<PqlReference> PQLParser::parseSelect() {
+std::pair<std::vector<PqlReference>, bool> PQLParser::parseSelect() {
+	bool tupleSelect = false;
 	std::vector<PqlReference> elems;
 	if (!lexer.match(Common::SELECT)) {
 		throw QPSException(QPSException::PARSER_ERROR);
 	}
 	std::string whitespace = lexer.nextWhitespace();
 	if (lexer.match(Common::LEFT_ANGLE)) {
+		tupleSelect = true;
 		do {
 			PqlReference elem = parseElem();
 			elems.push_back(elem);
@@ -100,22 +102,14 @@ std::vector<PqlReference> PQLParser::parseSelect() {
 		if (!lexer.match(Common::RIGHT_ANGLE)) {
 			throw QPSException(QPSException::PARSER_ERROR);
 		}
-		return elems;
+		return { elems, tupleSelect };
 	}
 	if (whitespace.empty()) {
 		throw QPSException(QPSException::PARSER_ERROR);
 	}
-	if (lexer.match(Common::BOOLEAN)) {
-		whitespace = lexer.nextWhitespace();
-		bool validDelimiter = !whitespace.empty() || lexer.reachedEnd();
-		if (!validDelimiter) {
-			throw QPSException(QPSException::PARSER_ERROR);
-		}
-		return elems;
-	}
 	PqlReference elem = parseElem();
 	elems.push_back(elem);
-	return elems;
+	return { elems, tupleSelect };
 }
 
 ParsedRelationship PQLParser::parseSingleSuchThat() {
@@ -356,7 +350,7 @@ PqlExpression PQLParser::parseExpression() {
 ParsedQuery PQLParser::parseQuery(const std::string& query) {
 	lexer = Lexer(query);
 	std::vector<PqlEntity> allDeclarations = parseDeclarations();
-	std::vector<PqlReference> columns = parseSelect();
+	auto [columns, tupleSelect] = parseSelect();
 	std::vector<ParsedRelationship> relationships;
 	std::vector<ParsedPattern> patterns;
 	std::vector<ParsedWith> withs;
@@ -389,7 +383,7 @@ ParsedQuery PQLParser::parseQuery(const std::string& query) {
 		/* Consume additional whitespace in the case of trailing whitespace */
 		lexer.nextWhitespace();
 	}
-	return ParsedQuery(allDeclarations, columns, relationships, patterns, withs);
+	return ParsedQuery(allDeclarations, columns, relationships, patterns, withs, tupleSelect);
 }
 
 bool PQLParser::validDelimiter() {

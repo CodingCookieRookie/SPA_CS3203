@@ -63,10 +63,10 @@ EvaluatedTable WithInstruction::execute() {
 
 std::unordered_set<std::string> WithInstruction::getSynonyms() {
 	std::unordered_set<std::string> synonyms;
-	if (isSynonymRef(lhs)) {
+	if (QPSCommons::isSynonymRef(lhs)) {
 		synonyms.insert(lhs.second);
 	}
-	if (isSynonymRef(rhs)) {
+	if (QPSCommons::isSynonymRef(rhs)) {
 		synonyms.insert(rhs.second);
 	}
 	return synonyms;

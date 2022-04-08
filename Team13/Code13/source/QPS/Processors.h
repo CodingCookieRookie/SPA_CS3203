@@ -12,8 +12,8 @@ private:
 
 public:
 	Processors(NextTProcessor* nextTProcessor, AffectsProcessor* affectsProcessor, AffectsTProcessor* affectsTProcessor);
-	NextTProcessor* getNextTProcessor();
-	AffectsProcessor* getAffectsProcessor();
-	AffectsTProcessor* getAffectsTProcessor();
+	NextTProcessor* getNextTProcessor() const;
+	AffectsProcessor* getAffectsProcessor() const;
+	AffectsTProcessor* getAffectsTProcessor() const;
 
 };

@@ -11,5 +11,5 @@ protected:
 public:
 	/* Default Constructor */
 	GetAllInstruction(std::string synonym, PKBGetter* pkbGetter);
-	virtual EvaluatedTable execute() = 0;
+	virtual std::unordered_set<std::string> getSynonyms();
 };

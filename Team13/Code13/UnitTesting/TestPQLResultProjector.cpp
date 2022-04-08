@@ -38,8 +38,9 @@ public:
 		std::vector<ParsedRelationship> noRelationships;
 		std::vector<ParsedPattern> noPatterns;
 		std::vector<ParsedWith> noWiths;
+		bool tupleSelect = false;
 		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
-			noRelationships, noPatterns, noWiths);
+			noRelationships, noPatterns, noWiths, tupleSelect);
 
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
@@ -80,8 +81,9 @@ public:
 		std::vector<ParsedRelationship> noRelationships;
 		std::vector<ParsedPattern> noPatterns;
 		std::vector<ParsedWith> noWiths;
+		bool tupleSelect = false;
 		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
-			noRelationships, noPatterns, noWiths);
+			noRelationships, noPatterns, noWiths, tupleSelect);
 
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
@@ -120,8 +122,9 @@ public:
 		std::vector<ParsedRelationship> noRelationships;
 		std::vector<ParsedPattern> noPatterns;
 		std::vector<ParsedWith> noWiths;
+		bool tupleSelect = false;
 		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
-			noRelationships, noPatterns, noWiths);
+			noRelationships, noPatterns, noWiths, tupleSelect);
 
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
@@ -153,8 +156,9 @@ public:
 		std::vector<ParsedRelationship> noRelationships;
 		std::vector<ParsedPattern> noPatterns;
 		std::vector<ParsedWith> noWiths;
+		bool tupleSelect = false;
 		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
-			noRelationships, noPatterns, noWiths);
+			noRelationships, noPatterns, noWiths, tupleSelect);
 
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
@@ -183,8 +187,9 @@ public:
 		std::vector<ParsedRelationship> noRelationships;
 		std::vector<ParsedPattern> noPatterns;
 		std::vector<ParsedWith> noWiths;
+		bool tupleSelect = false;
 		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
-			noRelationships, noPatterns, noWiths);
+			noRelationships, noPatterns, noWiths, tupleSelect);
 
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
@@ -216,8 +221,9 @@ public:
 		std::vector<ParsedRelationship> noRelationships;
 		std::vector<ParsedPattern> noPatterns;
 		std::vector<ParsedWith> noWiths;
+		bool tupleSelect = false;
 		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
-			noRelationships, noPatterns, noWiths);
+			noRelationships, noPatterns, noWiths, tupleSelect);
 
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
@@ -249,8 +255,9 @@ public:
 		std::vector<ParsedRelationship> noRelationships;
 		std::vector<ParsedPattern> noPatterns;
 		std::vector<ParsedWith> noWiths;
+		bool tupleSelect = false;
 		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
-			noRelationships, noPatterns, noWiths);
+			noRelationships, noPatterns, noWiths, tupleSelect);
 
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
@@ -282,8 +289,9 @@ public:
 		std::vector<ParsedRelationship> noRelationships;
 		std::vector<ParsedPattern> noPatterns;
 		std::vector<ParsedWith> noWiths;
+		bool tupleSelect = false;
 		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
-			noRelationships, noPatterns, noWiths);
+			noRelationships, noPatterns, noWiths, tupleSelect);
 
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
@@ -314,8 +322,9 @@ public:
 		std::vector<ParsedRelationship> noRelationships;
 		std::vector<ParsedPattern> noPatterns;
 		std::vector<ParsedWith> noWiths;
+		bool tupleSelect = false;
 		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
-			noRelationships, noPatterns, noWiths);
+			noRelationships, noPatterns, noWiths, tupleSelect);
 
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
@@ -363,8 +372,9 @@ public:
 		std::vector<ParsedRelationship> noRelationships;
 		std::vector<ParsedPattern> noPatterns;
 		std::vector<ParsedWith> noWiths;
+		bool tupleSelect = false;
 		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
-			noRelationships, noPatterns, noWiths);
+			noRelationships, noPatterns, noWiths, tupleSelect);
 
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
@@ -411,8 +421,9 @@ public:
 		std::vector<ParsedRelationship> noRelationships;
 		std::vector<ParsedPattern> noPatterns;
 		std::vector<ParsedWith> noWiths;
+		bool tupleSelect = false;
 		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
-			noRelationships, noPatterns, noWiths);
+			noRelationships, noPatterns, noWiths, tupleSelect);
 
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
@@ -456,8 +467,9 @@ public:
 		std::vector<ParsedRelationship> noRelationships;
 		std::vector<ParsedPattern> noPatterns;
 		std::vector<ParsedWith> noWiths;
+		bool tupleSelect = false;
 		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
-			noRelationships, noPatterns, noWiths);
+			noRelationships, noPatterns, noWiths, tupleSelect);
 
 		// Simulating stmt 1 in proc1 calls proc2, stmt2 in proc2 calls proc3
 		// procedure p; call cl; Select <cl, cl.procName, p, p.procName>
@@ -517,8 +529,9 @@ public:
 		std::vector<ParsedRelationship> noRelationships;
 		std::vector<ParsedPattern> noPatterns;
 		std::vector<ParsedWith> noWiths;
+		bool tupleSelect = false;
 		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
-			noRelationships, noPatterns, noWiths);
+			noRelationships, noPatterns, noWiths, tupleSelect);
 
 		// print pn; read r; variable v; Select <v.varName, r.varName, pn.varName, v, r, pn>
 
@@ -559,8 +572,9 @@ public:
 		std::vector<ParsedRelationship> noRelationships;
 		std::vector<ParsedPattern> noPatterns;
 		std::vector<ParsedWith> noWiths;
+		bool tupleSelect = false;
 		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
-			noRelationships, noPatterns, noWiths);
+			noRelationships, noPatterns, noWiths, tupleSelect);
 
 		// stmt s1; constant c1, c2; Select <s1, c1, c2, c2.value>
 
@@ -612,8 +626,9 @@ public:
 		std::vector<ParsedRelationship> noRelationships;
 		std::vector<ParsedPattern> noPatterns;
 		std::vector<ParsedWith> noWiths;
+		bool tupleSelect = false;
 		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
-			noRelationships, noPatterns, noWiths);
+			noRelationships, noPatterns, noWiths, tupleSelect);
 
 		// Select <s1, s2.stmt#, r1.stmt#, pn1.stmt#, cl1.stmt#, w1.stmt#, if1.stmt#, a1.stmt#>
 
@@ -659,8 +674,9 @@ public:
 		std::vector<ParsedRelationship> noRelationships;
 		std::vector<ParsedPattern> noPatterns;
 		std::vector<ParsedWith> noWiths;
+		bool tupleSelect = false;
 		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
-			noRelationships, noPatterns, noWiths);
+			noRelationships, noPatterns, noWiths, tupleSelect);
 
 		// Select <s1, s2.stmt#, r1.stmt#, pn1.stmt#, cl1.stmt#, w1.stmt#, if1.stmt#, a1.stmt#>
 
@@ -688,8 +704,9 @@ public:
 		std::vector<ParsedRelationship> noRelationships;
 		std::vector<ParsedPattern> noPatterns;
 		std::vector<ParsedWith> noWiths;
+		bool tupleSelect = false;
 		ParsedQuery parsedQuery = ParsedQuery(declarations, attributesProjected,
-			noRelationships, noPatterns, noWiths);
+			noRelationships, noPatterns, noWiths, tupleSelect);
 
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(false);

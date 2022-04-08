@@ -34,7 +34,6 @@
     <ClCompile Include="..\source\QPS\CallsInstruction.cpp" />
     <ClCompile Include="..\source\QPS\CallsStarInstruction.cpp" />
     <ClCompile Include="..\source\QPS\OnTheFlyRSProcessor.cpp" />
-    <ClCompile Include="..\source\QPS\Clause.cpp" />
     <ClCompile Include="..\source\QPS\EvaluatedTable.cpp" />
     <ClCompile Include="..\source\QPS\FollowsInstruction.cpp" />
     <ClCompile Include="..\source\QPS\FollowsStarInstruction.cpp" />
@@ -50,7 +49,7 @@
     <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllVarInstruction.cpp" />
     <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllWhileInstruction.cpp" />
     <ClCompile Include="..\source\QPS\ModifiesInstruction.cpp" />
-    <ClCompile Include="..\source\QPS\NestStarInstruction.cpp" />
+    <ClCompile Include="..\source\QPS\NextStarInstruction.cpp" />
     <ClCompile Include="..\source\QPS\NextInstruction.cpp" />
     <ClCompile Include="..\source\QPS\ParentInstruction.cpp" />
     <ClCompile Include="..\source\QPS\ParentStarInstruction.cpp" />
@@ -125,7 +124,6 @@
     <ClInclude Include="..\source\QPS\CallsInstruction.h" />
     <ClInclude Include="..\source\QPS\CallsStarInstruction.h" />
     <ClInclude Include="..\source\QPS\OnTheFlyRSProcessor.h" />
-    <ClInclude Include="..\source\QPS\Clause.h" />
     <ClInclude Include="..\source\QPS\EvaluatedTable.h" />
     <ClInclude Include="..\source\QPS\FollowsInstruction.h" />
     <ClInclude Include="..\source\QPS\FollowsStarInstruction.h" />

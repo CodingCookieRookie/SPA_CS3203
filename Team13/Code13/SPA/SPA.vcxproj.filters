@@ -70,9 +70,6 @@
     <ClCompile Include="..\source\QPS\OnTheFlyRSProcessor.cpp">
       <Filter>Source Files\QPS</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\QPS\Clause.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\QPS\EvaluatedTable.cpp">
       <Filter>Source Files\QPS</Filter>
     </ClCompile>
@@ -224,7 +221,7 @@
     <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllWhileInstruction.cpp">
       <Filter>Source Files\QPS\Instruction</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\QPS\NestStarInstruction.cpp">
+    <ClCompile Include="..\source\QPS\NextStarInstruction.cpp">
       <Filter>Source Files\QPS</Filter>
     </ClCompile>
     <ClCompile Include="..\source\QPS\Processors.cpp">
@@ -368,9 +365,6 @@
       <Filter>Header Files\QPS</Filter>
     </ClInclude>
     <ClInclude Include="..\source\QPS\OnTheFlyRSProcessor.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\Clause.h">
       <Filter>Header Files\QPS</Filter>
     </ClInclude>
     <ClInclude Include="..\source\QPS\EvaluatedTable.h">

@@ -17,10 +17,10 @@ RelationshipInstruction::RelationshipInstruction(PqlReference lhs, PqlReference 
 
 std::unordered_set<std::string> RelationshipInstruction::getSynonyms() {
 	std::unordered_set<std::string> results;
-	if (isSynonymRef(lhsRef)) {
+	if (QPSCommons::isSynonymRef(lhsRef)) {
 		results.insert(lhsRef.second);
 	}
-	if (isSynonymRef(rhsRef)) {
+	if (QPSCommons::isSynonymRef(rhsRef)) {
 		results.insert(rhsRef.second);
 	}
 	return results;

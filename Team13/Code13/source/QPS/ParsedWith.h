@@ -1,19 +1,21 @@
 #pragma once
 
-#include "Clause.h"
+#include "WithInstruction.h"
 
-class ParsedWith : public Clause {
+class ParsedWith {
 private:
+	/* Tables for type-validating the with-clause */
+	static const std::unordered_set<PqlReferenceType> ATTRIB_REFERENCES;
+	static const std::unordered_map<EntityType, std::unordered_set<PqlReferenceType>> VALID_ATTRIBS;
+	static const std::unordered_map<PqlReferenceType, PqlAttributeType> REF_TO_ATTRIB_MAP;
+
 	PqlReference lhs;
 	PqlReference rhs;
-	EntityType lhsEntity;
-	EntityType rhsEntity;
-	PqlAttributeType attribType;
+
+	PqlAttributeType getAttribType(const PqlReference& pqlRef, const std::unordered_map<std::string, EntityType>& declarationMap);
 public:
 	ParsedWith(PqlReference lhs, PqlReference rhs);
-	ParsedWith(PqlReference lhs, PqlReference rhs, EntityType lhsEntity, EntityType rhsEntity, PqlAttributeType attribType);
 	PqlReference getLhs() const;
 	PqlReference getRhs() const;
-	PqlAttributeType getAttribType() const;
-	Instruction* toInstruction(PKBGetter* pkbGetter) const;
+	Instruction* toInstruction(const std::unordered_map<std::string, EntityType>& declarationMap, PKBGetter* pkbGetter);
 };
