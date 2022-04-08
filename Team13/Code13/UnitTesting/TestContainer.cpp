@@ -3,7 +3,6 @@
 
 #include "../source/Common/Types.h"
 #include "../source/PKB/Container.h"
-#include "../source/PKB/Entity.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

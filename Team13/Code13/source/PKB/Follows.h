@@ -1,5 +1,5 @@
 #pragma once
 
-#include "./RS2.h"
+#include "./SameSynonymsRelationship.h"
 
-class Follows : public RS2<Follows, StmtIndex> {};
+class Follows : public SameSynonymsRelationship<StmtIndex> {};

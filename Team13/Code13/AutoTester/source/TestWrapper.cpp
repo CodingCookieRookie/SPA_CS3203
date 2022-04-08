@@ -18,7 +18,6 @@ TestWrapper::TestWrapper() {
 	pkb = new PKB();
 	pkbGetter = new PKBGetter(pkb);
 	pkbInserter = new PKBInserter(pkb);
-	designExtractor = new DesignExtractor();
 }
 
 TestWrapper::~TestWrapper() = default;
@@ -32,7 +31,8 @@ void TestWrapper::parse(std::string filename) {
 	try {
 		SourceAST ast = parser.parse(fileContent);
 		ASTValidator::validateAST(ast);
-		designExtractor->extract(ast, pkbInserter);
+		designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 	} catch (ParserException& ex) {
 		std::cerr << ex.what() << std::endl;
 		exit(EXIT_FAILURE);
@@ -62,10 +62,10 @@ void TestWrapper::evaluate(std::string query, std::list<std::string>&results) {
 	// ...code to evaluate query...
 	try {
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
-		PQLEvaluator pqlEvaluator = PQLEvaluator(parsedQuery);
+		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
 		EvaluatedTable& evTable = pqlEvaluator.evaluate();
 		EvaluatedTable& projectedEvTable = pqlEvaluator.selectProjection(evTable);
-		PQLResultProjector pqlResultProjector = PQLResultProjector(projectedEvTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(projectedEvTable, parsedQuery, pkbGetter);
 		results = pqlResultProjector.resolveTableToResults();
 	} catch (QPSException&) {
 		return;

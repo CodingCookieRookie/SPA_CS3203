@@ -14,6 +14,7 @@ private:
 
 public:
 	PatternAssign();
+	~PatternAssign();
 	void insertAssignInfo(VarIndex& varIdx, std::string& postFixExpression, StmtIndex& stmtIdx);
 	std::vector<StmtIndex> getAssignStmtsFromVarExprFullMatch(VarIndex varIdx, std::string& expression);
 	std::vector<StmtIndex> getAssignStmtsFromVarExprPartialMatch(VarIndex varIdx, std::string& expression);

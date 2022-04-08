@@ -21,7 +21,7 @@ PqlAttributeType ParsedWith::getAttribType() const {
 	return attribType;
 }
 
-Instruction* ParsedWith::toInstruction() const {
+Instruction* ParsedWith::toInstruction(PKBGetter* pkbGetter) const {
 	//PqlAttributeType lhsAttrib;
 	//PqlAttributeType rhsAttrib;
 	//if (lhsAttrib != rhsAttrib) {
@@ -31,10 +31,10 @@ Instruction* ParsedWith::toInstruction() const {
 	Instruction* instruction = nullptr;
 	switch (attribType) {
 	case PqlAttributeType::STRING:
-		instruction = new WithStringInstruction(lhs, rhs, lhsEntity, rhsEntity);
+		instruction = new WithStringInstruction(lhs, rhs, lhsEntity, rhsEntity, pkbGetter);
 		break;
 	case PqlAttributeType::INTEGER:
-		instruction = new WithIntegerInstruction(lhs, rhs, lhsEntity, rhsEntity);
+		instruction = new WithIntegerInstruction(lhs, rhs, lhsEntity, rhsEntity, pkbGetter);
 		break;
 	default:
 		break;

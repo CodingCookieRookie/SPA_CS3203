@@ -3,23 +3,23 @@
 
 #include "../source/QPS/EvaluatedTable.h"
 #include "../source/QPS/PQLResultProjector.h"
-#include "PKB/Entity.h"
-#include "PKB/Calls.h"
-#include "PKB/ModifiesS.h"
-#include "PKB/UsesS.h"
+#include "../source/PKB/PKBInserter.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting {
 	TEST_CLASS(TestPQLResultProjector) {
 private:
-	TEST_METHOD_CLEANUP(cleanUpTables) {
-		Attribute::performCleanUp();
-		Entity::performCleanUp();
-		Calls::performCleanUp();
-		UsesS::performCleanUp();
-		ModifiesS::performCleanUp();
+	PKB* pkb;
+	PKBGetter* pkbGetter;
+	PKBInserter* pkbInserter;
+
+	TEST_METHOD_INITIALIZE(init) {
+		pkb = new PKB();
+		pkbGetter = new PKBGetter(pkb);
+		pkbInserter = new PKBInserter(pkb);
 	}
+
 public:
 
 	TEST_METHOD(resolveTableToResults_oneColumnStatement_projectOneColumn) {
@@ -47,8 +47,10 @@ public:
 		expected.push_back("1");
 		expected.push_back("3");
 		expected.push_back("5");
-		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery, pkbGetter);
 		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
+
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -67,9 +69,9 @@ public:
 		vec.push_back(1);
 		vec.push_back(2);
 		vec.push_back(3);
-		Entity::insertVar("a");
-		Entity::insertVar("b");
-		Entity::insertVar("c");
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "a");
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "b");
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "c");
 		testTable["v"] = vec;
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "v");
 
@@ -87,7 +89,7 @@ public:
 		expected.push_back("a");
 		expected.push_back("b");
 		expected.push_back("c");
-		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery, pkbGetter);
 		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
@@ -107,9 +109,9 @@ public:
 		vec.push_back(1);
 		vec.push_back(2);
 		vec.push_back(3);
-		Entity::insertProc("proc1");
-		Entity::insertProc("proc2");
-		Entity::insertProc("proc3");
+		pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, "proc1");
+		pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, "proc2");
+		pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, "proc3");
 		testTable["p"] = vec;
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "p");
 
@@ -127,7 +129,7 @@ public:
 		expected.push_back("proc1");
 		expected.push_back("proc2");
 		expected.push_back("proc3");
-		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery, pkbGetter);
 		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
@@ -157,7 +159,7 @@ public:
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{ "1", "2", "3", "4" };
-		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery, pkbGetter);
 		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
@@ -187,7 +189,7 @@ public:
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{ "1", "2", "3", "4" };
-		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery, pkbGetter);
 		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
@@ -220,7 +222,7 @@ public:
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{ "1 4", "2 5", "3 6" };
-		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery, pkbGetter);
 		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
@@ -253,7 +255,7 @@ public:
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{ "1 4", "1 5", "2 5", "2 6", "3 6" };
-		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery, pkbGetter);
 		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
@@ -286,7 +288,7 @@ public:
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{ "1 4", "1 5", "2 5", "2 6", "3 6", "4 7" };
-		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery, pkbGetter);
 		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
@@ -318,7 +320,7 @@ public:
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{ "1", "2", "3" };
-		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery, pkbGetter);
 		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
@@ -345,10 +347,10 @@ public:
 		testTable["a1"] = std::vector<int>{ 13, 14, 15 };
 		testTable["p1"] = std::vector<int>{ 1, 2, 3 };
 		for (int i = 0; i < 6; i++) {
-			Entity::insertVar("var" + std::to_string(i + 1));
+			pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "var" + std::to_string(i + 1));
 		}
 		for (int i = 0; i < 3; i++) {
-			Entity::insertProc("proc" + std::to_string(i + 1));
+			pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, "proc" + std::to_string(i + 1));
 		}
 
 		std::vector <std::pair<EntityType, std::string>> declarations;
@@ -367,7 +369,7 @@ public:
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{ "1 var1 13 proc1", "2 var2 14 proc2", "3 var3 15 proc3" };
-		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery, pkbGetter);
 		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
@@ -394,10 +396,10 @@ public:
 		testTable["a1"] = std::vector<int>{ 13, 14, 15 };
 		testTable["p1"] = std::vector<int>{ 1, 2, 3 };
 		for (int i = 0; i < 6; i++) {
-			Entity::insertVar("var" + std::to_string(i + 1));
+			pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "var" + std::to_string(i + 1));
 		}
 		for (int i = 0; i < 3; i++) {
-			Entity::insertProc("proc" + std::to_string(i + 1));
+			pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, "proc" + std::to_string(i + 1));
 		}
 		std::vector <std::pair<EntityType, std::string>> declarations;
 		declarations.emplace_back(std::make_pair(EntityType::STMT, "s1"));
@@ -415,7 +417,7 @@ public:
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{ "1 var1 13 proc1", "2 var2 14 proc2", "3 var3 15 proc3" };
-		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery, pkbGetter);
 		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
@@ -437,16 +439,16 @@ public:
 		attributesProjected.emplace_back(PqlReferenceType::PROC_NAME, "p");
 		testTable["cl"] = std::vector<int>{ 1, 2 };
 		testTable["p"] = std::vector<int>{ 1, 2, 3 };
-		StmtIndex CallIdx1 = Entity::insertStmt(StatementType::CALL_TYPE);
-		StmtIndex CallIdx2 = Entity::insertStmt(StatementType::CALL_TYPE);
+		StmtIndex CallIdx1 = pkbInserter->insertStmt(StatementType::CALL_TYPE);
+		StmtIndex CallIdx2 = pkbInserter->insertStmt(StatementType::CALL_TYPE);
 		std::string proc1 = "proc1";
 		std::string proc2 = "proc2";
 		std::string proc3 = "proc3";
-		ProcIndex ProcIdx1 = Entity::insertProc("proc1");
-		ProcIndex ProcIdx2 = Entity::insertProc("proc2");
-		ProcIndex ProcIdx3 = Entity::insertProc("proc3");
-		Attribute::insertStmtByName(CallIdx1, StatementType::CALL_TYPE, proc2);
-		Attribute::insertStmtByName(CallIdx2, StatementType::CALL_TYPE, proc3);
+		ProcIndex ProcIdx1 = pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, "proc1");
+		ProcIndex ProcIdx2 = pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, "proc2");
+		ProcIndex ProcIdx3 = pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, "proc3");
+		pkbInserter->insertStmtByName(CallIdx1, StatementType::CALL_TYPE, proc2);
+		pkbInserter->insertStmtByName(CallIdx2, StatementType::CALL_TYPE, proc3);
 
 		std::vector <std::pair<EntityType, std::string>> declarations;
 		declarations.emplace_back(std::make_pair(EntityType::CALL, "cl"));
@@ -464,7 +466,7 @@ public:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{
 			"1 proc2 proc1 proc1", "2 proc3 proc2 proc2" };
-		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery, pkbGetter);
 		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
@@ -492,21 +494,21 @@ public:
 		std::string var1 = "var1";
 		std::string var2 = "var2";
 		std::string var3 = "var3";
-		VarIndex varIndex1 = Entity::insertVar("var1");
-		VarIndex varIndex2 = Entity::insertVar("var2");
-		VarIndex varIndex3 = Entity::insertVar("var3");
-		StmtIndex readStmt1 = Entity::insertStmt(StatementType::READ_TYPE);
-		StmtIndex readStmt2 = Entity::insertStmt(StatementType::READ_TYPE);
-		StmtIndex readStmt3 = Entity::insertStmt(StatementType::READ_TYPE);
-		StmtIndex printStmt4 = Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex printStmt5 = Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex printStmt6 = Entity::insertStmt(StatementType::PRINT_TYPE);
-		Attribute::insertStmtByName(readStmt1, StatementType::READ_TYPE, var1); // simulate stmt 1 reading var1
-		Attribute::insertStmtByName(readStmt2, StatementType::READ_TYPE, var2); // simulate stmt 2 reading var2
-		Attribute::insertStmtByName(readStmt3, StatementType::READ_TYPE, var3); // simulate stmt 3 reading var3
-		Attribute::insertStmtByName(printStmt4, StatementType::PRINT_TYPE, var1); // simulate stmt 4 printing var1
-		Attribute::insertStmtByName(printStmt5, StatementType::PRINT_TYPE, var2); // simulate stmt 5 printing var2
-		Attribute::insertStmtByName(printStmt6, StatementType::PRINT_TYPE, var3); // simulate stmt 6 printing var3
+		VarIndex varIndex1 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "var1");
+		VarIndex varIndex2 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "var2");
+		VarIndex varIndex3 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "var3");
+		StmtIndex readStmt1 = pkbInserter->insertStmt(StatementType::READ_TYPE);
+		StmtIndex readStmt2 = pkbInserter->insertStmt(StatementType::READ_TYPE);
+		StmtIndex readStmt3 = pkbInserter->insertStmt(StatementType::READ_TYPE);
+		StmtIndex printStmt4 = pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex printStmt5 = pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex printStmt6 = pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		pkbInserter->insertStmtByName(readStmt1, StatementType::READ_TYPE, var1); // simulate stmt 1 reading var1
+		pkbInserter->insertStmtByName(readStmt2, StatementType::READ_TYPE, var2); // simulate stmt 2 reading var2
+		pkbInserter->insertStmtByName(readStmt3, StatementType::READ_TYPE, var3); // simulate stmt 3 reading var3
+		pkbInserter->insertStmtByName(printStmt4, StatementType::PRINT_TYPE, var1); // simulate stmt 4 printing var1
+		pkbInserter->insertStmtByName(printStmt5, StatementType::PRINT_TYPE, var2); // simulate stmt 5 printing var2
+		pkbInserter->insertStmtByName(printStmt6, StatementType::PRINT_TYPE, var3); // simulate stmt 6 printing var3
 
 		std::vector <std::pair<EntityType, std::string>> declarations;
 		declarations.emplace_back(std::make_pair(EntityType::VARIABLE, "v"));
@@ -526,7 +528,7 @@ public:
 			"var1 var1 var1 var1 1 4",
 			"var2 var2 var2 var2 2 5",
 			"var3 var3 var3 var3 3 6" };
-		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery, pkbGetter);
 		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
@@ -566,8 +568,7 @@ public:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{
 			"1 10 99 99", "2 20 88 88" };
-		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
-		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery, pkbGetter); std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
 		auto expectedRes = expected.begin();
@@ -621,7 +622,7 @@ public:
 		std::list<std::string> expected{
 			"1 3 5 7 9 11 13 15",
 			"2 4 6 8 10 12 14 16" };
-		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery, pkbGetter);
 		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
@@ -666,7 +667,7 @@ public:
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(testTable);
 		std::list<std::string> expected{ "TRUE" };
-		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery, pkbGetter);
 		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
@@ -693,7 +694,7 @@ public:
 		// 2. Main test:
 		EvaluatedTable evTestTable = EvaluatedTable(false);
 		std::list<std::string> expected{ "FALSE" };
-		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(evTestTable, parsedQuery, pkbGetter);
 		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		Assert::AreEqual(expected.size(), results.size());
 		auto actualRes = results.begin();
@@ -704,6 +705,5 @@ public:
 			std::advance(expectedRes, 1);
 		}
 	}
-
 	};
 }

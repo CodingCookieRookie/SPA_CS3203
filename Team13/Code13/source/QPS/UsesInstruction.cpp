@@ -1,6 +1,6 @@
 #include "UsesInstruction.h"
 
-UsesInstruction::UsesInstruction(PqlReference lhsRef, PqlReference rhsRef) : RelationshipInstruction(lhsRef, rhsRef) {}
+UsesInstruction::UsesInstruction(PqlReference lhsRef, PqlReference rhsRef, PKBGetter* pkbGetter) : RelationshipInstruction(lhsRef, rhsRef, pkbGetter) {}
 
 EvaluatedTable UsesSInstruction::execute() {
 	/* Uses (a/r/s/a1, v) or Uses(a/r/s/a1, "x") or Uses (a/r/s/a1, _ ) or Uses (1, v)	=> true or Uses (1, _ ) (under statement) */
@@ -37,7 +37,7 @@ EvaluatedTable UsesPInstruction::execute() {
 }
 
 EvaluatedTable UsesInstruction::handleSynonymLeft(std::unordered_map<std::string, std::vector<int>> PQLmap, PqlReference lhsRef, PqlReference rhsRef, std::vector<int> allStmts, std::vector<int> varIndices, PqlRelationshipType pqlRelationshipType) {
-	std::tuple<std::vector<int>, std::vector<int>> allStmtVarInfos = pqlRelationshipType == PqlRelationshipType::USES_S ? UsesS::getAllInfo() : UsesP::getAllInfo();
+	std::tuple<std::vector<int>, std::vector<int>> allStmtVarInfos = pqlRelationshipType == PqlRelationshipType::USES_S ? pkbGetter->getRSAllInfo(RelationshipType::USES_S) : pkbGetter->getRSAllInfo(RelationshipType::USES_P);
 	switch (rhsRef.first) {
 	case PqlReferenceType::SYNONYM:
 		varIndices = std::get<1>(allStmtVarInfos);
@@ -48,9 +48,9 @@ EvaluatedTable UsesInstruction::handleSynonymLeft(std::unordered_map<std::string
 		allStmts = std::get<0>(allStmtVarInfos);
 		break;
 	case PqlReferenceType::IDENT:
-		if (Entity::containsVar(rhsRef.second)) {
-			VarIndex varIndex = Entity::getVarIdx(rhsRef.second);
-			allStmts = pqlRelationshipType == PqlRelationshipType::USES_S ? UsesS::getFromRightArg(varIndex) : UsesP::getFromRightArg(varIndex);
+		if (pkbGetter->containsNameIdxEntity(EntityType::VARIABLE, rhsRef.second)) {
+			VarIndex varIndex = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, rhsRef.second);
+			allStmts = pqlRelationshipType == PqlRelationshipType::USES_S ? pkbGetter->getRSInfoFromRightArg(RelationshipType::USES_S, varIndex) : pkbGetter->getRSInfoFromRightArg(RelationshipType::USES_P, varIndex);
 		}
 		break;
 	default:
@@ -62,24 +62,24 @@ EvaluatedTable UsesInstruction::handleSynonymLeft(std::unordered_map<std::string
 
 EvaluatedTable UsesInstruction::handleIntegerLeft(std::unordered_map<std::string, std::vector<int>> PQLmap, PqlReference lhsRef, PqlReference rhsRef, std::vector<int> allStmts, std::vector<int> varIndices) {
 	int lhsRefValue = stoi(lhsRef.second);
-	if (!Entity::containsStmt(lhsRefValue)) {
+	if (!pkbGetter->containsStmt(lhsRefValue)) {
 		return EvaluatedTable(false);
 	}
 	VarIndex varIndex;
 	StmtIndex stmtIndex = { lhsRefValue };
 	switch (rhsRef.first) {
 	case PqlReferenceType::SYNONYM:
-		varIndices = UsesS::getFromLeftArg(stmtIndex);
+		varIndices = pkbGetter->getRSInfoFromLeftArg(RelationshipType::USES_S, stmtIndex);
 		PQLmap[rhsRef.second] = varIndices;
 		return EvaluatedTable(PQLmap);
 	case PqlReferenceType::WILDCARD:
-		return EvaluatedTable(UsesS::getFromLeftArg(stmtIndex).size() > 0);
+		return EvaluatedTable(pkbGetter->getRSInfoFromLeftArg(RelationshipType::USES_S, stmtIndex).size() > 0);
 	case PqlReferenceType::IDENT:
-		if (!Entity::containsVar(rhsRef.second)) {
+		if (!pkbGetter->containsNameIdxEntity(EntityType::VARIABLE, rhsRef.second)) {
 			return EvaluatedTable(false);
 		}
-		varIndex = Entity::getVarIdx(rhsRef.second);
-		return EvaluatedTable(UsesS::contains(stmtIndex, varIndex));
+		varIndex = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, rhsRef.second);
+		return EvaluatedTable(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIndex, varIndex));
 	default:
 		break;
 	}
@@ -87,24 +87,24 @@ EvaluatedTable UsesInstruction::handleIntegerLeft(std::unordered_map<std::string
 }
 
 EvaluatedTable UsesInstruction::handleIdentLeft(std::unordered_map<std::string, std::vector<int>> PQLmap, PqlReference lhsRef, PqlReference rhsRef, std::vector<int> allStmts, std::vector<int> varIndices) {
-	if (!Entity::containsProc(lhsRef.second)) {
+	if (!pkbGetter->containsNameIdxEntity(EntityType::PROCEDURE, lhsRef.second)) {
 		return EvaluatedTable(false);
 	}
-	ProcIndex procIndex = Entity::getProcIdx(lhsRef.second);
+	ProcIndex procIndex = pkbGetter->getNameIdxEntityIndex(EntityType::PROCEDURE, lhsRef.second);
 	VarIndex varIndex;
 	switch (rhsRef.first) {
 	case PqlReferenceType::SYNONYM:
-		varIndices = UsesP::getFromLeftArg(procIndex);
+		varIndices = pkbGetter->getRSInfoFromLeftArg(RelationshipType::USES_P, procIndex);
 		PQLmap[rhsRef.second] = varIndices;
 		return EvaluatedTable(PQLmap);
 	case PqlReferenceType::WILDCARD:
-		return EvaluatedTable(UsesP::getFromLeftArg(procIndex).size() > 0);
+		return EvaluatedTable(pkbGetter->getRSInfoFromLeftArg(RelationshipType::USES_P, procIndex).size() > 0);
 	case PqlReferenceType::IDENT:
-		if (!Entity::containsVar(rhsRef.second)) {
+		if (!pkbGetter->containsNameIdxEntity(EntityType::VARIABLE, rhsRef.second)) {
 			return EvaluatedTable(false);
 		}
-		varIndex = Entity::getVarIdx(rhsRef.second);
-		return EvaluatedTable(UsesP::contains(procIndex, varIndex));
+		varIndex = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, rhsRef.second);
+		return EvaluatedTable(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIndex, varIndex));
 	default:
 		break;
 	}

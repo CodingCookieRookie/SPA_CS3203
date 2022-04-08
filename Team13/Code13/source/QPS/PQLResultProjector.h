@@ -3,14 +3,18 @@
 #include "EvaluatedTable.h"
 #include "QPSCommons.h"
 #include "ParsedQuery.h"
+#include "../PKB/PKBGetter.h"
 
 class PQLResultProjector {
 private:
-	EvaluatedTable evaluatedTable;
+	EvaluatedTable& evTable;
 	ParsedQuery& parsedQuery;
+	PKBGetter* pkbGetter;
+	std::vector<std::string> columnsProjected;
+	std::unordered_map<std::string, EntityType> declarations;
 
 public:
-	PQLResultProjector(EvaluatedTable& evaluatedTable, ParsedQuery& parsedQuery);
+	PQLResultProjector(EvaluatedTable& evTable, ParsedQuery& parsedQuery, PKBGetter* pkbGetter);
 
 	/* Resolves the EvaluatedTable results into a list of strings to present the results of the query. */
 	std::list<std::string> PQLResultProjector::resolveTableToResults();

@@ -11,6 +11,7 @@ private:
 
 public:
 	ProcedureStatementMapper();
+	~ProcedureStatementMapper();
 	void insertStmtFromProc(ProcIndex procIdx, StmtIndex stmtIdx);
 	std::vector<StmtIndex> getStmtsFromProc(ProcIndex& procIdx);
 	ProcIndex getProcFromStmt(StmtIndex stmtIdx);

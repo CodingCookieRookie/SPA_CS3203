@@ -9,7 +9,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace UnitTesting {
 	TEST_CLASS(TestBidirectionalTableTwoWaySet) {
 public:
-	TEST_METHOD(insert_contains_RS1S_sameStmt) {
+	TEST_METHOD(insert_contains_DifferentSynonymsRelationshipS_sameStmt) {
 		StmtIndex stmtIdx = StmtIndex(1);
 		VarIndex varIdx1 = VarIndex(1);
 		VarIndex varIdx2 = VarIndex(2);
@@ -25,7 +25,7 @@ public:
 		Assert::IsTrue(bidirectionalTable.contains(varIdx3, stmtIdx));
 	}
 
-	TEST_METHOD(insert_contains_RS1S_differentStmt) {
+	TEST_METHOD(insert_contains_DifferentSynonymsRelationshipS_differentStmt) {
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		VarIndex varIdx1 = VarIndex(1);
@@ -42,7 +42,7 @@ public:
 		Assert::IsFalse(bidirectionalTable.contains(varIdx3, stmtIdx2));
 	}
 
-	TEST_METHOD(insert_contains_RS1P_sameProc) {
+	TEST_METHOD(insert_contains_DifferentSynonymsRelationshipP_sameProc) {
 		ProcIndex procIdx = ProcIndex(1);
 		VarIndex varIdx1 = VarIndex(1);
 		VarIndex varIdx2 = VarIndex(2);
@@ -58,7 +58,7 @@ public:
 		Assert::IsTrue(bidirectionalTable.contains(varIdx3, procIdx));
 	}
 
-	TEST_METHOD(insert_contains_RS1P_differentProc) {
+	TEST_METHOD(insert_contains_DifferentSynonymsRelationshipP_differentProc) {
 		ProcIndex procIdx1 = ProcIndex(1);
 		ProcIndex procIdx2 = ProcIndex(2);
 		VarIndex varIdx1 = VarIndex(1);
@@ -75,7 +75,7 @@ public:
 		Assert::IsFalse(bidirectionalTable.contains(varIdx3, procIdx2));
 	}
 
-	TEST_METHOD(insert_getFromLeftArg_RS1S_sameStmt) {
+	TEST_METHOD(insert_getFromLeftArg_DifferentSynonymsRelationshipS_sameStmt) {
 		StmtIndex stmtIdx = StmtIndex(1);
 		VarIndex varIdx1 = VarIndex(1);
 		VarIndex varIdx2 = VarIndex(2);
@@ -96,7 +96,7 @@ public:
 		Assert::IsTrue(expectedRes == res3);
 	}
 
-	TEST_METHOD(insert_getFromLeftArg_RS1S_differentStmt) {
+	TEST_METHOD(insert_getFromLeftArg_DifferentSynonymsRelationshipS_differentStmt) {
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		VarIndex varIdx1 = VarIndex(1);
@@ -116,7 +116,7 @@ public:
 		Assert::IsTrue(expectedRes2 == res2);
 	}
 
-	TEST_METHOD(insert_getFromLeftArg_RS1P_sameProc) {
+	TEST_METHOD(insert_getFromLeftArg_DifferentSynonymsRelationshipP_sameProc) {
 		ProcIndex procIdx = ProcIndex(1);
 		VarIndex varIdx1 = VarIndex(1);
 		VarIndex varIdx2 = VarIndex(2);
@@ -137,7 +137,7 @@ public:
 		Assert::IsTrue(expectedRes == res3);
 	}
 
-	TEST_METHOD(insert_getFromLeftArg_RS1P_differentProc) {
+	TEST_METHOD(insert_getFromLeftArg_DifferentSynonymsRelationshipP_differentProc) {
 		ProcIndex procIdx1 = ProcIndex(1);
 		ProcIndex procIdx2 = ProcIndex(2);
 		VarIndex varIdx1 = VarIndex(1);
@@ -157,7 +157,7 @@ public:
 		Assert::IsTrue(expectedRes2 == res2);
 	}
 
-	TEST_METHOD(insert_getFromRightArg_RS1S_sameStmt) {
+	TEST_METHOD(insert_getFromRightArg_DifferentSynonymsRelationshipS_sameStmt) {
 		StmtIndex stmtIdx = StmtIndex(1);
 		VarIndex varIdx1 = VarIndex(1);
 		VarIndex varIdx2 = VarIndex(2);
@@ -174,7 +174,7 @@ public:
 		Assert::IsTrue(expectedRes == res);
 	}
 
-	TEST_METHOD(insert_getFromRightArg_RS1S_differentStmt) {
+	TEST_METHOD(insert_getFromRightArg_DifferentSynonymsRelationshipS_differentStmt) {
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		VarIndex varIdx1 = VarIndex(1);
@@ -194,7 +194,7 @@ public:
 		Assert::IsTrue(expectedRes2 == res2);
 	}
 
-	TEST_METHOD(insert_getFromRightArg_RS1P_sameProc) {
+	TEST_METHOD(insert_getFromRightArg_DifferentSynonymsRelationshipP_sameProc) {
 		ProcIndex procIdx = ProcIndex(1);
 		VarIndex varIdx1 = VarIndex(1);
 		VarIndex varIdx2 = VarIndex(2);
@@ -211,7 +211,7 @@ public:
 		Assert::IsTrue(expectedRes == res);
 	}
 
-	TEST_METHOD(insert_getFromRightArg_RS1P_differentProc) {
+	TEST_METHOD(insert_getFromRightArg_DifferentSynonymsRelationshipP_differentProc) {
 		ProcIndex procIdx1 = ProcIndex(1);
 		ProcIndex procIdx2 = ProcIndex(2);
 		VarIndex varIdx1 = VarIndex(1);
@@ -231,7 +231,7 @@ public:
 		Assert::IsTrue(expectedRes2 == res2);
 	}
 
-	TEST_METHOD(insert_getAll_RS1S_sameStmt) {
+	TEST_METHOD(insert_getAll_DifferentSynonymsRelationshipS_sameStmt) {
 		StmtIndex stmtIdx = StmtIndex(1);
 		VarIndex varIdx1 = VarIndex(1);
 		VarIndex varIdx2 = VarIndex(2);
@@ -250,7 +250,7 @@ public:
 		Assert::IsTrue(expectedRes == res);
 	}
 
-	TEST_METHOD(insert_getAll_RS1S_differentStmt) {
+	TEST_METHOD(insert_getAll_DifferentSynonymsRelationshipS_differentStmt) {
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		VarIndex varIdx1 = VarIndex(1);
@@ -269,7 +269,7 @@ public:
 		Assert::IsTrue(expectedRes == res);
 	}
 
-	TEST_METHOD(insert_getAll_RS1P_sameProc) {
+	TEST_METHOD(insert_getAll_DifferentSynonymsRelationshipP_sameProc) {
 		ProcIndex procIdx = ProcIndex(1);
 		VarIndex varIdx1 = VarIndex(1);
 		VarIndex varIdx2 = VarIndex(2);
@@ -288,7 +288,7 @@ public:
 		Assert::IsTrue(expectedRes == res);
 	}
 
-	TEST_METHOD(insert_getAll_RS1P_differentProc) {
+	TEST_METHOD(insert_getAll_DifferentSynonymsRelationshipP_differentProc) {
 		ProcIndex procIdx1 = ProcIndex(1);
 		ProcIndex procIdx2 = ProcIndex(2);
 		VarIndex varIdx1 = VarIndex(1);
@@ -307,7 +307,7 @@ public:
 		Assert::IsTrue(expectedRes == res);
 	}
 
-	TEST_METHOD(insert_getAll_RS2_Calls) {
+	TEST_METHOD(insert_getAll_SameSynonymsRelationship_Calls) {
 		ProcIndex procIdx1 = ProcIndex(1);
 		ProcIndex procIdx2 = ProcIndex(2);
 		ProcIndex procIdx3 = ProcIndex(3);
@@ -326,7 +326,7 @@ public:
 		Assert::IsTrue(expectedRes == res);
 	}
 
-	TEST_METHOD(insert_getAll_RS2_Follows) {
+	TEST_METHOD(insert_getAll_SameSynonymsRelationship_Follows) {
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		StmtIndex stmtIdx3 = StmtIndex(3);

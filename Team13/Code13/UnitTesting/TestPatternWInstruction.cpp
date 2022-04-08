@@ -3,9 +3,10 @@
 
 #include <string>
 
-#include "../source/PKB/Pattern.h"
-#include "../source/QPS/PQLEvaluator.h"
-#include "../source/QPS/PQLParser.h"
+#include "PKB/PKBInserter.h"
+#include "PKB/PKBGetter.h"
+#include "QPS/PQLEvaluator.h"
+#include "QPS/PQLParser.h"
 #include "PKB/ExpressionProcessor.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -13,11 +14,16 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace UnitTesting {
 	TEST_CLASS(TestPatternWInstruction) {
 private:
-	TEST_METHOD_CLEANUP(cleanUpTables) {
-		Attribute::performCleanUp();
-		Entity::performCleanUp();
-		Pattern::performCleanUp();
+	PKB* pkb;
+	PKBGetter* pkbGetter;
+	PKBInserter* pkbInserter;
+
+	TEST_METHOD_INITIALIZE(init) {
+		pkb = new PKB();
+		pkbGetter = new PKBGetter(pkb);
+		pkbInserter = new PKBInserter(pkb);
 	}
+
 public:
 	// Pattern while(v, "_") or Pattern while("x", "_") or Pattern while("_", "_")
 	TEST_METHOD(execute_lhsSynonym_IdentOutOfBoundsEvTableFalse) {
@@ -28,20 +34,20 @@ public:
 		PqlPatternType pqlPatternType = PqlPatternType::PATTERN_W;
 		PqlReference entRef = std::make_pair(PqlReferenceType::IDENT, "v");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::WILDCARD, "");
-		Instruction* instruction = new PatternWInstruction(synonym, entRef);
+		Instruction* instruction = new PatternWInstruction(synonym, entRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "w" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
-		Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex stmt = Entity::insertStmt(StatementType::WHILE_TYPE);
-		Entity::insertVar("y");
-		VarIndex varIndex = Entity::insertVar("x");
-		Pattern::insertWhileInfo(stmt, varIndex);
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::WHILE_TYPE);
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "y");
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "x");
+		pkbInserter->insertPatternContainer(StatementType::WHILE_TYPE, stmt, varIndex);
 
 		// Check PKB populated
-		std::vector<int> allStmts = Pattern::getWhileStmtsFromVar(varIndex);
+		std::vector<int> allStmts = pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIndex);
 		Assert::AreEqual(size_t(1), allStmts.size());
 
 		// 2. Main test:
@@ -56,20 +62,20 @@ public:
 		PqlPatternType pqlPatternType = PqlPatternType::PATTERN_W;
 		PqlReference entRef = std::make_pair(PqlReferenceType::SYNONYM, "v");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::WILDCARD, "");
-		Instruction* instruction = new PatternWInstruction(synonym, entRef);
+		Instruction* instruction = new PatternWInstruction(synonym, entRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "w", "v" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
-		Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex stmt = Entity::insertStmt(StatementType::WHILE_TYPE);
-		Entity::insertVar("y");
-		VarIndex varIndex = Entity::insertVar("x");
-		Pattern::insertWhileInfo(stmt, varIndex);
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::WHILE_TYPE);
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "y");
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "x");
+		pkbInserter->insertPatternContainer(StatementType::WHILE_TYPE, stmt, varIndex);
 
 		// Check PKB populated
-		std::vector<int> allStmts = Pattern::getWhileStmtsFromVar(varIndex);
+		std::vector<int> allStmts = pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIndex);
 		Assert::AreEqual(size_t(1), allStmts.size());
 
 		// 2. Main test:
@@ -85,20 +91,20 @@ public:
 		PqlPatternType pqlPatternType = PqlPatternType::PATTERN_W;
 		PqlReference entRef = std::make_pair(PqlReferenceType::IDENT, "x");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::WILDCARD, "");
-		Instruction* instruction = new PatternWInstruction(synonym, entRef);
+		Instruction* instruction = new PatternWInstruction(synonym, entRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "w" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
-		Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex stmt = Entity::insertStmt(StatementType::WHILE_TYPE);
-		Entity::insertVar("y");
-		VarIndex varIndex = Entity::insertVar("x");
-		Pattern::insertWhileInfo(stmt, varIndex);
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::WHILE_TYPE);
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "y");
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "x");
+		pkbInserter->insertPatternContainer(StatementType::WHILE_TYPE, stmt, varIndex);
 
 		// Check PKB populated
-		std::vector<int> allStmts = Pattern::getWhileStmtsFromVar(varIndex);
+		std::vector<int> allStmts = pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIndex);
 		Assert::AreEqual(size_t(1), allStmts.size());
 
 		// 2. Main test:
@@ -114,20 +120,20 @@ public:
 		PqlPatternType pqlPatternType = PqlPatternType::PATTERN_W;
 		PqlReference entRef = std::make_pair(PqlReferenceType::WILDCARD, "");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::WILDCARD, "");
-		Instruction* instruction = new PatternWInstruction(synonym, entRef);
+		Instruction* instruction = new PatternWInstruction(synonym, entRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "w" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
-		Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex stmt = Entity::insertStmt(StatementType::WHILE_TYPE);
-		Entity::insertVar("y");
-		VarIndex varIndex = Entity::insertVar("x");
-		Pattern::insertWhileInfo(stmt, varIndex);
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::WHILE_TYPE);
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "y");
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "x");
+		pkbInserter->insertPatternContainer(StatementType::WHILE_TYPE, stmt, varIndex);
 
 		// Check PKB populated
-		std::vector<int> allStmts = Pattern::getWhileStmtsFromVar(varIndex);
+		std::vector<int> allStmts = pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIndex);
 		Assert::AreEqual(size_t(1), allStmts.size());
 
 		// 2. Main test:

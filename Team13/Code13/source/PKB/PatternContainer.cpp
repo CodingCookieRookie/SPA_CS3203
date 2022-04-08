@@ -2,6 +2,8 @@
 
 PatternContainer::PatternContainer() {}
 
+PatternContainer::~PatternContainer() {}
+
 void PatternContainer::insert(StmtIndex& stmtIdx, VarIndex& varIdx) {
 	containerVarTable[varIdx].insert(stmtIdx);
 }

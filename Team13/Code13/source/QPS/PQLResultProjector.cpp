@@ -2,21 +2,20 @@
 #include <string>
 #include <unordered_set>
 
-#include "../PKB/Entity.h"
 #include "../QPS/Instruction.h"
 #include "EvaluatedTable.h"
 #include "PQLResultProjector.h"
 #include "QPSCommons.h"
 
-PQLResultProjector::PQLResultProjector(EvaluatedTable& evaluatedTable, ParsedQuery& parsedQuery) :
-	evaluatedTable(evaluatedTable), parsedQuery(parsedQuery) {}
+PQLResultProjector::PQLResultProjector(EvaluatedTable& evTable, ParsedQuery& parsedQuery, PKBGetter* pkbGetter) :
+	evTable(evTable), parsedQuery(parsedQuery), pkbGetter(pkbGetter) {}
 
 std::list<std::string> PQLResultProjector::resolveTableToResults() {
 	std::vector<PqlReference> attributes = parsedQuery.getAttributes();
 	std::unordered_map<std::string, EntityType> declarations = parsedQuery.getDeclarations();
 	std::list<std::string> resList;
-	std::unordered_map<std::string, std::vector<int>> resultTable = evaluatedTable.getTableRef();
-	int numRow = evaluatedTable.getNumRow();
+	std::unordered_map<std::string, std::vector<int>> resultTable = evTable.getTableRef();
+	int numRow = evTable.getNumRow();
 
 	/* 1. Check if Projecting Single Synonym, Tuple, or Boolean */
 	ProjectionType projType = ParsedQuery::getProjectionType(attributes);
@@ -56,38 +55,34 @@ std::list<std::string> PQLResultProjector::resolveTableToResults() {
 					|| declarations[entityName] == EntityType::CONSTANT) {
 					value = std::to_string(resultTable[entityName][i]);
 				} else if ((declarations[entityName] == EntityType::VARIABLE)) {
-					value = Entity::getVarName(resultTable[entityName][i]);
+					value = pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, resultTable[entityName][i]);
 				} else if ((declarations[entityName] == EntityType::PROCEDURE)) {
-					value = Entity::getProcName(resultTable[entityName][i]);
+					value = pkbGetter->getNameIdxEntityName(EntityType::PROCEDURE, resultTable[entityName][i]);
 				} else {}
-
 			} else if (attributeType == PqlReferenceType::PROC_NAME) {
 				/* Assumption: there exists a column of p or cl */
 				int index = resultTable[entityName][i]; /* index could be ProcIdx or StmtIdx */
 				if ((declarations[entityName] == EntityType::PROCEDURE)) {
-					value = Entity::getProcName(index);
+					value = pkbGetter->getNameIdxEntityName(EntityType::PROCEDURE, index);
 				} else if ((declarations[entityName] == EntityType::CALL)) {
-					value = Attribute::getAttributeNameByStmtIdx(index);
+					value = pkbGetter->getAttributeNameByStmtIdx(index);
 				}
-
 			} else if (attributeType == PqlReferenceType::VAR_NAME) {
 				/* Assumption: there exists a column of v, r or pn */
 				int index = resultTable[entityName][i]; /* index could be VarIdx or StmtIdx */
 				if ((declarations[entityName] == EntityType::VARIABLE)) {
-					value = Entity::getVarName(index);
+					value = pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, index);
 				} else if ((declarations[entityName] == EntityType::READ)) {
-					value = Attribute::getAttributeNameByStmtIdx(index);
+					value = pkbGetter->getAttributeNameByStmtIdx(index);
 				} else if ((declarations[entityName] == EntityType::PRINT)) {
-					value = Attribute::getAttributeNameByStmtIdx(index);
+					value = pkbGetter->getAttributeNameByStmtIdx(index);
 				} else {}
-
 			} else if (attributeType == PqlReferenceType::VALUE) {
 				/* Assumption: there exists a column of c */
 				int index = resultTable[entityName][i]; /* index is the constant value itself */
 				if ((declarations[entityName] == EntityType::CONSTANT)) {
 					value = std::to_string(index);
 				} else {}
-
 			} else if (attributeType == PqlReferenceType::STMT_NUM) {
 				/* Assumption: there exists a column of s, r, pn, cl, if, a */
 				int index = resultTable[entityName][i]; /* index is StmtIdx */

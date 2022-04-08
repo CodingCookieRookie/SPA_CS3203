@@ -3,7 +3,8 @@
 
 #include <string>
 
-#include "../source/PKB/Pattern.h"
+#include "../source/PKB/PKBGetter.h"
+#include "../source/PKB/PKBInserter.h"
 #include "../source/QPS/PQLEvaluator.h"
 #include "../source/QPS/PQLParser.h"
 #include "PKB/ExpressionProcessor.h"
@@ -13,10 +14,14 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace UnitTesting {
 	TEST_CLASS(TestPatternAInstruction) {
 private:
-	TEST_METHOD_CLEANUP(cleanUpTables) {
-		Attribute::performCleanUp();
-		Entity::performCleanUp();
-		Pattern::performCleanUp();
+	PKB* pkb;
+	PKBGetter* pkbGetter;
+	PKBInserter* pkbInserter;
+
+	TEST_METHOD_INITIALIZE(init) {
+		pkb = new PKB();
+		pkbGetter = new PKBGetter(pkb);
+		pkbInserter = new PKBInserter(pkb);
 	}
 public:
 	// Pattern a(v, "_x_") or Pattern a(v, "_123_") or Pattern a("x", "_x_") or Pattern a("x", "__")
@@ -30,21 +35,21 @@ public:
 		std::string synonym = "a1";
 		PqlReference entRef = std::make_pair(PqlReferenceType::SYNONYM, "v");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::PARTIAL, " 12345 ");
-		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
+		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1", "v" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
-		Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		Entity::insertVar("a");
-		VarIndex varIndex = Entity::insertVar("assign1");
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "a");
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "assign1");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+234");
-		Pattern::insertAssignInfo(varIndex, postFixExpression, stmt);
+		pkbInserter->insertAssignInfo(varIndex, postFixExpression, stmt);
 
 		// Check PKB populated
-		std::vector<int> allStmts = Pattern::getAssignStmtsFromVarExprPartialMatch(varIndex, expressionSpec.second);
+		std::vector<int> allStmts = pkbGetter->getAssignStmtsFromVarExprPartialMatch(varIndex, expressionSpec.second);
 		Assert::AreEqual(size_t(0), allStmts.size());
 
 		// 2. Main test:
@@ -61,21 +66,21 @@ public:
 		std::string synonym = "a1";
 		PqlReference entRef = std::make_pair(PqlReferenceType::IDENT, "v");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::PARTIAL, " xx ");
-		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
+		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
-		Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		Entity::insertVar("a");
-		VarIndex varIndex = Entity::insertVar("assign1");
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "a");
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "assign1");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x");
-		Pattern::insertAssignInfo(varIndex, postFixExpression, stmt);
+		pkbInserter->insertAssignInfo(varIndex, postFixExpression, stmt);
 
 		// Check PKB populated
-		std::vector<int> allStmts = Pattern::getAssignStmtsFromVarExprPartialMatch(varIndex, expressionSpec.second);
+		std::vector<int> allStmts = pkbGetter->getAssignStmtsFromVarExprPartialMatch(varIndex, expressionSpec.second);
 		Assert::AreEqual(size_t(0), allStmts.size());
 
 		// 2. Main test:
@@ -91,21 +96,21 @@ public:
 		std::string synonym = "a1";
 		PqlReference entRef = std::make_pair(PqlReferenceType::SYNONYM, "v");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::PARTIAL, " xx ");
-		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
+		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec, pkbGetter);
 
-		std::unordered_set<std::string> expectedSynonyms{ "a1", "v"};
+		std::unordered_set<std::string> expectedSynonyms{ "a1", "v" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
-		Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		Entity::insertVar("a");
-		VarIndex varIndex = Entity::insertVar("assign1");
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "a");
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "assign1");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x");
-		Pattern::insertAssignInfo(varIndex, postFixExpression, stmt);
+		pkbInserter->insertAssignInfo(varIndex, postFixExpression, stmt);
 
 		// Check PKB populated
-		std::vector<int> allStmts = Pattern::getAssignStmtsFromVarExprPartialMatch(varIndex, expressionSpec.second);
+		std::vector<int> allStmts = pkbGetter->getAssignStmtsFromVarExprPartialMatch(varIndex, expressionSpec.second);
 		Assert::AreEqual(size_t(0), allStmts.size());
 
 		// 2. Main test:
@@ -122,22 +127,22 @@ public:
 		std::string synonym = "a1";
 		PqlReference entRef = std::make_pair(PqlReferenceType::SYNONYM, "v");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::PARTIAL, " x ");
-		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
+		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec, pkbGetter);
 
-		std::unordered_set<std::string> expectedSynonyms{ "a1", "v"};
+		std::unordered_set<std::string> expectedSynonyms{ "a1", "v" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
-		Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		Entity::insertVar("a");
-		VarIndex varIndex = Entity::insertVar("assign1");
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "a");
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "assign1");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+xx");
-		Pattern::insertAssignInfo(varIndex, postFixExpression, stmt);
+		pkbInserter->insertAssignInfo(varIndex, postFixExpression, stmt);
 
 		// Check PKB populated
 		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("x");
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getAssignStmtsFromExprPartialMatch(postFixExpressionQuery);
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = pkbGetter->getAssignStmtsFromExprPartialMatch(postFixExpressionQuery);
 		Assert::AreEqual(size_t(0), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Main test:
@@ -154,21 +159,21 @@ public:
 		std::string synonym = "a1";
 		PqlReference entRef = std::make_pair(PqlReferenceType::SYNONYM, "v");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::PARTIAL, " x ");
-		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
+		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1", "v" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
-		Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		Entity::insertVar("a");
-		VarIndex varIndex = Entity::insertVar("x");
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "a");
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "x");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x");
-		Pattern::insertAssignInfo(varIndex, postFixExpression, stmt);
+		pkbInserter->insertAssignInfo(varIndex, postFixExpression, stmt);
 
 		// Check PKB populated
-		std::vector<int> allStmts = Pattern::getAssignStmtsFromVarExprPartialMatch(varIndex, expressionSpec.second);
+		std::vector<int> allStmts = pkbGetter->getAssignStmtsFromVarExprPartialMatch(varIndex, expressionSpec.second);
 		Assert::AreEqual(size_t(1), allStmts.size());
 
 		// 2. Main test:
@@ -184,21 +189,21 @@ public:
 		std::string synonym = "a1";
 		PqlReference entRef = std::make_pair(PqlReferenceType::SYNONYM, "v");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::PARTIAL, " 123 ");
-		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
+		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1", "v" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
-		Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		VarIndex varIndex = Entity::insertVar("assign1");
-		Entity::insertConst(123);
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "assign1");
+		pkbInserter->insertConst(123);
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+123");
-		Pattern::insertAssignInfo(varIndex, postFixExpression, stmt);
+		pkbInserter->insertAssignInfo(varIndex, postFixExpression, stmt);
 
 		// Check PKB populated
-		std::vector<int> allStmts = Pattern::getAssignStmtsFromVarExprPartialMatch(varIndex, expressionSpec.second);
+		std::vector<int> allStmts = pkbGetter->getAssignStmtsFromVarExprPartialMatch(varIndex, expressionSpec.second);
 		Assert::AreEqual(size_t(1), allStmts.size());
 
 		// 2. Main test:
@@ -215,21 +220,21 @@ public:
 		std::string synonym = "a1";
 		PqlReference entRef = std::make_pair(PqlReferenceType::IDENT, "assign1");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::PARTIAL, " x ");
-		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
+		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
-		Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		Entity::insertVar("x");
-		VarIndex varIndex = Entity::insertVar("assign1");
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "x");
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "assign1");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x");
-		Pattern::insertAssignInfo(varIndex, postFixExpression, stmt);
+		pkbInserter->insertAssignInfo(varIndex, postFixExpression, stmt);
 
 		// Check PKB populated
-		std::vector<int> allStmts = Pattern::getAssignStmtsFromVarExprPartialMatch(varIndex, expressionSpec.second);
+		std::vector<int> allStmts = pkbGetter->getAssignStmtsFromVarExprPartialMatch(varIndex, expressionSpec.second);
 		Assert::AreEqual(size_t(1), allStmts.size());
 
 		// 2. Main test:
@@ -246,22 +251,22 @@ public:
 		std::string synonym = "a1";
 		PqlReference entRef = std::make_pair(PqlReferenceType::IDENT, "assign1");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::PARTIAL, " 123 ");
-		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
+		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
-		Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		Entity::insertVar("x");
-		Entity::insertConst(123);
-		VarIndex varIndex = Entity::insertVar("assign1");
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "x");
+		pkbInserter->insertConst(123);
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "assign1");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+123");
-		Pattern::insertAssignInfo(varIndex, postFixExpression, stmt);
+		pkbInserter->insertAssignInfo(varIndex, postFixExpression, stmt);
 
 		// Check PKB populated
-		std::vector<int> allStmts = Pattern::getAssignStmtsFromVarExprPartialMatch(varIndex, expressionSpec.second);
+		std::vector<int> allStmts = pkbGetter->getAssignStmtsFromVarExprPartialMatch(varIndex, expressionSpec.second);
 		Assert::AreEqual(size_t(1), allStmts.size());
 
 		// 2. Main test:
@@ -278,20 +283,20 @@ public:
 		std::string synonym = "a1";
 		PqlReference entRef = std::make_pair(PqlReferenceType::SYNONYM, "v");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::WILDCARD, "");
-		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
+		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1", "v" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
-		Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		VarIndex varIndex = Entity::insertVar("assign1");
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "assign1");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x");
-		Pattern::insertAssignInfo(varIndex, postFixExpression, stmt);
+		pkbInserter->insertAssignInfo(varIndex, postFixExpression, stmt);
 
 		// Check PKB populated
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second));
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second));
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Main test:
@@ -308,20 +313,20 @@ public:
 		std::string synonym = "a1";
 		PqlReference entRef = std::make_pair(PqlReferenceType::IDENT, "assign1");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::WILDCARD, "");
-		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
+		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
-		Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		VarIndex varIndex = Entity::insertVar("assign1");
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "assign1");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x");
-		Pattern::insertAssignInfo(varIndex, postFixExpression, stmt);
+		pkbInserter->insertAssignInfo(varIndex, postFixExpression, stmt);
 
 		// Check PKB populated
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second));
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second));
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Main test:
@@ -338,20 +343,20 @@ public:
 		std::string synonym = "a1";
 		PqlReference entRef = std::make_pair(PqlReferenceType::WILDCARD, "");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::PARTIAL, " x ");
-		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
+		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
-		Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		VarIndex varIndex = Entity::insertVar("assign1");
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "assign1");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x");
-		Pattern::insertAssignInfo(varIndex, postFixExpression, stmt);
+		pkbInserter->insertAssignInfo(varIndex, postFixExpression, stmt);
 
 		// Check PKB populated
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getAssignStmtsFromExprPartialMatch(expressionSpec.second);
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = pkbGetter->getAssignStmtsFromExprPartialMatch(expressionSpec.second);
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Main test:
@@ -368,20 +373,20 @@ public:
 		std::string synonym = "a1";
 		PqlReference entRef = std::make_pair(PqlReferenceType::WILDCARD, "");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::WILDCARD, "");
-		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
+		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
-		Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		VarIndex varIndex = Entity::insertVar("assign1");
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "assign1");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x");
-		Pattern::insertAssignInfo(varIndex, postFixExpression, stmt);
+		pkbInserter->insertAssignInfo(varIndex, postFixExpression, stmt);
 
 		// Check PKB populated
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second));
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(expressionSpec.second));
 		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Main test:
@@ -403,20 +408,20 @@ public:
 		PqlReference entRef = std::make_pair(PqlReferenceType::SYNONYM, "v");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::FULL, postFixExpression);
-		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
+		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1", "v" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
-		Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		VarIndex varIndex = Entity::insertVar("assign1");
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "assign1");
 
-		Pattern::insertAssignInfo(varIndex, postFixExpression, stmt);
+		pkbInserter->insertAssignInfo(varIndex, postFixExpression, stmt);
 
 		// Check PKB populated
-		std::vector<int> allPatternStmtInfo = Pattern::getAssignStmtsFromVarExprFullMatch(varIndex, postFixExpression);
+		std::vector<int> allPatternStmtInfo = pkbGetter->getAssignStmtsFromVarExprFullMatch(varIndex, postFixExpression);
 		Assert::AreEqual(size_t(1), allPatternStmtInfo.size());
 
 		// 2. Main test:
@@ -434,20 +439,20 @@ public:
 		PqlReference entRef = std::make_pair(PqlReferenceType::SYNONYM, "v");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x+y");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::FULL, postFixExpression);
-		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
+		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1", "v" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
-		Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		VarIndex varIndex = Entity::insertVar("assign1");
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "assign1");
 
-		Pattern::insertAssignInfo(varIndex, postFixExpression, stmt);
+		pkbInserter->insertAssignInfo(varIndex, postFixExpression, stmt);
 
 		// Check PKB populated
-		std::vector<int> allPatternStmtInfo = Pattern::getAssignStmtsFromVarExprFullMatch(varIndex, postFixExpression);
+		std::vector<int> allPatternStmtInfo = pkbGetter->getAssignStmtsFromVarExprFullMatch(varIndex, postFixExpression);
 		Assert::AreEqual(size_t(1), allPatternStmtInfo.size());
 
 		// 2. Main test:
@@ -465,20 +470,20 @@ public:
 		PqlReference entRef = std::make_pair(PqlReferenceType::IDENT, "assign1");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x+y");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::FULL, postFixExpression);
-		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
+		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
-		Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		VarIndex varIndex = Entity::insertVar("assign1");
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "assign1");
 
-		Pattern::insertAssignInfo(varIndex, postFixExpression, stmt);
+		pkbInserter->insertAssignInfo(varIndex, postFixExpression, stmt);
 
 		// Check PKB populated
-		std::vector<int> allPatternStmtInfo = Pattern::getAssignStmtsFromVarExprFullMatch(varIndex, postFixExpression);
+		std::vector<int> allPatternStmtInfo = pkbGetter->getAssignStmtsFromVarExprFullMatch(varIndex, postFixExpression);
 		Assert::AreEqual(size_t(1), allPatternStmtInfo.size());
 
 		// 2. Main test:
@@ -496,23 +501,23 @@ public:
 		PqlReference entRef = std::make_pair(PqlReferenceType::WILDCARD, "");
 		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("assign1+x+y");
 		PqlExpression expressionSpec = std::make_pair(PqlExpressionType::FULL, postFixExpression);
-		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
+		Instruction* instruction = new PatternAInstruction(synonym, entRef, expressionSpec, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts pattern
-		Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		StmtIndex stmt2 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		VarIndex varIndex = Entity::insertVar("assign1");
-		VarIndex varIndex2 = Entity::insertVar("assign2");
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		StmtIndex stmt2 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "assign1");
+		VarIndex varIndex2 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "assign2");
 
-		Pattern::insertAssignInfo(varIndex, postFixExpression, stmt);
-		Pattern::insertAssignInfo(varIndex2, postFixExpression, stmt2);
+		pkbInserter->insertAssignInfo(varIndex, postFixExpression, stmt);
+		pkbInserter->insertAssignInfo(varIndex2, postFixExpression, stmt2);
 
 		// Check PKB populated
-		std::tuple< std::vector<int>, std::vector<int>> allPatternStmtInfo = Pattern::getAssignStmtsFromExprFullMatch(postFixExpression);
+		std::tuple< std::vector<int>, std::vector<int>> allPatternStmtInfo = pkbGetter->getAssignStmtsFromExprFullMatch(postFixExpression);
 		Assert::AreEqual(size_t(2), std::get<0>(allPatternStmtInfo).size());
 
 		// 2. Main test:

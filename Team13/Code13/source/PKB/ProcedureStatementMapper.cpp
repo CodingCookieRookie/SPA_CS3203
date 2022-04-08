@@ -2,6 +2,8 @@
 
 ProcedureStatementMapper::ProcedureStatementMapper() {}
 
+ProcedureStatementMapper::~ProcedureStatementMapper() {}
+
 void ProcedureStatementMapper::insertStmtFromProc(ProcIndex procIdx, StmtIndex stmtIdx) {
 	procStmtBidirectionalTable.insert(procIdx, stmtIdx);
 }

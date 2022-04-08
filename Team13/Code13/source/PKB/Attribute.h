@@ -9,39 +9,43 @@
 
 #include "../Common/Types.h"
 #include "./BidirectionalTable/BidirectionalIndexTable.h"
-#include "./Entity.h"
-#include "./NameIndexEntity.h"
+#include "./Constant.h"
+#include "./Statement.h"
+
+/* Forward declaration */
+class Statement;
 
 class Attribute {
 private:
-	static std::vector<EntityAttributeRef> processIntegerAttributeArgVector(EntityType entityType);
+	std::vector<EntityAttributeRef> processIntegerAttributeArgVector(EntityType entityType, Constant* constant, Statement* statement);
 
-	static BidirectionalIndexTable<NameIndex> nameIdxBidirectionalTable;
-	static std::unordered_map<NameIndex, std::unordered_set<VarIndex>> nameVarIdxTable;
-	static std::unordered_map<NameIndex, std::unordered_set<ProcIndex>> nameProcIdxTable;
-	static std::unordered_map<NameIndex, std::unordered_set<ProcIndex>> nameCallProcIdxTable;
-	static std::unordered_map<NameIndex, std::unordered_set<VarIndex>> nameReadVarIdxTable;
-	static std::unordered_map<NameIndex, std::unordered_set<VarIndex>> namePrintVarIdxTable;
-	static std::unordered_map<StmtIndex, NameIndex> stmtIdxAttributeNameTable;
+	BidirectionalIndexTable<NameIndex> nameIdxBidirectionalTable;
+	std::unordered_map<NameIndex, std::unordered_set<VarIndex>>* nameVarIdxTable;
+	std::unordered_map<NameIndex, std::unordered_set<ProcIndex>>* nameProcIdxTable;
+	std::unordered_map<NameIndex, std::unordered_set<ProcIndex>>* nameCallProcIdxTable;
+	std::unordered_map<NameIndex, std::unordered_set<VarIndex>>* nameReadVarIdxTable;
+	std::unordered_map<NameIndex, std::unordered_set<VarIndex>>* namePrintVarIdxTable;
+	std::unordered_map<EntityType, std::unordered_map<NameIndex, std::unordered_set<NameIdxEntityIndex>>*> entityTypeToNameEntityIdxTable;
+	std::unordered_map<StatementType, std::unordered_map<NameIndex, std::unordered_set<NameIdxEntityIndex>>*> stmtTypeToNameEntityIdxTable;
+	std::unordered_map<StmtIndex, NameIndex> stmtIdxAttributeNameTable;
 
 public:
-	static NameIndex insertNameValue(std::string nameValue);
-	static NameIndex getNameIdx(std::string& nameValue);
-	static bool containsName(std::string& nameValue);
+	Attribute();
+	~Attribute();
+	NameIndex insertNameValue(std::string nameValue);
+	NameIndex getNameIdx(std::string& nameValue);
+	bool containsName(std::string& nameValue);
 
-	static void insertNameIdxEntityByName(EntityType entityType, NameIdxEntityIndex entityIdx, NameIndex nameIdx);
+	void insertNameIdxEntityByName(EntityType entityType, NameIdxEntityIndex entityIdx, NameIndex nameIdx);
 
-	/* TO BE REMOVED */
-	static void insertVarIdxByName(VarIndex& varIdx, NameIndex nameIdx);
-	static void insertProcIdxByName(ProcIndex& procIdx, NameIndex nameIdx);
+	void insertStmtByName(StmtIndex& stmtIdx, StatementType stmtType, std::string& nameValue);
 
-	static void insertStmtByName(StmtIndex& stmtIdx, StatementType stmtType, std::string& nameValue);
-
-	static std::string getAttributeNameByStmtIdx(StmtIndex& stmtIdx);
-	static std::tuple<std::vector<EntityAttributeRef>, std::vector<EntityAttributeRef>> getEqualNameAttributes(EntityType leftEntityType, EntityType rightEntityType);
-	static std::vector<EntityAttributeRef> getEqualIntegerAttributes(EntityType leftEntityType, EntityType rightEntityType);
-	static std::vector<EntityAttributeRef> getEqualNameAttributesFromName(EntityType entityType, std::string& nameValue);
-	static bool hasEqualIntegerAttribute(EntityType entityType, ConstValue integerValue);
-
-	static void performCleanUp();
+	std::string getAttributeNameByStmtIdx(StmtIndex& stmtIdx);
+	std::tuple<std::vector<EntityAttributeRef>, std::vector<EntityAttributeRef>> getEqualNameAttributes(EntityType leftEntityType, EntityType rightEntityType);
+	std::vector<EntityAttributeRef> getEqualIntegerAttributes(
+		EntityType leftEntityType, EntityType rightEntityType, Constant* constant, Statement* statement);
+	std::vector<EntityAttributeRef> getEqualNameAttributesFromName(
+		EntityType entityType, std::string& nameValue);
+	bool hasEqualIntegerAttribute(EntityType entityType,
+		ConstValue integerValue, Constant* constant, Statement* statement);
 };

@@ -6,6 +6,9 @@
 #include "./Attribute.h"
 #include "./BidirectionalTable/BidirectionalTableOneWaySet.h"
 
+/* Forward declaration */
+class Attribute;
+
 class Statement {
 private:
 	size_t getStmtTypeTableSize();
@@ -14,8 +17,9 @@ private:
 
 public:
 	Statement();
+	~Statement();
 	StmtIndex insertStmt(StatementType stmtType);
-	StmtIndex insertStmt(StatementType stmtType, std::string& nameValue);
+	StmtIndex insertStmt(StatementType stmtType, std::string& nameValue, Attribute* attribute);
 	bool containsStmt(StmtIndex stmtNo);
 	std::vector<StmtIndex> getStmtIdxFromType(StatementType stmtType);
 	StatementType getTypeFromStmtIdx(StmtIndex stmtIdx);

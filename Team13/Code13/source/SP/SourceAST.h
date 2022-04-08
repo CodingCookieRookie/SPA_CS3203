@@ -14,19 +14,22 @@ public:
 	void process();
 
 	/* Getters to relationship maps */
-	FollowsMap getFollowsMap();
-	ModifiesMap getModifiesMap();
-	UsesMap getUsesMap();
-	ParentChildMap getParentChildMap();
-	CallStmtProcCalledMap getCallStmtProcCalledMap();
+	RelationshipMap getFollowsMap();
+	RelationshipMap getModifiesMap();
+	RelationshipMap getUsesMap();
+	RelationshipMap getParentChildMap();
+	RelationshipMap getCallStmtToProcIndexCalledMap();
+	RelationshipMap getProcIndexCallerToProcIndexCalledMap();
 
 	/* Getters to entity maps */
 	StmtNodes getStmtNodes();
 	StmtTypeMap getStmtTypeMap();
 	PatternMap getPatternMap();
 	ConstSet getConstSet();
-	ProcNameIndexMap getProcNameIndexMap();
-	ProcNames getProcNames();
+	ProcNameToIndexMap getProcNameToIndexMap();
+	SortedProcIndexToNameMap getSortedProcIndexToNameMap();
 	ProcStmtMap getProcStmtMap();
 	StmtProcMap getStmtProcMap();
+	VarNameToIndexMap getVarNameToIndexMap();
+	SortedVarIndexToNameMap getSortedVarIndexToNameMap();
 };

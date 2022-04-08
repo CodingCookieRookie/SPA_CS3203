@@ -8,5 +8,5 @@ private:
 	std::string synonym;
 public:
 	ParsedGetAll(EntityType type, std::string synonym);
-	Instruction* toInstruction() const;
+	Instruction* toInstruction(PKBGetter* pkbGetter) const;
 };

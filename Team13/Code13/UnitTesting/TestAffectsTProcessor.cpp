@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
+#include "../source/PKB/PKBGetter.h"
+#include "../source/PKB/PKBInserter.h"
 #include "../source/QPS/AffectsTProcessor.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -29,21 +31,22 @@ private:
 	VarIndex varIdx2;
 	VarIndex varIdx3;
 	VarIndex varIdx4;
+	PKB* pkb;
+	PKBGetter* pkbGetter;
+	PKBInserter* pkbInserter;
 
 	TEST_METHOD_INITIALIZE(init) {
 		AffectsTCache* affectsTCache = new AffectsTCache();
 		AffectsCache* affectsCache = new AffectsCache();
 		AffectsProcessor* affectsProcessor = new AffectsProcessor(affectsCache);
 		affectsTProcessor = new AffectsTProcessor(affectsTCache, affectsProcessor);
+		pkb = new PKB();
+		pkbGetter = new PKBGetter(pkb);
+		pkbInserter = new PKBInserter(pkb);
 	}
 
 	TEST_METHOD_CLEANUP(cleanUpCalls) {
 		affectsTProcessor->performCleanUp();
-		Next::performCleanUp();
-		UsesS::performCleanUp();
-		ModifiesS::performCleanUp();
-		Entity::performCleanUp();
-		Attribute::performCleanUp();
 	}
 
 public:
@@ -56,29 +59,29 @@ public:
 		3.    x = a + 1; }
 		*/
 
-		stmtIdx1 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		stmtIdx2 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		stmtIdx3 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
+		stmtIdx1 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		stmtIdx2 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		stmtIdx3 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
 
-		procIdx1 = Entity::insertProc("p");
+		procIdx1 = pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, "p");
 
-		Entity::insertStmtFromProc(procIdx1, stmtIdx1);
-		Entity::insertStmtFromProc(procIdx1, stmtIdx2);
-		Entity::insertStmtFromProc(procIdx1, stmtIdx3);
+		pkbInserter->insertStmtFromProc(procIdx1, stmtIdx1);
+		pkbInserter->insertStmtFromProc(procIdx1, stmtIdx2);
+		pkbInserter->insertStmtFromProc(procIdx1, stmtIdx3);
 
-		varIdx1 = Entity::insertVar("x");
-		varIdx2 = Entity::insertVar("a");
+		varIdx1 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "x");
+		varIdx2 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "a");
 
-		ModifiesS::insert(stmtIdx1, varIdx1);
-		ModifiesS::insert(stmtIdx2, varIdx2);
-		ModifiesS::insert(stmtIdx3, varIdx1);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx1, varIdx1);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx2, varIdx2);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx3, varIdx1);
 
-		UsesS::insert(stmtIdx1, varIdx2);
-		UsesS::insert(stmtIdx2, varIdx1);
-		UsesS::insert(stmtIdx3, varIdx2);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx1, varIdx2);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx2, varIdx1);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx3, varIdx2);
 
-		Next::insert(stmtIdx1, stmtIdx2);
-		Next::insert(stmtIdx2, stmtIdx3);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx3);
 	}
 
 	void populateContainersWithNestedCalls() {
@@ -103,104 +106,104 @@ public:
 			14	print z; }
 			*/
 
-		stmtIdx1 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		stmtIdx2 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		stmtIdx3 = Entity::insertStmt(StatementType::WHILE_TYPE);
-		stmtIdx4 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		stmtIdx5 = Entity::insertStmt(StatementType::CALL_TYPE, std::string("Third"));
-		stmtIdx6 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		stmtIdx7 = Entity::insertStmt(StatementType::IF_TYPE);
-		stmtIdx8 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		stmtIdx9 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		stmtIdx10 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		stmtIdx11 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		stmtIdx12 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		stmtIdx13 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		stmtIdx14 = Entity::insertStmt(StatementType::PRINT_TYPE);
+		stmtIdx1 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		stmtIdx2 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		stmtIdx3 = pkbInserter->insertStmt(StatementType::WHILE_TYPE);
+		stmtIdx4 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		stmtIdx5 = pkbInserter->insertStmt(StatementType::CALL_TYPE, std::string("Third"));
+		stmtIdx6 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		stmtIdx7 = pkbInserter->insertStmt(StatementType::IF_TYPE);
+		stmtIdx8 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		stmtIdx9 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		stmtIdx10 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		stmtIdx11 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		stmtIdx12 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		stmtIdx13 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		stmtIdx14 = pkbInserter->insertStmt(StatementType::PRINT_TYPE, std::string("z"));
 
-		procIdx1 = Entity::insertProc("Second");
-		procIdx1 = Entity::insertProc("Third");
+		procIdx1 = pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, "Second");
+		procIdx1 = pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, "Third");
 
-		Entity::insertStmtFromProc(procIdx1, stmtIdx1);
-		Entity::insertStmtFromProc(procIdx1, stmtIdx2);
-		Entity::insertStmtFromProc(procIdx1, stmtIdx3);
-		Entity::insertStmtFromProc(procIdx1, stmtIdx4);
-		Entity::insertStmtFromProc(procIdx1, stmtIdx5);
-		Entity::insertStmtFromProc(procIdx1, stmtIdx6);
-		Entity::insertStmtFromProc(procIdx1, stmtIdx7);
-		Entity::insertStmtFromProc(procIdx1, stmtIdx8);
-		Entity::insertStmtFromProc(procIdx1, stmtIdx9);
-		Entity::insertStmtFromProc(procIdx1, stmtIdx10);
-		Entity::insertStmtFromProc(procIdx1, stmtIdx11);
-		Entity::insertStmtFromProc(procIdx1, stmtIdx12);
-		Entity::insertStmtFromProc(procIdx2, stmtIdx13);
+		pkbInserter->insertStmtFromProc(procIdx1, stmtIdx1);
+		pkbInserter->insertStmtFromProc(procIdx1, stmtIdx2);
+		pkbInserter->insertStmtFromProc(procIdx1, stmtIdx3);
+		pkbInserter->insertStmtFromProc(procIdx1, stmtIdx4);
+		pkbInserter->insertStmtFromProc(procIdx1, stmtIdx5);
+		pkbInserter->insertStmtFromProc(procIdx1, stmtIdx6);
+		pkbInserter->insertStmtFromProc(procIdx1, stmtIdx7);
+		pkbInserter->insertStmtFromProc(procIdx1, stmtIdx8);
+		pkbInserter->insertStmtFromProc(procIdx1, stmtIdx9);
+		pkbInserter->insertStmtFromProc(procIdx1, stmtIdx10);
+		pkbInserter->insertStmtFromProc(procIdx1, stmtIdx11);
+		pkbInserter->insertStmtFromProc(procIdx1, stmtIdx12);
+		pkbInserter->insertStmtFromProc(procIdx2, stmtIdx13);
 
-		varIdx1 = Entity::insertVar("i");
-		varIdx2 = Entity::insertVar("x");
-		varIdx3 = Entity::insertVar("y");
-		varIdx4 = Entity::insertVar("z");
+		varIdx1 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "i");
+		varIdx2 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "x");
+		varIdx3 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "y");
+		varIdx4 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "z");
 
-		ModifiesS::insert(stmtIdx1, varIdx2);
-		ModifiesS::insert(stmtIdx2, varIdx1);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx1, varIdx2);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx2, varIdx1);
 
-		ModifiesS::insert(stmtIdx3, varIdx2);
-		ModifiesS::insert(stmtIdx3, varIdx4);
-		ModifiesS::insert(stmtIdx3, varIdx1);
-		ModifiesS::insert(stmtIdx4, varIdx2);
-		ModifiesS::insert(stmtIdx5, varIdx4);
-		ModifiesS::insert(stmtIdx6, varIdx1);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx3, varIdx2);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx3, varIdx4);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx3, varIdx1);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx4, varIdx2);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx5, varIdx4);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx6, varIdx1);
 
-		ModifiesS::insert(stmtIdx7, varIdx2);
-		ModifiesS::insert(stmtIdx7, varIdx4);
-		ModifiesS::insert(stmtIdx8, varIdx2);
-		ModifiesS::insert(stmtIdx9, varIdx4);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx7, varIdx2);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx7, varIdx4);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx8, varIdx2);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx9, varIdx4);
 
-		ModifiesS::insert(stmtIdx10, varIdx4);
-		ModifiesS::insert(stmtIdx11, varIdx3);
-		ModifiesS::insert(stmtIdx12, varIdx2);
-		ModifiesS::insert(stmtIdx13, varIdx4);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx10, varIdx4);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx11, varIdx3);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx12, varIdx2);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx13, varIdx4);
 
-		UsesS::insert(stmtIdx3, varIdx1);
-		UsesS::insert(stmtIdx3, varIdx2);
-		UsesS::insert(stmtIdx3, varIdx3);
-		UsesS::insert(stmtIdx3, varIdx4);
-		UsesS::insert(stmtIdx3, varIdx1);
-		UsesS::insert(stmtIdx4, varIdx2);
-		UsesS::insert(stmtIdx4, varIdx3);
-		UsesS::insert(stmtIdx5, varIdx4);
-		UsesS::insert(stmtIdx6, varIdx1);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx3, varIdx1);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx3, varIdx2);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx3, varIdx3);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx3, varIdx4);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx3, varIdx1);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx4, varIdx2);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx4, varIdx3);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx5, varIdx4);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx6, varIdx1);
 
-		UsesS::insert(stmtIdx7, varIdx1);
-		UsesS::insert(stmtIdx7, varIdx2);
-		UsesS::insert(stmtIdx8, varIdx2);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx7, varIdx1);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx7, varIdx2);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx8, varIdx2);
 
-		UsesS::insert(stmtIdx10, varIdx4);
-		UsesS::insert(stmtIdx10, varIdx2);
-		UsesS::insert(stmtIdx10, varIdx1);
-		UsesS::insert(stmtIdx11, varIdx4);
-		UsesS::insert(stmtIdx12, varIdx2);
-		UsesS::insert(stmtIdx12, varIdx3);
-		UsesS::insert(stmtIdx12, varIdx4);
-		UsesS::insert(stmtIdx14, varIdx4);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx10, varIdx4);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx10, varIdx2);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx10, varIdx1);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx11, varIdx4);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx12, varIdx2);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx12, varIdx3);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx12, varIdx4);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx14, varIdx4);
 
 		// non-container stmts
-		Next::insert(stmtIdx1, stmtIdx2);
-		Next::insert(stmtIdx2, stmtIdx3);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx3);
 		// while container stmts
-		Next::insert(stmtIdx3, stmtIdx4);
-		Next::insert(stmtIdx4, stmtIdx5);
-		Next::insert(stmtIdx5, stmtIdx6);
-		Next::insert(stmtIdx6, stmtIdx3);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmtIdx3, stmtIdx4);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmtIdx4, stmtIdx5);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmtIdx5, stmtIdx6);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmtIdx6, stmtIdx3);
 		// if container stmts
-		Next::insert(stmtIdx3, stmtIdx7);
-		Next::insert(stmtIdx7, stmtIdx8);
-		Next::insert(stmtIdx8, stmtIdx10);
-		Next::insert(stmtIdx7, stmtIdx9);
-		Next::insert(stmtIdx9, stmtIdx10);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmtIdx3, stmtIdx7);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmtIdx7, stmtIdx8);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmtIdx8, stmtIdx10);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmtIdx7, stmtIdx9);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmtIdx9, stmtIdx10);
 		// non-container stmts
-		Next::insert(stmtIdx10, stmtIdx11);
-		Next::insert(stmtIdx11, stmtIdx12);
-		Next::insert(stmtIdx13, stmtIdx14);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmtIdx10, stmtIdx11);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmtIdx11, stmtIdx12);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmtIdx13, stmtIdx14);
 	}
 
 	void populateNestedContainers() {
@@ -217,187 +220,187 @@ public:
 		8.    b = d - c;}}
 		*/
 
-		stmtIdx1 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		stmtIdx2 = Entity::insertStmt(StatementType::WHILE_TYPE);
-		stmtIdx3 = Entity::insertStmt(StatementType::IF_TYPE);
-		stmtIdx4 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		stmtIdx5 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		stmtIdx6 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		stmtIdx7 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		stmtIdx8 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
+		stmtIdx1 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		stmtIdx2 = pkbInserter->insertStmt(StatementType::WHILE_TYPE);
+		stmtIdx3 = pkbInserter->insertStmt(StatementType::IF_TYPE);
+		stmtIdx4 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		stmtIdx5 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		stmtIdx6 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		stmtIdx7 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		stmtIdx8 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
 
-		procIdx1 = Entity::insertProc("One");
+		procIdx1 = pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, "One");
 
-		Entity::insertStmtFromProc(procIdx1, stmtIdx1);
-		Entity::insertStmtFromProc(procIdx1, stmtIdx2);
-		Entity::insertStmtFromProc(procIdx1, stmtIdx3);
-		Entity::insertStmtFromProc(procIdx1, stmtIdx4);
-		Entity::insertStmtFromProc(procIdx1, stmtIdx5);
-		Entity::insertStmtFromProc(procIdx1, stmtIdx6);
-		Entity::insertStmtFromProc(procIdx1, stmtIdx7);
-		Entity::insertStmtFromProc(procIdx1, stmtIdx8);
+		pkbInserter->insertStmtFromProc(procIdx1, stmtIdx1);
+		pkbInserter->insertStmtFromProc(procIdx1, stmtIdx2);
+		pkbInserter->insertStmtFromProc(procIdx1, stmtIdx3);
+		pkbInserter->insertStmtFromProc(procIdx1, stmtIdx4);
+		pkbInserter->insertStmtFromProc(procIdx1, stmtIdx5);
+		pkbInserter->insertStmtFromProc(procIdx1, stmtIdx6);
+		pkbInserter->insertStmtFromProc(procIdx1, stmtIdx7);
+		pkbInserter->insertStmtFromProc(procIdx1, stmtIdx8);
 
-		varIdx1 = Entity::insertVar("a");
-		varIdx2 = Entity::insertVar("b");
-		varIdx3 = Entity::insertVar("c");
-		varIdx4 = Entity::insertVar("d");
+		varIdx1 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "a");
+		varIdx2 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "b");
+		varIdx3 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "c");
+		varIdx4 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "d");
 
-		ModifiesS::insert(stmtIdx1, varIdx1);
-		ModifiesS::insert(stmtIdx2, varIdx2);
-		ModifiesS::insert(stmtIdx2, varIdx3);
-		ModifiesS::insert(stmtIdx2, varIdx4);
-		ModifiesS::insert(stmtIdx3, varIdx2);
-		ModifiesS::insert(stmtIdx3, varIdx3);
-		ModifiesS::insert(stmtIdx4, varIdx2);
-		ModifiesS::insert(stmtIdx5, varIdx3);
-		ModifiesS::insert(stmtIdx6, varIdx4);
-		ModifiesS::insert(stmtIdx7, varIdx3);
-		ModifiesS::insert(stmtIdx8, varIdx2);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx1, varIdx1);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx2, varIdx2);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx2, varIdx3);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx2, varIdx4);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx3, varIdx2);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx3, varIdx3);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx4, varIdx2);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx5, varIdx3);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx6, varIdx4);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx7, varIdx3);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIdx8, varIdx2);
 
-		UsesS::insert(stmtIdx1, varIdx2);
-		UsesS::insert(stmtIdx1, varIdx3);
-		UsesS::insert(stmtIdx1, varIdx4);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx1, varIdx2);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx1, varIdx3);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx1, varIdx4);
 
-		UsesS::insert(stmtIdx2, varIdx1);
-		UsesS::insert(stmtIdx2, varIdx2);
-		UsesS::insert(stmtIdx2, varIdx3);
-		UsesS::insert(stmtIdx2, varIdx4);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx2, varIdx1);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx2, varIdx2);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx2, varIdx3);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx2, varIdx4);
 
-		UsesS::insert(stmtIdx3, varIdx1);
-		UsesS::insert(stmtIdx3, varIdx2);
-		UsesS::insert(stmtIdx3, varIdx4);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx3, varIdx1);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx3, varIdx2);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx3, varIdx4);
 
-		UsesS::insert(stmtIdx4, varIdx1);
-		UsesS::insert(stmtIdx5, varIdx2);
-		UsesS::insert(stmtIdx5, varIdx4);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx4, varIdx1);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx5, varIdx2);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx5, varIdx4);
 
-		UsesS::insert(stmtIdx6, varIdx2);
-		UsesS::insert(stmtIdx6, varIdx3);
-		UsesS::insert(stmtIdx7, varIdx4);
-		UsesS::insert(stmtIdx7, varIdx1);
-		UsesS::insert(stmtIdx8, varIdx4);
-		UsesS::insert(stmtIdx8, varIdx3);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx6, varIdx2);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx6, varIdx3);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx7, varIdx4);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx7, varIdx1);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx8, varIdx4);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIdx8, varIdx3);
 
-		Next::insert(stmtIdx1, stmtIdx2);
-		Next::insert(stmtIdx2, stmtIdx3);
-		Next::insert(stmtIdx3, stmtIdx4);
-		Next::insert(stmtIdx3, stmtIdx5);
-		Next::insert(stmtIdx4, stmtIdx6);
-		Next::insert(stmtIdx5, stmtIdx6);
-		Next::insert(stmtIdx6, stmtIdx7);
-		Next::insert(stmtIdx7, stmtIdx8);
-		Next::insert(stmtIdx8, stmtIdx2);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx3);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmtIdx3, stmtIdx4);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmtIdx3, stmtIdx5);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmtIdx4, stmtIdx6);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmtIdx5, stmtIdx6);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmtIdx6, stmtIdx7);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmtIdx7, stmtIdx8);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmtIdx8, stmtIdx2);
 	}
 
 	// ----------------- doesRsHold --------------------------------
 	TEST_METHOD(doesRsHold_basicAffectsTCase_true) {
 		populateBasicAffectsTCase();
 
-		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx1, stmtIdx3));
-		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx2, stmtIdx3));
+		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx1, stmtIdx2, pkbGetter));
+		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx1, stmtIdx3, pkbGetter));
+		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx2, stmtIdx3, pkbGetter));
 	};
 
 	TEST_METHOD(doesRsHold_containerWithNestedCalls_true) {
 		populateContainersWithNestedCalls();
 
-		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx1, stmtIdx4));
-		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx1, stmtIdx10));
-		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx1, stmtIdx11));
-		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx1, stmtIdx12));
-		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx4, stmtIdx4));
-		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx4, stmtIdx8));
-		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx9, stmtIdx12));
-		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx6, stmtIdx6));
+		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx1, stmtIdx4, pkbGetter));
+		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx1, stmtIdx10, pkbGetter));
+		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx1, stmtIdx11, pkbGetter));
+		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx1, stmtIdx12, pkbGetter));
+		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx4, stmtIdx4, pkbGetter));
+		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx4, stmtIdx8, pkbGetter));
+		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx9, stmtIdx12, pkbGetter));
+		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx6, stmtIdx6, pkbGetter));
 	};
 
 	TEST_METHOD(doesRsHold_containerWithNestedCalls_false_leftIdxIsNotAssignStmt) {
 		populateContainersWithNestedCalls();
 
-		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx5, stmtIdx10));
-		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx3, stmtIdx6));
-		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx7, stmtIdx8));
+		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx5, stmtIdx10, pkbGetter));
+		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx3, stmtIdx6, pkbGetter));
+		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx7, stmtIdx8, pkbGetter));
 	};
 
 	TEST_METHOD(doesRsHold_containerWithNestedCalls_false_rightIdxIsNotAssignStmt) {
 		populateContainersWithNestedCalls();
 
-		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx1, stmtIdx3));
-		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx6, stmtIdx3));
-		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx1, stmtIdx7));
-		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx13, stmtIdx14));
+		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx1, stmtIdx3, pkbGetter));
+		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx6, stmtIdx3, pkbGetter));
+		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx1, stmtIdx7, pkbGetter));
+		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx13, stmtIdx14, pkbGetter));
 	};
 
 	TEST_METHOD(doesRsHold_containerWithNestedCalls_false_bothIdxNotAssignStmt) {
 		populateContainersWithNestedCalls();
 
-		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx5, stmtIdx5));
-		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx3, stmtIdx3));
+		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx5, stmtIdx5, pkbGetter));
+		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx3, stmtIdx3, pkbGetter));
 	};
 
 	TEST_METHOD(doesRsHold_containerWithNestedCalls_false_noControlFlowPath) {
 		populateContainersWithNestedCalls();
 
-		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx8, stmtIdx8));
-		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx8, stmtIdx9));
-		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx4, stmtIdx1));
+		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx8, stmtIdx8, pkbGetter));
+		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx8, stmtIdx9, pkbGetter));
+		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx4, stmtIdx1, pkbGetter));
 	};
 
 	TEST_METHOD(doesRsHold_containerWithNestedCalls_false_differentProcs) {
 		populateContainersWithNestedCalls();
 
-		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx5, stmtIdx13));
-		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx13, stmtIdx10));
+		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx5, stmtIdx13, pkbGetter));
+		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx13, stmtIdx10, pkbGetter));
 	};
 
 	TEST_METHOD(doesRsHold_nestedContainers_true) {
 		populateNestedContainers();
 
-		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx1, stmtIdx4));
-		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx5, stmtIdx5));
-		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx4, stmtIdx5));
-		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx7, stmtIdx5));
-		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx5, stmtIdx7));
-		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx5, stmtIdx8));
-		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx7, stmtIdx6));
+		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx1, stmtIdx4, pkbGetter));
+		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx5, stmtIdx5, pkbGetter));
+		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx4, stmtIdx5, pkbGetter));
+		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx7, stmtIdx5, pkbGetter));
+		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx5, stmtIdx7, pkbGetter));
+		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx5, stmtIdx8, pkbGetter));
+		Assert::IsTrue(affectsTProcessor->doesRsHold(stmtIdx7, stmtIdx6, pkbGetter));
 	};
 
 	TEST_METHOD(doesRsHold_nestedContainers_false) {
 		populateNestedContainers();
 
-		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx4, stmtIdx4));
+		Assert::IsFalse(affectsTProcessor->doesRsHold(stmtIdx4, stmtIdx4, pkbGetter));
 	};
 
 	// ----------------- getUsingLeftStmtIndex --------------------------------
 	TEST_METHOD(getUsingLeftStmtIndex_basicAffectsTCase) {
 		populateBasicAffectsTCase();
 
-		Assert::IsTrue(std::vector<StmtIndex> {stmtIdx2, stmtIdx3} == affectsTProcessor->getUsingLeftStmtIndex(stmtIdx1));
-		Assert::IsTrue(std::vector<StmtIndex> {stmtIdx3} == affectsTProcessor->getUsingLeftStmtIndex(stmtIdx2));
+		Assert::IsTrue(std::vector<StmtIndex> {stmtIdx2, stmtIdx3} == affectsTProcessor->getUsingLeftStmtIndex(stmtIdx1, pkbGetter));
+		Assert::IsTrue(std::vector<StmtIndex> {stmtIdx3} == affectsTProcessor->getUsingLeftStmtIndex(stmtIdx2, pkbGetter));
 	};
 
 	TEST_METHOD(getUsingLeftStmtIndex_containerWithNestedCalls) {
 		populateContainersWithNestedCalls();
 
 		Assert::IsTrue(std::vector<StmtIndex> {stmtIdx4, stmtIdx12, stmtIdx8, stmtIdx10, stmtIdx11} ==
-			affectsTProcessor->getUsingLeftStmtIndex(stmtIdx1));
+			affectsTProcessor->getUsingLeftStmtIndex(stmtIdx1, pkbGetter));
 		Assert::IsTrue(std::vector<StmtIndex> {stmtIdx4, stmtIdx12, stmtIdx8, stmtIdx10, stmtIdx11} ==
-			affectsTProcessor->getUsingLeftStmtIndex(stmtIdx4));
+			affectsTProcessor->getUsingLeftStmtIndex(stmtIdx4, pkbGetter));
 		Assert::IsTrue(std::vector<StmtIndex> {stmtIdx10, stmtIdx11, stmtIdx12} ==
-			affectsTProcessor->getUsingLeftStmtIndex(stmtIdx9));
+			affectsTProcessor->getUsingLeftStmtIndex(stmtIdx9, pkbGetter));
 	};
 
 	TEST_METHOD(getUsingLeftStmtIndex_nestedContainers) {
 		populateNestedContainers();
 
 		Assert::IsTrue(std::vector<StmtIndex> {stmtIdx4, stmtIdx5, stmtIdx6, stmtIdx7, stmtIdx8} ==
-			affectsTProcessor->getUsingLeftStmtIndex(stmtIdx1));
+			affectsTProcessor->getUsingLeftStmtIndex(stmtIdx1, pkbGetter));
 		Assert::IsTrue(std::vector<StmtIndex> {stmtIdx6, stmtIdx7, stmtIdx8, stmtIdx5} ==
-			affectsTProcessor->getUsingLeftStmtIndex(stmtIdx4));
+			affectsTProcessor->getUsingLeftStmtIndex(stmtIdx4, pkbGetter));
 		Assert::IsTrue(std::vector<StmtIndex> {stmtIdx6, stmtIdx7, stmtIdx8, stmtIdx5} ==
-			affectsTProcessor->getUsingLeftStmtIndex(stmtIdx5));
+			affectsTProcessor->getUsingLeftStmtIndex(stmtIdx5, pkbGetter));
 		Assert::IsTrue(std::vector<StmtIndex> {stmtIdx7, stmtIdx8, stmtIdx5, stmtIdx6} ==
-			affectsTProcessor->getUsingLeftStmtIndex(stmtIdx6));
+			affectsTProcessor->getUsingLeftStmtIndex(stmtIdx6, pkbGetter));
 	};
 
 	// ----------------- getUsingRightStmtIndex --------------------------------
@@ -405,35 +408,35 @@ public:
 		populateBasicAffectsTCase();
 
 		Assert::IsTrue(std::vector<StmtIndex> {stmtIdx2, stmtIdx1} ==
-			affectsTProcessor->getUsingRightStmtIndex(stmtIdx3));
+			affectsTProcessor->getUsingRightStmtIndex(stmtIdx3, pkbGetter));
 		Assert::IsTrue(std::vector<StmtIndex> {stmtIdx1} ==
-			affectsTProcessor->getUsingRightStmtIndex(stmtIdx2));
+			affectsTProcessor->getUsingRightStmtIndex(stmtIdx2, pkbGetter));
 		Assert::IsTrue(std::vector<StmtIndex> {} ==
-			affectsTProcessor->getUsingRightStmtIndex(stmtIdx1));
+			affectsTProcessor->getUsingRightStmtIndex(stmtIdx1, pkbGetter));
 	};
 
 	TEST_METHOD(getUsingRightStmtIndex_containerWithNestedCalls) {
 		populateContainersWithNestedCalls();
 
 		Assert::IsTrue(std::vector<StmtIndex> {stmtIdx1, stmtIdx4} ==
-			affectsTProcessor->getUsingRightStmtIndex(stmtIdx4));
+			affectsTProcessor->getUsingRightStmtIndex(stmtIdx4, pkbGetter));
 		Assert::IsTrue(std::vector<StmtIndex> {stmtIdx1, stmtIdx4} ==
-			affectsTProcessor->getUsingRightStmtIndex(stmtIdx8));
+			affectsTProcessor->getUsingRightStmtIndex(stmtIdx8, pkbGetter));
 		Assert::IsTrue(std::vector<StmtIndex> {stmtIdx10, stmtIdx2, stmtIdx8, stmtIdx9, stmtIdx1, stmtIdx6, stmtIdx4} ==
-			affectsTProcessor->getUsingRightStmtIndex(stmtIdx11));
+			affectsTProcessor->getUsingRightStmtIndex(stmtIdx11, pkbGetter));
 		Assert::IsTrue(std::vector<StmtIndex> {stmtIdx11, stmtIdx10, stmtIdx2, stmtIdx8, stmtIdx9, stmtIdx1, stmtIdx6, stmtIdx4} ==
-			affectsTProcessor->getUsingRightStmtIndex(stmtIdx12));
+			affectsTProcessor->getUsingRightStmtIndex(stmtIdx12, pkbGetter));
 	};
 
 	TEST_METHOD(getUsingRightStmtIndex_nestedContainers) {
 		populateNestedContainers();
 
 		Assert::IsTrue(std::vector<StmtIndex> {stmtIdx1} ==
-			affectsTProcessor->getUsingRightStmtIndex(stmtIdx4));
+			affectsTProcessor->getUsingRightStmtIndex(stmtIdx4, pkbGetter));
 		Assert::IsTrue(std::vector<StmtIndex> {stmtIdx1, stmtIdx8, stmtIdx7, stmtIdx6, stmtIdx4, stmtIdx5} ==
-			affectsTProcessor->getUsingRightStmtIndex(stmtIdx5));
+			affectsTProcessor->getUsingRightStmtIndex(stmtIdx5, pkbGetter));
 		Assert::IsTrue(std::vector<StmtIndex> {stmtIdx7, stmtIdx6, stmtIdx4, stmtIdx5, stmtIdx1, stmtIdx8} ==
-			affectsTProcessor->getUsingRightStmtIndex(stmtIdx8));
+			affectsTProcessor->getUsingRightStmtIndex(stmtIdx8, pkbGetter));
 	};
 
 	// ----------------- getAll --------------------------------
@@ -444,7 +447,7 @@ public:
 		std::vector<StmtIndex> rightStmtIndices = { stmtIdx2, stmtIdx3, stmtIdx3 };
 
 		Assert::IsTrue(std::make_tuple(leftStmtIndices, rightStmtIndices) ==
-			affectsTProcessor->getAll());
+			affectsTProcessor->getAll(pkbGetter));
 	};
 	};
 };

@@ -18,6 +18,14 @@ private:
 	StmtIndex stmtIdx1 = StmtIndex(1);
 	StmtIndex stmtIdx2 = StmtIndex(2);
 	StmtIndex stmtIdx3 = StmtIndex(3);
+
+	Attribute* attribute;
+	Statement* statement;
+
+	TEST_METHOD_INITIALIZE(init) {
+		attribute = new Attribute();
+		statement = new Statement();
+	}
 public:
 	TEST_METHOD(insertStmt_containsStmt_stmtExists) {
 		Statement statement = Statement();
@@ -25,7 +33,7 @@ public:
 		std::string callStmtNameAttribute = "Peter";
 
 		StmtIndex idx1 = statement.insertStmt(assignType);
-		StmtIndex idx2 = statement.insertStmt(callType, callStmtNameAttribute);
+		StmtIndex idx2 = statement.insertStmt(callType, callStmtNameAttribute, attribute);
 
 		bool res1 = statement.containsStmt(1);
 		bool res2 = statement.containsStmt(2);
@@ -87,10 +95,10 @@ public:
 		std::string printStmtNameAttribute = "y";
 
 		StmtIndex stmtIdx1 = statement.insertStmt(assignType);
-		StmtIndex stmtIdx2 = statement.insertStmt(callType, callStmtNameAttribute);
+		StmtIndex stmtIdx2 = statement.insertStmt(callType, callStmtNameAttribute, attribute);
 		StmtIndex stmtIdx3 = statement.insertStmt(ifType);
-		StmtIndex stmtIdx4 = statement.insertStmt(printType, printStmtNameAttribute);
-		StmtIndex stmtIdx5 = statement.insertStmt(readType, readStmtNameAttribute);
+		StmtIndex stmtIdx4 = statement.insertStmt(printType, printStmtNameAttribute, attribute);
+		StmtIndex stmtIdx5 = statement.insertStmt(readType, readStmtNameAttribute, attribute);
 		StmtIndex stmtIdx6 = statement.insertStmt(whileType);
 
 		StatementType res1 = statement.getTypeFromStmtIdx(stmtIdx1);

@@ -1,6 +1,7 @@
 #include "FollowsStarInstruction.h"
 
-FollowsStarInstruction::FollowsStarInstruction(PqlReference lhsRef, PqlReference rhsRef) : RelationshipInstruction(lhsRef, rhsRef) {}
+FollowsStarInstruction::FollowsStarInstruction(PqlReference lhsRef, PqlReference rhsRef, PKBGetter* pkbGetter) :
+	RelationshipInstruction(lhsRef, rhsRef, pkbGetter) {}
 
 EvaluatedTable FollowsStarInstruction::execute() {
 	EvaluatedTable resultTable;
@@ -42,16 +43,16 @@ EvaluatedTable FollowsStarInstruction::helperHandleTwoIntegers() {
 	bool evResult = false;
 	int lhsRefValue = stoi(lhsRef.second);
 	int rhsRefValue = stoi(rhsRef.second);
-	if (Entity::containsStmt(lhsRefValue) && Entity::containsStmt(rhsRefValue)) {
+	if (pkbGetter->containsStmt(lhsRefValue) && pkbGetter->containsStmt(rhsRefValue)) {
 		lhsStmtIndex = StmtIndex(lhsRefValue);
 		rhsStmtIndex = StmtIndex(rhsRefValue);
-		evResult = FollowsT::contains(lhsStmtIndex, rhsStmtIndex);
+		evResult = pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS_T, lhsStmtIndex, rhsStmtIndex);
 	}
 	return EvaluatedTable(evResult);
 }
 
 EvaluatedTable FollowsStarInstruction::helperHandleOneInt(PqlReferenceType lhsRefType, PqlReferenceType rhsRefType) {
-	std::vector<StmtIndex> stmts = Entity::getAllStmts();
+	std::vector<StmtIndex> stmts = pkbGetter->getAllStmts();
 	std::vector<int> results;
 	int oneInt;
 	std::string otherSynonym;
@@ -60,19 +61,13 @@ EvaluatedTable FollowsStarInstruction::helperHandleOneInt(PqlReferenceType lhsRe
 	} else { /* rhsRefType == PqlReferenceType::ident */
 		oneInt = stoi(rhsRef.second);
 	}
-	/* Handle one ident to proc results */
-	if (Entity::containsStmt(oneInt)) { /* e.g. checks if STMT 6 exists, if not, return empty results */
+	/* Handle one integer results */
+	if (pkbGetter->containsStmt(oneInt)) { /* e.g. checks if STMT 6 exists, if not, return empty results */
 		StmtIndex oneIntIndex = StmtIndex(oneInt);
-		for (StmtIndex STMT : stmts) {
-			if (lhsRefType == PqlReferenceType::INTEGER) {
-				if (FollowsT::contains(oneIntIndex, STMT)) {
-					results.emplace_back(STMT); /* e.g {7} if 6 is a Follows* of some s2 (e.g. 7) */
-				}
-			} else if (rhsRefType == PqlReferenceType::INTEGER) {
-				if (FollowsT::contains(STMT, oneIntIndex)) {
-					results.emplace_back(STMT); /* e.g {6} if some s1 (e.g. 6) is a Follows* of 7 */
-				}
-			} else {}
+		if (lhsRefType == PqlReferenceType::INTEGER) { /* e.g {7} if 6 is a Follows* of some s2 (e.g. 7) */
+			results = pkbGetter->getRSInfoFromLeftArg(RelationshipType::FOLLOWS_T, oneIntIndex);
+		} else { /* e.g {6} if some s1 (e.g. 6) is a Follows* of 7 */
+			results = pkbGetter->getRSInfoFromRightArg(RelationshipType::FOLLOWS_T, oneIntIndex);
 		}
 	}
 	/* Handle final output, wildcards => boolean, synonyms => table */
@@ -97,7 +92,7 @@ EvaluatedTable FollowsStarInstruction::helperHandleTwoStmtsMaybeWildcard() {
 	std::tuple<std::vector<int>, std::vector<int>> results;
 	/* e.g. {1, 2}, {2, 3}, {3, 6} */
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
-	results = FollowsT::getAllInfo();
+	results = pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS_T);
 	if (lhsRef.second == rhsRef.second) { /* Special case: Follows*(s1, s1), recursive call, technically shouldn't be allowed */
 		/* No values populated to PQLmap for this case */
 		PQLmap[lhsRef.second] = std::vector<int>();
@@ -114,7 +109,7 @@ EvaluatedTable FollowsStarInstruction::helperHandleTwoStmtsMaybeWildcard() {
 
 EvaluatedTable FollowsStarInstruction::helperHandleTwoWildcards() {
 	bool isEmptyTable = true;
-	isEmptyTable = std::get<0>(FollowsT::getAllInfo()).empty();
+	isEmptyTable = std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS_T)).empty();
 	// No Follows* rs exists => isEmptyTable == true => EvTable.evResult == false (innerJoinMerge() can drop table)
 	// Follows* rs exists => isEmptyTable == false => EvTable.evResult == true (innerJoinMerge() can merge dummy table, preserving all rows)
 	return EvaluatedTable(!isEmptyTable);

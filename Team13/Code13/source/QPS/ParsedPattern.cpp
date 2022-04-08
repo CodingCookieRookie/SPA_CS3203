@@ -9,17 +9,17 @@ ParsedPattern::ParsedPattern(std::string& synonym, PqlPatternType patternType,
 	: synonym(synonym), patternType(patternType), entRef(entRef),
 	expressionSpec(expressionSpec), numOfArgs(numOfArgs) {}
 
-Instruction* ParsedPattern::toInstruction() const {
+Instruction* ParsedPattern::toInstruction(PKBGetter* pkbGetter) const {
 	Instruction* instruction = nullptr;
 	switch (patternType) {
 	case PqlPatternType::PATTERN_A:
-		instruction = new PatternAInstruction(synonym, entRef, expressionSpec);
+		instruction = new PatternAInstruction(synonym, entRef, expressionSpec, pkbGetter);
 		break;
 	case PqlPatternType::PATTERN_I:
-		instruction = new PatternIInstruction(synonym, entRef);
+		instruction = new PatternIInstruction(synonym, entRef, pkbGetter);
 		break;
 	case PqlPatternType::PATTERN_W:
-		instruction = new PatternWInstruction(synonym, entRef);
+		instruction = new PatternWInstruction(synonym, entRef, pkbGetter);
 		break;
 	default:
 		break;

@@ -1,8 +1,9 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-#include "PKB/Entity.h"
 #include "PKB/ExpressionProcessor.h"
+#include "PKB/PKBGetter.h"
+#include "PKB/PKBInserter.h"
 #include "SP/ASTValidator.h"
 #include "SP/DesignExtractor.h"
 #include "SP/Parser.h"
@@ -217,41 +218,16 @@ private:
 		"	z = 2; \n "
 		"} \n";
 
-	TEST_METHOD_CLEANUP(cleanUpTables) {
-		Attribute::performCleanUp();
-		Container::performCleanUp();
-		Calls::performCleanUp();
-		CallsT::performCleanUp();
-		Entity::performCleanUp();
-		Follows::performCleanUp();
-		FollowsT::performCleanUp();
-		ModifiesP::performCleanUp();
-		ModifiesS::performCleanUp();
-		Next::performCleanUp();
-		Pattern::performCleanUp();
-		Parent::performCleanUp();
-		ParentT::performCleanUp();
-		UsesP::performCleanUp();
-		UsesS::performCleanUp();
+	PKB* pkb;
+	PKBGetter* pkbGetter;
+	PKBInserter* pkbInserter;
+
+	TEST_METHOD_INITIALIZE(init) {
+		pkb = new PKB();
+		pkbGetter = new PKBGetter(pkb);
+		pkbInserter = new PKBInserter(pkb);
 	}
 
-	TEST_METHOD_INITIALIZE(initTables) {
-		Attribute::performCleanUp();
-		Container::performCleanUp();
-		Calls::performCleanUp();
-		CallsT::performCleanUp();
-		Entity::performCleanUp();
-		Follows::performCleanUp();
-		FollowsT::performCleanUp();
-		ModifiesP::performCleanUp();
-		ModifiesS::performCleanUp();
-		Next::performCleanUp();
-		Pattern::performCleanUp();
-		Parent::performCleanUp();
-		ParentT::performCleanUp();
-		UsesP::performCleanUp();
-		UsesS::performCleanUp();
-	}
 public:
 
 	TEST_METHOD(blackBoxSampleSource1_checkEntities) {
@@ -264,31 +240,29 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(sampleSource1);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
-		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
+		Assert::AreEqual(size_t(1), pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE).size());
+		Assert::AreEqual(procName, pkbGetter->getNameIdxEntityName(EntityType::PROCEDURE, pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE)[0]));
 
-		Assert::AreEqual(size_t(6), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::CALL_TYPE).size());
-		Assert::AreEqual(size_t(3), Entity::getStmtIdxFromType(StatementType::READ_TYPE).size());
-		Assert::AreEqual(size_t(2), Entity::getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::PRINT_TYPE).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::WHILE_TYPE).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
+		Assert::AreEqual(size_t(6), pkbGetter->getAllStmts().size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::CALL_TYPE).size());
+		Assert::AreEqual(size_t(3), pkbGetter->getStmtIdxFromType(StatementType::READ_TYPE).size());
+		Assert::AreEqual(size_t(2), pkbGetter->getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getStmtIdxFromType(StatementType::PRINT_TYPE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::WHILE_TYPE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::IF_TYPE).size());
 
-		Assert::AreEqual(size_t(5), Entity::getAllVars().size());
-		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[0]));
-		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[4]));
+		Assert::AreEqual(size_t(5), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
+		Assert::AreEqual(varName1, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[0]));
+		Assert::AreEqual(varName2, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[4]));
 
-		Assert::AreEqual(size_t(1), Entity::getAllConsts().size());
-		Assert::AreEqual(constVal, Entity::getAllConsts()[0]);
+		Assert::AreEqual(size_t(1), pkbGetter->getAllConsts().size());
+		Assert::AreEqual(constVal, pkbGetter->getAllConsts()[0]);
 
-		Assert::AreEqual(size_t(6), std::get<0>(Entity::getAllProcStmts()).size());
-		Assert::AreEqual(size_t(6), Entity::getStmtsFromProc(procIdx).size());
+		Assert::AreEqual(size_t(6), std::get<0>(pkbGetter->getAllProcStmts()).size());
+		Assert::AreEqual(size_t(6), pkbGetter->getStmtsFromProc(procIdx).size());
 	}
 
 	TEST_METHOD(blackBoxSampleSource1_checkAttributes) {
@@ -306,22 +280,20 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(sampleSource1);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(varName1, Attribute::getAttributeNameByStmtIdx(stmtIdx1));
-		Assert::AreEqual(varName2, Attribute::getAttributeNameByStmtIdx(stmtIdx6));
-		Assert::IsTrue(std::vector{ stmtIdx1 } == Attribute::getEqualNameAttributesFromName(EntityType::READ, varName1));
-		Assert::IsTrue(std::vector{ stmtIdx6 } == Attribute::getEqualNameAttributesFromName(EntityType::PRINT, varName2));
-		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
-		Assert::IsTrue(std::vector{ 3 } == Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 3));
-		Assert::IsFalse(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 7));
-		Assert::IsFalse(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::READ, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 3));
+		Assert::AreEqual(varName1, pkbGetter->getAttributeNameByStmtIdx(stmtIdx1));
+		Assert::AreEqual(varName2, pkbGetter->getAttributeNameByStmtIdx(stmtIdx6));
+		Assert::IsTrue(std::vector{ stmtIdx1 } == pkbGetter->getEqualNameAttributesFromName(EntityType::READ, varName1));
+		Assert::IsTrue(std::vector{ stmtIdx6 } == pkbGetter->getEqualNameAttributesFromName(EntityType::PRINT, varName2));
+		Assert::IsTrue(std::vector{ procIdx } == pkbGetter->getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
+		Assert::IsTrue(std::vector{ 3 } == pkbGetter->getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::STMT, 3));
+		Assert::IsFalse(pkbGetter->hasEqualIntegerAttribute(EntityType::STMT, 7));
+		Assert::IsFalse(pkbGetter->hasEqualIntegerAttribute(EntityType::ASSIGN, 3));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::READ, 3));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::CONSTANT, 3));
 	}
 
 	TEST_METHOD(blackBoxSampleSource1_checkPattern) {
@@ -333,48 +305,46 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(sampleSource1);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getAllAssignPatternInfo()).size());
 
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix(varName3)).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("num1+num2")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("num1+num2+num3")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("num1+((num2))")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("(num1+num2)+num3")).size());
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("num1+num3")).size());
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("num2+num3")).size());
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("num1+(num2+num3)")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix(varName3)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("num1+num2")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("num1+num2+num3")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("num1+((num2))")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("(num1+num2)+num3")).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("num1+num3")).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("num2+num3")).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("num1+(num2+num3)")).size());
 
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("num1+num2+num3")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("(num1+num2)+num3")).size());
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("num1+num2")).size());
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("num1+num2+num3")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("(num1+num2)+num3")).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("num1+num2")).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
 
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName3))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("num1+num2"))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("num1+num2+num3"))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("num1+((num2))"))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("(num1+num2)+num3"))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("num1+num3"))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("num2+num3"))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("num1+(num2+num3)"))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName3))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("num1+num2"))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("num1+num2+num3"))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("num1+((num2))"))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("(num1+num2)+num3"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("num1+num3"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("num2+num3"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("num1+(num2+num3)"))).size());
 
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("num1+num2+num3"))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("(num1+num2)+num3"))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("num1+num2"))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("num1+num2+num3"))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("(num1+num2)+num3"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("num1+num2"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllIfPatternInfo()).size());
-		Assert::AreEqual(size_t(0), Pattern::getIfStmtsFromVar(varIdx).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::IF_TYPE)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, varIdx).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllWhilePatternInfo()).size());
-		Assert::AreEqual(size_t(0), Pattern::getWhileStmtsFromVar(varIdx).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::WHILE_TYPE)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIdx).size());
 	}
 
 	TEST_METHOD(blackBoxSampleSource1_checkRelationships) {
@@ -391,46 +361,44 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(sampleSource1);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(5), std::get<0>(ModifiesS::getAllInfo()).size());
-		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx4, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx2, Entity::getVarIdx(varName3)));
+		Assert::AreEqual(size_t(5), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_S)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
 
-		Assert::AreEqual(size_t(5), std::get<0>(UsesS::getAllInfo()).size());
-		Assert::IsTrue(UsesS::contains(stmtIdx4, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesS::contains(stmtIdx4, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(UsesS::contains(stmtIdx5, Entity::getVarIdx(varName2)));
+		Assert::AreEqual(size_t(5), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_S)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx5, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
 
-		Assert::AreEqual(size_t(5), std::get<0>(ModifiesP::getAllInfo()).size());
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName3)));
+		Assert::AreEqual(size_t(5), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_P)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
 
-		Assert::AreEqual(size_t(5), std::get<0>(UsesP::getAllInfo()).size());
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName3)));
+		Assert::AreEqual(size_t(5), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_P)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
 
-		Assert::AreEqual(size_t(0), std::get<0>(Calls::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(CallsT::getAllInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS_T)).size());
 
-		Assert::AreEqual(size_t(5), std::get<0>(Next::getAllInfo()).size());
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx5));
+		Assert::AreEqual(size_t(5), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx4, stmtIdx5));
 
-		Assert::IsTrue(Follows::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Follows::contains(stmtIdx4, stmtIdx5));
-		Assert::AreEqual(size_t(5), std::get<0>(Follows::getAllInfo()).size());
-		Assert::IsTrue(FollowsT::contains(stmtIdx1, stmtIdx5));
-		Assert::AreEqual(size_t(15), std::get<0>(FollowsT::getAllInfo()).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx4, stmtIdx5));
+		Assert::AreEqual(size_t(5), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS_T, stmtIdx1, stmtIdx5));
+		Assert::AreEqual(size_t(15), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS_T)).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Parent::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(ParentT::getAllInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT_T)).size());
 	}
 
 	TEST_METHOD(blackBoxSampleSource2_checkEntities) {
@@ -444,32 +412,30 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(sampleSource2);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
-		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
+		Assert::AreEqual(size_t(1), pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE).size());
+		Assert::AreEqual(procName, pkbGetter->getNameIdxEntityName(EntityType::PROCEDURE, pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE)[0]));
 
-		Assert::AreEqual(size_t(11), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::CALL_TYPE).size());
-		Assert::AreEqual(size_t(2), Entity::getStmtIdxFromType(StatementType::READ_TYPE).size());
-		Assert::AreEqual(size_t(5), Entity::getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
-		Assert::AreEqual(size_t(3), Entity::getStmtIdxFromType(StatementType::PRINT_TYPE).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::WHILE_TYPE).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
+		Assert::AreEqual(size_t(11), pkbGetter->getAllStmts().size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::CALL_TYPE).size());
+		Assert::AreEqual(size_t(2), pkbGetter->getStmtIdxFromType(StatementType::READ_TYPE).size());
+		Assert::AreEqual(size_t(5), pkbGetter->getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
+		Assert::AreEqual(size_t(3), pkbGetter->getStmtIdxFromType(StatementType::PRINT_TYPE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::WHILE_TYPE).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getStmtIdxFromType(StatementType::IF_TYPE).size());
 
-		Assert::AreEqual(size_t(4), Entity::getAllVars().size());
-		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[0]));
-		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[3]));
+		Assert::AreEqual(size_t(4), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
+		Assert::AreEqual(varName1, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[0]));
+		Assert::AreEqual(varName2, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[3]));
 
-		Assert::AreEqual(size_t(2), Entity::getAllConsts().size());
-		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
-		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
+		Assert::AreEqual(size_t(2), pkbGetter->getAllConsts().size());
+		Assert::AreEqual(constVal1, pkbGetter->getAllConsts()[0]);
+		Assert::AreEqual(constVal2, pkbGetter->getAllConsts()[1]);
 
-		Assert::AreEqual(size_t(11), std::get<0>(Entity::getAllProcStmts()).size());
-		Assert::AreEqual(size_t(11), Entity::getStmtsFromProc(procIdx).size());
+		Assert::AreEqual(size_t(11), std::get<0>(pkbGetter->getAllProcStmts()).size());
+		Assert::AreEqual(size_t(11), pkbGetter->getStmtsFromProc(procIdx).size());
 	}
 
 	TEST_METHOD(blackBoxSampleSource2_checkAttributes) {
@@ -489,26 +455,24 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(sampleSource2);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(varName1, Attribute::getAttributeNameByStmtIdx(stmtIdx1));
-		Assert::AreEqual(varName2, Attribute::getAttributeNameByStmtIdx(stmtIdx2));
-		Assert::AreEqual(varName1, Attribute::getAttributeNameByStmtIdx(stmtIdx9));
-		Assert::AreEqual(varName2, Attribute::getAttributeNameByStmtIdx(stmtIdx10));
-		Assert::AreEqual(varName4, Attribute::getAttributeNameByStmtIdx(stmtIdx11));
-		Assert::IsTrue(std::vector{ stmtIdx1 } == Attribute::getEqualNameAttributesFromName(EntityType::READ, varName1));
-		Assert::IsTrue(std::vector{ stmtIdx2 } == Attribute::getEqualNameAttributesFromName(EntityType::READ, varName2));
-		Assert::IsTrue(std::vector{ stmtIdx9 } == Attribute::getEqualNameAttributesFromName(EntityType::PRINT, varName1));
-		Assert::IsTrue(std::vector{ stmtIdx10 } == Attribute::getEqualNameAttributesFromName(EntityType::PRINT, varName2));
-		Assert::IsTrue(std::vector{ stmtIdx11 } == Attribute::getEqualNameAttributesFromName(EntityType::PRINT, varName4));
-		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
-		Assert::IsTrue(std::vector{ 1 } == Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 1));
+		Assert::AreEqual(varName1, pkbGetter->getAttributeNameByStmtIdx(stmtIdx1));
+		Assert::AreEqual(varName2, pkbGetter->getAttributeNameByStmtIdx(stmtIdx2));
+		Assert::AreEqual(varName1, pkbGetter->getAttributeNameByStmtIdx(stmtIdx9));
+		Assert::AreEqual(varName2, pkbGetter->getAttributeNameByStmtIdx(stmtIdx10));
+		Assert::AreEqual(varName4, pkbGetter->getAttributeNameByStmtIdx(stmtIdx11));
+		Assert::IsTrue(std::vector{ stmtIdx1 } == pkbGetter->getEqualNameAttributesFromName(EntityType::READ, varName1));
+		Assert::IsTrue(std::vector{ stmtIdx2 } == pkbGetter->getEqualNameAttributesFromName(EntityType::READ, varName2));
+		Assert::IsTrue(std::vector{ stmtIdx9 } == pkbGetter->getEqualNameAttributesFromName(EntityType::PRINT, varName1));
+		Assert::IsTrue(std::vector{ stmtIdx10 } == pkbGetter->getEqualNameAttributesFromName(EntityType::PRINT, varName2));
+		Assert::IsTrue(std::vector{ stmtIdx11 } == pkbGetter->getEqualNameAttributesFromName(EntityType::PRINT, varName4));
+		Assert::IsTrue(std::vector{ procIdx } == pkbGetter->getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
+		Assert::IsTrue(std::vector{ 1 } == pkbGetter->getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::STMT, 3));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::ASSIGN, 3));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::CONSTANT, 1));
 	}
 
 	TEST_METHOD(blackBoxSampleSource2_checkPattern) {
@@ -521,40 +485,38 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(sampleSource2);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(5), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(5), std::get<0>(pkbGetter->getAllAssignPatternInfo()).size());
 
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix(varName3)).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix(varName2)).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName3), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName3), ExpressionProcessor::convertInfixToPostFix("((num1))")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix(varName3)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix(varName2)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3), ExpressionProcessor::convertInfixToPostFix("((num1))")).size());
 
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix(varName3)).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix(varName2)).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName3), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName3), ExpressionProcessor::convertInfixToPostFix("((num1))")).size());
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix(varName3)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix(varName2)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3), ExpressionProcessor::convertInfixToPostFix("((num1))")).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
 
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName2))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName3))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("((num1))"))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName2))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName3))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("((num1))"))).size());
 
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName2))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName3))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("((num1))"))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName2))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName3))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("((num1))"))).size());
 
-		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getAllIfPatternInfo()).size());
-		Assert::AreEqual(size_t(1), Pattern::getIfStmtsFromVar(varIdx1).size());
-		Assert::AreEqual(size_t(1), Pattern::getIfStmtsFromVar(varIdx2).size());
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::IF_TYPE)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, varIdx1).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, varIdx2).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllWhilePatternInfo()).size());
-		Assert::AreEqual(size_t(0), Pattern::getWhileStmtsFromVar(varIdx1).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::WHILE_TYPE)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIdx1).size());
 	}
 
 	TEST_METHOD(blackBoxSampleSource2_checkRelationships) {
@@ -574,63 +536,61 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(sampleSource2);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(11), std::get<0>(ModifiesS::getAllInfo()).size());
-		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx4, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx4, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx4, Entity::getVarIdx(varName4)));
+		Assert::AreEqual(size_t(11), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_S)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
 
-		Assert::AreEqual(size_t(9), std::get<0>(UsesS::getAllInfo()).size());
-		Assert::IsTrue(UsesS::contains(stmtIdx4, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesS::contains(stmtIdx4, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesS::contains(stmtIdx5, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesS::contains(stmtIdx6, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesS::contains(stmtIdx7, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(UsesS::contains(stmtIdx9, Entity::getVarIdx(varName1)));
-		Assert::AreEqual(size_t(3), UsesS::getFromRightArg(Entity::getVarIdx(varName1)).size());
+		Assert::AreEqual(size_t(9), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_S)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx5, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx6, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx7, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx9, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::AreEqual(size_t(3), pkbGetter->getRSInfoFromRightArg(RelationshipType::USES_S, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)).size());
 
-		Assert::AreEqual(size_t(4), std::get<0>(ModifiesP::getAllInfo()).size());
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName4)));
+		Assert::AreEqual(size_t(4), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_P)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
 
-		Assert::AreEqual(size_t(4), std::get<0>(UsesP::getAllInfo()).size());
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName4)));
+		Assert::AreEqual(size_t(4), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_P)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
 
-		Assert::AreEqual(size_t(0), std::get<0>(Calls::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(CallsT::getAllInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS_T)).size());
 
-		Assert::AreEqual(size_t(11), std::get<0>(Next::getAllInfo()).size());
-		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx5));
-		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx8));
-		Assert::IsTrue(Next::contains(stmtIdx5, stmtIdx6));
-		Assert::IsTrue(Next::contains(stmtIdx7, stmtIdx9));
-		Assert::IsTrue(Next::contains(stmtIdx8, stmtIdx9));
+		Assert::AreEqual(size_t(11), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx4, stmtIdx5));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx4, stmtIdx8));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx5, stmtIdx6));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx7, stmtIdx9));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx8, stmtIdx9));
 
-		Assert::AreEqual(size_t(8), std::get<0>(Follows::getAllInfo()).size());
-		Assert::IsFalse(Follows::contains(stmtIdx1, stmtIdx4));
-		Assert::IsFalse(Follows::contains(stmtIdx4, stmtIdx5));
-		Assert::IsTrue(Follows::contains(stmtIdx4, stmtIdx9));
-		Assert::IsTrue(Follows::contains(stmtIdx5, stmtIdx6));
-		Assert::AreEqual(size_t(24), std::get<0>(FollowsT::getAllInfo()).size());
-		Assert::IsTrue(FollowsT::contains(stmtIdx1, stmtIdx4));
-		Assert::IsTrue(FollowsT::contains(stmtIdx5, stmtIdx7));
+		Assert::AreEqual(size_t(8), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS)).size());
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx1, stmtIdx4));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx4, stmtIdx5));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx4, stmtIdx9));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx5, stmtIdx6));
+		Assert::AreEqual(size_t(24), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS_T)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS_T, stmtIdx1, stmtIdx4));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS_T, stmtIdx5, stmtIdx7));
 
-		Assert::AreEqual(size_t(4), std::get<0>(Parent::getAllInfo()).size());
-		Assert::IsTrue(Parent::contains(stmtIdx4, stmtIdx5));
-		Assert::IsTrue(Parent::contains(stmtIdx4, stmtIdx6));
-		Assert::IsTrue(Parent::contains(stmtIdx4, stmtIdx7));
-		Assert::IsTrue(Parent::contains(stmtIdx4, stmtIdx8));
-		Assert::AreEqual(size_t(4), std::get<0>(ParentT::getAllInfo()).size());
+		Assert::AreEqual(size_t(4), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT, stmtIdx4, stmtIdx5));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT, stmtIdx4, stmtIdx6));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT, stmtIdx4, stmtIdx7));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT, stmtIdx4, stmtIdx8));
+		Assert::AreEqual(size_t(4), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT_T)).size());
 	}
 
 	TEST_METHOD(blackBoxSampleSource3_checkEntities) {
@@ -644,32 +604,30 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(sampleSource3);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
-		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
+		Assert::AreEqual(size_t(1), pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE).size());
+		Assert::AreEqual(procName, pkbGetter->getNameIdxEntityName(EntityType::PROCEDURE, pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE)[0]));
 
-		Assert::AreEqual(size_t(7), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::CALL_TYPE).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::READ_TYPE).size());
-		Assert::AreEqual(size_t(4), Entity::getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::PRINT_TYPE).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::WHILE_TYPE).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
+		Assert::AreEqual(size_t(7), pkbGetter->getAllStmts().size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::CALL_TYPE).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getStmtIdxFromType(StatementType::READ_TYPE).size());
+		Assert::AreEqual(size_t(4), pkbGetter->getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getStmtIdxFromType(StatementType::PRINT_TYPE).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getStmtIdxFromType(StatementType::WHILE_TYPE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::IF_TYPE).size());
 
-		Assert::AreEqual(size_t(3), Entity::getAllVars().size());
-		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[0]));
-		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[2]));
+		Assert::AreEqual(size_t(3), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
+		Assert::AreEqual(varName1, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[0]));
+		Assert::AreEqual(varName2, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[2]));
 
-		Assert::AreEqual(size_t(2), Entity::getAllConsts().size());
-		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
-		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
+		Assert::AreEqual(size_t(2), pkbGetter->getAllConsts().size());
+		Assert::AreEqual(constVal1, pkbGetter->getAllConsts()[0]);
+		Assert::AreEqual(constVal2, pkbGetter->getAllConsts()[1]);
 
-		Assert::AreEqual(size_t(7), std::get<0>(Entity::getAllProcStmts()).size());
-		Assert::AreEqual(size_t(7), Entity::getStmtsFromProc(procIdx).size());
+		Assert::AreEqual(size_t(7), std::get<0>(pkbGetter->getAllProcStmts()).size());
+		Assert::AreEqual(size_t(7), pkbGetter->getStmtsFromProc(procIdx).size());
 	}
 
 	TEST_METHOD(blackBoxSampleSource3_checkAttributes) {
@@ -686,23 +644,21 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(sampleSource3);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(varName1, Attribute::getAttributeNameByStmtIdx(stmtIdx1));
-		Assert::AreEqual(varName2, Attribute::getAttributeNameByStmtIdx(stmtIdx7));
-		Assert::IsTrue(std::vector{ stmtIdx1 } == Attribute::getEqualNameAttributesFromName(EntityType::READ, varName1));
-		Assert::IsTrue(std::vector{ stmtIdx7 } == Attribute::getEqualNameAttributesFromName(EntityType::PRINT, varName2));
-		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
-		Assert::AreEqual(size_t(0), Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT).size());
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::WHILE, 3));
-		Assert::IsFalse(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 0));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 0));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 10));
-		Assert::IsFalse(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 1));
+		Assert::AreEqual(varName1, pkbGetter->getAttributeNameByStmtIdx(stmtIdx1));
+		Assert::AreEqual(varName2, pkbGetter->getAttributeNameByStmtIdx(stmtIdx7));
+		Assert::IsTrue(std::vector{ stmtIdx1 } == pkbGetter->getEqualNameAttributesFromName(EntityType::READ, varName1));
+		Assert::IsTrue(std::vector{ stmtIdx7 } == pkbGetter->getEqualNameAttributesFromName(EntityType::PRINT, varName2));
+		Assert::IsTrue(std::vector{ procIdx } == pkbGetter->getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
+		Assert::AreEqual(size_t(0), pkbGetter->getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT).size());
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::STMT, 3));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::WHILE, 3));
+		Assert::IsFalse(pkbGetter->hasEqualIntegerAttribute(EntityType::ASSIGN, 0));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::CONSTANT, 0));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::CONSTANT, 10));
+		Assert::IsFalse(pkbGetter->hasEqualIntegerAttribute(EntityType::CONSTANT, 1));
 	}
 
 	TEST_METHOD(blackBoxSampleSource3_checkPattern) {
@@ -714,42 +670,40 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(sampleSource3);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(4), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(4), std::get<0>(pkbGetter->getAllAssignPatternInfo()).size());
 
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix(varName2)).size());
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("0")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix(varName2)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("0")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
 
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix(varName2)).size());
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("0")).size());
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix(varName2)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("0")).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
 
-		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("number%10"))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("number%((10))"))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("sum+digit"))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("digit+sum"))).size());
-		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("10"))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("0"))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("1"))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("10%number"))).size());
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("number%10"))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("number%((10))"))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("sum+digit"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("digit+sum"))).size());
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("10"))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("0"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("1"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("10%number"))).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName2))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("0"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName2))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("0"))).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllIfPatternInfo()).size());
-		Assert::AreEqual(size_t(0), Pattern::getIfStmtsFromVar(varIdx1).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::IF_TYPE)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, varIdx1).size());
 
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAllWhilePatternInfo()).size());
-		Assert::AreEqual(size_t(1), Pattern::getWhileStmtsFromVar(varIdx1).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::WHILE_TYPE)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIdx1).size());
 	}
 
 	TEST_METHOD(blackBoxSampleSource3_checkRelationships) {
@@ -768,72 +722,70 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(sampleSource3);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(8), std::get<0>(ModifiesS::getAllInfo()).size());
-		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx2, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx3, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx3, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx3, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx4, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx5, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx6, Entity::getVarIdx(varName1)));
+		Assert::AreEqual(size_t(8), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_S)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx5, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx6, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
 
-		Assert::AreEqual(size_t(8), std::get<0>(UsesS::getAllInfo()).size());
-		Assert::IsTrue(UsesS::contains(stmtIdx3, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesS::contains(stmtIdx3, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesS::contains(stmtIdx3, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(UsesS::contains(stmtIdx4, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesS::contains(stmtIdx5, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesS::contains(stmtIdx5, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(UsesS::contains(stmtIdx6, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesS::contains(stmtIdx7, Entity::getVarIdx(varName3)));
-		Assert::AreEqual(size_t(3), UsesS::getFromRightArg(Entity::getVarIdx(varName1)).size());
+		Assert::AreEqual(size_t(8), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_S)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx5, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx5, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx6, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx7, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::AreEqual(size_t(3), pkbGetter->getRSInfoFromRightArg(RelationshipType::USES_S, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)).size());
 
-		Assert::AreEqual(size_t(3), std::get<0>(ModifiesP::getAllInfo()).size());
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName3)));
+		Assert::AreEqual(size_t(3), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_P)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
 
-		Assert::AreEqual(size_t(3), std::get<0>(UsesP::getAllInfo()).size());
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName3)));
+		Assert::AreEqual(size_t(3), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_P)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
 
-		Assert::AreEqual(size_t(0), std::get<0>(Calls::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(CallsT::getAllInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS_T)).size());
 
-		Assert::AreEqual(size_t(7), std::get<0>(Next::getAllInfo()).size());
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx3));
-		Assert::IsTrue(Next::contains(stmtIdx3, stmtIdx4));
-		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx5));
-		Assert::IsTrue(Next::contains(stmtIdx5, stmtIdx6));
-		Assert::IsTrue(Next::contains(stmtIdx6, stmtIdx3));
-		Assert::IsTrue(Next::contains(stmtIdx3, stmtIdx7));
-		Assert::IsFalse(Next::contains(stmtIdx6, stmtIdx7));
+		Assert::AreEqual(size_t(7), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx3, stmtIdx4));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx4, stmtIdx5));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx5, stmtIdx6));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx6, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx3, stmtIdx7));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx6, stmtIdx7));
 
-		Assert::AreEqual(size_t(5), std::get<0>(Follows::getAllInfo()).size());
-		Assert::IsFalse(Follows::contains(stmtIdx1, stmtIdx3));
-		Assert::IsFalse(Follows::contains(stmtIdx3, stmtIdx4));
-		Assert::IsTrue(Follows::contains(stmtIdx4, stmtIdx5));
-		Assert::IsTrue(Follows::contains(stmtIdx3, stmtIdx7));
-		Assert::AreEqual(size_t(9), std::get<0>(FollowsT::getAllInfo()).size());
-		Assert::IsTrue(FollowsT::contains(stmtIdx1, stmtIdx3));
-		Assert::IsTrue(FollowsT::contains(stmtIdx4, stmtIdx6));
+		Assert::AreEqual(size_t(5), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS)).size());
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx1, stmtIdx3));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx3, stmtIdx4));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx4, stmtIdx5));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx3, stmtIdx7));
+		Assert::AreEqual(size_t(9), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS_T)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS_T, stmtIdx1, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS_T, stmtIdx4, stmtIdx6));
 
-		Assert::AreEqual(size_t(3), std::get<0>(Parent::getAllInfo()).size());
-		Assert::IsTrue(Parent::contains(stmtIdx3, stmtIdx4));
-		Assert::IsTrue(Parent::contains(stmtIdx3, stmtIdx5));
-		Assert::IsTrue(Parent::contains(stmtIdx3, stmtIdx6));
-		Assert::AreEqual(size_t(3), std::get<0>(ParentT::getAllInfo()).size());
-		Assert::IsTrue(ParentT::contains(stmtIdx3, stmtIdx4));
-		Assert::IsTrue(ParentT::contains(stmtIdx3, stmtIdx5));
-		Assert::IsTrue(ParentT::contains(stmtIdx3, stmtIdx6));
+		Assert::AreEqual(size_t(3), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT, stmtIdx3, stmtIdx4));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT, stmtIdx3, stmtIdx5));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT, stmtIdx3, stmtIdx6));
+		Assert::AreEqual(size_t(3), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT_T)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx3, stmtIdx4));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx3, stmtIdx5));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx3, stmtIdx6));
 	}
 
 	TEST_METHOD(blackBoxSampleSource4_checkEntities) {
@@ -851,35 +803,33 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(sampleSource4);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(4), Entity::getAllProcs().size());
-		Assert::AreEqual(procName1, Entity::getProcName(Entity::getAllProcs()[0]));
-		Assert::AreEqual(procName4, Entity::getProcName(Entity::getAllProcs()[3]));
+		Assert::AreEqual(size_t(4), pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE).size());
+		Assert::AreEqual(procName1, pkbGetter->getNameIdxEntityName(EntityType::PROCEDURE, pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE)[0]));
+		Assert::AreEqual(procName4, pkbGetter->getNameIdxEntityName(EntityType::PROCEDURE, pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE)[3]));
 
-		Assert::AreEqual(size_t(23), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(4), Entity::getStmtIdxFromType(StatementType::CALL_TYPE).size());
-		Assert::AreEqual(size_t(2), Entity::getStmtIdxFromType(StatementType::READ_TYPE).size());
-		Assert::AreEqual(size_t(11), Entity::getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
-		Assert::AreEqual(size_t(4), Entity::getStmtIdxFromType(StatementType::PRINT_TYPE).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::WHILE_TYPE).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
+		Assert::AreEqual(size_t(23), pkbGetter->getAllStmts().size());
+		Assert::AreEqual(size_t(4), pkbGetter->getStmtIdxFromType(StatementType::CALL_TYPE).size());
+		Assert::AreEqual(size_t(2), pkbGetter->getStmtIdxFromType(StatementType::READ_TYPE).size());
+		Assert::AreEqual(size_t(11), pkbGetter->getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
+		Assert::AreEqual(size_t(4), pkbGetter->getStmtIdxFromType(StatementType::PRINT_TYPE).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getStmtIdxFromType(StatementType::WHILE_TYPE).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getStmtIdxFromType(StatementType::IF_TYPE).size());
 
-		Assert::AreEqual(size_t(7), Entity::getAllVars().size());
-		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[0]));
-		Assert::AreEqual(varName3, Entity::getVarName(Entity::getAllVars()[3]));
+		Assert::AreEqual(size_t(7), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
+		Assert::AreEqual(varName1, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[0]));
+		Assert::AreEqual(varName3, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[2]));
 
-		Assert::AreEqual(size_t(2), Entity::getAllConsts().size());
-		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
-		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
+		Assert::AreEqual(size_t(2), pkbGetter->getAllConsts().size());
+		Assert::AreEqual(constVal1, pkbGetter->getAllConsts()[0]);
+		Assert::AreEqual(constVal2, pkbGetter->getAllConsts()[1]);
 
-		Assert::AreEqual(size_t(3), Entity::getStmtsFromProc(procIdx1).size());
-		Assert::AreEqual(size_t(2), Entity::getStmtsFromProc(procIdx2).size());
-		Assert::AreEqual(size_t(4), Entity::getStmtsFromProc(procIdx3).size());
-		Assert::AreEqual(size_t(14), Entity::getStmtsFromProc(procIdx4).size());
+		Assert::AreEqual(size_t(3), pkbGetter->getStmtsFromProc(procIdx1).size());
+		Assert::AreEqual(size_t(2), pkbGetter->getStmtsFromProc(procIdx2).size());
+		Assert::AreEqual(size_t(4), pkbGetter->getStmtsFromProc(procIdx3).size());
+		Assert::AreEqual(size_t(14), pkbGetter->getStmtsFromProc(procIdx4).size());
 	}
 
 	TEST_METHOD(blackBoxSampleSource4_checkAttributes) {
@@ -901,29 +851,27 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(sampleSource4);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(procName4, Attribute::getAttributeNameByStmtIdx(stmtIdx2));
-		Assert::AreEqual(procName3, Attribute::getAttributeNameByStmtIdx(stmtIdx3));
-		Assert::AreEqual(varName2, Attribute::getAttributeNameByStmtIdx(stmtIdx4));
-		Assert::AreEqual(varName3, Attribute::getAttributeNameByStmtIdx(stmtIdx5));
-		Assert::AreEqual(varName1, Attribute::getAttributeNameByStmtIdx(stmtIdx6));
-		Assert::IsTrue(std::vector{ stmtIdx2 } == Attribute::getEqualNameAttributesFromName(EntityType::CALL, procName4));
-		Assert::IsTrue(std::vector{ stmtIdx3 } == Attribute::getEqualNameAttributesFromName(EntityType::CALL, procName3));
-		Assert::IsTrue(std::vector{ stmtIdx4 } == Attribute::getEqualNameAttributesFromName(EntityType::READ, varName2));
-		Assert::IsTrue(std::vector{ stmtIdx5 } == Attribute::getEqualNameAttributesFromName(EntityType::READ, varName3));
-		Assert::IsTrue(std::vector{ stmtIdx6 } == Attribute::getEqualNameAttributesFromName(EntityType::PRINT, varName1));
-		Assert::IsTrue(std::vector{ procIdx1 } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName1));
-		Assert::IsTrue(std::vector{ procIdx2 } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName2));
-		Assert::IsTrue(std::vector{ 1 } == Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CALL, 3));
-		Assert::IsFalse(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 0));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 1));
+		Assert::AreEqual(procName4, pkbGetter->getAttributeNameByStmtIdx(stmtIdx2));
+		Assert::AreEqual(procName3, pkbGetter->getAttributeNameByStmtIdx(stmtIdx3));
+		Assert::AreEqual(varName2, pkbGetter->getAttributeNameByStmtIdx(stmtIdx4));
+		Assert::AreEqual(varName3, pkbGetter->getAttributeNameByStmtIdx(stmtIdx5));
+		Assert::AreEqual(varName1, pkbGetter->getAttributeNameByStmtIdx(stmtIdx6));
+		Assert::IsTrue(std::vector{ stmtIdx2 } == pkbGetter->getEqualNameAttributesFromName(EntityType::CALL, procName4));
+		Assert::IsTrue(std::vector{ stmtIdx3 } == pkbGetter->getEqualNameAttributesFromName(EntityType::CALL, procName3));
+		Assert::IsTrue(std::vector{ stmtIdx4 } == pkbGetter->getEqualNameAttributesFromName(EntityType::READ, varName2));
+		Assert::IsTrue(std::vector{ stmtIdx5 } == pkbGetter->getEqualNameAttributesFromName(EntityType::READ, varName3));
+		Assert::IsTrue(std::vector{ stmtIdx6 } == pkbGetter->getEqualNameAttributesFromName(EntityType::PRINT, varName1));
+		Assert::IsTrue(std::vector{ procIdx1 } == pkbGetter->getEqualNameAttributesFromName(EntityType::PROCEDURE, procName1));
+		Assert::IsTrue(std::vector{ procIdx2 } == pkbGetter->getEqualNameAttributesFromName(EntityType::PROCEDURE, procName2));
+		Assert::IsTrue(std::vector{ 1 } == pkbGetter->getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::STMT, 3));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::CALL, 3));
+		Assert::IsFalse(pkbGetter->hasEqualIntegerAttribute(EntityType::ASSIGN, 3));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::CONSTANT, 0));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::CONSTANT, 1));
 	}
 
 	TEST_METHOD(blackBoxSampleSource4_checkPattern) {
@@ -935,42 +883,40 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(sampleSource4);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(11), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(11), std::get<0>(pkbGetter->getAllAssignPatternInfo()).size());
 
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix("0")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix("1")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName4), ExpressionProcessor::convertInfixToPostFix("0")).size());
-		Assert::AreEqual(size_t(2), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName4), ExpressionProcessor::convertInfixToPostFix(varName4)).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName5), ExpressionProcessor::convertInfixToPostFix("0")).size());
-		Assert::AreEqual(size_t(2), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName5), ExpressionProcessor::convertInfixToPostFix(varName5)).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName5), ExpressionProcessor::convertInfixToPostFix(varName3)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix("0")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix("1")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4), ExpressionProcessor::convertInfixToPostFix("0")).size());
+		Assert::AreEqual(size_t(2), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4), ExpressionProcessor::convertInfixToPostFix(varName4)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5), ExpressionProcessor::convertInfixToPostFix("0")).size());
+		Assert::AreEqual(size_t(2), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5), ExpressionProcessor::convertInfixToPostFix(varName5)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5), ExpressionProcessor::convertInfixToPostFix(varName3)).size());
 
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName4), ExpressionProcessor::convertInfixToPostFix("cenX/count")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName4), ExpressionProcessor::convertInfixToPostFix("cenX/(count)")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4), ExpressionProcessor::convertInfixToPostFix("cenX/count")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4), ExpressionProcessor::convertInfixToPostFix("cenX/(count)")).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
-		Assert::AreEqual(size_t(3), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName4))).size());
-		Assert::AreEqual(size_t(3), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName5))).size());
-		Assert::AreEqual(size_t(4), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("0"))).size());
-		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("1"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
+		Assert::AreEqual(size_t(3), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName4))).size());
+		Assert::AreEqual(size_t(3), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName5))).size());
+		Assert::AreEqual(size_t(4), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("0"))).size());
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("1"))).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName2))).size());
-		Assert::AreEqual(size_t(4), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("0"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName2))).size());
+		Assert::AreEqual(size_t(4), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("0"))).size());
 
-		VarIndex varIdx1 = Entity::getVarIdx(varName1);
-		VarIndex varIdx2 = Entity::getVarIdx(varName2);
+		VarIndex varIdx1 = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1);
+		VarIndex varIdx2 = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2);
 
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAllIfPatternInfo()).size());
-		Assert::AreEqual(size_t(0), Pattern::getIfStmtsFromVar(varIdx1).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::IF_TYPE)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, varIdx1).size());
 
-		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getAllWhilePatternInfo()).size());
-		Assert::AreEqual(size_t(0), Pattern::getWhileStmtsFromVar(varIdx1).size());
-		Assert::AreEqual(size_t(1), Pattern::getWhileStmtsFromVar(varIdx2).size());
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::WHILE_TYPE)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIdx1).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIdx2).size());
 	}
 
 	TEST_METHOD(blackBoxSampleSource4_checkRelationships) {
@@ -1003,114 +949,112 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(sampleSource4);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(32), std::get<0>(ModifiesS::getAllInfo()).size());
-		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx2, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx2, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx2, Entity::getVarIdx(varName5)));
-		Assert::IsFalse(ModifiesS::contains(stmtIdx3, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx4, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx5, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx14, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx14, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx14, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx14, Entity::getVarIdx(varName5)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx18, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx18, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx5, Entity::getVarIdx(varName3)));
+		Assert::AreEqual(size_t(32), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_S)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx5, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx14, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx14, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx14, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx14, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx18, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx18, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx5, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
 
-		Assert::AreEqual(size_t(32), std::get<0>(UsesS::getAllInfo()).size());
-		Assert::IsFalse(UsesS::contains(stmtIdx2, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesS::contains(stmtIdx2, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesS::contains(stmtIdx2, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(UsesS::contains(stmtIdx2, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(UsesS::contains(stmtIdx2, Entity::getVarIdx(varName5)));
-		Assert::IsTrue(UsesS::contains(stmtIdx3, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesS::contains(stmtIdx3, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(UsesS::contains(stmtIdx3, Entity::getVarIdx(varName5)));
-		Assert::IsTrue(UsesS::contains(stmtIdx6, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesS::contains(stmtIdx7, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(UsesS::contains(stmtIdx8, Entity::getVarIdx(varName5)));
-		Assert::IsTrue(UsesS::contains(stmtIdx14, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesS::contains(stmtIdx14, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(UsesS::contains(stmtIdx14, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(UsesS::contains(stmtIdx14, Entity::getVarIdx(varName5)));
-		Assert::IsTrue(UsesS::contains(stmtIdx19, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(UsesS::contains(stmtIdx19, Entity::getVarIdx(varName5)));
-		Assert::AreEqual(size_t(2), UsesS::getFromRightArg(Entity::getVarIdx(varName1)).size());
+		Assert::AreEqual(size_t(32), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_S)).size());
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx6, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx7, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx8, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx14, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx14, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx14, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx14, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx19, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx19, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5)));
+		Assert::AreEqual(size_t(2), pkbGetter->getRSInfoFromRightArg(RelationshipType::USES_S, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)).size());
 
-		Assert::AreEqual(size_t(16), std::get<0>(ModifiesP::getAllInfo()).size());
-		Assert::IsTrue(ModifiesP::contains(procIdx1, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesP::contains(procIdx1, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesP::contains(procIdx1, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(ModifiesP::contains(procIdx1, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(ModifiesP::contains(procIdx1, Entity::getVarIdx(varName5)));
-		Assert::IsTrue(ModifiesP::contains(procIdx2, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesP::contains(procIdx2, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(ModifiesP::contains(procIdx4, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesP::contains(procIdx4, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesP::contains(procIdx4, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(ModifiesP::contains(procIdx4, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(ModifiesP::contains(procIdx4, Entity::getVarIdx(varName5)));
+		Assert::AreEqual(size_t(16), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_P)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5)));
 
-		Assert::AreEqual(size_t(16), std::get<0>(UsesP::getAllInfo()).size());
-		Assert::IsTrue(UsesP::contains(procIdx1, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesP::contains(procIdx1, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesP::contains(procIdx1, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(UsesP::contains(procIdx1, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(UsesP::contains(procIdx1, Entity::getVarIdx(varName5)));
-		Assert::IsTrue(UsesP::contains(procIdx3, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesP::contains(procIdx3, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(UsesP::contains(procIdx3, Entity::getVarIdx(varName5)));
-		Assert::IsTrue(UsesP::contains(procIdx4, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesP::contains(procIdx4, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(UsesP::contains(procIdx4, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(UsesP::contains(procIdx4, Entity::getVarIdx(varName5)));
+		Assert::AreEqual(size_t(16), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_P)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5)));
 
-		Assert::AreEqual(size_t(3), std::get<0>(Calls::getAllInfo()).size());
-		Assert::IsTrue(Calls::contains(procIdx1, procIdx4));
-		Assert::IsTrue(Calls::contains(procIdx1, procIdx3));
-		Assert::IsFalse(Calls::contains(procIdx1, procIdx2));
-		Assert::IsTrue(Calls::contains(procIdx4, procIdx2));
-		Assert::AreEqual(size_t(4), std::get<0>(CallsT::getAllInfo()).size());
-		Assert::IsTrue(CallsT::contains(procIdx1, procIdx2));
-		Assert::IsTrue(CallsT::contains(procIdx1, procIdx3));
+		Assert::AreEqual(size_t(3), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::CALLS, procIdx1, procIdx4));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::CALLS, procIdx1, procIdx3));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::CALLS, procIdx1, procIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::CALLS, procIdx4, procIdx2));
+		Assert::AreEqual(size_t(4), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS_T)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::CALLS_T, procIdx1, procIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::CALLS_T, procIdx1, procIdx3));
 
-		Assert::AreEqual(size_t(21), std::get<0>(Next::getAllInfo()).size());
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx3));
-		Assert::IsFalse(Next::contains(stmtIdx3, stmtIdx4));
-		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx5));
-		Assert::IsFalse(Next::contains(stmtIdx5, stmtIdx6));
-		Assert::IsTrue(Next::contains(stmtIdx6, stmtIdx7));
-		Assert::IsTrue(Next::contains(stmtIdx7, stmtIdx8));
-		Assert::IsTrue(Next::contains(stmtIdx8, stmtIdx9));
-		Assert::IsTrue(Next::contains(stmtIdx14, stmtIdx15));
-		Assert::IsTrue(Next::contains(stmtIdx18, stmtIdx14));
-		Assert::IsTrue(Next::contains(stmtIdx14, stmtIdx19));
-		Assert::IsTrue(Next::contains(stmtIdx19, stmtIdx20));
-		Assert::IsTrue(Next::contains(stmtIdx20, stmtIdx23));
+		Assert::AreEqual(size_t(21), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx3));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx3, stmtIdx4));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx4, stmtIdx5));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx5, stmtIdx6));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx6, stmtIdx7));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx7, stmtIdx8));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx8, stmtIdx9));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx14, stmtIdx15));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx18, stmtIdx14));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx14, stmtIdx19));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx19, stmtIdx20));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx20, stmtIdx23));
 
-		Assert::AreEqual(size_t(16), std::get<0>(Follows::getAllInfo()).size());
-		Assert::IsFalse(Follows::contains(stmtIdx1, stmtIdx3));
-		Assert::IsFalse(Follows::contains(stmtIdx3, stmtIdx4));
-		Assert::IsTrue(Follows::contains(stmtIdx4, stmtIdx5));
-		Assert::IsFalse(Follows::contains(stmtIdx5, stmtIdx6));
-		Assert::IsTrue(Follows::contains(stmtIdx14, stmtIdx19));
-		Assert::IsTrue(Follows::contains(stmtIdx19, stmtIdx23));
-		Assert::AreEqual(size_t(38), std::get<0>(FollowsT::getAllInfo()).size());
-		Assert::IsTrue(FollowsT::contains(stmtIdx1, stmtIdx3));
-		Assert::IsTrue(FollowsT::contains(stmtIdx14, stmtIdx23));
+		Assert::AreEqual(size_t(16), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS)).size());
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx1, stmtIdx3));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx3, stmtIdx4));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx4, stmtIdx5));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx5, stmtIdx6));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx14, stmtIdx19));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx19, stmtIdx23));
+		Assert::AreEqual(size_t(38), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS_T)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS_T, stmtIdx1, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS_T, stmtIdx14, stmtIdx23));
 
-		Assert::AreEqual(size_t(7), std::get<0>(Parent::getAllInfo()).size());
-		Assert::IsTrue(Parent::contains(stmtIdx14, stmtIdx15));
-		Assert::IsTrue(Parent::contains(stmtIdx19, stmtIdx20));
-		Assert::AreEqual(size_t(7), std::get<0>(ParentT::getAllInfo()).size());
+		Assert::AreEqual(size_t(7), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT, stmtIdx14, stmtIdx15));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT, stmtIdx19, stmtIdx20));
+		Assert::AreEqual(size_t(7), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT_T)).size());
 	}
 
 	TEST_METHOD(mixedStmtsSource_checkEntities) {
@@ -1126,34 +1070,32 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(mixedStmtsSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
-		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
+		Assert::AreEqual(size_t(1), pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE).size());
+		Assert::AreEqual(procName, pkbGetter->getNameIdxEntityName(EntityType::PROCEDURE, pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE)[0]));
 
-		Assert::AreEqual(size_t(14), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::CALL_TYPE).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::READ_TYPE).size());
-		Assert::AreEqual(size_t(11), Entity::getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::PRINT_TYPE).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::WHILE_TYPE).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
+		Assert::AreEqual(size_t(14), pkbGetter->getAllStmts().size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::CALL_TYPE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::READ_TYPE).size());
+		Assert::AreEqual(size_t(11), pkbGetter->getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getStmtIdxFromType(StatementType::PRINT_TYPE).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getStmtIdxFromType(StatementType::WHILE_TYPE).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getStmtIdxFromType(StatementType::IF_TYPE).size());
 
-		Assert::AreEqual(size_t(7), Entity::getAllVars().size());
-		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[1]));
-		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[5]));
+		Assert::AreEqual(size_t(7), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
+		Assert::AreEqual(varName1, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[0]));
+		Assert::AreEqual(varName2, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[6]));
 
-		Assert::AreEqual(size_t(4), Entity::getAllConsts().size());
-		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
-		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
-		Assert::AreEqual(constVal3, Entity::getAllConsts()[2]);
-		Assert::AreEqual(constVal4, Entity::getAllConsts()[3]);
+		Assert::AreEqual(size_t(4), pkbGetter->getAllConsts().size());
+		Assert::AreEqual(constVal1, pkbGetter->getAllConsts()[0]);
+		Assert::AreEqual(constVal2, pkbGetter->getAllConsts()[1]);
+		Assert::AreEqual(constVal3, pkbGetter->getAllConsts()[2]);
+		Assert::AreEqual(constVal4, pkbGetter->getAllConsts()[3]);
 
-		Assert::AreEqual(size_t(14), std::get<0>(Entity::getAllProcStmts()).size());
-		Assert::AreEqual(size_t(14), Entity::getStmtsFromProc(procIdx).size());
+		Assert::AreEqual(size_t(14), std::get<0>(pkbGetter->getAllProcStmts()).size());
+		Assert::AreEqual(size_t(14), pkbGetter->getStmtsFromProc(procIdx).size());
 	}
 
 	TEST_METHOD(mixedStmtsSource_checkAttributes) {
@@ -1167,20 +1109,18 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(mixedStmtsSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(varName1, Attribute::getAttributeNameByStmtIdx(stmtIdx13));
-		Assert::IsTrue(std::vector{ stmtIdx13 } == Attribute::getEqualNameAttributesFromName(EntityType::PRINT, varName1));
-		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
-		Assert::IsTrue(std::vector{ 5, 3, 1 } == Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::PRINT, 13));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 1));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 5));
+		Assert::AreEqual(varName1, pkbGetter->getAttributeNameByStmtIdx(stmtIdx13));
+		Assert::IsTrue(std::vector{ stmtIdx13 } == pkbGetter->getEqualNameAttributesFromName(EntityType::PRINT, varName1));
+		Assert::IsTrue(std::vector{ procIdx } == pkbGetter->getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
+		Assert::IsTrue(std::vector{ 5, 3, 1 } == pkbGetter->getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::STMT, 3));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::ASSIGN, 3));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::PRINT, 13));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::CONSTANT, 1));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::CONSTANT, 5));
 	}
 
 	TEST_METHOD(mixedStmtsSource_checkPattern) {
@@ -1191,47 +1131,45 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(mixedStmtsSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(11), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(11), std::get<0>(pkbGetter->getAllAssignPatternInfo()).size());
 
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix(varName2)).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("5")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix("0")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName3), ExpressionProcessor::convertInfixToPostFix("1")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix(varName2)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("5")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix("0")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3), ExpressionProcessor::convertInfixToPostFix("1")).size());
 
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("5")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix("count+1")).size());
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix("1+count")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName3), ExpressionProcessor::convertInfixToPostFix("1")).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("5")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix("count+1")).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix("1+count")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3), ExpressionProcessor::convertInfixToPostFix("1")).size());
 
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
-		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName2))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName3))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("x+3"))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("3+x"))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName2))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName3))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("x+3"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("3+x"))).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName2))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("x+3"))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("3+x"))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("cenX*cenX"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName2))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("x+3"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("3+x"))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("cenX*cenX"))).size());
 
-		VarIndex varIdx1 = Entity::getVarIdx(varName1);
-		VarIndex varIdx2 = Entity::getVarIdx(varName2);
-		VarIndex varIdx4 = Entity::getVarIdx(varName4);
+		VarIndex varIdx1 = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1);
+		VarIndex varIdx2 = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2);
+		VarIndex varIdx4 = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4);
 
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAllIfPatternInfo()).size());
-		Assert::AreEqual(size_t(1), Pattern::getIfStmtsFromVar(varIdx1).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::IF_TYPE)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, varIdx1).size());
 
-		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getAllWhilePatternInfo()).size());
-		Assert::AreEqual(size_t(1), Pattern::getWhileStmtsFromVar(varIdx2).size());
-		Assert::AreEqual(size_t(1), Pattern::getWhileStmtsFromVar(varIdx4).size());
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::WHILE_TYPE)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIdx2).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIdx4).size());
 	}
 
 	TEST_METHOD(mixedStmtsSource_checkRelationships) {
@@ -1255,73 +1193,71 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(mixedStmtsSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(16), std::get<0>(ModifiesS::getAllInfo()).size());
-		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx6, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx6, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx6, Entity::getVarIdx(varName5)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx10, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx11, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx12, Entity::getVarIdx(varName4)));
-		Assert::AreEqual(size_t(3), ModifiesS::getFromRightArg(Entity::getVarIdx(varName1)).size());
+		Assert::AreEqual(size_t(16), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_S)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx6, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx6, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx6, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx10, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx11, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx12, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::AreEqual(size_t(3), pkbGetter->getRSInfoFromRightArg(RelationshipType::MODIFIES_S, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)).size());
 
-		Assert::AreEqual(size_t(16), std::get<0>(UsesS::getAllInfo()).size());
-		Assert::IsTrue(UsesS::contains(stmtIdx6, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesS::contains(stmtIdx6, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesS::contains(stmtIdx6, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(UsesS::contains(stmtIdx6, Entity::getVarIdx(varName5)));
-		Assert::IsTrue(UsesS::contains(stmtIdx7, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesS::contains(stmtIdx8, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesS::contains(stmtIdx8, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(UsesS::contains(stmtIdx9, Entity::getVarIdx(varName5)));
-		Assert::AreEqual(size_t(4), UsesS::getFromRightArg(Entity::getVarIdx(varName1)).size());
+		Assert::AreEqual(size_t(16), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_S)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx6, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx6, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx6, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx6, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx7, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx8, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx8, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx9, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5)));
+		Assert::AreEqual(size_t(4), pkbGetter->getRSInfoFromRightArg(RelationshipType::USES_S, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)).size());
 
-		Assert::AreEqual(size_t(6), std::get<0>(ModifiesP::getAllInfo()).size());
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName5)));
+		Assert::AreEqual(size_t(6), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_P)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5)));
 
-		Assert::AreEqual(size_t(5), std::get<0>(UsesP::getAllInfo()).size());
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName2)));
-		Assert::IsFalse(UsesP::contains(procIdx, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName5)));
+		Assert::AreEqual(size_t(5), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_P)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5)));
 
-		Assert::AreEqual(size_t(0), std::get<0>(Calls::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(CallsT::getAllInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS_T)).size());
 
-		Assert::AreEqual(size_t(15), std::get<0>(Next::getAllInfo()).size());
-		Assert::IsTrue(Next::contains(stmtIdx6, stmtIdx7));
-		Assert::IsTrue(Next::contains(stmtIdx7, stmtIdx8));
-		Assert::IsTrue(Next::contains(stmtIdx9, stmtIdx6));
-		Assert::IsTrue(Next::contains(stmtIdx10, stmtIdx11));
-		Assert::IsTrue(Next::contains(stmtIdx10, stmtIdx12));
-		Assert::IsTrue(Next::contains(stmtIdx12, stmtIdx13));
-		Assert::IsTrue(Next::contains(stmtIdx11, stmtIdx14));
-		Assert::IsTrue(Next::contains(stmtIdx13, stmtIdx14));
+		Assert::AreEqual(size_t(15), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx6, stmtIdx7));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx7, stmtIdx8));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx9, stmtIdx6));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx10, stmtIdx11));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx10, stmtIdx12));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx12, stmtIdx13));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx11, stmtIdx14));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx13, stmtIdx14));
 
-		Assert::AreEqual(size_t(10), std::get<0>(Follows::getAllInfo()).size());
-		Assert::IsFalse(Follows::contains(stmtIdx1, stmtIdx6));
-		Assert::IsFalse(Follows::contains(stmtIdx6, stmtIdx7));
-		Assert::IsTrue(Follows::contains(stmtIdx7, stmtIdx8));
-		Assert::IsTrue(Follows::contains(stmtIdx6, stmtIdx10));
-		Assert::AreEqual(size_t(32), std::get<0>(FollowsT::getAllInfo()).size());
-		Assert::IsTrue(FollowsT::contains(stmtIdx1, stmtIdx6));
-		Assert::IsTrue(FollowsT::contains(stmtIdx6, stmtIdx14));
+		Assert::AreEqual(size_t(10), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS)).size());
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx1, stmtIdx6));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx6, stmtIdx7));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx7, stmtIdx8));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx6, stmtIdx10));
+		Assert::AreEqual(size_t(32), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS_T)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS_T, stmtIdx1, stmtIdx6));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS_T, stmtIdx6, stmtIdx14));
 
-		Assert::AreEqual(size_t(6), std::get<0>(Parent::getAllInfo()).size());
-		Assert::IsTrue(Parent::contains(stmtIdx6, stmtIdx7));
-		Assert::IsTrue(Parent::contains(stmtIdx10, stmtIdx11));
-		Assert::IsTrue(Parent::contains(stmtIdx10, stmtIdx12));
-		Assert::AreEqual(size_t(6), std::get<0>(ParentT::getAllInfo()).size());
+		Assert::AreEqual(size_t(6), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT, stmtIdx6, stmtIdx7));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT, stmtIdx10, stmtIdx11));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT, stmtIdx10, stmtIdx12));
+		Assert::AreEqual(size_t(6), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT_T)).size());
 	}
 
 	TEST_METHOD(nestedWhileIfSource_checkEntities) {
@@ -1338,35 +1274,33 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(nestedWhileIfSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
-		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
+		Assert::AreEqual(size_t(1), pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE).size());
+		Assert::AreEqual(procName, pkbGetter->getNameIdxEntityName(EntityType::PROCEDURE, pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE)[0]));
 
-		Assert::AreEqual(size_t(12), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::CALL_TYPE).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::READ_TYPE).size());
-		Assert::AreEqual(size_t(8), Entity::getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
-		Assert::AreEqual(size_t(2), Entity::getStmtIdxFromType(StatementType::PRINT_TYPE).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::WHILE_TYPE).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
+		Assert::AreEqual(size_t(12), pkbGetter->getAllStmts().size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::CALL_TYPE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::READ_TYPE).size());
+		Assert::AreEqual(size_t(8), pkbGetter->getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
+		Assert::AreEqual(size_t(2), pkbGetter->getStmtIdxFromType(StatementType::PRINT_TYPE).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getStmtIdxFromType(StatementType::WHILE_TYPE).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getStmtIdxFromType(StatementType::IF_TYPE).size());
 
-		Assert::AreEqual(size_t(5), Entity::getAllVars().size());
-		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[4]));
-		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[3]));
+		Assert::AreEqual(size_t(5), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
+		Assert::AreEqual(varName1, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[0]));
+		Assert::AreEqual(varName2, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[4]));
 
-		Assert::AreEqual(size_t(5), Entity::getAllConsts().size());
-		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
-		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
-		Assert::AreEqual(constVal3, Entity::getAllConsts()[2]);
-		Assert::AreEqual(constVal4, Entity::getAllConsts()[3]);
-		Assert::AreEqual(constVal5, Entity::getAllConsts()[4]);
+		Assert::AreEqual(size_t(5), pkbGetter->getAllConsts().size());
+		Assert::AreEqual(constVal1, pkbGetter->getAllConsts()[0]);
+		Assert::AreEqual(constVal2, pkbGetter->getAllConsts()[1]);
+		Assert::AreEqual(constVal3, pkbGetter->getAllConsts()[2]);
+		Assert::AreEqual(constVal4, pkbGetter->getAllConsts()[3]);
+		Assert::AreEqual(constVal5, pkbGetter->getAllConsts()[4]);
 
-		Assert::AreEqual(size_t(12), std::get<0>(Entity::getAllProcStmts()).size());
-		Assert::AreEqual(size_t(12), Entity::getStmtsFromProc(procIdx).size());
+		Assert::AreEqual(size_t(12), std::get<0>(pkbGetter->getAllProcStmts()).size());
+		Assert::AreEqual(size_t(12), pkbGetter->getStmtsFromProc(procIdx).size());
 	}
 	TEST_METHOD(nestedWhileIfSource_checkAttributes) {
 		std::string varName1 = "present";
@@ -1379,22 +1313,20 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(nestedWhileIfSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(varName1, Attribute::getAttributeNameByStmtIdx(stmtIdx1));
-		Assert::AreEqual(varName2, Attribute::getAttributeNameByStmtIdx(stmtIdx12));
-		Assert::IsTrue(std::vector{ stmtIdx1 } == Attribute::getEqualNameAttributesFromName(EntityType::PRINT, varName1));
-		Assert::IsTrue(std::vector{ stmtIdx12 } == Attribute::getEqualNameAttributesFromName(EntityType::PRINT, varName2));
-		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
-		Assert::IsTrue(std::vector{ 8, 4, 2, 1 } == Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::PRINT, 1));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::PRINT, 12));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 8));
+		Assert::AreEqual(varName1, pkbGetter->getAttributeNameByStmtIdx(stmtIdx1));
+		Assert::AreEqual(varName2, pkbGetter->getAttributeNameByStmtIdx(stmtIdx12));
+		Assert::IsTrue(std::vector{ stmtIdx1 } == pkbGetter->getEqualNameAttributesFromName(EntityType::PRINT, varName1));
+		Assert::IsTrue(std::vector{ stmtIdx12 } == pkbGetter->getEqualNameAttributesFromName(EntityType::PRINT, varName2));
+		Assert::IsTrue(std::vector{ procIdx } == pkbGetter->getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
+		Assert::IsTrue(std::vector{ 8, 4, 2, 1 } == pkbGetter->getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::STMT, 3));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::PRINT, 1));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::PRINT, 12));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::ASSIGN, 3));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::CONSTANT, 8));
 	}
 
 	TEST_METHOD(nestedWhileIfSource_checkPattern) {
@@ -1406,54 +1338,52 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(nestedWhileIfSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(8), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(8), std::get<0>(pkbGetter->getAllAssignPatternInfo()).size());
 
-		Assert::AreEqual(size_t(2), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix(varName2)).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix("z-8")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix("x*y")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("x*y")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix("x*y*z")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("x*y*z")).size());
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix("y*z")).size());
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix("z-8-(x*y)")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("8")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName3), ExpressionProcessor::convertInfixToPostFix(varName3)).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName4), ExpressionProcessor::convertInfixToPostFix("2")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName5), ExpressionProcessor::convertInfixToPostFix(varName5)).size());
+		Assert::AreEqual(size_t(2), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix(varName2)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix("z-8")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix("x*y")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("x*y")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix("x*y*z")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("x*y*z")).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix("y*z")).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix("z-8-(x*y)")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("8")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3), ExpressionProcessor::convertInfixToPostFix(varName3)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4), ExpressionProcessor::convertInfixToPostFix("2")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5), ExpressionProcessor::convertInfixToPostFix(varName5)).size());
 
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("8*present")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName5), ExpressionProcessor::convertInfixToPostFix("x-1")).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("8*present")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5), ExpressionProcessor::convertInfixToPostFix("x-1")).size());
 
-		Assert::AreEqual(size_t(5), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("z-8"))).size());
-		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("x*y"))).size());
-		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("x*y*z"))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("z-8-(x*y)"))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("8-(x*y)"))).size());
+		Assert::AreEqual(size_t(5), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("z-8"))).size());
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("x*y"))).size());
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("x*y*z"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("z-8-(x*y)"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("8-(x*y)"))).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("z-8"))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("8*present"))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("x-1"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("z-8"))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("8*present"))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("x-1"))).size());
 
-		VarIndex varIdx1 = Entity::getVarIdx(varName1);
-		VarIndex varIdx2 = Entity::getVarIdx(varName2);
-		VarIndex varIdx5 = Entity::getVarIdx(varName5);
+		VarIndex varIdx1 = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1);
+		VarIndex varIdx2 = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2);
+		VarIndex varIdx5 = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5);
 
-		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getAllIfPatternInfo()).size());
-		Assert::AreEqual(size_t(1), Pattern::getIfStmtsFromVar(varIdx1).size());
-		Assert::AreEqual(size_t(0), Pattern::getIfStmtsFromVar(varIdx2).size());
-		Assert::AreEqual(size_t(1), Pattern::getIfStmtsFromVar(varIdx5).size());
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::IF_TYPE)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, varIdx1).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, varIdx2).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, varIdx5).size());
 
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAllWhilePatternInfo()).size());
-		Assert::AreEqual(size_t(1), Pattern::getWhileStmtsFromVar(varIdx1).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::WHILE_TYPE)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIdx1).size());
 	}
 
 	TEST_METHOD(nestedWhileIfSource_checkRelationships) {
@@ -1478,91 +1408,89 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(nestedWhileIfSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(14), std::get<0>(ModifiesS::getAllInfo()).size());
-		Assert::IsTrue(ModifiesS::contains(stmtIdx2, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx3, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx5, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx5, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx5, Entity::getVarIdx(varName5)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx7, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx7, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx7, Entity::getVarIdx(varName5)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx8, Entity::getVarIdx(varName1)));
-		Assert::AreEqual(size_t(3), ModifiesS::getFromRightArg(Entity::getVarIdx(varName1)).size());
+		Assert::AreEqual(size_t(14), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_S)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx5, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx5, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx5, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx7, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx7, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx7, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx8, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::AreEqual(size_t(3), pkbGetter->getRSInfoFromRightArg(RelationshipType::MODIFIES_S, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)).size());
 
-		Assert::AreEqual(size_t(27), std::get<0>(UsesS::getAllInfo()).size());
-		Assert::IsTrue(UsesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesS::contains(stmtIdx2, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesS::contains(stmtIdx3, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesS::contains(stmtIdx5, Entity::getVarIdx(varName1)));
-		Assert::IsFalse(UsesS::contains(stmtIdx5, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesS::contains(stmtIdx5, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(UsesS::contains(stmtIdx5, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(UsesS::contains(stmtIdx5, Entity::getVarIdx(varName5)));
-		Assert::IsTrue(UsesS::contains(stmtIdx7, Entity::getVarIdx(varName1)));
-		Assert::IsFalse(UsesS::contains(stmtIdx7, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesS::contains(stmtIdx7, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(UsesS::contains(stmtIdx7, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(UsesS::contains(stmtIdx7, Entity::getVarIdx(varName5)));
-		Assert::IsTrue(UsesS::contains(stmtIdx8, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(UsesS::contains(stmtIdx8, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(UsesS::contains(stmtIdx8, Entity::getVarIdx(varName5)));
-		Assert::IsTrue(UsesS::contains(stmtIdx12, Entity::getVarIdx(varName2)));
-		Assert::AreEqual(size_t(8), UsesS::getFromRightArg(Entity::getVarIdx(varName1)).size());
+		Assert::AreEqual(size_t(27), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_S)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx5, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx5, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx5, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx5, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx5, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx7, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx7, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx7, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx7, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx7, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx8, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx8, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx8, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx12, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::AreEqual(size_t(8), pkbGetter->getRSInfoFromRightArg(RelationshipType::USES_S, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)).size());
 
-		Assert::AreEqual(size_t(5), std::get<0>(ModifiesP::getAllInfo()).size());
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName5)));
+		Assert::AreEqual(size_t(5), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_P)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5)));
 
-		Assert::AreEqual(size_t(5), std::get<0>(UsesP::getAllInfo()).size());
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName5)));
+		Assert::AreEqual(size_t(5), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_P)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5)));
 
-		Assert::AreEqual(size_t(0), std::get<0>(Calls::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(CallsT::getAllInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS_T)).size());
 
-		Assert::AreEqual(size_t(13), std::get<0>(Next::getAllInfo()).size());
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx3));
-		Assert::IsTrue(Next::contains(stmtIdx5, stmtIdx6));
-		Assert::IsTrue(Next::contains(stmtIdx6, stmtIdx7));
-		Assert::IsTrue(Next::contains(stmtIdx7, stmtIdx8));
-		Assert::IsTrue(Next::contains(stmtIdx7, stmtIdx10));
-		Assert::IsTrue(Next::contains(stmtIdx8, stmtIdx9));
-		Assert::IsTrue(Next::contains(stmtIdx9, stmtIdx5));
-		Assert::IsTrue(Next::contains(stmtIdx10, stmtIdx5));
-		Assert::IsTrue(Next::contains(stmtIdx5, stmtIdx11));
-		Assert::IsTrue(Next::contains(stmtIdx11, stmtIdx12));
+		Assert::AreEqual(size_t(13), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx5, stmtIdx6));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx6, stmtIdx7));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx7, stmtIdx8));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx7, stmtIdx10));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx8, stmtIdx9));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx9, stmtIdx5));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx10, stmtIdx5));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx5, stmtIdx11));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx11, stmtIdx12));
 
-		Assert::AreEqual(size_t(8), std::get<0>(Follows::getAllInfo()).size());
-		Assert::IsTrue(Follows::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Follows::contains(stmtIdx2, stmtIdx3));
-		Assert::IsTrue(Follows::contains(stmtIdx5, stmtIdx11));
-		Assert::IsTrue(Follows::contains(stmtIdx6, stmtIdx7));
-		Assert::AreEqual(size_t(23), std::get<0>(FollowsT::getAllInfo()).size());
-		Assert::IsTrue(FollowsT::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(FollowsT::contains(stmtIdx2, stmtIdx11));
-		Assert::IsFalse(FollowsT::contains(stmtIdx8, stmtIdx10));
+		Assert::AreEqual(size_t(8), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx2, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx5, stmtIdx11));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx6, stmtIdx7));
+		Assert::AreEqual(size_t(23), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS_T)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS_T, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS_T, stmtIdx2, stmtIdx11));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS_T, stmtIdx8, stmtIdx10));
 
-		Assert::AreEqual(size_t(5), std::get<0>(Parent::getAllInfo()).size());
-		Assert::IsTrue(Parent::contains(stmtIdx5, stmtIdx6));
-		Assert::IsTrue(Parent::contains(stmtIdx5, stmtIdx7));
-		Assert::IsTrue(Parent::contains(stmtIdx7, stmtIdx8));
-		Assert::IsTrue(Parent::contains(stmtIdx7, stmtIdx10));
-		Assert::AreEqual(size_t(8), std::get<0>(ParentT::getAllInfo()).size());
-		Assert::IsTrue(ParentT::contains(stmtIdx5, stmtIdx8));
-		Assert::IsTrue(ParentT::contains(stmtIdx5, stmtIdx10));
+		Assert::AreEqual(size_t(5), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT, stmtIdx5, stmtIdx6));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT, stmtIdx5, stmtIdx7));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT, stmtIdx7, stmtIdx8));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT, stmtIdx7, stmtIdx10));
+		Assert::AreEqual(size_t(8), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT_T)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx5, stmtIdx8));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx5, stmtIdx10));
 	}
 
 	TEST_METHOD(multipleBracketsSource_checkEntities) {
@@ -1576,32 +1504,30 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(multipleBracketsSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
-		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
+		Assert::AreEqual(size_t(1), pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE).size());
+		Assert::AreEqual(procName, pkbGetter->getNameIdxEntityName(EntityType::PROCEDURE, pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE)[0]));
 
-		Assert::AreEqual(size_t(7), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::CALL_TYPE).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::READ_TYPE).size());
-		Assert::AreEqual(size_t(4), Entity::getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::PRINT_TYPE).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::WHILE_TYPE).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
+		Assert::AreEqual(size_t(7), pkbGetter->getAllStmts().size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::CALL_TYPE).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getStmtIdxFromType(StatementType::READ_TYPE).size());
+		Assert::AreEqual(size_t(4), pkbGetter->getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getStmtIdxFromType(StatementType::PRINT_TYPE).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getStmtIdxFromType(StatementType::WHILE_TYPE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::IF_TYPE).size());
 
-		Assert::AreEqual(size_t(3), Entity::getAllVars().size());
-		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[0]));
-		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[2]));
+		Assert::AreEqual(size_t(3), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
+		Assert::AreEqual(varName1, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[0]));
+		Assert::AreEqual(varName2, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[2]));
 
-		Assert::AreEqual(size_t(2), Entity::getAllConsts().size());
-		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
-		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
+		Assert::AreEqual(size_t(2), pkbGetter->getAllConsts().size());
+		Assert::AreEqual(constVal1, pkbGetter->getAllConsts()[0]);
+		Assert::AreEqual(constVal2, pkbGetter->getAllConsts()[1]);
 
-		Assert::AreEqual(size_t(7), std::get<0>(Entity::getAllProcStmts()).size());
-		Assert::AreEqual(size_t(7), Entity::getStmtsFromProc(procIdx).size());
+		Assert::AreEqual(size_t(7), std::get<0>(pkbGetter->getAllProcStmts()).size());
+		Assert::AreEqual(size_t(7), pkbGetter->getStmtsFromProc(procIdx).size());
 	}
 
 	TEST_METHOD(multipleBracketsSource_checkAttributes) {
@@ -1616,24 +1542,22 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(multipleBracketsSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(varName1, Attribute::getAttributeNameByStmtIdx(stmtIdx1));
-		Assert::AreEqual(varName2, Attribute::getAttributeNameByStmtIdx(stmtIdx7));
-		Assert::IsTrue(std::vector{ stmtIdx1 } == Attribute::getEqualNameAttributesFromName(EntityType::READ, varName1));
-		Assert::IsTrue(std::vector{ stmtIdx7 } == Attribute::getEqualNameAttributesFromName(EntityType::PRINT, varName2));
-		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
-		Assert::AreEqual(size_t(0), Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT).size());
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::WHILE, 3));
-		Assert::IsFalse(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 3));
-		Assert::IsFalse(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 8));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::READ, 1));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::PRINT, 7));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 0));
+		Assert::AreEqual(varName1, pkbGetter->getAttributeNameByStmtIdx(stmtIdx1));
+		Assert::AreEqual(varName2, pkbGetter->getAttributeNameByStmtIdx(stmtIdx7));
+		Assert::IsTrue(std::vector{ stmtIdx1 } == pkbGetter->getEqualNameAttributesFromName(EntityType::READ, varName1));
+		Assert::IsTrue(std::vector{ stmtIdx7 } == pkbGetter->getEqualNameAttributesFromName(EntityType::PRINT, varName2));
+		Assert::IsTrue(std::vector{ procIdx } == pkbGetter->getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
+		Assert::AreEqual(size_t(0), pkbGetter->getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT).size());
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::STMT, 3));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::WHILE, 3));
+		Assert::IsFalse(pkbGetter->hasEqualIntegerAttribute(EntityType::ASSIGN, 3));
+		Assert::IsFalse(pkbGetter->hasEqualIntegerAttribute(EntityType::STMT, 8));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::READ, 1));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::PRINT, 7));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::CONSTANT, 0));
 	}
 
 	TEST_METHOD(multipleBracketsSource_checkPattern) {
@@ -1645,45 +1569,43 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(multipleBracketsSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(4), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(4), std::get<0>(pkbGetter->getAllAssignPatternInfo()).size());
 
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix("10")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix(varName2)).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix(varName3)).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("0")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName3), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName3), ExpressionProcessor::convertInfixToPostFix("number%10")).size());
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName3), ExpressionProcessor::convertInfixToPostFix("10%number")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix("10")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix(varName2)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix(varName3)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("0")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3), ExpressionProcessor::convertInfixToPostFix("number%10")).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3), ExpressionProcessor::convertInfixToPostFix("10%number")).size());
 
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName3), ExpressionProcessor::convertInfixToPostFix("number%10")).size());
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName3), ExpressionProcessor::convertInfixToPostFix("10%number")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("0")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("sum+digit")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3), ExpressionProcessor::convertInfixToPostFix("number%10")).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3), ExpressionProcessor::convertInfixToPostFix("10%number")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("0")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("sum+digit")).size());
 
-		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName2))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName3))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("0"))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("number%10"))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("(((number))%10)"))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("10%number"))).size());
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName2))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName3))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("0"))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("number%10"))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("(((number))%10)"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("10%number"))).size());
 
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("number%10"))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("0"))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("((0))"))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("number%10"))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("0"))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("((0))"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllIfPatternInfo()).size());
-		Assert::AreEqual(size_t(0), Pattern::getIfStmtsFromVar(varIdx).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::IF_TYPE)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, varIdx).size());
 
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAllWhilePatternInfo()).size());
-		Assert::AreEqual(size_t(1), Pattern::getWhileStmtsFromVar(varIdx).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::WHILE_TYPE)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIdx).size());
 	}
 
 	TEST_METHOD(multipleBracketsSource_checkRelationships) {
@@ -1703,65 +1625,63 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(multipleBracketsSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(8), std::get<0>(ModifiesS::getAllInfo()).size());
-		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx2, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx3, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx3, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx3, Entity::getVarIdx(varName3)));
-		Assert::IsFalse(ModifiesS::contains(stmtIdx7, Entity::getVarIdx(varName2)));
-		Assert::AreEqual(size_t(3), ModifiesS::getFromRightArg(Entity::getVarIdx(varName1)).size());
+		Assert::AreEqual(size_t(8), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_S)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx7, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::AreEqual(size_t(3), pkbGetter->getRSInfoFromRightArg(RelationshipType::MODIFIES_S, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)).size());
 
-		Assert::AreEqual(size_t(8), std::get<0>(UsesS::getAllInfo()).size());
-		Assert::IsFalse(UsesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
-		Assert::IsFalse(UsesS::contains(stmtIdx2, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesS::contains(stmtIdx3, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesS::contains(stmtIdx3, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesS::contains(stmtIdx3, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(UsesS::contains(stmtIdx4, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesS::contains(stmtIdx5, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesS::contains(stmtIdx5, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(UsesS::contains(stmtIdx6, Entity::getVarIdx(varName1)));
-		Assert::AreEqual(size_t(3), UsesS::getFromRightArg(Entity::getVarIdx(varName1)).size());
+		Assert::AreEqual(size_t(8), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_S)).size());
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx5, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx5, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx6, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::AreEqual(size_t(3), pkbGetter->getRSInfoFromRightArg(RelationshipType::USES_S, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)).size());
 
-		Assert::AreEqual(size_t(3), std::get<0>(ModifiesP::getAllInfo()).size());
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName3)));
+		Assert::AreEqual(size_t(3), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_P)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
 
-		Assert::AreEqual(size_t(3), std::get<0>(UsesP::getAllInfo()).size());
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName3)));
+		Assert::AreEqual(size_t(3), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_P)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
 
-		Assert::AreEqual(size_t(0), std::get<0>(Calls::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(CallsT::getAllInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS_T)).size());
 
-		Assert::AreEqual(size_t(7), std::get<0>(Next::getAllInfo()).size());
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx3));
-		Assert::IsTrue(Next::contains(stmtIdx3, stmtIdx4));
-		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx5));
-		Assert::IsTrue(Next::contains(stmtIdx5, stmtIdx6));
-		Assert::IsTrue(Next::contains(stmtIdx6, stmtIdx3));
-		Assert::IsTrue(Next::contains(stmtIdx3, stmtIdx7));
-		Assert::IsFalse(Next::contains(stmtIdx6, stmtIdx7));
+		Assert::AreEqual(size_t(7), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx3, stmtIdx4));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx4, stmtIdx5));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx5, stmtIdx6));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx6, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx3, stmtIdx7));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx6, stmtIdx7));
 
-		Assert::AreEqual(size_t(5), std::get<0>(Follows::getAllInfo()).size());
-		Assert::IsTrue(Follows::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Follows::contains(stmtIdx2, stmtIdx3));
-		Assert::IsTrue(Follows::contains(stmtIdx5, stmtIdx6));
-		Assert::AreEqual(size_t(9), std::get<0>(FollowsT::getAllInfo()).size());
-		Assert::IsTrue(FollowsT::contains(stmtIdx1, stmtIdx3));
+		Assert::AreEqual(size_t(5), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx2, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx5, stmtIdx6));
+		Assert::AreEqual(size_t(9), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS_T)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS_T, stmtIdx1, stmtIdx3));
 
-		Assert::AreEqual(size_t(3), std::get<0>(Parent::getAllInfo()).size());
-		Assert::IsTrue(Parent::contains(stmtIdx3, stmtIdx5));
-		Assert::AreEqual(size_t(3), std::get<0>(ParentT::getAllInfo()).size());
+		Assert::AreEqual(size_t(3), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT, stmtIdx3, stmtIdx5));
+		Assert::AreEqual(size_t(3), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT_T)).size());
 	}
 
 	TEST_METHOD(sameKeywordNameSource_checkEntities) {
@@ -1776,33 +1696,31 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(sameKeywordNameSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
-		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
+		Assert::AreEqual(size_t(1), pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE).size());
+		Assert::AreEqual(procName, pkbGetter->getNameIdxEntityName(EntityType::PROCEDURE, pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE)[0]));
 
-		Assert::AreEqual(size_t(7), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::CALL_TYPE).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::READ_TYPE).size());
-		Assert::AreEqual(size_t(5), Entity::getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::PRINT_TYPE).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::WHILE_TYPE).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
+		Assert::AreEqual(size_t(7), pkbGetter->getAllStmts().size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::CALL_TYPE).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getStmtIdxFromType(StatementType::READ_TYPE).size());
+		Assert::AreEqual(size_t(5), pkbGetter->getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getStmtIdxFromType(StatementType::PRINT_TYPE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::WHILE_TYPE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::IF_TYPE).size());
 
-		Assert::AreEqual(size_t(5), Entity::getAllVars().size());
-		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[0]));
-		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[1]));
-		Assert::AreEqual(varName3, Entity::getVarName(Entity::getAllVars()[4]));
+		Assert::AreEqual(size_t(5), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
+		Assert::AreEqual(varName1, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[0]));
+		Assert::AreEqual(varName2, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[1]));
+		Assert::AreEqual(varName3, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[4]));
 
-		Assert::AreEqual(size_t(2), Entity::getAllConsts().size());
-		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
-		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
+		Assert::AreEqual(size_t(2), pkbGetter->getAllConsts().size());
+		Assert::AreEqual(constVal1, pkbGetter->getAllConsts()[0]);
+		Assert::AreEqual(constVal2, pkbGetter->getAllConsts()[1]);
 
-		Assert::AreEqual(size_t(7), std::get<0>(Entity::getAllProcStmts()).size());
-		Assert::AreEqual(size_t(7), Entity::getStmtsFromProc(procIdx).size());
+		Assert::AreEqual(size_t(7), std::get<0>(pkbGetter->getAllProcStmts()).size());
+		Assert::AreEqual(size_t(7), pkbGetter->getStmtsFromProc(procIdx).size());
 	}
 
 	TEST_METHOD(sameKeywordNameSource_checkAttributes) {
@@ -1816,27 +1734,25 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(sameKeywordNameSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(varName1, Attribute::getAttributeNameByStmtIdx(stmtIdx1));
-		Assert::AreEqual(varName2, Attribute::getAttributeNameByStmtIdx(stmtIdx7));
-		Assert::IsTrue(std::vector{ stmtIdx1 } == Attribute::getEqualNameAttributesFromName(EntityType::READ, varName1));
-		Assert::IsTrue(std::vector{ stmtIdx7 } == Attribute::getEqualNameAttributesFromName(EntityType::PRINT, varName2));
-		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
-		Assert::IsTrue(std::vector{ 1 } == Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::READ, 1));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 3));
-		Assert::IsFalse(Attribute::hasEqualIntegerAttribute(EntityType::PRINT, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 2));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 4));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 5));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 6));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 0));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 1));
+		Assert::AreEqual(varName1, pkbGetter->getAttributeNameByStmtIdx(stmtIdx1));
+		Assert::AreEqual(varName2, pkbGetter->getAttributeNameByStmtIdx(stmtIdx7));
+		Assert::IsTrue(std::vector{ stmtIdx1 } == pkbGetter->getEqualNameAttributesFromName(EntityType::READ, varName1));
+		Assert::IsTrue(std::vector{ stmtIdx7 } == pkbGetter->getEqualNameAttributesFromName(EntityType::PRINT, varName2));
+		Assert::IsTrue(std::vector{ procIdx } == pkbGetter->getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
+		Assert::IsTrue(std::vector{ 1 } == pkbGetter->getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::READ, 1));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::STMT, 3));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::ASSIGN, 3));
+		Assert::IsFalse(pkbGetter->hasEqualIntegerAttribute(EntityType::PRINT, 3));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::ASSIGN, 2));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::ASSIGN, 4));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::ASSIGN, 5));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::ASSIGN, 6));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::CONSTANT, 0));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::CONSTANT, 1));
 	}
 
 	TEST_METHOD(sameKeywordNameSource_checkPattern) {
@@ -1850,39 +1766,37 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(sameKeywordNameSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(5), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(5), std::get<0>(pkbGetter->getAllAssignPatternInfo()).size());
 
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix("1")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("0")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName3), ExpressionProcessor::convertInfixToPostFix("1")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName4), ExpressionProcessor::convertInfixToPostFix("1")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName5), ExpressionProcessor::convertInfixToPostFix("1")).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix("1")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("0")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3), ExpressionProcessor::convertInfixToPostFix("1")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4), ExpressionProcessor::convertInfixToPostFix("1")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5), ExpressionProcessor::convertInfixToPostFix("1")).size());
 
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix("1")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("0")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName3), ExpressionProcessor::convertInfixToPostFix("1")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName4), ExpressionProcessor::convertInfixToPostFix("1")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName5), ExpressionProcessor::convertInfixToPostFix("1")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix("1")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("0")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3), ExpressionProcessor::convertInfixToPostFix("1")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4), ExpressionProcessor::convertInfixToPostFix("1")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5), ExpressionProcessor::convertInfixToPostFix("1")).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
-		Assert::AreEqual(size_t(4), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("1"))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("0"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
+		Assert::AreEqual(size_t(4), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("1"))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("0"))).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
-		Assert::AreEqual(size_t(4), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("1"))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("0"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
+		Assert::AreEqual(size_t(4), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("1"))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("0"))).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllIfPatternInfo()).size());
-		Assert::AreEqual(size_t(0), Pattern::getIfStmtsFromVar(varIdx).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::IF_TYPE)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, varIdx).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllWhilePatternInfo()).size());
-		Assert::AreEqual(size_t(0), Pattern::getWhileStmtsFromVar(varIdx).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::WHILE_TYPE)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIdx).size());
 	}
 
 	TEST_METHOD(sameKeywordNameSource_checkRelationships) {
@@ -1903,64 +1817,62 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(sameKeywordNameSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(6), std::get<0>(ModifiesS::getAllInfo()).size());
-		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx4, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx2, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx3, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx5, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx6, Entity::getVarIdx(varName5)));
-		Assert::IsFalse(ModifiesS::contains(stmtIdx7, Entity::getVarIdx(varName3)));
-		Assert::AreEqual(size_t(2), ModifiesS::getFromRightArg(Entity::getVarIdx(varName1)).size());
+		Assert::AreEqual(size_t(6), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_S)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx5, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx6, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx7, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::AreEqual(size_t(2), pkbGetter->getRSInfoFromRightArg(RelationshipType::MODIFIES_S, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)).size());
 
-		Assert::AreEqual(size_t(1), std::get<0>(UsesS::getAllInfo()).size());
-		Assert::IsTrue(UsesS::contains(stmtIdx7, Entity::getVarIdx(varName3)));
-		Assert::IsFalse(UsesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
-		Assert::IsFalse(UsesS::contains(stmtIdx2, Entity::getVarIdx(varName2)));
-		Assert::IsFalse(UsesS::contains(stmtIdx3, Entity::getVarIdx(varName3)));
-		Assert::IsFalse(UsesS::contains(stmtIdx4, Entity::getVarIdx(varName1)));
-		Assert::IsFalse(UsesS::contains(stmtIdx5, Entity::getVarIdx(varName4)));
-		Assert::IsFalse(UsesS::contains(stmtIdx6, Entity::getVarIdx(varName5)));
-		Assert::AreEqual(size_t(1), UsesS::getFromRightArg(Entity::getVarIdx(varName3)).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_S)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx7, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx5, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx6, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5)));
+		Assert::AreEqual(size_t(1), pkbGetter->getRSInfoFromRightArg(RelationshipType::USES_S, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)).size());
 
-		Assert::AreEqual(size_t(5), std::get<0>(ModifiesP::getAllInfo()).size());
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName5)));
+		Assert::AreEqual(size_t(5), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_P)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5)));
 
-		Assert::AreEqual(size_t(1), std::get<0>(UsesP::getAllInfo()).size());
-		Assert::IsFalse(UsesP::contains(procIdx, Entity::getVarIdx(varName1)));
-		Assert::IsFalse(UsesP::contains(procIdx, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName3)));
-		Assert::IsFalse(UsesP::contains(procIdx, Entity::getVarIdx(varName4)));
-		Assert::IsFalse(UsesP::contains(procIdx, Entity::getVarIdx(varName5)));
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_P)).size());
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName5)));
 
-		Assert::AreEqual(size_t(0), std::get<0>(Calls::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(CallsT::getAllInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS_T)).size());
 
-		Assert::AreEqual(size_t(6), std::get<0>(Next::getAllInfo()).size());
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx3));
-		Assert::IsTrue(Next::contains(stmtIdx3, stmtIdx4));
-		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx5));
-		Assert::IsTrue(Next::contains(stmtIdx5, stmtIdx6));
-		Assert::IsTrue(Next::contains(stmtIdx6, stmtIdx7));
+		Assert::AreEqual(size_t(6), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx3, stmtIdx4));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx4, stmtIdx5));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx5, stmtIdx6));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx6, stmtIdx7));
 
-		Assert::AreEqual(size_t(6), std::get<0>(Follows::getAllInfo()).size());
-		Assert::IsTrue(Follows::contains(stmtIdx1, stmtIdx2));
-		Assert::IsFalse(Follows::contains(stmtIdx2, stmtIdx7));
-		Assert::AreEqual(size_t(21), std::get<0>(FollowsT::getAllInfo()).size());
-		Assert::IsTrue(FollowsT::contains(stmtIdx1, stmtIdx7));
+		Assert::AreEqual(size_t(6), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx1, stmtIdx2));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx2, stmtIdx7));
+		Assert::AreEqual(size_t(21), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS_T)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS_T, stmtIdx1, stmtIdx7));
 
-		Assert::AreEqual(size_t(0), std::get<0>(Parent::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(ParentT::getAllInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT_T)).size());
 	}
 
 	TEST_METHOD(longAssignmentExprSource_checkEntities) {
@@ -1973,32 +1885,30 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(longAssignmentExprSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
-		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
+		Assert::AreEqual(size_t(1), pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE).size());
+		Assert::AreEqual(procName, pkbGetter->getNameIdxEntityName(EntityType::PROCEDURE, pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE)[0]));
 
-		Assert::AreEqual(size_t(1), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::CALL_TYPE).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::READ_TYPE).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::PRINT_TYPE).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::WHILE_TYPE).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAllStmts().size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::CALL_TYPE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::READ_TYPE).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::PRINT_TYPE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::WHILE_TYPE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::IF_TYPE).size());
 
 		/* ordering: x, a, y, b, z, c, d, f, g */
-		Assert::AreEqual(size_t(9), Entity::getAllVars().size());
-		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[0]));
-		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[8]));
+		Assert::AreEqual(size_t(9), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
+		Assert::AreEqual(varName1, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[0]));
+		Assert::AreEqual(varName2, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[8]));
 
-		Assert::AreEqual(size_t(1), Entity::getAllConsts().size());
-		Assert::AreEqual(constVal, Entity::getAllConsts()[0]);
+		Assert::AreEqual(size_t(1), pkbGetter->getAllConsts().size());
+		Assert::AreEqual(constVal, pkbGetter->getAllConsts()[0]);
 
-		Assert::AreEqual(size_t(1), std::get<0>(Entity::getAllProcStmts()).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtsFromProc(procIdx).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAllProcStmts()).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getStmtsFromProc(procIdx).size());
 	}
 
 	TEST_METHOD(longAssignmentExprSource_checkAttributes) {
@@ -2008,16 +1918,14 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(longAssignmentExprSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
-		Assert::AreEqual(size_t(0), Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT).size());
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 1));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 1));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 9));
+		Assert::IsTrue(std::vector{ procIdx } == pkbGetter->getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
+		Assert::AreEqual(size_t(0), pkbGetter->getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT).size());
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::STMT, 1));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::ASSIGN, 1));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::CONSTANT, 9));
 	}
 
 	TEST_METHOD(longAssignmentExprSource_checkPattern) {
@@ -2028,30 +1936,28 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(longAssignmentExprSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAllAssignPatternInfo()).size());
 
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix(varName2)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix(varName2)).size());
 
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix("x+y/z%a*b/c%d+f-g+z%a*b/c%d+f-g-x+y/z%a*b/c%d+f-g+z%a*b/c%d+f-g+z%a*b/c%d+f-g+z%a*b/c%d+f-9")).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix("x+y/z%a*b/c%d+f-g+z%a*b/c%d+f-g-x+y/z%a*b/c%d+f-g+z%a*b/c%d+f-g+z%a*b/c%d+f-g+z%a*b/c%d+f-9")).size());
 
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("x+y"))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("x+y"))).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("x+y/z%a*b/c%d+f-g+z%a*b/c%d+f-g-x+y/z%a*b/c%d+f-g+z%a*b/c%d+f-g+z%a*b/c%d+f-g+z%a*b/c%d+f-9"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("x+y/z%a*b/c%d+f-g+z%a*b/c%d+f-g-x+y/z%a*b/c%d+f-g+z%a*b/c%d+f-g+z%a*b/c%d+f-g+z%a*b/c%d+f-9"))).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllIfPatternInfo()).size());
-		Assert::AreEqual(size_t(0), Pattern::getIfStmtsFromVar(varIdx).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::IF_TYPE)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, varIdx).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllWhilePatternInfo()).size());
-		Assert::AreEqual(size_t(0), Pattern::getWhileStmtsFromVar(varIdx).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::WHILE_TYPE)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIdx).size());
 	}
 
 	TEST_METHOD(longAssignmentExprSource_checkRelationships) {
@@ -2063,37 +1969,35 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(longAssignmentExprSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(1), std::get<0>(ModifiesS::getAllInfo()).size());
-		Assert::IsTrue(ModifiesS::contains(stmtIdx, Entity::getVarIdx(varName1)));
-		Assert::AreEqual(size_t(1), ModifiesS::getFromRightArg(Entity::getVarIdx(varName1)).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_S)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::AreEqual(size_t(1), pkbGetter->getRSInfoFromRightArg(RelationshipType::MODIFIES_S, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)).size());
 
-		Assert::AreEqual(size_t(9), std::get<0>(UsesS::getAllInfo()).size());
-		Assert::IsTrue(UsesS::contains(stmtIdx, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesS::contains(stmtIdx, Entity::getVarIdx(varName2)));
-		Assert::AreEqual(size_t(1), UsesS::getFromRightArg(Entity::getVarIdx(varName1)).size());
+		Assert::AreEqual(size_t(9), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_S)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::AreEqual(size_t(1), pkbGetter->getRSInfoFromRightArg(RelationshipType::USES_S, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)).size());
 
-		Assert::AreEqual(size_t(1), std::get<0>(ModifiesP::getAllInfo()).size());
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName1)));
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_P)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
 
-		Assert::AreEqual(size_t(9), std::get<0>(UsesP::getAllInfo()).size());
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName2)));
+		Assert::AreEqual(size_t(9), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_P)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
 
-		Assert::AreEqual(size_t(0), std::get<0>(Calls::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(CallsT::getAllInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS_T)).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Next::getAllInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Follows::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(FollowsT::getAllInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS_T)).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Parent::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(ParentT::getAllInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT_T)).size());
 	}
 
 	TEST_METHOD(longVarNameSource_checkEntities) {
@@ -2104,24 +2008,22 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(longVarNameSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
-		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
+		Assert::AreEqual(size_t(1), pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE).size());
+		Assert::AreEqual(procName, pkbGetter->getNameIdxEntityName(EntityType::PROCEDURE, pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE)[0]));
 
-		Assert::AreEqual(size_t(1), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::READ_TYPE).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAllStmts().size());
+		Assert::AreEqual(size_t(1), pkbGetter->getStmtIdxFromType(StatementType::READ_TYPE).size());
 
-		Assert::AreEqual(size_t(1), Entity::getAllVars().size());
-		Assert::AreEqual(varName, Entity::getVarName(Entity::getAllVars()[0]));
+		Assert::AreEqual(size_t(1), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
+		Assert::AreEqual(varName, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[0]));
 
-		Assert::AreEqual(size_t(0), Entity::getAllConsts().size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllConsts().size());
 
-		Assert::AreEqual(size_t(1), std::get<0>(Entity::getAllProcStmts()).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtsFromProc(procIdx).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAllProcStmts()).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getStmtsFromProc(procIdx).size());
 	}
 
 	TEST_METHOD(longVarNameSource_checkAttributes) {
@@ -2133,16 +2035,14 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(longVarNameSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(varName, Attribute::getAttributeNameByStmtIdx(stmtIdx));
-		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
-		Assert::AreEqual(size_t(0), Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT).size());
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 1));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::READ, 1));
+		Assert::AreEqual(varName, pkbGetter->getAttributeNameByStmtIdx(stmtIdx));
+		Assert::IsTrue(std::vector{ procIdx } == pkbGetter->getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
+		Assert::AreEqual(size_t(0), pkbGetter->getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT).size());
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::STMT, 1));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::READ, 1));
 	}
 
 	TEST_METHOD(longVarNameSource_checkPattern) {
@@ -2152,22 +2052,20 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(longVarNameSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName), ExpressionProcessor::convertInfixToPostFix(varName)).size());
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName), ExpressionProcessor::convertInfixToPostFix(varName)).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName), ExpressionProcessor::convertInfixToPostFix(varName)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName), ExpressionProcessor::convertInfixToPostFix(varName)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName))).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllIfPatternInfo()).size());
-		Assert::AreEqual(size_t(0), Pattern::getIfStmtsFromVar(varIdx).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::IF_TYPE)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, varIdx).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllWhilePatternInfo()).size());
-		Assert::AreEqual(size_t(0), Pattern::getWhileStmtsFromVar(varIdx).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::WHILE_TYPE)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIdx).size());
 	}
 
 	TEST_METHOD(longVarNameSource_checkRelationships) {
@@ -2178,33 +2076,31 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(longVarNameSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(1), std::get<0>(ModifiesS::getAllInfo()).size());
-		Assert::IsTrue(ModifiesS::contains(stmtIdx, Entity::getVarIdx(varName)));
-		Assert::AreEqual(size_t(1), ModifiesS::getFromRightArg(Entity::getVarIdx(varName)).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_S)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName)));
+		Assert::AreEqual(size_t(1), pkbGetter->getRSInfoFromRightArg(RelationshipType::MODIFIES_S, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName)).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(UsesS::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), UsesS::getFromRightArg(Entity::getVarIdx(varName)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_S)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getRSInfoFromRightArg(RelationshipType::USES_S, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName)).size());
 
-		Assert::AreEqual(size_t(1), std::get<0>(ModifiesP::getAllInfo()).size());
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName)));
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_P)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName)));
 
-		Assert::AreEqual(size_t(0), std::get<0>(UsesP::getAllInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_P)).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Calls::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(CallsT::getAllInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS_T)).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Next::getAllInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Follows::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(FollowsT::getAllInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS_T)).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Parent::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(ParentT::getAllInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT_T)).size());
 	}
 
 	TEST_METHOD(multipleNestingSource_checkEntities) {
@@ -2219,33 +2115,31 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(multipleNestingSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
-		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
+		Assert::AreEqual(size_t(1), pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE).size());
+		Assert::AreEqual(procName, pkbGetter->getNameIdxEntityName(EntityType::PROCEDURE, pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE)[0]));
 
-		Assert::AreEqual(size_t(11), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::CALL_TYPE).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::READ_TYPE).size());
-		Assert::AreEqual(size_t(7), Entity::getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::PRINT_TYPE).size());
-		Assert::AreEqual(size_t(2), Entity::getStmtIdxFromType(StatementType::WHILE_TYPE).size());
-		Assert::AreEqual(size_t(2), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
+		Assert::AreEqual(size_t(11), pkbGetter->getAllStmts().size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::CALL_TYPE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::READ_TYPE).size());
+		Assert::AreEqual(size_t(7), pkbGetter->getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::PRINT_TYPE).size());
+		Assert::AreEqual(size_t(2), pkbGetter->getStmtIdxFromType(StatementType::WHILE_TYPE).size());
+		Assert::AreEqual(size_t(2), pkbGetter->getStmtIdxFromType(StatementType::IF_TYPE).size());
 
-		Assert::AreEqual(size_t(4), Entity::getAllVars().size());
-		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[0]));
-		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[2]));
+		Assert::AreEqual(size_t(4), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
+		Assert::AreEqual(varName1, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[0]));
+		Assert::AreEqual(varName2, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[2]));
 
-		Assert::AreEqual(size_t(3), Entity::getAllConsts().size());
-		Assert::AreEqual(constVal1, Entity::getAllConsts()[0]);
-		Assert::AreEqual(constVal2, Entity::getAllConsts()[1]);
-		Assert::AreEqual(constVal3, Entity::getAllConsts()[2]);
+		Assert::AreEqual(size_t(3), pkbGetter->getAllConsts().size());
+		Assert::AreEqual(constVal1, pkbGetter->getAllConsts()[0]);
+		Assert::AreEqual(constVal2, pkbGetter->getAllConsts()[1]);
+		Assert::AreEqual(constVal3, pkbGetter->getAllConsts()[2]);
 
-		Assert::AreEqual(size_t(11), std::get<0>(Entity::getAllProcStmts()).size());
-		Assert::AreEqual(size_t(11), Entity::getStmtsFromProc(procIdx).size());
+		Assert::AreEqual(size_t(11), std::get<0>(pkbGetter->getAllProcStmts()).size());
+		Assert::AreEqual(size_t(11), pkbGetter->getStmtsFromProc(procIdx).size());
 	}
 
 	TEST_METHOD(multipleNestingSource_checkAttributes) {
@@ -2257,20 +2151,18 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(multipleNestingSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
-		Assert::IsTrue(std::vector{ 8, 1 } == Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::WHILE, 1));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::IF, 2));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::WHILE, 8));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 1));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 8));
+		Assert::IsTrue(std::vector{ procIdx } == pkbGetter->getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
+		Assert::IsTrue(std::vector{ 8, 1 } == pkbGetter->getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::STMT, 3));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::WHILE, 1));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::IF, 2));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::ASSIGN, 3));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::WHILE, 8));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::CONSTANT, 1));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::CONSTANT, 8));
 	}
 
 	TEST_METHOD(multipleNestingSource_checkPattern) {
@@ -2284,48 +2176,46 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(multipleNestingSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(7), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(7), std::get<0>(pkbGetter->getAllAssignPatternInfo()).size());
 
-		Assert::AreEqual(size_t(3), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
-		Assert::AreEqual(size_t(2), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix(varName2)).size());
-		Assert::AreEqual(size_t(3), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix(varName2)).size());
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("sent")).size());
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("y*z")).size());
-		Assert::AreEqual(size_t(3), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("present*y*z")).size());
-		Assert::AreEqual(size_t(3), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("present*y")).size());
-		Assert::AreEqual(size_t(2), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix("x*y*z")).size());
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix("x*(y*z)")).size());
+		Assert::AreEqual(size_t(3), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix(varName1)).size());
+		Assert::AreEqual(size_t(2), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix(varName2)).size());
+		Assert::AreEqual(size_t(3), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix(varName2)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("sent")).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("y*z")).size());
+		Assert::AreEqual(size_t(3), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("present*y*z")).size());
+		Assert::AreEqual(size_t(3), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("present*y")).size());
+		Assert::AreEqual(size_t(2), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix("x*y*z")).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix("x*(y*z)")).size());
 
-		Assert::AreEqual(size_t(3), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("present*y*z")).size());
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("present*y")).size());
-		Assert::AreEqual(size_t(2), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix("z-8-x*y*z")).size());
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix("x*(y*z)")).size());
+		Assert::AreEqual(size_t(3), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("present*y*z")).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("present*y")).size());
+		Assert::AreEqual(size_t(2), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix("z-8-x*y*z")).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix("x*(y*z)")).size());
 
-		Assert::AreEqual(size_t(3), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
-		Assert::AreEqual(size_t(5), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName2))).size());
-		Assert::AreEqual(size_t(4), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName3))).size());
-		Assert::AreEqual(size_t(5), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName4))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("y*z"))).size());
-		Assert::AreEqual(size_t(3), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("present*y*z"))).size());
-		Assert::AreEqual(size_t(3), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("present*y"))).size());
-		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("x*y*z"))).size());
+		Assert::AreEqual(size_t(3), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
+		Assert::AreEqual(size_t(5), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName2))).size());
+		Assert::AreEqual(size_t(4), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName3))).size());
+		Assert::AreEqual(size_t(5), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName4))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("y*z"))).size());
+		Assert::AreEqual(size_t(3), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("present*y*z"))).size());
+		Assert::AreEqual(size_t(3), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("present*y"))).size());
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("x*y*z"))).size());
 
-		Assert::AreEqual(size_t(3), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("present*y*z"))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("present*y"))).size());
-		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("z-8-x*y*z"))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("x*(y*z)"))).size());
+		Assert::AreEqual(size_t(3), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("present*y*z"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("present*y"))).size());
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("z-8-x*y*z"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("x*(y*z)"))).size());
 
-		Assert::AreEqual(size_t(4), std::get<0>(Pattern::getAllIfPatternInfo()).size());
-		Assert::AreEqual(size_t(2), Pattern::getIfStmtsFromVar(varIdx1).size());
-		Assert::AreEqual(size_t(2), Pattern::getIfStmtsFromVar(varIdx2).size());
+		Assert::AreEqual(size_t(4), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::IF_TYPE)).size());
+		Assert::AreEqual(size_t(2), pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, varIdx1).size());
+		Assert::AreEqual(size_t(2), pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, varIdx2).size());
 
-		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getAllWhilePatternInfo()).size());
-		Assert::AreEqual(size_t(2), Pattern::getWhileStmtsFromVar(varIdx1).size());
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::WHILE_TYPE)).size());
+		Assert::AreEqual(size_t(2), pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIdx1).size());
 	}
 
 	TEST_METHOD(multipleNestingSource_checkRelationships) {
@@ -2349,153 +2239,151 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(multipleNestingSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(17), std::get<0>(ModifiesS::getAllInfo()).size());
-		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName3)));
-		Assert::IsFalse(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx2, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx2, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx2, Entity::getVarIdx(varName3)));
-		Assert::IsFalse(ModifiesS::contains(stmtIdx2, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx3, Entity::getVarIdx(varName1)));
-		Assert::IsFalse(ModifiesS::contains(stmtIdx3, Entity::getVarIdx(varName2)));
-		Assert::IsFalse(ModifiesS::contains(stmtIdx3, Entity::getVarIdx(varName3)));
-		Assert::IsFalse(ModifiesS::contains(stmtIdx3, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx4, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx4, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx4, Entity::getVarIdx(varName3)));
-		Assert::IsFalse(ModifiesS::contains(stmtIdx4, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx5, Entity::getVarIdx(varName1)));
-		Assert::IsFalse(ModifiesS::contains(stmtIdx6, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx6, Entity::getVarIdx(varName3)));
-		Assert::IsFalse(ModifiesS::contains(stmtIdx7, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx7, Entity::getVarIdx(varName2)));
-		Assert::IsFalse(ModifiesS::contains(stmtIdx8, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx8, Entity::getVarIdx(varName2)));
-		Assert::IsFalse(ModifiesS::contains(stmtIdx9, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx9, Entity::getVarIdx(varName2)));
-		Assert::AreEqual(size_t(5), ModifiesS::getFromRightArg(Entity::getVarIdx(varName1)).size());
-		Assert::AreEqual(size_t(7), ModifiesS::getFromRightArg(Entity::getVarIdx(varName2)).size());
+		Assert::AreEqual(size_t(17), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_S)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx5, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx6, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx6, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx7, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx7, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx8, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx8, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx9, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx9, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::AreEqual(size_t(5), pkbGetter->getRSInfoFromRightArg(RelationshipType::MODIFIES_S, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)).size());
+		Assert::AreEqual(size_t(7), pkbGetter->getRSInfoFromRightArg(RelationshipType::MODIFIES_S, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)).size());
 
-		Assert::AreEqual(size_t(32), std::get<0>(UsesS::getAllInfo()).size());
-		Assert::IsTrue(UsesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesS::contains(stmtIdx1, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesS::contains(stmtIdx1, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(UsesS::contains(stmtIdx1, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(UsesS::contains(stmtIdx2, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesS::contains(stmtIdx2, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesS::contains(stmtIdx2, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(UsesS::contains(stmtIdx2, Entity::getVarIdx(varName4)));
-		Assert::IsFalse(UsesS::contains(stmtIdx3, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesS::contains(stmtIdx3, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesS::contains(stmtIdx3, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(UsesS::contains(stmtIdx3, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(UsesS::contains(stmtIdx4, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesS::contains(stmtIdx4, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesS::contains(stmtIdx4, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(UsesS::contains(stmtIdx4, Entity::getVarIdx(varName4)));
-		Assert::IsFalse(UsesS::contains(stmtIdx5, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesS::contains(stmtIdx5, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesS::contains(stmtIdx5, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(UsesS::contains(stmtIdx5, Entity::getVarIdx(varName4)));
-		Assert::IsFalse(UsesS::contains(stmtIdx6, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesS::contains(stmtIdx6, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(UsesS::contains(stmtIdx7, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesS::contains(stmtIdx7, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesS::contains(stmtIdx7, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(UsesS::contains(stmtIdx8, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesS::contains(stmtIdx8, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesS::contains(stmtIdx8, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(UsesS::contains(stmtIdx9, Entity::getVarIdx(varName2)));
-		Assert::AreEqual(size_t(7), UsesS::getFromRightArg(Entity::getVarIdx(varName1)).size());
-		Assert::AreEqual(size_t(9), UsesS::getFromRightArg(Entity::getVarIdx(varName2)).size());
+		Assert::AreEqual(size_t(32), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_S)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx5, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx5, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx5, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx5, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx6, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx6, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx7, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx7, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx7, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx8, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx8, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx8, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx9, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::AreEqual(size_t(7), pkbGetter->getRSInfoFromRightArg(RelationshipType::USES_S, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)).size());
+		Assert::AreEqual(size_t(9), pkbGetter->getRSInfoFromRightArg(RelationshipType::USES_S, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)).size());
 
-		Assert::AreEqual(size_t(3), std::get<0>(ModifiesP::getAllInfo()).size());
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName3)));
-		Assert::IsFalse(ModifiesP::contains(procIdx, Entity::getVarIdx(varName4)));
+		Assert::AreEqual(size_t(3), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_P)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
 
-		Assert::AreEqual(size_t(4), std::get<0>(UsesP::getAllInfo()).size());
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName4)));
+		Assert::AreEqual(size_t(4), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_P)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
 
-		Assert::AreEqual(size_t(0), std::get<0>(Calls::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(CallsT::getAllInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS_T)).size());
 
-		Assert::AreEqual(size_t(14), std::get<0>(Next::getAllInfo()).size());
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx3));
-		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx11));
-		Assert::IsTrue(Next::contains(stmtIdx3, stmtIdx4));
-		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx5));
-		Assert::IsTrue(Next::contains(stmtIdx5, stmtIdx6));
-		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx7));
-		Assert::IsTrue(Next::contains(stmtIdx7, stmtIdx8));
-		Assert::IsTrue(Next::contains(stmtIdx8, stmtIdx9));
-		Assert::IsTrue(Next::contains(stmtIdx9, stmtIdx8));
-		Assert::IsTrue(Next::contains(stmtIdx8, stmtIdx10));
-		Assert::IsTrue(Next::contains(stmtIdx6, stmtIdx10));
-		Assert::IsTrue(Next::contains(stmtIdx10, stmtIdx1));
-		Assert::IsTrue(Next::contains(stmtIdx11, stmtIdx1));
+		Assert::AreEqual(size_t(14), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx11));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx3, stmtIdx4));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx4, stmtIdx5));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx5, stmtIdx6));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx4, stmtIdx7));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx7, stmtIdx8));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx8, stmtIdx9));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx9, stmtIdx8));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx8, stmtIdx10));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx6, stmtIdx10));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx10, stmtIdx1));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx11, stmtIdx1));
 
-		Assert::AreEqual(size_t(4), std::get<0>(Follows::getAllInfo()).size());
-		Assert::IsFalse(Follows::contains(stmtIdx3, stmtIdx10));
-		Assert::IsTrue(Follows::contains(stmtIdx3, stmtIdx4));
-		Assert::IsTrue(Follows::contains(stmtIdx5, stmtIdx6));
-		Assert::IsFalse(Follows::contains(stmtIdx6, stmtIdx7));
-		Assert::IsTrue(Follows::contains(stmtIdx7, stmtIdx8));
-		Assert::AreEqual(size_t(5), std::get<0>(FollowsT::getAllInfo()).size());
-		Assert::IsTrue(FollowsT::contains(stmtIdx3, stmtIdx10));
-		Assert::IsFalse(FollowsT::contains(stmtIdx6, stmtIdx7));
+		Assert::AreEqual(size_t(4), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS)).size());
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx3, stmtIdx10));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx3, stmtIdx4));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx5, stmtIdx6));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx6, stmtIdx7));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx7, stmtIdx8));
+		Assert::AreEqual(size_t(5), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS_T)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS_T, stmtIdx3, stmtIdx10));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS_T, stmtIdx6, stmtIdx7));
 
-		Assert::AreEqual(size_t(10), std::get<0>(Parent::getAllInfo()).size());
-		Assert::IsTrue(Parent::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Parent::contains(stmtIdx2, stmtIdx3));
-		Assert::IsTrue(Parent::contains(stmtIdx2, stmtIdx4));
-		Assert::IsTrue(Parent::contains(stmtIdx4, stmtIdx5));
-		Assert::IsTrue(Parent::contains(stmtIdx4, stmtIdx6));
-		Assert::IsTrue(Parent::contains(stmtIdx4, stmtIdx7));
-		Assert::IsTrue(Parent::contains(stmtIdx4, stmtIdx8));
-		Assert::IsTrue(Parent::contains(stmtIdx8, stmtIdx9));
-		Assert::IsTrue(Parent::contains(stmtIdx2, stmtIdx10));
-		Assert::IsFalse(Parent::contains(stmtIdx3, stmtIdx4));
+		Assert::AreEqual(size_t(10), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT, stmtIdx2, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT, stmtIdx2, stmtIdx4));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT, stmtIdx4, stmtIdx5));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT, stmtIdx4, stmtIdx6));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT, stmtIdx4, stmtIdx7));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT, stmtIdx4, stmtIdx8));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT, stmtIdx8, stmtIdx9));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT, stmtIdx2, stmtIdx10));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::PARENT, stmtIdx3, stmtIdx4));
 
-		Assert::AreEqual(size_t(25), std::get<0>(ParentT::getAllInfo()).size());
-		Assert::IsTrue(ParentT::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(ParentT::contains(stmtIdx2, stmtIdx3));
-		Assert::IsTrue(ParentT::contains(stmtIdx2, stmtIdx4));
-		Assert::IsTrue(ParentT::contains(stmtIdx4, stmtIdx5));
-		Assert::IsTrue(ParentT::contains(stmtIdx4, stmtIdx6));
-		Assert::IsTrue(ParentT::contains(stmtIdx4, stmtIdx7));
-		Assert::IsTrue(ParentT::contains(stmtIdx4, stmtIdx8));
-		Assert::IsTrue(ParentT::contains(stmtIdx8, stmtIdx9));
-		Assert::IsTrue(ParentT::contains(stmtIdx2, stmtIdx10));
-		Assert::IsFalse(ParentT::contains(stmtIdx3, stmtIdx4));
-		Assert::AreEqual(size_t(3), ParentT::getFromRightArg(stmtIdx5).size());
+		Assert::AreEqual(size_t(25), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT_T)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx2, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx2, stmtIdx4));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx4, stmtIdx5));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx4, stmtIdx6));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx4, stmtIdx7));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx4, stmtIdx8));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx8, stmtIdx9));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx2, stmtIdx10));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx3, stmtIdx4));
+		Assert::AreEqual(size_t(3), pkbGetter->getRSInfoFromRightArg(RelationshipType::PARENT_T, stmtIdx5).size());
 
-		Assert::IsTrue(ParentT::contains(stmtIdx1, stmtIdx3));
-		Assert::IsTrue(ParentT::contains(stmtIdx1, stmtIdx4));
-		Assert::IsTrue(ParentT::contains(stmtIdx1, stmtIdx5));
-		Assert::IsTrue(ParentT::contains(stmtIdx1, stmtIdx6));
-		Assert::IsTrue(ParentT::contains(stmtIdx1, stmtIdx7));
-		Assert::IsTrue(ParentT::contains(stmtIdx1, stmtIdx8));
-		Assert::IsTrue(ParentT::contains(stmtIdx1, stmtIdx9));
-		Assert::IsTrue(ParentT::contains(stmtIdx1, stmtIdx10));
-		Assert::IsTrue(ParentT::contains(stmtIdx2, stmtIdx5));
-		Assert::IsTrue(ParentT::contains(stmtIdx2, stmtIdx6));
-		Assert::IsTrue(ParentT::contains(stmtIdx2, stmtIdx7));
-		Assert::IsTrue(ParentT::contains(stmtIdx2, stmtIdx8));
-		Assert::IsTrue(ParentT::contains(stmtIdx2, stmtIdx9));
-		Assert::IsTrue(ParentT::contains(stmtIdx4, stmtIdx9));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx1, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx1, stmtIdx4));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx1, stmtIdx5));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx1, stmtIdx6));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx1, stmtIdx7));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx1, stmtIdx8));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx1, stmtIdx9));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx1, stmtIdx10));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx2, stmtIdx5));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx2, stmtIdx6));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx2, stmtIdx7));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx2, stmtIdx8));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx2, stmtIdx9));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, stmtIdx4, stmtIdx9));
 	}
 
 	TEST_METHOD(differentCasingNamesSource_checkEntities) {
@@ -2508,32 +2396,30 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(differentCasingNamesSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
-		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
-		Assert::IsFalse("main" == Entity::getProcName(Entity::getAllProcs()[0]));
+		Assert::AreEqual(size_t(1), pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE).size());
+		Assert::AreEqual(procName, pkbGetter->getNameIdxEntityName(EntityType::PROCEDURE, pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE)[0]));
+		Assert::IsFalse("main" == pkbGetter->getNameIdxEntityName(EntityType::PROCEDURE, pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE)[0]));
 
-		Assert::AreEqual(size_t(4), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::CALL_TYPE).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::READ_TYPE).size());
-		Assert::AreEqual(size_t(4), Entity::getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::PRINT_TYPE).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::WHILE_TYPE).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
+		Assert::AreEqual(size_t(4), pkbGetter->getAllStmts().size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::CALL_TYPE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::READ_TYPE).size());
+		Assert::AreEqual(size_t(4), pkbGetter->getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::PRINT_TYPE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::WHILE_TYPE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::IF_TYPE).size());
 
-		Assert::AreEqual(size_t(4), Entity::getAllVars().size());
-		Assert::AreEqual(varName1, Entity::getVarName(Entity::getAllVars()[0]));
-		Assert::AreEqual(varName2, Entity::getVarName(Entity::getAllVars()[3]));
+		Assert::AreEqual(size_t(4), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
+		Assert::AreEqual(varName1, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[0]));
+		Assert::AreEqual(varName2, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[3]));
 
-		Assert::AreEqual(size_t(1), Entity::getAllConsts().size());
-		Assert::AreEqual(constVal, Entity::getAllConsts()[0]);
+		Assert::AreEqual(size_t(1), pkbGetter->getAllConsts().size());
+		Assert::AreEqual(constVal, pkbGetter->getAllConsts()[0]);
 
-		Assert::AreEqual(size_t(4), std::get<0>(Entity::getAllProcStmts()).size());
-		Assert::AreEqual(size_t(4), Entity::getStmtsFromProc(procIdx).size());
+		Assert::AreEqual(size_t(4), std::get<0>(pkbGetter->getAllProcStmts()).size());
+		Assert::AreEqual(size_t(4), pkbGetter->getStmtsFromProc(procIdx).size());
 	}
 
 	TEST_METHOD(differentCasingNamesSource_checkAttributes) {
@@ -2545,17 +2431,15 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(differentCasingNamesSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
-		Assert::IsTrue(std::vector{ 1 } == Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 3));
-		Assert::IsFalse(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 5));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 1));
+		Assert::IsTrue(std::vector{ procIdx } == pkbGetter->getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
+		Assert::IsTrue(std::vector{ 1 } == pkbGetter->getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::STMT, 3));
+		Assert::IsFalse(pkbGetter->hasEqualIntegerAttribute(EntityType::STMT, 5));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::ASSIGN, 3));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::CONSTANT, 1));
 	}
 
 	TEST_METHOD(differentCasingNamesSource_checkPattern) {
@@ -2568,33 +2452,31 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(differentCasingNamesSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(4), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(4), std::get<0>(pkbGetter->getAllAssignPatternInfo()).size());
 
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix("1")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("1")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName3), ExpressionProcessor::convertInfixToPostFix("1")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName4), ExpressionProcessor::convertInfixToPostFix("1")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix("1")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("1")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3), ExpressionProcessor::convertInfixToPostFix("1")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4), ExpressionProcessor::convertInfixToPostFix("1")).size());
 
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix("1")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName2), ExpressionProcessor::convertInfixToPostFix("1")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName3), ExpressionProcessor::convertInfixToPostFix("1")).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName4), ExpressionProcessor::convertInfixToPostFix("1")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix("1")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2), ExpressionProcessor::convertInfixToPostFix("1")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3), ExpressionProcessor::convertInfixToPostFix("1")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4), ExpressionProcessor::convertInfixToPostFix("1")).size());
 
-		Assert::AreEqual(size_t(4), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("1"))).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
+		Assert::AreEqual(size_t(4), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("1"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName1))).size());
 
-		Assert::AreEqual(size_t(4), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("1"))).size());
+		Assert::AreEqual(size_t(4), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("1"))).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllIfPatternInfo()).size());
-		Assert::AreEqual(size_t(0), Pattern::getIfStmtsFromVar(varIdx).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::IF_TYPE)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, varIdx).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllWhilePatternInfo()).size());
-		Assert::AreEqual(size_t(0), Pattern::getWhileStmtsFromVar(varIdx).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::WHILE_TYPE)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIdx).size());
 	}
 
 	TEST_METHOD(differentCasingNamesSource_checkRelationships) {
@@ -2611,54 +2493,52 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(differentCasingNamesSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(4), std::get<0>(ModifiesS::getAllInfo()).size());
-		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
-		Assert::IsFalse(ModifiesS::contains(stmtIdx2, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx2, Entity::getVarIdx(varName2)));
-		Assert::IsFalse(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx3, Entity::getVarIdx(varName3)));
-		Assert::IsFalse(ModifiesS::contains(stmtIdx3, Entity::getVarIdx(varName4)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx4, Entity::getVarIdx(varName4)));
-		Assert::IsFalse(ModifiesS::contains(stmtIdx4, Entity::getVarIdx(varName3)));
-		Assert::AreEqual(size_t(1), ModifiesS::getFromRightArg(Entity::getVarIdx(varName1)).size());
+		Assert::AreEqual(size_t(4), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_S)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::AreEqual(size_t(1), pkbGetter->getRSInfoFromRightArg(RelationshipType::MODIFIES_S, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(UsesS::getAllInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_S)).size());
 
-		Assert::AreEqual(size_t(4), std::get<0>(ModifiesP::getAllInfo()).size());
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName4)));
+		Assert::AreEqual(size_t(4), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_P)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName4)));
 
-		Assert::AreEqual(size_t(0), std::get<0>(UsesP::getAllInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_P)).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Calls::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(CallsT::getAllInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS_T)).size());
 
-		Assert::AreEqual(size_t(3), std::get<0>(Next::getAllInfo()).size());
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx3));
-		Assert::IsTrue(Next::contains(stmtIdx3, stmtIdx4));
+		Assert::AreEqual(size_t(3), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx3, stmtIdx4));
 
-		Assert::AreEqual(size_t(3), std::get<0>(Follows::getAllInfo()).size());
-		Assert::IsTrue(Follows::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Follows::contains(stmtIdx2, stmtIdx3));
-		Assert::IsTrue(Follows::contains(stmtIdx3, stmtIdx4));
-		Assert::IsFalse(Follows::contains(stmtIdx1, stmtIdx3));
-		Assert::IsFalse(Follows::contains(stmtIdx1, stmtIdx4));
-		Assert::IsFalse(Follows::contains(stmtIdx2, stmtIdx4));
-		Assert::AreEqual(size_t(6), std::get<0>(FollowsT::getAllInfo()).size());
-		Assert::IsTrue(FollowsT::contains(stmtIdx1, stmtIdx3));
-		Assert::IsTrue(FollowsT::contains(stmtIdx1, stmtIdx4));
-		Assert::IsTrue(FollowsT::contains(stmtIdx2, stmtIdx4));
+		Assert::AreEqual(size_t(3), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx2, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx3, stmtIdx4));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx1, stmtIdx3));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx1, stmtIdx4));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx2, stmtIdx4));
+		Assert::AreEqual(size_t(6), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS_T)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS_T, stmtIdx1, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS_T, stmtIdx1, stmtIdx4));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS_T, stmtIdx2, stmtIdx4));
 
-		Assert::AreEqual(size_t(0), std::get<0>(Parent::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(ParentT::getAllInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT_T)).size());
 	}
 
 	TEST_METHOD(multipleWhitespacesSource_checkEntities) {
@@ -2670,30 +2550,28 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(multipleWhitespacesSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
-		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
+		Assert::AreEqual(size_t(1), pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE).size());
+		Assert::AreEqual(procName, pkbGetter->getNameIdxEntityName(EntityType::PROCEDURE, pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE)[0]));
 
-		Assert::AreEqual(size_t(3), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::READ_TYPE).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::PRINT_TYPE).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::CALL_TYPE).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::WHILE_TYPE).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
+		Assert::AreEqual(size_t(3), pkbGetter->getAllStmts().size());
+		Assert::AreEqual(size_t(1), pkbGetter->getStmtIdxFromType(StatementType::READ_TYPE).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getStmtIdxFromType(StatementType::PRINT_TYPE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::CALL_TYPE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::WHILE_TYPE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::IF_TYPE).size());
 
-		Assert::AreEqual(size_t(1), Entity::getAllVars().size());
-		Assert::AreEqual(varName, Entity::getVarName(Entity::getAllVars()[0]));
+		Assert::AreEqual(size_t(1), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
+		Assert::AreEqual(varName, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[0]));
 
-		Assert::AreEqual(size_t(1), Entity::getAllConsts().size());
-		Assert::AreEqual(constVal, Entity::getAllConsts()[0]);
+		Assert::AreEqual(size_t(1), pkbGetter->getAllConsts().size());
+		Assert::AreEqual(constVal, pkbGetter->getAllConsts()[0]);
 
-		Assert::AreEqual(size_t(3), std::get<0>(Entity::getAllProcStmts()).size());
-		Assert::AreEqual(size_t(3), Entity::getStmtsFromProc(procIdx).size());
+		Assert::AreEqual(size_t(3), std::get<0>(pkbGetter->getAllProcStmts()).size());
+		Assert::AreEqual(size_t(3), pkbGetter->getStmtsFromProc(procIdx).size());
 	}
 
 	TEST_METHOD(multipleWhitespacesSource_checkAttributes) {
@@ -2707,23 +2585,21 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(multipleWhitespacesSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(varName, Attribute::getAttributeNameByStmtIdx(stmtIdx1));
-		Assert::IsFalse(varName == Attribute::getAttributeNameByStmtIdx(stmtIdx2));
-		Assert::AreEqual(varName, Attribute::getAttributeNameByStmtIdx(stmtIdx3));
-		Assert::IsTrue(std::vector{ stmtIdx1 } == Attribute::getEqualNameAttributesFromName(EntityType::READ, varName));
-		Assert::IsTrue(std::vector{ stmtIdx3 } == Attribute::getEqualNameAttributesFromName(EntityType::PRINT, varName));
-		Assert::IsTrue(std::vector{ procIdx } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
-		Assert::AreEqual(size_t(0), Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT).size());
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 2));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::READ, 1));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 2));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::PRINT, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 0));
+		Assert::AreEqual(varName, pkbGetter->getAttributeNameByStmtIdx(stmtIdx1));
+		Assert::IsFalse(varName == pkbGetter->getAttributeNameByStmtIdx(stmtIdx2));
+		Assert::AreEqual(varName, pkbGetter->getAttributeNameByStmtIdx(stmtIdx3));
+		Assert::IsTrue(std::vector{ stmtIdx1 } == pkbGetter->getEqualNameAttributesFromName(EntityType::READ, varName));
+		Assert::IsTrue(std::vector{ stmtIdx3 } == pkbGetter->getEqualNameAttributesFromName(EntityType::PRINT, varName));
+		Assert::IsTrue(std::vector{ procIdx } == pkbGetter->getEqualNameAttributesFromName(EntityType::PROCEDURE, procName));
+		Assert::AreEqual(size_t(0), pkbGetter->getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT).size());
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::STMT, 2));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::READ, 1));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::ASSIGN, 2));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::PRINT, 3));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::CONSTANT, 0));
 	}
 
 	TEST_METHOD(multipleWhitespacesSource_checkPattern) {
@@ -2733,30 +2609,28 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(multipleWhitespacesSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAllAssignPatternInfo()).size());
 
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName), ExpressionProcessor::convertInfixToPostFix(varName)).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName), ExpressionProcessor::convertInfixToPostFix("0")).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName), ExpressionProcessor::convertInfixToPostFix(varName)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName), ExpressionProcessor::convertInfixToPostFix("0")).size());
 
-		Assert::AreEqual(size_t(0), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName), ExpressionProcessor::convertInfixToPostFix(varName)).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName), ExpressionProcessor::convertInfixToPostFix("0")).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName), ExpressionProcessor::convertInfixToPostFix(varName)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName), ExpressionProcessor::convertInfixToPostFix("0")).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("0"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("0"))).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("0"))).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("0"))).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllIfPatternInfo()).size());
-		Assert::AreEqual(size_t(0), Pattern::getIfStmtsFromVar(varIdx).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::IF_TYPE)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, varIdx).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllWhilePatternInfo()).size());
-		Assert::AreEqual(size_t(0), Pattern::getWhileStmtsFromVar(varIdx).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::WHILE_TYPE)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIdx).size());
 	}
 
 	TEST_METHOD(multipleWhitespacesSource_checkRelationships) {
@@ -2769,40 +2643,38 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(multipleWhitespacesSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(2), std::get<0>(ModifiesS::getAllInfo()).size());
-		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx2, Entity::getVarIdx(varName)));
-		Assert::AreEqual(size_t(2), ModifiesS::getFromRightArg(Entity::getVarIdx(varName)).size());
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_S)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName)));
+		Assert::AreEqual(size_t(2), pkbGetter->getRSInfoFromRightArg(RelationshipType::MODIFIES_S, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName)).size());
 
-		Assert::AreEqual(size_t(1), std::get<0>(UsesS::getAllInfo()).size());
-		Assert::IsTrue(UsesS::contains(stmtIdx3, Entity::getVarIdx(varName)));
-		Assert::AreEqual(size_t(1), UsesS::getFromRightArg(Entity::getVarIdx(varName)).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_S)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName)));
+		Assert::AreEqual(size_t(1), pkbGetter->getRSInfoFromRightArg(RelationshipType::USES_S, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName)).size());
 
-		Assert::AreEqual(size_t(1), std::get<0>(ModifiesP::getAllInfo()).size());
-		Assert::IsTrue(ModifiesP::contains(procIdx, Entity::getVarIdx(varName)));
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_P)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName)));
 
-		Assert::AreEqual(size_t(1), std::get<0>(UsesP::getAllInfo()).size());
-		Assert::IsTrue(UsesP::contains(procIdx, Entity::getVarIdx(varName)));
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_P)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName)));
 
-		Assert::AreEqual(size_t(0), std::get<0>(Calls::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(CallsT::getAllInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS_T)).size());
 
-		Assert::AreEqual(size_t(2), std::get<0>(Next::getAllInfo()).size());
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx3));
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx3));
 
-		Assert::AreEqual(size_t(2), std::get<0>(Follows::getAllInfo()).size());
-		Assert::IsTrue(Follows::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Follows::contains(stmtIdx2, stmtIdx3));
-		Assert::AreEqual(size_t(3), std::get<0>(FollowsT::getAllInfo()).size());
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx2, stmtIdx3));
+		Assert::AreEqual(size_t(3), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS_T)).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Parent::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(ParentT::getAllInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT_T)).size());
 	}
 
 	TEST_METHOD(multipleProceduresRecursiveCallsSource_checkEntities) {
@@ -2816,31 +2688,29 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(multipleProceduresRecursiveCallsSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(4), Entity::getAllProcs().size());
-		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
+		Assert::AreEqual(size_t(4), pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE).size());
+		Assert::AreEqual(procName, pkbGetter->getNameIdxEntityName(EntityType::PROCEDURE, pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE)[0]));
 
-		Assert::AreEqual(size_t(6), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(1), Entity::getStmtIdxFromType(StatementType::READ_TYPE).size());
-		Assert::AreEqual(size_t(2), Entity::getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::PRINT_TYPE).size());
-		Assert::AreEqual(size_t(3), Entity::getStmtIdxFromType(StatementType::CALL_TYPE).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::WHILE_TYPE).size());
-		Assert::AreEqual(size_t(0), Entity::getStmtIdxFromType(StatementType::IF_TYPE).size());
+		Assert::AreEqual(size_t(6), pkbGetter->getAllStmts().size());
+		Assert::AreEqual(size_t(1), pkbGetter->getStmtIdxFromType(StatementType::READ_TYPE).size());
+		Assert::AreEqual(size_t(2), pkbGetter->getStmtIdxFromType(StatementType::ASSIGN_TYPE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::PRINT_TYPE).size());
+		Assert::AreEqual(size_t(3), pkbGetter->getStmtIdxFromType(StatementType::CALL_TYPE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::WHILE_TYPE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getStmtIdxFromType(StatementType::IF_TYPE).size());
 
-		Assert::AreEqual(size_t(3), Entity::getAllVars().size());
-		Assert::AreEqual(varName, Entity::getVarName(Entity::getAllVars()[0]));
+		Assert::AreEqual(size_t(3), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
+		Assert::AreEqual(varName, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[0]));
 
-		Assert::AreEqual(size_t(1), Entity::getAllConsts().size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAllConsts().size());
 
-		Assert::AreEqual(size_t(2), Entity::getStmtsFromProc(procIdx1).size());
-		Assert::AreEqual(size_t(2), Entity::getStmtsFromProc(procIdx2).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtsFromProc(procIdx3).size());
-		Assert::AreEqual(size_t(1), Entity::getStmtsFromProc(procIdx4).size());
+		Assert::AreEqual(size_t(2), pkbGetter->getStmtsFromProc(procIdx1).size());
+		Assert::AreEqual(size_t(2), pkbGetter->getStmtsFromProc(procIdx2).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getStmtsFromProc(procIdx3).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getStmtsFromProc(procIdx4).size());
 	}
 
 	TEST_METHOD(multipleProceduresRecursiveCallsSource_checkAttributes) {
@@ -2862,31 +2732,29 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(multipleProceduresRecursiveCallsSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(procName2, Attribute::getAttributeNameByStmtIdx(stmtIdx1));
-		Assert::AreEqual(procName3, Attribute::getAttributeNameByStmtIdx(stmtIdx2));
-		Assert::AreEqual(procName4, Attribute::getAttributeNameByStmtIdx(stmtIdx3));
-		Assert::IsTrue(std::vector{ stmtIdx1 } == Attribute::getEqualNameAttributesFromName(EntityType::CALL, procName2));
-		Assert::IsTrue(std::vector{ stmtIdx2 } == Attribute::getEqualNameAttributesFromName(EntityType::CALL, procName3));
-		Assert::IsTrue(std::vector{ stmtIdx3 } == Attribute::getEqualNameAttributesFromName(EntityType::CALL, procName4));
-		Assert::IsTrue(std::vector{ stmtIdx5 } == Attribute::getEqualNameAttributesFromName(EntityType::READ, varName));
-		Assert::IsTrue(std::vector{ procIdx1 } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName1));
-		Assert::IsTrue(std::vector{ procIdx2 } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName2));
-		Assert::IsTrue(std::vector{ procIdx3 } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName3));
-		Assert::IsTrue(std::vector{ procIdx4 } == Attribute::getEqualNameAttributesFromName(EntityType::PROCEDURE, procName4));
-		Assert::IsTrue(std::vector{ 2 } == Attribute::getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::STMT, 2));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CALL, 1));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CALL, 2));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CALL, 3));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 4));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::READ, 5));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::ASSIGN, 6));
-		Assert::IsTrue(Attribute::hasEqualIntegerAttribute(EntityType::CONSTANT, 2));
+		Assert::AreEqual(procName2, pkbGetter->getAttributeNameByStmtIdx(stmtIdx1));
+		Assert::AreEqual(procName3, pkbGetter->getAttributeNameByStmtIdx(stmtIdx2));
+		Assert::AreEqual(procName4, pkbGetter->getAttributeNameByStmtIdx(stmtIdx3));
+		Assert::IsTrue(std::vector{ stmtIdx1 } == pkbGetter->getEqualNameAttributesFromName(EntityType::CALL, procName2));
+		Assert::IsTrue(std::vector{ stmtIdx2 } == pkbGetter->getEqualNameAttributesFromName(EntityType::CALL, procName3));
+		Assert::IsTrue(std::vector{ stmtIdx3 } == pkbGetter->getEqualNameAttributesFromName(EntityType::CALL, procName4));
+		Assert::IsTrue(std::vector{ stmtIdx5 } == pkbGetter->getEqualNameAttributesFromName(EntityType::READ, varName));
+		Assert::IsTrue(std::vector{ procIdx1 } == pkbGetter->getEqualNameAttributesFromName(EntityType::PROCEDURE, procName1));
+		Assert::IsTrue(std::vector{ procIdx2 } == pkbGetter->getEqualNameAttributesFromName(EntityType::PROCEDURE, procName2));
+		Assert::IsTrue(std::vector{ procIdx3 } == pkbGetter->getEqualNameAttributesFromName(EntityType::PROCEDURE, procName3));
+		Assert::IsTrue(std::vector{ procIdx4 } == pkbGetter->getEqualNameAttributesFromName(EntityType::PROCEDURE, procName4));
+		Assert::IsTrue(std::vector{ 2 } == pkbGetter->getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::STMT, 2));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::CALL, 1));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::CALL, 2));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::CALL, 3));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::ASSIGN, 4));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::READ, 5));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::ASSIGN, 6));
+		Assert::IsTrue(pkbGetter->hasEqualIntegerAttribute(EntityType::CONSTANT, 2));
 	}
 
 	TEST_METHOD(multipleProceduresRecursiveCallsSource_checkPattern) {
@@ -2898,30 +2766,28 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(multipleProceduresRecursiveCallsSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(2), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getAllAssignPatternInfo()).size());
 
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix(varName2)).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprPartialMatch(Entity::getVarIdx(varName3), ExpressionProcessor::convertInfixToPostFix("2")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix(varName2)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprPartialMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3), ExpressionProcessor::convertInfixToPostFix("2")).size());
 
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName1), ExpressionProcessor::convertInfixToPostFix(varName2)).size());
-		Assert::AreEqual(size_t(1), Pattern::getAssignStmtsFromVarExprFullMatch(Entity::getVarIdx(varName3), ExpressionProcessor::convertInfixToPostFix("2")).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1), ExpressionProcessor::convertInfixToPostFix(varName2)).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAssignStmtsFromVarExprFullMatch(pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3), ExpressionProcessor::convertInfixToPostFix("2")).size());
 
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName2))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("2"))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix(varName2))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprPartialMatch(ExpressionProcessor::convertInfixToPostFix("2"))).size());
 
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName2))).size());
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("2"))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix(varName2))).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAssignStmtsFromExprFullMatch(ExpressionProcessor::convertInfixToPostFix("2"))).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllIfPatternInfo()).size());
-		Assert::AreEqual(size_t(0), Pattern::getIfStmtsFromVar(varIdx).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::IF_TYPE)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, varIdx).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllWhilePatternInfo()).size());
-		Assert::AreEqual(size_t(0), Pattern::getWhileStmtsFromVar(varIdx).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::WHILE_TYPE)).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIdx).size());
 	}
 
 	TEST_METHOD(multipleProceduresRecursiveCallsSource_checkRelationships) {
@@ -2942,79 +2808,77 @@ public:
 
 		Parser parser;
 		SourceAST ast = parser.parse(multipleProceduresRecursiveCallsSource);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(7), std::get<0>(ModifiesS::getAllInfo()).size());
-		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
-		Assert::IsFalse(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx1, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx2, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx3, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx4, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesS::contains(stmtIdx5, Entity::getVarIdx(varName1)));
-		Assert::AreEqual(size_t(4), ModifiesS::getFromRightArg(Entity::getVarIdx(varName1)).size());
+		Assert::AreEqual(size_t(7), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_S)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, stmtIdx5, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::AreEqual(size_t(4), pkbGetter->getRSInfoFromRightArg(RelationshipType::MODIFIES_S, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)).size());
 
-		Assert::AreEqual(size_t(2), std::get<0>(UsesS::getAllInfo()).size());
-		Assert::IsTrue(UsesS::contains(stmtIdx1, Entity::getVarIdx(varName2)));
-		Assert::IsFalse(UsesS::contains(stmtIdx1, Entity::getVarIdx(varName1)));
-		Assert::IsFalse(UsesS::contains(stmtIdx1, Entity::getVarIdx(varName3)));
-		Assert::IsFalse(UsesS::contains(stmtIdx2, Entity::getVarIdx(varName1)));
-		Assert::IsFalse(UsesS::contains(stmtIdx2, Entity::getVarIdx(varName2)));
-		Assert::IsFalse(UsesS::contains(stmtIdx2, Entity::getVarIdx(varName3)));
-		Assert::IsFalse(UsesS::contains(stmtIdx3, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(UsesS::contains(stmtIdx4, Entity::getVarIdx(varName2)));
-		Assert::IsFalse(UsesS::contains(stmtIdx5, Entity::getVarIdx(varName1)));
-		Assert::AreEqual(size_t(2), UsesS::getFromRightArg(Entity::getVarIdx(varName2)).size());
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_S)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_S, stmtIdx5, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::AreEqual(size_t(2), pkbGetter->getRSInfoFromRightArg(RelationshipType::USES_S, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)).size());
 
-		Assert::AreEqual(size_t(6), std::get<0>(ModifiesP::getAllInfo()).size());
-		Assert::IsTrue(ModifiesP::contains(procIdx1, Entity::getVarIdx(varName1)));
-		Assert::IsFalse(ModifiesP::contains(procIdx1, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesP::contains(procIdx1, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(ModifiesP::contains(procIdx2, Entity::getVarIdx(varName1)));
-		Assert::IsFalse(ModifiesP::contains(procIdx2, Entity::getVarIdx(varName2)));
-		Assert::IsTrue(ModifiesP::contains(procIdx2, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(ModifiesP::contains(procIdx3, Entity::getVarIdx(varName1)));
-		Assert::IsTrue(ModifiesP::contains(procIdx4, Entity::getVarIdx(varName3)));
+		Assert::AreEqual(size_t(6), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_P)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_P, procIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
 
-		Assert::AreEqual(size_t(2), std::get<0>(UsesP::getAllInfo()).size());
-		Assert::IsTrue(UsesP::contains(procIdx1, Entity::getVarIdx(varName2)));
-		Assert::IsFalse(UsesP::contains(procIdx1, Entity::getVarIdx(varName1)));
-		Assert::IsFalse(UsesP::contains(procIdx1, Entity::getVarIdx(varName3)));
-		Assert::IsTrue(UsesP::contains(procIdx2, Entity::getVarIdx(varName2)));
-		Assert::IsFalse(UsesP::contains(procIdx3, Entity::getVarIdx(varName1)));
-		Assert::IsFalse(UsesP::contains(procIdx4, Entity::getVarIdx(varName3)));
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_P)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx1, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx2, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName2)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx3, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName1)));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::USES_P, procIdx4, pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varName3)));
 
-		Assert::AreEqual(size_t(3), std::get<0>(Calls::getAllInfo()).size());
-		Assert::IsTrue(Calls::contains(procIdx1, procIdx2));
-		Assert::IsTrue(Calls::contains(procIdx1, procIdx3));
-		Assert::IsTrue(Calls::contains(procIdx2, procIdx4));
-		Assert::IsFalse(Calls::contains(procIdx1, procIdx4));
-		Assert::AreEqual(size_t(4), std::get<0>(CallsT::getAllInfo()).size());
-		Assert::IsTrue(CallsT::contains(procIdx1, procIdx4));
-		Assert::IsTrue(CallsT::contains(procIdx1, procIdx2));
-		Assert::IsTrue(CallsT::contains(procIdx1, procIdx3));
-		Assert::IsTrue(CallsT::contains(procIdx2, procIdx4));
+		Assert::AreEqual(size_t(3), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::CALLS, procIdx1, procIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::CALLS, procIdx1, procIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::CALLS, procIdx2, procIdx4));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::CALLS, procIdx1, procIdx4));
+		Assert::AreEqual(size_t(4), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS_T)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::CALLS_T, procIdx1, procIdx4));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::CALLS_T, procIdx1, procIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::CALLS_T, procIdx1, procIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::CALLS_T, procIdx2, procIdx4));
 
-		Assert::AreEqual(size_t(2), std::get<0>(Next::getAllInfo()).size());
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
-		Assert::IsFalse(Next::contains(stmtIdx2, stmtIdx3));
-		Assert::IsTrue(Next::contains(stmtIdx3, stmtIdx4));
-		Assert::IsFalse(Next::contains(stmtIdx4, stmtIdx5));
-		Assert::IsFalse(Next::contains(stmtIdx5, stmtIdx6));
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx3, stmtIdx4));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx4, stmtIdx5));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx5, stmtIdx6));
 
-		Assert::AreEqual(size_t(2), std::get<0>(Follows::getAllInfo()).size());
-		Assert::IsTrue(Follows::contains(stmtIdx1, stmtIdx2));
-		Assert::IsFalse(Follows::contains(stmtIdx2, stmtIdx3));
-		Assert::IsTrue(Follows::contains(stmtIdx3, stmtIdx4));
-		Assert::IsFalse(Follows::contains(stmtIdx4, stmtIdx5));
-		Assert::IsFalse(Follows::contains(stmtIdx5, stmtIdx6));
-		Assert::AreEqual(size_t(2), std::get<0>(FollowsT::getAllInfo()).size());
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS)).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx1, stmtIdx2));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx2, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx3, stmtIdx4));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx4, stmtIdx5));
+		Assert::IsFalse(pkbGetter->getRSContainsInfo(RelationshipType::FOLLOWS, stmtIdx5, stmtIdx6));
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS_T)).size());
 
-		Assert::AreEqual(size_t(0), std::get<0>(Parent::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(ParentT::getAllInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT_T)).size());
 	}
 
 	TEST_METHOD(missingSemicolon_parserExceptionThrown_checkPKBTables) {
@@ -3030,31 +2894,31 @@ public:
 			SourceAST ast = parser.parse(source);
 			PKB* pkb = new PKB();
 			PKBInserter* pkbInserter = new PKBInserter(pkb);
-			DesignExtractor* designExtractor = new DesignExtractor();
-			designExtractor->extract(ast, pkbInserter);
+			DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+			designExtractor->extract();
 		} catch (ParserException& ex) {
 			Assert::AreEqual(ParserException::MISSING_SEMICOLON.c_str(), ex.what());
 		}
 
-		Assert::AreEqual(size_t(0), Entity::getAllProcs().size());
-		Assert::AreEqual(size_t(0), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(0), Entity::getAllVars().size());
-		Assert::AreEqual(size_t(0), Entity::getAllConsts().size());
-		Assert::AreEqual(size_t(0), std::get<0>(Entity::getAllProcStmts()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(ModifiesS::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(UsesS::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(ModifiesP::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(UsesP::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Calls::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(CallsT::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Next::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Follows::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(FollowsT::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Parent::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(ParentT::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllIfPatternInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllWhilePatternInfo()).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllStmts().size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllConsts().size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllProcStmts()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_S)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_S)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_P)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_P)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS_T)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS_T)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT_T)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::IF_TYPE)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::WHILE_TYPE)).size());
 	}
 
 	TEST_METHOD(callNonExistentProcedure_ASTExceptionThrown_checkPKBTables) {
@@ -3077,31 +2941,31 @@ public:
 			ASTValidator::validateAST(ast);
 			PKB* pkb = new PKB();
 			PKBInserter* pkbInserter = new PKBInserter(pkb);
-			DesignExtractor* designExtractor = new DesignExtractor();
-			designExtractor->extract(ast, pkbInserter);
+			DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+			designExtractor->extract();
 		} catch (ASTException& ex) {
 			Assert::AreEqual(ASTException::CALL_NON_EXISTENT_PROC_NAME_ERROR.c_str(), ex.what());
 		}
 
-		Assert::AreEqual(size_t(0), Entity::getAllProcs().size());
-		Assert::AreEqual(size_t(0), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(0), Entity::getAllVars().size());
-		Assert::AreEqual(size_t(0), Entity::getAllConsts().size());
-		Assert::AreEqual(size_t(0), std::get<0>(Entity::getAllProcStmts()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(ModifiesS::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(UsesS::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(ModifiesP::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(UsesP::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Calls::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(CallsT::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Next::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Follows::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(FollowsT::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Parent::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(ParentT::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllIfPatternInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllWhilePatternInfo()).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllStmts().size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllConsts().size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllProcStmts()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_S)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_S)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_P)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_P)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS_T)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS_T)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT_T)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::IF_TYPE)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::WHILE_TYPE)).size());
 	}
 
 	TEST_METHOD(duplicateProc_ASTExceptionThrown_checkPKBTables) {
@@ -3124,31 +2988,31 @@ public:
 			ASTValidator::validateAST(ast);
 			PKB* pkb = new PKB();
 			PKBInserter* pkbInserter = new PKBInserter(pkb);
-			DesignExtractor* designExtractor = new DesignExtractor();
-			designExtractor->extract(ast, pkbInserter);
+			DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+			designExtractor->extract();
 		} catch (ASTException& ex) {
 			Assert::AreEqual(ASTException::DUPLICATE_PROC_NAMES_ERROR.c_str(), ex.what());
 		}
 
-		Assert::AreEqual(size_t(0), Entity::getAllProcs().size());
-		Assert::AreEqual(size_t(0), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(0), Entity::getAllVars().size());
-		Assert::AreEqual(size_t(0), Entity::getAllConsts().size());
-		Assert::AreEqual(size_t(0), std::get<0>(Entity::getAllProcStmts()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(ModifiesS::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(UsesS::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(ModifiesP::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(UsesP::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Calls::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(CallsT::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Next::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Follows::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(FollowsT::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Parent::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(ParentT::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllIfPatternInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllWhilePatternInfo()).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllStmts().size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllConsts().size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllProcStmts()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_S)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_S)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_P)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_P)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS_T)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS_T)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT_T)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::IF_TYPE)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::WHILE_TYPE)).size());
 	}
 
 	TEST_METHOD(selfCall_insideNestedContainerStmts_ASTExceptionThrown_checkPKBTables) {
@@ -3170,31 +3034,31 @@ public:
 			ASTValidator::validateAST(ast);
 			PKB* pkb = new PKB();
 			PKBInserter* pkbInserter = new PKBInserter(pkb);
-			DesignExtractor* designExtractor = new DesignExtractor();
-			designExtractor->extract(ast, pkbInserter);
+			DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+			designExtractor->extract();
 		} catch (ASTException& ex) {
 			Assert::AreEqual(ASTException::CYCLIC_CALL_ERROR.c_str(), ex.what());
 		}
 
-		Assert::AreEqual(size_t(0), Entity::getAllProcs().size());
-		Assert::AreEqual(size_t(0), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(0), Entity::getAllVars().size());
-		Assert::AreEqual(size_t(0), Entity::getAllConsts().size());
-		Assert::AreEqual(size_t(0), std::get<0>(Entity::getAllProcStmts()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(ModifiesS::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(UsesS::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(ModifiesP::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(UsesP::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Calls::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(CallsT::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Next::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Follows::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(FollowsT::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Parent::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(ParentT::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllIfPatternInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllWhilePatternInfo()).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllStmts().size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllConsts().size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllProcStmts()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_S)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_S)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_P)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_P)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS_T)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS_T)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT_T)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::IF_TYPE)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::WHILE_TYPE)).size());
 	}
 
 	TEST_METHOD(cyclicCall_twoProcs_ASTExceptionThrown_checkPKBTables) {
@@ -3222,31 +3086,31 @@ public:
 			ASTValidator::validateAST(ast);
 			PKB* pkb = new PKB();
 			PKBInserter* pkbInserter = new PKBInserter(pkb);
-			DesignExtractor* designExtractor = new DesignExtractor();
-			designExtractor->extract(ast, pkbInserter);
+			DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+			designExtractor->extract();
 		} catch (ASTException& ex) {
 			Assert::AreEqual(ASTException::CYCLIC_CALL_ERROR.c_str(), ex.what());
 		}
 
-		Assert::AreEqual(size_t(0), Entity::getAllProcs().size());
-		Assert::AreEqual(size_t(0), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(0), Entity::getAllVars().size());
-		Assert::AreEqual(size_t(0), Entity::getAllConsts().size());
-		Assert::AreEqual(size_t(0), std::get<0>(Entity::getAllProcStmts()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(ModifiesS::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(UsesS::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(ModifiesP::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(UsesP::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Calls::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(CallsT::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Next::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Follows::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(FollowsT::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Parent::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(ParentT::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllIfPatternInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllWhilePatternInfo()).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllStmts().size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllConsts().size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllProcStmts()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_S)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_S)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_P)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_P)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS_T)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS_T)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT_T)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::IF_TYPE)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::WHILE_TYPE)).size());
 	}
 
 	TEST_METHOD(cyclicCall_transitiveCalls_ASTExceptionThrown_checkPKBTables) {
@@ -3284,31 +3148,31 @@ public:
 			ASTValidator::validateAST(ast);
 			PKB* pkb = new PKB();
 			PKBInserter* pkbInserter = new PKBInserter(pkb);
-			DesignExtractor* designExtractor = new DesignExtractor();
-			designExtractor->extract(ast, pkbInserter);
+			DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+			designExtractor->extract();
 		} catch (ASTException& ex) {
 			Assert::AreEqual(ASTException::CYCLIC_CALL_ERROR.c_str(), ex.what());
 		}
 
-		Assert::AreEqual(size_t(0), Entity::getAllProcs().size());
-		Assert::AreEqual(size_t(0), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(0), Entity::getAllVars().size());
-		Assert::AreEqual(size_t(0), Entity::getAllConsts().size());
-		Assert::AreEqual(size_t(0), std::get<0>(Entity::getAllProcStmts()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(ModifiesS::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(UsesS::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(ModifiesP::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(UsesP::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Calls::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(CallsT::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Next::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Follows::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(FollowsT::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Parent::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(ParentT::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllIfPatternInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllWhilePatternInfo()).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllStmts().size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllConsts().size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllProcStmts()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_S)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_S)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_P)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_P)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS_T)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS_T)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT_T)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::IF_TYPE)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::WHILE_TYPE)).size());
 	}
 
 	TEST_METHOD(cyclicCall_transitiveCalls_disjointCallsGraphs_ASTExceptionThrown_checkPKBTables) {
@@ -3348,31 +3212,31 @@ public:
 			ASTValidator::validateAST(ast);
 			PKB* pkb = new PKB();
 			PKBInserter* pkbInserter = new PKBInserter(pkb);
-			DesignExtractor* designExtractor = new DesignExtractor();
-			designExtractor->extract(ast, pkbInserter);
+			DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+			designExtractor->extract();
 		} catch (ASTException& ex) {
 			Assert::AreEqual(ASTException::CYCLIC_CALL_ERROR.c_str(), ex.what());
 		}
 
-		Assert::AreEqual(size_t(0), Entity::getAllProcs().size());
-		Assert::AreEqual(size_t(0), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(0), Entity::getAllVars().size());
-		Assert::AreEqual(size_t(0), Entity::getAllConsts().size());
-		Assert::AreEqual(size_t(0), std::get<0>(Entity::getAllProcStmts()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(ModifiesS::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(UsesS::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(ModifiesP::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(UsesP::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Calls::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(CallsT::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Next::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Follows::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(FollowsT::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Parent::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(ParentT::getAllInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllAssignPatternInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllIfPatternInfo()).size());
-		Assert::AreEqual(size_t(0), std::get<0>(Pattern::getAllWhilePatternInfo()).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllStmts().size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getAllConsts().size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllProcStmts()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_S)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_S)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_P)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_P)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS_T)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS_T)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT_T)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllAssignPatternInfo()).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::IF_TYPE)).size());
+		Assert::AreEqual(size_t(0), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::WHILE_TYPE)).size());
 	}
 	};
 }

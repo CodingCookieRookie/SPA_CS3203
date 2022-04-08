@@ -1,12 +1,12 @@
 #include "PatternInstruction.h"
 
 PatternInstruction::PatternInstruction(
-	std::string synonym, PqlReference entRef) :
-	synonym(synonym), entRef(entRef) {}
+	std::string synonym, PqlReference entRef, PKBGetter* pkbGetter) :
+	synonym(synonym), entRef(entRef), pkbGetter(pkbGetter) {}
 
 PatternInstruction::PatternInstruction(
-	std::string synonym, PqlReference entRef, PqlExpression expressionSpec) :
-	synonym(synonym), entRef(entRef), expressionSpec(expressionSpec) {}
+	std::string synonym, PqlReference entRef, PqlExpression expressionSpec, PKBGetter* pkbGetter) :
+	synonym(synonym), entRef(entRef), expressionSpec(expressionSpec), pkbGetter(pkbGetter) {}
 
 std::unordered_set<std::string> PatternInstruction::getSynonyms() {
 	std::unordered_set<std::string> results{ synonym };
@@ -21,17 +21,17 @@ EvaluatedTable PatternAInstruction::execute() {
 	std::vector<int> allStmts;
 	switch (entRef.first) {
 	case PqlReferenceType::IDENT:
-		if (Entity::containsVar(entRef.second)) {
-			VarIndex varIndex = Entity::getVarIdx(entRef.second);
+		if (pkbGetter->containsNameIdxEntity(EntityType::VARIABLE, entRef.second)) {
+			VarIndex varIndex = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, entRef.second);
 			switch (expressionSpec.first) {
 			case PqlExpressionType::FULL:
-				allStmts = Pattern::getAssignStmtsFromVarExprFullMatch(varIndex, expressionSpec.second);
+				allStmts = pkbGetter->getAssignStmtsFromVarExprFullMatch(varIndex, expressionSpec.second);
 				break;
 			case PqlExpressionType::PARTIAL:
-				allStmts = Pattern::getAssignStmtsFromVarExprPartialMatch(varIndex, expressionSpec.second);
+				allStmts = pkbGetter->getAssignStmtsFromVarExprPartialMatch(varIndex, expressionSpec.second);
 				break;
 			case PqlExpressionType::WILDCARD:
-				allStmts = Pattern::getAssignStmtsFromVar(varIndex);
+				allStmts = pkbGetter->getAssignStmtsFromVar(varIndex);
 				break;
 			default:
 				throw EvaluatorException(EvaluatorException::PATTERN_ERROR);
@@ -43,13 +43,13 @@ EvaluatedTable PatternAInstruction::execute() {
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo;
 		switch (expressionSpec.first) {
 		case PqlExpressionType::FULL:
-			allPatternStmtInfo = Pattern::getAssignStmtsFromExprFullMatch(expressionSpec.second);
+			allPatternStmtInfo = pkbGetter->getAssignStmtsFromExprFullMatch(expressionSpec.second);
 			break;
 		case PqlExpressionType::PARTIAL:
-			allPatternStmtInfo = Pattern::getAssignStmtsFromExprPartialMatch(expressionSpec.second);
+			allPatternStmtInfo = pkbGetter->getAssignStmtsFromExprPartialMatch(expressionSpec.second);
 			break;
 		case PqlExpressionType::WILDCARD:
-			allPatternStmtInfo = Pattern::getAllAssignPatternInfo();
+			allPatternStmtInfo = pkbGetter->getAllAssignPatternInfo();
 			break;
 		default:
 			throw EvaluatorException(EvaluatorException::PATTERN_ERROR);
@@ -70,14 +70,14 @@ EvaluatedTable PatternIInstruction::execute() {
 	std::vector<int> allStmts;
 	switch (entRef.first) {
 	case PqlReferenceType::IDENT:
-		if (Entity::containsVar(entRef.second)) {
-			VarIndex varIndex = Entity::getVarIdx(entRef.second);
-			allStmts = Pattern::getIfStmtsFromVar(varIndex);
+		if (pkbGetter->containsNameIdxEntity(EntityType::VARIABLE, entRef.second)) {
+			VarIndex varIndex = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, entRef.second);
+			allStmts = pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, varIndex);
 		}
 		break;
 	default:
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo;
-		allPatternStmtInfo = Pattern::getAllIfPatternInfo();
+		allPatternStmtInfo = pkbGetter->getAllPatternContainerInfo(StatementType::IF_TYPE);
 		if (entRef.first == PqlReferenceType::SYNONYM) {
 			std::vector<int> varIndices = std::get<0>(allPatternStmtInfo);
 			PQLmap[entRef.second] = varIndices;
@@ -93,14 +93,14 @@ EvaluatedTable PatternWInstruction::execute() {
 	std::vector<int> allStmts;
 	switch (entRef.first) {
 	case PqlReferenceType::IDENT:
-		if (Entity::containsVar(entRef.second)) {
-			VarIndex varIndex = Entity::getVarIdx(entRef.second);
-			allStmts = Pattern::getWhileStmtsFromVar(varIndex);
+		if (pkbGetter->containsNameIdxEntity(EntityType::VARIABLE, entRef.second)) {
+			VarIndex varIndex = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, entRef.second);
+			allStmts = pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIndex);
 		}
 		break;
 	default:
 		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo;
-		allPatternStmtInfo = Pattern::getAllWhilePatternInfo();
+		allPatternStmtInfo = pkbGetter->getAllPatternContainerInfo(StatementType::WHILE_TYPE);
 		if (entRef.first == PqlReferenceType::SYNONYM) {
 			std::vector<int> varIndices = std::get<0>(allPatternStmtInfo);
 			PQLmap[entRef.second] = varIndices;

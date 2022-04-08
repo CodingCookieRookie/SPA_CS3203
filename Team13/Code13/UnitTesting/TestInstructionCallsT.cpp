@@ -4,22 +4,22 @@
 #include <algorithm>
 #include <string>
 
-#include "../source/PKB/Entity.h"
-#include "../source/PKB/Calls.h"
-#include "../source/PKB/CallsT.h"
-#include "../source/PKB/RS2.h"
 #include "../source/QPS/PQLEvaluator.h"
+#include "../source/PKB/PKBInserter.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting {
 	TEST_CLASS(TestCallsTInstructions) {
 private:
-	TEST_METHOD_CLEANUP(cleanUpTables) {
-		Attribute::performCleanUp();
-		Entity::performCleanUp();
-		Calls::performCleanUp();
-		CallsT::performCleanUp();
+	PKB* pkb;
+	PKBGetter* pkbGetter;
+	PKBInserter* pkbInserter;
+
+	TEST_METHOD_INITIALIZE(init) {
+		pkb = new PKB();
+		pkbGetter = new PKBGetter(pkb);
+		pkbInserter = new PKBInserter(pkb);
 	}
 
 public:
@@ -30,7 +30,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::IDENT, "procedure2");
 		rhsRef = std::make_pair(PqlReferenceType::IDENT, "procedure3");
-		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{};
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -40,13 +40,14 @@ public:
 		std::string procName;
 		for (int i = 0; i < 4; i++) {
 			procName = "procedure" + std::to_string(i + 1);
-			procs.emplace_back(Entity::insertProc(procName));
+			procs.emplace_back(pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, procName));
 		}
 
-		Calls::insert(procs[0], procs[1]);
-		Calls::insert(procs[1], procs[2]);
-		Calls::insert(procs[1], procs[3]);
-		CallsT::populate();
+		pkbInserter->insertRSInfo(RelationshipType::CALLS_T, procs[0], procs[1]);
+		pkbInserter->insertRSInfo(RelationshipType::CALLS_T, procs[1], procs[2]);
+		pkbInserter->insertRSInfo(RelationshipType::CALLS_T, procs[1], procs[3]);
+		pkbInserter->insertRSInfo(RelationshipType::CALLS_T, procs[2], procs[3]);
+		pkbInserter->insertRSInfo(RelationshipType::CALLS_T, procs[0], procs[3]);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -61,7 +62,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::IDENT, "procedure1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "q");
-		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "q" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -71,13 +72,14 @@ public:
 		std::string procName;
 		for (int i = 0; i < 4; i++) {
 			procName = "procedure" + std::to_string(i + 1);
-			procs.emplace_back(Entity::insertProc(procName));
+			procs.emplace_back(pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, procName));
 		}
 
-		Calls::insert(procs[0], procs[1]);
-		Calls::insert(procs[1], procs[2]);
-		Calls::insert(procs[1], procs[3]);
-		CallsT::populate();
+		pkbInserter->insertRSInfo(RelationshipType::CALLS_T, procs[0], procs[1]);
+		pkbInserter->insertRSInfo(RelationshipType::CALLS_T, procs[1], procs[2]);
+		pkbInserter->insertRSInfo(RelationshipType::CALLS_T, procs[0], procs[2]);
+		pkbInserter->insertRSInfo(RelationshipType::CALLS_T, procs[1], procs[2]);
+		pkbInserter->insertRSInfo(RelationshipType::CALLS_T, procs[0], procs[3]);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -108,7 +110,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "p");
 		rhsRef = std::make_pair(PqlReferenceType::IDENT, "procedure4");
-		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "p" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -118,14 +120,15 @@ public:
 		std::string procName;
 		for (int i = 0; i < 4; i++) {
 			procName = "procedure" + std::to_string(i + 1);
-			procs.emplace_back(Entity::insertProc(procName));
+			procs.emplace_back(pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, procName));
 		}
 
-		Calls::insert(procs[0], procs[1]);
-		Calls::insert(procs[1], procs[2]);
-		Calls::insert(procs[1], procs[3]);
-		Calls::insert(procs[2], procs[3]);
-		CallsT::populate();
+		pkbInserter->insertRSInfo(RelationshipType::CALLS_T, procs[0], procs[1]);
+		pkbInserter->insertRSInfo(RelationshipType::CALLS_T, procs[1], procs[2]);
+
+		pkbInserter->insertRSInfo(RelationshipType::CALLS_T, procs[0], procs[3]);
+		pkbInserter->insertRSInfo(RelationshipType::CALLS_T, procs[1], procs[3]);
+		pkbInserter->insertRSInfo(RelationshipType::CALLS_T, procs[2], procs[3]);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -156,9 +159,9 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "p");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "q");
-		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef, pkbGetter);
 
-		std::unordered_set<std::string> expectedSynonyms{ "p", "q"};
+		std::unordered_set<std::string> expectedSynonyms{ "p", "q" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts 4 procs, establishes 3 calls relationships
@@ -166,15 +169,15 @@ public:
 		std::string procName;
 		for (int i = 0; i < 4; i++) {
 			procName = "procedure" + std::to_string(i + 1);
-			procs.emplace_back(Entity::insertProc(procName));
+			procs.emplace_back(pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, procName));
 		}
 
-		Calls::insert(procs[0], procs[1]);
-		Calls::insert(procs[0], procs[2]);
-		Calls::insert(procs[1], procs[2]);
-		Calls::insert(procs[1], procs[3]);
-		Calls::insert(procs[2], procs[3]);
-		CallsT::populate();
+		pkbInserter->insertRSInfo(RelationshipType::CALLS_T, procs[0], procs[1]);
+		pkbInserter->insertRSInfo(RelationshipType::CALLS_T, procs[0], procs[2]);
+		pkbInserter->insertRSInfo(RelationshipType::CALLS_T, procs[0], procs[3]);
+		pkbInserter->insertRSInfo(RelationshipType::CALLS_T, procs[1], procs[2]);
+		pkbInserter->insertRSInfo(RelationshipType::CALLS_T, procs[1], procs[3]);
+		pkbInserter->insertRSInfo(RelationshipType::CALLS_T, procs[2], procs[3]);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -208,13 +211,13 @@ public:
 
 	TEST_METHOD(executeCallsStarInstruction_twoProcStress_evaluatedTableFormed) {
 		// 1. Setup:
-		// Parent*(s1, s2) RelationshipInstruction
+		// Calls*(s1, s2) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "p");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "q");
-		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef, pkbGetter);
 
-		std::unordered_set<std::string> expectedSynonyms{ "p", "q"};
+		std::unordered_set<std::string> expectedSynonyms{ "p", "q" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts 19 procs, establishes 18 Calls relationships
@@ -222,14 +225,15 @@ public:
 		std::string procName;
 		for (int i = 0; i < 19; i++) {
 			procName = "procedure" + std::to_string(i + 1);
-			procs.emplace_back(Entity::insertProc(procName));
+			procs.emplace_back(pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, procName));
 		}
 
-		for (int i = 0; i < 18; i++) {
-			Calls::insert(procs[i], procs[i + 1]); // i Calls i + 1, simulate 18 Calls relationships
+		for (int i = 0; i < 19; i++) {
+			for (int j = i + 1; j < 19; j++) {
+				// i Calls i + 1, simulate 19 Calls relationships
+				pkbInserter->insertRSInfo(RelationshipType::CALLS_T, procs[i], procs[j]);
+			}
 		}
-		CallsT::populate();
-
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
 
@@ -281,7 +285,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "p");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
-		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "p" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -291,13 +295,15 @@ public:
 		std::string procName;
 		for (int i = 0; i < 99; i++) {
 			procName = "procedure" + std::to_string(i + 1);
-			procs.emplace_back(Entity::insertProc(procName));
+			procs.emplace_back(pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, procName));
 		}
 
-		for (int i = 0; i < 99 - 1; i++) {
-			Calls::insert(procs[i], procs[i + 1]); // i Calls i + 1, simulate 98 Calls relationships
+		for (int i = 0; i < 99; i++) {
+			for (int j = i + 1; j < 99; j++) {
+				// i Calls i + 1, simulate 98 Calls relationships
+				pkbInserter->insertRSInfo(RelationshipType::CALLS_T, procs[i], procs[j]);
+			}
 		}
-		CallsT::populate();
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -340,7 +346,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		rhsRef = std::make_pair(PqlReferenceType::IDENT, "procedure87");
-		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{};
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -350,13 +356,13 @@ public:
 		std::string procName;
 		for (int i = 0; i < 99; i++) {
 			procName = "procedure" + std::to_string(i + 1);
-			procs.emplace_back(Entity::insertProc(procName));
+			procs.emplace_back(pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, procName));
 		}
 
 		for (int i = 0; i < 99 - 1; i++) {
-			Calls::insert(procs[i], procs[i + 1]); // i Calls i + 1, simulate 98 Calls relationships
+			// i Calls i + 1, simulate 98 Calls relationships
+			pkbInserter->insertRSInfo(RelationshipType::CALLS_T, procs[i], procs[i + 1]);
 		}
-		CallsT::populate();
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -383,7 +389,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
-		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{};
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -393,13 +399,13 @@ public:
 		std::string procName;
 		for (int i = 0; i < 99; i++) {
 			procName = "procedure" + std::to_string(i + 1);
-			procs.emplace_back(Entity::insertProc(procName));
+			procs.emplace_back(pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, procName));
 		}
 
 		for (int i = 0; i < 99 - 1; i++) {
-			Calls::insert(procs[i], procs[i + 1]); // i Calls i + 1, simulate 98 Calls relationships
+			// i Calls i + 1, simulate 98 Calls relationships
+			pkbInserter->insertRSInfo(RelationshipType::CALLS_T, procs[i], procs[i + 1]);
 		}
-		CallsT::populate();
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();

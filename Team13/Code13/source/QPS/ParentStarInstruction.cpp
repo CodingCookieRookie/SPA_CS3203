@@ -1,6 +1,7 @@
 #include "ParentStarInstruction.h"
 
-ParentStarInstruction::ParentStarInstruction(PqlReference lhsRef, PqlReference rhsRef) : RelationshipInstruction(lhsRef, rhsRef) {}
+ParentStarInstruction::ParentStarInstruction(PqlReference lhsRef, PqlReference rhsRef, PKBGetter* pkbGetter) :
+	RelationshipInstruction(lhsRef, rhsRef, pkbGetter) {}
 
 EvaluatedTable ParentStarInstruction::execute() {
 	EvaluatedTable resultTable;
@@ -42,16 +43,16 @@ EvaluatedTable ParentStarInstruction::helperHandleTwoIntegers() {
 	bool evResult = false;
 	int lhsRefValue = stoi(lhsRef.second);
 	int rhsRefValue = stoi(rhsRef.second);
-	if (Entity::containsStmt(lhsRefValue) && Entity::containsStmt(rhsRefValue)) {
+	if (pkbGetter->containsStmt(lhsRefValue) && pkbGetter->containsStmt(rhsRefValue)) {
 		lhsStmtIndex = StmtIndex(lhsRefValue);
 		rhsStmtIndex = StmtIndex(rhsRefValue);
-		evResult = ParentT::contains(lhsStmtIndex, rhsStmtIndex);
+		evResult = pkbGetter->getRSContainsInfo(RelationshipType::PARENT_T, lhsStmtIndex, rhsStmtIndex);
 	}
 	return EvaluatedTable(evResult);
 }
 
 EvaluatedTable ParentStarInstruction::helperHandleOneInt(PqlReferenceType lhsRefType, PqlReferenceType rhsRefType) {
-	std::vector<StmtIndex> stmts = Entity::getAllStmts();
+	std::vector<StmtIndex> stmts = pkbGetter->getAllStmts();
 	std::vector<int> results;
 	int oneInt;
 	std::string otherSynonym;
@@ -60,19 +61,13 @@ EvaluatedTable ParentStarInstruction::helperHandleOneInt(PqlReferenceType lhsRef
 	} else { /* rhsRefType == PqlReferenceType::ident */
 		oneInt = stoi(rhsRef.second);
 	}
-	/* Handle one ident to proc results */
-	if (Entity::containsStmt(oneInt)) { /* e.g. checks if STMT 6 exists, if not, return empty results */
+	/* Handle one integer results */
+	if (pkbGetter->containsStmt(oneInt)) { /* e.g. checks if STMT 6 exists, if not, return empty results */
 		StmtIndex oneIntIndex = StmtIndex(oneInt);
-		for (StmtIndex STMT : stmts) {
-			if (lhsRefType == PqlReferenceType::INTEGER) {
-				if (ParentT::contains(oneIntIndex, STMT)) {
-					results.emplace_back(STMT); /* e.g {7} if 6 is a Parent* of some s2 (e.g. 7) */
-				}
-			} else if (rhsRefType == PqlReferenceType::INTEGER) {
-				if (ParentT::contains(STMT, oneIntIndex)) {
-					results.emplace_back(STMT); /* e.g {6} if some s1 (e.g. 6) is a Parent* of 7 */
-				}
-			} else {}
+		if (lhsRefType == PqlReferenceType::INTEGER) { /* e.g {7} if 6 is a Parent of some s2 (e.g. 7) */
+			results = pkbGetter->getRSInfoFromLeftArg(RelationshipType::PARENT_T, oneIntIndex);
+		} else { /* e.g {6} if some s1 (e.g. 6) is a Parent of 7 */
+			results = pkbGetter->getRSInfoFromRightArg(RelationshipType::PARENT_T, oneIntIndex);
 		}
 	}
 	/* Handle final output, wildcards => boolean, synonyms => table */
@@ -96,7 +91,7 @@ EvaluatedTable ParentStarInstruction::helperHandleTwoStmtsMaybeWildcard() {
 	std::tuple<std::vector<int>, std::vector<int>> results;
 	/* e.g. {1, 2}, {2, 3}, {3, 6} */
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
-	results = ParentT::getAllInfo();
+	results = pkbGetter->getRSAllInfo(RelationshipType::PARENT_T);
 	if (lhsRef.second == rhsRef.second) { /* Special case: Parent*(s1, s1), recursive call, technically shouldn't be allowed */
 		/* No values populated to PQLmap for this case */
 		PQLmap[lhsRef.second] = std::vector<int>();
@@ -113,7 +108,7 @@ EvaluatedTable ParentStarInstruction::helperHandleTwoStmtsMaybeWildcard() {
 
 EvaluatedTable ParentStarInstruction::helperHandleTwoWildcards() {
 	bool isEmptyTable = true;
-	isEmptyTable = std::get<0>(ParentT::getAllInfo()).empty();
+	isEmptyTable = std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT_T)).empty();
 	// No Parent* rs exists => isEmptyTable == true => EvTable.evResult == false (innerJoinMerge() can drop table)
 	// Parent* rs exists => isEmptyTable == false => EvTable.evResult == true (innerJoinMerge() can merge dummy table, preserving all rows)
 	return EvaluatedTable(!isEmptyTable);

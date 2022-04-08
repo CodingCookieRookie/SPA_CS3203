@@ -4,8 +4,8 @@
 #include <algorithm>
 #include <string>
 
-#include "../source/PKB/Entity.h"
-#include "../source/PKB/RS2.h"
+#include "../source/PKB/PKBGetter.h"
+#include "../source/PKB/PKBInserter.h"
 #include "../source/QPS/PQLEvaluator.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -13,22 +13,28 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace UnitTesting {
 	TEST_CLASS(TestGetAllInstructions) {
 private:
-	TEST_METHOD_CLEANUP(cleanUpTables) {
-		Attribute::performCleanUp();
-		Entity::performCleanUp();
+	PKB* pkb;
+	PKBGetter* pkbGetter;
+	PKBInserter* pkbInserter;
+
+	TEST_METHOD_INITIALIZE(init) {
+		pkb = new PKB();
+		pkbGetter = new PKBGetter(pkb);
+		pkbInserter = new PKBInserter(pkb);
 	}
+
 public:
 
 	TEST_METHOD(executeGetAllInstruction_getAllStmt_evaluatedTableFormed) {
 		// 1. Setup:
 		// The 'Select s1' portion of the query
 		ParsedGetAll getAllSynonym = ParsedGetAll(EntityType::STMT, "s1");
-		Instruction* instruction = getAllSynonym.toInstruction();
+		Instruction* instruction = getAllSynonym.toInstruction(pkbGetter);
 
 		// PKB inserts 5 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 5; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::ASSIGN_TYPE));
 		}
 
 		// 2. Main test:
@@ -56,21 +62,21 @@ public:
 		// 1. Setup:
 		// The 'Select pn1' portion of the query
 		ParsedGetAll getAllSynonym = ParsedGetAll(EntityType::STMT, "stress1");
-		Instruction* instruction = getAllSynonym.toInstruction();
+		Instruction* instruction = getAllSynonym.toInstruction(pkbGetter);
 
 		// PKB inserts 100 statements of all kinds
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 10; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
-			stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
-			stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
-			stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
-			stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
-			stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
-			stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
-			stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
-			stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
-			stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::ASSIGN_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::CALL_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::WHILE_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::IF_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::READ_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::PRINT_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::PRINT_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::IF_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::READ_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::PRINT_TYPE));
 		}
 
 		// 2. Main test:
@@ -104,15 +110,15 @@ public:
 		// 1. Setup:
 		// The 'Select pn1' portion of the query
 		ParsedGetAll getAllSynonym = ParsedGetAll(EntityType::PRINT, "pn1");
-		Instruction* instruction = getAllSynonym.toInstruction();
+		Instruction* instruction = getAllSynonym.toInstruction(pkbGetter);
 
 		// PKB inserts 99 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 49; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::PRINT_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::PRINT_TYPE));
 		}
 		for (int i = 0; i < 50; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE)); // extra
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::ASSIGN_TYPE)); // extra
 		}
 
 		// 2. Main test:
@@ -146,15 +152,15 @@ public:
 		// 1. Setup:
 		// The 'Select pn1' portion of the query
 		ParsedGetAll getAllSynonym = ParsedGetAll(EntityType::CALL, "cl1");
-		Instruction* instruction = getAllSynonym.toInstruction();
+		Instruction* instruction = getAllSynonym.toInstruction(pkbGetter);
 
 		// PKB inserts 99 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 49; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::CALL_TYPE));
 		}
 		for (int i = 0; i < 50; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE)); // extra
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::ASSIGN_TYPE)); // extra
 		}
 
 		// 2. Main test:
@@ -188,15 +194,15 @@ public:
 		// 1. Setup:
 		// The 'Select pn1' portion of the query
 		ParsedGetAll getAllSynonym = ParsedGetAll(EntityType::READ, "r1");
-		Instruction* instruction = getAllSynonym.toInstruction();
+		Instruction* instruction = getAllSynonym.toInstruction(pkbGetter);
 
 		// PKB inserts 99 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 49; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::READ_TYPE));
 		}
 		for (int i = 0; i < 50; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::CALL_TYPE)); // extra
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::CALL_TYPE)); // extra
 		}
 
 		// 2. Main test:
@@ -230,15 +236,15 @@ public:
 		// 1. Setup:
 		// The 'Select pn1' portion of the query
 		ParsedGetAll getAllSynonym = ParsedGetAll(EntityType::IF, "if1");
-		Instruction* instruction = getAllSynonym.toInstruction();
+		Instruction* instruction = getAllSynonym.toInstruction(pkbGetter);
 
 		// PKB inserts 99 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 49; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::IF_TYPE));
 		}
 		for (int i = 0; i < 50; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::READ_TYPE)); // extra
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::READ_TYPE)); // extra
 		}
 
 		// 2. Main test:
@@ -272,15 +278,15 @@ public:
 		// 1. Setup:
 		// The 'Select pn1' portion of the query
 		ParsedGetAll getAllSynonym = ParsedGetAll(EntityType::WHILE, "w1");
-		Instruction* instruction = getAllSynonym.toInstruction();
+		Instruction* instruction = getAllSynonym.toInstruction(pkbGetter);
 
 		// PKB inserts 99 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 49; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::WHILE_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::WHILE_TYPE));
 		}
 		for (int i = 0; i < 50; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE)); // extra
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::IF_TYPE)); // extra
 		}
 
 		// 2. Main test:
@@ -314,15 +320,15 @@ public:
 		// 1. Setup:
 		// The 'Select pn1' portion of the query
 		ParsedGetAll getAllSynonym = ParsedGetAll(EntityType::ASSIGN, "a1");
-		Instruction* instruction = getAllSynonym.toInstruction();
+		Instruction* instruction = getAllSynonym.toInstruction(pkbGetter);
 
 		// PKB inserts 99 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 49; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::ASSIGN_TYPE));
 		}
 		for (int i = 0; i < 50; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::IF_TYPE)); // extra
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::IF_TYPE)); // extra
 		}
 
 		// 2. Main test:
@@ -355,14 +361,14 @@ public:
 		// 1. Setup:
 		// The 'Select pn1' portion of the query
 		ParsedGetAll getAllSynonym = ParsedGetAll(EntityType::VARIABLE, "v1");
-		Instruction* instruction = getAllSynonym.toInstruction();
+		Instruction* instruction = getAllSynonym.toInstruction(pkbGetter);
 
 		// PKB inserts 99 statements
 		std::vector<VarIndex> vars;
 		std::vector<std::string> varNames;
 		for (int i = 0; i < 99; i++) {
 			std::string varName = "var" + std::to_string(i);
-			VarIndex var = Entity::insertVar(varName);
+			VarIndex var = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, varName);
 			vars.emplace_back(var);
 			varNames.emplace_back(varName);
 		}
@@ -398,14 +404,14 @@ public:
 		// 1. Setup:
 		// The 'Select pn1' portion of the query
 		ParsedGetAll getAllSynonym = ParsedGetAll(EntityType::PROCEDURE, "p1");
-		Instruction* instruction = getAllSynonym.toInstruction();
+		Instruction* instruction = getAllSynonym.toInstruction(pkbGetter);
 
 		// PKB inserts 99 statements
 		std::vector<VarIndex> procs;
 		std::vector<std::string> procNames;
 		for (int i = 0; i < 99; i++) {
 			std::string procName = "proc" + std::to_string(i);
-			ProcIndex proc = Entity::insertProc(procName);
+			ProcIndex proc = pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, procName);
 			procs.emplace_back(proc);
 			procNames.emplace_back(procName);
 		}
@@ -441,11 +447,11 @@ public:
 		// 1. Setup:
 		// The 'Select pn1' portion of the query
 		ParsedGetAll getAllSynonym = ParsedGetAll(EntityType::CONSTANT, "c1");
-		Instruction* instruction = getAllSynonym.toInstruction();
+		Instruction* instruction = getAllSynonym.toInstruction(pkbGetter);
 
 		// PKB inserts 99 statements
 		for (int i = 0; i < 99; i++) {
-			Entity::insertConst(i + 1);
+			pkbInserter->insertConst(i + 1);
 		}
 
 		// 2. Main test:

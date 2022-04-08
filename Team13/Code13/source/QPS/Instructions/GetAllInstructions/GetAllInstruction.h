@@ -6,9 +6,10 @@
 class GetAllInstruction : public Instruction {
 protected:
 	std::string synonym;
+	PKBGetter* pkbGetter;
 
 public:
 	/* Default Constructor */
-	GetAllInstruction(std::string synonym);
+	GetAllInstruction(std::string synonym, PKBGetter* pkbGetter);
 	virtual EvaluatedTable execute() = 0;
 };

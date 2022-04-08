@@ -10,7 +10,7 @@ AffectsTProcessor::~AffectsTProcessor() {
 	affectsProcessor->performCleanUp();
 }
 
-bool AffectsTProcessor::checkRsHoldsFromTraversal(StmtIndex leftIdx, StmtIndex rightIdx) {
+bool AffectsTProcessor::checkRsHoldsFromTraversal(StmtIndex leftIdx, StmtIndex rightIdx, PKBGetter* pkbGetter) {
 	std::unordered_set<StmtIndex> visited;
 	std::queue<StmtIndex> queue;
 	queue.push(leftIdx);
@@ -19,7 +19,7 @@ bool AffectsTProcessor::checkRsHoldsFromTraversal(StmtIndex leftIdx, StmtIndex r
 		StmtIndex stmtIdx = queue.front();
 		queue.pop();
 
-		std::vector<StmtIndex> affectedStmts = affectsProcessor->getUsingLeftStmtIndex(stmtIdx);
+		std::vector<StmtIndex> affectedStmts = affectsProcessor->getUsingLeftStmtIndex(stmtIdx, pkbGetter);
 		for (StmtIndex successor : affectedStmts) {
 			if (successor == rightIdx) {
 				return true;
@@ -37,8 +37,8 @@ bool AffectsTProcessor::checkRsHoldsFromTraversal(StmtIndex leftIdx, StmtIndex r
 	return false;
 }
 
-bool AffectsTProcessor::doesRsHold(StmtIndex leftIdx, StmtIndex rightIdx) {
-	if (!isBasicAffectsRequirementsFulfilled(leftIdx, rightIdx)) {
+bool AffectsTProcessor::doesRsHold(StmtIndex leftIdx, StmtIndex rightIdx, PKBGetter* pkbGetter) {
+	if (isEarlyTerminationConditionFound(leftIdx, rightIdx, pkbGetter)) {
 		return false;
 	}
 
@@ -51,5 +51,5 @@ bool AffectsTProcessor::doesRsHold(StmtIndex leftIdx, StmtIndex rightIdx) {
 		return false;
 	}
 
-	return checkRsHoldsFromTraversal(leftIdx, rightIdx);
+	return checkRsHoldsFromTraversal(leftIdx, rightIdx, pkbGetter);
 }

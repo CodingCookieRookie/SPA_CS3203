@@ -14,24 +14,28 @@ void SourceAST::process() {
 	return root->process();
 }
 
-FollowsMap SourceAST::getFollowsMap() {
+RelationshipMap SourceAST::getFollowsMap() {
 	return root->getRelationshipMaps().followsMap;
 }
 
-ModifiesMap SourceAST::getModifiesMap() {
+RelationshipMap SourceAST::getModifiesMap() {
 	return root->getRelationshipMaps().modifiesMap;
 }
 
-UsesMap SourceAST::getUsesMap() {
+RelationshipMap SourceAST::getUsesMap() {
 	return root->getRelationshipMaps().usesMap;
 }
 
-ParentChildMap SourceAST::getParentChildMap() {
+RelationshipMap SourceAST::getParentChildMap() {
 	return root->getRelationshipMaps().parentChildMap;
 }
 
-CallStmtProcCalledMap SourceAST::getCallStmtProcCalledMap() {
-	return root->getRelationshipMaps().callStmtProcCalledMap;
+RelationshipMap SourceAST::getCallStmtToProcIndexCalledMap() {
+	return root->getRelationshipMaps().callStmtToProcIndexCalledMap;
+}
+
+RelationshipMap SourceAST::getProcIndexCallerToProcIndexCalledMap() {
+	return root->getRelationshipMaps().procIndexCallerToProcIndexCalledMap;
 }
 
 StmtNodes SourceAST::getStmtNodes() {
@@ -50,12 +54,12 @@ ConstSet SourceAST::getConstSet() {
 	return root->getEntityMaps().constSet;
 }
 
-ProcNameIndexMap SourceAST::getProcNameIndexMap() {
-	return root->getEntityMaps().procNameIndexMap;
+ProcNameToIndexMap SourceAST::getProcNameToIndexMap() {
+	return root->getEntityMaps().procNameToIndexMap;
 }
 
-ProcNames SourceAST::getProcNames() {
-	return root->getEntityMaps().procNames;
+SortedProcIndexToNameMap SourceAST::getSortedProcIndexToNameMap() {
+	return root->getEntityMaps().sortedProcIndexToNameMap;
 }
 
 ProcStmtMap SourceAST::getProcStmtMap() {
@@ -64,4 +68,12 @@ ProcStmtMap SourceAST::getProcStmtMap() {
 
 StmtProcMap SourceAST::getStmtProcMap() {
 	return root->getEntityMaps().stmtProcMap;
+}
+
+VarNameToIndexMap SourceAST::getVarNameToIndexMap() {
+	return root->getEntityMaps().varNameToIndexMap;
+}
+
+SortedVarIndexToNameMap SourceAST::getSortedVarIndexToNameMap() {
+	return root->getEntityMaps().sortedVarIndexToNameMap;
 }

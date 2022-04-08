@@ -4,20 +4,22 @@
 #include <algorithm>
 #include <string>
 
-#include "../source/PKB/Entity.h"
-#include "../source/PKB/Calls.h"
-#include "../source/PKB/RS2.h"
 #include "../source/QPS/PQLEvaluator.h"
+#include "../source/PKB/PKBInserter.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting {
 	TEST_CLASS(TestCallsInstructions) {
 private:
-	TEST_METHOD_CLEANUP(cleanUpTables) {
-		Attribute::performCleanUp();
-		Entity::performCleanUp();
-		Calls::performCleanUp();
+	PKB* pkb;
+	PKBGetter* pkbGetter;
+	PKBInserter* pkbInserter;
+
+	TEST_METHOD_INITIALIZE(init) {
+		pkb = new PKB();
+		pkbGetter = new PKBGetter(pkb);
+		pkbInserter = new PKBInserter(pkb);
 	}
 
 public:
@@ -28,15 +30,15 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::IDENT, "first");
 		rhsRef = std::make_pair(PqlReferenceType::IDENT, "second");
-		Instruction* instruction = new CallsInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new CallsInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{};
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts statements
-		ProcIndex proc1 = Entity::insertProc("first");
-		ProcIndex proc2 = Entity::insertProc("second");
-		Calls::insert(proc1, proc2);
+		ProcIndex proc1 = pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, "first");
+		ProcIndex proc2 = pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, "second");
+		pkbInserter->insertRSInfo(RelationshipType::CALLS, proc1, proc2);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -51,15 +53,15 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::IDENT, "first");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "q");
-		Instruction* instruction = new CallsInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new CallsInstruction(lhsRef, rhsRef, pkbGetter);;
 
-		std::unordered_set<std::string> expectedSynonyms{"q"};
+		std::unordered_set<std::string> expectedSynonyms{ "q" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts statements
-		ProcIndex proc1 = Entity::insertProc("first");
-		ProcIndex proc2 = Entity::insertProc("second");
-		Calls::insert(proc1, proc2);
+		ProcIndex proc1 = pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, "first");
+		ProcIndex proc2 = pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, "second");
+		pkbInserter->insertRSInfo(RelationshipType::CALLS, proc1, proc2);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -90,17 +92,17 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "p");
 		rhsRef = std::make_pair(PqlReferenceType::IDENT, "second");
-		Instruction* instruction = new CallsInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new CallsInstruction(lhsRef, rhsRef, pkbGetter);;
 
-		std::unordered_set<std::string> expectedSynonyms{"p"};
+		std::unordered_set<std::string> expectedSynonyms{ "p" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts statements
-		ProcIndex proc1 = Entity::insertProc("first");
-		ProcIndex proc2 = Entity::insertProc("second");
-		ProcIndex proc3 = Entity::insertProc("third");
-		Calls::insert(proc1, proc2);
-		Calls::insert(proc3, proc2);
+		ProcIndex proc1 = pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, "first");
+		ProcIndex proc2 = pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, "second");
+		ProcIndex proc3 = pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, "third");
+		pkbInserter->insertRSInfo(RelationshipType::CALLS, proc1, proc2);
+		pkbInserter->insertRSInfo(RelationshipType::CALLS, proc3, proc2);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -132,9 +134,9 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "p");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "q");
-		Instruction* instruction = new CallsInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new CallsInstruction(lhsRef, rhsRef, pkbGetter);;
 
-		std::unordered_set<std::string> expectedSynonyms{ "p", "q"};
+		std::unordered_set<std::string> expectedSynonyms{ "p", "q" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts 4 procs
@@ -142,10 +144,10 @@ public:
 		std::string procName = "procedure";
 		for (int i = 0; i < 4; i++) {
 			procName += std::to_string(i + 1);
-			procs.emplace_back(Entity::insertProc(procName));
+			procs.emplace_back(pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, procName));
 		}
 		for (int i = 0; i < 3; i++) {
-			Calls::insert(procs[i], procs[i + 1]);
+			pkbInserter->insertRSInfo(RelationshipType::CALLS, procs[i], procs[i + 1]);
 		}
 
 		// 2. Main test:
@@ -181,7 +183,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "p");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
-		Instruction* instruction = new CallsInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new CallsInstruction(lhsRef, rhsRef, pkbGetter);;
 
 		std::unordered_set<std::string> expectedSynonyms{ "p" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -191,10 +193,10 @@ public:
 		std::string procName = "procedure";
 		for (int i = 0; i < 19; i++) {
 			procName += std::to_string(i + 1);
-			procs.emplace_back(Entity::insertProc(procName));
+			procs.emplace_back(pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, procName));
 		}
 		for (int i = 0; i < 18; i++) {
-			Calls::insert(procs[i], procs[i + 1]);
+			pkbInserter->insertRSInfo(RelationshipType::CALLS, procs[i], procs[i + 1]);
 		}
 
 		// 2. Main test:
@@ -233,7 +235,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
-		Instruction* instruction = new CallsInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new CallsInstruction(lhsRef, rhsRef, pkbGetter);;
 
 		std::unordered_set<std::string> expectedSynonyms{};
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -243,10 +245,10 @@ public:
 		std::string procName = "procedure";
 		for (int i = 0; i < 19; i++) {
 			procName += std::to_string(i + 1);
-			procs.emplace_back(Entity::insertProc(procName));
+			procs.emplace_back(pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, procName));
 		}
 		for (int i = 0; i < 18; i++) {
-			Calls::insert(procs[i], procs[i + 1]);
+			pkbInserter->insertRSInfo(RelationshipType::CALLS, procs[i], procs[i + 1]);
 		}
 
 		// 2. Main test:

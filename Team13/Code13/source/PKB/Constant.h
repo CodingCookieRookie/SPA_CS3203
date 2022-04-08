@@ -10,6 +10,7 @@ private:
 
 public:
 	Constant();
+	~Constant();
 	void insertConst(ConstValue constant);
 	std::vector<ConstValue> getAllConsts();
 };

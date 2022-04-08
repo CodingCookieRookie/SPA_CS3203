@@ -2,6 +2,8 @@
 
 Constant::Constant() {}
 
+Constant::~Constant() {}
+
 void Constant::insertConst(ConstValue constant) {
 	constTable.insert(constant);
 }

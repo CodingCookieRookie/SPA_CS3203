@@ -4,24 +4,15 @@
 #include <vector>
 
 #include "../Exception/SPAException.h"
-#include "../PKB/Entity.h"
 #include "../PKB/ExpressionProcessor.h"
-#include "../PKB/Follows.h"
-#include "../PKB/FollowsT.h"
-#include "../PKB/ModifiesS.h"
-#include "../PKB/ModifiesP.h"
-#include "../PKB/Parent.h"
-#include "../PKB/ParentT.h"
-#include "../PKB/Pattern.h"
-#include "../PKB/UsesS.h"
-#include "../PKB/UsesP.h"
-#include "../PKB/Calls.h"
-#include "../PKB/CallsT.h"
-#include "../PKB/Next.h"
-#include "NextTProcessor.h"
+#include "../PKB/PKBGetter.h"
 #include "EvaluatedTable.h"
 #include "QPSCommons.h"
 #include "../Common/Types.h"
+#include "OnTheFlyRSProcessor.h"
+#include "NextTProcessor.h"
+#include "AffectsProcessor.h"
+#include "AffectsTProcessor.h"
 
 class Instruction {
 public:

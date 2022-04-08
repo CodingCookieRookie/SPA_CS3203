@@ -6,7 +6,7 @@ NextTProcessor::NextTProcessor(NextTCache* nextTCache) {
 
 NextTProcessor::~NextTProcessor() { nextTCache->performCleanUp(); }
 
-bool NextTProcessor::checkRsHoldsFromTraversal(StmtIndex leftIdx, StmtIndex rightIdx) {
+bool NextTProcessor::checkRsHoldsFromTraversal(StmtIndex leftIdx, StmtIndex rightIdx, PKBGetter* pkbGetter) {
 	std::unordered_set<StmtIndex> visited;
 	std::queue<StmtIndex> queue;
 	queue.push(leftIdx);
@@ -15,7 +15,7 @@ bool NextTProcessor::checkRsHoldsFromTraversal(StmtIndex leftIdx, StmtIndex righ
 		StmtIndex stmtIdx = queue.front();
 		queue.pop();
 
-		for (StmtIndex successor : Next::getFromLeftArg(stmtIdx)) {
+		for (StmtIndex successor : pkbGetter->getRSInfoFromLeftArg(RelationshipType::NEXT, stmtIdx)) {
 			if (successor == rightIdx) {
 				return true;
 			}
@@ -32,7 +32,7 @@ bool NextTProcessor::checkRsHoldsFromTraversal(StmtIndex leftIdx, StmtIndex righ
 	return false;
 }
 
-bool NextTProcessor::doesRsHold(StmtIndex leftIdx, StmtIndex rightIdx) {
+bool NextTProcessor::doesRsHold(StmtIndex leftIdx, StmtIndex rightIdx, PKBGetter* pkbGetter) {
 	// if NextTProcessor has already been FULLY computed for leftIdx, use it directly
 	if (nextTCache->contains(leftIdx, rightIdx)) {
 		return true;
@@ -41,14 +41,10 @@ bool NextTProcessor::doesRsHold(StmtIndex leftIdx, StmtIndex rightIdx) {
 		return false;
 	}
 
-	return checkRsHoldsFromTraversal(leftIdx, rightIdx);
+	return checkRsHoldsFromTraversal(leftIdx, rightIdx, pkbGetter);
 }
 
-/*
-Acts as a helper method for the getUsingLeftStmtIndex and getUsingRightStmtIndex.
-Performs BFS to compute a vector of stmtIndices for which the NextT relationship holds
-*/
-std::vector<StmtIndex> NextTProcessor::getStmtsFromComputationHelper(StmtIndex index,
+std::vector<StmtIndex> NextTProcessor::computeStmtsFromIndex(StmtIndex index,
 	std::function<bool(StmtIndex)> checkIfFullyComputed,
 	std::function<std::vector<StmtIndex>(StmtIndex)> getSubsequentCacheStmts,
 	std::function<std::vector<StmtIndex>(StmtIndex&)> getSubsequentNextStmts,
@@ -85,42 +81,41 @@ std::vector<StmtIndex> NextTProcessor::getStmtsFromComputationHelper(StmtIndex i
 	return getVectorFromSet(allStmtsSet);
 }
 
-std::vector<StmtIndex> NextTProcessor::getUsingLeftStmtIndex(StmtIndex leftIdx) {
+std::vector<StmtIndex> NextTProcessor::getUsingLeftStmtIndex(StmtIndex leftIdx, PKBGetter* pkbGetter) {
 	// if NextTProcessor has already been computed FULLY for a leftIdx, use it directly
 	if (nextTCache->isPredecessorFullyComputed(leftIdx)) {
 		return nextTCache->getFromLeftArg(leftIdx);
 	}
 
-	return getStmtsFromComputationHelper(leftIdx,
+	return computeStmtsFromIndex(leftIdx,
 		std::bind(&NextTCache::isPredecessorFullyComputed, nextTCache, std::placeholders::_1),
 		std::bind(&NextTCache::getFromLeftArg, nextTCache, std::placeholders::_1),
-		&Next::getFromLeftArg,
+		std::bind(&PKBGetter::getRSInfoFromLeftArg, pkbGetter, RelationshipType::NEXT, std::placeholders::_1),
 		std::bind(&NextTCache::insertSuccessors, nextTCache, std::placeholders::_1, std::placeholders::_2));
 };
 
-std::vector<StmtIndex> NextTProcessor::getUsingRightStmtIndex(StmtIndex rightIdx) {
+std::vector<StmtIndex> NextTProcessor::getUsingRightStmtIndex(StmtIndex rightIdx, PKBGetter* pkbGetter) {
 	// if NextTProcessor has already been computed FULLY for a rightIdx, use it directly
 	if (nextTCache->isSuccessorFullyComputed(rightIdx)) {
 		return nextTCache->getFromRightArg(rightIdx);
 	}
 
-	return getStmtsFromComputationHelper(rightIdx,
+	return computeStmtsFromIndex(rightIdx,
 		std::bind(&NextTCache::isSuccessorFullyComputed, nextTCache, std::placeholders::_1),
 		std::bind(&NextTCache::getFromRightArg, nextTCache, std::placeholders::_1),
-		&Next::getFromRightArg,
+		std::bind(&PKBGetter::getRSInfoFromRightArg, pkbGetter, RelationshipType::NEXT, std::placeholders::_1),
 		std::bind(&NextTCache::insertPredecessors, nextTCache, std::placeholders::_1, std::placeholders::_2));
 };
 
-std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> NextTProcessor::getAll() {
-	auto predSucTable = Next::getPredSucTable();
+std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> NextTProcessor::getAll(PKBGetter* pkbGetter) {
+	std::vector<StmtIndex> stmtIndices = pkbGetter->getAllStmts();
 
 	std::vector<StmtIndex> leftStmtIndices;
 	std::vector<StmtIndex> rightStmtIndices;
-	for (auto entry : predSucTable) {
-		StmtIndex leftIdx = entry.first;
-		auto nextTStmtsIndices = getUsingLeftStmtIndex(leftIdx);
+	for (auto stmtIdx : stmtIndices) {
+		auto nextTStmtsIndices = getUsingLeftStmtIndex(stmtIdx, pkbGetter);
 		for (StmtIndex nextTStmtIdx : nextTStmtsIndices) {
-			leftStmtIndices.push_back(leftIdx);
+			leftStmtIndices.push_back(stmtIdx);
 			rightStmtIndices.push_back(nextTStmtIdx);
 		}
 	}

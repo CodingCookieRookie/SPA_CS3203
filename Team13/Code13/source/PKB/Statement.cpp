@@ -2,6 +2,8 @@
 
 Statement::Statement() {}
 
+Statement::~Statement() {}
+
 size_t Statement::getStmtTypeTableSize() {
 	return stmtBidirectionalTable.getSize();
 }
@@ -13,9 +15,9 @@ StmtIndex Statement::insertStmt(StatementType stmtType) {
 	return stmtIdx;
 }
 
-StmtIndex Statement::insertStmt(StatementType stmtType, std::string& nameValue) {
+StmtIndex Statement::insertStmt(StatementType stmtType, std::string& nameValue, Attribute* attribute) {
 	StmtIndex stmtIdx = insertStmt(stmtType);
-	Attribute::insertStmtByName(stmtIdx, stmtType, nameValue);
+	attribute->insertStmtByName(stmtIdx, stmtType, nameValue);
 
 	return stmtIdx;
 }

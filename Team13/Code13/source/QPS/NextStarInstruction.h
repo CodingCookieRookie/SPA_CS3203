@@ -3,9 +3,6 @@
 #include "RelationshipInstruction.h"
 
 class NextStarInstruction : public RelationshipInstruction {
-private:
-	CFGProcessor* nextTProcessor;
-
 protected:
 	EvaluatedTable helperHandleTwoIntegers();
 	EvaluatedTable helperHandleOneInt(PqlReferenceType lhsRefType, PqlReferenceType rhsRefType);
@@ -13,6 +10,6 @@ protected:
 	EvaluatedTable helperHandleTwoWildcards();
 
 public:
-	NextStarInstruction(PqlReference lhsRef, PqlReference rhsRef, CFGProcessor* nextTProcessor);
+	NextStarInstruction(PqlReference lhsRef, PqlReference rhsRef, NextTProcessor* nextTProcessor, PKBGetter* pkbGetter);
 	EvaluatedTable execute() override;
 };

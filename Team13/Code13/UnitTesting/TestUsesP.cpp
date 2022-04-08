@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-#include "../source/Common/Types.h"
-#include "../source/PKB/ModifiesP.h"
 #include "../source/PKB/UsesP.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -16,38 +14,35 @@ private:
 	ProcIndex procIndex1 = { 3 };
 	ProcIndex procIndex2 = { 4 };
 
-	TEST_METHOD_CLEANUP(cleanUpUsesP) {
-		UsesP::performCleanUp();
+	UsesP* usesP;
+
+	TEST_METHOD_INITIALIZE(init) {
+		usesP = new UsesP();
 	}
 
 public:
 	TEST_METHOD(insert_getFromRightArg) {
 		std::vector<ProcIndex> expectedAns{ procIndex1 };
 
-		UsesP::insert(procIndex1, varIndex1);
-		auto procedures = UsesP::getFromRightArg(varIndex1);
+		usesP->insert(procIndex1, varIndex1);
+		auto procedures = usesP->getFromRightArg(varIndex1);
 		Assert::IsTrue(expectedAns == procedures);
-
-		/* Check if other relationship gets affected */
-		auto procedures2 = ModifiesP::getFromRightArg(varIndex1);
-		Assert::IsTrue(0 == procedures2.size());
-		ModifiesP::performCleanUp();
 	};
 
 	TEST_METHOD(contains) {
-		UsesP::insert(procIndex1, varIndex1);
-		Assert::AreEqual(true, UsesP::contains(procIndex1, varIndex1));
-		Assert::AreEqual(false, UsesP::contains(procIndex1, varIndex2));
-		Assert::AreEqual(false, UsesP::contains(procIndex2, varIndex1));
-		Assert::AreEqual(false, UsesP::contains(procIndex2, varIndex2));
+		usesP->insert(procIndex1, varIndex1);
+		Assert::AreEqual(true, usesP->contains(procIndex1, varIndex1));
+		Assert::AreEqual(false, usesP->contains(procIndex1, varIndex2));
+		Assert::AreEqual(false, usesP->contains(procIndex2, varIndex1));
+		Assert::AreEqual(false, usesP->contains(procIndex2, varIndex2));
 	};
 
 	TEST_METHOD(insert_getFromLeftArg) {
 		std::vector<VarIndex> expectedAns{ varIndex1, varIndex2 };
 
-		UsesP::insert(procIndex1, varIndex1);
-		UsesP::insert(procIndex1, varIndex2);
-		auto variables = UsesP::getFromLeftArg(procIndex1);
+		usesP->insert(procIndex1, varIndex1);
+		usesP->insert(procIndex1, varIndex2);
+		auto variables = usesP->getFromLeftArg(procIndex1);
 		Assert::IsTrue(expectedAns == variables);
 	};
 
@@ -56,25 +51,13 @@ public:
 		std::vector<VarIndex> variables{ varIndex1, varIndex2, varIndex1, varIndex2 };
 		std::tuple<std::vector<ProcIndex>, std::vector<VarIndex>> expectedAns = std::make_tuple(procedures, variables);
 
-		UsesP::insert(procIndex1, varIndex1);
-		UsesP::insert(procIndex1, varIndex2);
-		UsesP::insert(procIndex2, varIndex1);
-		UsesP::insert(procIndex2, varIndex2);
+		usesP->insert(procIndex1, varIndex1);
+		usesP->insert(procIndex1, varIndex2);
+		usesP->insert(procIndex2, varIndex1);
+		usesP->insert(procIndex2, varIndex2);
 
-		auto procVarInfo = UsesP::getAllInfo();
+		auto procVarInfo = usesP->getAllInfo();
 		Assert::IsTrue(expectedAns == procVarInfo);
-	};
-
-	TEST_METHOD(populateFromSubSynonyms) {
-		std::vector<VarIndex> expectedAns{ varIndex1, varIndex2 };
-
-		std::unordered_set<ProcIndex> subStmts{ procIndex1 };
-		UsesP::insert(procIndex1, varIndex1);
-		UsesP::insert(procIndex1, varIndex2);
-		UsesP::populateFromSubSynonyms(procIndex2, subStmts);
-
-		auto variables = UsesP::getFromLeftArg(procIndex2);
-		Assert::IsTrue(expectedAns == variables);
 	};
 	};
 }

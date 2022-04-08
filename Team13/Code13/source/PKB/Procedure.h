@@ -2,4 +2,4 @@
 
 #include "./NameIndexEntity.h"
 
-class Procedure : public NameIndexEntity<EntityType::PROCEDURE, ProcIndex> {};
+class Procedure : public NameIndexEntity<EntityType::PROCEDURE> {};

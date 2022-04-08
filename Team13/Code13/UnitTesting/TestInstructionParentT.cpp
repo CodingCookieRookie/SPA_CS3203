@@ -4,40 +4,41 @@
 #include <algorithm>
 #include <string>
 
-#include "../source/PKB/Entity.h"
-#include "../source/PKB/Parent.h"
-#include "../source/PKB/ParentT.h"
-#include "../source/PKB/RS2.h"
 #include "../source/QPS/PQLEvaluator.h"
+#include "../source/PKB/PKBInserter.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting {
 	TEST_CLASS(TestParentTInstructions) {
 private:
-	TEST_METHOD_CLEANUP(cleanUpTables) {
-		Attribute::performCleanUp();
-		Entity::performCleanUp();
-		ParentT::performCleanUp();
-		Parent::performCleanUp();
+	PKB* pkb;
+	PKBGetter* pkbGetter;
+	PKBInserter* pkbInserter;
+
+	TEST_METHOD_INITIALIZE(init) {
+		pkb = new PKB();
+		pkbGetter = new PKBGetter(pkb);
+		pkbInserter = new PKBInserter(pkb);
 	}
+
 public:
 
 	TEST_METHOD(executeParentStarInstruction_twoConstants_evaluatedTableFormed) {
 		// 1. Setup:
-		// Parent (1, 2) RelationshipInstruction
+		// Parent*(1, 2) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "1");
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "2");
-		Instruction* instruction = new ParentInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{};
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts statements
-		StmtIndex stmt1 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		StmtIndex stmt2 = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		Parent::insert(stmt1, stmt2);
+		StmtIndex stmt1 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		StmtIndex stmt2 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		pkbInserter->insertRSInfo(RelationshipType::PARENT_T, stmt1, stmt2);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -48,11 +49,11 @@ public:
 
 	TEST_METHOD(executeParentStarInstruction_lhsConstRhsStmt_evaluatedTableFormed) {
 		// 1. Setup:
-		// Parent*(2, s2) RelationshipInstruction
+		// Parent*(1, s2) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s2");
-		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "s2" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -60,13 +61,14 @@ public:
 		// PKB inserts 4 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 4; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::ASSIGN_TYPE));
 		}
 
-		Parent::insert(stmts[0], stmts[1]);
-		Parent::insert(stmts[1], stmts[2]);
-		Parent::insert(stmts[1], stmts[3]);
-		ParentT::populate();
+		pkbInserter->insertRSInfo(RelationshipType::PARENT_T, stmts[0], stmts[1]);
+		pkbInserter->insertRSInfo(RelationshipType::PARENT_T, stmts[1], stmts[2]);
+		pkbInserter->insertRSInfo(RelationshipType::PARENT_T, stmts[0], stmts[2]);
+		pkbInserter->insertRSInfo(RelationshipType::PARENT_T, stmts[1], stmts[2]);
+		pkbInserter->insertRSInfo(RelationshipType::PARENT_T, stmts[0], stmts[3]);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -96,7 +98,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "4");
-		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "s1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -104,14 +106,15 @@ public:
 		// PKB inserts 4 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 4; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::ASSIGN_TYPE));
 		}
 
-		Parent::insert(stmts[0], stmts[1]);
-		Parent::insert(stmts[1], stmts[2]);
-		Parent::insert(stmts[1], stmts[3]);
-		Parent::insert(stmts[2], stmts[3]);
-		ParentT::populate();
+		pkbInserter->insertRSInfo(RelationshipType::PARENT_T, stmts[0], stmts[1]);
+		pkbInserter->insertRSInfo(RelationshipType::PARENT_T, stmts[1], stmts[2]);
+
+		pkbInserter->insertRSInfo(RelationshipType::PARENT_T, stmts[0], stmts[3]);
+		pkbInserter->insertRSInfo(RelationshipType::PARENT_T, stmts[1], stmts[3]);
+		pkbInserter->insertRSInfo(RelationshipType::PARENT_T, stmts[2], stmts[3]);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -141,7 +144,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s2");
-		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "s1", "s2" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -149,15 +152,15 @@ public:
 		// PKB inserts 4 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 4; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::ASSIGN_TYPE));
 		}
 
-		Parent::insert(stmts[0], stmts[1]);
-		Parent::insert(stmts[0], stmts[2]);
-		Parent::insert(stmts[1], stmts[2]);
-		Parent::insert(stmts[1], stmts[3]);
-		Parent::insert(stmts[2], stmts[3]);
-		ParentT::populate();
+		pkbInserter->insertRSInfo(RelationshipType::PARENT_T, stmts[0], stmts[1]);
+		pkbInserter->insertRSInfo(RelationshipType::PARENT_T, stmts[0], stmts[2]);
+		pkbInserter->insertRSInfo(RelationshipType::PARENT_T, stmts[0], stmts[3]);
+		pkbInserter->insertRSInfo(RelationshipType::PARENT_T, stmts[1], stmts[2]);
+		pkbInserter->insertRSInfo(RelationshipType::PARENT_T, stmts[1], stmts[3]);
+		pkbInserter->insertRSInfo(RelationshipType::PARENT_T, stmts[2], stmts[3]);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -195,7 +198,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s2");
-		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "s1", "s2" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -203,13 +206,14 @@ public:
 		// PKB inserts 19 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 19; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::ASSIGN_TYPE));
 		}
 
-		for (int i = 0; i < 18; i++) {
-			Parent::insert(stmts[i], stmts[i + 1]); // i parents i + 1, simulate 19 nesting levels
+		for (int i = 0; i < 19; i++) {
+			for (int j = i + 1; j < 19; j++) {
+				pkbInserter->insertRSInfo(RelationshipType::PARENT_T, stmts[i], stmts[j]); // i parents i + 1, simulate 19 nesting levels
+			}
 		}
-		ParentT::populate();
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -227,8 +231,8 @@ public:
 		// Test Table size:
 		Assert::AreEqual(size_t(2), tableRef.size()); // 2 columns: s1 and s2
 
-		// Test Entities: std::unordered_map<std::string, EntityType>
-		std::vector<int> s1values, wildcardValues;
+		// Test Entities: std::unordered_map<std::string, EntityType>Instruction* instruction = new ParentInstruction(lhsRef, rhsRef);
+		std::vector<int> s1values, s2values;
 		for (int i = 0; i < 18; i++) {
 			for (int j = 0; j < (18 - i); j++) {
 				s1values.emplace_back(i + 1);
@@ -236,7 +240,7 @@ public:
 		}
 		for (int i = 0; i < 18; i++) {
 			for (int j = i; j < 18; j++) {
-				wildcardValues.emplace_back(j + 2);
+				s2values.emplace_back(j + 2);
 			}
 		}
 
@@ -246,8 +250,8 @@ public:
 		Assert::AreEqual(true, areVecEqual); // s1values == {19 1s, 18 2s, ... 1 19}
 		auto actuals2Values = tableRef.at("s2");
 		std::sort(actuals2Values.begin(), actuals2Values.end());
-		std::sort(wildcardValues.begin(), wildcardValues.end());
-		bool areVecEqual2 = std::equal(wildcardValues.begin(), wildcardValues.end(), actuals2Values.begin());
+		std::sort(s2values.begin(), s2values.end());
+		bool areVecEqual2 = std::equal(s2values.begin(), s2values.end(), actuals2Values.begin());
 		Assert::AreEqual(true, areVecEqual2); // wildcardValues == {2-19, 3-19, ..., 18, 19, 19}
 
 		// Test EvResult:
@@ -261,7 +265,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
-		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "s1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -269,13 +273,14 @@ public:
 		// PKB inserts 99 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 99; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::ASSIGN_TYPE));
 		}
 
-		for (int i = 0; i < 99 - 1; i++) {
-			Parent::insert(stmts[i], stmts[i + 1]); // i parents i + 1
+		for (int i = 0; i < 99; i++) {
+			for (int j = i + 1; j < 99; j++) {
+				pkbInserter->insertRSInfo(RelationshipType::PARENT_T, stmts[i], stmts[j]); // i parents i + 1, simulate 99 nesting levels
+			}
 		}
-		ParentT::populate();
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -318,7 +323,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "87");
-		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{};
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -326,13 +331,12 @@ public:
 		// PKB inserts 99 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 99; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::ASSIGN_TYPE));
 		}
 
 		for (int i = 0; i < 99 - 1; i++) {
-			Parent::insert(stmts[i], stmts[i + 1]); // i parents i + 1
+			pkbInserter->insertRSInfo(RelationshipType::PARENT_T, stmts[i], stmts[i + 1]); // i parents i + 1
 		}
-		ParentT::populate();
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -360,7 +364,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
-		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{};
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -368,15 +372,14 @@ public:
 		// PKB inserts 3 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 4; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::ASSIGN_TYPE));
 		}
 
-		Parent::insert(stmts[0], stmts[1]);
-		Parent::insert(stmts[0], stmts[2]);
-		Parent::insert(stmts[1], stmts[2]);
-		Parent::insert(stmts[1], stmts[3]);
-		Parent::insert(stmts[2], stmts[3]);
-		ParentT::populate();
+		pkbInserter->insertRSInfo(RelationshipType::PARENT_T, stmts[0], stmts[1]);
+		pkbInserter->insertRSInfo(RelationshipType::PARENT_T, stmts[0], stmts[2]);
+		pkbInserter->insertRSInfo(RelationshipType::PARENT_T, stmts[1], stmts[2]);
+		pkbInserter->insertRSInfo(RelationshipType::PARENT_T, stmts[1], stmts[3]);
+		pkbInserter->insertRSInfo(RelationshipType::PARENT_T, stmts[2], stmts[3]);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();

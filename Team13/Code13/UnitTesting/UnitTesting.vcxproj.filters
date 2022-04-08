@@ -9,7 +9,6 @@
     <ClCompile Include="TestInstructionParent.cpp" />
     <ClCompile Include="TestInstructionParentT.cpp" />
     <ClCompile Include="TestModifiesSInstruction.cpp" />
-    <ClCompile Include="TestTransitivePopulator.cpp" />
     <ClCompile Include="TestPQLResultProjector.cpp" />
     <ClCompile Include="TestSourceASTNode.cpp" />
     <ClCompile Include="TestDesignExtractor.cpp" />
@@ -75,7 +74,6 @@
     <ClCompile Include="TestVariable.cpp" />
     <ClCompile Include="TestPatternIf.cpp" />
     <ClCompile Include="TestPatternWhile.cpp" />
-    <ClCompile Include="TestBidirectionalTable.cpp" />
     <ClCompile Include="TestInstructionNextT.cpp" />
   </ItemGroup>
   <ItemGroup>

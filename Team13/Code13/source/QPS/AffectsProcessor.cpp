@@ -10,15 +10,15 @@ AffectsProcessor::AffectsProcessor(AffectsCache* affectsCache) {
 
 AffectsProcessor::~AffectsProcessor() { affectsCache->performCleanUp(); }
 
-bool AffectsProcessor::isBasicAffectsRequirementsFulfilled(StmtIndex leftIdx, StmtIndex rightIdx) {
-	return Entity::getTypeFromStmtIdx(leftIdx) == StatementType::ASSIGN_TYPE
-		&& Entity::getTypeFromStmtIdx(rightIdx) == StatementType::ASSIGN_TYPE
-		&& UsesS::getFromLeftArg(rightIdx).size() > 0
-		&& Entity::getProcFromStmt(leftIdx) == Entity::getProcFromStmt(rightIdx);
+bool AffectsProcessor::isEarlyTerminationConditionFound(StmtIndex leftIdx, StmtIndex rightIdx, PKBGetter* pkbGetter) {
+	return pkbGetter->getTypeFromStmtIdx(leftIdx) != StatementType::ASSIGN_TYPE
+		|| pkbGetter->getTypeFromStmtIdx(rightIdx) != StatementType::ASSIGN_TYPE
+		|| pkbGetter->getRSInfoFromLeftArg(RelationshipType::USES_S, rightIdx).size() <= 0
+		|| pkbGetter->getProcFromStmt(leftIdx) != pkbGetter->getProcFromStmt(rightIdx);
 }
 
-bool AffectsProcessor::checkRsHoldsFromTraversal(StmtIndex leftIdx, StmtIndex rightIdx) {
-	VarIndex modifiedVar = ModifiesS::getFromLeftArg(leftIdx).front();
+bool AffectsProcessor::checkRsHoldsFromTraversal(StmtIndex leftIdx, StmtIndex rightIdx, PKBGetter* pkbGetter) {
+	VarIndex modifiedVar = pkbGetter->getRSInfoFromLeftArg(RelationshipType::MODIFIES_S, leftIdx).front();
 	std::unordered_set<StmtIndex> visited;
 	std::queue<StmtIndex> queue;
 	queue.push(leftIdx);
@@ -27,15 +27,15 @@ bool AffectsProcessor::checkRsHoldsFromTraversal(StmtIndex leftIdx, StmtIndex ri
 		StmtIndex stmtIdx = queue.front();
 		queue.pop();
 
-		for (StmtIndex successor : Next::getFromLeftArg(stmtIdx)) {
+		for (StmtIndex successor : pkbGetter->getRSInfoFromLeftArg(RelationshipType::NEXT, stmtIdx)) {
 			if (successor == rightIdx) {
 				return true;
 			}
 
 			// If modifiedVar is being modified by a non-container stmt, do not add it
-			if (Entity::getTypeFromStmtIdx(successor) != StatementType::IF_TYPE
-				&& Entity::getTypeFromStmtIdx(successor) != StatementType::WHILE_TYPE
-				&& ModifiesS::contains(successor, modifiedVar)) {
+			if (pkbGetter->getTypeFromStmtIdx(successor) != StatementType::IF_TYPE
+				&& pkbGetter->getTypeFromStmtIdx(successor) != StatementType::WHILE_TYPE
+				&& pkbGetter->getRSContainsInfo(RelationshipType::MODIFIES_S, successor, modifiedVar)) {
 				continue;
 			}
 
@@ -51,13 +51,13 @@ bool AffectsProcessor::checkRsHoldsFromTraversal(StmtIndex leftIdx, StmtIndex ri
 	return false;
 }
 
-bool AffectsProcessor::doesRsHold(StmtIndex leftIdx, StmtIndex rightIdx) {
-	if (!isBasicAffectsRequirementsFulfilled(leftIdx, rightIdx)) {
+bool AffectsProcessor::doesRsHold(StmtIndex leftIdx, StmtIndex rightIdx, PKBGetter* pkbGetter) {
+	if (isEarlyTerminationConditionFound(leftIdx, rightIdx, pkbGetter)) {
 		return false;
 	}
 
-	VarIndex modifiedVar = ModifiesS::getFromLeftArg(leftIdx).front();
-	if (!UsesS::contains(rightIdx, modifiedVar)) {
+	VarIndex modifiedVar = pkbGetter->getRSInfoFromLeftArg(RelationshipType::MODIFIES_S, leftIdx).front();
+	if (!pkbGetter->getRSContainsInfo(RelationshipType::USES_S, rightIdx, modifiedVar)) {
 		return false; // ensures that rightStmt var indeed uses the modifiedVar
 	}
 
@@ -70,14 +70,10 @@ bool AffectsProcessor::doesRsHold(StmtIndex leftIdx, StmtIndex rightIdx) {
 		return false;
 	}
 
-	return checkRsHoldsFromTraversal(leftIdx, rightIdx);
+	return checkRsHoldsFromTraversal(leftIdx, rightIdx, pkbGetter);
 }
 
-/*
-Acts as a helper method for the getUsingLeftStmtIndex and getUsingRightStmtIndex.
-Performs BFS to compute a vector of stmtIndices for which the Affects relationship holds
-*/
-std::vector<StmtIndex> AffectsProcessor::getStmtsFromComputationHelper(StmtIndex index,
+std::vector<StmtIndex> AffectsProcessor::computeStmtsFromIndex(StmtIndex index,
 	std::function<bool(StmtIndex)> doesRsHold,
 	std::function<std::vector<StmtIndex>(StmtIndex&)> getSubsequentNextStmts,
 	std::function<void(StmtIndex, std::unordered_set<StmtIndex>)> insertSubsequentAffectsStmts) {
@@ -108,36 +104,36 @@ std::vector<StmtIndex> AffectsProcessor::getStmtsFromComputationHelper(StmtIndex
 	return getVectorFromSet(allStmtsSet);
 }
 
-std::vector<StmtIndex> AffectsProcessor::getUsingLeftStmtIndex(StmtIndex leftIdx) {
+std::vector<StmtIndex> AffectsProcessor::getUsingLeftStmtIndex(StmtIndex leftIdx, PKBGetter* pkbGetter) {
 	// if AffectsProcessor has already been computed FULLY for a leftIdx, use it directly
 	if (affectsCache->isPredecessorFullyComputed(leftIdx)) {
 		return affectsCache->getFromLeftArg(leftIdx);
 	}
 
-	return getStmtsFromComputationHelper(leftIdx,
-		std::bind(&AffectsProcessor::doesRsHold, this, leftIdx, std::placeholders::_1),
-		&Next::getFromLeftArg,
+	return computeStmtsFromIndex(leftIdx,
+		std::bind(&AffectsProcessor::doesRsHold, this, leftIdx, std::placeholders::_1, pkbGetter),
+		std::bind(&PKBGetter::getRSInfoFromLeftArg, pkbGetter, RelationshipType::NEXT, std::placeholders::_1),
 		std::bind(&AffectsCache::insertSuccessors, affectsCache, std::placeholders::_1, std::placeholders::_2));
 };
 
-std::vector<StmtIndex> AffectsProcessor::getUsingRightStmtIndex(StmtIndex rightIdx) {
+std::vector<StmtIndex> AffectsProcessor::getUsingRightStmtIndex(StmtIndex rightIdx, PKBGetter* pkbGetter) {
 	// if AffectsProcessor has already been computed FULLY for a rightIdx, use it directly
 	if (affectsCache->isSuccessorFullyComputed(rightIdx)) {
 		return affectsCache->getFromRightArg(rightIdx);
 	}
 
-	return getStmtsFromComputationHelper(rightIdx,
-		std::bind(&AffectsProcessor::doesRsHold, this, std::placeholders::_1, rightIdx),
-		&Next::getFromRightArg,
+	return computeStmtsFromIndex(rightIdx,
+		std::bind(&AffectsProcessor::doesRsHold, this, std::placeholders::_1, rightIdx, pkbGetter),
+		std::bind(&PKBGetter::getRSInfoFromRightArg, pkbGetter, RelationshipType::NEXT, std::placeholders::_1),
 		std::bind(&AffectsCache::insertPredecessors, affectsCache, std::placeholders::_1, std::placeholders::_2));
 };
 
-std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> AffectsProcessor::getAll() {
-	std::vector<StmtIndex> stmtIndices = Entity::getAllStmts();
+std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> AffectsProcessor::getAll(PKBGetter* pkbGetter) {
+	std::vector<StmtIndex> stmtIndices = pkbGetter->getAllStmts();
 	std::vector<StmtIndex> assignStmtIndices;
 
 	for (StmtIndex stmtIdx : stmtIndices) {
-		if (Entity::getTypeFromStmtIdx(stmtIdx) == StatementType::ASSIGN_TYPE) {
+		if (pkbGetter->getTypeFromStmtIdx(stmtIdx) == StatementType::ASSIGN_TYPE) {
 			assignStmtIndices.push_back(stmtIdx);
 		}
 	}
@@ -145,7 +141,7 @@ std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> AffectsProcessor::get
 	std::vector<StmtIndex> leftStmtIndices;
 	std::vector<StmtIndex> rightStmtIndices;
 	for (StmtIndex stmtIdx : assignStmtIndices) {
-		auto affectedStmtsIndices = getUsingLeftStmtIndex(stmtIdx);
+		auto affectedStmtsIndices = getUsingLeftStmtIndex(stmtIdx, pkbGetter);
 		for (StmtIndex affectedStmtIdx : affectedStmtsIndices) {
 			leftStmtIndices.push_back(stmtIdx);
 			rightStmtIndices.push_back(affectedStmtIdx);

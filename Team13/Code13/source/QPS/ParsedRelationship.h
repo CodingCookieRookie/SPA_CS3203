@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Clause.h"
+#include "../PKB/PKBGetter.h"
+#include "Processors.h"
 
 class ParsedRelationship : public Clause {
 private:
@@ -13,5 +15,5 @@ public:
 	PqlRelationshipType getRelationshipType() const;
 	PqlReference getLhs() const;
 	PqlReference getRhs() const;
-	Instruction* toInstruction(Processors processors) const;
+	Instruction* toInstruction(PKBGetter* pkbGetter, Processors processors) const;
 };

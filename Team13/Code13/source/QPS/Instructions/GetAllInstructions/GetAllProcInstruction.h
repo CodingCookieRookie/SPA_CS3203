@@ -5,5 +5,5 @@
 class GetAllProcInstruction : public GetAllInstruction {
 public:
 	EvaluatedTable execute() override;
-	GetAllProcInstruction(std::string synonym);
+	GetAllProcInstruction(std::string synonym, PKBGetter* pkbGetter);
 };

@@ -14,7 +14,7 @@ public:
 		PqlExpression expressionSpec, int numOfArgs);
 	ParsedPattern(std::string& synonym, PqlPatternType patternType,
 		PqlReference entRef, PqlExpression expressionSpec, int numOfArgs);
-	Instruction* toInstruction() const;
+	Instruction* toInstruction(PKBGetter* pkbGetter) const;
 	std::string getSynonym() const;
 	PqlPatternType getPatternType() const;
 	PqlReference getEntRef() const;

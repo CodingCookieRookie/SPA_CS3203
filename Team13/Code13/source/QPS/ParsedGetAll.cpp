@@ -4,38 +4,38 @@ ParsedGetAll::ParsedGetAll(EntityType type, std::string synonym) :
 	type(type), synonym(synonym) {}
 
 /* Factory Pattern */
-Instruction* ParsedGetAll::toInstruction() const {
+Instruction* ParsedGetAll::toInstruction(PKBGetter* pkbGetter) const {
 	Instruction* instruction = nullptr;
 	switch (type) {
 	case EntityType::STMT:
-		instruction = new GetAllStmtInstruction(synonym);
+		instruction = new GetAllStmtInstruction(synonym, pkbGetter);
 		break;
 	case EntityType::READ:
-		instruction = new GetAllReadInstruction(synonym);
+		instruction = new GetAllReadInstruction(synonym, pkbGetter);
 		break;
 	case EntityType::PRINT:
-		instruction = new GetAllPrintInstruction(synonym);
+		instruction = new GetAllPrintInstruction(synonym, pkbGetter);
 		break;
 	case EntityType::CALL:
-		instruction = new GetAllCallInstruction(synonym);
+		instruction = new GetAllCallInstruction(synonym, pkbGetter);
 		break;
 	case EntityType::WHILE:
-		instruction = new GetAllWhileInstruction(synonym);
+		instruction = new GetAllWhileInstruction(synonym, pkbGetter);
 		break;
 	case EntityType::IF:
-		instruction = new GetAllIfInstruction(synonym);
+		instruction = new GetAllIfInstruction(synonym, pkbGetter);
 		break;
 	case EntityType::ASSIGN:
-		instruction = new GetAllAssignInstruction(synonym);
+		instruction = new GetAllAssignInstruction(synonym, pkbGetter);
 		break;
 	case EntityType::VARIABLE:
-		instruction = new GetAllVarInstruction(synonym);
+		instruction = new GetAllVarInstruction(synonym, pkbGetter);
 		break;
 	case EntityType::CONSTANT:
-		instruction = new GetAllConstInstruction(synonym);
+		instruction = new GetAllConstInstruction(synonym, pkbGetter);
 		break;
 	case EntityType::PROCEDURE:
-		instruction = new GetAllProcInstruction(synonym);
+		instruction = new GetAllProcInstruction(synonym, pkbGetter);
 		break;
 	}
 	return instruction;

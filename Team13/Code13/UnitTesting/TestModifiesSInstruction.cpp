@@ -5,8 +5,8 @@
 
 #include "../source/QPS/PQLEvaluator.h"
 #include "../source/QPS/PQLParser.h"
-#include "../source/PKB/ModifiesS.h"
-#include "../source/PKB/ModifiesP.h"
+#include "../source/PKB/PKBInserter.h"
+#include "../source/PKB/PKBGetter.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -16,29 +16,33 @@ namespace UnitTesting {
 	// Modifies (p/p1, v) or Modifies(p/p1, "x") or Modifies (p/p1, _ )	proc
 	TEST_CLASS(TestModifiesInstruction) {
 private:
-	TEST_METHOD_CLEANUP(cleanUpTables) {
-		Attribute::performCleanUp();
-		Entity::performCleanUp();
-		ModifiesS::performCleanUp();
-		ModifiesP::performCleanUp();
+	PKB* pkb;
+	PKBGetter* pkbGetter;
+	PKBInserter* pkbInserter;
+
+	TEST_METHOD_INITIALIZE(init) {
+		pkb = new PKB();
+		pkbGetter = new PKBGetter(pkb);
+		pkbInserter = new PKBInserter(pkb);
 	}
+
 public:
 	TEST_METHOD(execute_lhsSynonymRhsSynonymStmt) {
 		// 1. Setup:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "v");
-		Instruction* instruction = new ModifiesSInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new ModifiesSInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1", "v" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts modifies
-		Entity::insertStmt(StatementType::PRINT_TYPE);   // insert dummy stmt
-		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		Entity::insertVar("randomVar"); // insert dummy var
-		VarIndex varIndex = Entity::insertVar("v");
-		ModifiesS::insert(stmt, varIndex);
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);   // insert dummy stmt
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "randomVar"); // insert dummy var
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "v");
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmt, varIndex);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -52,17 +56,17 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
 		rhsRef = std::make_pair(PqlReferenceType::IDENT, "x");
-		Instruction* instruction = new ModifiesSInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new ModifiesSInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts modifies
-		Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		Entity::insertVar("randomVar");
-		VarIndex varIndex = Entity::insertVar("x");
-		ModifiesS::insert(stmt, varIndex);
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "randomVar");
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "x");
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmt, varIndex);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -76,19 +80,19 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
-		Instruction* instruction = new ModifiesSInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new ModifiesSInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts modifies
-		Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		Entity::insertVar("randomVar");
-		VarIndex varIndex = Entity::insertVar("x");
-		VarIndex varIndex2 = Entity::insertVar("y");
-		ModifiesS::insert(stmt, varIndex);
-		ModifiesS::insert(stmt, varIndex2);
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "randomVar");
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "x");
+		VarIndex varIndex2 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "y");
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmt, varIndex);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmt, varIndex2);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -102,19 +106,19 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "2");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
-		Instruction* instruction = new ModifiesSInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new ModifiesSInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts modifies
-		Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		Entity::insertVar("randomVar");
-		VarIndex varIndex = Entity::insertVar("x");
-		VarIndex varIndex2 = Entity::insertVar("y");
-		ModifiesS::insert(stmt, varIndex);
-		ModifiesS::insert(stmt, varIndex2);
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "randomVar");
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "x");
+		VarIndex varIndex2 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "y");
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmt, varIndex);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmt, varIndex2);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -128,17 +132,17 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "2");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
-		Instruction* instruction = new ModifiesSInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new ModifiesSInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts modifies
-		Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		Entity::insertVar("randomVar");
-		VarIndex varIndex = Entity::insertVar("x");
-		VarIndex varIndex2 = Entity::insertVar("y");
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "randomVar");
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "x");
+		VarIndex varIndex2 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "y");
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -152,19 +156,19 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "50");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
-		Instruction* instruction = new ModifiesSInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new ModifiesSInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts modifies
-		Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		Entity::insertVar("randomVar");
-		VarIndex varIndex = Entity::insertVar("x");
-		VarIndex varIndex2 = Entity::insertVar("y");
-		ModifiesS::insert(stmt, varIndex);
-		ModifiesS::insert(stmt, varIndex2);
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "randomVar");
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "x");
+		VarIndex varIndex2 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "y");
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmt, varIndex);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmt, varIndex2);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -179,19 +183,19 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "2");
 		rhsRef = std::make_pair(PqlReferenceType::IDENT, "fhg");
-		Instruction* instruction = new ModifiesSInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new ModifiesSInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{};
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts modifies
-		Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		Entity::insertVar("randomVar");
-		VarIndex varIndex = Entity::insertVar("x");
-		VarIndex varIndex2 = Entity::insertVar("y");
-		ModifiesS::insert(stmt, varIndex);
-		ModifiesS::insert(stmt, varIndex2);
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "randomVar");
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "x");
+		VarIndex varIndex2 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "y");
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmt, varIndex);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmt, varIndex2);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -206,19 +210,19 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "2");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
-		Instruction* instruction = new ModifiesSInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new ModifiesSInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{};
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts modifies
-		Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		Entity::insertVar("randomVar");
-		VarIndex varIndex = Entity::insertVar("x");
-		VarIndex varIndex2 = Entity::insertVar("y");
-		ModifiesS::insert(stmt, varIndex);
-		ModifiesS::insert(stmt, varIndex2);
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "randomVar");
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "x");
+		VarIndex varIndex2 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "y");
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmt, varIndex);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmt, varIndex2);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -233,17 +237,17 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "2");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
-		Instruction* instruction = new ModifiesSInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new ModifiesSInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{};
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts modifies
-		Entity::insertStmt(StatementType::PRINT_TYPE);
-		StmtIndex stmt = Entity::insertStmt(StatementType::ASSIGN_TYPE);
-		Entity::insertVar("randomVar");
-		VarIndex varIndex = Entity::insertVar("x");
-		VarIndex varIndex2 = Entity::insertVar("y");
+		pkbInserter->insertStmt(StatementType::PRINT_TYPE);
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "randomVar");
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "x");
+		VarIndex varIndex2 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "y");
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();

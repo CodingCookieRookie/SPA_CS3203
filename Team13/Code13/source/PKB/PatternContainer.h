@@ -14,6 +14,7 @@ protected:
 
 public:
 	PatternContainer();
+	~PatternContainer();
 	void insert(StmtIndex& stmtIdx, VarIndex& varIdx);
 	std::vector<StmtIndex> getStmtsFromVar(VarIndex& varIndex);
 	std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> getAll();

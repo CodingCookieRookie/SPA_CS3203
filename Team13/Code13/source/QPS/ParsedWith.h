@@ -15,5 +15,5 @@ public:
 	PqlReference getLhs() const;
 	PqlReference getRhs() const;
 	PqlAttributeType getAttribType() const;
-	Instruction* toInstruction() const;
+	Instruction* toInstruction(PKBGetter* pkbGetter) const;
 };

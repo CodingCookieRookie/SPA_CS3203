@@ -68,7 +68,7 @@ EvaluatedTable EvaluatedTable::hashJoin(EvaluatedTable& otherTable, std::unorder
 	prepopulate(resultTable, otherColumns);
 
 	/* Convert this table into a HashMap mapping common cols -> rows */
-	for (int i = 0; i < numRows; i++) {
+	for (size_t i = 0; i < numRows; i++) {
 		/* Key refers to the indexes of the common columns between both tables */
 		/* Note that we need to pre-allocate this size of the mapped vector,
 		since std::transform will not expand the vector for us */
@@ -83,7 +83,7 @@ EvaluatedTable EvaluatedTable::hashJoin(EvaluatedTable& otherTable, std::unorder
 	}
 
 	/* Repeat for otherTable */
-	for (int i = 0; i < otherRows; i++) {
+	for (size_t i = 0; i < otherRows; i++) {
 		/* Key refers to the indexes of the common columns between both tables */
 		std::vector<int> key(numCommon);
 		std::transform(commonEntitiesVector.begin(), commonEntitiesVector.end(),
@@ -104,15 +104,15 @@ EvaluatedTable EvaluatedTable::hashJoin(EvaluatedTable& otherTable, std::unorder
 		for (const std::vector<int>& tableRow : tableValue) {
 			for (const std::vector<int>& otherRow : otherValue) {
 				/* Populate table with common cols */
-				for (int i = 0; i < numCommon; i++) {
+				for (size_t i = 0; i < numCommon; i++) {
 					resultTable[commonEntitiesVector.at(i)].push_back(key.at(i));
 				}
 				/* Populate table with cols from table */
-				for (int i = 0; i < numTable; i++) {
+				for (size_t i = 0; i < numTable; i++) {
 					resultTable[tableColumns.at(i)].push_back(tableRow.at(i));
 				}
 				/* Populate table with cols from otherTable */
-				for (int i = 0; i < numOther; i++) {
+				for (size_t i = 0; i < numOther; i++) {
 					resultTable[otherColumns.at(i)].push_back(otherRow.at(i));
 				}
 			}

@@ -1,18 +1,13 @@
 #pragma once
 
-#include "./CFGProcessor.h"
-#include "./CacheStorage.h"
-#include "../PKB/Next.h"
-#include "../PKB/Entity.h"
-#include "../PKB/UsesS.h"
-#include "../PKB/ModifiesS.h"
+#include "./OnTheFlyRSProcessor.h"
 
-class AffectsProcessor : public CFGProcessor {
+class AffectsProcessor : public OnTheFlyRSProcessor {
 protected:
 	AffectsCache* affectsCache;
-	bool isBasicAffectsRequirementsFulfilled(StmtIndex leftIdx, StmtIndex rightIdx);
-	bool checkRsHoldsFromTraversal(StmtIndex leftIdx, StmtIndex rightIdx) override;
-	std::vector<StmtIndex> getStmtsFromComputationHelper(StmtIndex index,
+	bool isEarlyTerminationConditionFound(StmtIndex leftIdx, StmtIndex rightIdx, PKBGetter* pkbGetter);
+	bool checkRsHoldsFromTraversal(StmtIndex leftIdx, StmtIndex rightIdx, PKBGetter* pkbGetter) override;
+	std::vector<StmtIndex> computeStmtsFromIndex(StmtIndex index,
 		std::function<bool(StmtIndex)> doesRsHold,
 		std::function<std::vector<StmtIndex>(StmtIndex&)> getSubsequentNextStmts,
 		std::function<void(StmtIndex, std::unordered_set<StmtIndex>)> insertSubsequentAffectsStmts);
@@ -21,9 +16,9 @@ public:
 	AffectsProcessor();
 	AffectsProcessor(AffectsCache* affectsCache);
 	~AffectsProcessor();
-	bool doesRsHold(StmtIndex leftIdx, StmtIndex rightIdx) override;
-	std::vector<StmtIndex> getUsingLeftStmtIndex(StmtIndex leftIdx) override;
-	std::vector<StmtIndex> getUsingRightStmtIndex(StmtIndex rightIdx) override;
-	std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> getAll() override;
+	bool doesRsHold(StmtIndex leftIdx, StmtIndex rightIdx, PKBGetter* pkbGetter) override;
+	std::vector<StmtIndex> getUsingLeftStmtIndex(StmtIndex leftIdx, PKBGetter* pkbGetter) override;
+	std::vector<StmtIndex> getUsingRightStmtIndex(StmtIndex rightIdx, PKBGetter* pkbGetter) override;
+	std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> getAll(PKBGetter* pkbGetter) override;
 	void performCleanUp() override;
 };

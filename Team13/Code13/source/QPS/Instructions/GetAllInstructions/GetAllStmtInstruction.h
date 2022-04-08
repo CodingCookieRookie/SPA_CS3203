@@ -5,5 +5,5 @@
 class GetAllStmtInstruction : public GetAllInstruction {
 public:
 	EvaluatedTable execute() override;
-	GetAllStmtInstruction(std::string synonym);
+	GetAllStmtInstruction(std::string synonym, PKBGetter* pkbGetter);
 };

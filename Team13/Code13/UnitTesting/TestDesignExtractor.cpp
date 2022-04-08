@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-#include "PKB/Entity.h"
+#include "PKB/PKBGetter.h"
+#include "PKB/PKBInserter.h"
 #include "SP/DesignExtractor.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -9,22 +10,14 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace UnitTesting {
 	TEST_CLASS(TestDesignExtractor) {
 private:
-	TEST_METHOD_CLEANUP(cleanUpTables) {
-		Attribute::performCleanUp();
-		Entity::performCleanUp();
-		UsesS::performCleanUp();
-		UsesP::performCleanUp();
-		ModifiesS::performCleanUp();
-		ModifiesP::performCleanUp();
-		Next::performCleanUp();
-		Pattern::performCleanUp();
-		Parent::performCleanUp();
-		ParentT::performCleanUp();
-		Follows::performCleanUp();
-		FollowsT::performCleanUp();
-		Calls::performCleanUp();
-		CallsT::performCleanUp();
-		Container::performCleanUp();
+	PKB* pkb;
+	PKBGetter* pkbGetter;
+	PKBInserter* pkbInserter;
+
+	TEST_METHOD_INITIALIZE(init) {
+		pkb = new PKB();
+		pkbGetter = new PKBGetter(pkb);
+		pkbInserter = new PKBInserter(pkb);
 	}
 
 public:
@@ -40,17 +33,17 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
-		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
-		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
-		Assert::AreEqual(size_t(1), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(1), Entity::getAllVars().size());
-		Assert::AreEqual(varName, Entity::getVarName(Entity::getAllVars()[0]));
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(1), std::get<0>(ModifiesS::getAllInfo()).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE).size());
+		Assert::AreEqual(procName, pkbGetter->getNameIdxEntityName(EntityType::PROCEDURE, pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE)[0]));
+		Assert::AreEqual(size_t(1), pkbGetter->getAllStmts().size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
+		Assert::AreEqual(varName, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[0]));
+
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_S)).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_P)).size());
 	}
 
 	TEST_METHOD(extract_printStatementOnly_success) {
@@ -65,17 +58,16 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
-		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
-		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
-		Assert::AreEqual(size_t(1), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(1), Entity::getAllVars().size());
-		Assert::AreEqual(varName, Entity::getVarName(Entity::getAllVars()[0]));
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
+		Assert::AreEqual(size_t(1), pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE).size());
+		Assert::AreEqual(procName, pkbGetter->getNameIdxEntityName(EntityType::PROCEDURE, pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE)[0]));
+		Assert::AreEqual(size_t(1), pkbGetter->getAllStmts().size());
+		Assert::AreEqual(size_t(1), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
+		Assert::AreEqual(varName, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[0]));
 
-		Assert::AreEqual(size_t(1), std::get<0>(UsesS::getAllInfo()).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_S)).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_P)).size());
 	}
 
 	TEST_METHOD(extract_readandPrintStatement_success) {
@@ -93,22 +85,23 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
-		Assert::AreEqual(size_t(1), Entity::getAllProcs().size());
-		Assert::AreEqual(procName, Entity::getProcName(Entity::getAllProcs()[0]));
-		Assert::AreEqual(size_t(2), Entity::getAllStmts().size());
-		Assert::AreEqual(size_t(2), Entity::getAllVars().size());
-		Assert::AreEqual(varNameX, Entity::getVarName(Entity::getAllVars()[0]));
-		Assert::AreEqual(varNameY, Entity::getVarName(Entity::getAllVars()[1]));
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
+		Assert::AreEqual(size_t(1), pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE).size());
+		Assert::AreEqual(procName, pkbGetter->getNameIdxEntityName(EntityType::PROCEDURE, pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE)[0]));
+		Assert::AreEqual(size_t(2), pkbGetter->getAllStmts().size());
+		Assert::AreEqual(size_t(2), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
+		Assert::AreEqual(varNameX, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[0]));
+		Assert::AreEqual(varNameY, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[1]));
 
-		Assert::AreEqual(size_t(1), std::get<0>(ModifiesS::getAllInfo()).size());
-		Assert::AreEqual(size_t(1), std::get<0>(UsesS::getAllInfo()).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_S)).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_P)).size());
 
-		Assert::AreEqual(size_t(1), std::get<0>(Follows::getAllInfo()).size());
-		Assert::AreEqual(size_t(1), std::get<0>(FollowsT::getAllInfo()).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_S)).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_P)).size());
+
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS)).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS_T)).size());
 	}
 
 	TEST_METHOD(extract_multipleStatements_allFollowsFollowsTCaptured) {
@@ -129,14 +122,12 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(2), std::get<0>(Follows::getAllInfo()).size());
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS)).size());
 		/* We expect (3 choose 2) = 3 relationships in Follows T */
-		Assert::AreEqual(size_t(3), std::get<0>(FollowsT::getAllInfo()).size());
+		Assert::AreEqual(size_t(3), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS_T)).size());
 	}
 
 	TEST_METHOD(extract_singleIfStatement_parentCaptured) {
@@ -165,14 +156,12 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		/* We expect two Parent relationships to be captured, one from the print statement in the then-block,
 		   and one from the read statement in the else-block. */
-		Assert::AreEqual(size_t(2), std::get<0>(Parent::getAllInfo()).size());
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT)).size());
 	}
 
 	TEST_METHOD(extract_singleWhileStatement_parentCaptured) {
@@ -197,13 +186,11 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		/* We expect one Parent relationships to be captured, from the read statement in the while-block */
-		Assert::AreEqual(size_t(1), std::get<0>(Parent::getAllInfo()).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT)).size());
 	}
 
 	TEST_METHOD(extract_whileInWhile_parentAndParentTCaptured) {
@@ -238,18 +225,16 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		/* We expect two Parent relationships to be captured,
 		   one from the outer while to inner while, and one from the inner while to read x; */
-		Assert::AreEqual(size_t(2), std::get<0>(Parent::getAllInfo()).size());
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT)).size());
 		/* We expect three Parent relationships to be captured,
 		   one from the outer while to inner while, one from the inner while to read x;,
 		   and one from the outer while to read x; */
-		Assert::AreEqual(size_t(3), std::get<0>(ParentT::getAllInfo()).size());
+		Assert::AreEqual(size_t(3), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT_T)).size());
 	}
 
 	TEST_METHOD(extract_whileAndIfInIf_parentAndParentTCaptured) {
@@ -310,17 +295,15 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		/* We expect five Parent relationships to be captured: (1, 2), (1, 4), (2, 3), (4, 5) and (4, 6). */
-		Assert::AreEqual(size_t(5), std::get<0>(Parent::getAllInfo()).size());
+		Assert::AreEqual(size_t(5), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT)).size());
 
 		/* We expect eight ParentT relationships to be captured:
 		   (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (2, 3), (4, 5) and (4, 6). */
-		Assert::AreEqual(size_t(8), std::get<0>(ParentT::getAllInfo()).size());
+		Assert::AreEqual(size_t(8), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT_T)).size());
 	}
 
 	TEST_METHOD(extract_ifInWhile_parentAndParentTCaptured) {
@@ -364,17 +347,15 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		/* We expect three Parent relationships to be captured: (1, 2), (2, 3), and (2, 4). */
-		Assert::AreEqual(size_t(3), std::get<0>(Parent::getAllInfo()).size());
+		Assert::AreEqual(size_t(3), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT)).size());
 
 		/* We expect five ParentT relationships to be captured:
 		   (1, 2), (1, 3), (1, 4), (2, 3), and (2, 4). */
-		Assert::AreEqual(size_t(5), std::get<0>(ParentT::getAllInfo()).size());
+		Assert::AreEqual(size_t(5), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT_T)).size());
 	}
 
 	TEST_METHOD(extract_assign_postfixExpressionExtracted) {
@@ -416,17 +397,15 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		Assert::AreEqual(size_t(2), Entity::getAllVars().size());
-		Assert::AreEqual(size_t(3), Entity::getAllConsts().size());
-		std::tuple<std::vector<int>, std::vector<int>> patternVarResult = Pattern::getAssignStmtsFromExprPartialMatch(std::string(" x "));
+		Assert::AreEqual(size_t(2), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
+		Assert::AreEqual(size_t(3), pkbGetter->getAllConsts().size());
+		std::tuple<std::vector<int>, std::vector<int>> patternVarResult = pkbGetter->getAssignStmtsFromExprPartialMatch(std::string(" x "));
 		Assert::AreEqual(size_t(1), std::get<0>(patternVarResult).size());
 
-		std::tuple<std::vector<int>, std::vector<int>> patternConstResult = Pattern::getAssignStmtsFromExprPartialMatch(std::string(" 1 "));
+		std::tuple<std::vector<int>, std::vector<int>> patternConstResult = pkbGetter->getAssignStmtsFromExprPartialMatch(std::string(" 1 "));
 		Assert::AreEqual(size_t(1), std::get<0>(patternConstResult).size());
 	}
 
@@ -456,17 +435,15 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		VarIndex x = Entity::getVarIdx("x");
-		VarIndex y = Entity::getVarIdx("y");
-		Assert::AreEqual(size_t(1), Pattern::getIfStmtsFromVar(x).size());
-		Assert::AreEqual(size_t(0), Pattern::getIfStmtsFromVar(y).size());
+		VarIndex x = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, "x");
+		VarIndex y = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, "y");
+		Assert::AreEqual(size_t(1), pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, x).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, y).size());
 
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAllIfPatternInfo()).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::IF_TYPE)).size());
 	}
 
 	TEST_METHOD(extract_singleIfStatement_multVars_patternCaptured) {
@@ -501,21 +478,19 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		VarIndex x = Entity::getVarIdx("x");
-		VarIndex y = Entity::getVarIdx("y");
-		VarIndex z = Entity::getVarIdx("z");
-		VarIndex a = Entity::getVarIdx("a");
-		Assert::AreEqual(size_t(1), Pattern::getIfStmtsFromVar(x).size());
-		Assert::AreEqual(size_t(1), Pattern::getIfStmtsFromVar(y).size());
-		Assert::AreEqual(size_t(1), Pattern::getIfStmtsFromVar(z).size());
-		Assert::AreEqual(size_t(0), Pattern::getIfStmtsFromVar(a).size());
+		VarIndex x = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, "x");
+		VarIndex y = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, "y");
+		VarIndex z = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, "z");
+		VarIndex a = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, "a");
+		Assert::AreEqual(size_t(1), pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, x).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, y).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, z).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, a).size());
 
-		Assert::AreEqual(size_t(3), std::get<0>(Pattern::getAllIfPatternInfo()).size());
+		Assert::AreEqual(size_t(3), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::IF_TYPE)).size());
 	}
 
 	TEST_METHOD(extract_multIfStatements_multVars_patternCaptured) {
@@ -568,21 +543,30 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		VarIndex x = Entity::getVarIdx("x");
-		VarIndex y = Entity::getVarIdx("y");
-		VarIndex z = Entity::getVarIdx("z");
-		VarIndex a = Entity::getVarIdx("a");
-		Assert::AreEqual(size_t(2), Pattern::getIfStmtsFromVar(x).size());
-		Assert::AreEqual(size_t(1), Pattern::getIfStmtsFromVar(y).size());
-		Assert::AreEqual(size_t(2), Pattern::getIfStmtsFromVar(z).size());
-		Assert::AreEqual(size_t(0), Pattern::getIfStmtsFromVar(a).size());
+		std::string varNameX = "x";
+		std::string varNameY = "y";
+		std::string varNameZ = "z";
+		std::string varNameA = "a";
 
-		Assert::AreEqual(size_t(5), std::get<0>(Pattern::getAllIfPatternInfo()).size());
+		VarIndex varIndexX = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, "x");
+		VarIndex varIndexY = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, "y");
+		VarIndex varIndexZ = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, "z");
+		VarIndex varIndexA = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, "a");
+
+		Assert::AreEqual(varIndexX, ast.getVarNameToIndexMap()[varNameX]);
+		Assert::AreEqual(varIndexY, ast.getVarNameToIndexMap()[varNameY]);
+		Assert::AreEqual(varIndexZ, ast.getVarNameToIndexMap()[varNameZ]);
+		Assert::AreEqual(varIndexA, ast.getVarNameToIndexMap()[varNameA]);
+
+		Assert::AreEqual(size_t(2), pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, varIndexX).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, varIndexY).size());
+		Assert::AreEqual(size_t(2), pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, varIndexZ).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getPatternContainerStmtsFromVar(StatementType::IF_TYPE, varIndexA).size());
+
+		Assert::AreEqual(size_t(5), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::IF_TYPE)).size());
 	}
 
 	TEST_METHOD(extract_singleWhileStatement_singleVar_patternCaptured) {
@@ -607,17 +591,15 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		VarIndex x = Entity::getVarIdx("x");
-		VarIndex y = Entity::getVarIdx("y");
-		Assert::AreEqual(size_t(1), Pattern::getWhileStmtsFromVar(x).size());
-		Assert::AreEqual(size_t(0), Pattern::getWhileStmtsFromVar(y).size());
+		VarIndex x = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, "x");
+		VarIndex y = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, "y");
+		Assert::AreEqual(size_t(1), pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, x).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, y).size());
 
-		Assert::AreEqual(size_t(1), std::get<0>(Pattern::getAllWhilePatternInfo()).size());
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::WHILE_TYPE)).size());
 	}
 
 	TEST_METHOD(extract_singleWhileStatement_multVars_patternCaptured) {
@@ -648,21 +630,19 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		VarIndex x = Entity::getVarIdx("x");
-		VarIndex y = Entity::getVarIdx("y");
-		VarIndex z = Entity::getVarIdx("z");
-		VarIndex a = Entity::getVarIdx("a");
-		Assert::AreEqual(size_t(1), Pattern::getWhileStmtsFromVar(x).size());
-		Assert::AreEqual(size_t(1), Pattern::getWhileStmtsFromVar(y).size());
-		Assert::AreEqual(size_t(1), Pattern::getWhileStmtsFromVar(z).size());
-		Assert::AreEqual(size_t(0), Pattern::getWhileStmtsFromVar(a).size());
+		VarIndex x = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, "x");
+		VarIndex y = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, "y");
+		VarIndex z = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, "z");
+		VarIndex a = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, "a");
+		Assert::AreEqual(size_t(1), pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, x).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, y).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, z).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, a).size());
 
-		Assert::AreEqual(size_t(3), std::get<0>(Pattern::getAllWhilePatternInfo()).size());
+		Assert::AreEqual(size_t(3), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::WHILE_TYPE)).size());
 	}
 
 	TEST_METHOD(extract_multWhileStatements_multVars_patternCaptured) {
@@ -707,21 +687,19 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		VarIndex x = Entity::getVarIdx("x");
-		VarIndex y = Entity::getVarIdx("y");
-		VarIndex z = Entity::getVarIdx("z");
-		VarIndex a = Entity::getVarIdx("a");
-		Assert::AreEqual(size_t(2), Pattern::getWhileStmtsFromVar(x).size());
-		Assert::AreEqual(size_t(1), Pattern::getWhileStmtsFromVar(y).size());
-		Assert::AreEqual(size_t(2), Pattern::getWhileStmtsFromVar(z).size());
-		Assert::AreEqual(size_t(0), Pattern::getWhileStmtsFromVar(a).size());
+		VarIndex x = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, "x");
+		VarIndex y = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, "y");
+		VarIndex z = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, "z");
+		VarIndex a = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, "a");
+		Assert::AreEqual(size_t(2), pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, x).size());
+		Assert::AreEqual(size_t(1), pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, y).size());
+		Assert::AreEqual(size_t(2), pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, z).size());
+		Assert::AreEqual(size_t(0), pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, a).size());
 
-		Assert::AreEqual(size_t(5), std::get<0>(Pattern::getAllWhilePatternInfo()).size());
+		Assert::AreEqual(size_t(5), std::get<0>(pkbGetter->getAllPatternContainerInfo(StatementType::WHILE_TYPE)).size());
 	}
 
 	TEST_METHOD(generateCFG_readStatementOnly) {
@@ -740,10 +718,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = designExtractor->getCFG();
 		Assert::IsTrue(size_t(0) == cfgTable.size());
@@ -765,10 +741,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = designExtractor->getCFG();
 		Assert::IsTrue(size_t(0) == cfgTable.size());
@@ -799,10 +773,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = designExtractor->getCFG();
 		Assert::IsTrue(size_t(1) == cfgTable.size());
@@ -841,10 +813,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = designExtractor->getCFG();
 		Assert::IsTrue(size_t(2) == cfgTable.size());
@@ -885,10 +855,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = designExtractor->getCFG();
 		Assert::IsTrue(size_t(1) == cfgTable.size());
@@ -924,10 +892,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = designExtractor->getCFG();
 		Assert::IsTrue(size_t(2) == cfgTable.size());
@@ -975,10 +941,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = designExtractor->getCFG();
 		Assert::IsTrue(size_t(3) == cfgTable.size());
@@ -1057,10 +1021,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = designExtractor->getCFG();
 		Assert::IsTrue(size_t(4) == cfgTable.size());
@@ -1119,10 +1081,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = designExtractor->getCFG();
 		Assert::IsTrue(size_t(4) == cfgTable.size());
@@ -1194,10 +1154,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = designExtractor->getCFG();
 		Assert::IsTrue(size_t(4) == cfgTable.size());
@@ -1258,10 +1216,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = designExtractor->getCFG();
 		Assert::IsTrue(size_t(4) == cfgTable.size());
@@ -1346,37 +1302,35 @@ public:
 		programNode->addProcedure(procedureNode1);
 		programNode->addProcedure(procedureNode2);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		/* Check stmts and attributes population */
-		Assert::AreEqual(size_t(9), Entity::getAllStmts().size());
+		Assert::AreEqual(size_t(9), pkbGetter->getAllStmts().size());
 
 		/* read x */
 		std::vector<EntityAttributeRef> expectedResultReadVarNameX{ 4, 9 };
-		std::vector<EntityAttributeRef> resultReadVarNameX = Attribute::getEqualNameAttributesFromName(EntityType::READ, varNameX);
+		std::vector<EntityAttributeRef> resultReadVarNameX = pkbGetter->getEqualNameAttributesFromName(EntityType::READ, varNameX);
 		Assert::IsTrue(expectedResultReadVarNameX == resultReadVarNameX);
 
 		/* read y */
 		std::vector<EntityAttributeRef> expectedResultReadVarNameY{ 6 };
-		std::vector<EntityAttributeRef> resultReadVarNameY = Attribute::getEqualNameAttributesFromName(EntityType::READ, varNameY);
+		std::vector<EntityAttributeRef> resultReadVarNameY = pkbGetter->getEqualNameAttributesFromName(EntityType::READ, varNameY);
 		Assert::IsTrue(expectedResultReadVarNameY == resultReadVarNameY);
 
 		/* print x */
 		std::vector<EntityAttributeRef> expectedResultPrintVarNameX{ 3 };
-		std::vector<EntityAttributeRef> resultPrintVarNameX = Attribute::getEqualNameAttributesFromName(EntityType::PRINT, varNameX);
+		std::vector<EntityAttributeRef> resultPrintVarNameX = pkbGetter->getEqualNameAttributesFromName(EntityType::PRINT, varNameX);
 		Assert::IsTrue(expectedResultPrintVarNameX == resultPrintVarNameX);
 
 		/* print y (does not exist) */
 		std::vector<EntityAttributeRef> expectedResultPrintVarNameY{ };
-		std::vector<EntityAttributeRef> resultPrintVarNameY = Attribute::getEqualNameAttributesFromName(EntityType::PRINT, varNameY);
+		std::vector<EntityAttributeRef> resultPrintVarNameY = pkbGetter->getEqualNameAttributesFromName(EntityType::PRINT, varNameY);
 		Assert::IsTrue(expectedResultPrintVarNameY == resultPrintVarNameY);
 
 		/* call proc2 */
 		std::vector<EntityAttributeRef> expectedResultCallProcName2{ 8 };
-		std::vector<EntityAttributeRef> resultCallProcName2 = Attribute::getEqualNameAttributesFromName(EntityType::CALL, procName2);
+		std::vector<EntityAttributeRef> resultCallProcName2 = pkbGetter->getEqualNameAttributesFromName(EntityType::CALL, procName2);
 		Assert::IsTrue(expectedResultCallProcName2 == resultCallProcName2);
 	}
 
@@ -1400,15 +1354,13 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
-		Assert::AreEqual(size_t(1), std::get<0>(Next::getAllInfo()).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2));
+		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
 	}
 
 	TEST_METHOD(extract_multipleStatements_nextCaptured) {
@@ -1435,17 +1387,15 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		StmtIndex stmtIdx3 = StmtIndex(3);
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx3));
-		Assert::AreEqual(size_t(2), std::get<0>(Next::getAllInfo()).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx3));
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
 	}
 
 	TEST_METHOD(extract_singleIfStatement_nextCaptured) {
@@ -1474,17 +1424,15 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		StmtIndex stmtIdx3 = StmtIndex(3);
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx3));
-		Assert::AreEqual(size_t(2), std::get<0>(Next::getAllInfo()).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx3));
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
 	}
 
 	TEST_METHOD(extract_singleWhileStatement_nextCaptured) {
@@ -1509,16 +1457,14 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx1));
-		Assert::AreEqual(size_t(2), std::get<0>(Next::getAllInfo()).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx1));
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
 	}
 
 	TEST_METHOD(extract_whileInWhile_nextCaptured) {
@@ -1553,19 +1499,17 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		StmtIndex stmtIdx3 = StmtIndex(3);
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx1));
-		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx3));
-		Assert::IsTrue(Next::contains(stmtIdx3, stmtIdx2));
-		Assert::AreEqual(size_t(4), std::get<0>(Next::getAllInfo()).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx1));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx3, stmtIdx2));
+		Assert::AreEqual(size_t(4), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
 	}
 
 	TEST_METHOD(extract_whileAndIfInIf_nextCaptured) {
@@ -1626,10 +1570,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -1637,13 +1579,13 @@ public:
 		StmtIndex stmtIdx4 = StmtIndex(4);
 		StmtIndex stmtIdx5 = StmtIndex(5);
 		StmtIndex stmtIdx6 = StmtIndex(6);
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx4));
-		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx3));
-		Assert::IsTrue(Next::contains(stmtIdx3, stmtIdx2));
-		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx5));
-		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx6));
-		Assert::AreEqual(size_t(6), std::get<0>(Next::getAllInfo()).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx4));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx3, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx4, stmtIdx5));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx4, stmtIdx6));
+		Assert::AreEqual(size_t(6), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
 	}
 
 	TEST_METHOD(extract_ifInWhile_nextCaptured) {
@@ -1687,21 +1629,19 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		StmtIndex stmtIdx3 = StmtIndex(3);
 		StmtIndex stmtIdx4 = StmtIndex(4);
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx3));
-		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx4));
-		Assert::IsTrue(Next::contains(stmtIdx3, stmtIdx1));
-		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx1));
-		Assert::AreEqual(size_t(5), std::get<0>(Next::getAllInfo()).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx4));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx3, stmtIdx1));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx4, stmtIdx1));
+		Assert::AreEqual(size_t(5), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
 	}
 
 	TEST_METHOD(extract_multIfStatements_nextCaptured) {
@@ -1755,10 +1695,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -1766,13 +1704,13 @@ public:
 		StmtIndex stmtIdx4 = StmtIndex(4);
 		StmtIndex stmtIdx5 = StmtIndex(5);
 		StmtIndex stmtIdx6 = StmtIndex(6);
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx3));
-		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx4));
-		Assert::IsTrue(Next::contains(stmtIdx3, stmtIdx4));
-		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx5));
-		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx6));
-		Assert::AreEqual(size_t(6), std::get<0>(Next::getAllInfo()).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx4));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx3, stmtIdx4));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx4, stmtIdx5));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx4, stmtIdx6));
+		Assert::AreEqual(size_t(6), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
 	}
 
 	TEST_METHOD(extract_multWhileStatements_nextCaptured) {
@@ -1818,21 +1756,19 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		StmtIndex stmtIdx3 = StmtIndex(3);
 		StmtIndex stmtIdx4 = StmtIndex(4);
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx1));
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx3));
-		Assert::IsTrue(Next::contains(stmtIdx3, stmtIdx4));
-		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx3));
-		Assert::AreEqual(size_t(5), std::get<0>(Next::getAllInfo()).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx1));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx3, stmtIdx4));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx4, stmtIdx3));
+		Assert::AreEqual(size_t(5), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
 	}
 
 	TEST_METHOD(extract_ifStatementThenNonContainerStatments_nextCaptured) {
@@ -1870,23 +1806,21 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		StmtIndex stmtIdx3 = StmtIndex(3);
 		StmtIndex stmtIdx4 = StmtIndex(4);
 		StmtIndex stmtIdx5 = StmtIndex(5);
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx3));
-		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx4));
-		Assert::IsTrue(Next::contains(stmtIdx3, stmtIdx4));
-		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx5));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx4));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx3, stmtIdx4));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx4, stmtIdx5));
 
-		Assert::AreEqual(size_t(5), std::get<0>(Next::getAllInfo()).size());
+		Assert::AreEqual(size_t(5), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
 	}
 
 	TEST_METHOD(extract_whileStatementThenNonContainerStatments_nextCaptured) {
@@ -1926,20 +1860,18 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		StmtIndex stmtIdx3 = StmtIndex(3);
 		StmtIndex stmtIdx4 = StmtIndex(4);
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx1));
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx3));
-		Assert::IsTrue(Next::contains(stmtIdx3, stmtIdx4));
-		Assert::AreEqual(size_t(4), std::get<0>(Next::getAllInfo()).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx1));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx3, stmtIdx4));
+		Assert::AreEqual(size_t(4), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
 	}
 
 	TEST_METHOD(extract_ifStatementMultipleStatementsInStmtLst_nextCaptured) {
@@ -1984,21 +1916,19 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		StmtIndex stmtIdx3 = StmtIndex(3);
 		StmtIndex stmtIdx4 = StmtIndex(4);
 		StmtIndex stmtIdx5 = StmtIndex(5);
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx3));
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx4));
-		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx5));
-		Assert::AreEqual(size_t(4), std::get<0>(Next::getAllInfo()).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx4));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx4, stmtIdx5));
+		Assert::AreEqual(size_t(4), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
 	}
 
 	TEST_METHOD(extract_whileStatementMultipleStatementsInStmtLst_nextCaptured) {
@@ -2038,20 +1968,18 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		StmtIndex stmtIdx3 = StmtIndex(3);
 		StmtIndex stmtIdx4 = StmtIndex(4);
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx3));
-		Assert::IsTrue(Next::contains(stmtIdx3, stmtIdx4));
-		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx1));
-		Assert::AreEqual(size_t(4), std::get<0>(Next::getAllInfo()).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx3, stmtIdx4));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx4, stmtIdx1));
+		Assert::AreEqual(size_t(4), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
 	}
 
 	TEST_METHOD(extract_multipleProc_nextCaptured) {
@@ -2091,18 +2019,16 @@ public:
 		programNode->addProcedure(firstProcedureNode);
 		programNode->addProcedure(secondProcedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
 		StmtIndex stmtIdx3 = StmtIndex(3);
 		StmtIndex stmtIdx4 = StmtIndex(4);
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::contains(stmtIdx3, stmtIdx4));
-		Assert::AreEqual(size_t(2), std::get<0>(Next::getAllInfo()).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx3, stmtIdx4));
+		Assert::AreEqual(size_t(2), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
 	}
 
 	TEST_METHOD(extract_mixedCode_nextCaptured) {
@@ -2170,10 +2096,8 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		StmtIndex stmtIdx1 = StmtIndex(1);
 		StmtIndex stmtIdx2 = StmtIndex(2);
@@ -2182,15 +2106,15 @@ public:
 		StmtIndex stmtIdx5 = StmtIndex(5);
 		StmtIndex stmtIdx6 = StmtIndex(6);
 		StmtIndex stmtIdx7 = StmtIndex(7);
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx2));
-		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx3));
-		Assert::IsTrue(Next::contains(stmtIdx2, stmtIdx4));
-		Assert::IsTrue(Next::contains(stmtIdx3, stmtIdx6));
-		Assert::IsTrue(Next::contains(stmtIdx4, stmtIdx5));
-		Assert::IsTrue(Next::contains(stmtIdx5, stmtIdx6));
-		Assert::IsTrue(Next::contains(stmtIdx6, stmtIdx1));
-		Assert::IsTrue(Next::contains(stmtIdx1, stmtIdx7));
-		Assert::AreEqual(size_t(8), std::get<0>(Next::getAllInfo()).size());
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx3));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx4));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx3, stmtIdx6));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx4, stmtIdx5));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx5, stmtIdx6));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx6, stmtIdx1));
+		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx7));
+		Assert::AreEqual(size_t(8), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::NEXT)).size());
 	}
 
 	TEST_METHOD(extract_insertCalls_callsAndCallsTCaptured) {
@@ -2334,18 +2258,16 @@ public:
 		programNode->addProcedure(procedureNode4);
 		programNode->addProcedure(procedureNode5);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
 		/* Check Calls population */
 		/* We expect three Calls relationships to be captured: (1, 2), (2, 3), and (5, 4). */
-		Assert::AreEqual(size_t(3), std::get<0>(Calls::getAllInfo()).size());
+		Assert::AreEqual(size_t(3), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS)).size());
 
 		/* We expect four CallsT relationships to be captured:
 		   (1, 2), (1, 3), (2, 3), and (5, 4). */
-		Assert::AreEqual(size_t(4), std::get<0>(CallsT::getAllInfo()).size());
+		Assert::AreEqual(size_t(4), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS_T)).size());
 	}
 
 	TEST_METHOD(extract_singleProc_insertStmtFromProc_usesPAndModifiesPCaptured) {
@@ -2410,27 +2332,25 @@ public:
 		ProgramNode* programNode = new ProgramNode();
 		programNode->addProcedure(procedureNode);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		ProcIndex procIndex = Entity::getProcIdx(procName);
+		ProcIndex procIndex = pkbGetter->getNameIdxEntityIndex(EntityType::PROCEDURE, procName);
 
-		VarIndex varIndexU = Entity::getVarIdx(varNameU);
-		VarIndex varIndexV = Entity::getVarIdx(varNameV);
-		VarIndex varIndexA = Entity::getVarIdx(varNameA);
-		VarIndex varIndexB = Entity::getVarIdx(varNameB);
-		VarIndex varIndexC = Entity::getVarIdx(varNameC);
-		VarIndex varIndexM = Entity::getVarIdx(varNameM);
-		VarIndex varIndexN = Entity::getVarIdx(varNameN);
-		VarIndex varIndexX = Entity::getVarIdx(varNameX);
-		VarIndex varIndexY = Entity::getVarIdx(varNameY);
+		VarIndex varIndexU = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varNameU);
+		VarIndex varIndexV = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varNameV);
+		VarIndex varIndexA = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varNameA);
+		VarIndex varIndexB = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varNameB);
+		VarIndex varIndexC = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varNameC);
+		VarIndex varIndexM = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varNameM);
+		VarIndex varIndexN = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varNameN);
+		VarIndex varIndexX = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varNameX);
+		VarIndex varIndexY = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varNameY);
 
 		/* Check UsesP (vars might not be in order) */
 		/* Vars used: u, v, b, c, m, n, y */
 		std::vector<VarIndex> expectedResultUsesP{ varIndexU, varIndexV, varIndexB, varIndexC, varIndexM, varIndexN, varIndexY };
-		std::vector<EntityAttributeRef> resultUsesP = UsesP::getFromLeftArg(procIndex);
+		std::vector<EntityAttributeRef> resultUsesP = pkbGetter->getRSInfoFromLeftArg(RelationshipType::USES_P, procIndex);
 		Assert::AreEqual(size_t(7), resultUsesP.size());
 
 		for (VarIndex varIndex : resultUsesP) {
@@ -2440,7 +2360,7 @@ public:
 		/* Check ModifiesP (vars might not be in order) */
 		/* Vars modified: a, x, y */
 		std::vector<VarIndex> expectedResultModifiesP{ varIndexA, varIndexX, varIndexY };
-		std::vector<EntityAttributeRef> resultModifiesP = ModifiesP::getFromLeftArg(procIndex);
+		std::vector<EntityAttributeRef> resultModifiesP = pkbGetter->getRSInfoFromLeftArg(RelationshipType::MODIFIES_P, procIndex);
 		Assert::AreEqual(size_t(3), resultModifiesP.size());
 
 		for (VarIndex varIndex : resultModifiesP) {
@@ -2526,28 +2446,26 @@ public:
 		programNode->addProcedure(procedureNode1);
 		programNode->addProcedure(procedureNode2);
 		SourceAST ast(programNode);
-		PKB* pkb = new PKB();
-		PKBInserter* pkbInserter = new PKBInserter(pkb);
-		DesignExtractor* designExtractor = new DesignExtractor();
-		designExtractor->extract(ast, pkbInserter);
+		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
+		designExtractor->extract();
 
-		ProcIndex procIndex1 = Entity::getProcIdx(procName1);
-		ProcIndex procIndex2 = Entity::getProcIdx(procName2);
+		ProcIndex procIndex1 = pkbGetter->getNameIdxEntityIndex(EntityType::PROCEDURE, procName1);
+		ProcIndex procIndex2 = pkbGetter->getNameIdxEntityIndex(EntityType::PROCEDURE, procName2);
 
-		VarIndex varIndexU = Entity::getVarIdx(varNameU);
-		VarIndex varIndexV = Entity::getVarIdx(varNameV);
-		VarIndex varIndexA = Entity::getVarIdx(varNameA);
-		VarIndex varIndexB = Entity::getVarIdx(varNameB);
-		VarIndex varIndexC = Entity::getVarIdx(varNameC);
-		VarIndex varIndexM = Entity::getVarIdx(varNameM);
-		VarIndex varIndexN = Entity::getVarIdx(varNameN);
-		VarIndex varIndexX = Entity::getVarIdx(varNameX);
-		VarIndex varIndexY = Entity::getVarIdx(varNameY);
+		VarIndex varIndexU = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varNameU);
+		VarIndex varIndexV = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varNameV);
+		VarIndex varIndexA = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varNameA);
+		VarIndex varIndexB = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varNameB);
+		VarIndex varIndexC = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varNameC);
+		VarIndex varIndexM = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varNameM);
+		VarIndex varIndexN = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varNameN);
+		VarIndex varIndexX = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varNameX);
+		VarIndex varIndexY = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, varNameY);
 
 		/* Check UsesP for 1st proc (vars might not be in order) */
 		/* Vars used: u, v, b, c, m, n, y */
 		std::vector<VarIndex> expectedResultUsesP1{ varIndexU, varIndexV, varIndexB, varIndexC, varIndexM, varIndexN, varIndexY };
-		std::vector<EntityAttributeRef> resultUsesP1 = UsesP::getFromLeftArg(procIndex1);
+		std::vector<EntityAttributeRef> resultUsesP1 = pkbGetter->getRSInfoFromLeftArg(RelationshipType::USES_P, procIndex1);
 		Assert::AreEqual(size_t(7), resultUsesP1.size());
 		for (VarIndex varIndex : resultUsesP1) {
 			Assert::IsTrue(std::find(expectedResultUsesP1.begin(), expectedResultUsesP1.end(), varIndex) != expectedResultUsesP1.end());
@@ -2556,7 +2474,7 @@ public:
 		/* Check ModifiesP for 1st proc (vars might not be in order) */
 		/* Vars modified: a, x, y */
 		std::vector<VarIndex> expectedResultModifiesP1{ varIndexA, varIndexX, varIndexY };
-		std::vector<EntityAttributeRef> resultModifiesP1 = ModifiesP::getFromLeftArg(procIndex1);
+		std::vector<EntityAttributeRef> resultModifiesP1 = pkbGetter->getRSInfoFromLeftArg(RelationshipType::MODIFIES_P, procIndex1);
 		Assert::AreEqual(size_t(3), resultModifiesP1.size());
 		for (VarIndex varIndex : resultModifiesP1) {
 			Assert::IsTrue(std::find(expectedResultModifiesP1.begin(), expectedResultModifiesP1.end(), varIndex) != expectedResultModifiesP1.end());
@@ -2565,7 +2483,7 @@ public:
 		/* Check UsesP for 2nd proc (vars might not be in order) */
 		/* Vars used: b, c */
 		std::vector<VarIndex> expectedResultUsesP2{ varIndexB, varIndexC };
-		std::vector<EntityAttributeRef> resultUsesP2 = UsesP::getFromLeftArg(procIndex2);
+		std::vector<EntityAttributeRef> resultUsesP2 = pkbGetter->getRSInfoFromLeftArg(RelationshipType::USES_P, procIndex2);
 		Assert::AreEqual(size_t(2), resultUsesP2.size());
 		for (VarIndex varIndex : resultUsesP2) {
 			Assert::IsTrue(std::find(expectedResultUsesP2.begin(), expectedResultUsesP2.end(), varIndex) != expectedResultUsesP2.end());
@@ -2574,7 +2492,7 @@ public:
 		/* Check ModifiesP for 2nd proc (vars might not be in order) */
 		/* Vars modified: u, a */
 		std::vector<VarIndex> expectedResultModifiesP2{ varIndexU, varIndexA };
-		std::vector<EntityAttributeRef> resultModifiesP2 = ModifiesP::getFromLeftArg(procIndex2);
+		std::vector<EntityAttributeRef> resultModifiesP2 = pkbGetter->getRSInfoFromLeftArg(RelationshipType::MODIFIES_P, procIndex2);
 		Assert::AreEqual(size_t(2), resultModifiesP2.size());
 		for (VarIndex varIndex : resultModifiesP2) {
 			Assert::IsTrue(std::find(expectedResultModifiesP2.begin(), expectedResultModifiesP2.end(), varIndex) != expectedResultModifiesP2.end());

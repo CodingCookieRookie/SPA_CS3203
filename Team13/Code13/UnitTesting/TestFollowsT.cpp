@@ -1,148 +1,129 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-#include "../source/Common/Types.h"
 #include "../source/PKB/FollowsT.h"
-#include "../source/PKB/ParentT.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting {
 	TEST_CLASS(TestFollowsT) {
 private:
-	StmtIndex stmtIdx1 = { 1 };
-	StmtIndex stmtIdx2 = { 2 };
-	StmtIndex stmtIdx3 = { 3 };
-	StmtIndex stmtIdx4 = { 4 };
-	StmtIndex stmtIdx5 = { 5 };
+	StmtIndex predecessor1 = { 1 };
+	StmtIndex predecessor2 = { 2 };
+	StmtIndex successor1 = { 3 };
+	StmtIndex successor2 = { 4 };
 
-	TEST_METHOD_CLEANUP(cleanUpFollowsT) {
-		Follows::performCleanUp();
-		FollowsT::performCleanUp();
+	FollowsT* followsT;
+
+	TEST_METHOD_INITIALIZE(init) {
+		followsT = new FollowsT();
 	}
 
 public:
-	TEST_METHOD(populate_getFromLeftArg_branched) {
-		std::vector<StmtIndex> followsTExpAns{ stmtIdx2, stmtIdx3, stmtIdx4, stmtIdx5 };
+	TEST_METHOD(insert_getFromLeftArg_onePredOneSuc) {
+		followsT->insert(predecessor1, successor1);
+		followsT->insert(predecessor2, successor2);
 
-		Follows::insert(stmtIdx1, stmtIdx2);
-		Follows::insert(stmtIdx1, stmtIdx5);
-		Follows::insert(stmtIdx2, stmtIdx3);
-		Follows::insert(stmtIdx2, stmtIdx4);
-		FollowsT::populate();
+		auto statements = followsT->getFromLeftArg(predecessor1);
+		Assert::IsTrue(std::vector<StmtIndex> { successor1 } == statements);
 
-		auto followsTStmts = FollowsT::getFromLeftArg(stmtIdx1);
-		Assert::IsTrue(followsTExpAns == followsTStmts);
+		statements = followsT->getFromLeftArg(predecessor2);
+		Assert::IsTrue(std::vector<StmtIndex> { successor2 } == statements);
 
-		auto followsTEmptyStmts = FollowsT::getFromLeftArg(stmtIdx5);
-		Assert::IsTrue(0 == followsTEmptyStmts.size());
-
-		/* Check ParentT data does not get affected */
-		auto parentTStmts = ParentT::getFromLeftArg(stmtIdx1);
-		Assert::IsTrue(0 == parentTStmts.size());
-		ParentT::performCleanUp();
+		statements = followsT->getFromLeftArg(successor1);
+		Assert::IsTrue(0 == statements.size());
 	};
 
-	TEST_METHOD(populate_getFromLeftArg_linear) {
-		std::vector<StmtIndex> followsTExpAns{ stmtIdx1, stmtIdx2, stmtIdx3, stmtIdx4 };
+	TEST_METHOD(insert_getFromLeftArg_onePredMultSuc) {
+		followsT->insert(predecessor1, successor1);
+		followsT->insert(predecessor1, successor2);
 
-		Follows::insert(stmtIdx1, stmtIdx2);
-		Follows::insert(stmtIdx2, stmtIdx3);
-		Follows::insert(stmtIdx3, stmtIdx4);
-		Follows::insert(stmtIdx5, stmtIdx1);
-		FollowsT::populate();
+		auto statements = followsT->getFromLeftArg(predecessor1);
+		Assert::IsTrue(std::vector<StmtIndex> { successor1, successor2 } == statements);
 
-		auto followsTStmts = FollowsT::getFromLeftArg(stmtIdx5);
-		Assert::IsTrue(followsTExpAns == followsTStmts);
-
-		auto followsTEmptyStmts = FollowsT::getFromLeftArg(stmtIdx4);
-		Assert::IsTrue(0 == followsTEmptyStmts.size());
-
-		/* Check ParentT data does not get affected */
-		auto parentTStmts = ParentT::getFromLeftArg(stmtIdx5);
-		Assert::IsTrue(0 == parentTStmts.size());
-		ParentT::performCleanUp();
+		statements = followsT->getFromLeftArg(successor1);
+		Assert::IsTrue(0 == statements.size());
 	};
 
-	TEST_METHOD(populate_getFromRightArg_branched) {
-		std::vector<StmtIndex> followsTExpAns{ stmtIdx4, stmtIdx2, stmtIdx1 };
+	TEST_METHOD(insert_getFromRightArg_onePredOneSuc) {
+		followsT->insert(predecessor1, successor1);
+		followsT->insert(predecessor2, successor2);
 
-		Follows::insert(stmtIdx1, stmtIdx2);
-		Follows::insert(stmtIdx2, stmtIdx3);
-		Follows::insert(stmtIdx2, stmtIdx4);
-		Follows::insert(stmtIdx4, stmtIdx5);
-		FollowsT::populate();
+		auto statements = followsT->getFromRightArg(successor1);
+		Assert::IsTrue(std::vector<StmtIndex> {predecessor1} == statements);
 
-		auto followsTStmts = FollowsT::getFromRightArg(stmtIdx5);
-		Assert::IsTrue(followsTExpAns == followsTStmts);
+		statements = followsT->getFromRightArg(successor2);
+		Assert::IsTrue(std::vector<StmtIndex> {predecessor2} == statements);
 
-		auto followsTEmptyStmts = FollowsT::getFromRightArg(stmtIdx1);
-		Assert::IsTrue(0 == followsTEmptyStmts.size());
-
-		/* Check ParentTs data does not get affected */
-		auto parentTStmts = ParentT::getFromRightArg(stmtIdx5);
-		Assert::IsTrue(0 == parentTStmts.size());
-		ParentT::performCleanUp();
+		statements = followsT->getFromRightArg(predecessor1);
+		Assert::IsTrue(0 == statements.size());
 	};
 
-	TEST_METHOD(populate_getFromRightArg_linear) {
-		std::vector<StmtIndex> followsTExpAns{ stmtIdx3, stmtIdx2, stmtIdx1, stmtIdx5 };
+	TEST_METHOD(insert_getFromRightArg_multPredOneSuc) {
+		std::vector<StmtIndex> expectedAns{ predecessor1, predecessor2 };
 
-		Follows::insert(stmtIdx1, stmtIdx2);
-		Follows::insert(stmtIdx2, stmtIdx3);
-		Follows::insert(stmtIdx3, stmtIdx4);
-		Follows::insert(stmtIdx5, stmtIdx1);
-		FollowsT::populate();
+		followsT->insert(predecessor1, successor1);
+		followsT->insert(predecessor2, successor1);
+		auto statements = followsT->getFromRightArg(successor1);
+		Assert::IsTrue(std::vector<StmtIndex> { predecessor1, predecessor2 } == statements);
 
-		auto followsTStmts = FollowsT::getFromRightArg(stmtIdx4);
-		Assert::IsTrue(followsTExpAns == followsTStmts);
-
-		auto followsTEmptyStmts = FollowsT::getFromRightArg(stmtIdx5);
-		Assert::IsTrue(0 == followsTEmptyStmts.size());
-
-		/* Check ParentTs data does not get affected */
-		auto parentTStmts = ParentT::getFromRightArg(stmtIdx4);
-		Assert::IsTrue(0 == parentTStmts.size());
-		ParentT::performCleanUp();
+		statements = followsT->getFromRightArg(predecessor1);
+		Assert::IsTrue(0 == statements.size());
 	};
 
-	TEST_METHOD(contains) {
-		Follows::insert(stmtIdx1, stmtIdx2);
-		Follows::insert(stmtIdx2, stmtIdx3);
-		Follows::insert(stmtIdx2, stmtIdx4);
-		FollowsT::populate();
+	TEST_METHOD(insert_contains_onePredOneSuc) {
+		followsT->insert(predecessor1, successor1);
 
-		Assert::IsTrue(FollowsT::contains(stmtIdx1, stmtIdx4));
-		Assert::IsFalse(FollowsT::contains(stmtIdx4, stmtIdx1));
-		Assert::IsFalse(FollowsT::contains(stmtIdx3, stmtIdx4)); /* siblings */
+		Assert::IsTrue(followsT->contains(predecessor1, successor1));
+		Assert::IsFalse(followsT->contains(successor1, predecessor1));
+		Assert::IsFalse(followsT->contains(predecessor2, successor1));
+		Assert::IsFalse(followsT->contains(predecessor1, successor2));
 	};
 
-	TEST_METHOD(getAllInfo) {
-		std::vector<StmtIndex> followsTpredecessors{ stmtIdx2, stmtIdx1, stmtIdx1 };
-		std::vector<StmtIndex> followsTsuccessors{ stmtIdx3, stmtIdx2, stmtIdx3 };
-		std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> followsTExpAns =
-			std::make_tuple(followsTpredecessors, followsTsuccessors);
+	TEST_METHOD(insert_contains_onePredMultSuc) {
+		followsT->insert(predecessor1, successor1);
+		followsT->insert(predecessor1, successor2);
 
-		Follows::insert(stmtIdx1, stmtIdx2);
-		Follows::insert(stmtIdx2, stmtIdx3);
-		FollowsT::populate();
-
-		auto followsTInfo = FollowsT::getAllInfo();
-		Assert::IsTrue(followsTExpAns == followsTInfo);
+		Assert::IsTrue(followsT->contains(predecessor1, successor1));
+		Assert::IsFalse(followsT->contains(successor1, predecessor1));
+		Assert::IsFalse(followsT->contains(predecessor2, successor1));
+		Assert::IsTrue(followsT->contains(predecessor1, successor2));
 	};
 
-	TEST_METHOD(getPredSucTable) {
-		std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> followsTExpAns;
-		followsTExpAns[stmtIdx1].insert(stmtIdx2);
-		followsTExpAns[stmtIdx1].insert(stmtIdx3);
-		followsTExpAns[stmtIdx2].insert(stmtIdx3);
+	TEST_METHOD(insert_getAllInfo_onePredOneSuc) {
+		std::vector<StmtIndex> predecessors{ predecessor1, predecessor2 };
+		std::vector<StmtIndex> successors{ successor1, successor2 };
+		std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> expectedAns = std::make_tuple(predecessors, successors);
 
-		Follows::insert(stmtIdx1, stmtIdx2);
-		Follows::insert(stmtIdx2, stmtIdx3);
-		FollowsT::populate();
+		followsT->insert(predecessor1, successor1);
+		followsT->insert(predecessor2, successor2);
 
-		auto followsTTable = FollowsT::getPredSucTable();
-		Assert::IsTrue(followsTExpAns == followsTTable);
+		auto predSucInfo = followsT->getAllInfo();
+		Assert::IsTrue(expectedAns == predSucInfo);
+	};
+
+	TEST_METHOD(insert_getAllInfo_onePredMultSuc) {
+		std::vector<StmtIndex> predecessors{ predecessor1, predecessor1 };
+		std::vector<StmtIndex> successors{ successor1, successor2 };
+		std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> expectedAns = std::make_tuple(predecessors, successors);
+
+		followsT->insert(predecessor1, successor1);
+		followsT->insert(predecessor1, successor2);
+
+		auto predSucInfo = followsT->getAllInfo();
+		Assert::IsTrue(expectedAns == predSucInfo);
+	};
+
+	TEST_METHOD(insert_getAllInfo_multPredOneSuc) {
+		std::vector<StmtIndex> predecessors{ predecessor1, predecessor2 };
+		std::vector<StmtIndex> successors{ successor1, successor1 };
+		std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> expectedAns = std::make_tuple(predecessors, successors);
+
+		followsT->insert(predecessor1, successor1);
+		followsT->insert(predecessor2, successor1);
+
+		auto predSucInfo = followsT->getAllInfo();
+		Assert::IsTrue(expectedAns == predSucInfo);
 	};
 	};
-};
+}

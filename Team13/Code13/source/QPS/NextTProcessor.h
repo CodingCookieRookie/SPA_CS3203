@@ -1,14 +1,12 @@
 #pragma once
 
-#include "./CFGProcessor.h"
-#include "./CacheStorage.h"
-#include "../PKB/Next.h"
+#include "./OnTheFlyRSProcessor.h"
 
-class NextTProcessor : public CFGProcessor {
+class NextTProcessor : public OnTheFlyRSProcessor {
 protected:
 	NextTCache* nextTCache;
-	bool checkRsHoldsFromTraversal(StmtIndex leftIdx, StmtIndex rightIdx) override;
-	std::vector<StmtIndex> getStmtsFromComputationHelper(StmtIndex index,
+	bool checkRsHoldsFromTraversal(StmtIndex leftIdx, StmtIndex rightIdx, PKBGetter* pkbGetter) override;
+	std::vector<StmtIndex> computeStmtsFromIndex(StmtIndex index,
 		std::function<bool(StmtIndex)> checkIfFullyComputed,
 		std::function<std::vector<StmtIndex>(StmtIndex)> getSubsequentCacheStmts,
 		std::function<std::vector<StmtIndex>(StmtIndex&)> getSubsequentNextStmts,
@@ -17,9 +15,9 @@ protected:
 public:
 	NextTProcessor(NextTCache* nextTCache);
 	~NextTProcessor();
-	bool doesRsHold(StmtIndex leftIdx, StmtIndex rightIdx) override;
-	std::vector<StmtIndex> getUsingLeftStmtIndex(StmtIndex leftIdx) override;
-	std::vector<StmtIndex> getUsingRightStmtIndex(StmtIndex rightIdx) override;
-	std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> getAll() override;
+	bool doesRsHold(StmtIndex leftIdx, StmtIndex rightIdx, PKBGetter* pkbGetter) override;
+	std::vector<StmtIndex> getUsingLeftStmtIndex(StmtIndex leftIdx, PKBGetter* pkbGetter) override;
+	std::vector<StmtIndex> getUsingRightStmtIndex(StmtIndex rightIdx, PKBGetter* pkbGetter) override;
+	std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> getAll(PKBGetter* pkbGetter) override;
 	void performCleanUp() override;
 };

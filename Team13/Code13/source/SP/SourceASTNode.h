@@ -20,11 +20,26 @@ Declared here to avoid circular dependency with RsEntitiesMapsTypes.h. */
 typedef std::vector<StmtNode*> StmtNodes;
 
 struct RelationshipMaps {
-	FollowsMap followsMap;
-	ModifiesMap modifiesMap;
-	UsesMap usesMap;
-	ParentChildMap parentChildMap;
-	CallStmtProcCalledMap callStmtProcCalledMap;
+	/* Maps prevIndex to the stmtIndex that follows the former */
+	RelationshipMap followsMap;
+
+	/* Maps stmtIndex to the variable that it modifies */
+	RelationshipMap modifiesMap;
+
+	/* Maps stmtIndex to the variables that it uses */
+	RelationshipMap usesMap;
+
+	/* Maps parent's stmtIndex to its children's stmtIndices */
+	RelationshipMap parentChildMap;
+
+	/* Maps call stmtIndex to the procIndex that it calls */
+	RelationshipMap callStmtToProcIndexCalledMap;
+
+	/* Maps procIndex of a call stmt to the procIndex that it calls */
+	RelationshipMap procIndexCallerToProcIndexCalledMap;
+
+	/* Intermediate map that maps call stmtIndex to the procedure name that it calls */
+	std::unordered_map<StmtIndex, std::string> callStmtToProcNameCalledMap;
 };
 
 struct EntityMaps {
@@ -32,10 +47,12 @@ struct EntityMaps {
 	StmtTypeMap stmtTypeMap;
 	PatternMap patternMap;
 	ConstSet constSet;
-	ProcNameIndexMap procNameIndexMap;
-	ProcNames procNames;
+	ProcNameToIndexMap procNameToIndexMap;
+	SortedProcIndexToNameMap sortedProcIndexToNameMap;
 	ProcStmtMap procStmtMap;
 	StmtProcMap stmtProcMap;
+	VarNameToIndexMap varNameToIndexMap;
+	SortedVarIndexToNameMap sortedVarIndexToNameMap;
 };
 
 class SourceASTNode {
@@ -77,7 +94,26 @@ public:
 	/* Returns the name value attribute of a StmtNode */
 	virtual std::string getNameValue();
 
+	virtual void process(RelationshipMaps& relationshipMaps, EntityMaps& entityMaps) = 0;
+	void process(StmtIndex prevIndex, RelationshipMaps& relationshipMaps, EntityMaps& entityMaps);
+
 	StmtIndex getStmtIdx();
+
+	/* Populates entities */
+	void bidirectionalPopulateVarNameAndIndex(
+		VarNameToIndexMap& varNameToIndexMap,
+		SortedVarIndexToNameMap& sortedVarIndexToNameMap,
+		std::unordered_set<std::string> varNames);
+	void populateConsts(ConstSet& constSet);
+	void populatePattern(PatternMap& patternMap);
+	void populateStmtType(StmtTypeMap& stmtTypeMap);
+	void populateStmtNodes(StmtNodes& stmtNode);
+
+	/* Populates Uses and Modifies */
+	void populateRS1(RelationshipMap& rsMap, EntityMaps& entityMaps, std::unordered_set<std::string>& varNames);
+
+	/* Populates Follows, Parent, and Calls */
+	void populateRS2(RelationshipMap& rsMap, SynonymIndex predecessor, std::unordered_set<SynonymIndex> successors);
 };
 
 class ReadNode : public StmtNode {
@@ -171,16 +207,21 @@ public:
 	void process(RelationshipMaps& relationshipMaps, EntityMaps& entityMaps) override;
 
 	std::vector<StmtNode*> getStmtNodes();
-	std::vector<StmtIndex> getDirectStmtNodeIndices();
-	std::vector<StmtIndex> getAllStmtNodeIndices();
+	std::unordered_set<StmtIndex> getDirectStmtNodeIndices();
+	std::unordered_set<StmtIndex> getAllStmtNodeIndices();
 };
 
 class ProcedureNode : public SourceASTNode {
 private:
 	std::string procName;
 	StmtLstNode* stmtLstNode;
+	ProcIndex procIndex;
+
+	void bidirectionalPopulateProcAndStmt(ProcStmtMap& procStmtMap, StmtProcMap& stmtProcMap, std::unordered_set<StmtIndex>& stmtIndices);
+	void bidirectionalPopulateProcNameAndIndex(ProcNameToIndexMap& procNameToIndexMap, SortedProcIndexToNameMap& sortedProcIndexToNameMap);
 public:
 	ProcedureNode(std::string procName);
+	void setProcIndex(ProcIndex procIndex);
 	void addStmtLst(StmtLstNode* stmtLstNode);
 	void process(RelationshipMaps& relationshipMaps, EntityMaps& entityMaps) override;
 

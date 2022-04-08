@@ -4,22 +4,24 @@
 #include <algorithm>
 #include <string>
 
-#include "../source/PKB/Follows.h"
-#include "../source/PKB/FollowsT.h"
-#include "../source/PKB/RS2.h"
 #include "../source/QPS/PQLEvaluator.h"
+#include "../source/PKB/PKBInserter.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting {
 	TEST_CLASS(TestFollowsTInstructions) {
 private:
-	TEST_METHOD_CLEANUP(cleanUpTables) {
-		Attribute::performCleanUp();
-		Entity::performCleanUp();
-		Follows::performCleanUp();
-		FollowsT::performCleanUp();
+	PKB* pkb;
+	PKBGetter* pkbGetter;
+	PKBInserter* pkbInserter;
+
+	TEST_METHOD_INITIALIZE(init) {
+		pkb = new PKB();
+		pkbGetter = new PKBGetter(pkb);
+		pkbInserter = new PKBInserter(pkb);
 	}
+
 public:
 
 	TEST_METHOD(executeFollowsStarInstruction_twoConstants_evaluatedTableTrue) {
@@ -28,7 +30,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "1");
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "4");
-		Instruction* instruction = new FollowsStarInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new FollowsStarInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{};
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -36,13 +38,14 @@ public:
 		// PKB inserts 4 statements, 3 Follows
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 4; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::ASSIGN_TYPE));
 		}
 
-		Follows::insert(stmts[0], stmts[1]);
-		Follows::insert(stmts[1], stmts[2]);
-		Follows::insert(stmts[1], stmts[3]);
-		FollowsT::populate();
+		pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[0], stmts[1]);
+		pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[1], stmts[2]);
+		pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[1], stmts[3]);
+		pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[2], stmts[3]);
+		pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[0], stmts[3]);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -57,7 +60,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "2");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s2");
-		Instruction* instruction = new FollowsStarInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new FollowsStarInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "s2" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -65,13 +68,14 @@ public:
 		// PKB inserts 4 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 4; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::ASSIGN_TYPE));
 		}
-
-		Follows::insert(stmts[0], stmts[1]);
-		Follows::insert(stmts[1], stmts[2]);
-		Follows::insert(stmts[1], stmts[3]);
-		FollowsT::populate();
+		pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[0], stmts[1]);
+		pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[1], stmts[2]);
+		pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[0], stmts[2]);
+		pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[1], stmts[2]);
+		pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[0], stmts[3]);
+		pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[1], stmts[3]);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -95,7 +99,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "4");
-		Instruction* instruction = new FollowsStarInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new FollowsStarInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "s1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -103,14 +107,15 @@ public:
 		// PKB inserts 4 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 4; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::ASSIGN_TYPE));
 		}
 
-		Follows::insert(stmts[0], stmts[1]);
-		Follows::insert(stmts[1], stmts[2]);
-		Follows::insert(stmts[1], stmts[3]);
-		Follows::insert(stmts[2], stmts[3]);
-		FollowsT::populate();
+		pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[0], stmts[1]);
+		pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[1], stmts[2]);
+
+		pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[0], stmts[3]);
+		pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[1], stmts[3]);
+		pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[2], stmts[3]);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -140,23 +145,23 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s2");
-		Instruction* instruction = new FollowsStarInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new FollowsStarInstruction(lhsRef, rhsRef, pkbGetter);
 
-		std::unordered_set<std::string> expectedSynonyms{ "s1", "s2"};
+		std::unordered_set<std::string> expectedSynonyms{ "s1", "s2" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts 4 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 4; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::ASSIGN_TYPE));
 		}
 
-		Follows::insert(stmts[0], stmts[1]);
-		Follows::insert(stmts[0], stmts[2]);
-		Follows::insert(stmts[1], stmts[2]);
-		Follows::insert(stmts[1], stmts[3]);
-		Follows::insert(stmts[2], stmts[3]);
-		FollowsT::populate();
+		pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[0], stmts[1]);
+		pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[0], stmts[2]);
+		pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[0], stmts[3]);
+		pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[1], stmts[2]);
+		pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[1], stmts[3]);
+		pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[2], stmts[3]);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -194,22 +199,22 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s2");
-		Instruction* instruction = new FollowsStarInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new FollowsStarInstruction(lhsRef, rhsRef, pkbGetter);
 
-		std::unordered_set<std::string> expectedSynonyms{ "s1", "s2"};
+		std::unordered_set<std::string> expectedSynonyms{ "s1", "s2" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
 
 		// PKB inserts 19 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 19; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::ASSIGN_TYPE));
 		}
 
-		for (int i = 0; i < 18; i++) {
-			Follows::insert(stmts[i], stmts[i + 1]);
+		for (int i = 0; i < 19; i++) {
+			for (int j = i + 1; j < 19; j++) {
+				pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[i], stmts[j]); // i parents i + 1, simulate 19 nesting levels
+			}
 		}
-		FollowsT::populate();
-
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
 
@@ -261,7 +266,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
-		Instruction* instruction = new FollowsStarInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new FollowsStarInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "s1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -269,13 +274,14 @@ public:
 		// PKB inserts 19 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 19; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::ASSIGN_TYPE));
 		}
 
-		for (int i = 0; i < 18; i++) {
-			Follows::insert(stmts[i], stmts[i + 1]);
+		for (int i = 0; i < 19; i++) {
+			for (int j = i + 1; j < 19; j++) {
+				pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[i], stmts[j]); // i parents i + 1, simulate 19 nesting levels
+			}
 		}
-		FollowsT::populate();
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();
@@ -318,7 +324,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
-		Instruction* instruction = new FollowsStarInstruction(lhsRef, rhsRef);
+		Instruction* instruction = new FollowsStarInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{};
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -326,15 +332,14 @@ public:
 		// PKB inserts 3 statements
 		std::vector<StmtIndex> stmts;
 		for (int i = 0; i < 4; i++) {
-			stmts.emplace_back(Entity::insertStmt(StatementType::ASSIGN_TYPE));
+			stmts.emplace_back(pkbInserter->insertStmt(StatementType::ASSIGN_TYPE));
 		}
 
-		Follows::insert(stmts[0], stmts[1]);
-		Follows::insert(stmts[0], stmts[2]);
-		Follows::insert(stmts[1], stmts[2]);
-		Follows::insert(stmts[1], stmts[3]);
-		Follows::insert(stmts[2], stmts[3]);
-		FollowsT::populate();
+		pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[0], stmts[1]);
+		pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[0], stmts[2]);
+		pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[1], stmts[2]);
+		pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[1], stmts[3]);
+		pkbInserter->insertRSInfo(RelationshipType::FOLLOWS_T, stmts[2], stmts[3]);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();

@@ -1,10 +1,7 @@
 #include "NextStarInstruction.h"
 
-NextStarInstruction::NextStarInstruction(PqlReference lhsRef, PqlReference rhsRef, CFGProcessor* nextTProcessor) {
-	this->lhsRef = lhsRef;
-	this->rhsRef = rhsRef;
-	this->nextTProcessor = nextTProcessor;
-}
+NextStarInstruction::NextStarInstruction(PqlReference lhsRef, PqlReference rhsRef, NextTProcessor* nextTProcessor, PKBGetter* pkbGetter) :
+	RelationshipInstruction(lhsRef, rhsRef, nextTProcessor, pkbGetter) {}
 
 EvaluatedTable NextStarInstruction::execute() {
 	EvaluatedTable resultTable;
@@ -46,16 +43,16 @@ EvaluatedTable NextStarInstruction::helperHandleTwoIntegers() {
 	bool evResult = false;
 	int lhsRefValue = stoi(lhsRef.second);
 	int rhsRefValue = stoi(rhsRef.second);
-	if (Entity::containsStmt(lhsRefValue) && Entity::containsStmt(rhsRefValue)) {
+	if (pkbGetter->containsStmt(lhsRefValue) && pkbGetter->containsStmt(rhsRefValue)) {
 		lhsStmtIndex = StmtIndex(lhsRefValue);
 		rhsStmtIndex = StmtIndex(rhsRefValue);
-		evResult = nextTProcessor->doesRsHold(lhsStmtIndex, rhsStmtIndex);
+		evResult = nextTProcessor->doesRsHold(lhsStmtIndex, rhsStmtIndex, pkbGetter);
 	}
 	return EvaluatedTable(evResult);
 }
 
 EvaluatedTable NextStarInstruction::helperHandleOneInt(PqlReferenceType lhsRefType, PqlReferenceType rhsRefType) {
-	std::vector<StmtIndex> stmts = Entity::getAllStmts();
+	std::vector<StmtIndex> stmts = pkbGetter->getAllStmts();
 	std::vector<int> results;
 	int oneInt;
 	std::string otherSynonym;
@@ -65,12 +62,12 @@ EvaluatedTable NextStarInstruction::helperHandleOneInt(PqlReferenceType lhsRefTy
 		oneInt = stoi(rhsRef.second);
 	}
 	/* Handle one integer results */
-	if (Entity::containsStmt(oneInt)) { /* e.g. checks if STMT 6 exists, if not, return empty results */
+	if (pkbGetter->containsStmt(oneInt)) { /* e.g. checks if STMT 6 exists, if not, return empty results */
 		StmtIndex oneIntIndex = StmtIndex(oneInt);
 		if (lhsRefType == PqlReferenceType::INTEGER) { /* e.g {7} if 6 is a Next* of some s2 (e.g. 7) */
-			results = nextTProcessor->getUsingLeftStmtIndex(oneIntIndex);
+			results = nextTProcessor->getUsingLeftStmtIndex(oneIntIndex, pkbGetter);
 		} else { /* e.g {6} if some s1 (e.g. 6) is a Next* of 7 */
-			results = nextTProcessor->getUsingRightStmtIndex(oneIntIndex);
+			results = nextTProcessor->getUsingRightStmtIndex(oneIntIndex, pkbGetter);
 		}
 	}
 	/* Handle final output, wildcards => boolean, synonyms => table */
@@ -94,7 +91,7 @@ EvaluatedTable NextStarInstruction::helperHandleTwoStmtsMaybeWildcard() {
 	std::tuple<std::vector<int>, std::vector<int>> results;
 	/* e.g. {1, 2}, {2, 3}, {3, 6} */
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
-	results = nextTProcessor->getAll();
+	results = nextTProcessor->getAll(pkbGetter);
 	if (lhsRef.second == rhsRef.second) { /* Special case: Next(s1, s1) has a legitimate result */
 		std::vector<int> lhsResults = std::get<0>(results);
 		std::vector<int> rhsResults = std::get<1>(results);
@@ -118,7 +115,7 @@ EvaluatedTable NextStarInstruction::helperHandleTwoStmtsMaybeWildcard() {
 
 EvaluatedTable NextStarInstruction::helperHandleTwoWildcards() {
 	bool isEmptyTable = true;
-	isEmptyTable = std::get<0>(nextTProcessor->getAll()).empty();
+	isEmptyTable = std::get<0>(nextTProcessor->getAll(pkbGetter)).empty();
 	// No Next rs exists => isEmptyTable == true => EvTable.evResult == false (innerJoinMerge() can drop table)
 	// Next rs exists => isEmptyTable == false => EvTable.evResult == true (innerJoinMerge() can merge dummy table, preserving all rows)
 	return EvaluatedTable(!isEmptyTable);

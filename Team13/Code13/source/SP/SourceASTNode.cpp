@@ -62,16 +62,76 @@ std::string StmtNode::getNameValue() {
 	return std::string();
 }
 
+void StmtNode::process(StmtIndex prevIndex, RelationshipMaps& relationshipMaps, EntityMaps& entityMaps) {
+	populateStmtNodes(entityMaps.stmtNodes);
+
+	process(relationshipMaps, entityMaps);
+
+	/* StmtType */
+	populateStmtType(entityMaps.stmtTypeMap);
+
+	/* Follows */
+	StmtIndex currIndex = getStmtIdx();
+	if (!(prevIndex == StmtIndex())) {
+		populateRS2(relationshipMaps.followsMap, prevIndex, { currIndex });
+	}
+}
+
 StmtIndex StmtNode::getStmtIdx() {
 	return stmtIdx;
+}
+
+void StmtNode::bidirectionalPopulateVarNameAndIndex(
+	VarNameToIndexMap& varNameToIndexMap,
+	SortedVarIndexToNameMap& sortedVarIndexToNameMap,
+	std::unordered_set<std::string> varNames) {
+	for (const std::string varName : varNames) {
+		VarIndex varIndex = varNameToIndexMap.size() + 1;
+
+		/* Only bidirectionally populate the maps for unique varName */
+		if (varNameToIndexMap.count(varName) <= 0) {
+			varNameToIndexMap[varName] = varIndex;
+			sortedVarIndexToNameMap[varIndex] = varName;
+		}
+	}
+}
+
+void StmtNode::populateConsts(ConstSet& constSet) {
+	std::unordered_set<std::string> consts = getUsesConsts();
+	constSet.insert(consts.begin(), consts.end());
+}
+
+void StmtNode::populateStmtNodes(StmtNodes& stmtNodes) {
+	stmtNodes.push_back(this);
+}
+
+void StmtNode::populatePattern(PatternMap& patternMap) {
+	patternMap[getStmtIdx()] = getPattern();
+}
+
+void StmtNode::populateStmtType(StmtTypeMap& stmtTypeMap) {
+	stmtTypeMap[getStmtIdx()] = getStmtType();
+}
+
+void StmtNode::populateRS1(RelationshipMap& rsMap, EntityMaps& entityMaps, std::unordered_set<std::string>& varNames) {
+	bidirectionalPopulateVarNameAndIndex(entityMaps.varNameToIndexMap, entityMaps.sortedVarIndexToNameMap, varNames);
+
+	for (const std::string varName : varNames) {
+		VarIndex varIndex = entityMaps.varNameToIndexMap[varName];
+		rsMap[getStmtIdx()].insert(varIndex);
+	}
+}
+
+void StmtNode::populateRS2(RelationshipMap& rsMap, SynonymIndex predecessor, std::unordered_set<SynonymIndex> successors) {
+	rsMap[predecessor].insert(successors.begin(), successors.end());
 }
 
 /* ReadNode */
 ReadNode::ReadNode(std::string varName, StmtIndex stmtIdx) : StmtNode(stmtIdx), varName(varName) {}
 
 void ReadNode::process(RelationshipMaps& relationshipMaps, EntityMaps& entityMaps) {
-	/* Modifies */
-	relationshipMaps.modifiesMap[getStmtIdx()] = varName;
+	/* Read stmt modifies the var it's reading */
+	populateRS1(relationshipMaps.modifiesMap, entityMaps, getModifiesVars());
 }
 
 StatementType ReadNode::getStmtType() {
@@ -90,8 +150,8 @@ std::string ReadNode::getNameValue() {
 PrintNode::PrintNode(std::string varName, StmtIndex stmtIdx) : StmtNode(stmtIdx), varName(varName) {}
 
 void PrintNode::process(RelationshipMaps& relationshipMaps, EntityMaps& entityMaps) {
-	/* Uses vars */
-	relationshipMaps.usesMap[getStmtIdx()] = getUsesVars();
+	/* Print stmt uses the var it's printing */
+	populateRS1(relationshipMaps.usesMap, entityMaps, getUsesVars());
 }
 
 StatementType PrintNode::getStmtType() {
@@ -110,22 +170,20 @@ std::string PrintNode::getNameValue() {
 AssignNode::AssignNode(std::string varName, ExprNode* expr, StmtIndex stmtIdx) : StmtNode(stmtIdx), varName(varName), expr(expr) {}
 
 void AssignNode::process(RelationshipMaps& relationshipMaps, EntityMaps& entityMaps) {
-	StmtIndex stmtIndex = getStmtIdx();
-	/* Modifies */
-	relationshipMaps.modifiesMap[stmtIndex] = varName;
+	/* Assign stmt modifies the var on its LHS */
+	populateRS1(relationshipMaps.modifiesMap, entityMaps, getModifiesVars());
 
-	/* Uses vars */
+	/* Assign stmt uses the var(s) on its RHS */
 	std::unordered_set<std::string> usesVars = getUsesVars();
 	if (!usesVars.empty()) {
-		relationshipMaps.usesMap[stmtIndex] = usesVars;
+		populateRS1(relationshipMaps.usesMap, entityMaps, getUsesVars());
 	}
 
 	/* Pattern */
-	entityMaps.patternMap[stmtIndex] = getPattern();
+	populatePattern(entityMaps.patternMap);
 
 	/* Const */
-	std::unordered_set<std::string> usesConsts = getUsesConsts();
-	entityMaps.constSet.insert(usesConsts.begin(), usesConsts.end());
+	populateConsts(entityMaps.constSet);
 }
 
 StatementType AssignNode::getStmtType() {
@@ -157,25 +215,24 @@ ContainerNode::ContainerNode(ExprNode* condExpr, std::vector<StmtLstNode*> child
 
 void ContainerNode::process(RelationshipMaps& relationshipMaps, EntityMaps& entityMaps) {
 	StmtIndex stmtIndex = getStmtIdx();
+	std::unordered_set<StmtIndex> childIndices;
 	for (StmtLstNode* stmtLstNode : getChildStmtLst()) {
 		stmtLstNode->process(relationshipMaps, entityMaps);
-
-		/* Parent */
-		std::vector<StmtIndex> childIndices = stmtLstNode->getDirectStmtNodeIndices();
-		for (StmtIndex childIndex : childIndices) {
-			relationshipMaps.parentChildMap[stmtIndex].push_back(childIndex);
-		}
+		std::unordered_set<StmtIndex> stmtLstNodeIndices = stmtLstNode->getDirectStmtNodeIndices();
+		childIndices.insert(stmtLstNodeIndices.begin(), stmtLstNodeIndices.end());
 	}
 
-	/* Uses */
-	relationshipMaps.usesMap[stmtIndex] = getUsesVars();
+	/* Container stmt uses the var(s) in its condition expr */
+	populateRS1(relationshipMaps.usesMap, entityMaps, getUsesVars());
+
+	/* Parent */
+	populateRS2(relationshipMaps.parentChildMap, stmtIndex, childIndices);
 
 	/* Pattern */
-	entityMaps.patternMap[stmtIndex] = getPattern();
+	populatePattern(entityMaps.patternMap);
 
 	/* Const */
-	std::unordered_set<std::string> usesConsts = getUsesConsts();
-	entityMaps.constSet.insert(usesConsts.begin(), usesConsts.end());
+	populateConsts(entityMaps.constSet);
 }
 
 ExprNode* ContainerNode::getCondExpr() {
@@ -216,8 +273,10 @@ StatementType IfNode::getStmtType() {
 CallNode::CallNode(std::string procName, StmtIndex stmtIdx) : StmtNode(stmtIdx), procName(procName) {}
 
 void CallNode::process(RelationshipMaps& relationshipMaps, EntityMaps& entityMaps) {
-	/* Calls */
-	relationshipMaps.callStmtProcCalledMap[getStmtIdx()] = getProcCalled();
+	/* Stores Calls relationship in the intermediate map.
+	This is because the mapping of procName called to the procIndex called can only be done
+	after all procedures in the source program have been processed. */
+	relationshipMaps.callStmtToProcNameCalledMap[getStmtIdx()] = getProcCalled();
 }
 
 StatementType CallNode::getStmtType() {
@@ -242,19 +301,8 @@ void StmtLstNode::addStmtNode(StmtNode* stmtNode) {
 void StmtLstNode::process(RelationshipMaps& relationshipMaps, EntityMaps& entityMaps) {
 	StmtIndex prevIndex = 0;
 	for (StmtNode* stmtNode : getStmtNodes()) {
-		entityMaps.stmtNodes.push_back(stmtNode);
-
-		stmtNode->process(relationshipMaps, entityMaps);
-
-		/* StmtType */
-		entityMaps.stmtTypeMap[stmtNode->getStmtIdx()] = stmtNode->getStmtType();
-
-		/* Follows */
-		StmtIndex currIndex = stmtNode->getStmtIdx();
-		if (!(prevIndex == StmtIndex())) {
-			relationshipMaps.followsMap[prevIndex] = currIndex;
-		}
-		prevIndex = currIndex;
+		stmtNode->process(prevIndex, relationshipMaps, entityMaps);
+		prevIndex = stmtNode->getStmtIdx();
 	}
 }
 
@@ -262,23 +310,21 @@ std::vector<StmtNode*> StmtLstNode::getStmtNodes() {
 	return stmtNodes;
 }
 
-std::vector<StmtIndex> StmtLstNode::getDirectStmtNodeIndices() {
-	std::vector<StmtIndex> stmtNodeIndices;
+std::unordered_set<StmtIndex> StmtLstNode::getDirectStmtNodeIndices() {
+	std::unordered_set<StmtIndex> stmtNodeIndices;
 	for (StmtNode* stmtNode : getStmtNodes()) {
-		stmtNodeIndices.push_back(stmtNode->getStmtIdx());
+		stmtNodeIndices.insert(stmtNode->getStmtIdx());
 	}
 
 	return stmtNodeIndices;
 }
 
-std::vector<StmtIndex> StmtLstNode::getAllStmtNodeIndices() {
-	std::vector<StmtIndex> stmtNodeIndices;
+std::unordered_set<StmtIndex> StmtLstNode::getAllStmtNodeIndices() {
+	std::unordered_set<StmtIndex> stmtNodeIndices = getDirectStmtNodeIndices();
 	for (StmtNode* stmtNode : getStmtNodes()) {
-		stmtNodeIndices.push_back(stmtNode->getStmtIdx());
-
 		for (StmtLstNode* nestedStmtLstNode : stmtNode->getChildStmtLst()) {
-			std::vector<StmtIndex> nestedIndices = nestedStmtLstNode->getAllStmtNodeIndices();
-			stmtNodeIndices.insert(stmtNodeIndices.end(), nestedIndices.begin(), nestedIndices.end());
+			std::unordered_set<StmtIndex> nestedIndices = nestedStmtLstNode->getAllStmtNodeIndices();
+			stmtNodeIndices.insert(nestedIndices.begin(), nestedIndices.end());
 		}
 	}
 
@@ -286,8 +332,24 @@ std::vector<StmtIndex> StmtLstNode::getAllStmtNodeIndices() {
 }
 
 /* ProcedureNode */
-ProcedureNode::ProcedureNode(std::string procName) : SourceASTNode(), procName(procName) {
+ProcedureNode::ProcedureNode(std::string procName) : SourceASTNode(), procName(procName), procIndex(0) {
 	stmtLstNode = new StmtLstNode();
+}
+
+void ProcedureNode::bidirectionalPopulateProcAndStmt(ProcStmtMap& procStmtMap, StmtProcMap& stmtProcMap, std::unordered_set<StmtIndex>& stmtIndices) {
+	for (StmtIndex stmtIndex : stmtIndices) {
+		procStmtMap[procIndex].push_back(stmtIndex);
+		stmtProcMap[stmtIndex] = procIndex;
+	}
+}
+
+void ProcedureNode::bidirectionalPopulateProcNameAndIndex(ProcNameToIndexMap& procNameToIndexMap, SortedProcIndexToNameMap& sortedProcIndexToNameMap) {
+	procNameToIndexMap[procName] = procIndex;
+	sortedProcIndexToNameMap[procIndex] = procName;
+}
+
+void ProcedureNode::setProcIndex(ProcIndex procIndex) {
+	this->procIndex = procIndex;
 }
 
 void ProcedureNode::addStmtLst(StmtLstNode* stmtLstNode) {
@@ -297,20 +359,16 @@ void ProcedureNode::addStmtLst(StmtLstNode* stmtLstNode) {
 void ProcedureNode::process(RelationshipMaps& relationshipMaps, EntityMaps& entityMaps) {
 	getStmtLstNode()->process(relationshipMaps, entityMaps);
 
-	/* Bidirectional population of ProcStmtMap and StmtProcMap.
-	Note that procIndex starts with 1. */
+	/* Sets procIndex. Note that procIndex starts with 1. */
 	ProcIndex procIndex = entityMaps.procStmtMap.size() + 1;
-	std::vector<StmtIndex> stmtIndices = stmtLstNode->getAllStmtNodeIndices();
-	for (StmtIndex stmtIndex : stmtIndices) {
-		entityMaps.procStmtMap[procIndex].push_back(stmtIndex);
-		entityMaps.stmtProcMap[stmtIndex] = procIndex;
-	}
+	setProcIndex(procIndex);
 
-	/* ProcNameIndexMap */
-	entityMaps.procNameIndexMap[procName] = procIndex++;
+	/* Bidirectional population of ProcStmtMap and StmtProcMap.*/
+	std::unordered_set<StmtIndex> stmtIndices = stmtLstNode->getAllStmtNodeIndices();
+	bidirectionalPopulateProcAndStmt(entityMaps.procStmtMap, entityMaps.stmtProcMap, stmtIndices);
 
-	/* ProcNames */
-	entityMaps.procNames.push_back(procName);
+	/* Bidirectional population of ProcNameToIndex and ProcIndexToName */
+	bidirectionalPopulateProcNameAndIndex(entityMaps.procNameToIndexMap, entityMaps.sortedProcIndexToNameMap);
 }
 
 StmtLstNode* ProcedureNode::getStmtLstNode() {
@@ -331,6 +389,16 @@ void ProgramNode::addProcedure(ProcedureNode* procedureNode) {
 void ProgramNode::process() {
 	for (ProcedureNode* procedureNode : getProcedureNodes()) {
 		procedureNode->process(relationshipMaps, entityMaps);
+	}
+
+	/* For every call stmt, converts the name of the proc called to its index. Note that stmtIndex starts from 1 */
+	for (const auto& [stmtIndex, procNameCalled] : relationshipMaps.callStmtToProcNameCalledMap) {
+		StmtNode* stmtNode = entityMaps.stmtNodes[stmtIndex - 1];
+		ProcIndex procIndexCalled = entityMaps.procNameToIndexMap[procNameCalled];
+		stmtNode->populateRS2(relationshipMaps.callStmtToProcIndexCalledMap, stmtIndex, { procIndexCalled });
+
+		ProcIndex procIndexCaller = entityMaps.stmtProcMap[stmtNode->getStmtIdx()];
+		stmtNode->populateRS2(relationshipMaps.procIndexCallerToProcIndexCalledMap, procIndexCaller, { procIndexCalled });
 	}
 }
 

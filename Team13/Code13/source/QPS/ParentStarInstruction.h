@@ -4,12 +4,12 @@
 
 class ParentStarInstruction : public RelationshipInstruction {
 protected:
-	EvaluatedTable execute() override;
 	EvaluatedTable helperHandleTwoIntegers();
 	EvaluatedTable helperHandleOneInt(PqlReferenceType lhsRefType, PqlReferenceType rhsRefType);
 	EvaluatedTable helperHandleTwoStmtsMaybeWildcard();
 	EvaluatedTable helperHandleTwoWildcards();
 
 public:
-	ParentStarInstruction(PqlReference lhsRef, PqlReference rhsRef);
+	ParentStarInstruction(PqlReference lhsRef, PqlReference rhsRef, PKBGetter* pkbGetter);
+	EvaluatedTable execute() override;
 };

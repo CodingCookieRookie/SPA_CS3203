@@ -2,6 +2,8 @@
 
 PatternAssign::PatternAssign() {}
 
+PatternAssign::~PatternAssign() {}
+
 void PatternAssign::insertAssignInfo(VarIndex& varIdx, std::string& postFixExpression, StmtIndex& stmtIdx) {
 	assignedVarStmtBidirectionalTable.insert(varIdx, stmtIdx);
 	postfixExprStmtBidirectionalTable.insert(postFixExpression, stmtIdx);

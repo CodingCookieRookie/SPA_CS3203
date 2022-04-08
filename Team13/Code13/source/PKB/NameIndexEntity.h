@@ -1,58 +1,58 @@
 #pragma once
 
-#include <string>
-#include <vector>
-
-#include "../Common/Types.h"
-#include "./Attribute.h"
 #include "./BidirectionalTable/BidirectionalIndexTable.h"
+#include "./NameIndexEntityBase.h"
 
-template <EntityType entityType, typename Index>
-class NameIndexEntity {
+template <EntityType entityType>
+class NameIndexEntity : public NameIndexEntityBase {
 private:
-	BidirectionalIndexTable<Index> entityIdxBidirectionalTable;
+	BidirectionalIndexTable<NameIdxEntityIndex> entityIdxBidirectionalTable;
 
 public:
 	NameIndexEntity();
-	Index insert(std::string entityName);
-	bool contains(std::string& entityName);
-	std::string getName(Index idx);
-	Index getIndex(std::string entityName);
-	std::vector<Index> getAll();
+	~NameIndexEntity();
+	NameIdxEntityIndex insert(std::string entityName, Attribute* attribute) override;
+	bool contains(std::string& entityName) override;
+	std::string getName(NameIdxEntityIndex entityIdx) override;
+	NameIdxEntityIndex getIndex(std::string entityName) override;
+	std::vector<NameIdxEntityIndex> getAll() override;
 };
 
-template<EntityType entityType, typename Index>
-NameIndexEntity<entityType, Index>::NameIndexEntity() {};
+template<EntityType entityType>
+NameIndexEntity<entityType>::NameIndexEntity() {};
 
-template<EntityType entityType, typename Index>
-Index NameIndexEntity<entityType, Index>::insert(std::string entityName) {
-	NameIndex nameIdx = Attribute::insertNameValue(entityName);
+template<EntityType entityType>
+NameIndexEntity<entityType>::~NameIndexEntity() {};
+
+template<EntityType entityType>
+NameIdxEntityIndex NameIndexEntity<entityType>::insert(std::string entityName, Attribute* attribute) {
+	NameIndex nameIdx = attribute->insertNameValue(entityName);
 
 	if (!entityIdxBidirectionalTable.contains(entityName)) {
-		Index entityIdx = entityIdxBidirectionalTable.insert(entityName);
-		Attribute::insertNameIdxEntityByName(entityType, entityIdx, nameIdx);
+		NameIdxEntityIndex entityIdx = entityIdxBidirectionalTable.insert(entityName);
+		attribute->insertNameIdxEntityByName(entityType, entityIdx, nameIdx);
 		return entityIdx;
 	}
 
 	return entityIdxBidirectionalTable.getIndexFromString(entityName);
 }
 
-template <EntityType entityType, typename Index>
-bool NameIndexEntity<entityType, Index>::contains(std::string& entityName) {
+template <EntityType entityType>
+bool NameIndexEntity<entityType>::contains(std::string& entityName) {
 	return entityIdxBidirectionalTable.contains(entityName);
 }
 
-template<EntityType entityType, typename Index>
-std::string NameIndexEntity<entityType, Index>::getName(Index entityIdx) {
+template<EntityType entityType>
+std::string NameIndexEntity<entityType>::getName(NameIdxEntityIndex entityIdx) {
 	return entityIdxBidirectionalTable.getStringFromIndex(entityIdx);
 }
 
-template<EntityType entityType, typename Index>
-Index NameIndexEntity<entityType, Index>::getIndex(std::string entityName) {
+template<EntityType entityType>
+NameIdxEntityIndex NameIndexEntity<entityType>::getIndex(std::string entityName) {
 	return entityIdxBidirectionalTable.getIndexFromString(entityName);
 }
 
-template<EntityType entityType, typename Index>
-std::vector<Index> NameIndexEntity<entityType, Index>::getAll() {
+template<EntityType entityType>
+std::vector<NameIdxEntityIndex> NameIndexEntity<entityType>::getAll() {
 	return entityIdxBidirectionalTable.getAll();
 }

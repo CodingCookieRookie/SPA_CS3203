@@ -4,11 +4,6 @@
 #include <algorithm>
 #include <string>
 
-#include "../source/PKB/Follows.h"
-#include "../source/PKB/FollowsT.h"
-#include "../source/PKB/Parent.h"
-#include "../source/PKB/ParentT.h"
-#include "../source/PKB/RS2.h"
 #include "../source/QPS/PQLEvaluator.h"
 #include "../source/QPS/PQLParser.h"
 
@@ -17,14 +12,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace UnitTesting {
 	TEST_CLASS(TestPQLEvaluator) {
 private:
-	TEST_METHOD_CLEANUP(cleanUpTables) {
-		Attribute::performCleanUp();
-		Entity::performCleanUp();
-		FollowsT::performCleanUp();
-		Follows::performCleanUp();
-		ParentT::performCleanUp();
-		Parent::performCleanUp();
-	}
+
 public:
 
 	TEST_METHOD(evaluateQuery_declarationAndSelectOnly_designEntitiesExtracted) {

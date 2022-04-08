@@ -1,10 +1,11 @@
 #include "CallsInstruction.h"
 
-CallsInstruction::CallsInstruction(PqlReference lhsRef, PqlReference rhsRef) : RelationshipInstruction(lhsRef, rhsRef) {}
+CallsInstruction::CallsInstruction(PqlReference lhsRef, PqlReference rhsRef, PKBGetter* pkbGetter) :
+	RelationshipInstruction(lhsRef, rhsRef, pkbGetter) {}
 
 EvaluatedTable CallsInstruction::execute() {
 	EvaluatedTable evTable;
-	std::vector<ProcIndex> procs = Entity::getAllProcs();
+	std::vector<ProcIndex> procs = pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE);
 
 	/* e.g Calls/Calls*("first", "second") */
 	if (lhsRef.first == PqlReferenceType::IDENT && rhsRef.first == PqlReferenceType::IDENT) {
@@ -39,16 +40,16 @@ EvaluatedTable CallsInstruction::execute() {
 EvaluatedTable CallsInstruction::helperHandleTwoIdents() {
 	ProcIndex lhsProcIndex, rhsProcIndex;
 	bool evResult = false;
-	if (Entity::containsProc(lhsRef.second) && Entity::containsProc(rhsRef.second)) {
-		lhsProcIndex = Entity::getProcIdx(lhsRef.second);
-		rhsProcIndex = Entity::getProcIdx(rhsRef.second);
-		evResult = Calls::contains(lhsProcIndex, rhsProcIndex);
+	if (pkbGetter->containsNameIdxEntity(EntityType::PROCEDURE, lhsRef.second) && pkbGetter->containsNameIdxEntity(EntityType::PROCEDURE, rhsRef.second)) {
+		lhsProcIndex = pkbGetter->getNameIdxEntityIndex(EntityType::PROCEDURE, lhsRef.second);
+		rhsProcIndex = pkbGetter->getNameIdxEntityIndex(EntityType::PROCEDURE, rhsRef.second);
+		evResult = pkbGetter->getRSContainsInfo(RelationshipType::CALLS, lhsProcIndex, rhsProcIndex);
 	}
 	return EvaluatedTable(evResult); /* e.g evResult == true, if "first" calls "second" */
 }
 
 EvaluatedTable CallsInstruction::helperHandleOneIdent(PqlReferenceType lhsRefType, PqlReferenceType rhsRefType) {
-	std::vector<ProcIndex> procs = Entity::getAllProcs();
+	std::vector<ProcIndex> procs = pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE);
 	std::vector<int> results;
 	std::string oneIdent;
 	std::string otherSynonym;
@@ -58,19 +59,12 @@ EvaluatedTable CallsInstruction::helperHandleOneIdent(PqlReferenceType lhsRefTyp
 		oneIdent = rhsRef.second;
 	}
 	/* Handle one ident to proc results */
-	if (Entity::containsProc(oneIdent)) { /* e.g. checks if proc named "first" exists, if not, return empty results */
-		ProcIndex oneIdentRef = Entity::getProcIdx(oneIdent);
-		for (ProcIndex proc : procs) {
-			if (lhsRefType == PqlReferenceType::IDENT) {
-				if (Calls::contains(oneIdentRef, proc)) {
-					results.emplace_back(proc); /* e.g {"first"} if "first" calls some q */
-				}
-			} else if (rhsRefType == PqlReferenceType::IDENT) {
-				if (Calls::contains(proc, oneIdentRef)) {
-					results.emplace_back(proc); /* e.g {"second"} if some p calls "second" */
-				}
-			} else {
-			}
+	if (pkbGetter->containsNameIdxEntity(EntityType::PROCEDURE, oneIdent)) { /* e.g. checks if proc named "first" exists, if not, return empty results */
+		ProcIndex oneIdentRef = pkbGetter->getNameIdxEntityIndex(EntityType::PROCEDURE, oneIdent);
+		if (lhsRefType == PqlReferenceType::IDENT) { /* e.g {7} if 6 is a Parent of some s2 (e.g. 7) */
+			results = pkbGetter->getRSInfoFromLeftArg(RelationshipType::CALLS, oneIdentRef);
+		} else { /* e.g {6} if some s1 (e.g. 6) is a Parent of 7 */
+			results = pkbGetter->getRSInfoFromRightArg(RelationshipType::CALLS, oneIdentRef);
 		}
 	}
 	/* Handle final output, wildcards => boolean, synonyms => table */
@@ -93,13 +87,13 @@ EvaluatedTable CallsInstruction::helperHandleOneIdent(PqlReferenceType lhsRefTyp
 EvaluatedTable CallsInstruction::helperHandleTwoProcMaybeWildcard() {
 	/* Assumption: Different synonym names(i.e. Calls(p, q), not Calls(p, p)) */
 	std::tuple<std::vector<int>, std::vector<int>> results;
-	results = Calls::getAllInfo();
+	results = pkbGetter->getRSAllInfo(RelationshipType::CALLS);
 
 	/* e.g. {1, 2}, {2, 3}, {3, 6} */
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
 
 	if (lhsRef.second == rhsRef.second) { /* Special case: Calls(p, p), recursive call, technically shouldn't be allowed */
-		/* No values populated to PQLmap for this case */
+		/* No values populated to PQLmap for this case => short-circuit */
 		PQLmap[lhsRef.second] = std::vector<int>();
 		return EvaluatedTable(PQLmap);
 	}
@@ -116,7 +110,7 @@ EvaluatedTable CallsInstruction::helperHandleTwoProcMaybeWildcard() {
 EvaluatedTable CallsInstruction::helperHandleTwoWildcards() {
 	bool isEmptyTable = true;
 	if (lhsRef.first == PqlReferenceType::WILDCARD && rhsRef.first == PqlReferenceType::WILDCARD) {
-		isEmptyTable = std::get<0>(Calls::getAllInfo()).empty();
+		isEmptyTable = std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS)).empty();
 	}
 	// No Calls rs exists => isEmptyTable == true => EvTable.evResult == false (innerJoinMerge() can drop table)
 	// Calls rs exists => isEmptyTable == false => EvTable.evResult == true (innerJoinMerge() can merge dummy table, preserving all rows)

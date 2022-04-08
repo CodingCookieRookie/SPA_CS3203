@@ -16,50 +16,51 @@ PqlReference ParsedRelationship::getRhs() const {
 	return rhsRef;
 }
 
-Instruction* ParsedRelationship::toInstruction(Processors processors) const {
+/* Factory Pattern used to create instructions */
+Instruction* ParsedRelationship::toInstruction(PKBGetter* pkbGetter, Processors processors) const {
 	Instruction* instruction = nullptr;
 	switch (relationshipType) {
 	case PqlRelationshipType::MODIFIES_S:
-		instruction = new ModifiesSInstruction(lhsRef, rhsRef);
+		instruction = new ModifiesSInstruction(lhsRef, rhsRef, pkbGetter);
 		break;
 	case PqlRelationshipType::MODIFIES_P:
-		instruction = new ModifiesPInstruction(lhsRef, rhsRef);
+		instruction = new ModifiesPInstruction(lhsRef, rhsRef, pkbGetter);
 		break;
 	case PqlRelationshipType::USES_S:
-		instruction = new UsesSInstruction(lhsRef, rhsRef);
+		instruction = new UsesSInstruction(lhsRef, rhsRef, pkbGetter);
 		break;
 	case PqlRelationshipType::USES_P:
-		instruction = new UsesPInstruction(lhsRef, rhsRef);
+		instruction = new UsesPInstruction(lhsRef, rhsRef, pkbGetter);
 		break;
 	case PqlRelationshipType::FOLLOWS:
-		instruction = new FollowsInstruction(lhsRef, rhsRef);
+		instruction = new FollowsInstruction(lhsRef, rhsRef, pkbGetter);
 		break;
 	case PqlRelationshipType::FOLLOWS_T:
-		instruction = new FollowsStarInstruction(lhsRef, rhsRef);
+		instruction = new FollowsStarInstruction(lhsRef, rhsRef, pkbGetter);
 		break;
 	case PqlRelationshipType::PARENT:
-		instruction = new ParentInstruction(lhsRef, rhsRef);
+		instruction = new ParentInstruction(lhsRef, rhsRef, pkbGetter);
 		break;
 	case PqlRelationshipType::PARENT_T:
-		instruction = new ParentStarInstruction(lhsRef, rhsRef);
+		instruction = new ParentStarInstruction(lhsRef, rhsRef, pkbGetter);
 		break;
 	case PqlRelationshipType::CALLS:
-		instruction = new CallsInstruction(lhsRef, rhsRef);
+		instruction = new CallsInstruction(lhsRef, rhsRef, pkbGetter);
 		break;
 	case PqlRelationshipType::CALLS_T:
-		instruction = new CallsStarInstruction(lhsRef, rhsRef);
+		instruction = new CallsStarInstruction(lhsRef, rhsRef, pkbGetter);
 		break;
 	case PqlRelationshipType::NEXT:
-		instruction = new NextInstruction(lhsRef, rhsRef);
+		instruction = new NextInstruction(lhsRef, rhsRef, pkbGetter);
 		break;
 	case PqlRelationshipType::NEXT_T:
-		instruction = new NextStarInstruction(lhsRef, rhsRef, processors.getNextTProcessor());
+		instruction = new NextStarInstruction(lhsRef, rhsRef, processors.getNextTProcessor(), pkbGetter);
 		break;
 	case PqlRelationshipType::AFFECTS:
-		instruction = new AffectsInstruction(lhsRef, rhsRef, processors.getAffectsProcessor());
+		instruction = new AffectsInstruction(lhsRef, rhsRef, processors.getAffectsProcessor(), pkbGetter);
 		break;
 	case PqlRelationshipType::AFFECTS_T:
-		instruction = new AffectsStarInstruction(lhsRef, rhsRef, processors.getAffectsTProcessor());
+		instruction = new AffectsStarInstruction(lhsRef, rhsRef, processors.getAffectsTProcessor(), pkbGetter);
 		break;
 	default:
 		break;

@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-#include "../source/Common/Types.h"
 #include "../source/PKB/CallsT.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -9,119 +8,122 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace UnitTesting {
 	TEST_CLASS(TestCallsT) {
 private:
-	ProcIndex procIdx1 = { 1 };
-	ProcIndex procIdx2 = { 2 };
-	ProcIndex procIdx3 = { 3 };
-	ProcIndex procIdx4 = { 4 };
-	ProcIndex procIdx5 = { 5 };
+	ProcIndex predecessor1 = { 1 };
+	ProcIndex predecessor2 = { 2 };
+	ProcIndex successor1 = { 3 };
+	ProcIndex successor2 = { 4 };
 
-	TEST_METHOD_CLEANUP(cleanUpCallsT) {
-		Calls::performCleanUp();
-		CallsT::performCleanUp();
+	CallsT* callsT;
+
+	TEST_METHOD_INITIALIZE(init) {
+		callsT = new CallsT();
 	}
 
 public:
-	TEST_METHOD(populate_getFromLeftArg_branched) {
-		std::vector<ProcIndex> callsTExpAns{ procIdx2, procIdx3, procIdx4, procIdx5 };
+	TEST_METHOD(insert_getFromLeftArg_onePredOneSuc) {
+		callsT->insert(predecessor1, successor1);
+		callsT->insert(predecessor2, successor2);
 
-		Calls::insert(procIdx1, procIdx2);
-		Calls::insert(procIdx1, procIdx5);
-		Calls::insert(procIdx2, procIdx3);
-		Calls::insert(procIdx2, procIdx4);
-		CallsT::populate();
+		auto procedures = callsT->getFromLeftArg(predecessor1);
+		Assert::IsTrue(std::vector<ProcIndex> { successor1 } == procedures);
 
-		auto callsTStmts = CallsT::getFromLeftArg(procIdx1);
-		Assert::IsTrue(callsTExpAns == callsTStmts);
+		procedures = callsT->getFromLeftArg(predecessor2);
+		Assert::IsTrue(std::vector<ProcIndex> { successor2 } == procedures);
 
-		auto callsTEmptyStmts = CallsT::getFromLeftArg(procIdx5);
-		Assert::IsTrue(0 == callsTEmptyStmts.size());
+		procedures = callsT->getFromLeftArg(successor1);
+		Assert::IsTrue(0 == procedures.size());
 	};
 
-	TEST_METHOD(populate_getFromLeftArg_linear) {
-		std::vector<ProcIndex> callsTExpAns{ procIdx1, procIdx2, procIdx3, procIdx4 };
+	TEST_METHOD(insert_getFromLeftArg_onePredMultSuc) {
+		callsT->insert(predecessor1, successor1);
+		callsT->insert(predecessor1, successor2);
 
-		Calls::insert(procIdx1, procIdx2);
-		Calls::insert(procIdx2, procIdx3);
-		Calls::insert(procIdx3, procIdx4);
-		Calls::insert(procIdx5, procIdx1);
-		CallsT::populate();
+		auto procedures = callsT->getFromLeftArg(predecessor1);
+		Assert::IsTrue(std::vector<ProcIndex> { successor1, successor2 } == procedures);
 
-		auto callsTStmts = CallsT::getFromLeftArg(procIdx5);
-		Assert::IsTrue(callsTExpAns == callsTStmts);
-
-		auto callsTEmptyStmts = CallsT::getFromLeftArg(procIdx4);
-		Assert::IsTrue(0 == callsTEmptyStmts.size());
+		procedures = callsT->getFromLeftArg(successor1);
+		Assert::IsTrue(0 == procedures.size());
 	};
 
-	TEST_METHOD(populate_getFromRightArg_branched) {
-		std::vector<ProcIndex> callsTExpAns{ procIdx4, procIdx2, procIdx1 };
+	TEST_METHOD(insert_getFromRightArg_onePredOneSuc) {
+		callsT->insert(predecessor1, successor1);
+		callsT->insert(predecessor2, successor2);
 
-		Calls::insert(procIdx1, procIdx2);
-		Calls::insert(procIdx2, procIdx3);
-		Calls::insert(procIdx2, procIdx4);
-		Calls::insert(procIdx4, procIdx5);
-		CallsT::populate();
+		auto procedures = callsT->getFromRightArg(successor1);
+		Assert::IsTrue(std::vector<ProcIndex> {predecessor1} == procedures);
 
-		auto callsTStmts = CallsT::getFromRightArg(procIdx5);
-		Assert::IsTrue(callsTExpAns == callsTStmts);
+		procedures = callsT->getFromRightArg(successor2);
+		Assert::IsTrue(std::vector<ProcIndex> {predecessor2} == procedures);
 
-		auto callsTEmptyStmts = CallsT::getFromRightArg(procIdx1);
-		Assert::IsTrue(0 == callsTEmptyStmts.size());
+		procedures = callsT->getFromRightArg(predecessor1);
+		Assert::IsTrue(0 == procedures.size());
 	};
 
-	TEST_METHOD(populate_getFromRightArg_linear) {
-		std::vector<ProcIndex> callsTExpAns{ procIdx3, procIdx2, procIdx1, procIdx5 };
+	TEST_METHOD(insert_getFromRightArg_multPredOneSuc) {
+		std::vector<ProcIndex> expectedAns{ predecessor1, predecessor2 };
 
-		Calls::insert(procIdx1, procIdx2);
-		Calls::insert(procIdx2, procIdx3);
-		Calls::insert(procIdx3, procIdx4);
-		Calls::insert(procIdx5, procIdx1);
-		CallsT::populate();
+		callsT->insert(predecessor1, successor1);
+		callsT->insert(predecessor2, successor1);
+		auto procedures = callsT->getFromRightArg(successor1);
+		Assert::IsTrue(std::vector<ProcIndex> { predecessor1, predecessor2 } == procedures);
 
-		auto callsTStmts = CallsT::getFromRightArg(procIdx4);
-		Assert::IsTrue(callsTExpAns == callsTStmts);
-
-		auto callsTEmptyStmts = CallsT::getFromRightArg(procIdx5);
-		Assert::IsTrue(0 == callsTEmptyStmts.size());
+		procedures = callsT->getFromRightArg(predecessor1);
+		Assert::IsTrue(0 == procedures.size());
 	};
 
-	TEST_METHOD(contains) {
-		Calls::insert(procIdx1, procIdx2);
-		Calls::insert(procIdx2, procIdx3);
-		Calls::insert(procIdx2, procIdx4);
-		CallsT::populate();
+	TEST_METHOD(insert_contains_onePredOneSuc) {
+		callsT->insert(predecessor1, successor1);
 
-		Assert::IsTrue(CallsT::contains(procIdx1, procIdx4));
-		Assert::IsFalse(CallsT::contains(procIdx4, procIdx1));
-		Assert::IsFalse(CallsT::contains(procIdx3, procIdx4)); /* siblings */
+		Assert::IsTrue(callsT->contains(predecessor1, successor1));
+		Assert::IsFalse(callsT->contains(successor1, predecessor1));
+		Assert::IsFalse(callsT->contains(predecessor2, successor1));
+		Assert::IsFalse(callsT->contains(predecessor1, successor2));
 	};
 
-	TEST_METHOD(getAllInfo) {
-		std::vector<ProcIndex> callsTpredecessors{ procIdx2, procIdx1, procIdx1 };
-		std::vector<ProcIndex> callsTsuccessors{ procIdx3, procIdx2, procIdx3 };
-		std::tuple<std::vector<ProcIndex>, std::vector<ProcIndex>> callsTExpAns =
-			std::make_tuple(callsTpredecessors, callsTsuccessors);
+	TEST_METHOD(insert_contains_onePredMultSuc) {
+		callsT->insert(predecessor1, successor1);
+		callsT->insert(predecessor1, successor2);
 
-		Calls::insert(procIdx1, procIdx2);
-		Calls::insert(procIdx2, procIdx3);
-		CallsT::populate();
-
-		auto callsTInfo = CallsT::getAllInfo();
-		Assert::IsTrue(callsTExpAns == callsTInfo);
+		Assert::IsTrue(callsT->contains(predecessor1, successor1));
+		Assert::IsFalse(callsT->contains(successor1, predecessor1));
+		Assert::IsFalse(callsT->contains(predecessor2, successor1));
+		Assert::IsTrue(callsT->contains(predecessor1, successor2));
 	};
 
-	TEST_METHOD(getPredSucTable) {
-		std::unordered_map<ProcIndex, std::unordered_set<ProcIndex>> callsTExpAns;
-		callsTExpAns[procIdx1].insert(procIdx2);
-		callsTExpAns[procIdx1].insert(procIdx3);
-		callsTExpAns[procIdx2].insert(procIdx3);
+	TEST_METHOD(insert_getAllInfo_onePredOneSuc) {
+		std::vector<ProcIndex> predecessors{ predecessor1, predecessor2 };
+		std::vector<ProcIndex> successors{ successor1, successor2 };
+		std::tuple<std::vector<ProcIndex>, std::vector<ProcIndex>> expectedAns = std::make_tuple(predecessors, successors);
 
-		Calls::insert(procIdx1, procIdx2);
-		Calls::insert(procIdx2, procIdx3);
-		CallsT::populate();
+		callsT->insert(predecessor1, successor1);
+		callsT->insert(predecessor2, successor2);
 
-		auto callsTTable = CallsT::getPredSucTable();
-		Assert::IsTrue(callsTExpAns == callsTTable);
+		auto predSucInfo = callsT->getAllInfo();
+		Assert::IsTrue(expectedAns == predSucInfo);
+	};
+
+	TEST_METHOD(insert_getAllInfo_onePredMultSuc) {
+		std::vector<ProcIndex> predecessors{ predecessor1, predecessor1 };
+		std::vector<ProcIndex> successors{ successor1, successor2 };
+		std::tuple<std::vector<ProcIndex>, std::vector<ProcIndex>> expectedAns = std::make_tuple(predecessors, successors);
+
+		callsT->insert(predecessor1, successor1);
+		callsT->insert(predecessor1, successor2);
+
+		auto predSucInfo = callsT->getAllInfo();
+		Assert::IsTrue(expectedAns == predSucInfo);
+	};
+
+	TEST_METHOD(insert_getAllInfo_multPredOneSuc) {
+		std::vector<ProcIndex> predecessors{ predecessor1, predecessor2 };
+		std::vector<ProcIndex> successors{ successor1, successor1 };
+		std::tuple<std::vector<ProcIndex>, std::vector<ProcIndex>> expectedAns = std::make_tuple(predecessors, successors);
+
+		callsT->insert(predecessor1, successor1);
+		callsT->insert(predecessor2, successor1);
+
+		auto predSucInfo = callsT->getAllInfo();
+		Assert::IsTrue(expectedAns == predSucInfo);
 	};
 	};
-};
+}

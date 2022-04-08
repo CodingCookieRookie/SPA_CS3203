@@ -1,12 +1,19 @@
 #include "./Attribute.h"
 
-BidirectionalIndexTable<NameIndex> Attribute::nameIdxBidirectionalTable;
-std::unordered_map<NameIndex, std::unordered_set<VarIndex>> Attribute::nameVarIdxTable;
-std::unordered_map<NameIndex, std::unordered_set<ProcIndex>> Attribute::nameProcIdxTable;
-std::unordered_map<NameIndex, std::unordered_set<StmtIndex>> Attribute::nameCallProcIdxTable;
-std::unordered_map<NameIndex, std::unordered_set<StmtIndex>> Attribute::nameReadVarIdxTable;
-std::unordered_map<NameIndex, std::unordered_set<StmtIndex>> Attribute::namePrintVarIdxTable;
-std::unordered_map<StmtIndex, NameIndex> Attribute::stmtIdxAttributeNameTable;
+Attribute::Attribute() {
+	nameProcIdxTable = new std::unordered_map<NameIndex, std::unordered_set<VarIndex>>();
+	nameVarIdxTable = new std::unordered_map<NameIndex, std::unordered_set<ProcIndex>>();
+	nameCallProcIdxTable = new std::unordered_map<NameIndex, std::unordered_set<ProcIndex>>();
+	nameReadVarIdxTable = new std::unordered_map<NameIndex, std::unordered_set<VarIndex>>();
+	namePrintVarIdxTable = new std::unordered_map<NameIndex, std::unordered_set<VarIndex>>();
+	entityTypeToNameEntityIdxTable[EntityType::PROCEDURE] = nameProcIdxTable;
+	entityTypeToNameEntityIdxTable[EntityType::VARIABLE] = nameVarIdxTable;
+	stmtTypeToNameEntityIdxTable[StatementType::CALL_TYPE] = nameCallProcIdxTable;
+	stmtTypeToNameEntityIdxTable[StatementType::READ_TYPE] = nameReadVarIdxTable;
+	stmtTypeToNameEntityIdxTable[StatementType::PRINT_TYPE] = namePrintVarIdxTable;
+}
+
+Attribute::~Attribute() {}
 
 bool Attribute::containsName(std::string& nameValue) {
 	return nameIdxBidirectionalTable.contains(nameValue);
@@ -21,36 +28,14 @@ NameIndex Attribute::getNameIdx(std::string& nameValue) {
 }
 
 void Attribute::insertNameIdxEntityByName(EntityType entityType, NameIdxEntityIndex entityIdx, NameIndex nameIdx) {
-	if (entityType == EntityType::PROCEDURE) {
-		nameProcIdxTable[nameIdx].insert(entityIdx);
-	} else if (entityType == EntityType::VARIABLE) {
-		nameVarIdxTable[nameIdx].insert(entityIdx);
-	}
-}
-
-void Attribute::insertVarIdxByName(VarIndex& varIdx, NameIndex nameIdx) {
-	nameVarIdxTable[nameIdx].insert(varIdx);
-}
-
-void Attribute::insertProcIdxByName(ProcIndex& procIdx, NameIndex nameIdx) {
-	nameProcIdxTable[nameIdx].insert(procIdx);
+	(*entityTypeToNameEntityIdxTable[entityType])[nameIdx].insert(entityIdx);
 }
 
 void Attribute::insertStmtByName(StmtIndex& stmtIdx, StatementType stmtType, std::string& nameValue) {
 	NameIndex nameIdx = insertNameValue(nameValue);
 	stmtIdxAttributeNameTable[stmtIdx] = nameIdx;
 
-	switch (stmtType) {
-	case StatementType::CALL_TYPE:
-		nameCallProcIdxTable[nameIdx].insert(stmtIdx);
-		break;
-	case StatementType::READ_TYPE:
-		nameReadVarIdxTable[nameIdx].insert(stmtIdx);
-		break;
-	case StatementType::PRINT_TYPE:
-		namePrintVarIdxTable[nameIdx].insert(stmtIdx);
-		break;
-	}
+	(*stmtTypeToNameEntityIdxTable[stmtType])[nameIdx].insert(stmtIdx);
 }
 
 std::string Attribute::getAttributeNameByStmtIdx(StmtIndex& stmtIdx) {
@@ -61,7 +46,7 @@ std::tuple<std::vector<EntityAttributeRef>, std::vector<EntityAttributeRef>> Att
 	std::vector<EntityAttributeRef> leftEntityTypeIndices;
 	std::vector<EntityAttributeRef> rightEntityTypeIndices;
 
-	std::map<EntityType, std::unordered_map<EntityAttributeRef, std::unordered_set<EntityAttributeRef>>> EntityTypeTableMap = {
+	std::map<EntityType, std::unordered_map<EntityAttributeRef, std::unordered_set<EntityAttributeRef>>*> EntityTypeTableMap = {
 		{ EntityType::PROCEDURE, Attribute::nameProcIdxTable },
 		{ EntityType::VARIABLE, Attribute::nameVarIdxTable },
 		{ EntityType::CALL, Attribute::nameCallProcIdxTable },
@@ -69,13 +54,13 @@ std::tuple<std::vector<EntityAttributeRef>, std::vector<EntityAttributeRef>> Att
 		{ EntityType::PRINT, Attribute::namePrintVarIdxTable }
 	};
 
-	std::unordered_map<EntityAttributeRef, std::unordered_set<EntityAttributeRef>> leftArgMap = EntityTypeTableMap[leftEntityType];
-	std::unordered_map<EntityAttributeRef, std::unordered_set<EntityAttributeRef>> rightArgMap = EntityTypeTableMap[rightEntityType];
+	std::unordered_map<EntityAttributeRef, std::unordered_set<EntityAttributeRef>>* leftArgMap = EntityTypeTableMap[leftEntityType];
+	std::unordered_map<EntityAttributeRef, std::unordered_set<EntityAttributeRef>>* rightArgMap = EntityTypeTableMap[rightEntityType];
 
-	for (auto& leftArgMapInfo : leftArgMap) {
+	for (auto& leftArgMapInfo : *leftArgMap) {
 		NameIndex nameIdx = leftArgMapInfo.first;
-		for (auto& leftEntityIdx : leftArgMap[nameIdx]) {
-			for (auto& rightEntityIdx : rightArgMap[nameIdx]) {
+		for (auto& leftEntityIdx : (*leftArgMap)[nameIdx]) {
+			for (auto& rightEntityIdx : (*rightArgMap)[nameIdx]) {
 				leftEntityTypeIndices.push_back(leftEntityIdx);
 				rightEntityTypeIndices.push_back(rightEntityIdx);
 			}
@@ -85,7 +70,7 @@ std::tuple<std::vector<EntityAttributeRef>, std::vector<EntityAttributeRef>> Att
 	return std::make_tuple(leftEntityTypeIndices, rightEntityTypeIndices);
 }
 
-std::vector<EntityAttributeRef> Attribute::processIntegerAttributeArgVector(EntityType entityType) {
+std::vector<EntityAttributeRef> Attribute::processIntegerAttributeArgVector(EntityType entityType, Constant* constant, Statement* statement) {
 	std::map<EntityType, StatementType> EntityTypeStatementTypeMap = {
 		{ EntityType::READ, StatementType::READ_TYPE },
 		{ EntityType::PRINT, StatementType::PRINT_TYPE },
@@ -96,16 +81,16 @@ std::vector<EntityAttributeRef> Attribute::processIntegerAttributeArgVector(Enti
 	};
 
 	if (entityType == EntityType::CONSTANT) {
-		return Entity::getAllConsts();
+		return constant->getAllConsts();
 	}
 
 	std::vector<StmtIndex> stmtIndices;
 	std::vector<StmtIndex> res;
 
 	if (entityType == EntityType::STMT) {
-		stmtIndices = Entity::getAllStmts();
+		stmtIndices = statement->getAllStmts();
 	} else {
-		stmtIndices = Entity::getStmtIdxFromType(EntityTypeStatementTypeMap[entityType]);
+		stmtIndices = statement->getStmtIdxFromType(EntityTypeStatementTypeMap[entityType]);
 	}
 
 	for (auto& stmtIdx : stmtIndices) {
@@ -115,11 +100,11 @@ std::vector<EntityAttributeRef> Attribute::processIntegerAttributeArgVector(Enti
 	return res;
 }
 
-std::vector<EntityAttributeRef> Attribute::getEqualIntegerAttributes(EntityType leftEntityType, EntityType rightEntityType) {
+std::vector<EntityAttributeRef> Attribute::getEqualIntegerAttributes(EntityType leftEntityType, EntityType rightEntityType, Constant* constant, Statement* statement) {
 	std::vector<EntityAttributeRef> res;
 
-	std::vector<EntityAttributeRef> leftArgVector = processIntegerAttributeArgVector(leftEntityType);
-	std::vector<EntityAttributeRef> rightArgVector = processIntegerAttributeArgVector(rightEntityType);
+	std::vector<EntityAttributeRef> leftArgVector = processIntegerAttributeArgVector(leftEntityType, constant, statement);
+	std::vector<EntityAttributeRef> rightArgVector = processIntegerAttributeArgVector(rightEntityType, constant, statement);
 
 	for (auto& intValue : leftArgVector) {
 		if (std::find(rightArgVector.begin(), rightArgVector.end(), intValue) != rightArgVector.end()) {
@@ -133,7 +118,7 @@ std::vector<EntityAttributeRef> Attribute::getEqualIntegerAttributes(EntityType 
 std::vector<EntityAttributeRef> Attribute::getEqualNameAttributesFromName(EntityType entityType, std::string& nameValue) {
 	std::vector<EntityAttributeRef> res;
 
-	std::map<EntityType, std::unordered_map<EntityAttributeRef, std::unordered_set<EntityAttributeRef>>> EntityTypeTableMap = {
+	std::map<EntityType, std::unordered_map<EntityAttributeRef, std::unordered_set<EntityAttributeRef>>*> EntityTypeTableMap = {
 		{ EntityType::PROCEDURE, Attribute::nameProcIdxTable },
 		{ EntityType::VARIABLE, Attribute::nameVarIdxTable },
 		{ EntityType::CALL, Attribute::nameCallProcIdxTable },
@@ -141,28 +126,18 @@ std::vector<EntityAttributeRef> Attribute::getEqualNameAttributesFromName(Entity
 		{ EntityType::PRINT, Attribute::namePrintVarIdxTable }
 	};
 
-	std::unordered_map<EntityAttributeRef, std::unordered_set<EntityAttributeRef>> argMap = EntityTypeTableMap[entityType];
+	std::unordered_map<EntityAttributeRef, std::unordered_set<EntityAttributeRef>>* argMap = EntityTypeTableMap[entityType];
 
 	NameIndex nameIdx = getNameIdx(nameValue);
 
-	for (auto& entityIdx : argMap[nameIdx]) {
+	for (auto& entityIdx : (*argMap)[nameIdx]) {
 		res.push_back(entityIdx);
 	}
 
 	return res;
 }
 
-bool Attribute::hasEqualIntegerAttribute(EntityType entityType, ConstValue integerValue) {
-	std::vector<EntityAttributeRef> argVector = processIntegerAttributeArgVector(entityType);
+bool Attribute::hasEqualIntegerAttribute(EntityType entityType, ConstValue integerValue, Constant* constant, Statement* statement) {
+	std::vector<EntityAttributeRef> argVector = processIntegerAttributeArgVector(entityType, constant, statement);
 	return std::find(argVector.begin(), argVector.end(), integerValue) != argVector.end();
-}
-
-void Attribute::performCleanUp() {
-	nameIdxBidirectionalTable = BidirectionalIndexTable<NameIndex>();
-	nameVarIdxTable = {};
-	nameProcIdxTable = {};
-	nameCallProcIdxTable = {};
-	nameReadVarIdxTable = {};
-	namePrintVarIdxTable = {};
-	stmtIdxAttributeNameTable = {};
 }

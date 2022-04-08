@@ -4,12 +4,12 @@
 
 class NextInstruction : public RelationshipInstruction {
 protected:
-	EvaluatedTable execute() override;
 	EvaluatedTable helperHandleTwoIntegers();
 	EvaluatedTable helperHandleOneInt(PqlReferenceType lhsRefType, PqlReferenceType rhsRefType);
 	EvaluatedTable helperHandleTwoStmtsMaybeWildcard();
 	EvaluatedTable helperHandleTwoWildcards();
 
 public:
-	NextInstruction(PqlReference lhsRef, PqlReference rhsRef);
+	NextInstruction(PqlReference lhsRef, PqlReference rhsRef, PKBGetter* pkbGetter);
+	EvaluatedTable execute() override;
 };

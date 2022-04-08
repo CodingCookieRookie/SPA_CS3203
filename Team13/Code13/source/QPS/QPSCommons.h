@@ -3,6 +3,7 @@
 #include <string>
 
 #include "../Common/Types.h"
+#include "OnTheFlyRSProcessor.h"
 
 enum class InstructionType {
 	GET_ALL, RELATIONSHIP, PATTERN

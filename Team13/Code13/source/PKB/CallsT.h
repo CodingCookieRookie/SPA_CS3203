@@ -1,6 +1,6 @@
 #pragma once
 
 #include "./Calls.h"
-#include "./RS2T.h"
+#include "./SameSynonymsRelationship.h"
 
-class CallsT : public RS2T<CallsT, Calls, ProcIndex> {};
+class CallsT : public SameSynonymsRelationship<ProcIndex> {};

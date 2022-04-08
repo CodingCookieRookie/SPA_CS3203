@@ -1,8 +1,3 @@
-#include <string>
-#include <unordered_map>
-#include <unordered_set>
-
-#include "../PKB/Entity.h"
 #include "PQLEvaluator.h"
 
 Processors PQLEvaluator::instantiateProcessors() {
@@ -13,60 +8,59 @@ Processors PQLEvaluator::instantiateProcessors() {
 	return processors;
 }
 
-PQLEvaluator::PQLEvaluator(ParsedQuery& parsedQuery) :
-	parsedQuery(parsedQuery), processors(PQLEvaluator::instantiateProcessors()) {}
+PQLEvaluator::PQLEvaluator(ParsedQuery& parsedQuery, PKBGetter* pkbGetter) :
+	parsedQuery(parsedQuery), pkbGetter(pkbGetter), processors(PQLEvaluator::instantiateProcessors()) {}
 
 EvaluatedTable PQLEvaluator::evaluate() {
-	std::vector<Instruction*> instructions = PQLEvaluator::evaluateToInstructions();
+	std::vector<Instruction*> instructions = PQLEvaluator::evaluateToInstructions(parsedQuery);
 	EvaluatedTable resultingEvTable = PQLEvaluator::executeInstructions(instructions);
 	return resultingEvTable;
 }
 
 EvaluatedTable PQLEvaluator::selectProjection(EvaluatedTable& resultingEvTable) {
-	EvaluatedTable projectingEvTable = PQLEvaluator::selectColumnsForProjection(resultingEvTable);
+	EvaluatedTable projectingEvTable = PQLEvaluator::selectColumnsForProjection(resultingEvTable, parsedQuery);
 	return projectingEvTable;
 }
 
-std::vector<Instruction*> PQLEvaluator::evaluateToInstructions() {
+std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
 	std::vector<Instruction*> instructions = std::vector<Instruction*>();
-	std::unordered_map<std::string, EntityType> declarations = parsedQuery.getDeclarations();
-	std::unordered_set<std::string> columns = parsedQuery.getColumns();
-	std::vector<ParsedRelationship> relationships = parsedQuery.getRelationships();
-	std::vector<ParsedPattern> patterns = parsedQuery.getPatterns();
-	std::vector<ParsedWith> withs = parsedQuery.getWiths();
+	std::unordered_map<std::string, EntityType> declarations = pq.getDeclarations();
+	std::unordered_set<std::string> columns = pq.getColumns();
+	std::vector<ParsedRelationship> relationships = pq.getRelationships();
+	std::vector<ParsedPattern> patterns = pq.getPatterns();
+	std::vector<ParsedWith> withs = pq.getWiths();
 
 	// Assumption: Semantically corrct ParsedQuery
 	// 1. Get all relationship results from such-that-clause
 	for (ParsedRelationship& relationship : relationships) {
-		instructions.push_back(relationship.toInstruction(processors));
+		instructions.push_back(relationship.toInstruction(pkbGetter, processors));
 		PqlReference lhsRef = relationship.getLhs();
 		PqlReference rhsRef = relationship.getRhs();
-		PQLEvaluator::insertGetAllInstr(lhsRef, instructions);
-		PQLEvaluator::insertGetAllInstr(rhsRef, instructions);
+		PQLEvaluator::insertGetAllInstr(lhsRef, pq, instructions);
+		PQLEvaluator::insertGetAllInstr(rhsRef, pq, instructions);
 	}
 
 	// 2. Get all pattern results from pattern-clause
 	for (size_t i = 0; i < patterns.size(); i++) {
 		ParsedPattern parsedPattern = patterns.at(i);
-		instructions.push_back(parsedPattern.toInstruction());
+		instructions.push_back(parsedPattern.toInstruction(pkbGetter));
 	}
 
 	// 3. Get all with results for with-clause
 	for (const ParsedWith& with : withs) {
-		instructions.push_back(with.toInstruction());
+		instructions.push_back(with.toInstruction(pkbGetter));
 	}
 
-	// TODO: Optimisation: Sort instructions.
 	return instructions;
 }
 
-void PQLEvaluator::insertGetAllInstr(PqlReference pqlRef, std::vector<Instruction*>& instructions) {
-	std::unordered_map<std::string, EntityType> declarations = parsedQuery.getDeclarations();
-	if (isSynonymRef(pqlRef) && parsedQuery.isStmtSubtype(pqlRef)) {
+void PQLEvaluator::insertGetAllInstr(PqlReference pqlRef, ParsedQuery& pq, std::vector<Instruction*>& instructions) {
+	std::unordered_map<std::string, EntityType> declarations = pq.getDeclarations();
+	if (isSynonymRef(pqlRef) && pq.isStmtSubtype(pqlRef)) {
 		std::string value = pqlRef.second;
 		EntityType entType = declarations.at(value);
 		ParsedGetAll getAllSynonym = ParsedGetAll(entType, value);
-		instructions.push_back(getAllSynonym.toInstruction());
+		instructions.push_back(getAllSynonym.toInstruction(pkbGetter));
 	}
 }
 
@@ -82,10 +76,10 @@ EvaluatedTable PQLEvaluator::executeInstructions(std::vector<Instruction*> instr
 }
 
 EvaluatedTable PQLEvaluator::selectColumnsForProjection(
-	EvaluatedTable& evaluatedTable) {
-	std::unordered_set<std::string> columnsProjected = parsedQuery.getColumns();
-	std::vector<PqlReference> attributesProjected = parsedQuery.getAttributes();
-	std::unordered_map<std::string, EntityType> declarations = parsedQuery.getDeclarations();
+	EvaluatedTable evaluatedTable, ParsedQuery& pq) {
+	std::unordered_set<std::string> columnsProjected = pq.getColumns();
+	std::vector<PqlReference> attributesProjected = pq.getAttributes();
+	std::unordered_map<std::string, EntityType> declarations = pq.getDeclarations();
 	std::unordered_map<std::string, std::vector<int>> table = evaluatedTable.getTableRef();
 	std::unordered_map<std::string, std::vector<int>> resultTable;
 	EvaluatedTable resultEvTable;
@@ -95,7 +89,7 @@ EvaluatedTable PQLEvaluator::selectColumnsForProjection(
 	if (projType == ProjectionType::BOOLEAN) {
 		/* Existence of clauses means clauses determine boolean result,
 		=> short circuit and go straight to PQLResultProjector */
-		if (ParsedQuery::isClausePresent(parsedQuery)) {
+		if (ParsedQuery::isClausePresent(pq)) {
 			return evaluatedTable;
 		} else {
 			/* No Clauses, existence of declared synonyms determine boolean result
@@ -103,7 +97,7 @@ EvaluatedTable PQLEvaluator::selectColumnsForProjection(
 			for (const std::pair<std::string, EntityType>& synonym : declarations) {
 				//EntityType columnType = declarations.at(column);
 				ParsedGetAll getAllSynonym = ParsedGetAll(synonym.second, synonym.first);
-				Instruction* getAll = getAllSynonym.toInstruction();
+				Instruction* getAll = getAllSynonym.toInstruction(pkbGetter);
 				EvaluatedTable evTable = getAll->execute();
 				resultEvTable = resultEvTable.innerJoinMerge(evTable);
 			}
@@ -131,7 +125,7 @@ EvaluatedTable PQLEvaluator::selectColumnsForProjection(
 		if (table.find(column) == table.end()) {
 			EntityType columnType = declarations.at(column);
 			ParsedGetAll getAllSynonym = ParsedGetAll(columnType, column);
-			Instruction* getAll = getAllSynonym.toInstruction();
+			Instruction* getAll = getAllSynonym.toInstruction(pkbGetter);
 			EvaluatedTable evTable = getAll->execute();
 			resultEvTable = resultEvTable.innerJoinMerge(evTable);
 		}

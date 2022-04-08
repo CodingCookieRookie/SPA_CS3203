@@ -1,9 +1,12 @@
 #include "AffectsInstruction.h"
 
+AffectsInstruction::AffectsInstruction(PqlReference lhsRef, PqlReference rhsRef, AffectsProcessor* affectsProcessor, PKBGetter* pkbGetter) :
+	RelationshipInstruction(lhsRef, rhsRef, affectsProcessor, pkbGetter) {}
+
 EvaluatedTable AffectsInstruction::handleWildCardLeft(std::unordered_map<std::string, std::vector<int>> PQLmap,
 	PqlReference lhsRef, PqlReference rhsRef,
 	std::vector<int> allStmts, std::vector<int> varIndices) {
-	std::tuple<std::vector<int>, std::vector<int>> allStmtVarInfos = affectsProcessor->getAll();
+	std::tuple<std::vector<int>, std::vector<int>> allStmtVarInfos = affectsProcessor->getAll(pkbGetter);
 	int rhsRefValue;
 	switch (rhsRef.first) {
 	case PqlReferenceType::SYNONYM:
@@ -16,7 +19,7 @@ EvaluatedTable AffectsInstruction::handleWildCardLeft(std::unordered_map<std::st
 		return EvaluatedTable(allStmts.size() > 0);
 	case PqlReferenceType::INTEGER:
 		rhsRefValue = stoi(rhsRef.second);
-		allStmts = affectsProcessor->getUsingRightStmtIndex(StmtIndex(rhsRefValue));
+		allStmts = affectsProcessor->getUsingRightStmtIndex(rhsRefValue, pkbGetter);
 		return EvaluatedTable(allStmts.size() > 0);
 	default:
 		break;
@@ -27,7 +30,7 @@ EvaluatedTable AffectsInstruction::handleWildCardLeft(std::unordered_map<std::st
 EvaluatedTable AffectsInstruction::handleSynonymLeft(std::unordered_map<std::string, std::vector<int>> PQLmap,
 	PqlReference lhsRef, PqlReference rhsRef,
 	std::vector<int> allStmts, std::vector<int> varIndices) {
-	std::tuple<std::vector<int>, std::vector<int>> allStmtVarInfos = affectsProcessor->getAll();
+	std::tuple<std::vector<int>, std::vector<int>> allStmtVarInfos = affectsProcessor->getAll(pkbGetter);
 	int rhsRefValue;
 	switch (rhsRef.first) {
 	case PqlReferenceType::SYNONYM:
@@ -52,7 +55,7 @@ EvaluatedTable AffectsInstruction::handleSynonymLeft(std::unordered_map<std::str
 		break;
 	case PqlReferenceType::INTEGER:
 		rhsRefValue = stoi(rhsRef.second);
-		allStmts = affectsProcessor->getUsingRightStmtIndex(StmtIndex(rhsRefValue));
+		allStmts = affectsProcessor->getUsingRightStmtIndex(rhsRefValue, pkbGetter);
 		break;
 	default:
 		break;
@@ -66,12 +69,12 @@ EvaluatedTable AffectsInstruction::handleIntegerLeft(std::unordered_map<std::str
 	std::vector<int> allStmts, std::vector<int> varIndices) {
 	int lhsRefValue = stoi(lhsRef.second);
 	int rhsRefValue;
-	if (!Entity::containsStmt(StmtIndex(lhsRefValue))) {
+	if (!pkbGetter->containsStmt(StmtIndex(lhsRefValue))) {
 		return EvaluatedTable(false);
 	}
-	VarIndex varIndex;
-	StmtIndex leftStmtIndex = { lhsRefValue };
-	allStmts = affectsProcessor->getUsingLeftStmtIndex(leftStmtIndex);
+
+	StmtIndex stmtIndex = { lhsRefValue };
+	allStmts = affectsProcessor->getUsingLeftStmtIndex(lhsRefValue, pkbGetter);
 	switch (rhsRef.first) {
 	case PqlReferenceType::SYNONYM:
 		PQLmap[rhsRef.second] = allStmts;
@@ -80,15 +83,12 @@ EvaluatedTable AffectsInstruction::handleIntegerLeft(std::unordered_map<std::str
 		return EvaluatedTable(allStmts.size() > 0);
 	case PqlReferenceType::INTEGER:
 		rhsRefValue = stoi(rhsRef.second);
-		return EvaluatedTable(affectsProcessor->doesRsHold(leftStmtIndex, StmtIndex(rhsRefValue)));
+		return EvaluatedTable(affectsProcessor->doesRsHold(lhsRefValue, rhsRefValue, pkbGetter));
 	default:
 		break;
 	}
 	return EvaluatedTable(PQLmap);
 }
-
-AffectsInstruction::AffectsInstruction(PqlReference lhsRef, PqlReference rhsRef, AffectsProcessor* affectsProcessor) :
-	RelationshipInstruction(lhsRef, rhsRef, affectsProcessor) {}
 
 EvaluatedTable AffectsInstruction::execute() {
 	EvaluatedTable evTable;
@@ -105,4 +105,5 @@ EvaluatedTable AffectsInstruction::execute() {
 	default:
 		break;
 	}
+	return evTable;
 }

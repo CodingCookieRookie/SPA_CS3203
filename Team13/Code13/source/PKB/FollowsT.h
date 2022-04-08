@@ -1,6 +1,6 @@
 #pragma once
 
 #include "./Follows.h"
-#include "./RS2T.h"
+#include "./SameSynonymsRelationship.h"
 
-class FollowsT : public RS2T<FollowsT, Follows, StmtIndex> {};
+class FollowsT : public SameSynonymsRelationship<StmtIndex> {};

@@ -1,5 +1,5 @@
 #pragma once
 
-#include "./RS2.h"
+#include "./SameSynonymsRelationship.h"
 
-class Calls : public RS2<Calls, ProcIndex> {};
+class Calls : public SameSynonymsRelationship<ProcIndex> {};
