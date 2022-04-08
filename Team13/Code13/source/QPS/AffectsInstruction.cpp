@@ -43,12 +43,12 @@ EvaluatedTable AffectsInstruction::handleSynonymLeft(std::unordered_map<std::str
 					finalAssigns.emplace_back(lhsAssigns[i]);
 				}
 			}
-			PQLmap[lhsRef.second] = finalAssigns;
-			return EvaluatedTable(PQLmap);
+			allStmts = finalAssigns;
+		} else {
+			allStmts = std::get<0>(allStmtVarInfos);
 		}
 		varIndices = std::get<1>(allStmtVarInfos);
 		PQLmap[rhsRef.second] = varIndices;
-		allStmts = std::get<0>(allStmtVarInfos);
 		break;
 	case PqlReferenceType::WILDCARD:
 		allStmts = std::get<0>(allStmtVarInfos);

@@ -17,11 +17,17 @@ private:
 	PKB* pkb;
 	PKBGetter* pkbGetter;
 	PKBInserter* pkbInserter;
+	CacheStorage* cacheStorage;
+	AffectsProcessor* affectsProcessor;
+	AffectsTProcessor* affectsTProcessor;
 
 	TEST_METHOD_INITIALIZE(initTables) {
 		pkb = new PKB();
 		pkbGetter = new PKBGetter(pkb);
 		pkbInserter = new PKBInserter(pkb);
+		cacheStorage = new CacheStorage();
+		affectsProcessor = new AffectsProcessor(cacheStorage);
+		affectsTProcessor = new AffectsTProcessor(new AffectsTCache(), affectsProcessor);
 	}
 
 public:
@@ -1976,6 +1982,466 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 4. Test QPS Result Projector:
 		EvaluatedTable projectedEvTable = pqlEvaluator.selectProjection(evTable);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(projectedEvTable, parsedQuery, pkbGetter);
+		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
+		std::list<std::string> expectedRes{ "7" };
+		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+		Assert::AreEqual(true, areListsEqual);
+	}
+
+	TEST_METHOD(querying_AffectsAndPatternAOnly_success) {
+		// a = b + c
+		// c = a
+		// 1. Setup:
+		std::string query = "assign a; variable v; Select a such that Affects(a, _) pattern a(v, _\"b\"_)";
+		// PKB inserts 6 types of statements
+		std::vector<StmtIndex> stmts;
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::READ_TYPE));
+
+		// PKB inserts pattern
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		StmtIndex stmt2 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "z");
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "a");
+		VarIndex varIndex2 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "b");
+		VarIndex varIndex3 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "c");
+		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("a+b");
+		std::string postFixExpression2 = ExpressionProcessor::convertInfixToPostFix("a");
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmt, varIndex);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmt, varIndex2);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmt, varIndex3);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmt2, varIndex3);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmt2, varIndex);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmt, stmt2);
+		pkbInserter->insertAssignInfo(varIndex, postFixExpression, stmt);
+		pkbInserter->insertAssignInfo(varIndex3, postFixExpression2, stmt2);
+
+		// Check PKB population
+		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("b");
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = pkbGetter->getAssignStmtsFromExprPartialMatch(postFixExpressionQuery);
+		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
+
+		// 2. Test QPS Parser:
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		Assert::AreEqual(size_t(2), parsedQuery.getDeclarations().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
+
+		// 3. Test QPS Evaluator:
+		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
+		EvaluatedTable& evTable = pqlEvaluator.evaluate();
+
+		// Test numRow:
+		Assert::AreEqual(size_t(1), evTable.getNumRow());
+
+		// Test Table:
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("a") != tableRef.end());
+
+		// Test Values: std::unordered_map<std::string, EntityType>
+		std::vector<int> values{ 7 };
+		auto actualValues = tableRef.at("a");
+		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// Test EvResult:
+		bool actualEvResult = evTable.getEvResult();
+		Assert::AreEqual(true, actualEvResult);
+
+		// 4. Test QPS Result Projector:
+		EvaluatedTable& projectedEvTable = pqlEvaluator.selectProjection(evTable);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(projectedEvTable, parsedQuery, pkbGetter);
+		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
+		std::list<std::string> expectedRes{ "7" };
+		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+		Assert::AreEqual(true, areListsEqual);
+	}
+
+	TEST_METHOD(querying_AffectsAndModifiesSOnly_success) {
+		// a = b + c
+		// c = a
+		// 1. Setup:
+		std::string query = "assign a; variable v; Select a such that Affects(a, _) and Modifies(a, v)";
+		// PKB inserts 6 types of statements
+		std::vector<StmtIndex> stmts;
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::READ_TYPE));
+
+		// PKB inserts pattern
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		StmtIndex stmt2 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "z");
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "a");
+		VarIndex varIndex2 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "b");
+		VarIndex varIndex3 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "c");
+		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("a+b");
+		std::string postFixExpression2 = ExpressionProcessor::convertInfixToPostFix("a");
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmt, varIndex);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmt, varIndex2);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmt, varIndex3);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmt2, varIndex3);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmt2, varIndex);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmt, stmt2);
+		pkbInserter->insertAssignInfo(varIndex, postFixExpression, stmt);
+		pkbInserter->insertAssignInfo(varIndex3, postFixExpression2, stmt2);
+
+		// Check PKB population
+		std::vector<int> allAssignStmts = pkbGetter->getStmtIdxFromType(StatementType::ASSIGN_TYPE);
+		Assert::AreEqual(size_t(3), allAssignStmts.size());
+
+		// 2. Test QPS Parser:
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		Assert::AreEqual(size_t(2), parsedQuery.getDeclarations().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
+
+		// 3. Test QPS Evaluator:
+		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
+		EvaluatedTable& evTable = pqlEvaluator.evaluate();
+
+		// Test numRow:
+		Assert::AreEqual(size_t(1), evTable.getNumRow());
+
+		// Test Table:
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("a") != tableRef.end());
+
+		// Test Values: std::unordered_map<std::string, EntityType>
+		std::vector<int> values{ 7 };
+		auto actualValues = tableRef.at("a");
+		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// Test EvResult:
+		bool actualEvResult = evTable.getEvResult();
+		Assert::AreEqual(true, actualEvResult);
+
+		// 4. Test QPS Result Projector:
+		EvaluatedTable& projectedEvTable = pqlEvaluator.selectProjection(evTable);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(projectedEvTable, parsedQuery, pkbGetter);
+		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
+		std::list<std::string> expectedRes{ "7" };
+		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+		Assert::AreEqual(true, areListsEqual);
+	}
+
+	TEST_METHOD(querying_AffectsAndUsesSOnly_success) {
+		// a = b + c
+		// c = a
+		// 1. Setup:
+		std::string query = "assign a; variable v; Select a such that Affects(a, _) and Uses(a, v)";
+		// PKB inserts 6 types of statements
+		std::vector<StmtIndex> stmts;
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::READ_TYPE));
+
+		// PKB inserts pattern
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		StmtIndex stmt2 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "z");
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "a");
+		VarIndex varIndex2 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "b");
+		VarIndex varIndex3 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "c");
+		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("a+b");
+		std::string postFixExpression2 = ExpressionProcessor::convertInfixToPostFix("a");
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmt, varIndex);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmt, varIndex2);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmt, varIndex3);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmt2, varIndex3);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmt2, varIndex);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmt, stmt2);
+		pkbInserter->insertAssignInfo(varIndex, postFixExpression, stmt);
+		pkbInserter->insertAssignInfo(varIndex3, postFixExpression2, stmt2);
+
+		// Check PKB population
+		std::vector<int> allAssignStmts = pkbGetter->getStmtIdxFromType(StatementType::ASSIGN_TYPE);
+		Assert::AreEqual(size_t(3), allAssignStmts.size());
+
+		// 2. Test QPS Parser:
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		Assert::AreEqual(size_t(2), parsedQuery.getDeclarations().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
+
+		// 3. Test QPS Evaluator:
+		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
+		EvaluatedTable& evTable = pqlEvaluator.evaluate();
+
+		// Test numRow:
+		Assert::AreEqual(size_t(2), evTable.getNumRow());
+
+		// Test Table:
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("a") != tableRef.end());
+
+		// Test Values: std::unordered_map<std::string, EntityType>
+		std::vector<int> values{ 7 };
+		auto actualValues = tableRef.at("a");
+		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// Test EvResult:
+		bool actualEvResult = evTable.getEvResult();
+		Assert::AreEqual(true, actualEvResult);
+
+		// 4. Test QPS Result Projector:
+		EvaluatedTable& projectedEvTable = pqlEvaluator.selectProjection(evTable);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(projectedEvTable, parsedQuery, pkbGetter);
+		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
+		std::list<std::string> expectedRes{ "7" };
+		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+		Assert::AreEqual(true, areListsEqual);
+	}
+
+	TEST_METHOD(querying_AffectsStarAndPatternAOnly_success) {
+		// while (true) {
+		//	a = b + c
+		//	c = a
+		// }
+		// 1. Setup:
+		std::string query = "assign a; variable v; Select a such that Affects*(a, _) pattern a(v, _\"b\"_)";
+		// PKB inserts 6 types of statements
+		std::vector<StmtIndex> stmts;
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::READ_TYPE));
+
+		// PKB inserts pattern
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::WHILE_TYPE);
+		StmtIndex stmt2 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		StmtIndex stmt3 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "z");
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "a");
+		VarIndex varIndex2 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "b");
+		VarIndex varIndex3 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "c");
+		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("a+b");
+		std::string postFixExpression2 = ExpressionProcessor::convertInfixToPostFix("a");
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmt, varIndex);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmt, varIndex3);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmt, varIndex);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmt, varIndex2);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmt, varIndex3);
+
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmt2, varIndex);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmt2, varIndex2);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmt2, varIndex3);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmt3, varIndex3);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmt3, varIndex);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmt, stmt2);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmt2, stmt3);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmt3, stmt);
+
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmt, stmt2);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmt2, stmt3);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmt3, stmt);
+
+		pkbInserter->insertAssignInfo(varIndex, postFixExpression, stmt2);
+		pkbInserter->insertAssignInfo(varIndex3, postFixExpression2, stmt3);
+
+		// Check PKB population
+		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("b");
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = pkbGetter->getAssignStmtsFromExprPartialMatch(postFixExpressionQuery);
+		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
+
+		// 2. Test QPS Parser:
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		Assert::AreEqual(size_t(2), parsedQuery.getDeclarations().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
+
+		// 3. Test QPS Evaluator:
+		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
+		EvaluatedTable& evTable = pqlEvaluator.evaluate();
+
+		// Test numRow:
+		Assert::AreEqual(size_t(2), evTable.getNumRow());
+
+		// Test Table:
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("a") != tableRef.end());
+
+		// Test Values: std::unordered_map<std::string, EntityType>
+
+		std::vector<int> values{ 8 };
+		auto actualValues = tableRef.at("a");
+		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// Test EvResult:
+		bool actualEvResult = evTable.getEvResult();
+		Assert::AreEqual(true, actualEvResult);
+
+		// 4. Test QPS Result Projector:
+		EvaluatedTable& projectedEvTable = pqlEvaluator.selectProjection(evTable);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(projectedEvTable, parsedQuery, pkbGetter);
+		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
+		std::list<std::string> expectedRes{ "8" };
+		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+		Assert::AreEqual(true, areListsEqual);
+	}
+
+	TEST_METHOD(querying_AffectandAffectsStar_success) {
+		// while (true) {
+		//	a = b + c
+		//	c = a
+		// }
+		// 1. Setup:
+		std::string query = "assign a; variable v; Select a such that Affects(8, 9) and Affects*(a, _)";
+		// PKB inserts 6 types of statements
+		std::vector<StmtIndex> stmts;
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::READ_TYPE));
+
+		// PKB inserts pattern
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::WHILE_TYPE);
+		StmtIndex stmt2 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		StmtIndex stmt3 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "z");
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "a");
+		VarIndex varIndex2 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "b");
+		VarIndex varIndex3 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "c");
+		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("a+b");
+		std::string postFixExpression2 = ExpressionProcessor::convertInfixToPostFix("a");
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmt, varIndex);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmt, varIndex3);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmt, varIndex);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmt, varIndex2);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmt, varIndex3);
+
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmt2, varIndex);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmt2, varIndex2);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmt2, varIndex3);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmt3, varIndex3);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmt3, varIndex);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmt, stmt2);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmt2, stmt3);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmt3, stmt);
+
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmt, stmt2);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmt2, stmt3);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmt3, stmt);
+
+		pkbInserter->insertAssignInfo(varIndex, postFixExpression, stmt2);
+		pkbInserter->insertAssignInfo(varIndex3, postFixExpression2, stmt3);
+
+		// 2. Test QPS Parser:
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		Assert::AreEqual(size_t(2), parsedQuery.getDeclarations().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
+
+		// 3. Test QPS Evaluator:
+		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
+		EvaluatedTable& evTable = pqlEvaluator.evaluate();
+
+		// Test numRow:
+		Assert::AreEqual(size_t(4), evTable.getNumRow());
+
+		// Test Table:
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("a") != tableRef.end());
+
+		// Test Values: std::unordered_map<std::string, EntityType>
+
+		std::vector<int> values{ 8, 8, 9, 9 };
+		auto actualValues = tableRef.at("a");
+		bool areVecEqual = std::equal(actualValues.begin(), actualValues.end(), values.begin());
+
+		Assert::AreEqual(true, areVecEqual);
+
+		// Test EvResult:
+		bool actualEvResult = evTable.getEvResult();
+		Assert::AreEqual(true, actualEvResult);
+
+		// 4. Test QPS Result Projector:
+		EvaluatedTable& projectedEvTable = pqlEvaluator.selectProjection(evTable);
+		PQLResultProjector pqlResultProjector = PQLResultProjector(projectedEvTable, parsedQuery, pkbGetter);
+		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
+		std::list<std::string> expectedRes{ "8", "9" };
+		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
+		Assert::AreEqual(true, areListsEqual);
+	}
+
+	TEST_METHOD(querying_AffectsAndPatternWOnly_success) {
+		// a = b + c
+		// c = a
+		// 1. Setup:
+		std::string query = "assign a; variable v; Select a such that Affects(a, _) pattern a(v, _\"b\"_)";
+		// PKB inserts 6 types of statements
+		std::vector<StmtIndex> stmts;
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::ASSIGN_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::PRINT_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::CALL_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::IF_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::WHILE_TYPE));
+		stmts.emplace_back(pkbInserter->insertStmt(StatementType::READ_TYPE));
+
+		// PKB inserts pattern
+		StmtIndex stmt = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		StmtIndex stmt2 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
+		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "z");
+		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "a");
+		VarIndex varIndex2 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "b");
+		VarIndex varIndex3 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "c");
+		std::string postFixExpression = ExpressionProcessor::convertInfixToPostFix("a+b");
+		std::string postFixExpression2 = ExpressionProcessor::convertInfixToPostFix("a");
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmt, varIndex);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmt, varIndex2);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmt, varIndex3);
+		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmt2, varIndex3);
+		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmt2, varIndex);
+		pkbInserter->insertRSInfo(RelationshipType::NEXT, stmt, stmt2);
+		pkbInserter->insertAssignInfo(varIndex, postFixExpression, stmt);
+		pkbInserter->insertAssignInfo(varIndex3, postFixExpression2, stmt2);
+
+		// Check PKB population
+		std::string postFixExpressionQuery = ExpressionProcessor::convertInfixToPostFix("b");
+		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo = pkbGetter->getAssignStmtsFromExprPartialMatch(postFixExpressionQuery);
+		Assert::AreEqual(size_t(1), std::get<0>(allPatternStmtInfo).size());
+
+		// 2. Test QPS Parser:
+		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
+		Assert::AreEqual(size_t(2), parsedQuery.getDeclarations().size());
+		Assert::AreEqual(size_t(1), parsedQuery.getColumns().size());
+
+		// 3. Test QPS Evaluator:
+		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
+		EvaluatedTable& evTable = pqlEvaluator.evaluate();
+
+		// Test numRow:
+		Assert::AreEqual(size_t(1), evTable.getNumRow());
+
+		// Test Table:
+		auto tableRef = evTable.getTableRef();
+		Assert::AreEqual(true, tableRef.find("a") != tableRef.end());
+
+		// Test Values: std::unordered_map<std::string, EntityType>
+		std::vector<int> values{ 7 };
+		auto actualValues = tableRef.at("a");
+		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
+		Assert::AreEqual(true, areVecEqual);
+
+		// Test EvResult:
+		bool actualEvResult = evTable.getEvResult();
+		Assert::AreEqual(true, actualEvResult);
+
+		// 4. Test QPS Result Projector:
+		EvaluatedTable& projectedEvTable = pqlEvaluator.selectProjection(evTable);
 		PQLResultProjector pqlResultProjector = PQLResultProjector(projectedEvTable, parsedQuery, pkbGetter);
 		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
 		std::list<std::string> expectedRes{ "7" };
