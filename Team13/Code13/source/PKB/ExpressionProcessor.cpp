@@ -15,22 +15,49 @@ OperatorPriority ExpressionProcessor::evaluateOperatorPrecedence(char currentCha
 	}
 }
 
+std::string ExpressionProcessor::processOperand(std::string& s, size_t index, char currentChar) {
+	std::string res;
+	/* All variable names and constants are prepended by a space */
+	if ((index > 0 && !isOperand(s[index - 1])) || index == 0) {
+		res += ' ';
+	}
+	res += currentChar;
+	return res;
+}
+
+std::string ExpressionProcessor::processOperators(std::stack<char>& stk, char currentChar) {
+	std::string res;
+	/* If current operator is of lower/equal precedence than operator from stack top,
+		then pop operator from stack and add to res.
+		Ensure check is done only when stack is not empty. */
+	while (!stk.empty() && evaluateOperatorPrecedence(currentChar) <= evaluateOperatorPrecedence(stk.top())) {
+		res += ' ';
+		res += stk.top();
+		stk.pop();
+	}
+	stk.push(currentChar);
+	return res;
+}
+
+std::string ExpressionProcessor::processStack(std::stack<char>& stk, std::string& res) {
+	/* Pop remaining items from stack */
+	while (!stk.empty()) {
+		res += ' ';
+		res += stk.top();
+		stk.pop();
+	}
+	return res;
+}
+
 /* Shunting yard algorithm */
 std::string ExpressionProcessor::convertInfixToPostFix(std::string s) {
-	/* To track non-operands */
 	std::stack<char> stk;
 	std::string res;
 
 	for (size_t i = 0; i < s.length(); i++) {
 		char currentChar = s[i];
-
-		/* Operand: Add to res */
 		if (isOperand(currentChar)) {
-			/* All variable names and constants are prepended by a space */
-			if ((i > 0 && !isOperand(s[i - 1])) || i == 0) {
-				res += ' ';
-			}
-			res += currentChar;
+			res += processOperand(s, i, currentChar);
 		} else if (currentChar == '(') {
 			stk.push('(');
 		} else if (currentChar == ')') {
@@ -41,24 +68,8 @@ std::string ExpressionProcessor::convertInfixToPostFix(std::string s) {
 			}
 			stk.pop();
 		} else {
-			/* If current operator is of lower/equal precedence than operator from stack top,
-			then pop operator from stack and add to res.
-			Ensure check is done only when stack is not empty. */
-			while (!stk.empty() && evaluateOperatorPrecedence(s[i]) <= evaluateOperatorPrecedence(stk.top())) {
-				res += ' ';
-				res += stk.top();
-				stk.pop();
-			}
-			stk.push(currentChar);
+			res += processOperators(stk, currentChar);
 		}
 	}
-
-	/* Pop remaining items from stack */
-	while (!stk.empty()) {
-		res += ' ';
-		res += stk.top();
-		stk.pop();
-	}
-
-	return res + ' ';
+	return processStack(stk, res) + ' ';
 }

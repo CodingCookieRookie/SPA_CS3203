@@ -10,6 +10,11 @@ enum class OperatorPriority {
 };
 
 class ExpressionProcessor {
+private:
+	static std::string processOperand(std::string& s, size_t index, char currentChar);
+	static std::string processOperators(std::stack<char>& stk, char currentChar);
+	static std::string processStack(std::stack<char>& stk, std::string& res);
+
 public:
 	static bool isOperand(char currentChar);
 	static OperatorPriority evaluateOperatorPrecedence(char currentChar);

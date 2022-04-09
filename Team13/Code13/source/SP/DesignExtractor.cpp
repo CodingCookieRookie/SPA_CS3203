@@ -136,44 +136,58 @@ void DesignExtractor::generateCFGFromStmt(
 	std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap,
 	int currStmtIdx,
 	int nextStmtIdx) {
-	if (currNode->getStmtType() == StatementType::IF_TYPE) {
-		/* Process for then statement list and else statement list respectively */
-		for (size_t i = 0; i <= 1; i++) {
-			StmtLstNode* childStmtLst = currNode->getChildStmtLst()[i];
-			StmtNode* firstChildStmtNode = childStmtLst->getStmtNodes().at(0);
-			int firstChildStmtIdx = stmtNodeIndexMap[firstChildStmtNode];
-
-			cfg->insert(currStmtIdx, firstChildStmtIdx);
-
-			generateCFG(childStmtLst, pkb, stmtNodeIndexMap);
-
-			StmtNode* lastChildStmtNode = childStmtLst->getStmtNodes().at(childStmtLst->getStmtNodes().size() - 1);
-			int lastChildStmtIdx = stmtNodeIndexMap[lastChildStmtNode];
-
-			generateCFGFromStmt(lastChildStmtNode, pkb, stmtNodeIndexMap, lastChildStmtIdx, nextStmtIdx);
-		}
-	} else if (currNode->getStmtType() == StatementType::WHILE_TYPE) {
+	StatementType stmtType = currNode->getStmtType();
+	switch (stmtType) {
+	case StatementType::IF_TYPE:
+		generateCFGfromIfStmt(currNode, pkb, stmtNodeIndexMap, currStmtIdx, nextStmtIdx);
+		break;
+	case StatementType::WHILE_TYPE:
+		generateCFGfromWhileStmt(currNode, pkb, stmtNodeIndexMap, currStmtIdx, nextStmtIdx);
+		break;
+	default:
 		if (nextStmtIdx != EXIT_NODE_IDX) {
 			cfg->insert(currStmtIdx, nextStmtIdx);
 		}
+		break;
+	}
+}
 
-		StmtLstNode* childStmtLst = currNode->getChildStmtLst()[0];
+void DesignExtractor::generateCFGfromIfStmt(
+	StmtNode* currNode,
+	PKBInserter* pkb,
+	std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap,
+	int currStmtIdx,
+	int nextStmtIdx) {
+	/* Process for then statement list and else statement list respectively */
+	for (size_t i = 0; i <= 1; i++) {
+		StmtLstNode* childStmtLst = currNode->getChildStmtLst()[i];
 		StmtNode* firstChildStmtNode = childStmtLst->getStmtNodes().at(0);
 		int firstChildStmtIdx = stmtNodeIndexMap[firstChildStmtNode];
-
 		cfg->insert(currStmtIdx, firstChildStmtIdx);
-
 		generateCFG(childStmtLst, pkb, stmtNodeIndexMap);
-
 		StmtNode* lastChildStmtNode = childStmtLst->getStmtNodes().at(childStmtLst->getStmtNodes().size() - 1);
 		int lastChildStmtIdx = stmtNodeIndexMap[lastChildStmtNode];
-
-		generateCFGFromStmt(lastChildStmtNode, pkb, stmtNodeIndexMap, lastChildStmtIdx, currStmtIdx);
-	} else {
-		if (nextStmtIdx != EXIT_NODE_IDX) {
-			cfg->insert(currStmtIdx, nextStmtIdx);
-		}
+		generateCFGFromStmt(lastChildStmtNode, pkb, stmtNodeIndexMap, lastChildStmtIdx, nextStmtIdx);
 	}
+}
+
+void DesignExtractor::generateCFGfromWhileStmt(
+	StmtNode* currNode,
+	PKBInserter* pkb,
+	std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap,
+	int currStmtIdx,
+	int nextStmtIdx) {
+	if (nextStmtIdx != EXIT_NODE_IDX) {
+		cfg->insert(currStmtIdx, nextStmtIdx);
+	}
+	StmtLstNode* childStmtLst = currNode->getChildStmtLst()[0];
+	StmtNode* firstChildStmtNode = childStmtLst->getStmtNodes().at(0);
+	int firstChildStmtIdx = stmtNodeIndexMap[firstChildStmtNode];
+	cfg->insert(currStmtIdx, firstChildStmtIdx);
+	generateCFG(childStmtLst, pkb, stmtNodeIndexMap);
+	StmtNode* lastChildStmtNode = childStmtLst->getStmtNodes().at(childStmtLst->getStmtNodes().size() - 1);
+	int lastChildStmtIdx = stmtNodeIndexMap[lastChildStmtNode];
+	generateCFGFromStmt(lastChildStmtNode, pkb, stmtNodeIndexMap, lastChildStmtIdx, currStmtIdx);
 }
 
 void DesignExtractor::processCFGs(

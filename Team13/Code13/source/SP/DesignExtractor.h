@@ -48,6 +48,18 @@ private:
 		std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap,
 		int currStmtIdx,
 		int nextStmtIdx);
+	void generateCFGfromIfStmt(
+		StmtNode* currNode,
+		PKBInserter* pkb,
+		std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap,
+		int currStmtIdx,
+		int nextStmtIdx);
+	void generateCFGfromWhileStmt(
+		StmtNode* currNode,
+		PKBInserter* pkb,
+		std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap,
+		int currStmtIdx,
+		int nextStmtIdx);
 
 	/* PKB population for diff synonyms RS (UsesS/P, ModifiesS/P) */
 	void populateDiffSynonymsRSInfo();
