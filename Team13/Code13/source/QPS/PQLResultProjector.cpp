@@ -27,9 +27,22 @@ std::list<std::string> PQLResultProjector::resolveTableToResults() {
 std::list<std::string> PQLResultProjector::projectBoolean() {
 	std::vector<PqlReference> attributes = parsedQuery.getAttributes();
 	std::list<std::string> resList;
-	std::string boolResult = evTable.getEvResult() ? "TRUE" : "FALSE";
+	bool resultTableHasEmptyColumn = PQLResultProjector::resultTableHasEmptyColumn(evTable.getTableRef());
+	std::string boolResult = !evTable.getEvResult() || resultTableHasEmptyColumn ? "FALSE" : "TRUE";
 	resList.emplace_back(boolResult);
 	return resList;
+}
+
+bool PQLResultProjector::resultTableHasEmptyColumn(
+	std::unordered_map<std::string, std::vector<int>> resultTable) {
+	bool resultTableHasEmptyColumn = false; /* Default: No table at all, or filled table */
+	for (std::pair<std::string, std::vector<int>> col : resultTable) {
+		if ((col.second.empty())) {
+			resultTableHasEmptyColumn = true;
+			break;
+		}
+	}
+	return resultTableHasEmptyColumn;
 }
 
 std::list<std::string> PQLResultProjector::projectColumns() {

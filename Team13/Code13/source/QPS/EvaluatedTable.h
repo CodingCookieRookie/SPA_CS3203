@@ -54,7 +54,7 @@ public:
 
 	/* Dummy default constructor */
 	EvaluatedTable();
-	
+
 	/* Wrapper constructor for table only */
 	EvaluatedTable(std::unordered_map<std::string, std::vector<int>> newTable);
 
@@ -63,10 +63,6 @@ public:
 
 	/* Handle table joins */
 	EvaluatedTable innerJoinMerge(EvaluatedTable& otherTable);
-
-	/* Checks if table field has no values */
-	static bool EvaluatedTable::isNoValuesInResultTable(
-		std::unordered_map<std::string, std::vector<int>> resultTable);
 
 	/* Getter for numRow */
 	size_t getNumRow() {
