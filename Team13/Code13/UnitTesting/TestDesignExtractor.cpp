@@ -1910,8 +1910,8 @@ public:
 		thenStmtLstNode->addStmtNode(ifPrintNode);
 		thenStmtLstNode->addStmtNode(assignNode);
 
-		ReadNode* readNode = new ReadNode("y", 5);
-		PrintNode* thenPrintNode = new PrintNode("a", 6);
+		ReadNode* readNode = new ReadNode("y", 4);
+		PrintNode* thenPrintNode = new PrintNode("a", 5);
 
 		StmtLstNode* elseStmtLstNode = new StmtLstNode();
 		elseStmtLstNode->addStmtNode(readNode);
@@ -1938,6 +1938,7 @@ public:
 		StmtIndex stmtIdx3 = StmtIndex(3);
 		StmtIndex stmtIdx4 = StmtIndex(4);
 		StmtIndex stmtIdx5 = StmtIndex(5);
+
 		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx2));
 		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx2, stmtIdx3));
 		Assert::IsTrue(pkbGetter->getRSContainsInfo(RelationshipType::NEXT, stmtIdx1, stmtIdx4));

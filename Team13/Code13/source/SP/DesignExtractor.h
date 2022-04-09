@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../PKB/PKBInserter.h"
-#include "../SP/CFG.h"
+#include "CFG.h"
 #include "SourceAST.h"
 
 class DesignExtractor {
@@ -20,46 +20,21 @@ private:
 	/* Maps RelationshipType to its corresponding populated indices */
 	std::unordered_map<RelationshipType, std::unordered_set<SynonymIndex>> rsToPopulatedIndicesMap;
 
-	/* TODO: 1) remove dead code, 2) remove ast and pkbInserter from params */
-
-	/* Populates relationships */
-	void insertNext(PKBInserter* pkbInserter);
-
 	/* Populates entities */
-	void insertStmt(SourceAST& ast, std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap);
-	void insertVar(SourceAST& ast);
-	void insertPattern(SourceAST& ast);
-	void insertConst(SourceAST& ast);
-	void insertProc(SourceAST& ast);
-	void insertStmtFromProc(SourceAST& ast);
+	void insertStmt();
+	void insertVar();
+	void insertPattern();
+	void insertConst();
+	void insertProc();
+	void insertStmtFromProc();
 
 	/* Constructs and processes CFGs */
-	void processCFGs(
-		ProgramNode* programNode,
-		PKBInserter* pkb,
-		std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap);
-	void generateCFG(
-		StmtLstNode* stmtLstNode,
-		PKBInserter* pkb,
-		std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap);
-	void generateCFGFromStmt(
-		StmtNode* currNode,
-		PKBInserter* pkb,
-		std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap,
-		int currStmtIdx,
-		int nextStmtIdx);
-	void generateCFGfromIfStmt(
-		StmtNode* currNode,
-		PKBInserter* pkb,
-		std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap,
-		int currStmtIdx,
-		int nextStmtIdx);
-	void generateCFGfromWhileStmt(
-		StmtNode* currNode,
-		PKBInserter* pkb,
-		std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap,
-		int currStmtIdx,
-		int nextStmtIdx);
+	void processCFGs(ProgramNode* programNode);
+	void generateCFG(StmtLstNode* stmtLstNode);
+	void generateCFGFromStmt(StmtNode* currNode, StmtIndex currStmtIdx, StmtIndex nextStmtIdx);
+	void generateCFGfromIfStmt(StmtNode* currNode, StmtIndex currStmtIdx, StmtIndex nextStmtIdx);
+	void generateCFGfromWhileStmt(StmtNode* currNode, StmtIndex currStmtIdx, StmtIndex nextStmtIdx);
+	void insertNext();
 
 	/* PKB population for diff synonyms RS (UsesS/P, ModifiesS/P) */
 	void populateDiffSynonymsRSInfo();

@@ -1,6 +1,6 @@
 #include "DesignExtractor.h"
 
-static const int EXIT_NODE_IDX;
+static const StmtIndex EXIT_NODE_IDX;
 
 DesignExtractor::DesignExtractor(SourceAST& ast, PKBInserter* pkbInserter) : ast(ast), pkbInserter(pkbInserter) {
 	this->cfg = new CFG();
@@ -34,16 +34,7 @@ std::unordered_map<RelationshipType, RelationshipType> DesignExtractor::rsToRsTM
 	{RelationshipType::CALLS, RelationshipType::CALLS_T},
 };
 
-void DesignExtractor::insertNext(PKBInserter* pkbInserter) {
-	for (auto cfgEntry : cfg->getCFGTable()) {
-		int keyStmtIdx = cfgEntry.first;
-		for (int nextStmtIdx : cfgEntry.second) {
-			pkbInserter->insertRSInfo(RelationshipType::NEXT, keyStmtIdx, nextStmtIdx);
-		}
-	}
-}
-
-void DesignExtractor::insertStmt(SourceAST& ast, std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap) {
+void DesignExtractor::insertStmt() {
 	StmtNodes stmtNodes = ast.getStmtNodes();
 	for (auto& stmtNode : stmtNodes) {
 		StatementType stmtType = stmtNode->getStmtType();
@@ -54,18 +45,17 @@ void DesignExtractor::insertStmt(SourceAST& ast, std::unordered_map<StmtNode*, S
 		} else {
 			stmtIndex = pkbInserter->insertStmt(stmtType, nameValue);
 		}
-		stmtNodeIndexMap[stmtNode] = stmtIndex;
 	}
 }
 
-void DesignExtractor::insertVar(SourceAST& ast) {
+void DesignExtractor::insertVar() {
 	SortedVarIndexToNameMap sortedVarIndexToNameMap = ast.getSortedVarIndexToNameMap();
 	for (const auto& [varIndex, varName] : sortedVarIndexToNameMap) {
 		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, varName);
 	}
 }
 
-void DesignExtractor::insertPattern(SourceAST& ast) {
+void DesignExtractor::insertPattern() {
 	PatternMap patternMap = ast.getPatternMap();
 	StmtTypeMap stmtTypeMap = ast.getStmtTypeMap();
 	VarNameToIndexMap varNameToIndexMap = ast.getVarNameToIndexMap();
@@ -92,21 +82,21 @@ void DesignExtractor::insertPattern(SourceAST& ast) {
 	}
 }
 
-void DesignExtractor::insertConst(SourceAST& ast) {
+void DesignExtractor::insertConst() {
 	ConstSet usesConsts = ast.getConstSet();
 	for (const std::string& usesConst : usesConsts) {
 		pkbInserter->insertConst(stoi(usesConst));
 	}
 }
 
-void DesignExtractor::insertProc(SourceAST& ast) {
+void DesignExtractor::insertProc() {
 	SortedProcIndexToNameMap sortedProcIndexToName = ast.getSortedProcIndexToNameMap();
 	for (auto& [procIndex, procName] : sortedProcIndexToName) {
 		pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, procName);
 	}
 }
 
-void DesignExtractor::insertStmtFromProc(SourceAST& ast) {
+void DesignExtractor::insertStmtFromProc() {
 	ProcStmtMap procStmtMap = ast.getProcStmtMap();
 	for (auto& procStmt : procStmtMap) {
 		StmtIndex procIndex = procStmt.first;
@@ -115,94 +105,6 @@ void DesignExtractor::insertStmtFromProc(SourceAST& ast) {
 			pkbInserter->insertStmtFromProc(procIndex, stmtIndex);
 		}
 	}
-}
-
-void DesignExtractor::generateCFG(
-	StmtLstNode* stmtLstNode,
-	PKBInserter* pkb,
-	std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap) {
-	std::vector<StmtNode*> stmtNodes = stmtLstNode->getStmtNodes();
-	for (size_t i = 0; i < stmtNodes.size(); i++) {
-		StmtNode* currNode = stmtNodes.at(i);
-		int currStmtIdx = stmtNodeIndexMap[currNode];
-		int nextStmtIdx = i == stmtNodes.size() - 1 ? EXIT_NODE_IDX : stmtNodeIndexMap[stmtNodes.at(i + 1)];
-		generateCFGFromStmt(currNode, pkb, stmtNodeIndexMap, currStmtIdx, nextStmtIdx);
-	}
-}
-
-void DesignExtractor::generateCFGFromStmt(
-	StmtNode* currNode,
-	PKBInserter* pkb,
-	std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap,
-	int currStmtIdx,
-	int nextStmtIdx) {
-	StatementType stmtType = currNode->getStmtType();
-	switch (stmtType) {
-	case StatementType::IF_TYPE:
-		generateCFGfromIfStmt(currNode, pkb, stmtNodeIndexMap, currStmtIdx, nextStmtIdx);
-		break;
-	case StatementType::WHILE_TYPE:
-		generateCFGfromWhileStmt(currNode, pkb, stmtNodeIndexMap, currStmtIdx, nextStmtIdx);
-		break;
-	default:
-		if (nextStmtIdx != EXIT_NODE_IDX) {
-			cfg->insert(currStmtIdx, nextStmtIdx);
-		}
-		break;
-	}
-}
-
-void DesignExtractor::generateCFGfromIfStmt(
-	StmtNode* currNode,
-	PKBInserter* pkb,
-	std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap,
-	int currStmtIdx,
-	int nextStmtIdx) {
-	/* Process for then statement list and else statement list respectively */
-	for (size_t i = 0; i <= 1; i++) {
-		StmtLstNode* childStmtLst = currNode->getChildStmtLst()[i];
-		StmtNode* firstChildStmtNode = childStmtLst->getStmtNodes().at(0);
-		int firstChildStmtIdx = stmtNodeIndexMap[firstChildStmtNode];
-		cfg->insert(currStmtIdx, firstChildStmtIdx);
-		generateCFG(childStmtLst, pkb, stmtNodeIndexMap);
-		StmtNode* lastChildStmtNode = childStmtLst->getStmtNodes().at(childStmtLst->getStmtNodes().size() - 1);
-		int lastChildStmtIdx = stmtNodeIndexMap[lastChildStmtNode];
-		generateCFGFromStmt(lastChildStmtNode, pkb, stmtNodeIndexMap, lastChildStmtIdx, nextStmtIdx);
-	}
-}
-
-void DesignExtractor::generateCFGfromWhileStmt(
-	StmtNode* currNode,
-	PKBInserter* pkb,
-	std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap,
-	int currStmtIdx,
-	int nextStmtIdx) {
-	if (nextStmtIdx != EXIT_NODE_IDX) {
-		cfg->insert(currStmtIdx, nextStmtIdx);
-	}
-	StmtLstNode* childStmtLst = currNode->getChildStmtLst()[0];
-	StmtNode* firstChildStmtNode = childStmtLst->getStmtNodes().at(0);
-	int firstChildStmtIdx = stmtNodeIndexMap[firstChildStmtNode];
-	cfg->insert(currStmtIdx, firstChildStmtIdx);
-	generateCFG(childStmtLst, pkb, stmtNodeIndexMap);
-	StmtNode* lastChildStmtNode = childStmtLst->getStmtNodes().at(childStmtLst->getStmtNodes().size() - 1);
-	int lastChildStmtIdx = stmtNodeIndexMap[lastChildStmtNode];
-	generateCFGFromStmt(lastChildStmtNode, pkb, stmtNodeIndexMap, lastChildStmtIdx, currStmtIdx);
-}
-
-void DesignExtractor::processCFGs(
-	ProgramNode* programNode,
-	PKBInserter* pkbInserter,
-	std::unordered_map<StmtNode*, StmtIndex>& stmtNodeIndexMap) {
-	for (ProcedureNode* procedureNode : programNode->getProcedureNodes()) {
-		StmtLstNode* stmtLstNode = procedureNode->getStmtLstNode();
-		generateCFG(stmtLstNode, pkbInserter, stmtNodeIndexMap);
-	}
-	insertNext(pkbInserter);
-}
-
-std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> DesignExtractor::getCFG() {
-	return cfg->getCFGTable();
 }
 
 void DesignExtractor::populateDiffSynonymsRSInfo() {
@@ -326,22 +228,95 @@ std::unordered_set<SynonymIndex> DesignExtractor::getAllSuccessors(SynonymIndex 
 	return successors;
 }
 
-void DesignExtractor::extract() {
-	/* Maps a StmtNode to the StmtIndex of the statement */
-	std::unordered_map<StmtNode*, StmtIndex> stmtNodeIndexMap;
+void DesignExtractor::generateCFG(StmtLstNode* stmtLstNode) {
+	std::vector<StmtNode*> stmtNodes = stmtLstNode->getStmtNodes();
+	for (size_t i = 0; i < stmtNodes.size(); i++) {
+		StmtNode* currNode = stmtNodes.at(i);
+		StmtIndex currStmtIdx = currNode->getStmtIdx();
+		StmtIndex nextStmtIdx = i == stmtNodes.size() - 1 ? EXIT_NODE_IDX : stmtNodes.at(i + 1)->getStmtIdx();
+		generateCFGFromStmt(currNode, currStmtIdx, nextStmtIdx);
+	}
+}
 
+void DesignExtractor::generateCFGFromStmt(StmtNode* currNode, StmtIndex currStmtIdx, StmtIndex nextStmtIdx) {
+	StatementType stmtType = currNode->getStmtType();
+	switch (stmtType) {
+	case StatementType::IF_TYPE:
+		generateCFGfromIfStmt(currNode, currStmtIdx, nextStmtIdx);
+		break;
+	case StatementType::WHILE_TYPE:
+		generateCFGfromWhileStmt(currNode, currStmtIdx, nextStmtIdx);
+		break;
+	default:
+		if (nextStmtIdx != EXIT_NODE_IDX) {
+			cfg->insert(currStmtIdx, nextStmtIdx);
+		}
+		break;
+	}
+}
+
+void DesignExtractor::generateCFGfromIfStmt(StmtNode* currNode, StmtIndex currStmtIdx, StmtIndex nextStmtIdx) {
+	/* Process for then statement list and else statement list respectively */
+	for (size_t i = 0; i <= 1; i++) {
+		StmtLstNode* childStmtLst = currNode->getChildStmtLst()[i];
+		StmtNode* firstChildStmtNode = childStmtLst->getStmtNodes().at(0);
+		StmtIndex firstChildStmtIdx = firstChildStmtNode->getStmtIdx();
+		cfg->insert(currStmtIdx, firstChildStmtIdx);
+		generateCFG(childStmtLst);
+		StmtNode* lastChildStmtNode = childStmtLst->getStmtNodes().at(childStmtLst->getStmtNodes().size() - 1);
+		StmtIndex lastChildStmtIdx = lastChildStmtNode->getStmtIdx();
+		generateCFGFromStmt(lastChildStmtNode, lastChildStmtIdx, nextStmtIdx);
+	}
+}
+
+void DesignExtractor::generateCFGfromWhileStmt(StmtNode* currNode, StmtIndex currStmtIdx, StmtIndex nextStmtIdx) {
+	if (nextStmtIdx != EXIT_NODE_IDX) {
+		cfg->insert(currStmtIdx, nextStmtIdx);
+	}
+	StmtLstNode* childStmtLst = currNode->getChildStmtLst()[0];
+	StmtNode* firstChildStmtNode = childStmtLst->getStmtNodes().at(0);
+	StmtIndex firstChildStmtIdx = firstChildStmtNode->getStmtIdx();
+	cfg->insert(currStmtIdx, firstChildStmtIdx);
+	generateCFG(childStmtLst);
+	StmtNode* lastChildStmtNode = childStmtLst->getStmtNodes().at(childStmtLst->getStmtNodes().size() - 1);
+	StmtIndex lastChildStmtIdx = lastChildStmtNode->getStmtIdx();
+	generateCFGFromStmt(lastChildStmtNode, lastChildStmtIdx, currStmtIdx);
+}
+
+void DesignExtractor::insertNext() {
+	std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> cfgTable = cfg->getCFGTable();
+	for (auto& [keyStmtIdx, nextStmtIndices] : cfgTable) {
+		for (StmtIndex nextStmtIdx : nextStmtIndices) {
+			pkbInserter->insertRSInfo(RelationshipType::NEXT, keyStmtIdx, nextStmtIdx);
+		}
+	}
+}
+
+void DesignExtractor::processCFGs(ProgramNode* programNode) {
+	for (ProcedureNode* procedureNode : programNode->getProcedureNodes()) {
+		StmtLstNode* stmtLstNode = procedureNode->getStmtLstNode();
+		generateCFG(stmtLstNode);
+	}
+	insertNext();
+}
+
+std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> DesignExtractor::getCFG() {
+	return cfg->getCFGTable();
+}
+
+void DesignExtractor::extract() {
 	/* Populates entities */
-	insertStmt(ast, stmtNodeIndexMap); /* TODO: remove stmtNodeIndexMap, CFG can use entityMap.stmtNodes */
-	insertVar(ast);
-	insertPattern(ast);
-	insertConst(ast);
-	insertProc(ast);
-	insertStmtFromProc(ast);
+	insertStmt();
+	insertVar();
+	insertPattern();
+	insertConst();
+	insertProc();
+	insertStmtFromProc();
 
 	/* Populate relationships */
 	populateDiffSynonymsRSInfo();
 	populateSameSynonymsRSInfo();
 
 	/* Construct CFGs and populates Next relationship */
-	processCFGs(ast.getRoot(), pkbInserter, stmtNodeIndexMap);
+	processCFGs(ast.getRoot());
 }
