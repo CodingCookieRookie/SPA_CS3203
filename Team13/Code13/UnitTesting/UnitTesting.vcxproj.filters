@@ -3,7 +3,6 @@
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="TestEvaluatedTable.cpp" />
-    <ClCompile Include="TestContainer.cpp" />
     <ClCompile Include="TestInstructionFollows.cpp" />
     <ClCompile Include="TestInstructionFollowsT.cpp" />
     <ClCompile Include="TestInstructionParent.cpp" />
@@ -53,7 +52,6 @@
     <ClCompile Include="TestWithInstruction.cpp" />
     <ClCompile Include="TestNext.cpp" />
     <ClCompile Include="TestInstructionNext.cpp" />
-    <ClCompile Include="TestNextT.cpp" />
     <ClCompile Include="TestCFG.cpp" />
     <ClCompile Include="TestAffectsProcessor.cpp" />
     <ClCompile Include="TestAffectsTProcessor.cpp" />

@@ -22,9 +22,6 @@
     <ClCompile Include="..\source\PKB\Constant.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\PKB\Container.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\PKB\ExpressionProcessor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -269,9 +266,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\PKB\Constant.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\Container.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\PKB\ExpressionProcessor.h">

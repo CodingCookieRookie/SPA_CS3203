@@ -17,7 +17,6 @@
     <ClCompile Include="..\source\Common\Lexer.cpp" />
     <ClCompile Include="..\source\PKB\Attribute.cpp" />
     <ClCompile Include="..\source\PKB\Constant.cpp" />
-    <ClCompile Include="..\source\PKB\Container.cpp" />
     <ClCompile Include="..\source\PKB\ExpressionProcessor.cpp" />
     <ClCompile Include="..\source\PKB\PatternAssign.cpp" />
     <ClCompile Include="..\source\PKB\PatternContainer.cpp" />
@@ -89,7 +88,6 @@
     <ClInclude Include="..\source\PKB\Calls.h" />
     <ClInclude Include="..\source\PKB\CallsT.h" />
     <ClInclude Include="..\source\PKB\Constant.h" />
-    <ClInclude Include="..\source\PKB\Container.h" />
     <ClInclude Include="..\source\PKB\ExpressionProcessor.h" />
     <ClInclude Include="..\source\PKB\Follows.h" />
     <ClInclude Include="..\source\PKB\FollowsT.h" />

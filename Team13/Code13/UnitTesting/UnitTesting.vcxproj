@@ -187,7 +187,6 @@
     <ClCompile Include="TestConstant.cpp" />
     <ClCompile Include="TestCFG.cpp" />
     <ClCompile Include="TestEvaluatedTable.cpp" />
-    <ClCompile Include="TestContainer.cpp" />
     <ClCompile Include="TestGetAllInstruction.cpp" />
     <ClCompile Include="TestInstructionCalls.cpp" />
     <ClCompile Include="TestInstructionCallsT.cpp" />

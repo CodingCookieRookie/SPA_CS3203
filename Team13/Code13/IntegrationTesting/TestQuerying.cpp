@@ -268,7 +268,7 @@ public:
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 		// Test numRow:
 		Assert::AreEqual(size_t(91), evTable.getNumRow()); // 91 statements are parent* to stmt-92
 		// Test Table:
@@ -331,7 +331,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// Test numRow:
 		Assert::AreEqual(size_t(2), evTable.getNumRow());
@@ -390,7 +390,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// Test numRow:
 		Assert::AreEqual(size_t(2), evTable.getNumRow());
@@ -448,7 +448,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// Test numRow:
 		Assert::AreEqual(size_t(2), evTable.getNumRow());
@@ -506,7 +506,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// Test numRow:
 		Assert::AreEqual(size_t(2), evTable.getNumRow());
@@ -567,7 +567,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -628,7 +628,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -689,7 +689,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -753,7 +753,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -811,7 +811,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -869,7 +869,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -927,7 +927,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -987,7 +987,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -1044,7 +1044,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -1103,7 +1103,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
@@ -1162,7 +1162,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
@@ -1221,7 +1221,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -1280,7 +1280,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -1339,7 +1339,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -1398,7 +1398,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -1457,7 +1457,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -1516,7 +1516,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -1576,7 +1576,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -1642,7 +1642,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -1708,7 +1708,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -1770,7 +1770,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -1831,7 +1831,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -1893,7 +1893,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -2627,7 +2627,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -2685,7 +2685,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
@@ -2743,7 +2743,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
@@ -2801,7 +2801,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -2850,7 +2850,6 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIndex3, varRead);
 		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIndex3, varProc1);
 		pkbInserter->insertConst(2);
-		//TransitivePopulator::populateRecursiveInfo();
 
 		// 2. Test QPS Parser:
 		std::string query = "read r; procedure p; Select r with r.varName = p.procName";
@@ -2861,7 +2860,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -2910,7 +2909,6 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIndex3, varRead);
 		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIndex3, varProc1);
 		pkbInserter->insertConst(2);
-		////TransitivePopulator::populateRecursiveInfo();
 
 		// 2. Test QPS Parser:
 		std::string query = "print pn; Select pn with \"read\" = pn.varName";
@@ -2970,7 +2968,6 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIndex3, varRead);
 		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIndex3, varProc1);
 		pkbInserter->insertConst(2);
-		//TransitivePopulator::populateRecursiveInfo();
 
 		/* 1. Setup:
 		* Clause: with "print" = "read"
@@ -2985,7 +2982,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		//// Test evResult:
 		Assert::AreEqual(true, evTable.getEvResult());
@@ -3020,7 +3017,6 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIndex3, varRead);
 		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIndex3, varProc1);
 		pkbInserter->insertConst(2);
-		//TransitivePopulator::populateRecursiveInfo();
 
 		// 2. Test QPS Parser:
 		std::string query = "constant c; stmt s; Select c with c.value = s.stmt#";
@@ -3031,7 +3027,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		//// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
@@ -3081,7 +3077,6 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIndex3, varRead);
 		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIndex3, varProc1);
 		pkbInserter->insertConst(2);
-		//TransitivePopulator::populateRecursiveInfo();
 
 		// 2. Test QPS Parser:
 		std::string query = "read r; Select r with 1 = r.stmt#";
@@ -3141,7 +3136,6 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIndex3, varRead);
 		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIndex3, varProc1);
 		pkbInserter->insertConst(2);
-		//TransitivePopulator::populateRecursiveInfo();
 
 		// 2. Test QPS Parser:
 		std::string query = "variable v; Select v with 100 = 100";
@@ -3152,7 +3146,7 @@ EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		// 3. Test QPS Evaluator:
 		PQLEvaluator pqlEvaluator = PQLEvaluator::PQLEvaluator(parsedQuery, pkbGetter);
-EvaluatedTable evTable = pqlEvaluator.evaluate();
+		EvaluatedTable evTable = pqlEvaluator.evaluate();
 
 		//// Test evResult:
 		Assert::AreEqual(true, evTable.getEvResult());
