@@ -115,6 +115,7 @@ EvaluatedTable WithIntegerInstruction::execute() {
 			std::unordered_map<std::string, std::vector<int>> PQLmap{ { lhs.second, { intVal } } };
 			return EvaluatedTable(PQLmap);
 		}
+		return EvaluatedTable(false);
 	}
 	std::vector<int> column = pkbGetter->getEqualIntegerAttributes(lhsEntity, rhsEntity);
 	std::unordered_map<std::string, std::vector<int>> PQLmap{ { lhs.second, column }, { rhs.second, column } };
