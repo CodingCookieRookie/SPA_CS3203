@@ -1946,8 +1946,6 @@ public:
 		std::vector<ExprNode*> multOpChildren = multOp->getChildren();
 		Assert::AreEqual(std::string("a"), multOpChildren[0]->getValue());
 		Assert::IsTrue(ExprNodeValueType::VAR_NAME == multOpChildren[0]->getExprNodeValueType());
-		Assert::AreEqual(std::string("d"), plusOpChildren[1]->getValue());
-		Assert::IsTrue(ExprNodeValueType::VAR_NAME == plusOpChildren[1]->getExprNodeValueType());
 
 		ExprNode* plusOp = multOpChildren[1];
 		Assert::AreEqual(std::string("+"), plusOp->getValue());
@@ -1962,6 +1960,8 @@ public:
 		Assert::IsTrue(ExprNodeValueType::VAR_NAME == minusOpChildren[0]->getExprNodeValueType());
 		Assert::AreEqual(std::string("c"), minusOpChildren[1]->getValue());
 		Assert::IsTrue(ExprNodeValueType::VAR_NAME == minusOpChildren[1]->getExprNodeValueType());
+		Assert::AreEqual(std::string("d"), plusOpChildren[1]->getValue());
+		Assert::IsTrue(ExprNodeValueType::VAR_NAME == plusOpChildren[1]->getExprNodeValueType());
 	}
 
 	TEST_METHOD(parse_matchWhile_oneRelExprCondExpr_success) {
