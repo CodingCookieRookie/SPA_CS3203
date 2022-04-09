@@ -375,8 +375,10 @@ public:
 	TEST_METHOD(getUsingLeftStmtIndex_basicAffectsTCase) {
 		populateBasicAffectsTCase();
 
-		Assert::IsTrue(std::vector<StmtIndex> {stmtIdx2, stmtIdx3} == affectsTProcessor->getUsingLeftStmtIndex(stmtIdx1, pkbGetter));
-		Assert::IsTrue(std::vector<StmtIndex> {stmtIdx3} == affectsTProcessor->getUsingLeftStmtIndex(stmtIdx2, pkbGetter));
+		Assert::IsTrue(std::vector<StmtIndex> {stmtIdx2, stmtIdx3} ==
+			affectsTProcessor->getUsingLeftStmtIndex(stmtIdx1, pkbGetter));
+		Assert::IsTrue(std::vector<StmtIndex> {stmtIdx3} ==
+			affectsTProcessor->getUsingLeftStmtIndex(stmtIdx2, pkbGetter));
 	};
 
 	TEST_METHOD(getUsingLeftStmtIndex_containerWithNestedCalls) {

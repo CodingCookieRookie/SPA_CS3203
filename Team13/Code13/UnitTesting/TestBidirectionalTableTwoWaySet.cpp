@@ -15,7 +15,8 @@ public:
 		VarIndex varIdx2 = VarIndex(2);
 		VarIndex varIdx3 = VarIndex(3);
 
-		BidirectionalTableTwoWaySet<VarIndex, StmtIndex> bidirectionalTable = BidirectionalTableTwoWaySet<VarIndex, StmtIndex>();
+		BidirectionalTableTwoWaySet<VarIndex, StmtIndex> bidirectionalTable =
+			BidirectionalTableTwoWaySet<VarIndex, StmtIndex>();
 		bidirectionalTable.insert(varIdx1, stmtIdx);
 		bidirectionalTable.insert(varIdx2, stmtIdx);
 		bidirectionalTable.insert(varIdx3, stmtIdx);
@@ -31,7 +32,8 @@ public:
 		VarIndex varIdx1 = VarIndex(1);
 		VarIndex varIdx3 = VarIndex(3);
 
-		BidirectionalTableTwoWaySet<VarIndex, StmtIndex> bidirectionalTable = BidirectionalTableTwoWaySet<VarIndex, StmtIndex>();
+		BidirectionalTableTwoWaySet<VarIndex, StmtIndex> bidirectionalTable =
+			BidirectionalTableTwoWaySet<VarIndex, StmtIndex>();
 		bidirectionalTable.insert(varIdx1, stmtIdx1);
 		bidirectionalTable.insert(varIdx1, stmtIdx2);
 		bidirectionalTable.insert(varIdx3, stmtIdx1);
@@ -48,7 +50,8 @@ public:
 		VarIndex varIdx2 = VarIndex(2);
 		VarIndex varIdx3 = VarIndex(3);
 
-		BidirectionalTableTwoWaySet<VarIndex, ProcIndex> bidirectionalTable = BidirectionalTableTwoWaySet<VarIndex, ProcIndex>();
+		BidirectionalTableTwoWaySet<VarIndex, ProcIndex> bidirectionalTable =
+			BidirectionalTableTwoWaySet<VarIndex, ProcIndex>();
 		bidirectionalTable.insert(varIdx1, procIdx);
 		bidirectionalTable.insert(varIdx2, procIdx);
 		bidirectionalTable.insert(varIdx3, procIdx);
@@ -64,7 +67,8 @@ public:
 		VarIndex varIdx1 = VarIndex(1);
 		VarIndex varIdx3 = VarIndex(3);
 
-		BidirectionalTableTwoWaySet<VarIndex, ProcIndex> bidirectionalTable = BidirectionalTableTwoWaySet<VarIndex, ProcIndex>();
+		BidirectionalTableTwoWaySet<VarIndex, ProcIndex> bidirectionalTable =
+			BidirectionalTableTwoWaySet<VarIndex, ProcIndex>();
 		bidirectionalTable.insert(varIdx1, procIdx1);
 		bidirectionalTable.insert(varIdx1, procIdx2);
 		bidirectionalTable.insert(varIdx3, procIdx1);
@@ -83,7 +87,8 @@ public:
 
 		std::vector<StmtIndex> expectedRes{ stmtIdx };
 
-		BidirectionalTableTwoWaySet<VarIndex, StmtIndex> bidirectionalTable = BidirectionalTableTwoWaySet<VarIndex, StmtIndex>();
+		BidirectionalTableTwoWaySet<VarIndex, StmtIndex> bidirectionalTable =
+			BidirectionalTableTwoWaySet<VarIndex, StmtIndex>();
 		bidirectionalTable.insert(varIdx1, stmtIdx);
 		bidirectionalTable.insert(varIdx2, stmtIdx);
 		bidirectionalTable.insert(varIdx3, stmtIdx);
@@ -105,7 +110,8 @@ public:
 		std::vector<StmtIndex> expectedRes1{ stmtIdx1 , stmtIdx2 };
 		std::vector<StmtIndex> expectedRes2{ stmtIdx1 };
 
-		BidirectionalTableTwoWaySet<VarIndex, StmtIndex> bidirectionalTable = BidirectionalTableTwoWaySet<VarIndex, StmtIndex>();
+		BidirectionalTableTwoWaySet<VarIndex, StmtIndex> bidirectionalTable =
+			BidirectionalTableTwoWaySet<VarIndex, StmtIndex>();
 		bidirectionalTable.insert(varIdx1, stmtIdx1);
 		bidirectionalTable.insert(varIdx1, stmtIdx2);
 		bidirectionalTable.insert(varIdx3, stmtIdx1);
@@ -124,7 +130,8 @@ public:
 
 		std::vector<ProcIndex> expectedRes{ procIdx };
 
-		BidirectionalTableTwoWaySet<VarIndex, ProcIndex> bidirectionalTable = BidirectionalTableTwoWaySet<VarIndex, ProcIndex>();
+		BidirectionalTableTwoWaySet<VarIndex, ProcIndex> bidirectionalTable =
+			BidirectionalTableTwoWaySet<VarIndex, ProcIndex>();
 		bidirectionalTable.insert(varIdx1, procIdx);
 		bidirectionalTable.insert(varIdx2, procIdx);
 		bidirectionalTable.insert(varIdx3, procIdx);
@@ -146,7 +153,8 @@ public:
 		std::vector<ProcIndex> expectedRes1{ procIdx2, procIdx1 };
 		std::vector<ProcIndex> expectedRes2{ procIdx2 };
 
-		BidirectionalTableTwoWaySet<VarIndex, ProcIndex> bidirectionalTable = BidirectionalTableTwoWaySet<VarIndex, ProcIndex>();
+		BidirectionalTableTwoWaySet<VarIndex, ProcIndex> bidirectionalTable =
+			BidirectionalTableTwoWaySet<VarIndex, ProcIndex>();
 		bidirectionalTable.insert(varIdx1, procIdx2);
 		bidirectionalTable.insert(varIdx1, procIdx1);
 		bidirectionalTable.insert(varIdx3, procIdx2);
@@ -165,7 +173,8 @@ public:
 
 		std::vector<VarIndex> expectedRes{ varIdx1 , varIdx2, varIdx3 };
 
-		BidirectionalTableTwoWaySet<VarIndex, StmtIndex> bidirectionalTable = BidirectionalTableTwoWaySet<VarIndex, StmtIndex>();
+		BidirectionalTableTwoWaySet<VarIndex, StmtIndex> bidirectionalTable =
+			BidirectionalTableTwoWaySet<VarIndex, StmtIndex>();
 		bidirectionalTable.insert(varIdx1, stmtIdx);
 		bidirectionalTable.insert(varIdx2, stmtIdx);
 		bidirectionalTable.insert(varIdx3, stmtIdx);
@@ -183,7 +192,8 @@ public:
 		std::vector<VarIndex> expectedRes1{ varIdx1 , varIdx3 };
 		std::vector<VarIndex> expectedRes2{ varIdx1 };
 
-		BidirectionalTableTwoWaySet<VarIndex, StmtIndex> bidirectionalTable = BidirectionalTableTwoWaySet<VarIndex, StmtIndex>();
+		BidirectionalTableTwoWaySet<VarIndex, StmtIndex> bidirectionalTable =
+			BidirectionalTableTwoWaySet<VarIndex, StmtIndex>();
 		bidirectionalTable.insert(varIdx1, stmtIdx1);
 		bidirectionalTable.insert(varIdx1, stmtIdx2);
 		bidirectionalTable.insert(varIdx3, stmtIdx1);
@@ -202,7 +212,8 @@ public:
 
 		std::vector<VarIndex> expectedRes{ varIdx1, varIdx2, varIdx3 };
 
-		BidirectionalTableTwoWaySet<VarIndex, ProcIndex> bidirectionalTable = BidirectionalTableTwoWaySet<VarIndex, ProcIndex>();
+		BidirectionalTableTwoWaySet<VarIndex, ProcIndex> bidirectionalTable =
+			BidirectionalTableTwoWaySet<VarIndex, ProcIndex>();
 		bidirectionalTable.insert(varIdx1, procIdx);
 		bidirectionalTable.insert(varIdx2, procIdx);
 		bidirectionalTable.insert(varIdx3, procIdx);
@@ -220,7 +231,8 @@ public:
 		std::vector<VarIndex> expectedRes1{ varIdx1 , varIdx3 };
 		std::vector<VarIndex> expectedRes2{ varIdx1 };
 
-		BidirectionalTableTwoWaySet<VarIndex, ProcIndex> bidirectionalTable = BidirectionalTableTwoWaySet<VarIndex, ProcIndex>();
+		BidirectionalTableTwoWaySet<VarIndex, ProcIndex> bidirectionalTable =
+			BidirectionalTableTwoWaySet<VarIndex, ProcIndex>();
 		bidirectionalTable.insert(varIdx1, procIdx1);
 		bidirectionalTable.insert(varIdx1, procIdx2);
 		bidirectionalTable.insert(varIdx3, procIdx1);
@@ -239,9 +251,11 @@ public:
 
 		std::vector<VarIndex> expectedTList{ varIdx1 , varIdx2 , varIdx3 };
 		std::vector<StmtIndex> expectedUList{ stmtIdx , stmtIdx, stmtIdx };
-		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> expectedRes = std::make_tuple(expectedTList, expectedUList);
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> expectedRes =
+			std::make_tuple(expectedTList, expectedUList);
 
-		BidirectionalTableTwoWaySet<VarIndex, StmtIndex> bidirectionalTable = BidirectionalTableTwoWaySet<VarIndex, StmtIndex>();
+		BidirectionalTableTwoWaySet<VarIndex, StmtIndex> bidirectionalTable =
+			BidirectionalTableTwoWaySet<VarIndex, StmtIndex>();
 		bidirectionalTable.insert(varIdx1, stmtIdx);
 		bidirectionalTable.insert(varIdx2, stmtIdx);
 		bidirectionalTable.insert(varIdx3, stmtIdx);
@@ -258,9 +272,11 @@ public:
 
 		std::vector<VarIndex> expectedTList{ varIdx1 , varIdx1 , varIdx3 };
 		std::vector<StmtIndex> expectedUList{ stmtIdx1 , stmtIdx2, stmtIdx1 };
-		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> expectedRes = std::make_tuple(expectedTList, expectedUList);
+		std::tuple<std::vector<VarIndex>, std::vector<StmtIndex>> expectedRes =
+			std::make_tuple(expectedTList, expectedUList);
 
-		BidirectionalTableTwoWaySet<VarIndex, StmtIndex> bidirectionalTable = BidirectionalTableTwoWaySet<VarIndex, StmtIndex>();
+		BidirectionalTableTwoWaySet<VarIndex, StmtIndex> bidirectionalTable =
+			BidirectionalTableTwoWaySet<VarIndex, StmtIndex>();
 		bidirectionalTable.insert(varIdx1, stmtIdx1);
 		bidirectionalTable.insert(varIdx1, stmtIdx2);
 		bidirectionalTable.insert(varIdx3, stmtIdx1);
@@ -277,9 +293,11 @@ public:
 
 		std::vector<VarIndex> expectedTList{ varIdx1 , varIdx2 , varIdx3 };
 		std::vector<ProcIndex> expectedUList{ procIdx , procIdx, procIdx };
-		std::tuple<std::vector<VarIndex>, std::vector<ProcIndex>> expectedRes = std::make_tuple(expectedTList, expectedUList);
+		std::tuple<std::vector<VarIndex>, std::vector<ProcIndex>> expectedRes =
+			std::make_tuple(expectedTList, expectedUList);
 
-		BidirectionalTableTwoWaySet<VarIndex, ProcIndex> bidirectionalTable = BidirectionalTableTwoWaySet<VarIndex, ProcIndex>();
+		BidirectionalTableTwoWaySet<VarIndex, ProcIndex> bidirectionalTable =
+			BidirectionalTableTwoWaySet<VarIndex, ProcIndex>();
 		bidirectionalTable.insert(varIdx1, procIdx);
 		bidirectionalTable.insert(varIdx2, procIdx);
 		bidirectionalTable.insert(varIdx3, procIdx);
@@ -296,9 +314,11 @@ public:
 
 		std::vector<VarIndex> expectedTList{ varIdx1 , varIdx1 , varIdx2 };
 		std::vector<ProcIndex> expectedUList{ procIdx1 , procIdx2, procIdx1 };
-		std::tuple<std::vector<VarIndex>, std::vector<ProcIndex>> expectedRes = std::make_tuple(expectedTList, expectedUList);
+		std::tuple<std::vector<VarIndex>, std::vector<ProcIndex>> expectedRes =
+			std::make_tuple(expectedTList, expectedUList);
 
-		BidirectionalTableTwoWaySet<VarIndex, ProcIndex> bidirectionalTable = BidirectionalTableTwoWaySet<VarIndex, ProcIndex>();
+		BidirectionalTableTwoWaySet<VarIndex, ProcIndex> bidirectionalTable =
+			BidirectionalTableTwoWaySet<VarIndex, ProcIndex>();
 		bidirectionalTable.insert(varIdx1, procIdx1);
 		bidirectionalTable.insert(varIdx1, procIdx2);
 		bidirectionalTable.insert(varIdx2, procIdx1);
@@ -315,9 +335,11 @@ public:
 
 		std::vector<ProcIndex> expectedTList{ procIdx1 , procIdx2 , procIdx2 };
 		std::vector<ProcIndex> expectedUList{ procIdx2 , procIdx3, procIdx4 };
-		std::tuple<std::vector<ProcIndex>, std::vector<ProcIndex>> expectedRes = std::make_tuple(expectedTList, expectedUList);
+		std::tuple<std::vector<ProcIndex>, std::vector<ProcIndex>> expectedRes =
+			std::make_tuple(expectedTList, expectedUList);
 
-		BidirectionalTableTwoWaySet<ProcIndex, ProcIndex> bidirectionalTable = BidirectionalTableTwoWaySet<ProcIndex, ProcIndex>();
+		BidirectionalTableTwoWaySet<ProcIndex, ProcIndex> bidirectionalTable =
+			BidirectionalTableTwoWaySet<ProcIndex, ProcIndex>();
 		bidirectionalTable.insert(procIdx1, procIdx2);
 		bidirectionalTable.insert(procIdx2, procIdx3);
 		bidirectionalTable.insert(procIdx2, procIdx4);
@@ -334,9 +356,11 @@ public:
 
 		std::vector<ProcIndex> expectedTList{ stmtIdx1 , stmtIdx2 , stmtIdx3 };
 		std::vector<ProcIndex> expectedUList{ stmtIdx2 , stmtIdx3, stmtIdx4 };
-		std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> expectedRes = std::make_tuple(expectedTList, expectedUList);
+		std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> expectedRes =
+			std::make_tuple(expectedTList, expectedUList);
 
-		BidirectionalTableTwoWaySet<StmtIndex, StmtIndex> bidirectionalTable = BidirectionalTableTwoWaySet<StmtIndex, StmtIndex>();
+		BidirectionalTableTwoWaySet<StmtIndex, StmtIndex> bidirectionalTable =
+			BidirectionalTableTwoWaySet<StmtIndex, StmtIndex>();
 		bidirectionalTable.insert(stmtIdx1, stmtIdx2);
 		bidirectionalTable.insert(stmtIdx2, stmtIdx3);
 		bidirectionalTable.insert(stmtIdx3, stmtIdx4);

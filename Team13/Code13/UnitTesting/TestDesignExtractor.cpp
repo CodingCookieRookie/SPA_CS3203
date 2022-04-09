@@ -37,10 +37,12 @@ public:
 		designExtractor->extract();
 
 		Assert::AreEqual(size_t(1), pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE).size());
-		Assert::AreEqual(procName, pkbGetter->getNameIdxEntityName(EntityType::PROCEDURE, pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE)[0]));
+		Assert::AreEqual(procName, pkbGetter->getNameIdxEntityName(EntityType::PROCEDURE,
+			pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE)[0]));
 		Assert::AreEqual(size_t(1), pkbGetter->getAllStmts().size());
 		Assert::AreEqual(size_t(1), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
-		Assert::AreEqual(varName, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[0]));
+		Assert::AreEqual(varName, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE,
+			pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[0]));
 
 		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_S)).size());
 		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_P)).size());
@@ -61,10 +63,12 @@ public:
 		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
 		designExtractor->extract();
 		Assert::AreEqual(size_t(1), pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE).size());
-		Assert::AreEqual(procName, pkbGetter->getNameIdxEntityName(EntityType::PROCEDURE, pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE)[0]));
+		Assert::AreEqual(procName, pkbGetter->getNameIdxEntityName(EntityType::PROCEDURE,
+			pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE)[0]));
 		Assert::AreEqual(size_t(1), pkbGetter->getAllStmts().size());
 		Assert::AreEqual(size_t(1), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
-		Assert::AreEqual(varName, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[0]));
+		Assert::AreEqual(varName, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE,
+			pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[0]));
 
 		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_S)).size());
 		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::USES_P)).size());
@@ -88,11 +92,14 @@ public:
 		DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
 		designExtractor->extract();
 		Assert::AreEqual(size_t(1), pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE).size());
-		Assert::AreEqual(procName, pkbGetter->getNameIdxEntityName(EntityType::PROCEDURE, pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE)[0]));
+		Assert::AreEqual(procName, pkbGetter->getNameIdxEntityName(EntityType::PROCEDURE,
+			pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE)[0]));
 		Assert::AreEqual(size_t(2), pkbGetter->getAllStmts().size());
 		Assert::AreEqual(size_t(2), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
-		Assert::AreEqual(varNameX, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[0]));
-		Assert::AreEqual(varNameY, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE, pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[1]));
+		Assert::AreEqual(varNameX, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE,
+			pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[0]));
+		Assert::AreEqual(varNameY, pkbGetter->getNameIdxEntityName(EntityType::VARIABLE,
+			pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE)[1]));
 
 		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_S)).size());
 		Assert::AreEqual(size_t(1), std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_P)).size());
@@ -402,10 +409,12 @@ public:
 
 		Assert::AreEqual(size_t(2), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
 		Assert::AreEqual(size_t(3), pkbGetter->getAllConsts().size());
-		std::tuple<std::vector<int>, std::vector<int>> patternVarResult = pkbGetter->getAssignStmtsFromExprPartialMatch(std::string(" x "));
+		std::tuple<std::vector<int>, std::vector<int>> patternVarResult =
+			pkbGetter->getAssignStmtsFromExprPartialMatch(std::string(" x "));
 		Assert::AreEqual(size_t(1), std::get<0>(patternVarResult).size());
 
-		std::tuple<std::vector<int>, std::vector<int>> patternConstResult = pkbGetter->getAssignStmtsFromExprPartialMatch(std::string(" 1 "));
+		std::tuple<std::vector<int>, std::vector<int>> patternConstResult =
+			pkbGetter->getAssignStmtsFromExprPartialMatch(std::string(" 1 "));
 		Assert::AreEqual(size_t(1), std::get<0>(patternConstResult).size());
 	}
 
@@ -1310,27 +1319,32 @@ public:
 
 		/* read x */
 		std::vector<EntityAttributeRef> expectedResultReadVarNameX{ 4, 9 };
-		std::vector<EntityAttributeRef> resultReadVarNameX = pkbGetter->getEqualNameAttributesFromName(EntityType::READ, varNameX);
+		std::vector<EntityAttributeRef> resultReadVarNameX =
+			pkbGetter->getEqualNameAttributesFromName(EntityType::READ, varNameX);
 		Assert::IsTrue(expectedResultReadVarNameX == resultReadVarNameX);
 
 		/* read y */
 		std::vector<EntityAttributeRef> expectedResultReadVarNameY{ 6 };
-		std::vector<EntityAttributeRef> resultReadVarNameY = pkbGetter->getEqualNameAttributesFromName(EntityType::READ, varNameY);
+		std::vector<EntityAttributeRef> resultReadVarNameY =
+			pkbGetter->getEqualNameAttributesFromName(EntityType::READ, varNameY);
 		Assert::IsTrue(expectedResultReadVarNameY == resultReadVarNameY);
 
 		/* print x */
 		std::vector<EntityAttributeRef> expectedResultPrintVarNameX{ 3 };
-		std::vector<EntityAttributeRef> resultPrintVarNameX = pkbGetter->getEqualNameAttributesFromName(EntityType::PRINT, varNameX);
+		std::vector<EntityAttributeRef> resultPrintVarNameX =
+			pkbGetter->getEqualNameAttributesFromName(EntityType::PRINT, varNameX);
 		Assert::IsTrue(expectedResultPrintVarNameX == resultPrintVarNameX);
 
 		/* print y (does not exist) */
 		std::vector<EntityAttributeRef> expectedResultPrintVarNameY{ };
-		std::vector<EntityAttributeRef> resultPrintVarNameY = pkbGetter->getEqualNameAttributesFromName(EntityType::PRINT, varNameY);
+		std::vector<EntityAttributeRef> resultPrintVarNameY =
+			pkbGetter->getEqualNameAttributesFromName(EntityType::PRINT, varNameY);
 		Assert::IsTrue(expectedResultPrintVarNameY == resultPrintVarNameY);
 
 		/* call proc2 */
 		std::vector<EntityAttributeRef> expectedResultCallProcName2{ 8 };
-		std::vector<EntityAttributeRef> resultCallProcName2 = pkbGetter->getEqualNameAttributesFromName(EntityType::CALL, procName2);
+		std::vector<EntityAttributeRef> resultCallProcName2 =
+			pkbGetter->getEqualNameAttributesFromName(EntityType::CALL, procName2);
 		Assert::IsTrue(expectedResultCallProcName2 == resultCallProcName2);
 	}
 
@@ -2349,22 +2363,27 @@ public:
 
 		/* Check UsesP (vars might not be in order) */
 		/* Vars used: u, v, b, c, m, n, y */
-		std::vector<VarIndex> expectedResultUsesP{ varIndexU, varIndexV, varIndexB, varIndexC, varIndexM, varIndexN, varIndexY };
-		std::vector<EntityAttributeRef> resultUsesP = pkbGetter->getRSInfoFromLeftArg(RelationshipType::USES_P, procIndex);
+		std::vector<VarIndex> expectedResultUsesP{ varIndexU, varIndexV, varIndexB, varIndexC,
+			varIndexM, varIndexN, varIndexY };
+		std::vector<EntityAttributeRef> resultUsesP =
+			pkbGetter->getRSInfoFromLeftArg(RelationshipType::USES_P, procIndex);
 		Assert::AreEqual(size_t(7), resultUsesP.size());
 
 		for (VarIndex varIndex : resultUsesP) {
-			Assert::IsTrue(std::find(expectedResultUsesP.begin(), expectedResultUsesP.end(), varIndex) != expectedResultUsesP.end());
+			Assert::IsTrue(std::find(expectedResultUsesP.begin(), expectedResultUsesP.end(), varIndex)
+				!= expectedResultUsesP.end());
 		}
 
 		/* Check ModifiesP (vars might not be in order) */
 		/* Vars modified: a, x, y */
 		std::vector<VarIndex> expectedResultModifiesP{ varIndexA, varIndexX, varIndexY };
-		std::vector<EntityAttributeRef> resultModifiesP = pkbGetter->getRSInfoFromLeftArg(RelationshipType::MODIFIES_P, procIndex);
+		std::vector<EntityAttributeRef> resultModifiesP =
+			pkbGetter->getRSInfoFromLeftArg(RelationshipType::MODIFIES_P, procIndex);
 		Assert::AreEqual(size_t(3), resultModifiesP.size());
 
 		for (VarIndex varIndex : resultModifiesP) {
-			Assert::IsTrue(std::find(expectedResultModifiesP.begin(), expectedResultModifiesP.end(), varIndex) != expectedResultModifiesP.end());
+			Assert::IsTrue(std::find(expectedResultModifiesP.begin(), expectedResultModifiesP.end(), varIndex)
+				!= expectedResultModifiesP.end());
 		}
 	}
 
@@ -2464,38 +2483,47 @@ public:
 
 		/* Check UsesP for 1st proc (vars might not be in order) */
 		/* Vars used: u, v, b, c, m, n, y */
-		std::vector<VarIndex> expectedResultUsesP1{ varIndexU, varIndexV, varIndexB, varIndexC, varIndexM, varIndexN, varIndexY };
-		std::vector<EntityAttributeRef> resultUsesP1 = pkbGetter->getRSInfoFromLeftArg(RelationshipType::USES_P, procIndex1);
+		std::vector<VarIndex> expectedResultUsesP1{ varIndexU, varIndexV, varIndexB, varIndexC,
+			varIndexM, varIndexN, varIndexY };
+		std::vector<EntityAttributeRef> resultUsesP1 =
+			pkbGetter->getRSInfoFromLeftArg(RelationshipType::USES_P, procIndex1);
 		Assert::AreEqual(size_t(7), resultUsesP1.size());
 		for (VarIndex varIndex : resultUsesP1) {
-			Assert::IsTrue(std::find(expectedResultUsesP1.begin(), expectedResultUsesP1.end(), varIndex) != expectedResultUsesP1.end());
+			Assert::IsTrue(std::find(expectedResultUsesP1.begin(), expectedResultUsesP1.end(), varIndex)
+				!= expectedResultUsesP1.end());
 		}
 
 		/* Check ModifiesP for 1st proc (vars might not be in order) */
 		/* Vars modified: a, x, y */
 		std::vector<VarIndex> expectedResultModifiesP1{ varIndexA, varIndexX, varIndexY };
-		std::vector<EntityAttributeRef> resultModifiesP1 = pkbGetter->getRSInfoFromLeftArg(RelationshipType::MODIFIES_P, procIndex1);
+		std::vector<EntityAttributeRef> resultModifiesP1 =
+			pkbGetter->getRSInfoFromLeftArg(RelationshipType::MODIFIES_P, procIndex1);
 		Assert::AreEqual(size_t(3), resultModifiesP1.size());
 		for (VarIndex varIndex : resultModifiesP1) {
-			Assert::IsTrue(std::find(expectedResultModifiesP1.begin(), expectedResultModifiesP1.end(), varIndex) != expectedResultModifiesP1.end());
+			Assert::IsTrue(std::find(expectedResultModifiesP1.begin(), expectedResultModifiesP1.end(), varIndex)
+				!= expectedResultModifiesP1.end());
 		}
 
 		/* Check UsesP for 2nd proc (vars might not be in order) */
 		/* Vars used: b, c */
 		std::vector<VarIndex> expectedResultUsesP2{ varIndexB, varIndexC };
-		std::vector<EntityAttributeRef> resultUsesP2 = pkbGetter->getRSInfoFromLeftArg(RelationshipType::USES_P, procIndex2);
+		std::vector<EntityAttributeRef> resultUsesP2 =
+			pkbGetter->getRSInfoFromLeftArg(RelationshipType::USES_P, procIndex2);
 		Assert::AreEqual(size_t(2), resultUsesP2.size());
 		for (VarIndex varIndex : resultUsesP2) {
-			Assert::IsTrue(std::find(expectedResultUsesP2.begin(), expectedResultUsesP2.end(), varIndex) != expectedResultUsesP2.end());
+			Assert::IsTrue(std::find(expectedResultUsesP2.begin(), expectedResultUsesP2.end(), varIndex)
+				!= expectedResultUsesP2.end());
 		}
 
 		/* Check ModifiesP for 2nd proc (vars might not be in order) */
 		/* Vars modified: u, a */
 		std::vector<VarIndex> expectedResultModifiesP2{ varIndexU, varIndexA };
-		std::vector<EntityAttributeRef> resultModifiesP2 = pkbGetter->getRSInfoFromLeftArg(RelationshipType::MODIFIES_P, procIndex2);
+		std::vector<EntityAttributeRef> resultModifiesP2 =
+			pkbGetter->getRSInfoFromLeftArg(RelationshipType::MODIFIES_P, procIndex2);
 		Assert::AreEqual(size_t(2), resultModifiesP2.size());
 		for (VarIndex varIndex : resultModifiesP2) {
-			Assert::IsTrue(std::find(expectedResultModifiesP2.begin(), expectedResultModifiesP2.end(), varIndex) != expectedResultModifiesP2.end());
+			Assert::IsTrue(std::find(expectedResultModifiesP2.begin(), expectedResultModifiesP2.end(), varIndex)
+				!= expectedResultModifiesP2.end());
 		}
 	}
 	};

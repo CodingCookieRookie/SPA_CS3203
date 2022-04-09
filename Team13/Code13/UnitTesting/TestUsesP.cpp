@@ -49,7 +49,8 @@ public:
 	TEST_METHOD(getAllInfo) {
 		std::vector<ProcIndex> procedures{ procIndex1, procIndex1, procIndex2, procIndex2 };
 		std::vector<VarIndex> variables{ varIndex1, varIndex2, varIndex1, varIndex2 };
-		std::tuple<std::vector<ProcIndex>, std::vector<VarIndex>> expectedAns = std::make_tuple(procedures, variables);
+		std::tuple<std::vector<ProcIndex>, std::vector<VarIndex>> expectedAns =
+			std::make_tuple(procedures, variables);
 
 		usesP->insert(procIndex1, varIndex1);
 		usesP->insert(procIndex1, varIndex2);

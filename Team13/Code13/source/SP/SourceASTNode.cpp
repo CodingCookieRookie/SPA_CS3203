@@ -211,7 +211,8 @@ std::unordered_set<std::string> AssignNode::getUsesConsts() {
 }
 
 /* ContainerNode */
-ContainerNode::ContainerNode(ExprNode* condExpr, std::vector<StmtLstNode*> childStmtLst, StmtIndex stmtIdx) : StmtNode(stmtIdx), condExpr(condExpr), childStmtLst(childStmtLst) {}
+ContainerNode::ContainerNode(ExprNode* condExpr, std::vector<StmtLstNode*> childStmtLst, StmtIndex stmtIdx)
+	: StmtNode(stmtIdx), condExpr(condExpr), childStmtLst(childStmtLst) {}
 
 void ContainerNode::process(RelationshipMaps& relationshipMaps, EntityMaps& entityMaps) {
 	StmtIndex stmtIndex = getStmtIdx();
@@ -263,7 +264,8 @@ StatementType WhileNode::getStmtType() {
 }
 
 /* IfNode */
-IfNode::IfNode(ExprNode* condExpr, StmtLstNode* thenStmtLst, StmtLstNode* elseStmtLst, StmtIndex stmtIdx) : ContainerNode(condExpr, { thenStmtLst, elseStmtLst }, stmtIdx) {}
+IfNode::IfNode(ExprNode* condExpr, StmtLstNode* thenStmtLst, StmtLstNode* elseStmtLst, StmtIndex stmtIdx)
+	: ContainerNode(condExpr, { thenStmtLst, elseStmtLst }, stmtIdx) {}
 
 StatementType IfNode::getStmtType() {
 	return StatementType::IF_TYPE;
@@ -336,14 +338,16 @@ ProcedureNode::ProcedureNode(std::string procName) : SourceASTNode(), procName(p
 	stmtLstNode = new StmtLstNode();
 }
 
-void ProcedureNode::bidirectionalPopulateProcAndStmt(ProcStmtMap& procStmtMap, StmtProcMap& stmtProcMap, std::unordered_set<StmtIndex>& stmtIndices) {
+void ProcedureNode::bidirectionalPopulateProcAndStmt(ProcStmtMap& procStmtMap, StmtProcMap& stmtProcMap,
+	std::unordered_set<StmtIndex>& stmtIndices) {
 	for (StmtIndex stmtIndex : stmtIndices) {
 		procStmtMap[procIndex].push_back(stmtIndex);
 		stmtProcMap[stmtIndex] = procIndex;
 	}
 }
 
-void ProcedureNode::bidirectionalPopulateProcNameAndIndex(ProcNameToIndexMap& procNameToIndexMap, SortedProcIndexToNameMap& sortedProcIndexToNameMap) {
+void ProcedureNode::bidirectionalPopulateProcNameAndIndex(ProcNameToIndexMap& procNameToIndexMap,
+	SortedProcIndexToNameMap& sortedProcIndexToNameMap) {
 	procNameToIndexMap[procName] = procIndex;
 	sortedProcIndexToNameMap[procIndex] = procName;
 }

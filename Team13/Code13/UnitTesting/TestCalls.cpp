@@ -93,7 +93,8 @@ public:
 	TEST_METHOD(insert_getAllInfo_onePredOneSuc) {
 		std::vector<ProcIndex> predecessors{ predecessor1, predecessor2 };
 		std::vector<ProcIndex> successors{ successor1, successor2 };
-		std::tuple<std::vector<ProcIndex>, std::vector<ProcIndex>> expectedAns = std::make_tuple(predecessors, successors);
+		std::tuple<std::vector<ProcIndex>, std::vector<ProcIndex>> expectedAns =
+			std::make_tuple(predecessors, successors);
 
 		calls->insert(predecessor1, successor1);
 		calls->insert(predecessor2, successor2);
@@ -105,7 +106,8 @@ public:
 	TEST_METHOD(insert_getAllInfo_onePredMultSuc) {
 		std::vector<ProcIndex> predecessors{ predecessor1, predecessor1 };
 		std::vector<ProcIndex> successors{ successor1, successor2 };
-		std::tuple<std::vector<ProcIndex>, std::vector<ProcIndex>> expectedAns = std::make_tuple(predecessors, successors);
+		std::tuple<std::vector<ProcIndex>, std::vector<ProcIndex>> expectedAns =
+			std::make_tuple(predecessors, successors);
 
 		calls->insert(predecessor1, successor1);
 		calls->insert(predecessor1, successor2);
@@ -117,7 +119,8 @@ public:
 	TEST_METHOD(insert_getAllInfo_multPredOneSuc) {
 		std::vector<ProcIndex> predecessors{ predecessor1, predecessor2 };
 		std::vector<ProcIndex> successors{ successor1, successor1 };
-		std::tuple<std::vector<ProcIndex>, std::vector<ProcIndex>> expectedAns = std::make_tuple(predecessors, successors);
+		std::tuple<std::vector<ProcIndex>, std::vector<ProcIndex>> expectedAns =
+			std::make_tuple(predecessors, successors);
 
 		calls->insert(predecessor1, successor1);
 		calls->insert(predecessor2, successor1);

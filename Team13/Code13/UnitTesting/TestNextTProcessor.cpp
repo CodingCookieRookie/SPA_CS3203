@@ -285,7 +285,8 @@ public:
 			nextTProcessor->getUsingLeftStmtIndex(stmtIdx2, pkbGetter));
 		Assert::IsTrue(std::vector<StmtIndex> { stmtIdx1, stmtIdx2, stmtIdx3, stmtIdx4 } ==
 			nextTProcessor->getUsingLeftStmtIndex(stmtIdx3, pkbGetter));
-		Assert::IsTrue(std::vector<StmtIndex> {} == nextTProcessor->getUsingLeftStmtIndex(stmtIdx4, pkbGetter));
+		Assert::IsTrue(std::vector<StmtIndex> {} ==
+			nextTProcessor->getUsingLeftStmtIndex(stmtIdx4, pkbGetter));
 	};
 
 	TEST_METHOD(getUsingLeftStmtIndex_loopAllNodes) {
@@ -334,8 +335,10 @@ public:
 			nextTProcessor->getUsingLeftStmtIndex(stmtIdx2, pkbGetter));
 		Assert::IsTrue(std::vector<StmtIndex> {stmtIdx1, stmtIdx2, stmtIdx4, stmtIdx3, stmtIdx5} ==
 			nextTProcessor->getUsingLeftStmtIndex(stmtIdx3, pkbGetter));
-		Assert::IsTrue(std::vector<StmtIndex> {stmtIdx5} == nextTProcessor->getUsingLeftStmtIndex(stmtIdx4, pkbGetter));
-		Assert::IsTrue(std::vector<StmtIndex> {} == nextTProcessor->getUsingLeftStmtIndex(stmtIdx5, pkbGetter));
+		Assert::IsTrue(std::vector<StmtIndex> {stmtIdx5} ==
+			nextTProcessor->getUsingLeftStmtIndex(stmtIdx4, pkbGetter));
+		Assert::IsTrue(std::vector<StmtIndex> {} ==
+			nextTProcessor->getUsingLeftStmtIndex(stmtIdx5, pkbGetter));
 	}
 
 	// ----------------- getUsingRightStmtIndex --------------------------------
@@ -482,9 +485,12 @@ public:
 
 		populateDisjoint();
 
-		std::vector<StmtIndex> leftSynonyms = { stmtIdx1, stmtIdx3, stmtIdx3, stmtIdx4, stmtIdx4, stmtIdx5, stmtIdx5 };
-		std::vector<StmtIndex> rightSynonyms = { stmtIdx2, stmtIdx4, stmtIdx5, stmtIdx5, stmtIdx4, stmtIdx4, stmtIdx5 };
-		Assert::IsTrue(std::make_tuple(leftSynonyms, rightSynonyms) == nextTProcessor->getAll(pkbGetter));
+		std::vector<StmtIndex> leftSynonyms = { stmtIdx1, stmtIdx3, stmtIdx3,
+			stmtIdx4, stmtIdx4, stmtIdx5, stmtIdx5 };
+		std::vector<StmtIndex> rightSynonyms = { stmtIdx2, stmtIdx4, stmtIdx5,
+			stmtIdx5, stmtIdx4, stmtIdx4, stmtIdx5 };
+		Assert::IsTrue(std::make_tuple(leftSynonyms, rightSynonyms) ==
+			nextTProcessor->getAll(pkbGetter));
 	};
 	};
 };

@@ -49,7 +49,8 @@ public:
 	TEST_METHOD(getAllInfo) {
 		std::vector<StmtIndex> statements{ stmtIndex1, stmtIndex1, stmtIndex2, stmtIndex2 };
 		std::vector<VarIndex> variables{ varIndex1, varIndex2, varIndex1, varIndex2 };
-		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> expectedAns = std::make_tuple(statements, variables);
+		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> expectedAns =
+			std::make_tuple(statements, variables);
 
 		usesS->insert(stmtIndex1, varIndex1);
 		usesS->insert(stmtIndex1, varIndex2);

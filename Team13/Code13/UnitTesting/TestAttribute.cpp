@@ -665,8 +665,10 @@ public:
 
 		std::vector<EntityAttributeRef> expectedRes{ 1 };
 
-		std::vector<EntityAttributeRef> res1 = attribute->getEqualIntegerAttributes(EntityType::CALL, EntityType::CALL, constant, statement);
-		std::vector<EntityAttributeRef> res2 = attribute->getEqualIntegerAttributes(EntityType::STMT, EntityType::STMT, constant, statement);
+		std::vector<EntityAttributeRef> res1 = attribute->getEqualIntegerAttributes(EntityType::CALL,
+			EntityType::CALL, constant, statement);
+		std::vector<EntityAttributeRef> res2 = attribute->getEqualIntegerAttributes(EntityType::STMT,
+			EntityType::STMT, constant, statement);
 		Assert::IsTrue(expectedRes == res1);
 		Assert::IsTrue(expectedRes == res2);
 	}
@@ -678,13 +680,17 @@ public:
 		Assert::IsTrue(1 == nameIdx);
 
 		std::vector<EntityAttributeRef> expectedRes{ 1 };
-		std::vector<EntityAttributeRef> res1 = attribute->getEqualIntegerAttributes(EntityType::READ, EntityType::STMT, constant, statement);
-		std::vector<EntityAttributeRef> res2 = attribute->getEqualIntegerAttributes(EntityType::STMT, EntityType::READ, constant, statement);
+		std::vector<EntityAttributeRef> res1 = attribute->getEqualIntegerAttributes(EntityType::READ,
+			EntityType::STMT, constant, statement);
+		std::vector<EntityAttributeRef> res2 = attribute->getEqualIntegerAttributes(EntityType::STMT,
+			EntityType::READ, constant, statement);
 		Assert::IsTrue(expectedRes == res1);
 		Assert::IsTrue(expectedRes == res2);
 
-		std::vector<EntityAttributeRef> res3 = attribute->getEqualIntegerAttributes(EntityType::READ, EntityType::CALL, constant, statement);
-		std::vector<EntityAttributeRef> res4 = attribute->getEqualIntegerAttributes(EntityType::CALL, EntityType::STMT, constant, statement);
+		std::vector<EntityAttributeRef> res3 = attribute->getEqualIntegerAttributes(EntityType::READ,
+			EntityType::CALL, constant, statement);
+		std::vector<EntityAttributeRef> res4 = attribute->getEqualIntegerAttributes(EntityType::CALL,
+			EntityType::STMT, constant, statement);
 		Assert::IsTrue(0 == res3.size());
 		Assert::IsTrue(0 == res4.size());
 	}
@@ -699,9 +705,12 @@ public:
 		Assert::IsTrue(2 == nameIdx2);
 
 		std::vector<EntityAttributeRef> expectedRes{ 1, 2 };
-		std::vector<EntityAttributeRef> res1 = attribute->getEqualIntegerAttributes(EntityType::READ, EntityType::READ, constant, statement);
-		std::vector<EntityAttributeRef> res2 = attribute->getEqualIntegerAttributes(EntityType::READ, EntityType::STMT, constant, statement);
-		std::vector<EntityAttributeRef> res3 = attribute->getEqualIntegerAttributes(EntityType::STMT, EntityType::STMT, constant, statement);
+		std::vector<EntityAttributeRef> res1 = attribute->getEqualIntegerAttributes(EntityType::READ,
+			EntityType::READ, constant, statement);
+		std::vector<EntityAttributeRef> res2 = attribute->getEqualIntegerAttributes(EntityType::READ,
+			EntityType::STMT, constant, statement);
+		std::vector<EntityAttributeRef> res3 = attribute->getEqualIntegerAttributes(EntityType::STMT,
+			EntityType::STMT, constant, statement);
 		Assert::IsTrue(expectedRes == res1);
 		Assert::IsTrue(expectedRes == res2);
 		Assert::IsTrue(expectedRes == res3);
@@ -718,35 +727,47 @@ public:
 		Assert::IsTrue(2 == nameIdx2);
 
 		std::vector<EntityAttributeRef> expectedRes1{ 1 };
-		std::vector<EntityAttributeRef> res1 = attribute->getEqualIntegerAttributes(EntityType::READ, EntityType::READ, constant, statement);
-		std::vector<EntityAttributeRef> res2 = attribute->getEqualIntegerAttributes(EntityType::READ, EntityType::STMT, constant, statement);
-		std::vector<EntityAttributeRef> res3 = attribute->getEqualIntegerAttributes(EntityType::STMT, EntityType::READ, constant, statement);
+		std::vector<EntityAttributeRef> res1 = attribute->getEqualIntegerAttributes(EntityType::READ,
+			EntityType::READ, constant, statement);
+		std::vector<EntityAttributeRef> res2 = attribute->getEqualIntegerAttributes(EntityType::READ,
+			EntityType::STMT, constant, statement);
+		std::vector<EntityAttributeRef> res3 = attribute->getEqualIntegerAttributes(EntityType::STMT,
+			EntityType::READ, constant, statement);
 		Assert::IsTrue(expectedRes1 == res1);
 		Assert::IsTrue(expectedRes1 == res2);
 		Assert::IsTrue(expectedRes1 == res3);
 
 		std::vector<EntityAttributeRef> expectedRes2{ 2 };
-		std::vector<EntityAttributeRef> res4 = attribute->getEqualIntegerAttributes(EntityType::CALL, EntityType::CALL, constant, statement);
-		std::vector<EntityAttributeRef> res5 = attribute->getEqualIntegerAttributes(EntityType::CALL, EntityType::STMT, constant, statement);
-		std::vector<EntityAttributeRef> res6 = attribute->getEqualIntegerAttributes(EntityType::STMT, EntityType::CALL, constant, statement);
+		std::vector<EntityAttributeRef> res4 = attribute->getEqualIntegerAttributes(EntityType::CALL,
+			EntityType::CALL, constant, statement);
+		std::vector<EntityAttributeRef> res5 = attribute->getEqualIntegerAttributes(EntityType::CALL,
+			EntityType::STMT, constant, statement);
+		std::vector<EntityAttributeRef> res6 = attribute->getEqualIntegerAttributes(EntityType::STMT,
+			EntityType::CALL, constant, statement);
 		Assert::IsTrue(expectedRes2 == res4);
 		Assert::IsTrue(expectedRes2 == res5);
 		Assert::IsTrue(expectedRes2 == res6);
 
 		std::vector<EntityAttributeRef> expectedRes3{ 3 };
-		std::vector<EntityAttributeRef> res7 = attribute->getEqualIntegerAttributes(EntityType::PRINT, EntityType::PRINT, constant, statement);
-		std::vector<EntityAttributeRef> res8 = attribute->getEqualIntegerAttributes(EntityType::PRINT, EntityType::STMT, constant, statement);
-		std::vector<EntityAttributeRef> res9 = attribute->getEqualIntegerAttributes(EntityType::STMT, EntityType::PRINT, constant, statement);
+		std::vector<EntityAttributeRef> res7 = attribute->getEqualIntegerAttributes(EntityType::PRINT,
+			EntityType::PRINT, constant, statement);
+		std::vector<EntityAttributeRef> res8 = attribute->getEqualIntegerAttributes(EntityType::PRINT,
+			EntityType::STMT, constant, statement);
+		std::vector<EntityAttributeRef> res9 = attribute->getEqualIntegerAttributes(EntityType::STMT,
+			EntityType::PRINT, constant, statement);
 		Assert::IsTrue(expectedRes3 == res7);
 		Assert::IsTrue(expectedRes3 == res8);
 		Assert::IsTrue(expectedRes3 == res9);
 
 		std::vector<EntityAttributeRef> expectedRes4{ 1, 2, 3 };
-		std::vector<EntityAttributeRef> res10 = attribute->getEqualIntegerAttributes(EntityType::STMT, EntityType::STMT, constant, statement);
+		std::vector<EntityAttributeRef> res10 = attribute->getEqualIntegerAttributes(EntityType::STMT,
+			EntityType::STMT, constant, statement);
 		Assert::IsTrue(expectedRes4 == res10);
 
-		std::vector<EntityAttributeRef> res11 = attribute->getEqualIntegerAttributes(EntityType::READ, EntityType::PRINT, constant, statement);
-		std::vector<EntityAttributeRef> res12 = attribute->getEqualIntegerAttributes(EntityType::CALL, EntityType::READ, constant, statement);
+		std::vector<EntityAttributeRef> res11 = attribute->getEqualIntegerAttributes(EntityType::READ,
+			EntityType::PRINT, constant, statement);
+		std::vector<EntityAttributeRef> res12 = attribute->getEqualIntegerAttributes(EntityType::CALL,
+			EntityType::READ, constant, statement);
 		Assert::IsTrue(0 == res11.size());
 		Assert::IsTrue(0 == res12.size());
 	}
@@ -759,19 +780,27 @@ public:
 		StmtIndex stmtIdx3 = statement->insertStmt(whileType);
 
 		std::vector<EntityAttributeRef> expectedRes1{ 1 };
-		std::vector<EntityAttributeRef> res1 = attribute->getEqualIntegerAttributes(EntityType::ASSIGN, EntityType::ASSIGN, constant, statement);
-		std::vector<EntityAttributeRef> res2 = attribute->getEqualIntegerAttributes(EntityType::ASSIGN, EntityType::STMT, constant, statement);
-		std::vector<EntityAttributeRef> res3 = attribute->getEqualIntegerAttributes(EntityType::STMT, EntityType::ASSIGN, constant, statement);
+		std::vector<EntityAttributeRef> res1 = attribute->getEqualIntegerAttributes(EntityType::ASSIGN,
+			EntityType::ASSIGN, constant, statement);
+		std::vector<EntityAttributeRef> res2 = attribute->getEqualIntegerAttributes(EntityType::ASSIGN,
+			EntityType::STMT, constant, statement);
+		std::vector<EntityAttributeRef> res3 = attribute->getEqualIntegerAttributes(EntityType::STMT,
+			EntityType::ASSIGN, constant, statement);
 		Assert::IsTrue(expectedRes1 == res1);
 		Assert::IsTrue(expectedRes1 == res2);
 		Assert::IsTrue(expectedRes1 == res3);
 
 		std::vector<EntityAttributeRef> expectedRes2{ 2 };
-		std::vector<EntityAttributeRef> res4 = attribute->getEqualIntegerAttributes(EntityType::IF, EntityType::IF, constant, statement);
-		std::vector<EntityAttributeRef> res5 = attribute->getEqualIntegerAttributes(EntityType::IF, EntityType::STMT, constant, statement);
-		std::vector<EntityAttributeRef> res6 = attribute->getEqualIntegerAttributes(EntityType::STMT, EntityType::IF, constant, statement);
-		std::vector<EntityAttributeRef> res7 = attribute->getEqualIntegerAttributes(EntityType::STMT, EntityType::CONSTANT, constant, statement);
-		std::vector<EntityAttributeRef> res8 = attribute->getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::STMT, constant, statement);
+		std::vector<EntityAttributeRef> res4 = attribute->getEqualIntegerAttributes(EntityType::IF,
+			EntityType::IF, constant, statement);
+		std::vector<EntityAttributeRef> res5 = attribute->getEqualIntegerAttributes(EntityType::IF,
+			EntityType::STMT, constant, statement);
+		std::vector<EntityAttributeRef> res6 = attribute->getEqualIntegerAttributes(EntityType::STMT,
+			EntityType::IF, constant, statement);
+		std::vector<EntityAttributeRef> res7 = attribute->getEqualIntegerAttributes(EntityType::STMT,
+			EntityType::CONSTANT, constant, statement);
+		std::vector<EntityAttributeRef> res8 = attribute->getEqualIntegerAttributes(EntityType::CONSTANT,
+			EntityType::STMT, constant, statement);
 		Assert::IsTrue(expectedRes2 == res4);
 		Assert::IsTrue(expectedRes2 == res5);
 		Assert::IsTrue(expectedRes2 == res6);
@@ -779,24 +808,32 @@ public:
 		Assert::IsTrue(expectedRes2 == res8);
 
 		std::vector<EntityAttributeRef> expectedRes3{ 3 };
-		std::vector<EntityAttributeRef> res9 = attribute->getEqualIntegerAttributes(EntityType::WHILE, EntityType::WHILE, constant, statement);
-		std::vector<EntityAttributeRef> res10 = attribute->getEqualIntegerAttributes(EntityType::WHILE, EntityType::STMT, constant, statement);
-		std::vector<EntityAttributeRef> res11 = attribute->getEqualIntegerAttributes(EntityType::STMT, EntityType::WHILE, constant, statement);
+		std::vector<EntityAttributeRef> res9 = attribute->getEqualIntegerAttributes(EntityType::WHILE,
+			EntityType::WHILE, constant, statement);
+		std::vector<EntityAttributeRef> res10 = attribute->getEqualIntegerAttributes(EntityType::WHILE,
+			EntityType::STMT, constant, statement);
+		std::vector<EntityAttributeRef> res11 = attribute->getEqualIntegerAttributes(EntityType::STMT,
+			EntityType::WHILE, constant, statement);
 		Assert::IsTrue(expectedRes3 == res9);
 		Assert::IsTrue(expectedRes3 == res10);
 		Assert::IsTrue(expectedRes3 == res11);
 
 		std::vector<EntityAttributeRef> expectedRes4{ 1, 2, 3 };
-		std::vector<EntityAttributeRef> res12 = attribute->getEqualIntegerAttributes(EntityType::STMT, EntityType::STMT, constant, statement);
+		std::vector<EntityAttributeRef> res12 = attribute->getEqualIntegerAttributes(EntityType::STMT,
+			EntityType::STMT, constant, statement);
 		Assert::IsTrue(expectedRes4 == res12);
 
 		std::vector<EntityAttributeRef> expectedRes5{ 2, 9 };
-		std::vector<EntityAttributeRef> res13 = attribute->getEqualIntegerAttributes(EntityType::CONSTANT, EntityType::CONSTANT, constant, statement);
+		std::vector<EntityAttributeRef> res13 = attribute->getEqualIntegerAttributes(EntityType::CONSTANT,
+			EntityType::CONSTANT, constant, statement);
 		Assert::IsTrue(expectedRes5 == res13);
 
-		std::vector<EntityAttributeRef> res14 = attribute->getEqualIntegerAttributes(EntityType::ASSIGN, EntityType::IF, constant, statement);
-		std::vector<EntityAttributeRef> res15 = attribute->getEqualIntegerAttributes(EntityType::IF, EntityType::WHILE, constant, statement);
-		std::vector<EntityAttributeRef> res16 = attribute->getEqualIntegerAttributes(EntityType::WHILE, EntityType::CONSTANT, constant, statement);
+		std::vector<EntityAttributeRef> res14 = attribute->getEqualIntegerAttributes(EntityType::ASSIGN,
+			EntityType::IF, constant, statement);
+		std::vector<EntityAttributeRef> res15 = attribute->getEqualIntegerAttributes(EntityType::IF,
+			EntityType::WHILE, constant, statement);
+		std::vector<EntityAttributeRef> res16 = attribute->getEqualIntegerAttributes(EntityType::WHILE,
+			EntityType::CONSTANT, constant, statement);
 		Assert::IsTrue(0 == res14.size());
 		Assert::IsTrue(0 == res15.size());
 		Assert::IsTrue(0 == res16.size());
