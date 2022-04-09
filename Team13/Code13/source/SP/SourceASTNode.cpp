@@ -73,7 +73,7 @@ void StmtNode::process(StmtIndex prevIndex, RelationshipMaps& relationshipMaps, 
 	/* Follows */
 	StmtIndex currIndex = getStmtIdx();
 	if (!(prevIndex == StmtIndex())) {
-		populateRS2(relationshipMaps.followsMap, prevIndex, { currIndex });
+		populateSameSynonymsRS(relationshipMaps.followsMap, prevIndex, { currIndex });
 	}
 }
 
@@ -113,7 +113,7 @@ void StmtNode::populateStmtType(StmtTypeMap& stmtTypeMap) {
 	stmtTypeMap[getStmtIdx()] = getStmtType();
 }
 
-void StmtNode::populateRS1(RelationshipMap& rsMap, EntityMaps& entityMaps, std::unordered_set<std::string>& varNames) {
+void StmtNode::populateDiffSynonymsRS(RelationshipMap& rsMap, EntityMaps& entityMaps, std::unordered_set<std::string>& varNames) {
 	bidirectionalPopulateVarNameAndIndex(entityMaps.varNameToIndexMap, entityMaps.sortedVarIndexToNameMap, varNames);
 
 	for (const std::string varName : varNames) {
@@ -122,7 +122,7 @@ void StmtNode::populateRS1(RelationshipMap& rsMap, EntityMaps& entityMaps, std::
 	}
 }
 
-void StmtNode::populateRS2(RelationshipMap& rsMap, SynonymIndex predecessor, std::unordered_set<SynonymIndex> successors) {
+void StmtNode::populateSameSynonymsRS(RelationshipMap& rsMap, SynonymIndex predecessor, std::unordered_set<SynonymIndex> successors) {
 	rsMap[predecessor].insert(successors.begin(), successors.end());
 }
 
@@ -131,7 +131,7 @@ ReadNode::ReadNode(std::string varName, StmtIndex stmtIdx) : StmtNode(stmtIdx), 
 
 void ReadNode::process(RelationshipMaps& relationshipMaps, EntityMaps& entityMaps) {
 	/* Read stmt modifies the var it's reading */
-	populateRS1(relationshipMaps.modifiesMap, entityMaps, getModifiesVars());
+	populateDiffSynonymsRS(relationshipMaps.modifiesMap, entityMaps, getModifiesVars());
 }
 
 StatementType ReadNode::getStmtType() {
@@ -151,7 +151,7 @@ PrintNode::PrintNode(std::string varName, StmtIndex stmtIdx) : StmtNode(stmtIdx)
 
 void PrintNode::process(RelationshipMaps& relationshipMaps, EntityMaps& entityMaps) {
 	/* Print stmt uses the var it's printing */
-	populateRS1(relationshipMaps.usesMap, entityMaps, getUsesVars());
+	populateDiffSynonymsRS(relationshipMaps.usesMap, entityMaps, getUsesVars());
 }
 
 StatementType PrintNode::getStmtType() {
@@ -171,12 +171,12 @@ AssignNode::AssignNode(std::string varName, ExprNode* expr, StmtIndex stmtIdx) :
 
 void AssignNode::process(RelationshipMaps& relationshipMaps, EntityMaps& entityMaps) {
 	/* Assign stmt modifies the var on its LHS */
-	populateRS1(relationshipMaps.modifiesMap, entityMaps, getModifiesVars());
+	populateDiffSynonymsRS(relationshipMaps.modifiesMap, entityMaps, getModifiesVars());
 
 	/* Assign stmt uses the var(s) on its RHS */
 	std::unordered_set<std::string> usesVars = getUsesVars();
 	if (!usesVars.empty()) {
-		populateRS1(relationshipMaps.usesMap, entityMaps, getUsesVars());
+		populateDiffSynonymsRS(relationshipMaps.usesMap, entityMaps, getUsesVars());
 	}
 
 	/* Pattern */
@@ -223,10 +223,10 @@ void ContainerNode::process(RelationshipMaps& relationshipMaps, EntityMaps& enti
 	}
 
 	/* Container stmt uses the var(s) in its condition expr */
-	populateRS1(relationshipMaps.usesMap, entityMaps, getUsesVars());
+	populateDiffSynonymsRS(relationshipMaps.usesMap, entityMaps, getUsesVars());
 
 	/* Parent */
-	populateRS2(relationshipMaps.parentChildMap, stmtIndex, childIndices);
+	populateSameSynonymsRS(relationshipMaps.parentChildMap, stmtIndex, childIndices);
 
 	/* Pattern */
 	populatePattern(entityMaps.patternMap);
@@ -395,10 +395,10 @@ void ProgramNode::process() {
 	for (const auto& [stmtIndex, procNameCalled] : relationshipMaps.callStmtToProcNameCalledMap) {
 		StmtNode* stmtNode = entityMaps.stmtNodes[stmtIndex - 1];
 		ProcIndex procIndexCalled = entityMaps.procNameToIndexMap[procNameCalled];
-		stmtNode->populateRS2(relationshipMaps.callStmtToProcIndexCalledMap, stmtIndex, { procIndexCalled });
+		stmtNode->populateSameSynonymsRS(relationshipMaps.callStmtToProcIndexCalledMap, stmtIndex, { procIndexCalled });
 
 		ProcIndex procIndexCaller = entityMaps.stmtProcMap[stmtNode->getStmtIdx()];
-		stmtNode->populateRS2(relationshipMaps.procIndexCallerToProcIndexCalledMap, procIndexCaller, { procIndexCalled });
+		stmtNode->populateSameSynonymsRS(relationshipMaps.procIndexCallerToProcIndexCalledMap, procIndexCaller, { procIndexCalled });
 	}
 }
 

@@ -110,10 +110,10 @@ public:
 	void populateStmtNodes(StmtNodes& stmtNode);
 
 	/* Populates Uses and Modifies */
-	void populateRS1(RelationshipMap& rsMap, EntityMaps& entityMaps, std::unordered_set<std::string>& varNames);
+	void populateDiffSynonymsRS(RelationshipMap& rsMap, EntityMaps& entityMaps, std::unordered_set<std::string>& varNames);
 
 	/* Populates Follows, Parent, and Calls */
-	void populateRS2(RelationshipMap& rsMap, SynonymIndex predecessor, std::unordered_set<SynonymIndex> successors);
+	void populateSameSynonymsRS(RelationshipMap& rsMap, SynonymIndex predecessor, std::unordered_set<SynonymIndex> successors);
 };
 
 class ReadNode : public StmtNode {

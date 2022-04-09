@@ -49,14 +49,14 @@ private:
 		int currStmtIdx,
 		int nextStmtIdx);
 
-	/* PKB population for RS1 (UsesS/P, ModifiesS/P) */
-	void populateRS1Info();
-	void populateRS1StmtInfo(RelationshipType rsTypeS, StmtIndex stmtIndex);
-	void populateRS1ProcInfo(RelationshipType rsTypeP, ProcIndex procIndex);
+	/* PKB population for diff synonyms RS (UsesS/P, ModifiesS/P) */
+	void populateDiffSynonymsRSInfo();
+	void populateDiffSynonymsRSStmtInfo(RelationshipType rsTypeS, StmtIndex stmtIndex);
+	void populateDiffSynonymsRSProcInfo(RelationshipType rsTypeP, ProcIndex procIndex);
 
-	/* PKB population for RS1 (Follows/T, Parent/T, Calls/T) */
-	void populateRS2Info();
-	std::unordered_set<SynonymIndex> getAllSuccessors(SynonymIndex predecessor, RelationshipMap& rsMap);
+	/* PKB population for same synonyms RS (Follows/T, Parent/T, Calls/T) */
+	void populateSameSynonymsRSInfo();
+	std::unordered_set<SynonymIndex> getAllSuccessors(SynonymIndex predecessor, RelationshipMap& rsMap, RelationshipMap& rsTMap);
 
 public:
 	DesignExtractor(SourceAST& ast, PKBInserter* pkbInserter);

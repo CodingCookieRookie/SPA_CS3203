@@ -191,15 +191,15 @@ std::unordered_map<StmtIndex, std::unordered_set<StmtIndex>> DesignExtractor::ge
 	return cfg->getCFGTable();
 }
 
-void DesignExtractor::populateRS1Info() {
+void DesignExtractor::populateDiffSynonymsRSInfo() {
 	for (const auto& [rsTypeS, rsTypeP] : rsStoPMap) {
 		for (const auto& [procIndex, stmtIndex] : ast.getProcStmtMap()) {
-			populateRS1ProcInfo(rsTypeP, procIndex);
+			populateDiffSynonymsRSProcInfo(rsTypeP, procIndex);
 		}
 	}
 }
 
-void DesignExtractor::populateRS1ProcInfo(RelationshipType rsTypeP, ProcIndex procIndex) {
+void DesignExtractor::populateDiffSynonymsRSProcInfo(RelationshipType rsTypeP, ProcIndex procIndex) {
 	/* Terminates early if the info for curr procIndex has been added to PKB */
 	std::unordered_set<ProcIndex>& populatedIndices = rsToPopulatedIndicesMap[rsTypeP];
 	if (populatedIndices.find(procIndex) != populatedIndices.end()) {
@@ -218,7 +218,7 @@ void DesignExtractor::populateRS1ProcInfo(RelationshipType rsTypeP, ProcIndex pr
 	RelationshipMap& rsPMap = rsToASTMap[rsTypeP];
 
 	for (StmtIndex stmtIndex : procStmtMap[procIndex]) {
-		populateRS1StmtInfo(rsTypeS, stmtIndex);
+		populateDiffSynonymsRSStmtInfo(rsTypeS, stmtIndex);
 
 		/* Iterate all vars used/ modified by curr stmtIndex to populate the transitive table */
 		std::unordered_set<VarIndex> varIndices = rsSMap[stmtIndex];
@@ -229,7 +229,7 @@ void DesignExtractor::populateRS1ProcInfo(RelationshipType rsTypeP, ProcIndex pr
 	}
 }
 
-void DesignExtractor::populateRS1StmtInfo(RelationshipType rsTypeS, StmtIndex stmtIndex) {
+void DesignExtractor::populateDiffSynonymsRSStmtInfo(RelationshipType rsTypeS, StmtIndex stmtIndex) {
 	/* Terminates early if the info for curr stmtIndex has been added to PKB */
 	std::unordered_set<StmtIndex>& populatedIndices = rsToPopulatedIndicesMap[rsTypeS];
 	if (populatedIndices.find(stmtIndex) != populatedIndices.end()) {
@@ -249,7 +249,7 @@ void DesignExtractor::populateRS1StmtInfo(RelationshipType rsTypeS, StmtIndex st
 	/* Recursively populates container info */
 	RelationshipMap& parentChildMap = ast.getParentChildMap();
 	for (StmtIndex childStmtIndex : parentChildMap[stmtIndex]) {
-		populateRS1StmtInfo(rsTypeS, childStmtIndex);
+		populateDiffSynonymsRSStmtInfo(rsTypeS, childStmtIndex);
 
 		std::unordered_set<VarIndex> childVarIndices = rsSMap[childStmtIndex];
 		for (VarIndex childVarIndex : childVarIndices) {
@@ -262,7 +262,7 @@ void DesignExtractor::populateRS1StmtInfo(RelationshipType rsTypeS, StmtIndex st
 	RelationshipMap& callStmtToProcIndexCalledMap = ast.getCallStmtToProcIndexCalledMap();
 	for (ProcIndex calledProcIndex : callStmtToProcIndexCalledMap[stmtIndex]) {
 		RelationshipType rsTypeP = rsStoPMap[rsTypeS];
-		populateRS1ProcInfo(rsTypeP, calledProcIndex);
+		populateDiffSynonymsRSProcInfo(rsTypeP, calledProcIndex);
 
 		RelationshipMap& rsPMap = rsToASTMap[rsTypeP];
 		/* Iterate all vars used/ modified by called procedure */
@@ -274,10 +274,11 @@ void DesignExtractor::populateRS1StmtInfo(RelationshipType rsTypeS, StmtIndex st
 	}
 }
 
-void DesignExtractor::populateRS2Info() {
-	/* For every RS2, populates its direct and transitive relationships */
+void DesignExtractor::populateSameSynonymsRSInfo() {
+	/* For every SameSynonymsRS, populates its direct and transitive relationships */
 	for (const auto& [rs, rsT] : rsToRsTMap) {
 		RelationshipMap& rsMap = rsToASTMap[rs];
+		RelationshipMap& rsTMap = rsToASTMap[rsT];
 
 		for (auto& [predecessor, successors] : rsMap) {
 			/* Populates direct relationship info */
@@ -286,7 +287,7 @@ void DesignExtractor::populateRS2Info() {
 			}
 
 			/* Populates transitive relationship info */
-			std::unordered_set<SynonymIndex> allSuccessors = getAllSuccessors(predecessor, rsMap);
+			std::unordered_set<SynonymIndex> allSuccessors = getAllSuccessors(predecessor, rsMap, rsTMap);
 			for (SynonymIndex successor : allSuccessors) {
 				pkbInserter->insertRSInfo(rsT, predecessor, successor);
 			}
@@ -294,12 +295,20 @@ void DesignExtractor::populateRS2Info() {
 	}
 }
 
-std::unordered_set<SynonymIndex> DesignExtractor::getAllSuccessors(SynonymIndex predecessor, RelationshipMap& rsMap) {
+std::unordered_set<SynonymIndex> DesignExtractor::getAllSuccessors(SynonymIndex predecessor, RelationshipMap& rsMap, RelationshipMap& rsTMap) {
+	/* Early termination if successors (for the curr predecessor) are already populated in the transitive table */
+	if (rsTMap.find(predecessor) != rsTMap.end()) {
+		return rsTMap[predecessor];
+	}
+
 	std::unordered_set<SynonymIndex> successors = rsMap[predecessor];
 	for (SynonymIndex successor : successors) {
-		std::unordered_set<SynonymIndex> grandSuccessors = getAllSuccessors(successor, rsMap);
+		std::unordered_set<SynonymIndex> grandSuccessors = getAllSuccessors(successor, rsMap, rsTMap);
 		successors.insert(grandSuccessors.begin(), grandSuccessors.end());
 	}
+
+	rsTMap[predecessor] = successors;
+
 	return successors;
 }
 
@@ -316,8 +325,8 @@ void DesignExtractor::extract() {
 	insertStmtFromProc(ast);
 
 	/* Populate relationships */
-	populateRS1Info();
-	populateRS2Info();
+	populateDiffSynonymsRSInfo();
+	populateSameSynonymsRSInfo();
 
 	/* Construct CFGs and populates Next relationship */
 	processCFGs(ast.getRoot(), pkbInserter, stmtNodeIndexMap);
