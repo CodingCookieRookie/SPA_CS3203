@@ -19,4 +19,6 @@ public:
 	bool peek(const std::string& pattern);
 	bool match(const std::string& pattern);
 	bool reachedEnd();
+	size_t getIndex();
+	void setIndex(size_t index);
 };

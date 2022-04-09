@@ -161,13 +161,13 @@ WhileNode* Parser::matchWhile() {
 ExprNode* Parser::matchCondExpr() {
 	if (lexer.match(Common::NOT)) {
 		if (!lexer.match(Common::LEFT_BRACKET)) {
-			throw ParserException(ParserException::MISSING_LEFT_BRACKET);
+			throw ParserException(ParserException::INVALID_COND_EXPR);
 		}
 
 		ExprNode* condExpr = matchCondExpr();
 
 		if (!lexer.match(Common::RIGHT_BRACKET)) {
-			throw ParserException(ParserException::MISSING_RIGHT_BRACKET);
+			throw ParserException(ParserException::INVALID_COND_EXPR);
 		}
 
 		ExprNode* notNode = new ExprNode(ExprNodeValueType::LOGICAL_OPERATOR, Common::NOT);
@@ -176,39 +176,78 @@ ExprNode* Parser::matchCondExpr() {
 		return notNode;
 	}
 
-	if (lexer.match(Common::LEFT_BRACKET)) {
-		ExprNode* leftCondExpr = matchCondExpr();
+	/* Either '(' cond_expr ')' ('&&' | '||') '(' cond_expr ')'
+	or '(' expr ')' rel_op rel_factor */
+	if (lexer.peek(Common::LEFT_BRACKET)) {
+		size_t lexerIndex = lexer.getIndex();
 
-		if (!lexer.match(Common::RIGHT_BRACKET)) {
-			throw ParserException(ParserException::MISSING_RIGHT_BRACKET);
-		}
+		try {
+			lexer.match(Common::LEFT_BRACKET);
+			ExprNode* leftCondExpr = matchCondExpr();
 
-		ExprNode* logOpNode{};
-		for (const std::string op : Common::LOGICAL_OPERATORS) {
-			if (lexer.match(op)) {
-				logOpNode = new ExprNode(ExprNodeValueType::LOGICAL_OPERATOR, op);
-				break;
+			if (!lexer.match(Common::RIGHT_BRACKET)) {
+				throw ParserException(ParserException::INVALID_COND_EXPR);
+			}
+
+			ExprNode* logOpNode{};
+			for (const std::string op : Common::LOGICAL_OPERATORS) {
+				if (lexer.match(op)) {
+					logOpNode = new ExprNode(ExprNodeValueType::LOGICAL_OPERATOR, op);
+					break;
+				}
+			}
+
+			if (logOpNode == nullptr) {
+				throw ParserException(ParserException::INVALID_COND_EXPR);
+			}
+
+			if (!lexer.match(Common::LEFT_BRACKET)) {
+				throw ParserException(ParserException::INVALID_COND_EXPR);
+			}
+
+			ExprNode* rightCondExpr = matchCondExpr();
+
+			if (!lexer.match(Common::RIGHT_BRACKET)) {
+				throw ParserException(ParserException::INVALID_COND_EXPR);
+			}
+
+			logOpNode->addChild(leftCondExpr);
+			logOpNode->addChild(rightCondExpr);
+
+			return logOpNode;
+		} catch (ParserException&) {
+			/* A ParserException would have been thrown if the '(' is for '( expr )' of the rel_factor, instead of for logical expressions.
+			Thus, the Parser would backtrack and try to parse the rel_factor */
+			lexer.setIndex(lexerIndex);
+
+			try {
+				/* Expects LHS rel_factor */
+				ExprNode* lhsRelExprNode = matchRelFactor();
+
+				/* Expects the rel operator */
+				ExprNode* relOpNode{};
+				for (const std::string op : Common::REL_OPERATORS) {
+					if (lexer.match(op)) {
+						relOpNode = new ExprNode(ExprNodeValueType::REL_OPERATOR, op);
+						break;
+					}
+				}
+				if (relOpNode == nullptr) {
+					throw ParserException(ParserException::INVALID_COND_EXPR);
+				}
+
+				/* Expects RHS rel_factor */
+				ExprNode* rhsRelExprNode = matchRelFactor();
+
+				relOpNode->addChild(lhsRelExprNode);
+				relOpNode->addChild(rhsRelExprNode);
+
+				/* Return the rel op as root of cond_expr */
+				return relOpNode;
+			} catch (ExpressionException&) {
+				throw ParserException(ParserException::INVALID_COND_EXPR);
 			}
 		}
-
-		if (logOpNode == nullptr) {
-			throw ParserException(ParserException::INVALID_COND_EXPR);
-		}
-
-		if (!lexer.match(Common::LEFT_BRACKET)) {
-			throw ParserException(ParserException::MISSING_LEFT_BRACKET);
-		}
-
-		ExprNode* rightCondExpr = matchCondExpr();
-
-		if (!lexer.match(Common::RIGHT_BRACKET)) {
-			throw ParserException(ParserException::MISSING_RIGHT_BRACKET);
-		}
-
-		logOpNode->addChild(leftCondExpr);
-		logOpNode->addChild(rightCondExpr);
-
-		return logOpNode;
 	}
 
 	ExprNode* relExprNode = matchRelExpr();
@@ -227,7 +266,7 @@ ExprNode* Parser::matchRelExpr() {
 		}
 	}
 	if (relOpNode == nullptr) {
-		throw ParserException(ParserException::INVALID_REL_EXPR);
+		throw ParserException(ParserException::INVALID_COND_EXPR);
 	}
 
 	ExprNode* rightRelFactor = matchRelFactor();
@@ -252,7 +291,7 @@ ExprNode* Parser::matchRelFactor() {
 			return new ExprNode(ExprNodeValueType::CONST_VALUE, constVal);
 		}
 
-		throw ParserException(ParserException::INVALID_REL_EXPR);
+		throw ParserException(ParserException::INVALID_COND_EXPR);
 	}
 
 	return expr;

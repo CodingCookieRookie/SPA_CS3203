@@ -22,7 +22,6 @@ public:
 class ParserException : public SPAException {
 public:
 	static const std::string INVALID_COND_EXPR;
-	static const std::string INVALID_REL_EXPR;
 	static const std::string INVALID_EXPR;
 	static const std::string INVALID_PROG;
 	static const std::string INVALID_STMT;

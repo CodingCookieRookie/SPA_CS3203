@@ -13,7 +13,6 @@ LexerException::LexerException(const std::string& reason) : SPAException(reason)
 
 /* ParserException */
 const std::string ParserException::INVALID_COND_EXPR = "Conditional expression is invalid";
-const std::string ParserException::INVALID_REL_EXPR = "Relational expression is invalid";
 const std::string ParserException::INVALID_EXPR = "Expression is invalid";
 const std::string ParserException::INVALID_PROG = "A program must have at least 1 procedure";
 const std::string ParserException::INVALID_STMT = "Invalid statement (stmt : read | print | call | while | if | assign)";

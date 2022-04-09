@@ -109,3 +109,11 @@ bool Lexer::reachedEnd() {
 	advance();
 	return (index == length);
 }
+
+size_t Lexer::getIndex() {
+	return index;
+}
+
+void Lexer::setIndex(size_t index) {
+	this->index = index;
+}
