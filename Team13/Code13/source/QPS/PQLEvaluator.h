@@ -35,6 +35,16 @@ private:
 	/* Helper method to select columns of table in EvaluatedTable for projection based on Select-cl */
 	EvaluatedTable selectColumnsForProjection(EvaluatedTable evaluatedTable, ParsedQuery& pq);
 
+	EvaluatedTable handleBoolean(EvaluatedTable& evaluatedTable);
+
+	EvaluatedTable& fillInColumns(EvaluatedTable& resultEvTable, EvaluatedTable& evaluatedTable);
+
+	EvaluatedTable& populateDeclarations(EvaluatedTable& resultEvTable);
+
+	EvaluatedTable handleNonBoolean(EvaluatedTable& evaluatedTable);
+
+	std::unordered_map<std::string, std::vector<int>> populateTable(EvaluatedTable& evaluatedTable);
+
 	void insertGetAllInstr(PqlReference pqlRef, ParsedQuery& pq, std::vector<Instruction*>& instructions);
 
 public:

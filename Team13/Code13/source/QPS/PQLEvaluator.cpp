@@ -32,8 +32,7 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
 	return instructions;
 }
 
-void PQLEvaluator::insertGetAllInstr(PqlReference pqlRef, ParsedQuery& pq, std::vector<Instruction*>& instructions) {
-}
+void PQLEvaluator::insertGetAllInstr(PqlReference pqlRef, ParsedQuery& pq, std::vector<Instruction*>& instructions) {}
 
 EvaluatedTable PQLEvaluator::executeInstructions(std::vector<Instruction*> instructions) {
 	EvaluatedTable resultEvTable;
@@ -48,50 +47,70 @@ EvaluatedTable PQLEvaluator::executeInstructions(std::vector<Instruction*> instr
 
 EvaluatedTable PQLEvaluator::selectColumnsForProjection(
 	EvaluatedTable evaluatedTable, ParsedQuery& pq) {
-	std::unordered_set<std::string> columnsProjected = pq.getColumns();
-	std::vector<PqlReference> attributesProjected = pq.getAttributes();
-	std::unordered_map<std::string, EntityType> declarations = pq.getDeclarations();
-	std::unordered_map<std::string, std::vector<int>> table = evaluatedTable.getTableRef();
-	std::unordered_map<std::string, std::vector<int>> resultTable;
-	EvaluatedTable resultEvTable;
-
-	/* If Select-cl is BOOLEAN */
+	std::vector<PqlReference> attributesProjected = parsedQuery.getAttributes();
 	ProjectionType projType = ParsedQuery::getProjectionType(attributesProjected);
 	if (projType == ProjectionType::BOOLEAN) {
-		/* Existence of clauses means clauses determine boolean result,
-		=> short circuit and go straight to PQLResultProjector */
-		if (ParsedQuery::isClausePresent(pq)) {
-			return evaluatedTable;
-		} else {
-			/* No Clauses, existence of declared synonyms determine boolean result
-			=> populate declarations into table */
-			for (const std::pair<std::string, EntityType>& synonym : declarations) {
-				//EntityType columnType = declarations.at(column);
-				ParsedGetAll getAllSynonym = ParsedGetAll(synonym.second, synonym.first);
-				Instruction* getAll = getAllSynonym.toInstruction(pkbGetter);
-				EvaluatedTable evTable = getAll->execute();
-				resultEvTable = resultEvTable.innerJoinMerge(evTable);
-			}
-			return resultEvTable;
-		}
+		return PQLEvaluator::handleBoolean(evaluatedTable);
 	}
+	return PQLEvaluator::handleNonBoolean(evaluatedTable);
+}
 
+EvaluatedTable PQLEvaluator::handleBoolean(EvaluatedTable& evaluatedTable) {
+	/* Existence of clauses means clauses determine boolean result,
+	=> short circuit and go straight to PQLResultProjector */
+	if (ParsedQuery::isClausePresent(parsedQuery)) {
+		return evaluatedTable;
+	} else {
+		/* No Clauses, existence of declared synonyms determine boolean result
+		=> populate declarations into table */
+		EvaluatedTable resultEvTable;
+		return PQLEvaluator::populateDeclarations(resultEvTable);
+	}
+}
+
+EvaluatedTable& PQLEvaluator::populateDeclarations(EvaluatedTable& resultEvTable) {
+	std::unordered_map<std::string, EntityType> declarations = parsedQuery.getDeclarations();
+	for (const std::pair<std::string, EntityType>& synonym : declarations) {
+		//EntityType columnType = declarations.at(column);
+		ParsedGetAll getAllSynonym = ParsedGetAll(synonym.second, synonym.first);
+		Instruction* getAll = getAllSynonym.toInstruction(pkbGetter);
+		EvaluatedTable evTable = getAll->execute();
+		resultEvTable = resultEvTable.innerJoinMerge(evTable);
+	}
+	return resultEvTable;
+}
+
+EvaluatedTable PQLEvaluator::handleNonBoolean(EvaluatedTable& evaluatedTable) {
 	/* For each column that already exists in the final EvTable, take it from the evaluatedTable */
+	std::unordered_map<std::string, std::vector<int>> resultTable = PQLEvaluator::populateTable(evaluatedTable);
+	/* If the evaluated table is false or an empty table, use a false table */
+	EvaluatedTable resultEvTable = EvaluatedTable(resultTable);
+	std::unordered_map<std::string, std::vector<int>> table = evaluatedTable.getTableRef();
+	if (evaluatedTable.getEvResult() == false || (table.size() > 0 && evaluatedTable.getNumRow() == 0)) {
+		resultEvTable = EvaluatedTable(false);
+	}
+	/* For each column that does not exist in the final EvTable,
+	get it via an instruction and then perform a cross product. */
+	resultEvTable = PQLEvaluator::fillInColumns(resultEvTable, evaluatedTable);
+	return resultEvTable;
+}
+
+std::unordered_map<std::string, std::vector<int>> PQLEvaluator::populateTable(EvaluatedTable& evaluatedTable) {
+	std::unordered_map<std::string, std::vector<int>> resultTable;
+	std::unordered_set<std::string> columnsProjected = parsedQuery.getColumns();
+	std::unordered_map<std::string, std::vector<int>> table = evaluatedTable.getTableRef();
 	for (const std::string& column : columnsProjected) {
 		if (table.find(column) != table.end()) {
 			resultTable[column] = table[column];
 		}
 	}
+	return resultTable;
+}
 
-	/* If the evaluated table is false or an empty table, use a false table */
-	resultEvTable = EvaluatedTable(resultTable);
-	if (evaluatedTable.getEvResult() == false
-		|| (table.size() > 0 && evaluatedTable.getNumRow() == 0)) {
-		resultEvTable = EvaluatedTable(false);
-	}
-
-	/* For each column that does not exist in the final EvTable,
-	get it via an instruction and then perform a cross product. */
+EvaluatedTable& PQLEvaluator::fillInColumns(EvaluatedTable& resultEvTable, EvaluatedTable& evaluatedTable) {
+	std::unordered_set<std::string> columnsProjected = parsedQuery.getColumns();
+	std::unordered_map<std::string, EntityType> declarations = parsedQuery.getDeclarations();
+	std::unordered_map<std::string, std::vector<int>> table = evaluatedTable.getTableRef();
 	for (const std::string& column : columnsProjected) {
 		if (table.find(column) == table.end()) {
 			EntityType columnType = declarations.at(column);
