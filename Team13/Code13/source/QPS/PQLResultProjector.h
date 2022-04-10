@@ -22,7 +22,7 @@ private:
 	std::string getColumnResults(int rowNum);
 
 	/* Checks if table field has no values */
-	bool resultTableHasEmptyColumn(Table resultTable);
+	bool resultTableHasEmptyColumn(Table& resultTable);
 
 	/* Helper methods to get results of the columns pertaining to the entity name */
 	std::string getSynonym(std::string entityName, int rowNum);

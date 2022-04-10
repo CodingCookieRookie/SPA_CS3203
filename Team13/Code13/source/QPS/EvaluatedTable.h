@@ -35,7 +35,18 @@ private:
 		std::unordered_set<std::string>& commonEntities);
 	void EvaluatedTable::prepopulate(Table& resultTable,
 		const std::vector<std::string>& cols);
-
+	Table filterUnique(const Table& originalTable);
+	std::vector<std::string> getUniqueColumns(const Table& tableVal, std::unordered_set<std::string>& commonEntities);
+	std::unordered_map<std::vector<int>, std::vector<std::vector<int>>, IntVectorHasher> buildHashMap(
+		const Table& tableVal,
+		const std::vector<std::string>& commonColumns,
+		const std::vector<std::string>& uniqueColumns,
+		size_t numRows);
+	Table probeStep(const std::unordered_map<std::vector<int>, std::vector<std::vector<int>>, IntVectorHasher>& tableHashMap,
+		const std::unordered_map<std::vector<int>, std::vector<std::vector<int>>, IntVectorHasher>& otherHashMap,
+		const std::vector<std::string>& commonColumns,
+		const std::vector<std::string>& tableColumns,
+		const std::vector<std::string>& otherColumns);
 public:
 	EvaluatedTable();
 	EvaluatedTable(Table newTable);
@@ -56,7 +67,9 @@ public:
 	/* Getters */
 	size_t getNumRow();
 
-	Table getTableRef();
+	Table& getTableRef();
 
 	bool getEvResult();
+
+	int getCell(const std::string& column, int row);
 };

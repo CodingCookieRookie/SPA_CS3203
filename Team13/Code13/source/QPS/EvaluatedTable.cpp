@@ -31,71 +31,94 @@ void EvaluatedTable::prepopulate(Table& resultTable,
 	}
 }
 
-EvaluatedTable EvaluatedTable::hashJoin(EvaluatedTable& otherTable, std::unordered_set<std::string>& commonEntities) {
-	size_t numRows = getNumRow();
-	size_t otherRows = otherTable.getNumRow();
-
-	/* Store a list of common columns */
-	std::vector<std::string> commonEntitiesVector(commonEntities.begin(), commonEntities.end());
-	/* Store a list of columns unique to table */
-	std::vector<std::string> tableColumns;
-	for (const auto& [colName, col] : table) {
-		if (commonEntities.find(colName) == commonEntities.end()) {
-			tableColumns.push_back(colName);
-		}
+Table EvaluatedTable::filterUnique(const Table& originalTable) {
+	std::unordered_map<std::string, std::vector<int>> nextTable;
+	if (originalTable.empty()) {
+		return originalTable;
 	}
-	/* Store a list of columns unique to otherTable */
-	std::vector<std::string> otherColumns;
-	for (const auto& [colName, col] : otherTable.table) {
-		if (commonEntities.find(colName) == commonEntities.end()) {
-			otherColumns.push_back(colName);
-		}
+	size_t numColumns = originalTable.size();
+	std::vector<std::string> columns;
+	columns.reserve(numColumns);
+	for (const auto& [column, values] : originalTable) {
+		columns.push_back(column);
+		nextTable.insert({ column, std::vector<int>() });
 	}
 
-	/* Pre-calculate the number of common/unique synonyms */
-	size_t numCommon = commonEntitiesVector.size();
-	size_t numTable = tableColumns.size();
-	size_t numOther = otherColumns.size();
+	size_t numRows = originalTable.begin()->second.size();
+	std::unordered_set<std::vector<int>, IntVectorHasher> uniqueRows;
+	uniqueRows.reserve(numRows);
+	for (size_t i = 0; i < numRows; i++) {
+		std::vector<int> row(numColumns);
+		std::transform(columns.begin(), columns.end(),
+			row.begin(), [&originalTable, i](const std::string& colName) { return originalTable.at(colName).at(i); });
+		uniqueRows.insert(row);
+	}
 
+	for (const std::vector<int>& row : uniqueRows) {
+		for (size_t i = 0; i < numColumns; i++) {
+			std::string& column = columns[i];
+			int value = row[i];
+			nextTable.at(column).push_back(value);
+		}
+	}
+
+	return nextTable;
+}
+
+std::vector<std::string> EvaluatedTable::getUniqueColumns(const Table& tableVal, std::unordered_set<std::string>& commonEntities) {
+	/* Gets unique columns from the left table */
+	std::vector<std::string> columns;
+	for (const auto& [column, value] : tableVal) {
+		if (commonEntities.find(column) == commonEntities.end()) {
+			columns.push_back(column);
+		}
+	}
+	return columns;
+}
+
+std::unordered_map<std::vector<int>, std::vector<std::vector<int>>, IntVectorHasher> EvaluatedTable::buildHashMap(
+	const Table& tableVal,
+	const std::vector<std::string>& commonColumns,
+	const std::vector<std::string>& uniqueColumns,
+	size_t numRows) {
 	std::unordered_map<std::vector<int>, std::vector<std::vector<int>>, IntVectorHasher> tableHashMap;
-	std::unordered_map<std::vector<int>, std::vector<std::vector<int>>, IntVectorHasher> otherHashMap;
-
-	Table resultTable;
-
-	/* Prepopulate the columns of the resulting table */
-	prepopulate(resultTable, commonEntitiesVector);
-	prepopulate(resultTable, tableColumns);
-	prepopulate(resultTable, otherColumns);
-
-	/* Convert this table into a HashMap mapping common cols -> rows */
+	size_t numCommon = commonColumns.size();
+	size_t numUnique = uniqueColumns.size();
+	
+	/* Convert the table into a HashMap mapping common cols -> rows */
 	for (size_t i = 0; i < numRows; i++) {
 		/* Key refers to the indexes of the common columns between both tables */
 		/* Note that we need to pre-allocate this size of the mapped vector,
 		since std::transform will not expand the vector for us */
 		std::vector<int> key(numCommon);
-		std::transform(commonEntitiesVector.begin(), commonEntitiesVector.end(),
-			key.begin(), [this, i](const std::string& colName) { return table[colName][i]; });
+		std::transform(commonColumns.begin(), commonColumns.end(),
+			key.begin(), [&tableVal, i](const std::string& colName) { return tableVal.at(colName).at(i); });
 		/* Value refers to the indexes of the columns in table that are not in otherTable */
-		std::vector<int> value(numTable);
-		std::transform(tableColumns.begin(), tableColumns.end(),
-			value.begin(), [this, i](const std::string& colName) { return this->table[colName][i]; });
+		std::vector<int> value(numUnique);
+		std::transform(uniqueColumns.begin(), uniqueColumns.end(),
+			value.begin(), [&tableVal, i](const std::string& colName) { return tableVal.at(colName).at(i); });
 		tableHashMap[key].push_back(value);
 	}
+	return tableHashMap;
+}
 
-	/* Repeat for otherTable */
-	for (size_t i = 0; i < otherRows; i++) {
-		/* Key refers to the indexes of the common columns between both tables */
-		std::vector<int> key(numCommon);
-		std::transform(commonEntitiesVector.begin(), commonEntitiesVector.end(),
-			key.begin(), [i, &otherTable](const std::string& colName) { return otherTable.table[colName][i]; });
-		/* Value refers to the indexes of the columns in otherTable that are not in table */
-		std::vector<int> value(numOther);
-		std::transform(otherColumns.begin(), otherColumns.end(),
-			value.begin(), [i, &otherTable](const std::string& colName) { return otherTable.table[colName][i]; });
-		otherHashMap[key].push_back(value);
-	}
+Table EvaluatedTable::probeStep(const std::unordered_map<std::vector<int>, std::vector<std::vector<int>>, IntVectorHasher>& tableHashMap,
+	const std::unordered_map<std::vector<int>, std::vector<std::vector<int>>, IntVectorHasher>& otherHashMap,
+	const std::vector<std::string>& commonColumns,
+	const std::vector<std::string>& tableColumns,
+	const std::vector<std::string>& otherColumns) {
+	Table resultTable;
 
-	/* Perform the Join step */
+	size_t numCommon = commonColumns.size();
+	size_t numTable = tableColumns.size();
+	size_t numOther = otherColumns.size();
+
+	/* Prepopulate the columns of the resulting table */
+	prepopulate(resultTable, commonColumns);
+	prepopulate(resultTable, tableColumns);
+	prepopulate(resultTable, otherColumns);
+
+	/* Perform the join/probe step */
 	for (const auto& [key, tableValue] : tableHashMap) {
 		if (otherHashMap.find(key) == otherHashMap.end()) {
 			continue;
@@ -105,7 +128,7 @@ EvaluatedTable EvaluatedTable::hashJoin(EvaluatedTable& otherTable, std::unorder
 			for (const std::vector<int>& otherRow : otherValue) {
 				/* Populate table with common cols */
 				for (size_t i = 0; i < numCommon; i++) {
-					resultTable[commonEntitiesVector.at(i)].push_back(key.at(i));
+					resultTable[commonColumns.at(i)].push_back(key.at(i));
 				}
 				/* Populate table with cols from table */
 				for (size_t i = 0; i < numTable; i++) {
@@ -118,6 +141,31 @@ EvaluatedTable EvaluatedTable::hashJoin(EvaluatedTable& otherTable, std::unorder
 			}
 		}
 	}
+	return resultTable;
+}
+
+EvaluatedTable EvaluatedTable::hashJoin(EvaluatedTable& otherTable, std::unordered_set<std::string>& commonEntities) {
+	size_t numRows = getNumRow();
+	size_t otherRows = otherTable.getNumRow();
+
+	/* Store a list of common columns */
+	std::vector<std::string> commonColumns(commonEntities.begin(), commonEntities.end());
+
+	/* Store a list of columns unique to table */
+	std::vector<std::string> tableColumns = getUniqueColumns(table, commonEntities);
+
+	/* Store a list of columns unique to otherTable */
+	std::vector<std::string> otherColumns = getUniqueColumns(otherTable.table, commonEntities);
+
+	/* Build Step */
+	std::unordered_map<std::vector<int>, std::vector<std::vector<int>>, IntVectorHasher> tableHashMap = 
+		buildHashMap(table, commonColumns, tableColumns, numRows);
+	std::unordered_map<std::vector<int>, std::vector<std::vector<int>>, IntVectorHasher> otherHashMap =
+		buildHashMap(otherTable.table, commonColumns, otherColumns, otherRows);
+
+	/* Probe step */
+	Table resultTable = probeStep(tableHashMap, otherHashMap, commonColumns, tableColumns, otherColumns);
+	
 	return EvaluatedTable(resultTable);
 }
 
@@ -158,7 +206,8 @@ EvaluatedTable EvaluatedTable::project(const std::unordered_set<std::string>& co
 	if (nextTable.empty()) {
 		return EvaluatedTable(getNumRow() > 0);
 	}
-	return EvaluatedTable(nextTable);
+	std::unordered_map<std::string, std::vector<int>> filteredTable = filterUnique(nextTable);
+	return EvaluatedTable(filteredTable);
 }
 
 EvaluatedTable::EvaluatedTable() : EvaluatedTable(true) {}
@@ -199,10 +248,14 @@ size_t EvaluatedTable::getNumRow() {
 	return firstColVector.size();
 }
 
-Table EvaluatedTable::getTableRef() {
+Table& EvaluatedTable::getTableRef() {
 	return table;
 }
 
 bool EvaluatedTable::getEvResult() {
 	return evResult;
+}
+
+int EvaluatedTable::getCell(const std::string& column, int row) {
+	return table.at(column).at(row);
 }

@@ -33,8 +33,7 @@ std::list<std::string> PQLResultProjector::projectBoolean() {
 	return resList;
 }
 
-bool PQLResultProjector::resultTableHasEmptyColumn(
-	Table resultTable) {
+bool PQLResultProjector::resultTableHasEmptyColumn(Table& resultTable) {
 	bool resultTableHasEmptyColumn = false; /* Default: No table at all, or filled table */
 	for (std::pair<std::string, std::vector<int>> col : resultTable) {
 		if ((col.second.empty())) {
@@ -89,7 +88,7 @@ std::string PQLResultProjector::getColumnResults(int i) {
 
 std::string PQLResultProjector::getSynonym(std::string entityName, int i) {
 	std::unordered_map<std::string, EntityType> declarations = parsedQuery.getDeclarations();
-	Table resultTable = evTable.getTableRef();
+	Table& resultTable = evTable.getTableRef();
 	std::string value = "";
 	if (isStatementEntity(declarations[entityName])
 		|| declarations[entityName] == EntityType::CONSTANT) {
@@ -104,7 +103,7 @@ std::string PQLResultProjector::getSynonym(std::string entityName, int i) {
 
 std::string PQLResultProjector::getProcName(std::string entityName, int i) {
 	std::unordered_map<std::string, EntityType> declarations = parsedQuery.getDeclarations();
-	Table resultTable = evTable.getTableRef();
+	Table& resultTable = evTable.getTableRef();
 	std::string value = "";
 	/* Assumption: there exists a column of p or cl */
 	int index = resultTable[entityName][i]; /* index could be ProcIdx or StmtIdx */
@@ -118,7 +117,7 @@ std::string PQLResultProjector::getProcName(std::string entityName, int i) {
 
 std::string PQLResultProjector::getVarName(std::string entityName, int i) {
 	std::unordered_map<std::string, EntityType> declarations = parsedQuery.getDeclarations();
-	Table resultTable = evTable.getTableRef();
+	Table& resultTable = evTable.getTableRef();
 	std::string value = "";
 	/* Assumption: there exists a column of v, r or pn */
 	int index = resultTable[entityName][i]; /* index could be VarIdx or StmtIdx */
@@ -133,7 +132,7 @@ std::string PQLResultProjector::getVarName(std::string entityName, int i) {
 
 std::string PQLResultProjector::getConstant(std::string entityName, int i) {
 	std::unordered_map<std::string, EntityType> declarations = parsedQuery.getDeclarations();
-	Table resultTable = evTable.getTableRef();
+	Table& resultTable = evTable.getTableRef();
 	std::string value = "";
 	/* Assumption: there exists a column of c */
 	int index = resultTable[entityName][i]; /* index is the constant value itself */
@@ -144,7 +143,7 @@ std::string PQLResultProjector::getConstant(std::string entityName, int i) {
 }
 
 std::string PQLResultProjector::getStmtNum(std::string entityName, int i) {
-	Table resultTable = evTable.getTableRef();
+	Table& resultTable = evTable.getTableRef();
 	std::string value = "";
 	/* Assumption: there exists a column of s, r, pn, cl, if, a */
 	int index = resultTable[entityName][i]; /* index is StmtIdx */
