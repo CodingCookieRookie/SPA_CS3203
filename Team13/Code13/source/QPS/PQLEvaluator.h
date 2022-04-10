@@ -36,18 +36,21 @@ private:
 	/* Helper method to select columns of table in EvaluatedTable for projection based on Select-cl */
 	EvaluatedTable selectColumnsForProjection(EvaluatedTable evaluatedTable, ParsedQuery& pq);
 
+	/* Helper methods for handling boolean projections */
 	EvaluatedTable handleBoolean(EvaluatedTable& evaluatedTable);
 
 	EvaluatedTable& fillInColumns(EvaluatedTable& resultEvTable, EvaluatedTable& evaluatedTable);
 
 	EvaluatedTable& populateDeclarations(EvaluatedTable& resultEvTable);
 
+	/* Helper methods for handling non-boolean projections, which are synonym and tuple projections */
 	EvaluatedTable handleNonBoolean(EvaluatedTable& evaluatedTable);
 
-	std::unordered_map<std::string, std::vector<int>> populateTable(EvaluatedTable& evaluatedTable);
+	Table populateTable(EvaluatedTable& evaluatedTable);
 
 	void insertGetAllInstr(PqlReference pqlRef, ParsedQuery& pq, std::vector<Instruction*>& instructions);
 
+	/* Helper methods for grouping clauses for optimisation */
 	std::vector<Instruction*> getBooleanClauses(const std::vector<Instruction*>& instructions);
 
 	std::unordered_map<std::string, std::vector<Instruction*>> buildInstructionGraph(const std::vector<Instruction*>& instructions);
@@ -66,7 +69,6 @@ private:
 		const std::string& synonym);
 
 public:
-	/* Constructor */
 	PQLEvaluator(ParsedQuery& parsedQuery, PKBGetter* pkbGetter);
 
 	/* Main entry method for parsing the query */

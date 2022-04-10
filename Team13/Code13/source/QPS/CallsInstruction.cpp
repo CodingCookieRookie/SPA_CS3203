@@ -40,7 +40,8 @@ EvaluatedTable CallsInstruction::execute() {
 EvaluatedTable CallsInstruction::helperHandleTwoIdents() {
 	ProcIndex lhsProcIndex, rhsProcIndex;
 	bool evResult = false;
-	if (pkbGetter->containsNameIdxEntity(EntityType::PROCEDURE, lhsRef.second) && pkbGetter->containsNameIdxEntity(EntityType::PROCEDURE, rhsRef.second)) {
+	if (pkbGetter->containsNameIdxEntity(EntityType::PROCEDURE, lhsRef.second)
+		&& pkbGetter->containsNameIdxEntity(EntityType::PROCEDURE, rhsRef.second)) {
 		lhsProcIndex = pkbGetter->getNameIdxEntityIndex(EntityType::PROCEDURE, lhsRef.second);
 		rhsProcIndex = pkbGetter->getNameIdxEntityIndex(EntityType::PROCEDURE, rhsRef.second);
 		evResult = pkbGetter->getRSContainsInfo(RelationshipType::CALLS, lhsProcIndex, rhsProcIndex);
@@ -50,7 +51,7 @@ EvaluatedTable CallsInstruction::helperHandleTwoIdents() {
 
 EvaluatedTable CallsInstruction::helperHandleOneIdent(PqlReferenceType lhsRefType, PqlReferenceType rhsRefType) {
 	std::vector<ProcIndex> procs = pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE);
-	std::vector<int> results;
+	std::vector<Index> results;
 	std::string oneIdent;
 	std::string otherSynonym;
 	if (lhsRefType == PqlReferenceType::IDENT) {
@@ -59,7 +60,8 @@ EvaluatedTable CallsInstruction::helperHandleOneIdent(PqlReferenceType lhsRefTyp
 		oneIdent = rhsRef.second;
 	}
 	/* Handle one ident to proc results */
-	if (pkbGetter->containsNameIdxEntity(EntityType::PROCEDURE, oneIdent)) { /* e.g. checks if proc named "first" exists, if not, return empty results */
+	if (pkbGetter->containsNameIdxEntity(EntityType::PROCEDURE, oneIdent)) {
+		/* e.g. checks if proc named "first" exists, if not, return empty results */
 		ProcIndex oneIdentRef = pkbGetter->getNameIdxEntityIndex(EntityType::PROCEDURE, oneIdent);
 		if (lhsRefType == PqlReferenceType::IDENT) { /* e.g {7} if 6 is a Parent of some s2 (e.g. 7) */
 			results = pkbGetter->getRSInfoFromLeftArg(RelationshipType::CALLS, oneIdentRef);
@@ -78,7 +80,7 @@ EvaluatedTable CallsInstruction::helperHandleOneIdent(PqlReferenceType lhsRefTyp
 			otherSynonym = lhsRef.second;
 		}
 	}
-	std::unordered_map<std::string, std::vector<int>> PQLmap;
+	Table PQLmap;
 	PQLmap[otherSynonym] = results;
 
 	return EvaluatedTable(PQLmap);
@@ -86,15 +88,15 @@ EvaluatedTable CallsInstruction::helperHandleOneIdent(PqlReferenceType lhsRefTyp
 
 EvaluatedTable CallsInstruction::helperHandleTwoProcMaybeWildcard() {
 	/* Assumption: Different synonym names(i.e. Calls(p, q), not Calls(p, p)) */
-	std::tuple<std::vector<int>, std::vector<int>> results;
+	std::tuple<std::vector<Index>, std::vector<Index>> results;
 	results = pkbGetter->getRSAllInfo(RelationshipType::CALLS);
 
 	/* e.g. {1, 2}, {2, 3}, {3, 6} */
-	std::unordered_map<std::string, std::vector<int>> PQLmap;
+	Table PQLmap;
 
 	if (lhsRef.second == rhsRef.second) { /* Special case: Calls(p, p), recursive call, technically shouldn't be allowed */
 		/* No values populated to PQLmap for this case => short-circuit */
-		PQLmap[lhsRef.second] = std::vector<int>();
+		PQLmap[lhsRef.second] = std::vector<Index>();
 		return EvaluatedTable(PQLmap);
 	}
 
@@ -112,7 +114,5 @@ EvaluatedTable CallsInstruction::helperHandleTwoWildcards() {
 	if (lhsRef.first == PqlReferenceType::WILDCARD && rhsRef.first == PqlReferenceType::WILDCARD) {
 		isEmptyTable = std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS)).empty();
 	}
-	// No Calls rs exists => isEmptyTable == true => EvTable.evResult == false (innerJoinMerge() can drop table)
-	// Calls rs exists => isEmptyTable == false => EvTable.evResult == true (innerJoinMerge() can merge dummy table, preserving all rows)
 	return EvaluatedTable(!isEmptyTable);
 }

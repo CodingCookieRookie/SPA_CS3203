@@ -2,7 +2,7 @@
 
 EvaluatedTable GetAllStmtInstruction::execute() {
 	std::vector<StmtIndex> results = pkbGetter->getAllStmts();
-	std::unordered_map<std::string, std::vector<int>> PQLmap;
+	Table PQLmap;
 	PQLmap[synonym] = results;
 	return EvaluatedTable(PQLmap);
 }

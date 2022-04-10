@@ -1,8 +1,6 @@
 #pragma once
 
 #include "Instruction.h"
-#include "AffectsProcessor.h"
-#include "AffectsTProcessor.h"
 
 class RelationshipInstruction : public Instruction {
 protected:
@@ -15,9 +13,12 @@ protected:
 
 public:
 	RelationshipInstruction(PqlReference lhs, PqlReference rhs, PKBGetter* pkbGetter);
-	RelationshipInstruction(PqlReference lhs, PqlReference rhs, AffectsProcessor* affectsProcessor, PKBGetter* pkbGetter);
-	RelationshipInstruction(PqlReference lhs, PqlReference rhs, AffectsTProcessor* affectsTProcessor, PKBGetter* pkbGetter);
-	RelationshipInstruction(PqlReference lhs, PqlReference rhs, NextTProcessor* nextTProcessor, PKBGetter* pkbGetter);
+	RelationshipInstruction(PqlReference lhs, PqlReference rhs,
+		AffectsProcessor* affectsProcessor, PKBGetter* pkbGetter);
+	RelationshipInstruction(PqlReference lhs, PqlReference rhs,
+		AffectsTProcessor* affectsTProcessor, PKBGetter* pkbGetter);
+	RelationshipInstruction(PqlReference lhs, PqlReference rhs,
+		NextTProcessor* nextTProcessor, PKBGetter* pkbGetter);
 	virtual EvaluatedTable execute() = 0;
 	std::unordered_set<std::string> getSynonyms() override;
 };

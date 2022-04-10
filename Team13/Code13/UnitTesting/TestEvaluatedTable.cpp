@@ -11,13 +11,13 @@ namespace UnitTesting {
 	TEST_CLASS(TestEvaluatedTable) {
 public:
 	TEST_METHOD(innerJoinMerge_noCommonColumns_crossProduct) {
-		std::unordered_map<std::string, std::vector<int>> leftTable = {
+		Table leftTable = {
 			{"s1", { 1, 3 } },
 			{"v1", { 2, 4 } },
 		};
 		EvaluatedTable leftEvTable(leftTable);
 
-		std::unordered_map<std::string, std::vector<int>> rightTable = {
+		Table rightTable = {
 			{"s2", { 5, 7, 9} },
 			{"v2", { 6, 8, 10} },
 		};
@@ -25,7 +25,7 @@ public:
 
 		EvaluatedTable mergedTable = leftEvTable.innerJoinMerge(rightEvTable);
 		Assert::AreEqual(size_t(4), mergedTable.getTableRef().size());
-		std::unordered_map<std::string, std::vector<int>> table = mergedTable.getTableRef();
+		Table table = mergedTable.getTableRef();
 		Assert::IsTrue(table.find(std::string("s1")) != table.end());
 		Assert::IsTrue(table.find(std::string("v1")) != table.end());
 		Assert::IsTrue(table.find(std::string("s2")) != table.end());
@@ -34,13 +34,13 @@ public:
 	}
 
 	TEST_METHOD(innerJoinMerge_commonColumnExists_innerJoin) {
-		std::unordered_map<std::string, std::vector<int>> leftTable = {
+		Table leftTable = {
 			{"s", { 1, 3, 4} },
 			{"v1", { 2, 4, 4} },
 		};
 		EvaluatedTable leftEvTable(leftTable);
 
-		std::unordered_map<std::string, std::vector<int>> rightTable = {
+		Table rightTable = {
 			{"s", { 1, 3, 5} },
 			{"v2", { 6, 8, 10} },
 		};
@@ -48,7 +48,7 @@ public:
 
 		EvaluatedTable mergedTable = leftEvTable.innerJoinMerge(rightEvTable);
 		Assert::AreEqual(size_t(3), mergedTable.getTableRef().size());
-		std::unordered_map<std::string, std::vector<int>> table = mergedTable.getTableRef();
+		Table table = mergedTable.getTableRef();
 		Assert::IsTrue(table.find(std::string("s")) != table.end());
 		Assert::IsTrue(table.find(std::string("v1")) != table.end());
 		Assert::IsTrue(table.find(std::string("v2")) != table.end());
@@ -58,7 +58,7 @@ public:
 	TEST_METHOD(innerJoinMerge_falseLHS_returnsEmptyTable) {
 		EvaluatedTable leftEvTable(false);
 
-		std::unordered_map<std::string, std::vector<int>> rightTable = {
+		Table rightTable = {
 			{"s", { 1, 3, 5} },
 			{"v2", { 6, 8, 10} },
 		};
@@ -70,7 +70,7 @@ public:
 	}
 
 	TEST_METHOD(innerJoinMerge_falseRHS_returnsEmptyTable) {
-		std::unordered_map<std::string, std::vector<int>> leftTable = {
+		Table leftTable = {
 			{"s", { 1, 3, 4} },
 			{"v1", { 2, 4, 4} },
 		};
@@ -86,7 +86,7 @@ public:
 	TEST_METHOD(innerJoinMerge_trueLHS_returnsRHS) {
 		EvaluatedTable leftEvTable(true);
 
-		std::unordered_map<std::string, std::vector<int>> rightTable = {
+		Table rightTable = {
 			{"s", { 1, 3, 5} },
 			{"v2", { 6, 8, 10} },
 		};
@@ -98,7 +98,7 @@ public:
 	}
 
 	TEST_METHOD(innerJoinMerge_trueRHS_returnsLHS) {
-		std::unordered_map<std::string, std::vector<int>> leftTable = {
+		Table leftTable = {
 			{"s", { 1, 3, 4} },
 			{"v1", { 2, 4, 4} },
 		};

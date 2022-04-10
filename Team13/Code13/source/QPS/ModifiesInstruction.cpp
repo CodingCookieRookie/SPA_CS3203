@@ -1,13 +1,14 @@
 #include "ModifiesInstruction.h"
 
-ModifiesInstruction::ModifiesInstruction(PqlReference lhsRef, PqlReference rhsRef, PKBGetter* pkbGetter) : RelationshipInstruction(lhsRef, rhsRef, pkbGetter) {}
+ModifiesInstruction::ModifiesInstruction(PqlReference lhsRef, PqlReference rhsRef, PKBGetter* pkbGetter)
+	: RelationshipInstruction(lhsRef, rhsRef, pkbGetter) {}
 
 EvaluatedTable ModifiesSInstruction::execute() {
 	/* Modifies (1, v)	or Modifies(1, "x")  => true or Modifies (1, _ ) (under statement) */
 	EvaluatedTable evTable;
-	std::unordered_map<std::string, std::vector<int>> PQLmap;
-	std::vector<int> allStmts;
-	std::vector<int> varIndices;
+	Table PQLmap;
+	std::vector<Index> allStmts;
+	std::vector<Index> varIndices;
 	switch (lhsRef.first) {
 	case PqlReferenceType::SYNONYM:
 		return ModifiesInstruction::handleSynonymLeft(PQLmap, lhsRef, rhsRef, allStmts, varIndices, PqlRelationshipType::MODIFIES_S);
@@ -22,9 +23,9 @@ EvaluatedTable ModifiesSInstruction::execute() {
 EvaluatedTable ModifiesPInstruction::execute() {
 	/* Modifies(p / p1, v) or Modifies(p / p1, _)	Modifies(p / p1, "x") */
 	/* Modifies("p", v) or Modifies("p" , _)	Modifies("p", "x") */
-	std::unordered_map<std::string, std::vector<int>> PQLmap;
-	std::vector<int> allStmts;
-	std::vector<int> varIndices;
+	Table PQLmap;
+	std::vector<Index> allStmts;
+	std::vector<Index> varIndices;
 	switch (lhsRef.first) {
 	case PqlReferenceType::SYNONYM:
 		// same as handleModfiesS
@@ -37,8 +38,10 @@ EvaluatedTable ModifiesPInstruction::execute() {
 	return EvaluatedTable(PQLmap);
 }
 
-EvaluatedTable ModifiesInstruction::handleSynonymLeft(std::unordered_map<std::string, std::vector<int>> PQLmap, PqlReference lhsRef, PqlReference rhsRef, std::vector<int> allStmts, std::vector<int> varIndices, PqlRelationshipType pqlRelationshipType) {
-	std::tuple<std::vector<int>, std::vector<int>> allStmtVarInfos = pqlRelationshipType == PqlRelationshipType::MODIFIES_S ? pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_S) : pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_P);
+EvaluatedTable ModifiesInstruction::handleSynonymLeft(Table PQLmap, PqlReference lhsRef, PqlReference rhsRef,
+	std::vector<Index> allStmts, std::vector<Index> varIndices, PqlRelationshipType pqlRelationshipType) {
+	std::tuple<std::vector<Index>, std::vector<Index>> allStmtVarInfos = pqlRelationshipType == PqlRelationshipType::MODIFIES_S
+		? pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_S) : pkbGetter->getRSAllInfo(RelationshipType::MODIFIES_P);
 
 	switch (rhsRef.first) {
 	case PqlReferenceType::SYNONYM:
@@ -52,7 +55,9 @@ EvaluatedTable ModifiesInstruction::handleSynonymLeft(std::unordered_map<std::st
 	case PqlReferenceType::IDENT:
 		if (pkbGetter->containsNameIdxEntity(EntityType::VARIABLE, rhsRef.second)) {
 			VarIndex varIndex = pkbGetter->getNameIdxEntityIndex(EntityType::VARIABLE, rhsRef.second);
-			allStmts = pqlRelationshipType == PqlRelationshipType::MODIFIES_S ? pkbGetter->getRSInfoFromRightArg(RelationshipType::MODIFIES_S, varIndex) : pkbGetter->getRSInfoFromRightArg(RelationshipType::MODIFIES_P, varIndex);
+			allStmts = pqlRelationshipType == PqlRelationshipType::MODIFIES_S
+				? pkbGetter->getRSInfoFromRightArg(RelationshipType::MODIFIES_S, varIndex)
+				: pkbGetter->getRSInfoFromRightArg(RelationshipType::MODIFIES_P, varIndex);
 		}
 		break;
 	default:
@@ -62,7 +67,8 @@ EvaluatedTable ModifiesInstruction::handleSynonymLeft(std::unordered_map<std::st
 	return EvaluatedTable(PQLmap);
 }
 
-EvaluatedTable ModifiesInstruction::handleIntegerLeft(std::unordered_map<std::string, std::vector<int>> PQLmap, PqlReference lhsRef, PqlReference rhsRef, std::vector<int> allStmts, std::vector<int> varIndices) {
+EvaluatedTable ModifiesInstruction::handleIntegerLeft(Table PQLmap, PqlReference lhsRef, PqlReference rhsRef,
+	std::vector<Index> allStmts, std::vector<Index> varIndices) {
 	int lhsRefValue = stoi(lhsRef.second);
 	if (!pkbGetter->containsStmt(lhsRefValue)) {
 		return EvaluatedTable(false);
@@ -91,7 +97,8 @@ EvaluatedTable ModifiesInstruction::handleIntegerLeft(std::unordered_map<std::st
 	return EvaluatedTable(PQLmap);
 }
 
-EvaluatedTable ModifiesInstruction::handleIdentLeft(std::unordered_map<std::string, std::vector<int>> PQLmap, PqlReference lhsRef, PqlReference rhsRef, std::vector<int> allStmts, std::vector<int> varIndices) {
+EvaluatedTable ModifiesInstruction::handleIdentLeft(Table PQLmap, PqlReference lhsRef, PqlReference rhsRef,
+	std::vector<Index> allStmts, std::vector<Index> varIndices) {
 	if (!pkbGetter->containsNameIdxEntity(EntityType::PROCEDURE, lhsRef.second)) {
 		return EvaluatedTable(false);
 	}

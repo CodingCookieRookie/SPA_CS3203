@@ -4,9 +4,12 @@
 
 class ModifiesInstruction : public RelationshipInstruction {
 protected:
-	EvaluatedTable handleSynonymLeft(std::unordered_map<std::string, std::vector<int>> PQLmap, PqlReference lhsRef, PqlReference rhsRef, std::vector<int> allStmts, std::vector<int> varIndices, PqlRelationshipType pqlRelationshipType);
-	EvaluatedTable handleIntegerLeft(std::unordered_map<std::string, std::vector<int>> PQLmap, PqlReference lhsRef, PqlReference rhsRef, std::vector<int> allStmts, std::vector<int> varIndices);
-	EvaluatedTable handleIdentLeft(std::unordered_map<std::string, std::vector<int>> PQLmap, PqlReference lhsRef, PqlReference rhsRef, std::vector<int> allStmts, std::vector<int> varIndices);
+	EvaluatedTable handleSynonymLeft(Table PQLmap, PqlReference lhsRef, PqlReference rhsRef,
+		std::vector<Index> allStmts, std::vector<Index> varIndices, PqlRelationshipType pqlRelationshipType);
+	EvaluatedTable handleIntegerLeft(Table PQLmap, PqlReference lhsRef, PqlReference rhsRef,
+		std::vector<Index> allStmts, std::vector<Index> varIndices);
+	EvaluatedTable handleIdentLeft(Table PQLmap, PqlReference lhsRef, PqlReference rhsRef,
+		std::vector<Index> allStmts, std::vector<Index> varIndices);
 	ModifiesInstruction(PqlReference lhsRef, PqlReference rhsRef, PKBGetter* pkbGetter);
 };
 

@@ -2,7 +2,7 @@
 
 EvaluatedTable GetAllProcInstruction::execute() {
 	std::vector<ProcIndex> results = pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE);
-	std::unordered_map<std::string, std::vector<int>> PQLmap;
+	Table PQLmap;
 	PQLmap[synonym] = results;
 	return EvaluatedTable(PQLmap);
 }

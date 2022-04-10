@@ -53,7 +53,7 @@ EvaluatedTable FollowsTInstruction::helperHandleTwoIntegers() {
 
 EvaluatedTable FollowsTInstruction::helperHandleOneInt(PqlReferenceType lhsRefType, PqlReferenceType rhsRefType) {
 	std::vector<StmtIndex> stmts = pkbGetter->getAllStmts();
-	std::vector<int> results;
+	std::vector<Index> results;
 	int oneInt;
 	std::string otherSynonym;
 	if (lhsRefType == PqlReferenceType::INTEGER) {
@@ -82,7 +82,7 @@ EvaluatedTable FollowsTInstruction::helperHandleOneInt(PqlReferenceType lhsRefTy
 		}
 	}
 
-	std::unordered_map<std::string, std::vector<int>> PQLmap;
+	Table PQLmap;
 	PQLmap[otherSynonym] = results;
 
 	return EvaluatedTable(PQLmap);
@@ -91,11 +91,11 @@ EvaluatedTable FollowsTInstruction::helperHandleOneInt(PqlReferenceType lhsRefTy
 EvaluatedTable FollowsTInstruction::helperHandleTwoStmtsMaybeWildcard() {
 	std::tuple<std::vector<int>, std::vector<int>> results;
 	/* e.g. {1, 2}, {2, 3}, {3, 6} */
-	std::unordered_map<std::string, std::vector<int>> PQLmap;
+	Table PQLmap;
 	results = pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS_T);
 	if (lhsRef.second == rhsRef.second) { /* Special case: Follows*(s1, s1), recursive call, technically shouldn't be allowed */
 		/* No values populated to PQLmap for this case */
-		PQLmap[lhsRef.second] = std::vector<int>();
+		PQLmap[lhsRef.second] = std::vector<Index>();
 		return EvaluatedTable(PQLmap);
 	}
 	if (lhsRef.first == PqlReferenceType::SYNONYM) {
@@ -110,7 +110,5 @@ EvaluatedTable FollowsTInstruction::helperHandleTwoStmtsMaybeWildcard() {
 EvaluatedTable FollowsTInstruction::helperHandleTwoWildcards() {
 	bool isEmptyTable = true;
 	isEmptyTable = std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS_T)).empty();
-	// No Follows* rs exists => isEmptyTable == true => EvTable.evResult == false (innerJoinMerge() can drop table)
-	// Follows* rs exists => isEmptyTable == false => EvTable.evResult == true (innerJoinMerge() can merge dummy table, preserving all rows)
 	return EvaluatedTable(!isEmptyTable);
 }

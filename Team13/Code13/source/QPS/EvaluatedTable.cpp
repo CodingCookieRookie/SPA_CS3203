@@ -9,7 +9,7 @@ void EvaluatedTable::removeDuplicates() {
 		return;
 	}
 	std::unordered_set<int> uniqueVals;
-	std::unordered_map<std::string, std::vector<int>> uniqueTable;
+	Table uniqueTable;
 	for (const std::pair<std::string, std::vector<int>>& column : table) {
 		const std::string& columnName = column.first;
 		const std::vector<int>& columnVals = column.second;
@@ -24,7 +24,7 @@ void EvaluatedTable::removeDuplicates() {
 	table = uniqueTable;
 }
 
-void EvaluatedTable::prepopulate(std::unordered_map<std::string, std::vector<int>>& resultTable,
+void EvaluatedTable::prepopulate(Table& resultTable,
 	const std::vector<std::string>& cols) {
 	for (const std::string& col : cols) {
 		resultTable.insert({ col, std::vector<int>() });
@@ -60,7 +60,7 @@ EvaluatedTable EvaluatedTable::hashJoin(EvaluatedTable& otherTable, std::unorder
 	std::unordered_map<std::vector<int>, std::vector<std::vector<int>>, IntVectorHasher> tableHashMap;
 	std::unordered_map<std::vector<int>, std::vector<std::vector<int>>, IntVectorHasher> otherHashMap;
 
-	std::unordered_map<std::string, std::vector<int>> resultTable;
+	Table resultTable;
 
 	/* Prepopulate the columns of the resulting table */
 	prepopulate(resultTable, commonEntitiesVector);
@@ -163,7 +163,7 @@ EvaluatedTable EvaluatedTable::project(const std::unordered_set<std::string>& co
 
 EvaluatedTable::EvaluatedTable() : EvaluatedTable(true) {}
 
-EvaluatedTable::EvaluatedTable(std::unordered_map<std::string, std::vector<int>> newTable) :
+EvaluatedTable::EvaluatedTable(Table newTable) :
 	table(newTable),
 	evResult(true) {}
 
@@ -173,4 +173,36 @@ EvaluatedTable::EvaluatedTable(bool evResult) :
 
 bool EvaluatedTable::columnExists(const std::string& column) {
 	return table.find(column) != table.end();
+}
+
+std::string EvaluatedTable::toString() {
+	std::map<std::string, std::vector<int>> ordered(table.begin(), table.end());
+	std::string res = "Table String: size: " + std::to_string(ordered.size()) + "\n";
+	for (auto& it : ordered) {
+		res += "Synonym: " + it.first + " ";
+		res += "Values: ";
+		std::vector<int> values = it.second;
+		for (size_t i = 0; i < values.size(); i++) {
+			res = res + std::to_string(values.at(i)) + " ";
+		}
+		res += "\n";
+	}
+	return res;
+}
+
+size_t EvaluatedTable::getNumRow() {
+	if (table.empty()) {
+		return 0;
+	}
+	Table::iterator firstCol = table.begin();
+	const std::vector<int>& firstColVector = firstCol->second;
+	return firstColVector.size();
+}
+
+Table EvaluatedTable::getTableRef() {
+	return table;
+}
+
+bool EvaluatedTable::getEvResult() {
+	return evResult;
 }

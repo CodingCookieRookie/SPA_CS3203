@@ -2,7 +2,7 @@
 
 EvaluatedTable GetAllCallInstruction::execute() {
 	std::vector<StmtIndex> results = pkbGetter->getStmtIdxFromType(StatementType::CALL_TYPE);
-	std::unordered_map<std::string, std::vector<int>> PQLmap;
+	Table PQLmap;
 	PQLmap[synonym] = results;
 	return EvaluatedTable(PQLmap);
 }

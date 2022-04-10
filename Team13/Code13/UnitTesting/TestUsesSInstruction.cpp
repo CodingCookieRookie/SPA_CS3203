@@ -67,7 +67,7 @@ public:
 		pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "randomVar");
 		VarIndex varIndex = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "x");
 		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmt, varIndex);
-		std::vector<int> allstmts = pkbGetter->getRSInfoFromRightArg(RelationshipType::USES_S, varIndex);
+		std::vector<Index> allstmts = pkbGetter->getRSInfoFromRightArg(RelationshipType::USES_S, varIndex);
 
 		// 2. Main test:
 		EvaluatedTable evTable = instruction->execute();

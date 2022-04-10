@@ -4,7 +4,6 @@
 
 class FollowsInstruction : public RelationshipInstruction {
 protected:
-
 	EvaluatedTable helperHandleTwoIntegers();
 	EvaluatedTable helperHandleOneInt(PqlReferenceType lhsRefType, PqlReferenceType rhsRefType);
 	EvaluatedTable helperHandleTwoStmtsMaybeWildcard();

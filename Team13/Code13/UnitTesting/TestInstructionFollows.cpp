@@ -68,13 +68,13 @@ public:
 		// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 
-		// Test Table: std::unordered_map<std::string, std::vector<int>>
+		// Test Table:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("s2") != tableRef.end());
 		Assert::AreEqual(false, tableRef.find("s3") != tableRef.end());
 
-		// Test Entities: std::unordered_map<std::string, EntityType>
-		std::vector<int> values{ 2 };
+		// Test Entities:
+		std::vector<Index> values{ 2 };
 		auto actualValues = tableRef.at("s2");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
 		Assert::AreEqual(true, areVecEqual);
@@ -106,13 +106,13 @@ public:
 		// Test numRow:
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 
-		// Test Table: std::unordered_map<std::string, std::vector<int>>
+		// Test Table:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("s1") != tableRef.end());
 		Assert::AreEqual(false, tableRef.find("s5") != tableRef.end());
 
-		// Test Entities: std::unordered_map<std::string, EntityType>
-		std::vector<int> values{ 1 };
+		// Test Entities:
+		std::vector<Index> values{ 1 };
 		auto actualValues = tableRef.at("s1");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
 		Assert::AreEqual(true, areVecEqual);
@@ -148,19 +148,19 @@ public:
 		// Test numRow:
 		Assert::AreEqual(size_t(3), evTable.getNumRow());
 
-		// Test Table: std::unordered_map<std::string, std::vector<int>>
+		// Test Table:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("s1") != tableRef.end());
 		Assert::AreEqual(true, tableRef.find("s2") != tableRef.end());
 		Assert::AreEqual(false, tableRef.find("s5") != tableRef.end());
 		Assert::AreEqual(false, tableRef.find("s12") != tableRef.end());
 
-		// Test Entities: std::unordered_map<std::string, EntityType>
-		std::vector<int> s1values{ 1, 2, 3 };
+		// Test Entities:
+		std::vector<Index> s1values{ 1, 2, 3 };
 		auto actuals1Values = tableRef.at("s1");
 		bool areVecEqual = std::equal(s1values.begin(), s1values.end(), actuals1Values.begin());
 		Assert::AreEqual(true, areVecEqual);
-		std::vector<int> s2values{ 2, 3, 4 };
+		std::vector<Index> s2values{ 2, 3, 4 };
 		auto actuals2Values = tableRef.at("s2");
 		bool areVecEqual2 = std::equal(s2values.begin(), s2values.end(), actuals2Values.begin());
 		Assert::AreEqual(true, areVecEqual2);
@@ -196,7 +196,7 @@ public:
 		// Test numRow:
 		Assert::AreEqual(size_t(18), evTable.getNumRow());
 
-		// Test Table: std::unordered_map<std::string, std::vector<int>>
+		// Test Table:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("s1") != tableRef.end());
 		Assert::AreEqual(false, tableRef.find("_") != tableRef.end());
@@ -205,8 +205,8 @@ public:
 		// Test Table size:
 		Assert::AreEqual(size_t(1), tableRef.size()); // RHS wildcard will not have column (not of concern)
 
-		// Test Entities: std::unordered_map<std::string, EntityType>
-		std::vector<int> s1values, wildcardValues;
+		// Test Entities:
+		std::vector<Index> s1values, wildcardValues;
 		for (int i = 0; i < 18; i++) {
 			s1values.emplace_back(i + 1);
 		}
@@ -245,7 +245,7 @@ public:
 		// Test numRow:
 		Assert::AreEqual(size_t(0), evTable.getNumRow()); //
 
-		// Test Table: std::unordered_map<std::string, std::vector<int>>
+		// Test Table:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(false, tableRef.find("_") != tableRef.end());
 		Assert::AreEqual(false, tableRef.find("s1") != tableRef.end());

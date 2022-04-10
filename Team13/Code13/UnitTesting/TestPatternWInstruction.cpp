@@ -47,7 +47,7 @@ public:
 		pkbInserter->insertPatternContainer(StatementType::WHILE_TYPE, stmt, varIndex);
 
 		// Check PKB populated
-		std::vector<int> allStmts = pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIndex);
+		std::vector<Index> allStmts = pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIndex);
 		Assert::AreEqual(size_t(1), allStmts.size());
 
 		// 2. Main test:
@@ -75,7 +75,7 @@ public:
 		pkbInserter->insertPatternContainer(StatementType::WHILE_TYPE, stmt, varIndex);
 
 		// Check PKB populated
-		std::vector<int> allStmts = pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIndex);
+		std::vector<Index> allStmts = pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIndex);
 		Assert::AreEqual(size_t(1), allStmts.size());
 
 		// 2. Main test:
@@ -104,7 +104,7 @@ public:
 		pkbInserter->insertPatternContainer(StatementType::WHILE_TYPE, stmt, varIndex);
 
 		// Check PKB populated
-		std::vector<int> allStmts = pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIndex);
+		std::vector<Index> allStmts = pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIndex);
 		Assert::AreEqual(size_t(1), allStmts.size());
 
 		// 2. Main test:
@@ -133,7 +133,7 @@ public:
 		pkbInserter->insertPatternContainer(StatementType::WHILE_TYPE, stmt, varIndex);
 
 		// Check PKB populated
-		std::vector<int> allStmts = pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIndex);
+		std::vector<Index> allStmts = pkbGetter->getPatternContainerStmtsFromVar(StatementType::WHILE_TYPE, varIndex);
 		Assert::AreEqual(size_t(1), allStmts.size());
 
 		// 2. Main test:

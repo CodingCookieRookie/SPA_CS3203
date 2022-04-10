@@ -10,7 +10,6 @@ bool QPSCommons::isSynonymRef(const PqlReference& reference) {
 }
 
 bool isStatementEntity(EntityType entityType) {
-	/* TODO: refactor this into a table */
 	return entityType == EntityType::ASSIGN
 		|| entityType == EntityType::STMT
 		|| entityType == EntityType::IF

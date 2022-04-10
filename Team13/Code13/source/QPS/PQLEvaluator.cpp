@@ -207,10 +207,10 @@ EvaluatedTable& PQLEvaluator::populateDeclarations(EvaluatedTable& resultEvTable
 
 EvaluatedTable PQLEvaluator::handleNonBoolean(EvaluatedTable& evaluatedTable) {
 	/* For each column that already exists in the final EvTable, take it from the evaluatedTable */
-	std::unordered_map<std::string, std::vector<int>> resultTable = PQLEvaluator::populateTable(evaluatedTable);
+	Table resultTable = PQLEvaluator::populateTable(evaluatedTable);
 	/* If the evaluated table is false or an empty table, use a false table */
 	EvaluatedTable resultEvTable = EvaluatedTable(resultTable);
-	std::unordered_map<std::string, std::vector<int>> table = evaluatedTable.getTableRef();
+	Table table = evaluatedTable.getTableRef();
 	if (evaluatedTable.getEvResult() == false || (table.size() > 0 && evaluatedTable.getNumRow() == 0)) {
 		resultEvTable = EvaluatedTable(false);
 	}
@@ -220,10 +220,10 @@ EvaluatedTable PQLEvaluator::handleNonBoolean(EvaluatedTable& evaluatedTable) {
 	return resultEvTable;
 }
 
-std::unordered_map<std::string, std::vector<int>> PQLEvaluator::populateTable(EvaluatedTable& evaluatedTable) {
-	std::unordered_map<std::string, std::vector<int>> resultTable;
+Table PQLEvaluator::populateTable(EvaluatedTable& evaluatedTable) {
+	Table resultTable;
 	std::unordered_set<std::string> columnsProjected = parsedQuery.getColumns();
-	std::unordered_map<std::string, std::vector<int>> table = evaluatedTable.getTableRef();
+	Table table = evaluatedTable.getTableRef();
 	for (const std::string& column : columnsProjected) {
 		if (table.find(column) != table.end()) {
 			resultTable[column] = table[column];
@@ -235,7 +235,7 @@ std::unordered_map<std::string, std::vector<int>> PQLEvaluator::populateTable(Ev
 EvaluatedTable& PQLEvaluator::fillInColumns(EvaluatedTable& resultEvTable, EvaluatedTable& evaluatedTable) {
 	std::unordered_set<std::string> columnsProjected = parsedQuery.getColumns();
 	std::unordered_map<std::string, EntityType> declarations = parsedQuery.getDeclarations();
-	std::unordered_map<std::string, std::vector<int>> table = evaluatedTable.getTableRef();
+	Table table = evaluatedTable.getTableRef();
 	for (const std::string& column : columnsProjected) {
 		if (table.find(column) == table.end()) {
 			EntityType columnType = declarations.at(column);

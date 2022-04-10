@@ -16,14 +16,13 @@ private:
 	/* Helper method to project clauses that select boolean */
 	std::list<std::string> projectBoolean();
 
-	/* Helper method to consolidate results of columns projected */
+	/* Helper methods to consolidate results of columns projected */
 	std::list<std::string> projectColumns();
 
 	std::string getColumnResults(int rowNum);
 
 	/* Checks if table field has no values */
-	bool resultTableHasEmptyColumn(
-		std::unordered_map<std::string, std::vector<int>> resultTable);
+	bool resultTableHasEmptyColumn(Table resultTable);
 
 	/* Helper methods to get results of the columns pertaining to the entity name */
 	std::string getSynonym(std::string entityName, int rowNum);

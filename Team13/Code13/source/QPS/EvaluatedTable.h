@@ -28,78 +28,35 @@ public:
 
 class EvaluatedTable {
 private:
-	std::unordered_map<std::string, std::vector<int>> table;
+	Table table;
 	bool evResult;
 	void removeDuplicates();
 	EvaluatedTable hashJoin(EvaluatedTable& otherTable,
 		std::unordered_set<std::string>& commonEntities);
-	void EvaluatedTable::prepopulate(std::unordered_map<std::string, std::vector<int>>& resultTable,
+	void EvaluatedTable::prepopulate(Table& resultTable,
 		const std::vector<std::string>& cols);
 
 public:
-	/* E.g. of an EvalauatedTable:
-	* {"s", "v"} = {{"1", "a"}, {"2", "b"}}
-	*
-	* EvalautedTable.entities == {
-		{"s", Stmt},
-		{"v", Variable}
-	  }
-	* EvalautedTable.table == {
-		{"s", {"1", "2"}},
-	*	{"v", {"a", "b"}}
-	* }
-	* numRow == 2
-	*/
-
-	/* Dummy default constructor */
 	EvaluatedTable();
-
-	/* Wrapper constructor for table only */
-	EvaluatedTable(std::unordered_map<std::string, std::vector<int>> newTable);
-
+	EvaluatedTable(Table newTable);
 	/* Wrapper constructor for boolean only (i.e. when the result evaluates to only a boolean) */
 	EvaluatedTable(bool evResult);
 
-	/* Handle table joins */
+	/* Method to handle table joins using hash join, an optimised joining algorithm */
 	EvaluatedTable innerJoinMerge(EvaluatedTable& otherTable);
 
-	/* Getter for numRow */
-	size_t getNumRow() {
-		if (table.empty()) {
-			return 0;
-		}
-		std::unordered_map<std::string, std::vector<int>>::iterator firstCol = table.begin();
-		const std::vector<int>& firstColVector = firstCol->second;
-		return firstColVector.size();
-	}
-
-	/* Getter for table */
-	std::unordered_map<std::string, std::vector<int>>& getTableRef() {
-		return table;
-	}
-
-	/* Getter for table */
-	bool getEvResult() {
-		return evResult;
-	}
-
+	/* Method to filter down columns in table to projected columns  */
 	EvaluatedTable project(const std::unordered_set<std::string>& columns);
 
 	/* Mentions all the relevant fields of the EvalautedTable */
-	std::string toString() {
-		std::map<std::string, std::vector<int>> ordered(table.begin(), table.end());
-		std::string res = "Table String: size: " + std::to_string(ordered.size()) + "\n";
-		for (auto& it : ordered) {
-			res += "Synonym: " + it.first + " ";
-			res += "Values: ";
-			std::vector<int> values = it.second;
-			for (size_t i = 0; i < values.size(); i++) {
-				res = res + std::to_string(values.at(i)) + " ";
-			}
-			res += "\n";
-		}
-		return res;
-	}
+	std::string toString();
 
 	bool columnExists(const std::string& column);
+
+	/* Getters */
+	size_t getNumRow();
+
+	Table getTableRef();
+
+	bool getEvResult();
 };

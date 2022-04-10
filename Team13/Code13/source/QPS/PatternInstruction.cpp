@@ -17,8 +17,8 @@ std::unordered_set<std::string> PatternInstruction::getSynonyms() {
 }
 
 EvaluatedTable PatternAInstruction::execute() {
-	std::unordered_map<std::string, std::vector<int>> PQLmap;
-	std::vector<int> allStmts;
+	Table PQLmap;
+	std::vector<Index> allStmts;
 	switch (entRef.first) {
 	case PqlReferenceType::IDENT:
 		if (pkbGetter->containsNameIdxEntity(EntityType::VARIABLE, entRef.second)) {
@@ -40,7 +40,7 @@ EvaluatedTable PatternAInstruction::execute() {
 		}
 		break;
 	default:
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo;
+		std::tuple<std::vector<Index>, std::vector<Index>> allPatternStmtInfo;
 		switch (expressionSpec.first) {
 		case PqlExpressionType::FULL:
 			allPatternStmtInfo = pkbGetter->getAssignStmtsFromExprFullMatch(expressionSpec.second);
@@ -56,7 +56,7 @@ EvaluatedTable PatternAInstruction::execute() {
 			break;
 		}
 		if (entRef.first == PqlReferenceType::SYNONYM) {
-			std::vector<int> varIndices = std::get<0>(allPatternStmtInfo);
+			std::vector<Index> varIndices = std::get<0>(allPatternStmtInfo);
 			PQLmap[entRef.second] = varIndices;
 		}
 		allStmts = std::get<1>(allPatternStmtInfo);
@@ -66,8 +66,8 @@ EvaluatedTable PatternAInstruction::execute() {
 }
 
 EvaluatedTable PatternIInstruction::execute() {
-	std::unordered_map<std::string, std::vector<int>> PQLmap;
-	std::vector<int> allStmts;
+	Table PQLmap;
+	std::vector<Index> allStmts;
 	switch (entRef.first) {
 	case PqlReferenceType::IDENT:
 		if (pkbGetter->containsNameIdxEntity(EntityType::VARIABLE, entRef.second)) {
@@ -76,10 +76,10 @@ EvaluatedTable PatternIInstruction::execute() {
 		}
 		break;
 	default:
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo;
+		std::tuple<std::vector<Index>, std::vector<Index>> allPatternStmtInfo;
 		allPatternStmtInfo = pkbGetter->getAllPatternContainerInfo(StatementType::IF_TYPE);
 		if (entRef.first == PqlReferenceType::SYNONYM) {
-			std::vector<int> varIndices = std::get<0>(allPatternStmtInfo);
+			std::vector<Index> varIndices = std::get<0>(allPatternStmtInfo);
 			PQLmap[entRef.second] = varIndices;
 		}
 		allStmts = std::get<1>(allPatternStmtInfo);
@@ -89,8 +89,8 @@ EvaluatedTable PatternIInstruction::execute() {
 }
 
 EvaluatedTable PatternWInstruction::execute() {
-	std::unordered_map<std::string, std::vector<int>> PQLmap;
-	std::vector<int> allStmts;
+	Table PQLmap;
+	std::vector<Index> allStmts;
 	switch (entRef.first) {
 	case PqlReferenceType::IDENT:
 		if (pkbGetter->containsNameIdxEntity(EntityType::VARIABLE, entRef.second)) {
@@ -99,10 +99,10 @@ EvaluatedTable PatternWInstruction::execute() {
 		}
 		break;
 	default:
-		std::tuple<std::vector<int>, std::vector<int>> allPatternStmtInfo;
+		std::tuple<std::vector<Index>, std::vector<Index>> allPatternStmtInfo;
 		allPatternStmtInfo = pkbGetter->getAllPatternContainerInfo(StatementType::WHILE_TYPE);
 		if (entRef.first == PqlReferenceType::SYNONYM) {
-			std::vector<int> varIndices = std::get<0>(allPatternStmtInfo);
+			std::vector<Index> varIndices = std::get<0>(allPatternStmtInfo);
 			PQLmap[entRef.second] = varIndices;
 		}
 		allStmts = std::get<1>(allPatternStmtInfo);

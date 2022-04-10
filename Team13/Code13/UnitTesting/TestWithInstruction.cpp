@@ -59,7 +59,7 @@ public:
 		/* 2. Check result of EvTable */
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
-		std::unordered_map<std::string, std::vector<int>> table = evTable.getTableRef();
+		Table table = evTable.getTableRef();
 		Assert::AreEqual(size_t(2), table.size());
 		Assert::IsTrue(table.find("read") != table.end());
 		Assert::IsTrue(table.find("proc") != table.end());
@@ -102,7 +102,7 @@ public:
 		/* 2. Check result of EvTable */
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());									// Error in this line -> actual gives 0
-		std::unordered_map<std::string, std::vector<int>> table = evTable.getTableRef();
+		Table table = evTable.getTableRef();
 		Assert::AreEqual(size_t(1), table.size());
 		Assert::IsTrue(table.find("print") != table.end());
 	}
@@ -145,7 +145,7 @@ public:
 		/* 2. Check result of EvTable */
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
-		std::unordered_map<std::string, std::vector<int>> table = evTable.getTableRef();
+		Table table = evTable.getTableRef();
 		Assert::AreEqual(size_t(0), table.size());
 		Assert::AreEqual(false, evTable.getEvResult());
 	}
@@ -188,7 +188,7 @@ public:
 		/* 2. Check result of EvTable */
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
-		std::unordered_map<std::string, std::vector<int>> table = evTable.getTableRef();
+		Table table = evTable.getTableRef();
 		Assert::AreEqual(size_t(2), table.size());
 		Assert::IsTrue(table.find("stmt") != table.end());
 		Assert::IsTrue(table.find("constant") != table.end());
@@ -232,7 +232,7 @@ public:
 		/* 2. Check result of EvTable */
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
-		std::unordered_map<std::string, std::vector<int>> table = evTable.getTableRef();
+		Table table = evTable.getTableRef();
 		Assert::AreEqual(size_t(1), table.size());
 		Assert::IsTrue(table.find("read") != table.end());
 	}
@@ -275,7 +275,7 @@ public:
 		/* 2. Check result of EvTable */
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
-		std::unordered_map<std::string, std::vector<int>> table = evTable.getTableRef();
+		Table table = evTable.getTableRef();
 		Assert::AreEqual(size_t(0), table.size());
 		Assert::AreEqual(false, evTable.getEvResult());
 	}

@@ -24,9 +24,9 @@ public:
 
 	TEST_METHOD(resolveTableToResults_oneColumnStatement_projectOneColumn) {
 		// 1. Set-up:
-		std::unordered_map<std::string, std::vector<int>> testTable;
+		Table testTable;
 		std::vector<PqlReference> attributesProjected;
-		std::vector<int> vec;
+		std::vector<Index> vec;
 		vec.push_back(1);
 		vec.push_back(3);
 		vec.push_back(5);
@@ -64,9 +64,9 @@ public:
 
 	TEST_METHOD(resolveTableToResults_oneColumnVariable_projectOneColumn) {
 		// 1. Set-up:
-		std::unordered_map<std::string, std::vector<int>> testTable;
+		Table testTable;
 		std::vector<PqlReference> attributesProjected;
-		std::vector<int> vec;
+		std::vector<Index> vec;
 		vec.push_back(1);
 		vec.push_back(2);
 		vec.push_back(3);
@@ -105,9 +105,9 @@ public:
 
 	TEST_METHOD(resolveTableToResults_oneColumnProcedure_projectOneColumn) {
 		// 1. Set-up:
-		std::unordered_map<std::string, std::vector<int>> testTable;
+		Table testTable;
 		std::vector<PqlReference> attributesProjected;
-		std::vector<int> vec;
+		std::vector<Index> vec;
 		vec.push_back(1);
 		vec.push_back(2);
 		vec.push_back(3);
@@ -146,10 +146,10 @@ public:
 
 	TEST_METHOD(resolveTableToResults_oneColumnConstantRepeated_projectOneColumnUnique) {
 		// 1. Set-up:
-		std::unordered_map<std::string, std::vector<int>> testTable;
+		Table testTable;
 		std::vector<PqlReference> attributesProjected;
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "c1");
-		testTable["c1"] = std::vector<int>{ 1, 1, 1, 2, 2, 3, 3, 4 };
+		testTable["c1"] = std::vector<Index>{ 1, 1, 1, 2, 2, 3, 3, 4 };
 
 		std::vector <std::pair<EntityType, std::string>> declarations;
 		declarations.emplace_back(std::make_pair(EntityType::CONSTANT, "c1"));
@@ -177,10 +177,10 @@ public:
 
 	TEST_METHOD(resolveTableToResults_oneColumnStatementRepeated_projectOneColumnUnique) {
 		// 1. Set-up:
-		std::unordered_map<std::string, std::vector<int>> testTable;
+		Table testTable;
 		std::vector<PqlReference> attributesProjected;
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "s1");
-		testTable["s1"] = std::vector<int>{ 1, 1, 1, 2, 2, 3, 3, 4 };
+		testTable["s1"] = std::vector<Index>{ 1, 1, 1, 2, 2, 3, 3, 4 };
 
 		std::vector <std::pair<EntityType, std::string>> declarations;
 		declarations.emplace_back(std::make_pair(EntityType::STMT, "s1"));
@@ -208,12 +208,12 @@ public:
 
 	TEST_METHOD(resolveTableToResults_twoColumnStatement_projectTwoColumns) {
 		// 1. Set-up:
-		std::unordered_map<std::string, std::vector<int>> testTable;
+		Table testTable;
 		std::vector<PqlReference> attributesProjected;
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "s1");
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "s2");
-		testTable["s1"] = std::vector<int>{ 1, 2, 3 };
-		testTable["s2"] = std::vector<int>{ 4, 5, 6 };
+		testTable["s1"] = std::vector<Index>{ 1, 2, 3 };
+		testTable["s2"] = std::vector<Index>{ 4, 5, 6 };
 
 		std::vector <std::pair<EntityType, std::string>> declarations;
 		declarations.emplace_back(std::make_pair(EntityType::STMT, "s1"));
@@ -242,12 +242,12 @@ public:
 
 	TEST_METHOD(resolveTableToResults_twoColumnStatementEachColWithRepeats_projectTwoColumns) {
 		// 1. Set-up:
-		std::unordered_map<std::string, std::vector<int>> testTable;
+		Table testTable;
 		std::vector<PqlReference> attributesProjected;
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "s1");
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "s2");
-		testTable["s1"] = std::vector<int>{ 1, 1, 2, 2, 3 };
-		testTable["s2"] = std::vector<int>{ 4, 5, 5, 6, 6 };
+		testTable["s1"] = std::vector<Index>{ 1, 1, 2, 2, 3 };
+		testTable["s2"] = std::vector<Index>{ 4, 5, 5, 6, 6 };
 
 		std::vector <std::pair<EntityType, std::string>> declarations;
 		declarations.emplace_back(std::make_pair(EntityType::STMT, "s1"));
@@ -276,12 +276,12 @@ public:
 
 	TEST_METHOD(resolveTableToResults_twoColumnStatementWithRepeatsInBoth_projectTwoColumnsUnique) {
 		// 1. Set-up:
-		std::unordered_map<std::string, std::vector<int>> testTable;
+		Table testTable;
 		std::vector<PqlReference> attributesProjected;
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "s1");
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "s2");
-		testTable["s1"] = std::vector<int>{ 1, 1, 2, 2, 3, 3, 4, 4, 4 };
-		testTable["s2"] = std::vector<int>{ 4, 5, 5, 6, 6, 6, 7, 7, 7 };
+		testTable["s1"] = std::vector<Index>{ 1, 1, 2, 2, 3, 3, 4, 4, 4 };
+		testTable["s2"] = std::vector<Index>{ 4, 5, 5, 6, 6, 6, 7, 7, 7 };
 
 		std::vector <std::pair<EntityType, std::string>> declarations;
 		declarations.emplace_back(std::make_pair(EntityType::STMT, "s1"));
@@ -310,11 +310,11 @@ public:
 
 	TEST_METHOD(resolveTableToResults_twoColumnStatement_projectOneColumn) {
 		// 1. Set-up:
-		std::unordered_map<std::string, std::vector<int>> testTable;
+		Table testTable;
 		std::vector<PqlReference> attributesProjected;
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "s1");
-		testTable["s1"] = std::vector<int>{ 1, 2, 3 };
-		testTable["s2"] = std::vector<int>{ 4, 5, 6 };
+		testTable["s1"] = std::vector<Index>{ 1, 2, 3 };
+		testTable["s2"] = std::vector<Index>{ 4, 5, 6 };
 
 		std::vector <std::pair<EntityType, std::string>> declarations;
 		declarations.emplace_back(std::make_pair(EntityType::STMT, "s1"));
@@ -343,18 +343,18 @@ public:
 
 	TEST_METHOD(resolveTableToResults_sixColumnsMixed_projectFourColumns) {
 		// 1. Set-up:
-		std::unordered_map<std::string, std::vector<int>> testTable;
+		Table testTable;
 		std::vector<PqlReference> attributesProjected;
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "s1");
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "v1");
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "a1");
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "p1");
-		testTable["s1"] = std::vector<int>{ 1, 2, 3 };
-		testTable["s2"] = std::vector<int>{ 4, 5, 6 };
-		testTable["v1"] = std::vector<int>{ 1, 2, 3 };
-		testTable["v2"] = std::vector<int>{ 4, 5, 6 };
-		testTable["a1"] = std::vector<int>{ 13, 14, 15 };
-		testTable["p1"] = std::vector<int>{ 1, 2, 3 };
+		testTable["s1"] = std::vector<Index>{ 1, 2, 3 };
+		testTable["s2"] = std::vector<Index>{ 4, 5, 6 };
+		testTable["v1"] = std::vector<Index>{ 1, 2, 3 };
+		testTable["v2"] = std::vector<Index>{ 4, 5, 6 };
+		testTable["a1"] = std::vector<Index>{ 13, 14, 15 };
+		testTable["p1"] = std::vector<Index>{ 1, 2, 3 };
 		for (int i = 0; i < 6; i++) {
 			pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "var" + std::to_string(i + 1));
 		}
@@ -393,18 +393,18 @@ public:
 
 	TEST_METHOD(resolveTableToResults_sixColumnsMixed_projectFourWithProcName) {
 		// 1. Set-up:
-		std::unordered_map<std::string, std::vector<int>> testTable;
+		Table testTable;
 		std::vector<PqlReference> attributesProjected;
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "s1");
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "v1");
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "a1");
 		attributesProjected.emplace_back(PqlReferenceType::PROC_NAME, "p1");
-		testTable["s1"] = std::vector<int>{ 1, 2, 3 };
-		testTable["s2"] = std::vector<int>{ 4, 5, 6 };
-		testTable["v1"] = std::vector<int>{ 1, 2, 3 };
-		testTable["v2"] = std::vector<int>{ 4, 5, 6 };
-		testTable["a1"] = std::vector<int>{ 13, 14, 15 };
-		testTable["p1"] = std::vector<int>{ 1, 2, 3 };
+		testTable["s1"] = std::vector<Index>{ 1, 2, 3 };
+		testTable["s2"] = std::vector<Index>{ 4, 5, 6 };
+		testTable["v1"] = std::vector<Index>{ 1, 2, 3 };
+		testTable["v2"] = std::vector<Index>{ 4, 5, 6 };
+		testTable["a1"] = std::vector<Index>{ 13, 14, 15 };
+		testTable["p1"] = std::vector<Index>{ 1, 2, 3 };
 		for (int i = 0; i < 6; i++) {
 			pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "var" + std::to_string(i + 1));
 		}
@@ -442,14 +442,14 @@ public:
 
 	TEST_METHOD(resolveTableToResults_sixColumnsMixed_projectMultipleProcName) {
 		// 1. Set-up:
-		std::unordered_map<std::string, std::vector<int>> testTable;
+		Table testTable;
 		std::vector<PqlReference> attributesProjected;
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "cl");
 		attributesProjected.emplace_back(PqlReferenceType::PROC_NAME, "cl");
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "p");
 		attributesProjected.emplace_back(PqlReferenceType::PROC_NAME, "p");
-		testTable["cl"] = std::vector<int>{ 1, 2 };
-		testTable["p"] = std::vector<int>{ 1, 2, 3 };
+		testTable["cl"] = std::vector<Index>{ 1, 2 };
+		testTable["p"] = std::vector<Index>{ 1, 2, 3 };
 		StmtIndex CallIdx1 = pkbInserter->insertStmt(StatementType::CALL_TYPE);
 		StmtIndex CallIdx2 = pkbInserter->insertStmt(StatementType::CALL_TYPE);
 		std::string proc1 = "proc1";
@@ -492,7 +492,7 @@ public:
 
 	TEST_METHOD(resolveTableToResults_sixColumnsMixed_projectMultipleVarName) {
 		// 1. Set-up:
-		std::unordered_map<std::string, std::vector<int>> testTable;
+		Table testTable;
 		std::vector<PqlReference> attributesProjected;
 		attributesProjected.emplace_back(PqlReferenceType::VAR_NAME, "v");
 		attributesProjected.emplace_back(PqlReferenceType::VAR_NAME, "r");
@@ -500,9 +500,9 @@ public:
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "v");
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "r");
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "pn");
-		testTable["v"] = std::vector<int>{ 1, 2, 3 };
-		testTable["r"] = std::vector<int>{ 1, 2, 3 };
-		testTable["pn"] = std::vector<int>{ 4, 5, 6 };
+		testTable["v"] = std::vector<Index>{ 1, 2, 3 };
+		testTable["r"] = std::vector<Index>{ 1, 2, 3 };
+		testTable["pn"] = std::vector<Index>{ 4, 5, 6 };
 		std::string var1 = "var1";
 		std::string var2 = "var2";
 		std::string var3 = "var3";
@@ -555,15 +555,15 @@ public:
 
 	TEST_METHOD(resolveTableToResults_sixColumnsMixed_projectConstantValue) {
 		// 1. Set-up:
-		std::unordered_map<std::string, std::vector<int>> testTable;
+		Table testTable;
 		std::vector<PqlReference> attributesProjected;
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "s1");
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "c1");
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "c2");
 		attributesProjected.emplace_back(PqlReferenceType::VALUE, "c2");
-		testTable["s1"] = std::vector<int>{ 1, 2 };
-		testTable["c1"] = std::vector<int>{ 10, 20 };
-		testTable["c2"] = std::vector<int>{ 99, 88 };
+		testTable["s1"] = std::vector<Index>{ 1, 2 };
+		testTable["c1"] = std::vector<Index>{ 10, 20 };
+		testTable["c2"] = std::vector<Index>{ 99, 88 };
 
 		std::vector <std::pair<EntityType, std::string>> declarations;
 		declarations.emplace_back(std::make_pair(EntityType::STMT, "s1"));
@@ -595,7 +595,7 @@ public:
 
 	TEST_METHOD(resolveTableToResults_sixColumnsMixed_projectAllStmtNumbers) {
 		// 1. Set-up:
-		std::unordered_map<std::string, std::vector<int>> testTable;
+		Table testTable;
 		std::vector<PqlReference> attributesProjected;
 		attributesProjected.emplace_back(PqlReferenceType::SYNONYM, "s1");
 		attributesProjected.emplace_back(PqlReferenceType::STMT_NUM, "s2");
@@ -605,14 +605,14 @@ public:
 		attributesProjected.emplace_back(PqlReferenceType::STMT_NUM, "w1");
 		attributesProjected.emplace_back(PqlReferenceType::STMT_NUM, "if1");
 		attributesProjected.emplace_back(PqlReferenceType::STMT_NUM, "a1");
-		testTable["s1"] = std::vector<int>{ 1, 2 };
-		testTable["s2"] = std::vector<int>{ 3, 4 };
-		testTable["r1"] = std::vector<int>{ 5, 6 };
-		testTable["pn1"] = std::vector<int>{ 7, 8 };
-		testTable["cl1"] = std::vector<int>{ 9, 10 };
-		testTable["w1"] = std::vector<int>{ 11, 12 };
-		testTable["if1"] = std::vector<int>{ 13, 14 };
-		testTable["a1"] = std::vector<int>{ 15, 16 };
+		testTable["s1"] = std::vector<Index>{ 1, 2 };
+		testTable["s2"] = std::vector<Index>{ 3, 4 };
+		testTable["r1"] = std::vector<Index>{ 5, 6 };
+		testTable["pn1"] = std::vector<Index>{ 7, 8 };
+		testTable["cl1"] = std::vector<Index>{ 9, 10 };
+		testTable["w1"] = std::vector<Index>{ 11, 12 };
+		testTable["if1"] = std::vector<Index>{ 13, 14 };
+		testTable["a1"] = std::vector<Index>{ 15, 16 };
 
 		std::vector <std::pair<EntityType, std::string>> declarations;
 		declarations.emplace_back(std::make_pair(EntityType::STMT, "s1"));
@@ -651,16 +651,16 @@ public:
 
 	TEST_METHOD(resolveTableToResults_sixColumnsMixed_projectBooleanTrue) {
 		// 1. Set-up:
-		std::unordered_map<std::string, std::vector<int>> testTable;
+		Table testTable;
 		std::vector<PqlReference> attributesProjected; // Empty attributesProjected table
-		testTable["s1"] = std::vector<int>{ 1, 2 };
-		testTable["s2"] = std::vector<int>{ 3, 4 };
-		testTable["r1"] = std::vector<int>{ 5, 6 };
-		testTable["pn1"] = std::vector<int>{ 7, 8 };
-		testTable["cl1"] = std::vector<int>{ 9, 10 };
-		testTable["w1"] = std::vector<int>{ 11, 12 };
-		testTable["if1"] = std::vector<int>{ 13, 14 };
-		testTable["a1"] = std::vector<int>{ 15, 16 };
+		testTable["s1"] = std::vector<Index>{ 1, 2 };
+		testTable["s2"] = std::vector<Index>{ 3, 4 };
+		testTable["r1"] = std::vector<Index>{ 5, 6 };
+		testTable["pn1"] = std::vector<Index>{ 7, 8 };
+		testTable["cl1"] = std::vector<Index>{ 9, 10 };
+		testTable["w1"] = std::vector<Index>{ 11, 12 };
+		testTable["if1"] = std::vector<Index>{ 13, 14 };
+		testTable["a1"] = std::vector<Index>{ 15, 16 };
 
 		std::vector <std::pair<EntityType, std::string>> declarations;
 		declarations.emplace_back(std::make_pair(EntityType::STMT, "s1"));
@@ -697,7 +697,7 @@ public:
 
 	TEST_METHOD(resolveTableToResults_sixColumnsMixed_projectBooleanFalse) {
 		// 1. Set-up:
-		std::unordered_map<std::string, std::vector<int>> testTable;
+		Table testTable;
 		std::vector<PqlReference> attributesProjected; // Empty attributesProjected table
 
 		std::vector <std::pair<EntityType, std::string>> declarations;

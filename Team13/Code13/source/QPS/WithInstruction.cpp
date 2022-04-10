@@ -7,7 +7,7 @@ EvaluatedTable WithInstruction::handleInt() {
 	if (lhs.first == PqlReferenceType::INTEGER) {
 		int intVal = stoi(lhs.second);
 		if (pkbGetter->hasEqualIntegerAttribute(rhsEntity, intVal)) { /* Read, 1*/
-			std::unordered_map<std::string, std::vector<int>> PQLmap{ { rhs.second, { intVal } } };
+			Table PQLmap{ { rhs.second, { intVal } } };
 			return EvaluatedTable(PQLmap);
 		}
 		return EvaluatedTable(false);
@@ -15,12 +15,12 @@ EvaluatedTable WithInstruction::handleInt() {
 	if (rhs.first == PqlReferenceType::INTEGER) {
 		int intVal = stoi(rhs.second);
 		if (pkbGetter->hasEqualIntegerAttribute(lhsEntity, intVal)) {
-			std::unordered_map<std::string, std::vector<int>> PQLmap{ { lhs.second, { intVal } } };
+			Table PQLmap{ { lhs.second, { intVal } } };
 			return EvaluatedTable(PQLmap);
 		}
 	}
-	std::vector<int> column = pkbGetter->getEqualIntegerAttributes(lhsEntity, rhsEntity);
-	std::unordered_map<std::string, std::vector<int>> PQLmap{ { lhs.second, column }, { rhs.second, column } };
+	std::vector<Index> column = pkbGetter->getEqualIntegerAttributes(lhsEntity, rhsEntity);
+	Table PQLmap{ { lhs.second, column }, { rhs.second, column } };
 	return EvaluatedTable(PQLmap);
 }
 
@@ -29,17 +29,17 @@ EvaluatedTable WithInstruction::handleString() {
 		return EvaluatedTable(lhs.second == rhs.second);
 	}
 	if (lhs.first == PqlReferenceType::IDENT) { /* "proc1" = p.procName,  get(Procedure, "proc1") */
-		std::vector<int> column = pkbGetter->getEqualNameAttributesFromName(rhsEntity, lhs.second);
-		std::unordered_map<std::string, std::vector<int>> PQLmap{ { rhs.second, column } };
+		std::vector<Index> column = pkbGetter->getEqualNameAttributesFromName(rhsEntity, lhs.second);
+		Table PQLmap{ { rhs.second, column } };
 		return EvaluatedTable(PQLmap);
 	}
 	if (rhs.first == PqlReferenceType::IDENT) {
-		std::vector<int> column = pkbGetter->getEqualNameAttributesFromName(lhsEntity, rhs.second);
-		std::unordered_map<std::string, std::vector<int>> PQLmap{ { lhs.second, column } };
+		std::vector<Index> column = pkbGetter->getEqualNameAttributesFromName(lhsEntity, rhs.second);
+		Table PQLmap{ { lhs.second, column } };
 		return EvaluatedTable(PQLmap);
 	}
 	auto [leftCol, rightCol] = pkbGetter->getEqualNameAttributes(lhsEntity, rhsEntity);
-	std::unordered_map<std::string, std::vector<int>> PQLmap{ { lhs.second, leftCol }, { rhs.second, rightCol } };
+	Table PQLmap{ { lhs.second, leftCol }, { rhs.second, rightCol } };
 	return EvaluatedTable(PQLmap);
 }
 
@@ -80,17 +80,17 @@ EvaluatedTable WithStringInstruction::execute() {
 		return EvaluatedTable(lhs.second == rhs.second);
 	}
 	if (lhs.first == PqlReferenceType::IDENT) { /* "proc1" = p.procName,  get(Procedure, "proc1") */
-		std::vector<int> column = pkbGetter->getEqualNameAttributesFromName(rhsEntity, lhs.second);
-		std::unordered_map<std::string, std::vector<int>> PQLmap{ { rhs.second, column } };
+		std::vector<Index> column = pkbGetter->getEqualNameAttributesFromName(rhsEntity, lhs.second);
+		Table PQLmap{ { rhs.second, column } };
 		return EvaluatedTable(PQLmap);
 	}
 	if (rhs.first == PqlReferenceType::IDENT) {
-		std::vector<int> column = pkbGetter->getEqualNameAttributesFromName(lhsEntity, rhs.second);
-		std::unordered_map<std::string, std::vector<int>> PQLmap{ { lhs.second, column } };
+		std::vector<Index> column = pkbGetter->getEqualNameAttributesFromName(lhsEntity, rhs.second);
+		Table PQLmap{ { lhs.second, column } };
 		return EvaluatedTable(PQLmap);
 	}
 	auto [leftCol, rightCol] = pkbGetter->getEqualNameAttributes(lhsEntity, rhsEntity);
-	std::unordered_map<std::string, std::vector<int>> PQLmap{ { lhs.second, leftCol }, { rhs.second, rightCol } };
+	Table PQLmap{ { lhs.second, leftCol }, { rhs.second, rightCol } };
 	return EvaluatedTable(PQLmap);
 }
 
@@ -104,7 +104,7 @@ EvaluatedTable WithIntegerInstruction::execute() {
 	if (lhs.first == PqlReferenceType::INTEGER) {
 		int intVal = stoi(lhs.second);
 		if (pkbGetter->hasEqualIntegerAttribute(rhsEntity, intVal)) { /* Read, 1*/
-			std::unordered_map<std::string, std::vector<int>> PQLmap{ { rhs.second, { intVal } } };
+			Table PQLmap{ { rhs.second, { intVal } } };
 			return EvaluatedTable(PQLmap);
 		}
 		return EvaluatedTable(false);
@@ -112,12 +112,12 @@ EvaluatedTable WithIntegerInstruction::execute() {
 	if (rhs.first == PqlReferenceType::INTEGER) {
 		int intVal = stoi(rhs.second);
 		if (pkbGetter->hasEqualIntegerAttribute(lhsEntity, intVal)) {
-			std::unordered_map<std::string, std::vector<int>> PQLmap{ { lhs.second, { intVal } } };
+			Table PQLmap{ { lhs.second, { intVal } } };
 			return EvaluatedTable(PQLmap);
 		}
 		return EvaluatedTable(false);
 	}
-	std::vector<int> column = pkbGetter->getEqualIntegerAttributes(lhsEntity, rhsEntity);
-	std::unordered_map<std::string, std::vector<int>> PQLmap{ { lhs.second, column }, { rhs.second, column } };
+	std::vector<Index> column = pkbGetter->getEqualIntegerAttributes(lhsEntity, rhsEntity);
+	Table PQLmap{ { lhs.second, column }, { rhs.second, column } };
 	return EvaluatedTable(PQLmap);
 }

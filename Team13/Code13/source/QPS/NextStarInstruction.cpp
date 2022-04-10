@@ -53,7 +53,7 @@ EvaluatedTable NextTInstruction::helperHandleTwoIntegers() {
 
 EvaluatedTable NextTInstruction::helperHandleOneInt(PqlReferenceType lhsRefType, PqlReferenceType rhsRefType) {
 	std::vector<StmtIndex> stmts = pkbGetter->getAllStmts();
-	std::vector<int> results;
+	std::vector<Index> results;
 	int oneInt;
 	std::string otherSynonym;
 	if (lhsRefType == PqlReferenceType::INTEGER) {
@@ -81,7 +81,7 @@ EvaluatedTable NextTInstruction::helperHandleOneInt(PqlReferenceType lhsRefType,
 			otherSynonym = lhsRef.second;
 		}
 	}
-	std::unordered_map<std::string, std::vector<int>> PQLmap;
+	Table PQLmap;
 	PQLmap[otherSynonym] = results;
 
 	return EvaluatedTable(PQLmap);
@@ -90,12 +90,12 @@ EvaluatedTable NextTInstruction::helperHandleOneInt(PqlReferenceType lhsRefType,
 EvaluatedTable NextTInstruction::helperHandleTwoStmtsMaybeWildcard() {
 	std::tuple<std::vector<int>, std::vector<int>> results;
 	/* e.g. {1, 2}, {2, 3}, {3, 6} */
-	std::unordered_map<std::string, std::vector<int>> PQLmap;
+	Table PQLmap;
 	results = nextTProcessor->getAll(pkbGetter);
 	if (lhsRef.second == rhsRef.second) { /* Special case: Next(s1, s1) has a legitimate result */
-		std::vector<int> lhsResults = std::get<0>(results);
-		std::vector<int> rhsResults = std::get<1>(results);
-		std::vector<int> finalResults;
+		std::vector<Index> lhsResults = std::get<0>(results);
+		std::vector<Index> rhsResults = std::get<1>(results);
+		std::vector<Index> finalResults;
 		for (size_t i = 0; i < lhsResults.size(); i++) {
 			if (lhsResults[i] == rhsResults[i]) {
 				finalResults.emplace_back(lhsResults[i]);
@@ -116,8 +116,6 @@ EvaluatedTable NextTInstruction::helperHandleTwoStmtsMaybeWildcard() {
 EvaluatedTable NextTInstruction::helperHandleTwoWildcards() {
 	bool isEmptyTable = true;
 	isEmptyTable = std::get<0>(nextTProcessor->getAll(pkbGetter)).empty();
-	// No Next rs exists => isEmptyTable == true => EvTable.evResult == false (innerJoinMerge() can drop table)
-	// Next rs exists => isEmptyTable == false => EvTable.evResult == true (innerJoinMerge() can merge dummy table, preserving all rows)
 	return EvaluatedTable(!isEmptyTable);
 }
 

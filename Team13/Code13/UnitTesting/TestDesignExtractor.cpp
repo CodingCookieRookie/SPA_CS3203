@@ -4,6 +4,7 @@
 #include "PKB/PKBGetter.h"
 #include "PKB/PKBInserter.h"
 #include "SP/DesignExtractor.h"
+#include "QPS/QPSCommons.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -409,11 +410,11 @@ public:
 
 		Assert::AreEqual(size_t(2), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
 		Assert::AreEqual(size_t(3), pkbGetter->getAllConsts().size());
-		std::tuple<std::vector<int>, std::vector<int>> patternVarResult =
+		std::tuple<std::vector<Index>, std::vector<Index>> patternVarResult =
 			pkbGetter->getAssignStmtsFromExprPartialMatch(std::string(" x "));
 		Assert::AreEqual(size_t(1), std::get<0>(patternVarResult).size());
 
-		std::tuple<std::vector<int>, std::vector<int>> patternConstResult =
+		std::tuple<std::vector<Index>, std::vector<Index>> patternConstResult =
 			pkbGetter->getAssignStmtsFromExprPartialMatch(std::string(" 1 "));
 		Assert::AreEqual(size_t(1), std::get<0>(patternConstResult).size());
 	}

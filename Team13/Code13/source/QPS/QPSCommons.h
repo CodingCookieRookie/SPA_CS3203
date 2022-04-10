@@ -55,6 +55,12 @@ typedef std::pair<PqlReferenceType, std::string> PqlReference;
 
 typedef std::pair<PqlExpressionType, std::string> PqlExpression;
 
+typedef std::string Synonym;
+
+typedef int Index;
+
+typedef std::unordered_map<Synonym, std::vector<Index>> Table;
+
 typedef int QueryScore;
 
 class QPSCommons {

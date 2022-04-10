@@ -3,10 +3,10 @@
 AffectsTInstruction::AffectsTInstruction(PqlReference lhsRef, PqlReference rhsRef, AffectsTProcessor* affectsTProcessor, PKBGetter* pkbGetter) :
 	RelationshipInstruction(lhsRef, rhsRef, affectsTProcessor, pkbGetter) {}
 
-EvaluatedTable AffectsTInstruction::handleWildCardLeft(std::unordered_map<std::string, std::vector<int>> PQLmap,
+EvaluatedTable AffectsTInstruction::handleWildCardLeft(Table PQLmap,
 	PqlReference lhsRef, PqlReference rhsRef,
-	std::vector<int> allStmts, std::vector<int> varIndices) {
-	std::tuple<std::vector<int>, std::vector<int>> allStmtVarInfos = affectsTProcessor->getAll(pkbGetter);
+	std::vector<Index> allStmts, std::vector<Index> varIndices) {
+	std::tuple<std::vector<Index>, std::vector<Index>> allStmtVarInfos = affectsTProcessor->getAll(pkbGetter);
 	int rhsRefValue;
 	switch (rhsRef.first) {
 	case PqlReferenceType::SYNONYM:
@@ -29,15 +29,15 @@ EvaluatedTable AffectsTInstruction::handleWildCardLeft(std::unordered_map<std::s
 
 EvaluatedTable AffectsTInstruction::handleSynonymLeft(std::unordered_map<std::string, std::vector<int>> PQLmap,
 	PqlReference lhsRef, PqlReference rhsRef,
-	std::vector<int> allStmts, std::vector<int> varIndices) {
-	std::tuple<std::vector<int>, std::vector<int>> allStmtVarInfos = affectsTProcessor->getAll(pkbGetter);
+	std::vector<Index> allStmts, std::vector<Index> varIndices) {
+	std::tuple<std::vector<Index>, std::vector<Index>> allStmtVarInfos = affectsTProcessor->getAll(pkbGetter);
 	int rhsRefValue;
 	switch (rhsRef.first) {
 	case PqlReferenceType::SYNONYM:
 		if (lhsRef.second == rhsRef.second) { /* Special case: Affects*(s1, s1) has a legitimate result */
-			std::vector<int> lhsAssigns = std::get<0>(allStmtVarInfos);
-			std::vector<int> rhsAssigns = std::get<1>(allStmtVarInfos);
-			std::vector<int> finalAssigns;
+			std::vector<Index> lhsAssigns = std::get<0>(allStmtVarInfos);
+			std::vector<Index> rhsAssigns = std::get<1>(allStmtVarInfos);
+			std::vector<Index> finalAssigns;
 			for (size_t i = 0; i < lhsAssigns.size(); i++) {
 				if (lhsAssigns[i] == rhsAssigns[i]) {
 					finalAssigns.emplace_back(lhsAssigns[i]);
@@ -66,7 +66,7 @@ EvaluatedTable AffectsTInstruction::handleSynonymLeft(std::unordered_map<std::st
 
 EvaluatedTable AffectsTInstruction::handleIntegerLeft(std::unordered_map<std::string, std::vector<int>> PQLmap,
 	PqlReference lhsRef, PqlReference rhsRef,
-	std::vector<int> allStmts, std::vector<int> varIndices) {
+	std::vector<Index> allStmts, std::vector<Index> varIndices) {
 	int lhsRefValue = stoi(lhsRef.second);
 	int rhsRefValue;
 	if (!pkbGetter->containsStmt(lhsRefValue)) {
@@ -91,9 +91,9 @@ EvaluatedTable AffectsTInstruction::handleIntegerLeft(std::unordered_map<std::st
 
 EvaluatedTable AffectsTInstruction::execute() {
 	EvaluatedTable evTable;
-	std::unordered_map<std::string, std::vector<int>> PQLmap;
-	std::vector<int> allStmts;
-	std::vector<int> varIndices;
+	Table PQLmap;
+	std::vector<Index> allStmts;
+	std::vector<Index> varIndices;
 	switch (lhsRef.first) {
 	case PqlReferenceType::WILDCARD:
 		return AffectsTInstruction::handleWildCardLeft(PQLmap, lhsRef, rhsRef, allStmts, varIndices);

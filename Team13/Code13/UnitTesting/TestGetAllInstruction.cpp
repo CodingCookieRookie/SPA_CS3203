@@ -43,12 +43,12 @@ public:
 		// Test numRow:
 		Assert::AreEqual(size_t(5), evTable.getNumRow());
 
-		// Test Table: std::unordered_map<std::string, std::vector<int>>
+		// Test Table:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("s1") != tableRef.end());
 
-		// Test Entities: std::unordered_map<std::string, EntityType>
-		std::vector<int> values{ 1, 2, 3, 4, 5 };
+		// Test Entities:
+		std::vector<Index> values{ 1, 2, 3, 4, 5 };
 		auto actualValues = tableRef.at("s1");
 		bool areVecEqual = std::equal(values.begin(), values.end(), actualValues.begin());
 		Assert::AreEqual(true, areVecEqual);
@@ -85,12 +85,12 @@ public:
 		// Test numRow:
 		Assert::AreEqual(size_t(100), evTable.getNumRow());
 
-		// Test Table: std::unordered_map<std::string, std::vector<int>>
+		// Test Table:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("stress1") != tableRef.end());
 
-		// Test Entities: std::unordered_map<std::string, EntityType>
-		std::vector<int> stress1values;
+		// Test Entities:
+		std::vector<Index> stress1values;
 		for (int i = 0; i < 100; i++) {
 			stress1values.emplace_back(i + 1);
 		}
@@ -127,12 +127,12 @@ public:
 		// Test numRow:
 		Assert::AreEqual(size_t(49), evTable.getNumRow());
 
-		// Test Table: std::unordered_map<std::string, std::vector<int>>
+		// Test Table:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("pn1") != tableRef.end());
 
-		// Test Entities: std::unordered_map<std::string, EntityType>
-		std::vector<int> pn1values;
+		// Test Entities:
+		std::vector<Index> pn1values;
 		for (int i = 0; i < 49; i++) {
 			pn1values.emplace_back(i + 1);
 		}
@@ -169,12 +169,12 @@ public:
 		// Test numRow:
 		Assert::AreEqual(size_t(49), evTable.getNumRow());
 
-		// Test Table: std::unordered_map<std::string, std::vector<int>>
+		// Test Table:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("cl1") != tableRef.end());
 
-		// Test Entities: std::unordered_map<std::string, EntityType>
-		std::vector<int> cl1values;
+		// Test Entities:
+		std::vector<Index> cl1values;
 		for (int i = 0; i < 49; i++) {
 			cl1values.emplace_back(i + 1);
 		}
@@ -211,12 +211,12 @@ public:
 		// Test numRow:
 		Assert::AreEqual(size_t(49), evTable.getNumRow());
 
-		// Test Table: std::unordered_map<std::string, std::vector<int>>
+		// Test Table:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("r1") != tableRef.end());
 
-		// Test Entities: std::unordered_map<std::string, EntityType>
-		std::vector<int> r1values;
+		// Test Entities:
+		std::vector<Index> r1values;
 		for (int i = 0; i < 49; i++) {
 			r1values.emplace_back(i + 1);
 		}
@@ -253,12 +253,12 @@ public:
 		// Test numRow:
 		Assert::AreEqual(size_t(49), evTable.getNumRow());
 
-		// Test Table: std::unordered_map<std::string, std::vector<int>>
+		// Test Table:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("if1") != tableRef.end());
 
-		// Test Entities: std::unordered_map<std::string, EntityType>
-		std::vector<int> if1values;
+		// Test Entities:
+		std::vector<Index> if1values;
 		for (int i = 0; i < 49; i++) {
 			if1values.emplace_back(i + 1);
 		}
@@ -295,12 +295,12 @@ public:
 		// Test numRow:
 		Assert::AreEqual(size_t(49), evTable.getNumRow());
 
-		// Test Table: std::unordered_map<std::string, std::vector<int>>
+		// Test Table:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("w1") != tableRef.end());
 
-		// Test Entities: std::unordered_map<std::string, EntityType>
-		std::vector<int> w1values;
+		// Test Entities:
+		std::vector<Index> w1values;
 		for (int i = 0; i < 49; i++) {
 			w1values.emplace_back(i + 1);
 		}
@@ -337,12 +337,12 @@ public:
 		// Test numRow:
 		Assert::AreEqual(size_t(49), evTable.getNumRow());
 
-		// Test Table: std::unordered_map<std::string, std::vector<int>>
+		// Test Table:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("a1") != tableRef.end());
 
-		// Test Entities: std::unordered_map<std::string, EntityType>
-		std::vector<int> a1values;
+		// Test Entities:
+		std::vector<Index> a1values;
 		for (int i = 0; i < 49; i++) {
 			a1values.emplace_back(i + 1);
 		}
@@ -379,12 +379,12 @@ public:
 		// Test numRow:
 		Assert::AreEqual(size_t(99), evTable.getNumRow());
 
-		// Test Table: std::unordered_map<std::string, std::vector<int>>
+		// Test Table:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("v1") != tableRef.end());
 
-		// Test Entities: std::unordered_map<std::string, EntityType>
-		std::vector<int> v1values;
+		// Test Entities:
+		std::vector<Index> v1values;
 		for (int i = 0; i < 99; i++) {
 			v1values.emplace_back(i + 1);
 		}
@@ -422,12 +422,12 @@ public:
 		// Test numRow:
 		Assert::AreEqual(size_t(99), evTable.getNumRow());
 
-		// Test Table: std::unordered_map<std::string, std::vector<int>>
+		// Test Table:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("p1") != tableRef.end());
 
-		// Test Entities: std::unordered_map<std::string, EntityType>
-		std::vector<int> p1values;
+		// Test Entities:
+		std::vector<Index> p1values;
 		for (int i = 0; i < 99; i++) {
 			p1values.emplace_back(i + 1);
 		}
@@ -460,12 +460,12 @@ public:
 		// Test numRow:
 		Assert::AreEqual(size_t(99), evTable.getNumRow());
 
-		// Test Table: std::unordered_map<std::string, std::vector<int>>
+		// Test Table:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("c1") != tableRef.end());
 
-		// Test Entities: std::unordered_map<std::string, EntityType>
-		std::vector<int> c1values;
+		// Test Entities:
+		std::vector<Index> c1values;
 		for (int i = 0; i < 99; i++) {
 			c1values.emplace_back(i + 1);
 		}

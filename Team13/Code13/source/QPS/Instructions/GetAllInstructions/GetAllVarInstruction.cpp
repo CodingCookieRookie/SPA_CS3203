@@ -2,7 +2,7 @@
 
 EvaluatedTable GetAllVarInstruction::execute() {
 	std::vector<VarIndex> results = pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE);
-	std::unordered_map<std::string, std::vector<int>> PQLmap;
+	Table PQLmap;
 	PQLmap[synonym] = results;
 	return EvaluatedTable(PQLmap);
 }

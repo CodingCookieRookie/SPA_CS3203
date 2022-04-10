@@ -2,7 +2,7 @@
 
 EvaluatedTable GetAllConstInstruction::execute() {
 	std::vector<int> results = pkbGetter->getAllConsts();
-	std::unordered_map<std::string, std::vector<int>> PQLmap;
+	Table PQLmap;
 	PQLmap[synonym] = results;
 	return EvaluatedTable(PQLmap);
 }

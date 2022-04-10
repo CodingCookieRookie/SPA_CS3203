@@ -53,7 +53,7 @@ EvaluatedTable ParentInstruction::helperHandleTwoIntegers() {
 
 EvaluatedTable ParentInstruction::helperHandleOneInt(PqlReferenceType lhsRefType, PqlReferenceType rhsRefType) {
 	std::vector<StmtIndex> stmts = pkbGetter->getAllStmts();
-	std::vector<int> results;
+	std::vector<Index> results;
 	int oneInt;
 	std::string otherSynonym;
 	if (lhsRefType == PqlReferenceType::INTEGER) {
@@ -81,20 +81,20 @@ EvaluatedTable ParentInstruction::helperHandleOneInt(PqlReferenceType lhsRefType
 			otherSynonym = lhsRef.second;
 		}
 	}
-	std::unordered_map<std::string, std::vector<int>> PQLmap;
+	Table PQLmap;
 	PQLmap[otherSynonym] = results;
 
 	return EvaluatedTable(PQLmap);
 }
 
 EvaluatedTable ParentInstruction::helperHandleTwoStmtsMaybeWildcard() {
-	std::tuple<std::vector<int>, std::vector<int>> results;
+	std::tuple<std::vector<Index>, std::vector<Index>> results;
 	/* e.g. {1, 2}, {2, 3}, {3, 6} */
-	std::unordered_map<std::string, std::vector<int>> PQLmap;
+	Table PQLmap;
 	results = pkbGetter->getRSAllInfo(RelationshipType::PARENT);
 	if (lhsRef.second == rhsRef.second) { /* Special case: Parent(s1, s1), recursive call, technically shouldn't be allowed */
 		/* No values populated to PQLmap for this case */
-		PQLmap[lhsRef.second] = std::vector<int>();
+		PQLmap[lhsRef.second] = std::vector<Index>();
 		return EvaluatedTable(PQLmap);
 	}
 	if (lhsRef.first == PqlReferenceType::SYNONYM) {
@@ -109,7 +109,5 @@ EvaluatedTable ParentInstruction::helperHandleTwoStmtsMaybeWildcard() {
 EvaluatedTable ParentInstruction::helperHandleTwoWildcards() {
 	bool isEmptyTable = true;
 	isEmptyTable = std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT)).empty();
-	// No Parent rs exists => isEmptyTable == true => EvTable.evResult == false (innerJoinMerge() can drop table)
-	// Parent rs exists => isEmptyTable == false => EvTable.evResult == true (innerJoinMerge() can merge dummy table, preserving all rows)
 	return EvaluatedTable(!isEmptyTable);
 }
