@@ -1,0 +1,51 @@
+procedure main {
+    while (((while > 3) && (read + 5 > v10)) && (print < 6)) {
+        call v6;
+        print v7;
+        print v6;
+        v7 = v1 + v2 - v3;
+        v1 = v5 % v6 % read + print;
+    }
+}
+
+procedure v6 {
+    read v6;
+    v6 = v5 + 1;
+    v7 = (v3) + v9 + (9 + ((10)));
+
+    if ((v7 + v6 > 7) || (v1 - v2 == v3 - v4)) then {
+        v7 = v8 * v9 * 2 + 7 - 8 % 10;
+    } else {
+        v10 = print + 5;
+        print = v10 - v6 + print % v7;
+    }
+}
+
+procedure print {
+    print v1;
+    print v2;   
+    print v3;   
+    print v4;
+    print v6;
+
+    if (v5 < 4 + v2) then {
+        read v5;
+        call v6;
+        print v10;
+        read print;
+    } else {
+        call read;
+    }
+}
+
+procedure read {
+    read = read + print - v10 % v6;
+    print read;
+}
+
+procedure while {
+    while (v4 > 9) {
+        call main;
+    }
+    read v9;
+}
