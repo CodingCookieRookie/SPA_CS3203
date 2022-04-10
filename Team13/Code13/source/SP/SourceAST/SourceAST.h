@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ProgramNode.h"
 #include "SourceASTNode.h"
 
 class SourceAST {

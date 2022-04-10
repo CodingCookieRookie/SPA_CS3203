@@ -71,9 +71,13 @@
     <ClCompile Include="..\source\SP\CFG.cpp" />
     <ClCompile Include="..\source\SP\DesignExtractor.cpp" />
     <ClCompile Include="..\source\SP\Parser.cpp" />
-    <ClCompile Include="..\source\SP\SourceAST.cpp" />
-    <ClCompile Include="..\source\SP\SourceASTNode.cpp" />
     <ClCompile Include="..\source\Exception\SPAException.cpp" />
+    <ClCompile Include="..\source\SP\SourceAST\ProcedureNode.cpp" />
+    <ClCompile Include="..\source\SP\SourceAST\ProgramNode.cpp" />
+    <ClCompile Include="..\source\SP\SourceAST\SourceAST.cpp" />
+    <ClCompile Include="..\source\SP\SourceAST\SourceASTNode.cpp" />
+    <ClCompile Include="..\source\SP\SourceAST\StmtLstNode.cpp" />
+    <ClCompile Include="..\source\SP\SourceAST\StmtNode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\Common\Common.h" />
@@ -162,9 +166,13 @@
     <ClInclude Include="..\source\SP\DesignExtractor.h" />
     <ClInclude Include="..\source\SP\Parser.h" />
     <ClInclude Include="..\source\SP\RSEntitiesMapsTypes.h" />
-    <ClInclude Include="..\source\SP\SourceAST.h" />
-    <ClInclude Include="..\source\SP\SourceASTNode.h" />
     <ClInclude Include="..\source\Exception\SPAException.h" />
+    <ClInclude Include="..\source\SP\SourceAST\ProcedureNode.h" />
+    <ClInclude Include="..\source\SP\SourceAST\ProgramNode.h" />
+    <ClInclude Include="..\source\SP\SourceAST\SourceAST.h" />
+    <ClInclude Include="..\source\SP\SourceAST\SourceASTNode.h" />
+    <ClInclude Include="..\source\SP\SourceAST\StmtLstNode.h" />
+    <ClInclude Include="..\source\SP\SourceAST\StmtNode.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{DC21A1EA-D2C6-4D14-A2B4-E025B64BDE81}</ProjectGuid>

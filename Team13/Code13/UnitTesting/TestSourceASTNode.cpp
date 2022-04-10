@@ -1,7 +1,9 @@
 #include "CppUnitTest.h"
 #include "stdafx.h"
 
-#include "SP/SourceASTNode.h"
+#include "SP/SourceAST/SourceASTNode.h"
+#include "SP/SourceAST/StmtLstNode.h"
+#include "SP/SourceAST/StmtNode.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

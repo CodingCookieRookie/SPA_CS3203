@@ -2,7 +2,7 @@
 
 #include "Common.h"
 #include "Lexer.h"
-#include "../SP/SourceASTNode.h"
+#include "../SP/SourceAST/SourceASTNode.h"
 
 class ExpressionParser {
 private:

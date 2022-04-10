@@ -7,8 +7,11 @@
 #include "../Common/ExpressionParser.h"
 #include "../Common/Lexer.h"
 #include "../Exception/SPAException.h"
-#include "SourceAST.h"
-#include "SourceASTNode.h"
+#include "./SourceAST/ProcedureNode.h"
+#include "./SourceAST/ProgramNode.h"
+#include "./SourceAST/SourceAST.h"
+#include "./SourceAST/StmtLstNode.h"
+#include "./SourceAST/StmtNode.h"
 
 class Parser {
 private:

@@ -2,7 +2,10 @@
 
 #include "../PKB/PKBInserter.h"
 #include "CFG.h"
-#include "SourceAST.h"
+#include "./SourceAST/ProgramNode.h"
+#include "./SourceAST/StmtLstNode.h"
+#include "./SourceAST/StmtNode.h"
+#include "./SourceAST/SourceAST.h"
 
 class DesignExtractor {
 private:

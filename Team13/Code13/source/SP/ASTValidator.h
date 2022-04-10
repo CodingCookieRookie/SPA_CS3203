@@ -4,7 +4,11 @@
 #include <unordered_map>
 
 #include "../Exception/SPAException.h"
-#include "SourceAST.h"
+#include "./SourceAST/ProcedureNode.h"
+#include "./SourceAST/ProgramNode.h"
+#include "./SourceAST/SourceAST.h"
+#include "./SourceAST/StmtLstNode.h"
+#include "./SourceAST/StmtNode.h"
 
 enum class CallNodeState {
 	NOT_VISITED, IN_STACK, DONE

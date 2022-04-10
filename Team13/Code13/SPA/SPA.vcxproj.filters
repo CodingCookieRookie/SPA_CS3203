@@ -1,539 +1,569 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <ClCompile Include="..\source\Common\Common.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\Common\ExpressionParser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\Common\ExprNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\Common\Lexer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\Exception\SPAException.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\PKB\Attribute.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\PKB\Constant.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\PKB\ExpressionProcessor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\PKB\PKB.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\PKB\PKBGetter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\PKB\PKBInserter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\SP\ASTValidator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\SP\CFG.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\SP\DesignExtractor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\SP\Parser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\SP\SourceAST.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\SP\SourceASTNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\AffectsProcessor.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\CacheStorage.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\CallsInstruction.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\OnTheFlyRSProcessor.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\EvaluatedTable.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\FollowsInstruction.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\ModifiesInstruction.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\NextInstruction.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\NextTProcessor.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\ParentInstruction.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\ParsedPattern.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\ParsedQuery.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\ParsedRelationship.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\ParsedWith.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\ParsedGetAll.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\PatternInstruction.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\PQLEvaluator.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\PQLParser.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\PQLResultProjector.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\QPSCommons.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\RelationshipInstruction.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\UsesInstruction.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\WithInstruction.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\AffectsInstruction.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\PKB\Statement.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\PKB\ProcedureStatementMapper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\PKB\PatternAssign.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\PKB\PatternContainer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllAssignInstruction.cpp">
-      <Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllCallInstruction.cpp">
-      <Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllConstInstruction.cpp">
-      <Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllIfInstruction.cpp">
-      <Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllPrintInstruction.cpp">
-      <Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllProcInstruction.cpp">
-      <Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllReadInstruction.cpp">
-      <Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllStmtInstruction.cpp">
-      <Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllVarInstruction.cpp">
-      <Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllWhileInstruction.cpp">
-      <Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllInstruction.cpp">
-      <Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\ParsedGetAll.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\AffectsTProcessor.cpp" />
-    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllAssignInstruction.cpp">
-      <Filter>Source Files\QPS\Instruction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllCallInstruction.cpp">
-      <Filter>Source Files\QPS\Instruction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllConstInstruction.cpp">
-      <Filter>Source Files\QPS\Instruction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllIfInstruction.cpp">
-      <Filter>Source Files\QPS\Instruction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllInstruction.cpp">
-      <Filter>Source Files\QPS\Instruction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllPrintInstruction.cpp">
-      <Filter>Source Files\QPS\Instruction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllProcInstruction.cpp">
-      <Filter>Source Files\QPS\Instruction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllReadInstruction.cpp">
-      <Filter>Source Files\QPS\Instruction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllStmtInstruction.cpp">
-      <Filter>Source Files\QPS\Instruction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllVarInstruction.cpp">
-      <Filter>Source Files\QPS\Instruction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllWhileInstruction.cpp">
-      <Filter>Source Files\QPS\Instruction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\Processors.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\AffectsTProcessor.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\AffectsTInstruction.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\FollowsTInstruction.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\NextTInstruction.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\ParentTInstruction.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\CallsTInstruction.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\source\Common\Common.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\Common\ExpressionParser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\Common\ExprNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\Common\Lexer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\Common\Types.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\Exception\SPAException.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\Attribute.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\BidirectionalTable\BidirectionalTableTwoWaySet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\BidirectionalTable\BidirectionalIndexTable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\BidirectionalTable\BidirectionalTableOneWaySet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\Calls.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\CallsT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\Constant.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\ExpressionProcessor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\Follows.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\FollowsT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\ModifiesP.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\ModifiesS.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\Next.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\Parent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\ParentT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\PKB.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\PKBGetter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\PKBInserter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\Relationship.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\PKBGetter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\PKBInserter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\DifferentSynonymsRelationship.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\SameSynonymsRelationship.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\UsesP.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\UsesS.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\SP\ASTValidator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\SP\CFG.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\SP\DesignExtractor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\SP\Parser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\SP\SourceAST.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\SP\SourceASTNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\SP\RSEntitiesMapsTypes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\AffectsProcessor.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\CacheStorage.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\CacheStorageTypes.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\CallsInstruction.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\OnTheFlyRSProcessor.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\EvaluatedTable.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\FollowsInstruction.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\Instruction.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\ModifiesInstruction.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\NextInstruction.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\NextTProcessor.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\ParentInstruction.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\ParsedGetAll.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\ParsedPattern.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\ParsedQuery.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\ParsedRelationship.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\ParsedWith.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\PatternInstruction.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\PQLEvaluator.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\PQLParser.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\PQLResultProjector.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\RelationshipInstruction.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\QPSCommons.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\UsesInstruction.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\WithInstruction.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\AffectsInstruction.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\Statement.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\ProcedureStatementMapper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\PatternAssign.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\NameIndexEntity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\Procedure.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\Variable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\PatternContainer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\PatternContainerTypes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\AffectsTProcessor.h" />
-    <ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllAssignInstruction.h">
-      <Filter>Header Files\QPS\Instruction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllCallInstruction.h">
-      <Filter>Header Files\QPS\Instruction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllConstInstruction.h">
-      <Filter>Header Files\QPS\Instruction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllIfInstruction.h">
-      <Filter>Header Files\QPS\Instruction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllInstruction.h">
-      <Filter>Header Files\QPS\Instruction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllPrintInstruction.h">
-      <Filter>Header Files\QPS\Instruction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllProcInstruction.h">
-      <Filter>Header Files\QPS\Instruction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllReadInstruction.h">
-      <Filter>Header Files\QPS\Instruction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllStmtInstruction.h">
-      <Filter>Header Files\QPS\Instruction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllVarInstruction.h">
-      <Filter>Header Files\QPS\Instruction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllWhileInstruction.h">
-      <Filter>Header Files\QPS\Instruction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\Processors.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\PKB\NameIndexEntityBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\AffectsTProcessor.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\AffectsTInstruction.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\FollowsTInstruction.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\CallsTInstruction.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\NextTInstruction.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\ParentTInstruction.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{8d0f5412-e201-410e-a751-7ab031a6f0e1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{acf13ccc-1688-4985-b4be-4f2203e3fd5c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\QPS">
-      <UniqueIdentifier>{c0f0df5d-a3fb-4a38-bfac-cbce030e4418}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\QPS">
-      <UniqueIdentifier>{951d237a-62c0-4e89-b5b6-2b3107a60735}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\QPS\Instruction">
-      <UniqueIdentifier>{4953bbfd-81d8-48bc-8462-1a015f910da0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\QPS\Instruction">
-      <UniqueIdentifier>{3e79b882-14c3-4e6b-8f51-e1db20287419}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\QPS\Instruction">
-      <UniqueIdentifier>{6bf9a0d8-b9e4-45fa-b247-53d76f7ab06c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\QPS\Instruction\GetAllInstruction">
-      <UniqueIdentifier>{4ea8f71f-c53b-43cb-9549-fd9381c86f3f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\QPS\Instruction">
-      <UniqueIdentifier>{62c379f5-f787-49dc-8610-2f132f4c59bb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\QPS\Instruction\GetAllInstruction">
-      <UniqueIdentifier>{b9ce447d-c8f9-4e05-b12c-5f44c6aec3df}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\source\Common\Common.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\Common\ExpressionParser.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\Common\ExprNode.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\Common\Lexer.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\Exception\SPAException.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\PKB\Attribute.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\PKB\Constant.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\PKB\ExpressionProcessor.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\PKB\PKB.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\PKB\PKBGetter.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\PKB\PKBInserter.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\SP\ASTValidator.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\SP\CFG.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\SP\DesignExtractor.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\SP\Parser.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\AffectsProcessor.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\CacheStorage.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\CallsInstruction.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\CallsStarInstruction.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\OnTheFlyRSProcessor.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\EvaluatedTable.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\FollowsInstruction.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\FollowsStarInstruction.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\ModifiesInstruction.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\NextInstruction.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\NextTProcessor.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\ParentInstruction.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\ParentStarInstruction.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\ParsedPattern.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\ParsedQuery.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\ParsedRelationship.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\ParsedWith.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\ParsedGetAll.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\PatternInstruction.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\PQLEvaluator.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\PQLParser.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\PQLResultProjector.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\QPSCommons.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\RelationshipInstruction.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\UsesInstruction.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\WithInstruction.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\AffectsStarInstruction.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\AffectsInstruction.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\PKB\Statement.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\PKB\ProcedureStatementMapper.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\PKB\PatternAssign.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\PKB\PatternContainer.cpp">
+			<Filter>Source Files</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllAssignInstruction.cpp">
+			<Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllCallInstruction.cpp">
+			<Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllConstInstruction.cpp">
+			<Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllIfInstruction.cpp">
+			<Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllPrintInstruction.cpp">
+			<Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllProcInstruction.cpp">
+			<Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllReadInstruction.cpp">
+			<Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllStmtInstruction.cpp">
+			<Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllVarInstruction.cpp">
+			<Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllWhileInstruction.cpp">
+			<Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllInstruction.cpp">
+			<Filter>Source Files\QPS\Instruction\GetAllInstruction</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\ParsedGetAll.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\AffectsTProcessor.cpp" />
+		<ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllAssignInstruction.cpp">
+			<Filter>Source Files\QPS\Instruction</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllCallInstruction.cpp">
+			<Filter>Source Files\QPS\Instruction</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllConstInstruction.cpp">
+			<Filter>Source Files\QPS\Instruction</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllIfInstruction.cpp">
+			<Filter>Source Files\QPS\Instruction</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllInstruction.cpp">
+			<Filter>Source Files\QPS\Instruction</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllPrintInstruction.cpp">
+			<Filter>Source Files\QPS\Instruction</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllProcInstruction.cpp">
+			<Filter>Source Files\QPS\Instruction</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllReadInstruction.cpp">
+			<Filter>Source Files\QPS\Instruction</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllStmtInstruction.cpp">
+			<Filter>Source Files\QPS\Instruction</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllVarInstruction.cpp">
+			<Filter>Source Files\QPS\Instruction</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllWhileInstruction.cpp">
+			<Filter>Source Files\QPS\Instruction</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\NextStarInstruction.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\Processors.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\QPS\AffectsTProcessor.cpp">
+			<Filter>Source Files\QPS</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\SP\SourceAST\SourceAST.cpp">
+			<Filter>Source Files\SP</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\SP\SourceAST\SourceASTNode.cpp">
+			<Filter>Source Files\SP</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\SP\SourceAST\StmtNode.cpp">
+			<Filter>Source Files\SP</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\SP\SourceAST\ProcedureNode.cpp">
+			<Filter>Source Files\SP</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\SP\SourceAST\ProgramNode.cpp">
+			<Filter>Source Files\SP</Filter>
+		</ClCompile>
+		<ClCompile Include="..\source\SP\SourceAST\StmtLstNode.cpp">
+			<Filter>Source Files\SP</Filter>
+		</ClCompile>
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\source\Common\Common.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\Common\ExpressionParser.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\Common\ExprNode.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\Common\Lexer.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\Common\Types.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\Exception\SPAException.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\Attribute.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\BidirectionalTable\BidirectionalTableTwoWaySet.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\BidirectionalTable\BidirectionalIndexTable.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\BidirectionalTable\BidirectionalTableOneWaySet.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\Calls.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\CallsT.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\Constant.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\ExpressionProcessor.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\Follows.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\FollowsT.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\ModifiesP.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\ModifiesS.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\Next.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\Parent.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\ParentT.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\PKB.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\PKBGetter.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\PKBInserter.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\Relationship.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\PKBGetter.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\PKBInserter.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\DifferentSynonymsRelationship.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\SameSynonymsRelationship.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\UsesP.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\UsesS.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\SP\ASTValidator.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\SP\CFG.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\SP\DesignExtractor.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\SP\Parser.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\SP\RSEntitiesMapsTypes.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\AffectsProcessor.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\CacheStorage.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\CacheStorageTypes.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\CallsInstruction.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\CallsStarInstruction.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\OnTheFlyRSProcessor.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\EvaluatedTable.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\FollowsInstruction.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\FollowsStarInstruction.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\Instruction.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\ModifiesInstruction.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\NextInstruction.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\NextTProcessor.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\ParentInstruction.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\ParentStarInstruction.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\ParsedGetAll.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\ParsedPattern.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\ParsedQuery.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\ParsedRelationship.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\ParsedWith.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\PatternInstruction.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\PQLEvaluator.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\PQLParser.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\PQLResultProjector.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\RelationshipInstruction.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\QPSCommons.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\UsesInstruction.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\WithInstruction.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\AffectsInstruction.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\AffectsStarInstruction.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\Statement.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\ProcedureStatementMapper.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\PatternAssign.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\NameIndexEntity.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\Procedure.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\Variable.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\PatternContainer.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\PatternContainerTypes.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\AffectsTProcessor.h" />
+		<ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllAssignInstruction.h">
+			<Filter>Header Files\QPS\Instruction</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllCallInstruction.h">
+			<Filter>Header Files\QPS\Instruction</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllConstInstruction.h">
+			<Filter>Header Files\QPS\Instruction</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllIfInstruction.h">
+			<Filter>Header Files\QPS\Instruction</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllInstruction.h">
+			<Filter>Header Files\QPS\Instruction</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllPrintInstruction.h">
+			<Filter>Header Files\QPS\Instruction</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllProcInstruction.h">
+			<Filter>Header Files\QPS\Instruction</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllReadInstruction.h">
+			<Filter>Header Files\QPS\Instruction</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllStmtInstruction.h">
+			<Filter>Header Files\QPS\Instruction</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllVarInstruction.h">
+			<Filter>Header Files\QPS\Instruction</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllWhileInstruction.h">
+			<Filter>Header Files\QPS\Instruction</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\NextStarInstruction.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\Processors.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\PKB\NameIndexEntityBase.h">
+			<Filter>Header Files</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\QPS\AffectsTProcessor.h">
+			<Filter>Header Files\QPS</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\SP\SourceAST\SourceAST.h">
+			<Filter>Header Files\SP</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\SP\SourceAST\SourceASTNode.h">
+			<Filter>Header Files\SP</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\SP\SourceAST\StmtNode.h">
+			<Filter>Header Files\SP</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\SP\SourceAST\ProcedureNode.h">
+			<Filter>Header Files\SP</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\SP\SourceAST\ProgramNode.h">
+			<Filter>Header Files\SP</Filter>
+		</ClInclude>
+		<ClInclude Include="..\source\SP\SourceAST\StmtLstNode.h">
+			<Filter>Header Files\SP</Filter>
+		</ClInclude>
+	</ItemGroup>
+	<ItemGroup>
+		<Filter Include="Header Files">
+			<UniqueIdentifier>{8d0f5412-e201-410e-a751-7ab031a6f0e1}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="Source Files">
+			<UniqueIdentifier>{acf13ccc-1688-4985-b4be-4f2203e3fd5c}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="Header Files\QPS">
+			<UniqueIdentifier>{c0f0df5d-a3fb-4a38-bfac-cbce030e4418}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="Source Files\QPS">
+			<UniqueIdentifier>{951d237a-62c0-4e89-b5b6-2b3107a60735}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="Source Files\QPS\Instruction">
+			<UniqueIdentifier>{4953bbfd-81d8-48bc-8462-1a015f910da0}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="Header Files\QPS\Instruction">
+			<UniqueIdentifier>{3e79b882-14c3-4e6b-8f51-e1db20287419}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="Header Files\QPS\Instruction">
+			<UniqueIdentifier>{6bf9a0d8-b9e4-45fa-b247-53d76f7ab06c}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="Header Files\QPS\Instruction\GetAllInstruction">
+			<UniqueIdentifier>{4ea8f71f-c53b-43cb-9549-fd9381c86f3f}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="Source Files\QPS\Instruction">
+			<UniqueIdentifier>{62c379f5-f787-49dc-8610-2f132f4c59bb}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="Source Files\QPS\Instruction\GetAllInstruction">
+			<UniqueIdentifier>{b9ce447d-c8f9-4e05-b12c-5f44c6aec3df}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="Source Files\SP">
+			<UniqueIdentifier>{ae6c93b3-e648-4033-8336-f4e42d938afb}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="Header Files\SP">
+			<UniqueIdentifier>{b30ebafb-323a-4865-bba2-b45364f8c31c}</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
 </Project>
