@@ -23,14 +23,14 @@ private:
 	VarIndex varIdx2;
 	VarIndex varIdx3;
 	VarIndex varIdx4;
-	PKB* pkb;
+	PKB pkb;
 	PKBGetter* pkbGetter;
 	PKBInserter* pkbInserter;
 
 	TEST_METHOD_INITIALIZE(init) {
 		AffectsCache* affectsCache = new AffectsCache();
 		affectsProcessor = new AffectsProcessor(affectsCache);
-		pkb = new PKB();
+		pkb = PKB();
 		pkbGetter = new PKBGetter(pkb);
 		pkbInserter = new PKBInserter(pkb);
 	}

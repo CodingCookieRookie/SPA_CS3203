@@ -16,7 +16,7 @@ namespace UnitTesting {
 	// Affects (_, a2) or Affects(_, 1) or Affects (_, _ )
 	TEST_CLASS(TestAffectsInstruction) {
 private:
-	PKB* pkb;
+	PKB pkb;
 	PKBGetter* pkbGetter;
 	PKBInserter* pkbInserter;
 	CacheStorage* cacheStorage;
@@ -25,7 +25,7 @@ private:
 	TEST_METHOD_INITIALIZE(init) {
 		cacheStorage = new CacheStorage();
 		affectsProcessor = new AffectsProcessor(cacheStorage);
-		pkb = new PKB();
+		pkb = PKB();
 		pkbGetter = new PKBGetter(pkb);
 		pkbInserter = new PKBInserter(pkb);
 	}

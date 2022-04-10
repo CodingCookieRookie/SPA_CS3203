@@ -15,12 +15,12 @@ namespace UnitTesting {
 	// Uses ("p", v) or Uses(, "x") or Uses (p/p1, _ )	proc
 	TEST_CLASS(TestUsesPInstruction) {
 private:
-	PKB* pkb;
+	PKB pkb;
 	PKBGetter* pkbGetter;
 	PKBInserter* pkbInserter;
 
 	TEST_METHOD_INITIALIZE(init) {
-		pkb = new PKB();
+		pkb = PKB();
 		pkbGetter = new PKBGetter(pkb);
 		pkbInserter = new PKBInserter(pkb);
 	}

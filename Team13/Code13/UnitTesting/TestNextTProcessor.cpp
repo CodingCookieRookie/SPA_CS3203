@@ -16,14 +16,14 @@ private:
 	StmtIndex stmtIdx4 = { 4 };
 	StmtIndex stmtIdx5 = { 5 };
 	NextTProcessor* nextTProcessor;
-	PKB* pkb;
+	PKB pkb;
 	PKBGetter* pkbGetter;
 	PKBInserter* pkbInserter;
 
 	TEST_METHOD_INITIALIZE(init) {
 		NextTCache* nextTCache = new NextTCache();
 		nextTProcessor = new NextTProcessor(nextTCache);
-		pkb = new PKB();
+		pkb = PKB();
 		pkbGetter = new PKBGetter(pkb);
 		pkbInserter = new PKBInserter(pkb);
 	}

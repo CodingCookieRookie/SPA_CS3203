@@ -3,6 +3,12 @@
 /* ExprNode */
 ExprNode::ExprNode(ExprNodeValueType valueType, std::string value) : valueType(valueType), value(value) {}
 
+ExprNode::~ExprNode() {
+	for (ExprNode* child : children) {
+		delete child;
+	}
+}
+
 void ExprNode::addChild(ExprNode* child) {
 	children.push_back(child);
 }

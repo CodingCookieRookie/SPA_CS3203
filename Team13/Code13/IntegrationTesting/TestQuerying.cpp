@@ -14,7 +14,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace IntegrationTesting {
 	TEST_CLASS(TestQPSPKB) {
 private:
-	PKB* pkb;
+	PKB pkb;
 	PKBGetter* pkbGetter;
 	PKBInserter* pkbInserter;
 	CacheStorage* cacheStorage;
@@ -22,7 +22,7 @@ private:
 	AffectsTProcessor* affectsTProcessor;
 
 	TEST_METHOD_INITIALIZE(initTables) {
-		pkb = new PKB();
+		pkb = PKB();
 		pkbGetter = new PKBGetter(pkb);
 		pkbInserter = new PKBInserter(pkb);
 		cacheStorage = new CacheStorage();

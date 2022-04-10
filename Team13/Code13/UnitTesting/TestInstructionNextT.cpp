@@ -13,13 +13,13 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace UnitTesting {
 	TEST_CLASS(TestNextTInstructions) {
 private:
-	PKB* pkb;
+	PKB pkb;
 	PKBGetter* pkbGetter;
 	PKBInserter* pkbInserter;
 	NextTProcessor* nextTProcessor;
 
 	TEST_METHOD_INITIALIZE(init) {
-		pkb = new PKB();
+		pkb = PKB();
 		pkbGetter = new PKBGetter(pkb);
 		pkbInserter = new PKBInserter(pkb);
 		nextTProcessor = new NextTProcessor(new NextTCache());

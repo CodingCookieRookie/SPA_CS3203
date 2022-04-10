@@ -218,12 +218,12 @@ private:
 		"	z = 2; \n "
 		"} \n";
 
-	PKB* pkb;
+	PKB pkb;
 	PKBGetter* pkbGetter;
 	PKBInserter* pkbInserter;
 
 	TEST_METHOD_INITIALIZE(init) {
-		pkb = new PKB();
+		pkb = PKB();
 		pkbGetter = new PKBGetter(pkb);
 		pkbInserter = new PKBInserter(pkb);
 	}
@@ -2892,7 +2892,7 @@ public:
 		try {
 			Parser parser;
 			SourceAST ast = parser.parse(source);
-			PKB* pkb = new PKB();
+			PKB& pkb = PKB();
 			PKBInserter* pkbInserter = new PKBInserter(pkb);
 			DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
 			designExtractor->extract();
@@ -2939,7 +2939,7 @@ public:
 			Parser parser;
 			SourceAST ast = parser.parse(source);
 			ASTValidator::validateAST(ast);
-			PKB* pkb = new PKB();
+			PKB& pkb = PKB();
 			PKBInserter* pkbInserter = new PKBInserter(pkb);
 			DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
 			designExtractor->extract();
@@ -2986,7 +2986,7 @@ public:
 			Parser parser;
 			SourceAST ast = parser.parse(source);
 			ASTValidator::validateAST(ast);
-			PKB* pkb = new PKB();
+			PKB& pkb = PKB();
 			PKBInserter* pkbInserter = new PKBInserter(pkb);
 			DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
 			designExtractor->extract();
@@ -3032,7 +3032,7 @@ public:
 			Parser parser;
 			SourceAST ast = parser.parse(source);
 			ASTValidator::validateAST(ast);
-			PKB* pkb = new PKB();
+			PKB& pkb = PKB();
 			PKBInserter* pkbInserter = new PKBInserter(pkb);
 			DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
 			designExtractor->extract();
@@ -3084,7 +3084,7 @@ public:
 			Parser parser;
 			SourceAST ast = parser.parse(source);
 			ASTValidator::validateAST(ast);
-			PKB* pkb = new PKB();
+			PKB& pkb = PKB();
 			PKBInserter* pkbInserter = new PKBInserter(pkb);
 			DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
 			designExtractor->extract();
@@ -3146,7 +3146,7 @@ public:
 			Parser parser;
 			SourceAST ast = parser.parse(source);
 			ASTValidator::validateAST(ast);
-			PKB* pkb = new PKB();
+			PKB& pkb = PKB();
 			PKBInserter* pkbInserter = new PKBInserter(pkb);
 			DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
 			designExtractor->extract();
@@ -3210,7 +3210,7 @@ public:
 			Parser parser;
 			SourceAST ast = parser.parse(source);
 			ASTValidator::validateAST(ast);
-			PKB* pkb = new PKB();
+			PKB& pkb = PKB();
 			PKBInserter* pkbInserter = new PKBInserter(pkb);
 			DesignExtractor* designExtractor = new DesignExtractor(ast, pkbInserter);
 			designExtractor->extract();

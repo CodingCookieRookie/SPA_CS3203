@@ -31,7 +31,7 @@ private:
 	VarIndex varIdx2;
 	VarIndex varIdx3;
 	VarIndex varIdx4;
-	PKB* pkb;
+	PKB pkb;
 	PKBGetter* pkbGetter;
 	PKBInserter* pkbInserter;
 
@@ -40,7 +40,7 @@ private:
 		AffectsCache* affectsCache = new AffectsCache();
 		AffectsProcessor* affectsProcessor = new AffectsProcessor(affectsCache);
 		affectsTProcessor = new AffectsTProcessor(affectsTCache, affectsProcessor);
-		pkb = new PKB();
+		pkb = PKB();
 		pkbGetter = new PKBGetter(pkb);
 		pkbInserter = new PKBInserter(pkb);
 	}

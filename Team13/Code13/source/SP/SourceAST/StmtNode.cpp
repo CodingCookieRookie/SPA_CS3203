@@ -164,7 +164,6 @@ std::string PrintNode::getNameValue() {
 AssignNode::AssignNode(std::string varName, ExprNode* expr, StmtIndex stmtIdx) : StmtNode(stmtIdx), varName(varName), expr(expr) {}
 
 AssignNode::~AssignNode() {
-	delete expr;
 	expr = nullptr;
 }
 
@@ -211,14 +210,11 @@ std::unordered_set<std::string> AssignNode::getUsesConsts() {
 
 /* ContainerNode */
 ContainerNode::ContainerNode(ExprNode* condExpr, std::vector<StmtLstNode*> childStmtLst, StmtIndex stmtIdx)
-	: StmtNode(stmtIdx), condExpr(condExpr), childStmtLst(childStmtLst) {
-}
+	: StmtNode(stmtIdx), condExpr(condExpr), childStmtLst(childStmtLst) {}
 
 ContainerNode::~ContainerNode() {
-	delete condExpr;
 	condExpr = nullptr;
 	for (StmtLstNode*& childStmt : childStmtLst) {
-		delete childStmt;
 		childStmt = nullptr;
 	}
 }
@@ -274,8 +270,7 @@ StatementType WhileNode::getStmtType() {
 
 /* IfNode */
 IfNode::IfNode(ExprNode* condExpr, StmtLstNode* thenStmtLst, StmtLstNode* elseStmtLst, StmtIndex stmtIdx)
-	: ContainerNode(condExpr, { thenStmtLst, elseStmtLst }, stmtIdx) {
-}
+	: ContainerNode(condExpr, { thenStmtLst, elseStmtLst }, stmtIdx) {}
 
 StatementType IfNode::getStmtType() {
 	return StatementType::IF_TYPE;

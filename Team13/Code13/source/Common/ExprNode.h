@@ -15,6 +15,7 @@ private:
 	void populatePattern(std::vector<std::string>& tokens);
 public:
 	ExprNode(ExprNodeValueType valueType, std::string value);
+	~ExprNode();
 	void addChild(ExprNode* child);
 	std::vector<ExprNode*> getChildren();
 	ExprNode* getLeftChild();

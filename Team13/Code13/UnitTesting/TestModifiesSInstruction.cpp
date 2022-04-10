@@ -16,12 +16,12 @@ namespace UnitTesting {
 	// Modifies (p/p1, v) or Modifies(p/p1, "x") or Modifies (p/p1, _ )	proc
 	TEST_CLASS(TestModifiesInstruction) {
 private:
-	PKB* pkb;
+	PKB pkb;
 	PKBGetter* pkbGetter;
 	PKBInserter* pkbInserter;
 
 	TEST_METHOD_INITIALIZE(init) {
-		pkb = new PKB();
+		pkb = PKB();
 		pkbGetter = new PKBGetter(pkb);
 		pkbInserter = new PKBInserter(pkb);
 	}

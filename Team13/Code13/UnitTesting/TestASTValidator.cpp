@@ -237,10 +237,10 @@ public:
 		rootExprNode->addChild(rightExprNode);
 		IfNode* ifNode = new IfNode(rootExprNode, thenStmtLstNode, elseStmtLstNode, 2);
 		StmtLstNode* whileStmtLstNode = new StmtLstNode();
-		whileStmtLstNode->addStmtNode(ifNode);
+		whileStmtLstNode->addStmtNode(readNode);
 		WhileNode* whileNode = new WhileNode(rootExprNode, whileStmtLstNode, 1);
 		StmtLstNode* stmtLstNode = new StmtLstNode();
-		stmtLstNode->addStmtNode(whileNode);
+		stmtLstNode->addStmtNode(ifNode);
 		ProcedureNode* procedureNode = new ProcedureNode(procName);
 		procedureNode->addStmtLst(stmtLstNode);
 
