@@ -120,3 +120,7 @@ EvaluatedTable NextStarInstruction::helperHandleTwoWildcards() {
 	// Next rs exists => isEmptyTable == false => EvTable.evResult == true (innerJoinMerge() can merge dummy table, preserving all rows)
 	return EvaluatedTable(!isEmptyTable);
 }
+
+QueryScore NextStarInstruction::getDifficultyScore() {
+	return Instruction::getDifficultyScore() + 10;
+}

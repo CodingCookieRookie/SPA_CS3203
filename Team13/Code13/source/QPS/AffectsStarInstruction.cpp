@@ -106,3 +106,7 @@ EvaluatedTable AffectsStarInstruction::execute() {
 	}
 	return evTable;
 }
+
+QueryScore AffectsStarInstruction::getDifficultyScore() {
+	return Instruction::getDifficultyScore() + 10;
+}

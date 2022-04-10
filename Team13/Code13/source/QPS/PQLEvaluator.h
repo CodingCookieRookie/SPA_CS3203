@@ -1,5 +1,6 @@
 #pragma once
 
+#include <set>
 #include <string>
 #include <vector>
 
@@ -30,7 +31,7 @@ private:
 	std::vector<Instruction*> evaluateToInstructions(ParsedQuery pq);
 
 	/* Helper method to execute all instructions */
-	EvaluatedTable executeInstructions(std::vector<Instruction*> instructions);
+	EvaluatedTable executeInstructions(const std::vector<Instruction*>& instructions);
 
 	/* Helper method to select columns of table in EvaluatedTable for projection based on Select-cl */
 	EvaluatedTable selectColumnsForProjection(EvaluatedTable evaluatedTable, ParsedQuery& pq);
@@ -46,6 +47,23 @@ private:
 	std::unordered_map<std::string, std::vector<int>> populateTable(EvaluatedTable& evaluatedTable);
 
 	void insertGetAllInstr(PqlReference pqlRef, ParsedQuery& pq, std::vector<Instruction*>& instructions);
+
+	std::vector<Instruction*> getBooleanClauses(const std::vector<Instruction*>& instructions);
+
+	std::unordered_map<std::string, std::vector<Instruction*>> buildInstructionGraph(const std::vector<Instruction*>& instructions);
+
+	std::vector<std::pair<int, std::string>> getConnectedComponents(
+		const std::unordered_map<std::string, std::vector<Instruction*>>& adjList);
+
+	EvaluatedTable executeBooleanClauses(const std::vector<Instruction*>& instructions);
+
+	EvaluatedTable executeInstructionGraph(
+		const std::unordered_map<std::string, std::vector<Instruction*>>& adjList,
+		const std::vector<std::pair<int, std::string>>& connectedComponents);
+
+	EvaluatedTable executeConnectedComponent(
+		const std::unordered_map<std::string, std::vector<Instruction*>>& adjList,
+		const std::string& synonym);
 
 public:
 	/* Constructor */

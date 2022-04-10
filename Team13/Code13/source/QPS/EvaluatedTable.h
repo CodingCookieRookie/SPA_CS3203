@@ -75,7 +75,7 @@ public:
 	}
 
 	/* Getter for table */
-	std::unordered_map<std::string, std::vector<int>> getTableRef() {
+	std::unordered_map<std::string, std::vector<int>>& getTableRef() {
 		return table;
 	}
 
@@ -83,6 +83,8 @@ public:
 	bool getEvResult() {
 		return evResult;
 	}
+
+	EvaluatedTable project(const std::unordered_set<std::string>& columns);
 
 	/* Mentions all the relevant fields of the EvalautedTable */
 	std::string getTableString() {
@@ -99,4 +101,6 @@ public:
 		}
 		return res;
 	}
+
+	bool columnExists(const std::string& column);
 };

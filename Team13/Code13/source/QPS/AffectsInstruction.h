@@ -15,4 +15,5 @@ private:
 public:
 	AffectsInstruction(PqlReference lhsRef, PqlReference rhsRef, AffectsProcessor* affectsProcessor, PKBGetter* pkbGetter);
 	EvaluatedTable execute() override;
+	QueryScore getDifficultyScore() override;
 };

@@ -12,4 +12,5 @@ protected:
 public:
 	NextStarInstruction(PqlReference lhsRef, PqlReference rhsRef, NextTProcessor* nextTProcessor, PKBGetter* pkbGetter);
 	EvaluatedTable execute() override;
+	QueryScore getDifficultyScore() override;
 };

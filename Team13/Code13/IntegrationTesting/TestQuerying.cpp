@@ -158,7 +158,7 @@ public:
 		// Test Table:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("s1") != tableRef.end());
-		Assert::AreEqual(size_t(2), tableRef.size()); // should contain s1 and s2 first (result projector filters down)
+		Assert::AreEqual(size_t(1), tableRef.size()); // optimized execute will project out only the relevant columns
 		// Test Values:
 		std::vector<int> values;
 		for (int i = 0; i < 4; i++) {
@@ -575,7 +575,7 @@ public:
 		//// Test Table:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end()); // "a" exists
-		Assert::AreEqual(true, tableRef.find("v") != tableRef.end()); // "v" exists
+		Assert::AreEqual(true, tableRef.find("v") == tableRef.end()); // "v" exists
 
 		//// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 7 };
@@ -636,7 +636,7 @@ public:
 		//// Test Table:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("ifs") != tableRef.end()); // "ifs" exists
-		Assert::AreEqual(true, tableRef.find("v") != tableRef.end()); // "v" exists
+		Assert::AreEqual(true, tableRef.find("v") == tableRef.end()); // "v" exists
 
 		//// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 7 };
@@ -697,7 +697,7 @@ public:
 		//// Test Table:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("w") != tableRef.end()); // "w" exists
-		Assert::AreEqual(true, tableRef.find("v") != tableRef.end()); // "v" exists
+		Assert::AreEqual(true, tableRef.find("v") == tableRef.end()); // "v" exists
 
 		//// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 7 };
@@ -2358,11 +2358,11 @@ public:
 
 		// Test Values: std::unordered_map<std::string, EntityType>
 
-		std::vector<int> values{ 8, 8, 9, 9 };
-		auto actualValues = tableRef.at("a");
-		bool areVecEqual = std::equal(actualValues.begin(), actualValues.end(), values.begin());
+		std::unordered_set<int> values{ 8, 9 };
+		std::vector<int> actualValues = tableRef.at("a");
+		std::unordered_set<int> actualValuesSet(actualValues.begin(), actualValues.end());
 
-		Assert::AreEqual(true, areVecEqual);
+		Assert::IsTrue(values == actualValuesSet);
 
 		// Test EvResult:
 		bool actualEvResult = evTable.getEvResult();
@@ -2372,9 +2372,9 @@ public:
 		EvaluatedTable& projectedEvTable = pqlEvaluator.selectProjection(evTable);
 		PQLResultProjector pqlResultProjector = PQLResultProjector(projectedEvTable, parsedQuery, pkbGetter);
 		std::list<std::string> results = pqlResultProjector.resolveTableToResults();
-		std::list<std::string> expectedRes{ "8", "9" };
-		bool areListsEqual = std::equal(expectedRes.begin(), expectedRes.end(), results.begin());
-		Assert::AreEqual(true, areListsEqual);
+		std::unordered_set<std::string> resultSet(results.begin(), results.end());
+		std::unordered_set<std::string> expectedRes{ "8", "9" };
+		Assert::IsTrue(expectedRes == resultSet);
 	}
 
 	TEST_METHOD(querying_AffectsAndPatternWOnly_success) {
@@ -2567,8 +2567,8 @@ public:
 		// Test Table:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end());
-		Assert::AreEqual(true, tableRef.find("w") != tableRef.end());
-		Assert::AreEqual(true, tableRef.find("v") != tableRef.end());
+		Assert::AreEqual(true, tableRef.find("w") == tableRef.end());
+		Assert::AreEqual(true, tableRef.find("v") == tableRef.end());
 
 		// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> wValues, aValues;
@@ -2576,10 +2576,6 @@ public:
 			wValues.emplace_back(i + 1);
 			aValues.emplace_back(99);
 		}
-		auto actualwValues = tableRef.at("w");
-		std::sort(actualwValues.begin(), actualwValues.end());
-		bool areVecEqual = std::equal(wValues.begin(), wValues.end(), actualwValues.begin());
-		Assert::AreEqual(true, areVecEqual);
 		auto actualaValues = tableRef.at("a");
 		std::sort(actualaValues.begin(), actualaValues.end());
 		bool areVecEqual2 = std::equal(aValues.begin(), aValues.end(), actualaValues.begin());
@@ -2635,7 +2631,7 @@ public:
 		//// Test Table:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end()); // "a" exists
-		Assert::AreEqual(true, tableRef.find("v") != tableRef.end()); // "v" exists
+		Assert::AreEqual(true, tableRef.find("v") == tableRef.end()); // "v" exists
 
 		//// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 7 };
@@ -2693,7 +2689,7 @@ public:
 		//// Test Table:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end()); // "a" exists
-		Assert::AreEqual(true, tableRef.find("v") != tableRef.end()); // "v" exists
+		Assert::AreEqual(true, tableRef.find("v") == tableRef.end()); // "v" exists
 
 		//// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values;
@@ -2751,7 +2747,7 @@ public:
 		//// Test Table:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end()); // "a" exists
-		Assert::AreEqual(true, tableRef.find("v") != tableRef.end()); // "v" exists
+		Assert::AreEqual(true, tableRef.find("v") == tableRef.end()); // "v" exists
 
 		//// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values;
@@ -2809,7 +2805,7 @@ public:
 		//// Test Table:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("a") != tableRef.end()); // "a" exists
-		Assert::AreEqual(true, tableRef.find("v") != tableRef.end()); // "v" exists
+		Assert::AreEqual(true, tableRef.find("v") == tableRef.end()); // "v" exists
 
 		//// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 7 };
@@ -3035,7 +3031,7 @@ public:
 		//// Test Table:
 		auto tableRef = evTable.getTableRef();
 		Assert::AreEqual(true, tableRef.find("c") != tableRef.end()); // "c" exists
-		Assert::AreEqual(true, tableRef.find("s") != tableRef.end()); // "s" exists
+		Assert::AreEqual(true, tableRef.find("s") == tableRef.end()); // "s" exists
 
 		//// Test Values: std::unordered_map<std::string, EntityType>
 		std::vector<int> values{ 2 };

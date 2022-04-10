@@ -144,6 +144,23 @@ EvaluatedTable EvaluatedTable::innerJoinMerge(EvaluatedTable& otherTable) {
 	return hashJoin(otherTable, commonEntities);
 }
 
+EvaluatedTable EvaluatedTable::project(const std::unordered_set<std::string>& columns) {
+	if (table.empty()) {
+		return EvaluatedTable(evResult);
+	}
+	std::unordered_map<std::string, std::vector<int>> nextTable;
+	for (const std::string& column : columns) {
+		if (table.find(column) != table.end()) {
+			nextTable[column] = table.at(column);
+		}
+	}
+	/* No columns projected, return a true/false evTable */
+	if (nextTable.empty()) {
+		return EvaluatedTable(getNumRow() > 0);
+	}
+	return EvaluatedTable(nextTable);
+}
+
 EvaluatedTable::EvaluatedTable() : EvaluatedTable(true) {}
 
 EvaluatedTable::EvaluatedTable(std::unordered_map<std::string, std::vector<int>> newTable) :
@@ -153,3 +170,7 @@ EvaluatedTable::EvaluatedTable(std::unordered_map<std::string, std::vector<int>>
 EvaluatedTable::EvaluatedTable(bool evResult) :
 	table(),
 	evResult(evResult) {}
+
+bool EvaluatedTable::columnExists(const std::string& column) {
+	return table.find(column) != table.end();
+}

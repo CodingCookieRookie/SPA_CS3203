@@ -34,15 +34,140 @@ std::vector<Instruction*> PQLEvaluator::evaluateToInstructions(ParsedQuery pq) {
 
 void PQLEvaluator::insertGetAllInstr(PqlReference pqlRef, ParsedQuery& pq, std::vector<Instruction*>& instructions) {}
 
-EvaluatedTable PQLEvaluator::executeInstructions(std::vector<Instruction*> instructions) {
+std::vector<Instruction*> PQLEvaluator::getBooleanClauses(const std::vector<Instruction*>& instructions) {
+	/* Filter out boolean clauses - clauses that don't involve any synonyms */
+	std::vector<Instruction*> booleanClauses;
+	for (Instruction* instruction : instructions) {
+		std::unordered_set<std::string> synonyms = instruction->getSynonyms();
+		if (synonyms.empty()) {
+			booleanClauses.push_back(instruction);
+		}
+	}
+	return booleanClauses;
+}
+
+std::unordered_map<std::string, std::vector<Instruction*>> PQLEvaluator::buildInstructionGraph(const std::vector<Instruction*>& instructions) {
+	/* Build "Adjacency List" of instructions */
+	std::unordered_map<std::string, std::vector<Instruction*>> adjList;
+	for (Instruction* instruction : instructions) {
+		std::unordered_set<std::string> synonyms = instruction->getSynonyms();
+		for (const std::string& synonym : synonyms) {
+			adjList[synonym].push_back(instruction);
+		}
+	}
+	return adjList;
+}
+
+std::vector<std::pair<int, std::string>> PQLEvaluator::getConnectedComponents(
+	const std::unordered_map<std::string, std::vector<Instruction*>>& adjList) {
+	/* Represent each connected component by a <score, synonym> tuple,
+	where synonym is any synonym in that connected component */
+	std::vector<std::pair<int, std::string>> connectedComponents;
+	size_t numSynonyms = adjList.size();
+	std::unordered_set<std::string> visitedSynonyms;
+	std::unordered_set<Instruction*> visitedInstructions;
+	visitedSynonyms.reserve(numSynonyms);
+	for (const auto& [synonym, clauses] : adjList) {
+		if (visitedSynonyms.find(synonym) != visitedSynonyms.end()) {
+			continue;
+		}
+		int sumDifficulty = 0;
+		std::queue<std::string> visitNext;
+		visitNext.push(synonym);
+		visitedSynonyms.insert(synonym);
+		while (!visitNext.empty()) {
+			std::string currSynonym = visitNext.front();
+			visitNext.pop();
+			for (Instruction* instruction : adjList.at(currSynonym)) {
+				std::unordered_set<std::string> synonyms = instruction->getSynonyms();
+				for (const std::string& nextSynonym : synonyms) {
+					if (visitedInstructions.find(instruction) == visitedInstructions.end()) {
+						sumDifficulty += instruction->getDifficultyScore();
+						visitedInstructions.insert(instruction);
+					}
+					if (visitedSynonyms.find(nextSynonym) == visitedSynonyms.end()) {
+						visitNext.push(nextSynonym);
+						visitedSynonyms.insert(nextSynonym);
+					}
+				}
+			}
+		}
+		connectedComponents.emplace_back(sumDifficulty, synonym);
+	}
+	std::sort(connectedComponents.begin(), connectedComponents.end(),
+		[](const auto& p1, const auto& p2) { return p1.first < p2.first; });
+	return connectedComponents;
+}
+
+EvaluatedTable PQLEvaluator::executeBooleanClauses(const std::vector<Instruction*>& instructions) {
 	EvaluatedTable resultEvTable;
-	std::unordered_set<std::string> currentTableColumns;
-	for (size_t i = 0; i < instructions.size(); i++) {
-		Instruction* instruction = instructions.at(i);
+	for (Instruction* instruction : instructions) {
+		if (!resultEvTable.getEvResult()) {
+			break;
+		}
 		EvaluatedTable evTable = instruction->execute();
 		resultEvTable = resultEvTable.innerJoinMerge(evTable);
 	}
 	return resultEvTable;
+}
+
+EvaluatedTable PQLEvaluator::executeInstructionGraph(
+	const std::unordered_map<std::string, std::vector<Instruction*>>& adjList,
+	const std::vector<std::pair<int, std::string>>& connectedComponents) {
+	EvaluatedTable resultEvTable;
+	for (const auto& [score, synonym] : connectedComponents) {
+		EvaluatedTable projectedEvTable = executeConnectedComponent(adjList, synonym);
+		resultEvTable = resultEvTable.innerJoinMerge(projectedEvTable);
+	}
+	return resultEvTable;
+}
+
+EvaluatedTable PQLEvaluator::executeConnectedComponent(
+	const std::unordered_map<std::string, std::vector<Instruction*>>& adjList,
+	const std::string& synonym) {
+	std::set<std::pair<int, Instruction*>> visitNextInstructions;
+	std::unordered_set<Instruction*> visitedInstructions;
+	for (Instruction* instruction : adjList.at(synonym)) {
+		visitedInstructions.insert(instruction);
+		visitNextInstructions.emplace(instruction->getDifficultyScore(), instruction);
+	}
+	EvaluatedTable groupEvTable;
+	while (!visitNextInstructions.empty()) {
+		auto [score, instruction] = *visitNextInstructions.begin();
+		visitNextInstructions.erase(visitNextInstructions.begin());
+		/* Add all the clauses which are "connected" to the current clause
+		to the frontier (if they haven't already been added/executed). */
+		std::unordered_set<std::string> synonyms = instruction->getSynonyms();
+		for (const std::string& nextSynonym : synonyms) {
+			for (Instruction* nextInstruction : adjList.at(nextSynonym)) {
+				if (visitedInstructions.find(nextInstruction) != visitedInstructions.end()) {
+					continue;
+				}
+				visitedInstructions.insert(nextInstruction);
+				visitNextInstructions.emplace(nextInstruction->getDifficultyScore(), nextInstruction);
+			}
+		}
+		EvaluatedTable evTable = instruction->execute();
+		groupEvTable = groupEvTable.innerJoinMerge(evTable);
+	}
+	EvaluatedTable projectedEvTable = groupEvTable.project(parsedQuery.getColumns());
+	return projectedEvTable;
+}
+
+EvaluatedTable PQLEvaluator::executeInstructions(const std::vector<Instruction*>& instructions) {
+	EvaluatedTable resultEvTable;
+
+	std::unordered_map<std::string, std::vector<Instruction*>> adjList = buildInstructionGraph(instructions);
+	std::vector<Instruction*> booleanClauses = getBooleanClauses(instructions);
+
+	std::vector<std::pair<int, std::string>> connectedComponents = getConnectedComponents(adjList);
+
+	EvaluatedTable boolClauseEvTable = executeBooleanClauses(booleanClauses);
+	if (!boolClauseEvTable.getEvResult()) {
+		return boolClauseEvTable;
+	}
+	EvaluatedTable graphClauseEvTable = executeInstructionGraph(adjList, connectedComponents);
+	return graphClauseEvTable;
 }
 
 EvaluatedTable PQLEvaluator::selectColumnsForProjection(

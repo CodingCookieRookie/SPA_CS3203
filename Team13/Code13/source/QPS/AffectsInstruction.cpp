@@ -107,3 +107,7 @@ EvaluatedTable AffectsInstruction::execute() {
 	}
 	return evTable;
 }
+
+QueryScore AffectsInstruction::getDifficultyScore() {
+	return Instruction::getDifficultyScore() + 10;
+}

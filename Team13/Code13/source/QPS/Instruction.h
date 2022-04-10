@@ -17,10 +17,8 @@
 class Instruction {
 public:
 	virtual EvaluatedTable execute() = 0;
-	virtual std::unordered_set<std::string> getSynonyms() {
-		return std::unordered_set<std::string>();
-	};
+	virtual std::unordered_set<std::string> getSynonyms() = 0;
 	virtual QueryScore getDifficultyScore() {
-		return 0;
+		return getSynonyms().size();
 	};
 };
