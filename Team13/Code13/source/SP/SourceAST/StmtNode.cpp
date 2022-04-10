@@ -2,6 +2,8 @@
 
 StmtNode::StmtNode(StmtIndex stmtIdx) : SourceASTNode(), stmtIdx(stmtIdx) {}
 
+StmtNode::~StmtNode() {}
+
 std::unordered_set<std::string> StmtNode::getModifiesVars() {
 	return std::unordered_set<std::string>();
 }
@@ -161,6 +163,11 @@ std::string PrintNode::getNameValue() {
 /* AssignNode */
 AssignNode::AssignNode(std::string varName, ExprNode* expr, StmtIndex stmtIdx) : StmtNode(stmtIdx), varName(varName), expr(expr) {}
 
+AssignNode::~AssignNode() {
+	delete expr;
+	expr = nullptr;
+}
+
 void AssignNode::process(RelationshipMaps& relationshipMaps, EntityMaps& entityMaps) {
 	/* Assign stmt modifies the var on its LHS */
 	populateDiffSynonymsRS(relationshipMaps.modifiesMap, entityMaps, getModifiesVars());
@@ -205,6 +212,15 @@ std::unordered_set<std::string> AssignNode::getUsesConsts() {
 /* ContainerNode */
 ContainerNode::ContainerNode(ExprNode* condExpr, std::vector<StmtLstNode*> childStmtLst, StmtIndex stmtIdx)
 	: StmtNode(stmtIdx), condExpr(condExpr), childStmtLst(childStmtLst) {
+}
+
+ContainerNode::~ContainerNode() {
+	delete condExpr;
+	condExpr = nullptr;
+	for (StmtLstNode*& childStmt : childStmtLst) {
+		delete childStmt;
+		childStmt = nullptr;
+	}
 }
 
 void ContainerNode::process(RelationshipMaps& relationshipMaps, EntityMaps& entityMaps) {

@@ -8,6 +8,7 @@ ProgramNode* SourceAST::getRoot() {
 
 SourceAST::~SourceAST() {
 	delete root;
+	root = nullptr;
 }
 
 void SourceAST::process() {

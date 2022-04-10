@@ -2,6 +2,13 @@
 
 StmtLstNode::StmtLstNode() : SourceASTNode() {}
 
+StmtLstNode::~StmtLstNode() {
+	for (StmtNode*& stmtNode : stmtNodes) {
+		delete stmtNode;
+		stmtNode = nullptr;
+	}
+}
+
 void StmtLstNode::addStmtNode(StmtNode* stmtNode) {
 	stmtNodes.push_back(stmtNode);
 }

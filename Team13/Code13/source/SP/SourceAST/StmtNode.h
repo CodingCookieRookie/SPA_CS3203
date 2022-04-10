@@ -15,6 +15,7 @@ protected:
 	std::unordered_set<std::string> getUses(ExprNode* expr, ExprNodeValueType valueType);
 public:
 	StmtNode(StmtIndex stmtIdx);
+	virtual ~StmtNode();
 
 	virtual StatementType getStmtType() = 0;
 	virtual std::unordered_set<std::string> getPattern();
@@ -90,6 +91,7 @@ private:
 	std::string pattern;
 public:
 	AssignNode(std::string varName, ExprNode* expr, StmtIndex stmtIdx);
+	virtual ~AssignNode();
 	void process(RelationshipMaps& relationshipMaps, EntityMaps& entityMaps) override;
 
 	ExprNode* getExpr();
@@ -106,6 +108,7 @@ protected:
 	std::vector<StmtLstNode*> childStmtLst;
 public:
 	ContainerNode(ExprNode* condExpr, std::vector<StmtLstNode*> childStmtLst, StmtIndex stmtIdx);
+	virtual ~ContainerNode();
 	void process(RelationshipMaps& relationshipMaps, EntityMaps& entityMaps) override;
 
 	ExprNode* getCondExpr();

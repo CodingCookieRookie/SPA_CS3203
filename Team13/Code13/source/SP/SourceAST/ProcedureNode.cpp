@@ -4,6 +4,11 @@ ProcedureNode::ProcedureNode(std::string procName) : SourceASTNode(), procName(p
 	stmtLstNode = new StmtLstNode();
 }
 
+ProcedureNode::~ProcedureNode() {
+	delete stmtLstNode;
+	stmtLstNode = nullptr;
+}
+
 void ProcedureNode::bidirectionalPopulateProcAndStmt(ProcStmtMap& procStmtMap, StmtProcMap& stmtProcMap,
 	std::unordered_set<StmtIndex>& stmtIndices) {
 	for (StmtIndex stmtIndex : stmtIndices) {

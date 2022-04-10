@@ -66,6 +66,8 @@ private:
 		const std::unordered_map<std::string, std::vector<Instruction*>>& adjList,
 		const std::string& synonym);
 
+	void cleanupInstructions(std::vector<Instruction*>& instructions);
+
 public:
 	PQLEvaluator(ParsedQuery& parsedQuery, PKBGetter* pkbGetter);
 

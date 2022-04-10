@@ -4,9 +4,9 @@
 
 class PKBGetter {
 private:
-	PKB* pkb;
+	PKB& pkb;
 public:
-	PKBGetter(PKB* pkb);
+	PKBGetter(PKB& pkb);
 	~PKBGetter();
 
 	/* Main Entities */

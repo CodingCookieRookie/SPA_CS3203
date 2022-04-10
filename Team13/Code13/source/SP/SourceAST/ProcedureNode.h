@@ -13,6 +13,7 @@ private:
 	void bidirectionalPopulateProcNameAndIndex(ProcNameToIndexMap& procNameToIndexMap, SortedProcIndexToNameMap& sortedProcIndexToNameMap);
 public:
 	ProcedureNode(std::string procName);
+	~ProcedureNode();
 	void setProcIndex(ProcIndex procIndex);
 	void addStmtLst(StmtLstNode* stmtLstNode);
 	void process(RelationshipMaps& relationshipMaps, EntityMaps& entityMaps) override;

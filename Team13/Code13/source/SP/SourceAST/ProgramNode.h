@@ -10,6 +10,7 @@ private:
 	EntityMaps entityMaps;
 public:
 	ProgramNode();
+	~ProgramNode();
 	void addProcedure(ProcedureNode* procedureNode);
 	void process() override;
 

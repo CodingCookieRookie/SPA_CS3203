@@ -19,6 +19,7 @@ EvaluatedTable PQLEvaluator::evaluate() {
 		return EvaluatedTable(false);
 	}
 	EvaluatedTable resultingEvTable = executeInstructions(instructions);
+	cleanupInstructions(instructions);
 	return resultingEvTable;
 }
 
@@ -154,6 +155,13 @@ EvaluatedTable PQLEvaluator::executeConnectedComponent(
 	return projectedEvTable;
 }
 
+void PQLEvaluator::cleanupInstructions(std::vector<Instruction*>& instructions) {
+	for (Instruction*& instruction : instructions) {
+		delete instruction;
+		instruction = nullptr;
+	}
+}
+
 EvaluatedTable PQLEvaluator::executeInstructions(const std::vector<Instruction*>& instructions) {
 	EvaluatedTable resultEvTable;
 
@@ -229,6 +237,8 @@ EvaluatedTable& PQLEvaluator::fillInColumns(EvaluatedTable& resultEvTable, Evalu
 			Instruction* getAll = getAllSynonym.toInstruction(pkbGetter);
 			EvaluatedTable evTable = getAll->execute();
 			resultEvTable = resultEvTable.innerJoinMerge(evTable);
+			delete getAll;
+			getAll = nullptr;
 		}
 	}
 	return resultEvTable;

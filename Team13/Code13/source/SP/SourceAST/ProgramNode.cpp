@@ -4,6 +4,13 @@
 
 ProgramNode::ProgramNode() : SourceASTNode() {}
 
+ProgramNode::~ProgramNode() {
+	for (ProcedureNode*& procNode : procedureNodes) {
+		delete procNode;
+		procNode = nullptr;
+	}
+}
+
 void ProgramNode::addProcedure(ProcedureNode* procedureNode) {
 	procedureNodes.push_back(procedureNode);
 }

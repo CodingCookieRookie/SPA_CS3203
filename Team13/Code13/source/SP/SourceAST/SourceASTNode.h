@@ -57,7 +57,7 @@ struct EntityMaps {
 class SourceASTNode {
 public:
 	SourceASTNode();
-	~SourceASTNode();
+	virtual ~SourceASTNode();
 
 	virtual void process();
 	virtual void process(RelationshipMaps& relationshipMaps, EntityMaps& entityMaps);

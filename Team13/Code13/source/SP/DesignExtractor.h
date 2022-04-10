@@ -13,7 +13,7 @@ private:
 	static std::unordered_map<RelationshipType, RelationshipType> rsPtoSMap;
 	static std::unordered_map<RelationshipType, RelationshipType> rsToRsTMap;
 
-	SourceAST ast;
+	SourceAST& ast;
 	PKBInserter* pkbInserter;
 	CFG* cfg;
 

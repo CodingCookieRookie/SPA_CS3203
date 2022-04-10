@@ -20,9 +20,8 @@
 
 class TestWrapper : public AbstractWrapper {
 private:
-	DesignExtractor* designExtractor;
 	Parser parser;
-	PKB* pkb;
+	PKB pkb;
 	PKBGetter* pkbGetter;
 	PKBInserter* pkbInserter;
 	std::string getFileContent(std::string& filename);

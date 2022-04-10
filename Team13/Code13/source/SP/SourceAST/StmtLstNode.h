@@ -8,6 +8,7 @@ private:
 	std::vector<StmtNode*> stmtNodes;
 public:
 	StmtLstNode();
+	~StmtLstNode();
 	void addStmtNode(StmtNode* stmtNode);
 	void process(RelationshipMaps& relationshipMaps, EntityMaps& entityMaps) override;
 

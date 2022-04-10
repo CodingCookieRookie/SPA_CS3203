@@ -4,9 +4,9 @@
 
 class PKBInserter {
 private:
-	PKB* pkb;
+	PKB& pkb;
 public:
-	PKBInserter(PKB* pkb);
+	PKBInserter(PKB& pkb);
 	~PKBInserter();
 
 	/* Main Entities */
