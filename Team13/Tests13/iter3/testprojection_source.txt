@@ -1,0 +1,18 @@
+procedure someProc {
+    call someOtherProc;
+    while (someProc == someProc) {
+        x = y + z;
+        read abc;
+        y = x;
+    }
+}
+procedure someOtherProc {
+    if (if != while) then {
+        while (abc <= xyz) {
+            read = print;
+        }
+    } else {
+        print print;
+    }
+    print = read;
+}

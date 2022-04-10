@@ -1,0 +1,390 @@
+1 - Select BOOLEAN, no declarations
+
+Select BOOLEAN
+TRUE
+5000
+2 - Select BOOLEAN, stmt declared
+stmt s;
+Select BOOLEAN
+TRUE
+5000
+3 - Select BOOLEAN, read declared
+read r;
+Select BOOLEAN
+TRUE
+5000
+4 - Select BOOLEAN, print declared
+print p;
+Select BOOLEAN
+TRUE
+5000
+5 - Select BOOLEAN, call declared
+call c;
+Select BOOLEAN
+TRUE
+5000
+6 - Select BOOLEAN, while declared
+while w;
+Select BOOLEAN
+TRUE
+5000
+7 - Select BOOLEAN, if declared
+if i;
+Select BOOLEAN
+TRUE
+5000
+8 - Select BOOLEAN, assign declared
+assign a;
+Select BOOLEAN
+TRUE
+5000
+9 - Select BOOLEAN, constant declared
+constant c;
+Select BOOLEAN
+TRUE
+5000
+10 - Select BOOLEAN, procedure declared
+procedure p;
+Select BOOLEAN
+TRUE
+5000
+11 - Select BOOLEAN, variable declared
+variable v;
+Select BOOLEAN
+TRUE
+5000
+12 - Select BOOLEAN, stmt declared, semantic error
+stmt s;
+Select BOOLEAN with 123 = "a123"
+FALSE
+5000
+13 - Select BOOLEAN, read declared, semantic error
+read r;
+Select BOOLEAN such that Calls(r, _)
+FALSE
+5000
+14 - Select BOOLEAN, print declared, semantic error
+print p;
+Select BOOLEAN such that Affects*(_, p)
+FALSE
+5000
+15 - Select BOOLEAN, call declared, semantic error
+call c;
+Select BOOLEAN pattern c (_, _)
+FALSE
+5000
+16 - Select BOOLEAN, while declared, semantic error
+while w;
+Select BOOLEAN with while.varName = "hello"
+FALSE
+5000
+17 - Select BOOLEAN, if declared, semantic error
+if i;
+Select BOOLEAN with i.value = 1
+FALSE
+5000
+18 - Select BOOLEAN, assign declared, semantic error
+assign a;
+Select BOOLEAN such that Modifies(_, _)
+FALSE
+5000
+19 - Select BOOLEAN, constant declared, semantic error
+constant c;
+Select BOOLEAN pattern c (_, _, _)
+FALSE
+5000
+20 - Select BOOLEAN, procedure declared, semantic error
+procedure p;
+Select BOOLEAN such that Uses("someProc", p)
+FALSE
+5000
+21 - Select BOOLEAN, variable declared, semantic error
+variable v;
+Select BOOLEAN such that Parent*(_, v)
+FALSE
+5000
+22 - stmt declared as BOOLEAN
+stmt BOOLEAN;
+Select BOOLEAN
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+5000
+23 - read declared as BOOLEAN
+read BOOLEAN;
+Select BOOLEAN
+4
+5000
+24 - print declared as BOOLEAN
+print BOOLEAN;
+Select BOOLEAN
+9
+5000
+25 - call declared as BOOLEAN
+call BOOLEAN;
+Select BOOLEAN
+1
+5000
+26 - while declared as BOOLEAN
+while BOOLEAN;
+Select BOOLEAN
+2, 7
+5000
+27 - if declared as BOOLEAN
+if BOOLEAN;
+Select BOOLEAN
+6
+5000
+28 - assign declared as BOOLEAN
+assign BOOLEAN;
+Select BOOLEAN
+3, 5, 8, 10
+5000
+29 - constant declared as BOOLEAN
+constant BOOLEAN;
+Select BOOLEAN
+none
+5000
+30 - procedure declared as BOOLEAN
+procedure BOOLEAN;
+Select BOOLEAN
+someProc, someOtherProc
+5000
+31 - procedure declared as BOOLEAN
+variable BOOLEAN;
+Select BOOLEAN
+someProc, x, y, z, abc, xyz, read, print, if, while
+5000
+32 - stmt declared as BOOLEAN, semantic error
+stmt BOOLEAN;
+Select BOOLEAN such that Modifies(1, BOOLEAN)
+none
+5000
+33 - read declared as BOOLEAN, semantic error
+read BOOLEAN;
+Select BOOLEAN pattern BOOLEAN (_, _)
+none
+5000
+34 - print declared as BOOLEAN, semantic error
+print BOOLEAN;
+Select BOOLEAN with "hello" = BOOLEAN.procName
+none
+5000
+35 - call declared as BOOLEAN, semantic error
+call BOOLEAN;
+Select BOOLEAN with BOOLEAN.varName = "xyz"
+none
+5000
+36 - while declared as BOOLEAN, semantic error
+while BOOLEAN;
+Select BOOLEAN pattern BOOLEAN (_, _, _)
+none
+5000
+37 - if declared as BOOLEAN, semantic error
+if BOOLEAN;
+Select BOOLEAN pattern BOOLEAN(_, _)
+none
+5000
+38 - assign declared as BOOLEAN, semantic error
+assign BOOLEAN;
+Select BOOLEAN such that Uses("BOOLEAN", BOOLEAN)
+none
+5000
+39 - constant declared as BOOLEAN, semantic error
+constant BOOLEAN;
+Select BOOLEAN such that Follows(BOOLEAN, _)
+none
+5000
+40 - procedure declared as BOOLEAN, semantic error
+procedure BOOLEAN;
+Select BOOLEAN with "abc" = BOOLEAN.varName
+none
+5000
+41 - procedure declared as BOOLEAN, semantic error
+variable BOOLEAN;
+Select BOOLEAN with Follows(BOOLEAN, _)
+none
+5000
+42 - 2-syn tuple, no clauses
+assign a; variable v;
+Select <a, v>
+3 someProc, 3 x, 3 y, 3 z, 3 abc, 3 xyz, 3 read, 3 print, 3 if, 3 while, 5 someProc, 5 x, 5 y, 5 z, 5 abc, 5 xyz, 5 read, 5 print, 5 if, 5 while, 8 someProc, 8 x, 8 y, 8 z, 8 abc, 8 xyz, 8 read, 8 print, 8 if, 8 while, 10 someProc, 10 x, 10 y, 10 z, 10 abc, 10 xyz, 10 read, 10 print, 10 if, 10 while
+5000
+43 - 2-syn tuple, true clause
+stmt s; print pn;
+Select <pn, s> with 1 = 1
+9 1, 9 2, 9 3, 9 4, 9 5, 9 6, 9 7, 9 8, 9 9, 9 10
+5000
+44 - 2-syn tuple, false clause
+constant c; read r;
+Select <c, r> with "abc" = "123"
+none
+5000
+45 - 2-syn tuple, filter left
+procedure p; if ifs;
+Select <p, ifs> such that Modifies(p, "abc")
+someProc 6
+5000
+46 - 2-syn tuple, filter right
+while w; call cl;
+Select <cl, w> such that Parent(_, w)
+1 7
+5000
+47 - 2-syn tuple, filter both
+stmt s1, s2;
+Select <s2, s1> such that Uses(s1, _) and Modifies(s2, _)
+1 1, 1 2, 1 3, 1 5, 1 6, 1 7, 1 8, 1 9, 1 10, 2 1, 2 2, 2 3, 2 5, 2 6, 2 7, 2 8, 2 9, 2 10, 3 1, 3 2, 3 3, 3 5, 3 6, 3 7, 3 8, 3 9, 3 10, 4 1, 4 2, 4 3, 4 5, 4 6, 4 7, 4 8, 4 9, 4 10, 5 1, 5 2, 5 3, 5 5, 5 6, 5 7, 5 8, 5 9, 5 10, 6 1, 6 2, 6 3, 6 5, 6 6, 6 7, 6 8, 6 9, 6 10, 7 1, 7 2, 7 3, 7 5, 7 6, 7 7, 7 8, 7 9, 7 10, 8 1, 8 2, 8 3, 8 5, 8 6, 8 7, 8 8, 8 9, 8 10, 10 1, 10 2, 10 3, 10 5, 10 6, 10 7, 10 8, 10 9, 10 10
+5000
+48 - 2-syn tuple, filter together
+assign a; variable v;
+Select <v, a> pattern a (v, _)
+x 3, y 5, read 8, print 10
+5000
+49 - Select BOOLEAN in tuple (invalid)
+
+Select <BOOLEAN>
+none
+5000
+50 - stmt declared as BOOLEAN in tuple
+stmt BOOLEAN;
+Select <BOOLEAN>
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+5000
+51 - read declared as BOOLEAN in tuple
+read BOOLEAN;
+Select <BOOLEAN>
+4
+5000
+52 - print declared as BOOLEAN in tuple
+print BOOLEAN;
+Select <BOOLEAN>
+9
+5000
+53 - call declared as BOOLEAN in tuple
+call BOOLEAN;
+Select <BOOLEAN>
+1
+5000
+54 - while declared as BOOLEAN in tuple
+while BOOLEAN;
+Select <BOOLEAN>
+2, 7
+5000
+55 - if declared as BOOLEAN in tuple
+if BOOLEAN;
+Select <BOOLEAN>
+6
+5000
+56 - assign declared as BOOLEAN in tuple
+assign BOOLEAN;
+Select <BOOLEAN>
+3, 5, 8, 10
+5000
+57 - constant declared as BOOLEAN in tuple
+constant BOOLEAN;
+Select <BOOLEAN>
+none
+5000
+58 - procedure declared as BOOLEAN in tuple
+procedure BOOLEAN;
+Select <BOOLEAN>
+someProc, someOtherProc
+5000
+59 - project attribute
+procedure p;
+Select <p.procName>
+someProc, someOtherProc
+5000
+60 - project attribute
+call c;
+Select <c.procName>
+someOtherProc
+5000
+61 - project attribute
+variable v;
+Select <v.varName>
+someProc, x, y, z, abc, if, while, xyz, read, print
+5000
+62 - project attribute
+read r;
+Select <r.varName>
+abc
+5000
+63 - project attribute
+print p;
+Select <p.varName>
+print
+5000
+64 - project attribute
+constant c;
+Select <c.value>
+none
+5000
+65 - project attribute
+stmt s;
+Select <s.stmt#>
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+5000
+66 - project attribute
+read r;
+Select <r.stmt#>
+4
+5000
+67 - project attribute
+print p;
+Select <p.stmt#>
+9
+5000
+68 - project attribute
+call c;
+Select <c.stmt#>
+1
+5000
+69 - project attribute
+while w;
+Select <w.stmt#>
+2, 7
+5000
+70 - project attribute
+if i;
+Select <i.stmt#>
+6
+5000
+71 - project attribute
+assign a;
+Select <a.stmt#>
+3, 5, 8, 10
+5000
+72 - project attributes
+procedure p1; call c2;
+Select <p1.procName, c2.procName>
+someProc someOtherProc, someOtherProc someOtherProc
+5000
+73 - project attributes
+variable v1; read r2;
+Select <v1.varName, r2.varName>
+someProc abc, x abc, y abc, z abc, if abc, while abc, abc abc, xyz abc, read abc, print abc
+5000
+74 - project attributes
+print p1; constant c2;
+Select <p1.varName, c2.value>
+none
+5000
+75 - project attributes
+stmt s1; read r2;
+Select <s1.stmt#, r2.stmt#>
+1 4, 2 4, 3 4, 4 4, 5 4, 6 4, 7 4, 8 4, 9 4, 10 4
+5000
+76 - project attributes
+print p1; call c2;
+Select <p1.stmt#, c2.stmt#>
+9 1
+5000
+77 - project attributes
+while w1; if i2;
+Select <w1.stmt#, i2.stmt#>
+2 6, 7 6
+5000
+78 - project attributes
+assign a1; procedure p2;
+Select <a1.stmt#, p2.procName>
+3 someProc, 3 someOtherProc, 5 someProc, 5 someOtherProc, 8 someProc, 8 someOtherProc, 10 someProc, 10 someOtherProc
+5000
