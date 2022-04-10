@@ -16,7 +16,7 @@ Select a pattern a (v, _) such that Uses(s, v)
 4 - explicit and
 stmt s;
 Select s such that Modifies(s, _) and Uses(s, _)
-4, 6, 7, 8, 10, 11, 12
+3, 4, 6, 7, 8, 10, 11, 12
 5000
 5 - with-cl
 read r; procedure p;
