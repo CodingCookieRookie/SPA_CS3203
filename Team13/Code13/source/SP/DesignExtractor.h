@@ -32,7 +32,7 @@ private:
 	void insertStmtFromProc();
 
 	/* Constructs and processes CFGs */
-	void processCFGs(ProgramNode* programNode);
+	void processCFG(ProgramNode* programNode);
 	void generateCFG(StmtLstNode* stmtLstNode);
 	void generateCFGFromStmt(StmtNode* currNode, StmtIndex currStmtIdx, StmtIndex nextStmtIdx);
 	void generateCFGfromIfStmt(StmtNode* currNode, StmtIndex currStmtIdx, StmtIndex nextStmtIdx);

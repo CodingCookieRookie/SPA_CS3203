@@ -410,11 +410,11 @@ public:
 
 		Assert::AreEqual(size_t(2), pkbGetter->getAllNameIdxEntityInfo(EntityType::VARIABLE).size());
 		Assert::AreEqual(size_t(3), pkbGetter->getAllConsts().size());
-		std::tuple<std::vector<Index>, std::vector<Index>> patternVarResult =
+		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> patternVarResult =
 			pkbGetter->getAssignStmtsFromExprPartialMatch(std::string(" x "));
 		Assert::AreEqual(size_t(1), std::get<0>(patternVarResult).size());
 
-		std::tuple<std::vector<Index>, std::vector<Index>> patternConstResult =
+		std::tuple<std::vector<StmtIndex>, std::vector<VarIndex>> patternConstResult =
 			pkbGetter->getAssignStmtsFromExprPartialMatch(std::string(" 1 "));
 		Assert::AreEqual(size_t(1), std::get<0>(patternConstResult).size());
 	}

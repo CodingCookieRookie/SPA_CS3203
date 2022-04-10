@@ -296,7 +296,7 @@ void DesignExtractor::insertNext() {
 	}
 }
 
-void DesignExtractor::processCFGs(ProgramNode* programNode) {
+void DesignExtractor::processCFG(ProgramNode* programNode) {
 	for (ProcedureNode* procedureNode : programNode->getProcedureNodes()) {
 		StmtLstNode* stmtLstNode = procedureNode->getStmtLstNode();
 		generateCFG(stmtLstNode);
@@ -321,6 +321,6 @@ void DesignExtractor::extract() {
 	populateDiffSynonymsRSInfo();
 	populateSameSynonymsRSInfo();
 
-	/* Construct CFGs and populates Next relationship */
-	processCFGs(ast.getRoot());
+	/* Populate CFG and Next relationship */
+	processCFG(ast.getRoot());
 }
