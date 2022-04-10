@@ -1,5 +1,7 @@
 #include "NextTInstruction.h"
 
+const int NextTInstruction::NEXT_T_DIFFICULTY = 10;
+
 NextTInstruction::NextTInstruction(PqlReference lhsRef, PqlReference rhsRef, NextTProcessor* nextTProcessor, PKBGetter* pkbGetter) :
 	RelationshipInstruction(lhsRef, rhsRef, nextTProcessor, pkbGetter) {}
 
@@ -122,5 +124,5 @@ EvaluatedTable NextTInstruction::helperHandleTwoWildcards() {
 }
 
 QueryScore NextTInstruction::getDifficultyScore() {
-	return Instruction::getDifficultyScore() + 10;
+	return Instruction::getDifficultyScore() + NEXT_T_DIFFICULTY;
 }

@@ -1,5 +1,7 @@
 #include "AffectsInstruction.h"
 
+const int AffectsInstruction::AFFECTS_DIFFICULTY = 10;
+
 AffectsInstruction::AffectsInstruction(PqlReference lhsRef, PqlReference rhsRef,
 	AffectsProcessor* affectsProcessor, PKBGetter* pkbGetter) :
 	RelationshipInstruction(lhsRef, rhsRef, affectsProcessor, pkbGetter) {}
@@ -110,5 +112,5 @@ EvaluatedTable AffectsInstruction::execute() {
 }
 
 QueryScore AffectsInstruction::getDifficultyScore() {
-	return Instruction::getDifficultyScore() + 10;
+	return Instruction::getDifficultyScore() + AFFECTS_DIFFICULTY;
 }

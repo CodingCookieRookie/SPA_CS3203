@@ -3,6 +3,8 @@
 #include "RelationshipInstruction.h"
 
 class NextTInstruction : public RelationshipInstruction {
+private:
+	static const int NEXT_T_DIFFICULTY;
 protected:
 	EvaluatedTable helperHandleTwoIntegers();
 	EvaluatedTable helperHandleOneInt(PqlReferenceType lhsRefType, PqlReferenceType rhsRefType);

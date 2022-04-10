@@ -5,6 +5,7 @@
 
 class AffectsInstruction : public RelationshipInstruction {
 private:
+	static const int AFFECTS_DIFFICULTY;
 	EvaluatedTable handleWildCardLeft(Table PQLmap,
 		PqlReference lhsRef, PqlReference rhsRef,
 		std::vector<Index> allStmts, std::vector<Index> varIndices);
