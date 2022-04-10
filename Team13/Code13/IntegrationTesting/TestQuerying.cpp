@@ -4,9 +4,9 @@
 #include <string>
 #include <algorithm>
 
-#include "../source/QPS/PQLEvaluator.h"
-#include "../source/QPS/PQLParser.h"
-#include "../source/QPS/PQLResultProjector.h"
+#include "../source/QPS/Evaluator/PQLEvaluator.h"
+#include "../source/QPS/Parser/PQLParser.h"
+#include "../source/QPS/ResultProjector/PQLResultProjector.h"
 #include "../source/PKB/PKBInserter.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;

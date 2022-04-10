@@ -4,7 +4,7 @@
 #include <unordered_set>
 
 #include "../Common/Types.h"
-#include "OnTheFlyRSProcessor.h"
+#include "Processors/OnTheFlyRSProcessor.h"
 
 enum class InstructionType {
 	GET_ALL, RELATIONSHIP, PATTERN

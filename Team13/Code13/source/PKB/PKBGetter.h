@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../PKB/PKB.h"
+#include "./PKB.h"
 
 class PKBGetter {
 private:

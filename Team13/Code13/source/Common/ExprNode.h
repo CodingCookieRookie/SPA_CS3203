@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "../Common/Types.h"
+#include "Types.h"
 
 class ExprNode {
 private:

@@ -9,14 +9,14 @@
 
 // include your other headers here
 #include "AbstractWrapper.h"
-#include "PKB/PKBGetter.h"
-#include "PKB/PKBInserter.h"
-#include "SP/ASTValidator.h"
-#include "SP/DesignExtractor.h"
-#include "SP/Parser.h"
-#include "QPS/PQLParser.h"
-#include "QPS/PQLEvaluator.h"
-#include "QPS/PQLResultProjector.h"
+#include "../../source/PKB/PKBGetter.h"
+#include "../../source/PKB/PKBInserter.h"
+#include "../../source/SP/ASTValidator.h"
+#include "../../source/SP/DesignExtractor.h"
+#include "../../source/SP/Parser.h"
+#include "../../source/QPS/Parser/PQLParser.h"
+#include "../../source/QPS/Evaluator/PQLEvaluator.h"
+#include "../../source/QPS/ResultProjector/PQLResultProjector.h"
 
 class TestWrapper : public AbstractWrapper {
 private:

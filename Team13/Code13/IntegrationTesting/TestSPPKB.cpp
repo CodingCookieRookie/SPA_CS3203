@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-#include "PKB/ExpressionProcessor.h"
+#include "PKB/Pattern/ExpressionProcessor.h"
 #include "PKB/PKBGetter.h"
 #include "PKB/PKBInserter.h"
 #include "SP/ASTValidator.h"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../Instruction.h"
+#include "../Instruction.h"
 #include "../../../Common/Types.h"
 
 class GetAllInstruction : public Instruction {
