@@ -1,5 +1,7 @@
 #include "ParsedQuery.h"
 
+const std::string ParsedQuery::BOOLEAN = "BOOLEAN";
+
 std::unordered_map<std::string, EntityType> ParsedQuery::generateDeclarationMap() {
 	std::unordered_map<std::string, EntityType> declarationMap;
 	for (const auto& [entityType, synonym] : declarations) {
@@ -18,7 +20,7 @@ std::unordered_set<std::string> ParsedQuery::getColumns(const std::unordered_map
 			/* Only case where this is valid - non-tuple select, synonym is "BOOLEAN"
 			and no synonym attributes are selected -> we are actually projecting BOOLEAN.
 			All other cases -> undeclared synonym, throw a validator error. */
-			if (!(!tupleSelect && synonym == "BOOLEAN" && refType == PqlReferenceType::SYNONYM)) {
+			if (!(!tupleSelect && synonym == BOOLEAN && refType == PqlReferenceType::SYNONYM)) {
 				throw QPSException(QPSException::VALIDATOR_ERROR);
 			}
 		} else {
@@ -35,7 +37,7 @@ std::vector<PqlReference> ParsedQuery::getAttributes(const std::unordered_map<st
 			/* Only case where this is valid - non-tuple select, synonym is "BOOLEAN"
 			and no synonym attributes are selected -> we are actually projecting BOOLEAN.
 			All other cases -> undeclared synonym, throw a validator error. */
-			if (!(!tupleSelect && synonym == "BOOLEAN" && refType == PqlReferenceType::SYNONYM)) {
+			if (!(!tupleSelect && synonym == BOOLEAN && refType == PqlReferenceType::SYNONYM)) {
 				throw QPSException(QPSException::VALIDATOR_ERROR);
 			}
 		} else {
@@ -209,7 +211,7 @@ std::vector<PqlReference> ParsedQuery::getAttributes() {
 		const auto& [refType, synonym] = pqlRef;
 
 		if (typeMap.find(synonym) == typeMap.end()) {
-			if (!(synonym == "BOOLEAN" && refType == PqlReferenceType::SYNONYM && !tupleSelect)) {
+			if (!(synonym == BOOLEAN && refType == PqlReferenceType::SYNONYM && !tupleSelect)) {
 				/* Only one corner case - if the "synonym" is BOOLEAN, selected as the synonym and not as an attribute,
 				and it is not selected in a tuple, then we treat it as a BOOLEAN projection.
 				All other cases are treated as semantically invalid queries. */

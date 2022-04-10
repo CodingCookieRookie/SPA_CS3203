@@ -14,6 +14,8 @@
 
 class ParsedQuery {
 private:
+	static const std::string BOOLEAN;
+
 	bool tupleSelect;
 	std::vector<PqlEntity> declarations;
 	std::vector<PqlReference> columns;
