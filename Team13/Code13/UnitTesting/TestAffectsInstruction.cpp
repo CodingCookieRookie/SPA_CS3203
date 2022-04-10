@@ -22,10 +22,6 @@ private:
 	CacheStorage* cacheStorage;
 	AffectsProcessor* affectsProcessor;
 
-	TEST_METHOD_CLEANUP(cleanUpTables) {
-		affectsProcessor->performCleanUp();
-	}
-
 	TEST_METHOD_INITIALIZE(init) {
 		cacheStorage = new CacheStorage();
 		affectsProcessor = new AffectsProcessor(cacheStorage);

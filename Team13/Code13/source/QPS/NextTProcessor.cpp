@@ -4,7 +4,9 @@ NextTProcessor::NextTProcessor(NextTCache* nextTCache) {
 	this->nextTCache = nextTCache;
 }
 
-NextTProcessor::~NextTProcessor() { nextTCache->performCleanUp(); }
+NextTProcessor::~NextTProcessor() {
+	delete nextTCache;
+}
 
 bool NextTProcessor::checkRsHoldsFromTraversal(StmtIndex leftIdx, StmtIndex rightIdx, PKBGetter* pkbGetter) {
 	std::unordered_set<StmtIndex> visited;
@@ -121,8 +123,4 @@ std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> NextTProcessor::getAl
 	}
 
 	return std::make_tuple(leftStmtIndices, rightStmtIndices);
-}
-
-void NextTProcessor::performCleanUp() {
-	nextTCache->performCleanUp();
 }

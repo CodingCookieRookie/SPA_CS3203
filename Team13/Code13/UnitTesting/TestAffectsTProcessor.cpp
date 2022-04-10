@@ -45,10 +45,6 @@ private:
 		pkbInserter = new PKBInserter(pkb);
 	}
 
-	TEST_METHOD_CLEANUP(cleanUpCalls) {
-		affectsTProcessor->performCleanUp();
-	}
-
 public:
 
 	void populateBasicAffectsTCase() {

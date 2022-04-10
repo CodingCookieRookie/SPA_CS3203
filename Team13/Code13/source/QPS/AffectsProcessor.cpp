@@ -8,7 +8,9 @@ AffectsProcessor::AffectsProcessor(AffectsCache* affectsCache) {
 	this->affectsCache = affectsCache;
 }
 
-AffectsProcessor::~AffectsProcessor() { affectsCache->performCleanUp(); }
+AffectsProcessor::~AffectsProcessor() {
+	delete affectsCache;
+}
 
 bool AffectsProcessor::isEarlyTerminationConditionFound(StmtIndex leftIdx, StmtIndex rightIdx, PKBGetter* pkbGetter) {
 	return pkbGetter->getTypeFromStmtIdx(leftIdx) != StatementType::ASSIGN_TYPE
@@ -150,7 +152,3 @@ std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> AffectsProcessor::get
 
 	return std::make_tuple(leftStmtIndices, rightStmtIndices);
 };
-
-void AffectsProcessor::performCleanUp() {
-	affectsCache->performCleanUp();
-}

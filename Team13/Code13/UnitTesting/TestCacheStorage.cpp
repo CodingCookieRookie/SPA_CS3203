@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-#include "../source/Common/Types.h"
 #include "../source/QPS/CacheStorage.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -17,10 +16,6 @@ private:
 
 	TEST_METHOD_INITIALIZE(init) {
 		cacheStorage = new CacheStorage();
-	}
-
-	TEST_METHOD_CLEANUP(cleanUpUsesS) {
-		cacheStorage->performCleanUp();
 	}
 
 public:

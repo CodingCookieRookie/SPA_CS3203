@@ -11,8 +11,6 @@ template<typename LeftIndexType, typename RightIndexType>
 class Relationship {
 protected:
 	BidirectionalTableTwoWaySet<LeftIndexType, RightIndexType> bidirectionalTable;
-	std::unordered_map<LeftIndexType, std::unordered_set<RightIndexType>> leftRightSynonymTable;
-	std::unordered_map<RightIndexType, std::unordered_set<LeftIndexType>> rightLeftSynonymTable;
 
 public:
 	Relationship();

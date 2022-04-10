@@ -51,10 +51,3 @@ std::vector<StmtIndex> CacheStorage::getFromRightArg(StmtIndex successor) {
 	}
 	return predecessors;
 };
-
-void CacheStorage::performCleanUp() {
-	predSucTable = {};
-	sucPredTable = {};
-	fullyComputedPredecessors = {};
-	fullyComputedSuccessors = {};
-};

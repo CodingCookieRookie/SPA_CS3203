@@ -22,5 +22,4 @@ public:
 	bool isSuccessorFullyComputed(StmtIndex predecessor);
 	std::vector<StmtIndex> getFromLeftArg(StmtIndex predecessor);
 	std::vector<StmtIndex> getFromRightArg(StmtIndex successors);
-	void performCleanUp();
 };

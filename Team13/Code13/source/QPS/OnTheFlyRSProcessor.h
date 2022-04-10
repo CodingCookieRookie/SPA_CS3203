@@ -21,5 +21,4 @@ public:
 	virtual std::vector<StmtIndex> getUsingLeftStmtIndex(StmtIndex leftIdx, PKBGetter* pkbGetter) = 0;
 	virtual std::vector<StmtIndex> getUsingRightStmtIndex(StmtIndex rightIdx, PKBGetter* pkbGetter) = 0;
 	virtual std::tuple<std::vector<StmtIndex>, std::vector<StmtIndex>> getAll(PKBGetter* pkbGetter) = 0;
-	virtual void performCleanUp() = 0;
 };

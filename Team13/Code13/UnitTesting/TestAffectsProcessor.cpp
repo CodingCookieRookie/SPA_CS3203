@@ -35,10 +35,6 @@ private:
 		pkbInserter = new PKBInserter(pkb);
 	}
 
-	TEST_METHOD_CLEANUP(cleanUpCalls) {
-		affectsProcessor->performCleanUp();
-	}
-
 public:
 
 	void populateCallsDoesNotModifyVar() {

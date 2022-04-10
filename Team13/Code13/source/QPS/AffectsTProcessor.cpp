@@ -6,8 +6,7 @@ AffectsTProcessor::AffectsTProcessor(AffectsTCache* affectsTCache, AffectsProces
 }
 
 AffectsTProcessor::~AffectsTProcessor() {
-	affectsTCache->performCleanUp();
-	affectsProcessor->performCleanUp();
+	delete affectsTCache;
 }
 
 bool AffectsTProcessor::checkRsHoldsFromTraversal(StmtIndex leftIdx, StmtIndex rightIdx, PKBGetter* pkbGetter) {
