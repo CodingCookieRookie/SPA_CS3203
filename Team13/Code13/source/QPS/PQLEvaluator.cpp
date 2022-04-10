@@ -186,23 +186,9 @@ EvaluatedTable PQLEvaluator::handleBoolean(EvaluatedTable& evaluatedTable) {
 	if (ParsedQuery::isClausePresent(parsedQuery)) {
 		return evaluatedTable;
 	} else {
-		/* No Clauses, existence of declared synonyms determine boolean result
-		=> populate declarations into table */
-		EvaluatedTable resultEvTable;
-		return PQLEvaluator::populateDeclarations(resultEvTable);
+		/* No Clauses, implicit true */
+		return EvaluatedTable(true);
 	}
-}
-
-EvaluatedTable& PQLEvaluator::populateDeclarations(EvaluatedTable& resultEvTable) {
-	std::unordered_map<std::string, EntityType> declarations = parsedQuery.getDeclarations();
-	for (const std::pair<std::string, EntityType>& synonym : declarations) {
-		//EntityType columnType = declarations.at(column);
-		ParsedGetAll getAllSynonym = ParsedGetAll(synonym.second, synonym.first);
-		Instruction* getAll = getAllSynonym.toInstruction(pkbGetter);
-		EvaluatedTable evTable = getAll->execute();
-		resultEvTable = resultEvTable.innerJoinMerge(evTable);
-	}
-	return resultEvTable;
 }
 
 EvaluatedTable PQLEvaluator::handleNonBoolean(EvaluatedTable& evaluatedTable) {

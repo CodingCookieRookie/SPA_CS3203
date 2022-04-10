@@ -41,8 +41,6 @@ private:
 
 	EvaluatedTable& fillInColumns(EvaluatedTable& resultEvTable, EvaluatedTable& evaluatedTable);
 
-	EvaluatedTable& populateDeclarations(EvaluatedTable& resultEvTable);
-
 	/* Helper methods for handling non-boolean projections, which are synonym and tuple projections */
 	EvaluatedTable handleNonBoolean(EvaluatedTable& evaluatedTable);
 
