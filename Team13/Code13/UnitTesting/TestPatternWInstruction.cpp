@@ -54,7 +54,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: w Values: \n";   // for this iteration we leave empty vectors still (does not affect end res)
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 	TEST_METHOD(execute_lhsSynonym) {
 		// while(v, "_")
@@ -82,7 +82,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 		std::string expected = "Table String: size: 2\nSynonym: v Values: 2 \nSynonym: w Values: 2 \n";   // for this iteration we leave empty vectors still (does not affect end res)
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsIdent) {
@@ -111,7 +111,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: w Values: 2 \n";   // for this iteration we leave empty vectors still (does not affect end res)
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsWildCard) {
@@ -140,7 +140,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: w Values: 2 \n";   // for this iteration we leave empty vectors still (does not affect end res)
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 	};
 }

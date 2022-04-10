@@ -1,9 +1,9 @@
-#include "ParentStarInstruction.h"
+#include "ParentTInstruction.h"
 
-ParentStarInstruction::ParentStarInstruction(PqlReference lhsRef, PqlReference rhsRef, PKBGetter* pkbGetter) :
+ParentTInstruction::ParentTInstruction(PqlReference lhsRef, PqlReference rhsRef, PKBGetter* pkbGetter) :
 	RelationshipInstruction(lhsRef, rhsRef, pkbGetter) {}
 
-EvaluatedTable ParentStarInstruction::execute() {
+EvaluatedTable ParentTInstruction::execute() {
 	EvaluatedTable resultTable;
 	// e.g Parent*(6, 7)
 	if (lhsRef.first == PqlReferenceType::INTEGER && rhsRef.first == PqlReferenceType::INTEGER) {
@@ -38,7 +38,7 @@ EvaluatedTable ParentStarInstruction::execute() {
 	return resultTable;
 }
 
-EvaluatedTable ParentStarInstruction::helperHandleTwoIntegers() {
+EvaluatedTable ParentTInstruction::helperHandleTwoIntegers() {
 	StmtIndex lhsStmtIndex, rhsStmtIndex;
 	bool evResult = false;
 	int lhsRefValue = stoi(lhsRef.second);
@@ -51,7 +51,7 @@ EvaluatedTable ParentStarInstruction::helperHandleTwoIntegers() {
 	return EvaluatedTable(evResult);
 }
 
-EvaluatedTable ParentStarInstruction::helperHandleOneInt(PqlReferenceType lhsRefType, PqlReferenceType rhsRefType) {
+EvaluatedTable ParentTInstruction::helperHandleOneInt(PqlReferenceType lhsRefType, PqlReferenceType rhsRefType) {
 	std::vector<StmtIndex> stmts = pkbGetter->getAllStmts();
 	std::vector<int> results;
 	int oneInt;
@@ -87,7 +87,7 @@ EvaluatedTable ParentStarInstruction::helperHandleOneInt(PqlReferenceType lhsRef
 	return EvaluatedTable(PQLmap);
 }
 
-EvaluatedTable ParentStarInstruction::helperHandleTwoStmtsMaybeWildcard() {
+EvaluatedTable ParentTInstruction::helperHandleTwoStmtsMaybeWildcard() {
 	std::tuple<std::vector<int>, std::vector<int>> results;
 	/* e.g. {1, 2}, {2, 3}, {3, 6} */
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
@@ -106,7 +106,7 @@ EvaluatedTable ParentStarInstruction::helperHandleTwoStmtsMaybeWildcard() {
 	return EvaluatedTable(PQLmap);
 }
 
-EvaluatedTable ParentStarInstruction::helperHandleTwoWildcards() {
+EvaluatedTable ParentTInstruction::helperHandleTwoWildcards() {
 	bool isEmptyTable = true;
 	isEmptyTable = std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::PARENT_T)).empty();
 	// No Parent* rs exists => isEmptyTable == true => EvTable.evResult == false (innerJoinMerge() can drop table)

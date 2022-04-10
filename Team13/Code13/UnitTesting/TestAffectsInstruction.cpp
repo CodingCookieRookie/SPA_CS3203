@@ -61,7 +61,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 		std::string expected = "Table String: size: 2\nSynonym: a1 Values: 2 \nSynonym: a2 Values: 3 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsSynonymRhsSynonym2) {
@@ -91,7 +91,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: a1 Values: \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsSynonymRhsSynonym3) {
@@ -126,7 +126,7 @@ public:
 		Assert::IsTrue(evTable.getEvResult());
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: a1 Values: 3 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsSynonymRhsInteger) {
@@ -156,7 +156,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: a1 Values: 2 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsSynonymRhsWildCard) {
@@ -186,7 +186,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: a1 Values: 2 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsWildCardRhsSynonym) {
@@ -216,7 +216,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: a1 Values: 3 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsWildCardRhsInteger) {
@@ -246,7 +246,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::IsTrue(evTable.getEvResult());
 		std::string expected = "Table String: size: 0\n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsWildCardRhsWildCard) {
@@ -276,7 +276,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(true, evTable.getEvResult());
 		std::string expected = "Table String: size: 0\n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 	};
 }

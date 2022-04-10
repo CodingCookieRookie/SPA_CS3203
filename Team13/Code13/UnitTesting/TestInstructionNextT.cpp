@@ -11,7 +11,7 @@
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting {
-	TEST_CLASS(TestNextStarInstructions) {
+	TEST_CLASS(TestNextTInstructions) {
 private:
 	PKB* pkb;
 	PKBGetter* pkbGetter;
@@ -27,13 +27,13 @@ private:
 
 public:
 
-	TEST_METHOD(executeNextStarInstruction_twoConstants_evaluatedTableFormed) {
+	TEST_METHOD(executeNextTInstruction_twoConstants_evaluatedTableFormed) {
 		// 1. Setup:
 		// Next (1, 2) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "1");
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "2");
-		Instruction* instruction = new NextStarInstruction(lhsRef, rhsRef, nextTProcessor, pkbGetter);
+		Instruction* instruction = new NextTInstruction(lhsRef, rhsRef, nextTProcessor, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{};
 		std::unordered_set<std::string> synonyms = instruction->getSynonyms();
@@ -52,13 +52,13 @@ public:
 		Assert::AreEqual(true, evTable.getEvResult());
 	}
 
-	TEST_METHOD(executeNextStarInstruction_lhsConstRhsStmt_evaluatedTableFormed) {
+	TEST_METHOD(executeNextTInstruction_lhsConstRhsStmt_evaluatedTableFormed) {
 		// 1. Setup:
 		// Next(1, s2) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s2");
-		Instruction* instruction = new NextStarInstruction(lhsRef, rhsRef, nextTProcessor, pkbGetter);
+		Instruction* instruction = new NextTInstruction(lhsRef, rhsRef, nextTProcessor, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "s2" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -90,13 +90,13 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 	}
 
-	TEST_METHOD(executeNextStarInstruction_lhsStmtRhsConst_evaluatedTableFormed) {
+	TEST_METHOD(executeNextTInstruction_lhsStmtRhsConst_evaluatedTableFormed) {
 		// 1. Setup:
 		// Next(s1, 2) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "2");
-		Instruction* instruction = new NextStarInstruction(lhsRef, rhsRef, nextTProcessor, pkbGetter);
+		Instruction* instruction = new NextTInstruction(lhsRef, rhsRef, nextTProcessor, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "s1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -128,13 +128,13 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 	}
 
-	TEST_METHOD(executeNextStarInstruction_twoStmts_evaluatedTableFormed) {
+	TEST_METHOD(executeNextTInstruction_twoStmts_evaluatedTableFormed) {
 		// 1. Setup:
 		// Next(s1, s2) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s2");
-		Instruction* instruction = new NextStarInstruction(lhsRef, rhsRef, nextTProcessor, pkbGetter);
+		Instruction* instruction = new NextTInstruction(lhsRef, rhsRef, nextTProcessor, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "s1", "s2" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -175,13 +175,13 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 	}
 
-	TEST_METHOD(executeNextStarInstruction_twoStmtsSameSyn_evaluatedTableFormed) {
+	TEST_METHOD(executeNextTInstruction_twoStmtsSameSyn_evaluatedTableFormed) {
 		// 1. Setup:
 		// Next(s1, s1) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
-		Instruction* instruction = new NextStarInstruction(lhsRef, rhsRef, nextTProcessor, pkbGetter);
+		Instruction* instruction = new NextTInstruction(lhsRef, rhsRef, nextTProcessor, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "s1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -220,13 +220,13 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 	}
 
-	TEST_METHOD(executeNextStarInstruction_lhsStmtRhsWildcardStress_evaluatedTableFormed) {
+	TEST_METHOD(executeNextTInstruction_lhsStmtRhsWildcardStress_evaluatedTableFormed) {
 		// 1. Setup:
 		// Next(s1, _) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
-		Instruction* instruction = new NextStarInstruction(lhsRef, rhsRef, nextTProcessor, pkbGetter);
+		Instruction* instruction = new NextTInstruction(lhsRef, rhsRef, nextTProcessor, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "s1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -275,13 +275,13 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 	}
 
-	TEST_METHOD(executeNextStarInstruction_lhsWildcardRhsConst_evaluatedTableFormed) {
+	TEST_METHOD(executeNextTInstruction_lhsWildcardRhsConst_evaluatedTableFormed) {
 		// 1. Setup:
 		// Next(_, 3) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "3");
-		Instruction* instruction = new NextStarInstruction(lhsRef, rhsRef, nextTProcessor, pkbGetter);
+		Instruction* instruction = new NextTInstruction(lhsRef, rhsRef, nextTProcessor, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{};
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -315,13 +315,13 @@ public:
 		Assert::AreEqual(true, actualEvResult); // there exists some statement whose Next is 3
 	}
 
-	TEST_METHOD(executeNextStarInstruction_lhsWildcardRhsConstStress_evaluatedTableFormed) {
+	TEST_METHOD(executeNextTInstruction_lhsWildcardRhsConstStress_evaluatedTableFormed) {
 		// 1. Setup:
 		// Next(_, 28) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "28");
-		Instruction* instruction = new NextStarInstruction(lhsRef, rhsRef, nextTProcessor, pkbGetter);
+		Instruction* instruction = new NextTInstruction(lhsRef, rhsRef, nextTProcessor, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{};
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -355,13 +355,13 @@ public:
 		Assert::AreEqual(true, actualEvResult); // there exists a statment whose Next is 28
 	}
 
-	TEST_METHOD(executeNextStarInstruction_twoWildcards_evaluatedTableFormed) {
+	TEST_METHOD(executeNextTInstruction_twoWildcards_evaluatedTableFormed) {
 		// 1. Setup:
 		// Next(_, _) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
-		Instruction* instruction = new NextStarInstruction(lhsRef, rhsRef, nextTProcessor, pkbGetter);
+		Instruction* instruction = new NextTInstruction(lhsRef, rhsRef, nextTProcessor, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{};
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);

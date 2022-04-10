@@ -1,9 +1,9 @@
-#include "CallsStarInstruction.h"
+#include "CallsTInstruction.h"
 
-CallsStarInstruction::CallsStarInstruction(PqlReference lhsRef, PqlReference rhsRef, PKBGetter* pkbGetter) :
+CallsTInstruction::CallsTInstruction(PqlReference lhsRef, PqlReference rhsRef, PKBGetter* pkbGetter) :
 	RelationshipInstruction(lhsRef, rhsRef, pkbGetter) {}
 
-EvaluatedTable CallsStarInstruction::execute() {
+EvaluatedTable CallsTInstruction::execute() {
 	EvaluatedTable resultTable;
 	/* e.g Calls/Calls*("first", "second") */
 	if (lhsRef.first == PqlReferenceType::IDENT && rhsRef.first == PqlReferenceType::IDENT) {
@@ -36,7 +36,7 @@ EvaluatedTable CallsStarInstruction::execute() {
 	return resultTable;
 }
 
-EvaluatedTable CallsStarInstruction::helperHandleTwoIdents() {
+EvaluatedTable CallsTInstruction::helperHandleTwoIdents() {
 	ProcIndex lhsProcIndex, rhsProcIndex;
 	bool evResult = false;
 	if (pkbGetter->containsNameIdxEntity(EntityType::PROCEDURE, lhsRef.second) &&
@@ -48,7 +48,7 @@ EvaluatedTable CallsStarInstruction::helperHandleTwoIdents() {
 	return EvaluatedTable(evResult); /* e.g evResult == true, if "first" calls "second" */
 }
 
-EvaluatedTable CallsStarInstruction::helperHandleOneIdent(PqlReferenceType lhsRefType, PqlReferenceType rhsRefType) {
+EvaluatedTable CallsTInstruction::helperHandleOneIdent(PqlReferenceType lhsRefType, PqlReferenceType rhsRefType) {
 	std::vector<ProcIndex> procs = pkbGetter->getAllNameIdxEntityInfo(EntityType::PROCEDURE);
 	std::vector<int> results;
 	std::string oneIdent;
@@ -84,7 +84,7 @@ EvaluatedTable CallsStarInstruction::helperHandleOneIdent(PqlReferenceType lhsRe
 	return EvaluatedTable(PQLmap);
 }
 
-EvaluatedTable CallsStarInstruction::helperHandleTwoProcMaybeWildcard() {
+EvaluatedTable CallsTInstruction::helperHandleTwoProcMaybeWildcard() {
 	/* Assumption: Different synonym names(i.e. Calls(p, q), not Calls(p, p)) */
 	std::tuple<std::vector<int>, std::vector<int>> results;
 	results = pkbGetter->getRSAllInfo(RelationshipType::CALLS_T);
@@ -106,7 +106,7 @@ EvaluatedTable CallsStarInstruction::helperHandleTwoProcMaybeWildcard() {
 	return EvaluatedTable(PQLmap);
 }
 
-EvaluatedTable CallsStarInstruction::helperHandleTwoWildcards() {
+EvaluatedTable CallsTInstruction::helperHandleTwoWildcards() {
 	bool isEmptyTable = true;
 	if (lhsRef.first == PqlReferenceType::WILDCARD && rhsRef.first == PqlReferenceType::WILDCARD) {
 		isEmptyTable = std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::CALLS_T)).empty();

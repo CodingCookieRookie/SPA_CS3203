@@ -86,24 +86,6 @@ public:
 		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIndex2, varRead);	// print read
 
 		StmtIndex stmtIndex3 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
-		/*pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIndex3, varRead);
-		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIndex3, varProc1);
-		pkbInserter->insertConst(2);*/
-
-		/*ProcIndex procIndex = pkbInserter->insertNameIdxEntity(EntityType::PROCEDURE, "proc1");
-		StmtIndex stmtIndex1 = pkbInserter->insertStmt(StatementType::READ_TYPE);
-		VarIndex varProc1 = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "proc1");
-		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIndex1, varProc1);
-		pkbInserter->insertStmtByName(stmtIndex1, StatementType::READ_TYPE, std::string("proc1"));
-		StmtIndex stmtIndex2 = pkbInserter->insertStmt(StatementType::PRINT_TYPE);
-		VarIndex varRead = pkbInserter->insertNameIdxEntity(EntityType::VARIABLE, "read");
-		pkbInserter->insertStmtByName(stmtIndex2, StatementType::PRINT_TYPE, std::string("read"));
-		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIndex2, varRead);
-		StmtIndex stmtIndex3 = pkbInserter->insertStmt(StatementType::ASSIGN_TYPE);
-		pkbInserter->insertRSInfo(RelationshipType::MODIFIES_S, stmtIndex3, varRead);
-		pkbInserter->insertRSInfo(RelationshipType::USES_S, stmtIndex3, varProc1);
-		pkbInserter->insertConst(2);*/
-
 		/* 1. Setup:
 		* Clause: with print.varName = "read"
 		*/

@@ -30,7 +30,6 @@ class EvaluatedTable {
 private:
 	std::unordered_map<std::string, std::vector<int>> table;
 	bool evResult;
-
 	void removeDuplicates();
 	EvaluatedTable hashJoin(EvaluatedTable& otherTable,
 		std::unordered_set<std::string>& commonEntities);
@@ -87,7 +86,7 @@ public:
 	EvaluatedTable project(const std::unordered_set<std::string>& columns);
 
 	/* Mentions all the relevant fields of the EvalautedTable */
-	std::string getTableString() {
+	std::string toString() {
 		std::map<std::string, std::vector<int>> ordered(table.begin(), table.end());
 		std::string res = "Table String: size: " + std::to_string(ordered.size()) + "\n";
 		for (auto& it : ordered) {

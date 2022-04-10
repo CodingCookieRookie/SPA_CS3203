@@ -48,7 +48,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 		std::string expected = "Table String: size: 2\nSynonym: a1 Values: 2 \nSynonym: v Values: 2 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsSynonymRhsIdentStmt) {
@@ -73,7 +73,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: a1 Values: 2 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsSynonymRhsWildCardStmt) {
@@ -99,7 +99,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(2), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: a1 Values: 2 2 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsConstRhsSynonym_EvTableTrue) {
@@ -125,7 +125,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(2), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: a1 Values: 2 3 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsConstRhsSynonym_EvTableFalse) {
@@ -149,7 +149,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: a1 Values: \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsConstRhsSynonym_ConstOutOfBoundsEvTableFalse) {
@@ -176,7 +176,7 @@ public:
 		Assert::AreEqual(false, evTable.getEvResult());
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
 		std::string expected = "Table String: size: 0\n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsConstRhsSynonym_VarOutOfBoundsEvTableFalse) {
@@ -203,7 +203,7 @@ public:
 		Assert::AreEqual(false, evTable.getEvResult());
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
 		std::string expected = "Table String: size: 0\n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsConstRhsWildcard_EvTableTrue) {
@@ -230,7 +230,7 @@ public:
 		Assert::AreEqual(true, evTable.getEvResult());
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
 		std::string expected = "Table String: size: 0\n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsConstRhsWildcard_EvTableFalse) {
@@ -255,7 +255,7 @@ public:
 		Assert::AreEqual(false, evTable.getEvResult());
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
 		std::string expected = "Table String: size: 0\n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 	};
 }

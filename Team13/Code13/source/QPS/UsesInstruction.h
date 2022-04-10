@@ -1,6 +1,6 @@
 #pragma once
 
-#include "RelationShipInstruction.h"
+#include "RelationshipInstruction.h"
 
 class UsesInstruction : public RelationshipInstruction {
 protected:
@@ -21,4 +21,3 @@ public:
 	UsesPInstruction(PqlReference lhsRef, PqlReference rhsRef, PKBGetter* pkbGetter) : UsesInstruction(lhsRef, rhsRef, pkbGetter) {};
 	EvaluatedTable execute() override;
 };
-#pragma once

@@ -21,12 +21,12 @@ public:
 		Assert::AreEqual(size_t(1), attributes.size());
 		Assert::IsTrue(std::any_of(attributes.begin(), attributes.end(), [](PqlReference pqlRef) {
 			return pqlRef == PqlReference(PqlReferenceType::SYNONYM, "s");
-		}));
+			}));
 	}
 
 	TEST_METHOD(parseQuery_repeatDeclaration_exceptionThrown) {
 		std::string queryRepeat = "stmt s; if s; Select s";
-		
+
 		auto wrapperFuncRepeat = [&queryRepeat, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryRepeat);
 			pq.getClauseInstructions(processors, pkbGetter);
@@ -35,7 +35,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_modifiesFirstArgNonStmtSynonym_exceptionThrown) {
-		
 		std::string queryVar = "stmt s; variable v; Select s such that Modifies(v, _)";
 		auto wrapperVar = [&queryVar, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryVar);
@@ -52,7 +51,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_modifiesFirstArgWildcard_exceptionThrown) {
-		
 		std::string queryModifiesWildcard = "stmt s; variable v; Select s such that Modifies(_, v)";
 		auto wrapperModifiesWildcard = [&queryModifiesWildcard, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryModifiesWildcard);
@@ -62,7 +60,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_modifiesSecondArgSynonym_exceptionThrown) {
-		
 		std::string queryModifiesStmtRef = "stmt s; if ifs; Select s such that Modifies(if, s)";
 		auto wrapperModifiesStmtRef = [&queryModifiesStmtRef, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryModifiesStmtRef);
@@ -72,7 +69,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_modifiesSecondArgStmtNumber_exceptionThrown) {
-		
 		std::string queryModifiesStmtRef = "print pn; variable v; Select pn such that Modifies(pn, 1)";
 		auto wrapperModifiesStmtRef = [&queryModifiesStmtRef, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryModifiesStmtRef);
@@ -82,7 +78,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_usesFirstArgNonStmtSynonym_exceptionThrown) {
-		
 		std::string queryVar = "stmt s; variable v; Select s such that Uses(v, _)";
 		auto wrapperVar = [&queryVar, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryVar);
@@ -99,7 +94,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_usesFirstArgWildcard_exceptionThrown) {
-		
 		std::string queryUsesWildcard = "stmt s; variable v; Select s such that Uses(_, _)";
 		auto wrapperUsesWildcard = [&queryUsesWildcard, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryUsesWildcard);
@@ -109,7 +103,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_usesSecondArgSynonym_exceptionThrown) {
-		
 		std::string queryUsesStmtRef = "while w; call c; Select w such that Uses(c, w)";
 		auto wrapperUsesStmtRef = [&queryUsesStmtRef, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryUsesStmtRef);
@@ -119,7 +112,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_usesSecondArgStmtNumber_exceptionThrown) {
-		
 		std::string queryUsesStmtRef = "assign a; variable v; Select a such that Uses(a, 1)";
 		auto wrapperUsesStmtRef = [&queryUsesStmtRef, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryUsesStmtRef);
@@ -129,7 +121,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_followsFirstArgNonStmtSynonym_exceptionThrown) {
-		
 		std::string queryFollowsVariable = "assign a; variable v; Select a such that Follows(v, a)";
 		auto wrapperFollowsVariable = [&queryFollowsVariable, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryFollowsVariable);
@@ -160,7 +151,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_followsSecondArgNonStmtSynonym_exceptionThrown) {
-		
 		std::string queryFollowsVariable = "assign a; variable v; Select a such that Follows(a, v)";
 		auto wrapperFollowsVariable = [&queryFollowsVariable, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryFollowsVariable);
@@ -191,7 +181,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_followsTFirstArgNonStmtSynonym_exceptionThrown) {
-		
 		std::string queryFollowsVariable = "assign a; variable v; Select a such that Follows*(v, a)";
 		auto wrapperFollowsVariable = [&queryFollowsVariable, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryFollowsVariable);
@@ -222,7 +211,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_followsTSecondArgNonStmtSynonym_exceptionThrown) {
-		
 		std::string queryFollowsVariable = "assign a; variable v; Select a such that Follows*(a, v)";
 		auto wrapperFollowsVariable = [&queryFollowsVariable, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryFollowsVariable);
@@ -253,7 +241,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_parentFirstArgNonStmtSynonym_exceptionThrown) {
-		
 		std::string queryParentVariable = "assign a; variable v; Select a such that Parent(v, a)";
 		auto wrapperParentVariable = [&queryParentVariable, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryParentVariable);
@@ -284,7 +271,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_parentSecondArgNonStmtSynonym_exceptionThrown) {
-		
 		std::string queryParentVariable = "assign a; variable v; Select a such that Parent(a, v)";
 		auto wrapperParentVariable = [&queryParentVariable, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryParentVariable);
@@ -315,7 +301,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_parentTFirstArgNonStmtSynonym_exceptionThrown) {
-		
 		std::string queryParentVariable = "assign a; variable v; Select a such that Parent*(v, a)";
 		auto wrapperParentVariable = [&queryParentVariable, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryParentVariable);
@@ -346,7 +331,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_parentTSecondArgNonStmtSynonym_exceptionThrown) {
-		
 		std::string queryParentVariable = "assign a; variable v; Select a such that Parent*(a, v)";
 		auto wrapperParentVariable = [&queryParentVariable, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryParentVariable);
@@ -377,7 +361,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_patternSynAssignInvalid_exceptionThrown) {
-		
 		std::string queryVariable = "assign a; variable v; Select a pattern v(_, _)";
 		auto wrapperVariable = [&queryVariable, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryVariable);
@@ -394,7 +377,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_patternEntRefInvalid_exceptionThrown) {
-		
 		std::string queryAssign = "assign a; variable v; Select a pattern a(a, _)";
 		auto wrapperAssign = [&queryAssign, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryAssign);
@@ -418,7 +400,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_syntaxError_exceptionThrown) {
-
 		/* No synonym Selected */
 		std::string queryMissingSelect = "stmt s; if ifs; Select";
 		auto wrapperFuncMissingSelect = [&queryMissingSelect] { PQLParser::parseQuery(queryMissingSelect); };
@@ -431,7 +412,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_usesClause_suchThatExtracted) {
-		
 		std::string query = "stmt s; variable v; Select s such that Uses(s, v)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -462,7 +442,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_modifiesClauseVarName_varNameExtracted) {
-		
 		std::string query = "stmt s; variable v; Select s such that Modifies(s, \"x\")";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -475,7 +454,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_patternClause_patternExtracted) {
-		
 		std::string query = "assign a; Select a pattern a(_, _)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -486,7 +464,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_patternClauseSynonym_synonymExtracted) {
-		
 		std::string query = "assign a; variable v; Select a pattern a(v, _)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -497,7 +474,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_patternClauseVarExpr_varExtracted) {
-		
 		std::string query = "assign a; Select a pattern a(_, _\"x\"_)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -508,7 +484,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_suchThatAndPatternClauses_bothExtracted) {
-		
 		std::string query =
 			"assign a; stmt s;"
 			"Select a such that Parent*(s, a) pattern a(_, _\"x\"_)";
@@ -517,7 +492,7 @@ public:
 		Assert::AreEqual(size_t(4), instructions.size());
 
 		Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {
-			return typeid(*instruction) == typeid(ParentStarInstruction); }));
+			return typeid(*instruction) == typeid(ParentTInstruction); }));
 		Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {
 			return typeid(*instruction) == typeid(GetAllStmtInstruction); }));
 		Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {
@@ -527,7 +502,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_patternClausePartialExpr_exprExtracted) {
-		
 		std::string query = "assign a; Select a pattern a(_, _\"(x + 1)       * 2 / 3		-4 %\n (5)\"_)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -538,7 +512,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_patternClauseFullExpr_exprExtracted) {
-		
 		std::string query = "assign a; Select a pattern a(_, \"(x + 1)       * 2 / 3		-4 %\n (5)\")";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -613,7 +586,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_modifiesFirstArgIdent_correctlyParsedAsModifiesP) {
-		
 		std::string query = "stmt s; variable v; Select s such that Modifies(\"x\", _)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -624,7 +596,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_usesFirstArgIdent_correctlyParsedAsUsesP) {
-		
 		std::string query = "stmt s; variable v; Select s such that Uses(\"x\", _)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -635,7 +606,7 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_usesFirstArgProcSynonym_correctlyParsedAsModifiesP) {
-				std::string query = "stmt s; variable v; procedure p; Select s such that Modifies(p, _)";
+		std::string query = "stmt s; variable v; procedure p; Select s such that Modifies(p, _)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(2), instructions.size());
@@ -645,7 +616,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_usesFirstArgProcSynonym_correctlyParsedAsUsesP) {
-		
 		std::string query = "stmt s; variable v; procedure p; Select s such that Uses(p, _)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -656,7 +626,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_callsClauseTwoSynonyms_bothSynonymsExtracted) {
-		
 		std::string query = "procedure p1, p2; Select p1 such that Calls(p1, p2)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -669,7 +638,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_callsClauseTwoWildcards_bothWildcardsExtracted) {
-		
 		std::string query = "procedure p1, p2; Select p1 such that Calls(_, _)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -680,7 +648,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_callsClauseTwoIdent_bothIdentsExtracted) {
-		
 		std::string query = "procedure p1, p2; Select p1 such that Calls(\"proc1\", \"proc2\")";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -691,42 +658,38 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_callsTClauseTwoSynonyms_bothSynonymsExtracted) {
-		
 		std::string query = "procedure p1, p2; Select p1 such that Calls*(p1, p2)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(3), instructions.size());
 
 		Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {
-			return typeid(*instruction) == typeid(CallsStarInstruction); }));
+			return typeid(*instruction) == typeid(CallsTInstruction); }));
 		Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {
 			return typeid(*instruction) == typeid(GetAllProcInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_callsTClauseTwoWildcards_bothWildcardsExtracted) {
-		
 		std::string query = "procedure p1, p2; Select p1 such that Calls*(_, _)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size());
 
 		Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {
-			return typeid(*instruction) == typeid(CallsStarInstruction); }));
+			return typeid(*instruction) == typeid(CallsTInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_callsTClauseTwoIdent_bothIdentsExtracted) {
-		
 		std::string query = "procedure p1, p2; Select p1 such that Calls*(\"proc1\", \"proc2\")";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size());
 
 		Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {
-			return typeid(*instruction) == typeid(CallsStarInstruction); }));
+			return typeid(*instruction) == typeid(CallsTInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_nextClauseTwoSynonyms_bothSynonymsExtracted) {
-		
 		std::string query = "stmt s1, s2; Select s1 such that Next(s1, s2)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -739,7 +702,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_nextClauseTwoWildcards_bothWildcardsExtracted) {
-		
 		std::string query = "stmt s1, s2; Select s1 such that Next(_, _)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -750,7 +712,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_nextClauseTwoIntegers_bothStmtIndexesExtracted) {
-		
 		std::string query = "stmt s1, s2; Select s1 such that Next(1, 2)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -761,42 +722,38 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_nextTClauseTwoSynonyms_bothSynonymsExtracted) {
-		
 		std::string query = "stmt s1, s2; Select s1 such that Next*(s1, s2)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(3), instructions.size());
 
 		Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {
-			return typeid(*instruction) == typeid(NextStarInstruction); }));
+			return typeid(*instruction) == typeid(NextTInstruction); }));
 		Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {
 			return typeid(*instruction) == typeid(GetAllStmtInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_nextTClauseTwoWildcards_bothWildcardsExtracted) {
-		
 		std::string query = "stmt s1, s2; Select s1 such that Next*(_, _)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size());
 
 		Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {
-			return typeid(*instruction) == typeid(NextStarInstruction); }));
+			return typeid(*instruction) == typeid(NextTInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_nextTClauseTwoIntegers_bothStmtIndexesExtracted) {
-		
 		std::string query = "stmt s1, s2; Select s1 such that Next*(1, 2)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size());
 
 		Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {
-			return typeid(*instruction) == typeid(NextStarInstruction); }));
+			return typeid(*instruction) == typeid(NextTInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_affectsClauseTwoAssigns_bothSynonymsExtracted) {
-		
 		std::string query = "assign a1, a2; Select a1 such that Affects(a1, a2)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -809,7 +766,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_affectsClauseTwoStmts_bothSynonymsExtracted) {
-		
 		std::string query = "stmt s1, s2; Select s1 such that Affects(s1, s2)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -822,7 +778,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_affectsClauseTwoWildcards_bothWildcardsExtracted) {
-		
 		std::string query = "assign a1, a2; Select a1 such that Affects(_, _)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -833,7 +788,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_affectsClauseTwoIntegers_bothStmtIndexesExtracted) {
-		
 		std::string query = "assign a1, a2; Select a1 such that Affects(1, 2)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -844,55 +798,50 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_affectsTClauseTwoAssigns_bothSynonymsExtracted) {
-		
 		std::string query = "assign a1, a2; Select a1 such that Affects*(a1, a2)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(3), instructions.size());
 
 		Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {
-			return typeid(*instruction) == typeid(AffectsStarInstruction); }));
+			return typeid(*instruction) == typeid(AffectsTInstruction); }));
 		Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {
 			return typeid(*instruction) == typeid(GetAllAssignInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_affectsTClauseTwoStmts_bothSynonymsExtracted) {
-		
 		std::string query = "stmt s1, s2; Select s1 such that Affects*(s1, s2)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(3), instructions.size());
 
 		Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {
-			return typeid(*instruction) == typeid(AffectsStarInstruction); }));
+			return typeid(*instruction) == typeid(AffectsTInstruction); }));
 		Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {
 			return typeid(*instruction) == typeid(GetAllStmtInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_affectsTClauseTwoWildcards_bothWildcardsExtracted) {
-		
 		std::string query = "assign a1, a2; Select a1 such that Affects*(_, _)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size());
 
 		Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {
-			return typeid(*instruction) == typeid(AffectsStarInstruction); }));
+			return typeid(*instruction) == typeid(AffectsTInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_affectsTClauseTwoIntegers_bothStmtIndexesExtracted) {
-		
 		std::string query = "assign a1, a2; Select a1 such that Affects*(1, 2)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size());
 
 		Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {
-			return typeid(*instruction) == typeid(AffectsStarInstruction); }));
+			return typeid(*instruction) == typeid(AffectsTInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_callsFirstArgNonProcSynonym_exceptionThrown) {
-		
 		std::string queryCallsVariable = "procedure p; variable v; Select p such that Calls(v, p)";
 		auto wrapperCallsVariable = [&queryCallsVariable, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryCallsVariable);
@@ -965,7 +914,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_callsSecondArgNonProcSynonym_exceptionThrown) {
-		
 		std::string queryCallsVariable = "procedure p; variable v; Select p such that Calls(p, v)";
 		auto wrapperCallsVariable = [&queryCallsVariable, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryCallsVariable);
@@ -1038,7 +986,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_callsTFirstArgNonProcSynonym_exceptionThrown) {
-		
 		std::string queryCallsVariable = "procedure p; variable v; Select p such that Calls*(v, p)";
 		auto wrapperCallsVariable = [&queryCallsVariable, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryCallsVariable);
@@ -1111,7 +1058,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_callsTSecondArgNonProcSynonym_exceptionThrown) {
-		
 		std::string queryCallsVariable = "procedure p; variable v; Select p such that Calls*(p, v)";
 		auto wrapperCallsVariable = [&queryCallsVariable, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryCallsVariable);
@@ -1184,7 +1130,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_nextFirstArgNonStmtSynonym_exceptionThrown) {
-		
 		std::string queryNextVariable = "assign a; variable v; Select a such that Next(a, v)";
 		auto wrapperNextVariable = [&queryNextVariable, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryNextVariable);
@@ -1215,7 +1160,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_nextSecondArgNonStmtSynonym_exceptionThrown) {
-		
 		std::string queryNextVariable = "assign a; variable v; Select a such that Next(v, a)";
 		auto wrapperNextVariable = [&queryNextVariable, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryNextVariable);
@@ -1246,7 +1190,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_nextTFirstArgNonStmtSynonym_exceptionThrown) {
-		
 		std::string queryNextVariable = "assign a; variable v; Select a such that Next*(a, v)";
 		auto wrapperNextVariable = [&queryNextVariable, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryNextVariable);
@@ -1277,7 +1220,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_nextTSecondArgNonStmtSynonym_exceptionThrown) {
-		
 		std::string queryNextVariable = "assign a; variable v; Select a such that Next*(v, a)";
 		auto wrapperNextVariable = [&queryNextVariable, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryNextVariable);
@@ -1373,7 +1315,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_affectsSecondArgNonProcSynonym_exceptionThrown) {
-		
 		std::string queryAffectsVariable = "assign a; variable v; Select a such that Affects(a, v)";
 		auto wrapperAffectsVariable = [&queryAffectsVariable, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryAffectsVariable);
@@ -1439,7 +1380,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_affectsTFirstArgNonAssignSynonym_exceptionThrown) {
-		
 		std::string queryAffectsVariable = "assign a; variable v; Select a such that Affects*(v, a)";
 		auto wrapperAffectsVariable = [&queryAffectsVariable, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryAffectsVariable);
@@ -1505,7 +1445,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_affectsTSecondArgNonProcSynonym_exceptionThrown) {
-		
 		std::string queryAffectsVariable = "assign a; variable v; Select a such that Affects*(a, v)";
 		auto wrapperAffectsVariable = [&queryAffectsVariable, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryAffectsVariable);
@@ -1571,7 +1510,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_clausesSuchThatSuchThat_allClausesExtracted) {
-		
 		std::string query = "stmt s; variable v; Select s such that Uses(s, v) and Modifies(s, v)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -1584,7 +1522,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_clausesSuchThatPattern_allClausesExtracted) {
-		
 		std::string query = "assign a; stmt s; Select a such that Follows(s, s) pattern a(_, _)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -1597,20 +1534,18 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_clausesSuchThatWith_allClausesExtracted) {
-		
 		std::string query = "stmt s; constant c; Select s such that Follows*(s, s) with s.stmt# = c.value";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(4), instructions.size());
 
 		Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {
-			return typeid(*instruction) == typeid(FollowsStarInstruction); }));
+			return typeid(*instruction) == typeid(FollowsTInstruction); }));
 		Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {
 			return typeid(*instruction) == typeid(WithIntegerInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_clausesPatternSuchThat_allClausesExtracted) {
-		
 		std::string query = "if ifs; Select ifs pattern ifs(_, _, _) such that Parent(ifs, ifs)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -1623,7 +1558,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_clausesPatternPattern_allClausesExtracted) {
-		
 		std::string query = "assign a; while w; Select a pattern a(_, _) and w(_, _)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -1636,7 +1570,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_clausesPatternWith_allClausesExtracted) {
-		
 		std::string query = "if ifs; Select ifs pattern ifs(_, _, _) with ifs.stmt# = ifs.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -1649,7 +1582,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_clausesWithSuchThat_allClausesExtracted) {
-		
 		std::string query = "procedure p; Select p with \"proc\"= p.procName such that Calls(p, p)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -1662,7 +1594,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_clausesWithPattern_allClausesExtracted) {
-		
 		std::string query = "assign a; Select a with a.stmt# = a.stmt# pattern a(_, _)";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -1675,7 +1606,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_clausesWithWith_allClausesExtracted) {
-		
 		std::string query = "print pn; read r; procedure p; Select p with p.procName = pn.varName and r.stmt# = pn.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -1688,7 +1618,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_patternAInvalidNumOfArgs_exceptionThrown) {
-		
 		std::string query = "assign a; Select a pattern a(_, _, _)";
 		auto wrapperFunc = [&query, this] {
 			ParsedQuery pq = PQLParser::parseQuery(query);
@@ -1698,7 +1627,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_patternWInvalidNumOfArgs_exceptionThrown) {
-		
 		std::string query = "while w; Select w pattern w(_, _, _)";
 		auto wrapperFunc = [&query, this] {
 			ParsedQuery pq = PQLParser::parseQuery(query);
@@ -1708,17 +1636,15 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_patternIInvalidNumOfArgs_exceptionThrown) {
-		
 		std::string query = "if ifs; Select ifs pattern ifs(_, _)";
 		auto wrapperFunc = [&query, this] {
 			ParsedQuery pq = PQLParser::parseQuery(query);
-			pq.getClauseInstructions(processors, pkbGetter); 
+			pq.getClauseInstructions(processors, pkbGetter);
 		};
 		Assert::ExpectException<QPSException>(wrapperFunc);
 	}
 
 	TEST_METHOD(parseQuery_patternInvalidDesignEntities_exceptionThrown) {
-		
 		std::string queryStmtTwoArgs = "stmt s; Select s pattern s(_, _)";
 		auto wrapperStmtTwoArgs = [&queryStmtTwoArgs, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryStmtTwoArgs);
@@ -1750,7 +1676,7 @@ public:
 		std::string queryPrintTwoArgs = "print p; Select p pattern p(_, _)";
 		auto wrapperPrintTwoArgs = [&queryPrintTwoArgs, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryPrintTwoArgs);
-			pq.getClauseInstructions(processors, pkbGetter); 
+			pq.getClauseInstructions(processors, pkbGetter);
 		};
 		Assert::ExpectException<QPSException>(wrapperPrintTwoArgs);
 
@@ -1855,7 +1781,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withInvalidAttributes_exceptionThrown) {
-		
 		std::string queryStmtProcName = "stmt s; Select s with s.procName = s.procName";
 		auto wrapperStmtProcName = [&queryStmtProcName, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryStmtProcName);
@@ -2047,7 +1972,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withIncompatibleAttributes_exceptionThrown) {
-		
 		std::string queryConstantValueProcedureProcName = "constant c1; procedure p2; Select c1 with c1.value = p2.procName";
 		auto wrapperConstantValueProcedureProcName = [&queryConstantValueProcedureProcName, this] {
 			ParsedQuery pq = PQLParser::parseQuery(queryConstantValueProcedureProcName);
@@ -2610,7 +2534,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withConstantValueConstantValue_withExtracted) {
-		
 		std::string query = "constant c1; constant c2; Select c1 with c1.value = c2.value";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2621,7 +2544,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withConstantValueStmtStmt_withExtracted) {
-		
 		std::string query = "constant c1; stmt s2; Select c1 with c1.value = s2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2632,7 +2554,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withConstantValueReadStmt_withExtracted) {
-		
 		std::string query = "constant c1; read r2; Select c1 with c1.value = r2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2643,7 +2564,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withConstantValuePrintStmt_withExtracted) {
-		
 		std::string query = "constant c1; print p2; Select c1 with c1.value = p2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2654,7 +2574,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withConstantValueCallStmt_withExtracted) {
-		
 		std::string query = "constant c1; call c2; Select c1 with c1.value = c2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2665,7 +2584,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withConstantValueWhileStmt_withExtracted) {
-		
 		std::string query = "constant c1; while w2; Select c1 with c1.value = w2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2676,7 +2594,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withConstantValueIfStmt_withExtracted) {
-		
 		std::string query = "constant c1; if i2; Select c1 with c1.value = i2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2687,7 +2604,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withConstantValueAssignStmt_withExtracted) {
-		
 		std::string query = "constant c1; assign a2; Select c1 with c1.value = a2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2698,7 +2614,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withStmtStmtConstantValue_withExtracted) {
-		
 		std::string query = "stmt s1; constant c2; Select s1 with s1.stmt# = c2.value";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2709,7 +2624,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withStmtStmtStmtStmt_withExtracted) {
-		
 		std::string query = "stmt s1; stmt s2; Select s1 with s1.stmt# = s2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2720,7 +2634,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withStmtStmtReadStmt_withExtracted) {
-		
 		std::string query = "stmt s1; read r2; Select s1 with s1.stmt# = r2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2731,7 +2644,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withStmtStmtPrintStmt_withExtracted) {
-		
 		std::string query = "stmt s1; print p2; Select s1 with s1.stmt# = p2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2742,7 +2654,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withStmtStmtCallStmt_withExtracted) {
-		
 		std::string query = "stmt s1; call c2; Select s1 with s1.stmt# = c2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2753,7 +2664,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withStmtStmtWhileStmt_withExtracted) {
-		
 		std::string query = "stmt s1; while w2; Select s1 with s1.stmt# = w2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2764,7 +2674,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withStmtStmtIfStmt_withExtracted) {
-		
 		std::string query = "stmt s1; if i2; Select s1 with s1.stmt# = i2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2775,7 +2684,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withStmtStmtAssignStmt_withExtracted) {
-		
 		std::string query = "stmt s1; assign a2; Select s1 with s1.stmt# = a2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2786,7 +2694,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withReadStmtConstantValue_withExtracted) {
-		
 		std::string query = "read r1; constant c2; Select r1 with r1.stmt# = c2.value";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2796,7 +2703,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withReadStmtStmtStmt_withExtracted) {
-		
 		std::string query = "read r1; stmt s2; Select r1 with r1.stmt# = s2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2806,7 +2712,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withReadStmtReadStmt_withExtracted) {
-		
 		std::string query = "read r1; read r2; Select r1 with r1.stmt# = r2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2816,7 +2721,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withReadStmtPrintStmt_withExtracted) {
-		
 		std::string query = "read r1; print p2; Select r1 with r1.stmt# = p2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2826,7 +2730,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withReadStmtCallStmt_withExtracted) {
-		
 		std::string query = "read r1; call c2; Select r1 with r1.stmt# = c2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2836,7 +2739,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withReadStmtWhileStmt_withExtracted) {
-		
 		std::string query = "read r1; while w2; Select r1 with r1.stmt# = w2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2846,7 +2748,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withReadStmtIfStmt_withExtracted) {
-		
 		std::string query = "read r1; if i2; Select r1 with r1.stmt# = i2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2856,7 +2757,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withReadStmtAssignStmt_withExtracted) {
-		
 		std::string query = "read r1; assign a2; Select r1 with r1.stmt# = a2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2866,7 +2766,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withPrintStmtConstantValue_withExtracted) {
-		
 		std::string query = "print p1; constant c2; Select p1 with p1.stmt# = c2.value";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2876,7 +2775,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withPrintStmtStmtStmt_withExtracted) {
-		
 		std::string query = "print p1; stmt s2; Select p1 with p1.stmt# = s2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2886,7 +2784,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withPrintStmtReadStmt_withExtracted) {
-		
 		std::string query = "print p1; read r2; Select p1 with p1.stmt# = r2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2896,7 +2793,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withPrintStmtPrintStmt_withExtracted) {
-		
 		std::string query = "print p1; print p2; Select p1 with p1.stmt# = p2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2906,7 +2802,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withPrintStmtCallStmt_withExtracted) {
-		
 		std::string query = "print p1; call c2; Select p1 with p1.stmt# = c2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2916,7 +2811,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withPrintStmtWhileStmt_withExtracted) {
-		
 		std::string query = "print p1; while w2; Select p1 with p1.stmt# = w2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2926,7 +2820,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withPrintStmtIfStmt_withExtracted) {
-		
 		std::string query = "print p1; if i2; Select p1 with p1.stmt# = i2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2936,7 +2829,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withPrintStmtAssignStmt_withExtracted) {
-		
 		std::string query = "print p1; assign a2; Select p1 with p1.stmt# = a2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2946,7 +2838,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withCallStmtConstantValue_withExtracted) {
-		
 		std::string query = "call c1; constant c2; Select c1 with c1.stmt# = c2.value";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2956,7 +2847,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withCallStmtStmtStmt_withExtracted) {
-		
 		std::string query = "call c1; stmt s2; Select c1 with c1.stmt# = s2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2966,7 +2856,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withCallStmtReadStmt_withExtracted) {
-		
 		std::string query = "call c1; read r2; Select c1 with c1.stmt# = r2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2976,7 +2865,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withCallStmtPrintStmt_withExtracted) {
-		
 		std::string query = "call c1; print p2; Select c1 with c1.stmt# = p2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2986,7 +2874,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withCallStmtCallStmt_withExtracted) {
-		
 		std::string query = "call c1; call c2; Select c1 with c1.stmt# = c2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -2996,7 +2883,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withCallStmtWhileStmt_withExtracted) {
-		
 		std::string query = "call c1; while w2; Select c1 with c1.stmt# = w2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -3006,7 +2892,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withCallStmtIfStmt_withExtracted) {
-		
 		std::string query = "call c1; if i2; Select c1 with c1.stmt# = i2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -3016,7 +2901,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withCallStmtAssignStmt_withExtracted) {
-		
 		std::string query = "call c1; assign a2; Select c1 with c1.stmt# = a2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -3026,7 +2910,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withWhileStmtConstantValue_withExtracted) {
-		
 		std::string query = "while w1; constant c2; Select w1 with w1.stmt# = c2.value";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -3036,7 +2919,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withWhileStmtStmtStmt_withExtracted) {
-		
 		std::string query = "while w1; stmt s2; Select w1 with w1.stmt# = s2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -3046,7 +2928,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withWhileStmtReadStmt_withExtracted) {
-		
 		std::string query = "while w1; read r2; Select w1 with w1.stmt# = r2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -3056,7 +2937,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withWhileStmtPrintStmt_withExtracted) {
-		
 		std::string query = "while w1; print p2; Select w1 with w1.stmt# = p2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -3066,7 +2946,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withWhileStmtCallStmt_withExtracted) {
-		
 		std::string query = "while w1; call c2; Select w1 with w1.stmt# = c2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -3076,7 +2955,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withWhileStmtWhileStmt_withExtracted) {
-		
 		std::string query = "while w1; while w2; Select w1 with w1.stmt# = w2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -3086,7 +2964,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withWhileStmtIfStmt_withExtracted) {
-		
 		std::string query = "while w1; if i2; Select w1 with w1.stmt# = i2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -3096,7 +2973,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withWhileStmtAssignStmt_withExtracted) {
-		
 		std::string query = "while w1; assign a2; Select w1 with w1.stmt# = a2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -3106,7 +2982,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withIfStmtConstantValue_withExtracted) {
-		
 		std::string query = "if i1; constant c2; Select i1 with i1.stmt# = c2.value";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -3116,7 +2991,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withIfStmtStmtStmt_withExtracted) {
-		
 		std::string query = "if i1; stmt s2; Select i1 with i1.stmt# = s2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -3126,7 +3000,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withIfStmtReadStmt_withExtracted) {
-		
 		std::string query = "if i1; read r2; Select i1 with i1.stmt# = r2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -3136,7 +3009,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withIfStmtPrintStmt_withExtracted) {
-		
 		std::string query = "if i1; print p2; Select i1 with i1.stmt# = p2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -3146,7 +3018,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withIfStmtCallStmt_withExtracted) {
-		
 		std::string query = "if i1; call c2; Select i1 with i1.stmt# = c2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -3156,7 +3027,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withIfStmtWhileStmt_withExtracted) {
-		
 		std::string query = "if i1; while w2; Select i1 with i1.stmt# = w2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -3166,7 +3036,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withIfStmtIfStmt_withExtracted) {
-		
 		std::string query = "if i1; if i2; Select i1 with i1.stmt# = i2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -3176,7 +3045,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withIfStmtAssignStmt_withExtracted) {
-		
 		std::string query = "if i1; assign a2; Select i1 with i1.stmt# = a2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -3186,7 +3054,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withAssignStmtConstantValue_withExtracted) {
-		
 		std::string query = "assign a1; constant c2; Select a1 with a1.stmt# = c2.value";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -3196,7 +3063,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withAssignStmtStmtStmt_withExtracted) {
-		
 		std::string query = "assign a1; stmt s2; Select a1 with a1.stmt# = s2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -3206,7 +3072,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withAssignStmtReadStmt_withExtracted) {
-		
 		std::string query = "assign a1; read r2; Select a1 with a1.stmt# = r2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -3216,7 +3081,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withAssignStmtPrintStmt_withExtracted) {
-		
 		std::string query = "assign a1; print p2; Select a1 with a1.stmt# = p2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -3226,7 +3090,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withAssignStmtCallStmt_withExtracted) {
-		
 		std::string query = "assign a1; call c2; Select a1 with a1.stmt# = c2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -3236,7 +3099,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withAssignStmtWhileStmt_withExtracted) {
-		
 		std::string query = "assign a1; while w2; Select a1 with a1.stmt# = w2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -3246,7 +3108,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withAssignStmtIfStmt_withExtracted) {
-		
 		std::string query = "assign a1; if i2; Select a1 with a1.stmt# = i2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -3256,7 +3117,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withAssignStmtAssignStmt_withExtracted) {
-		
 		std::string query = "assign a1; assign a2; Select a1 with a1.stmt# = a2.stmt#";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
@@ -3266,175 +3126,175 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_withProcedureProcNameProcedureProcName_withExtracted) {
-				std::string query = "procedure p1; procedure p2; Select p1 with p1.procName = p2.procName";
+		std::string query = "procedure p1; procedure p2; Select p1 with p1.procName = p2.procName";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size()); Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {return typeid(*instruction) == typeid(WithStringInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_withProcedureProcNameCallProcName_withExtracted) {
-				std::string query = "procedure p1; call c2; Select p1 with p1.procName = c2.procName";
+		std::string query = "procedure p1; call c2; Select p1 with p1.procName = c2.procName";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size()); Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {return typeid(*instruction) == typeid(WithStringInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_withProcedureProcNameVariableVarName_withExtracted) {
-				std::string query = "procedure p1; variable v2; Select p1 with p1.procName = v2.varName";
+		std::string query = "procedure p1; variable v2; Select p1 with p1.procName = v2.varName";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size()); Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {return typeid(*instruction) == typeid(WithStringInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_withProcedureProcNameReadVarName_withExtracted) {
-				std::string query = "procedure p1; read r2; Select p1 with p1.procName = r2.varName";
+		std::string query = "procedure p1; read r2; Select p1 with p1.procName = r2.varName";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size()); Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {return typeid(*instruction) == typeid(WithStringInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_withProcedureProcNamePrintVarName_withExtracted) {
-				std::string query = "procedure p1; print p2; Select p1 with p1.procName = p2.varName";
+		std::string query = "procedure p1; print p2; Select p1 with p1.procName = p2.varName";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size()); Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {return typeid(*instruction) == typeid(WithStringInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_withCallProcNameProcedureProcName_withExtracted) {
-				std::string query = "call c1; procedure p2; Select c1 with c1.procName = p2.procName";
+		std::string query = "call c1; procedure p2; Select c1 with c1.procName = p2.procName";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size()); Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {return typeid(*instruction) == typeid(WithStringInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_withCallProcNameCallProcName_withExtracted) {
-				std::string query = "call c1; call c2; Select c1 with c1.procName = c2.procName";
+		std::string query = "call c1; call c2; Select c1 with c1.procName = c2.procName";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size()); Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {return typeid(*instruction) == typeid(WithStringInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_withCallProcNameVariableVarName_withExtracted) {
-				std::string query = "call c1; variable v2; Select c1 with c1.procName = v2.varName";
+		std::string query = "call c1; variable v2; Select c1 with c1.procName = v2.varName";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size()); Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {return typeid(*instruction) == typeid(WithStringInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_withCallProcNameReadVarName_withExtracted) {
-				std::string query = "call c1; read r2; Select c1 with c1.procName = r2.varName";
+		std::string query = "call c1; read r2; Select c1 with c1.procName = r2.varName";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size()); Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {return typeid(*instruction) == typeid(WithStringInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_withCallProcNamePrintVarName_withExtracted) {
-				std::string query = "call c1; print p2; Select c1 with c1.procName = p2.varName";
+		std::string query = "call c1; print p2; Select c1 with c1.procName = p2.varName";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size()); Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {return typeid(*instruction) == typeid(WithStringInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_withVariableVarNameProcedureProcName_withExtracted) {
-				std::string query = "variable v1; procedure p2; Select v1 with v1.varName = p2.procName";
+		std::string query = "variable v1; procedure p2; Select v1 with v1.varName = p2.procName";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size()); Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {return typeid(*instruction) == typeid(WithStringInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_withVariableVarNameCallProcName_withExtracted) {
-				std::string query = "variable v1; call c2; Select v1 with v1.varName = c2.procName";
+		std::string query = "variable v1; call c2; Select v1 with v1.varName = c2.procName";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size()); Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {return typeid(*instruction) == typeid(WithStringInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_withVariableVarNameVariableVarName_withExtracted) {
-				std::string query = "variable v1; variable v2; Select v1 with v1.varName = v2.varName";
+		std::string query = "variable v1; variable v2; Select v1 with v1.varName = v2.varName";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size()); Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {return typeid(*instruction) == typeid(WithStringInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_withVariableVarNameReadVarName_withExtracted) {
-				std::string query = "variable v1; read r2; Select v1 with v1.varName = r2.varName";
+		std::string query = "variable v1; read r2; Select v1 with v1.varName = r2.varName";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size()); Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {return typeid(*instruction) == typeid(WithStringInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_withVariableVarNamePrintVarName_withExtracted) {
-				std::string query = "variable v1; print p2; Select v1 with v1.varName = p2.varName";
+		std::string query = "variable v1; print p2; Select v1 with v1.varName = p2.varName";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size()); Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {return typeid(*instruction) == typeid(WithStringInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_withReadVarNameProcedureProcName_withExtracted) {
-				std::string query = "read r1; procedure p2; Select r1 with r1.varName = p2.procName";
+		std::string query = "read r1; procedure p2; Select r1 with r1.varName = p2.procName";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size()); Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {return typeid(*instruction) == typeid(WithStringInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_withReadVarNameCallProcName_withExtracted) {
-				std::string query = "read r1; call c2; Select r1 with r1.varName = c2.procName";
+		std::string query = "read r1; call c2; Select r1 with r1.varName = c2.procName";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size()); Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {return typeid(*instruction) == typeid(WithStringInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_withReadVarNameVariableVarName_withExtracted) {
-				std::string query = "read r1; variable v2; Select r1 with r1.varName = v2.varName";
+		std::string query = "read r1; variable v2; Select r1 with r1.varName = v2.varName";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size()); Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {return typeid(*instruction) == typeid(WithStringInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_withReadVarNameReadVarName_withExtracted) {
-				std::string query = "read r1; read r2; Select r1 with r1.varName = r2.varName";
+		std::string query = "read r1; read r2; Select r1 with r1.varName = r2.varName";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size()); Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {return typeid(*instruction) == typeid(WithStringInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_withReadVarNamePrintVarName_withExtracted) {
-				std::string query = "read r1; print p2; Select r1 with r1.varName = p2.varName";
+		std::string query = "read r1; print p2; Select r1 with r1.varName = p2.varName";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size()); Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {return typeid(*instruction) == typeid(WithStringInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_withPrintVarNameProcedureProcName_withExtracted) {
-				std::string query = "print p1; procedure p2; Select p1 with p1.varName = p2.procName";
+		std::string query = "print p1; procedure p2; Select p1 with p1.varName = p2.procName";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size()); Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {return typeid(*instruction) == typeid(WithStringInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_withPrintVarNameCallProcName_withExtracted) {
-				std::string query = "print p1; call c2; Select p1 with p1.varName = c2.procName";
+		std::string query = "print p1; call c2; Select p1 with p1.varName = c2.procName";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size()); Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {return typeid(*instruction) == typeid(WithStringInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_withPrintVarNameVariableVarName_withExtracted) {
-				std::string query = "print p1; variable v2; Select p1 with p1.varName = v2.varName";
+		std::string query = "print p1; variable v2; Select p1 with p1.varName = v2.varName";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size()); Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {return typeid(*instruction) == typeid(WithStringInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_withPrintVarNameReadVarName_withExtracted) {
-				std::string query = "print p1; read r2; Select p1 with p1.varName = r2.varName";
+		std::string query = "print p1; read r2; Select p1 with p1.varName = r2.varName";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size()); Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {return typeid(*instruction) == typeid(WithStringInstruction); }));
 	}
 
 	TEST_METHOD(parseQuery_withPrintVarNamePrintVarName_withExtracted) {
-				std::string query = "print p1; print p2; Select p1 with p1.varName = p2.varName";
+		std::string query = "print p1; print p2; Select p1 with p1.varName = p2.varName";
 		ParsedQuery parsedQuery = PQLParser::parseQuery(query);
 		std::vector<Instruction*> instructions = parsedQuery.getClauseInstructions(processors, pkbGetter);
 		Assert::AreEqual(size_t(1), instructions.size()); Assert::IsTrue(std::any_of(instructions.begin(), instructions.end(), [](Instruction* instruction) {return typeid(*instruction) == typeid(WithStringInstruction); }));
@@ -3508,7 +3368,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_multipleElemsNotTuple_exceptionThrown) {
-		
 		std::string query = "read r; print pn; Select r.varName, pn.stmt#";
 		auto wrapperFunc =
 			[&query, this] { PQLParser::parseQuery(query); };
@@ -3516,7 +3375,6 @@ public:
 	}
 
 	TEST_METHOD(parseQuery_tupleNoClosingBracket_exceptionThrown) {
-		
 		std::string query = "read r; print pn; Select <r.varName, pn.stmt#";
 		auto wrapperFunc =
 			[&query, this] { PQLParser::parseQuery(query); };

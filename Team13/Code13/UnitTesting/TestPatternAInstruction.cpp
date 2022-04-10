@@ -56,7 +56,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
 		std::string expected = "Table String: size: 2\nSynonym: a1 Values: \nSynonym: v Values: \n";   // for this iteration we leave empty vectors still (does not affect end res)
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsIdentRhsIdent_LeftIdentOutOfBoundsEvTableFalse) {
@@ -87,7 +87,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: a1 Values: \n";   // for this iteration we leave empty vectors still (does not affect end res)
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 	TEST_METHOD(execute_lhsSynonymRhsIdentVarPartialPqlinsertAssignInfoTest1) {
 		// assign1 = assign1 + x
@@ -117,7 +117,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
 		std::string expected = "Table String: size: 2\nSynonym: a1 Values: \nSynonym: v Values: \n";   // for this iteration we leave empty vectors still (does not affect end res)
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsSynonymRhsIdentVarPartialPqlinsertAssignInfoTest2) {
@@ -149,7 +149,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
 		std::string expected = "Table String: size: 2\nSynonym: a1 Values: \nSynonym: v Values: \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsSynonymRhsIdentVar) {
@@ -180,7 +180,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 		std::string expected = "Table String: size: 2\nSynonym: a1 Values: 2 \nSynonym: v Values: 2 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsSynonymRhsIdentConstant) {   // assign1 = assign1 + 123
@@ -210,7 +210,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 		std::string expected = "Table String: size: 2\nSynonym: a1 Values: 2 \nSynonym: v Values: 1 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsIdentRhsIdentSynonym) {
@@ -241,7 +241,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: a1 Values: 2 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsIdentRhsIdentConstant) {
@@ -273,7 +273,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: a1 Values: 2 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsSynonymRhsWildCard) {
@@ -303,7 +303,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 		std::string expected = "Table String: size: 2\nSynonym: a1 Values: 2 \nSynonym: v Values: 1 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsIdentRhsWildCard) {
@@ -333,7 +333,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: a1 Values: 2 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsWildCardRhsIdent) {
@@ -363,7 +363,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: a1 Values: 2 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsWildCardRhsWildCard) {
@@ -393,7 +393,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: a1 Values: 2 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	/*FULL pattern matching*/
@@ -428,7 +428,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 		std::string expected = "Table String: size: 2\nSynonym: a1 Values: 2 \nSynonym: v Values: 1 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsSynonymRhsIdentExactMatch2) {
@@ -459,7 +459,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 		std::string expected = "Table String: size: 2\nSynonym: a1 Values: 2 \nSynonym: v Values: 1 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 	/*expressionSpec is converted to post fix before passed into PatternInstruction*/
 	TEST_METHOD(execute_lhsIdentRhsIdentExactMatch) {
@@ -490,7 +490,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: a1 Values: 2 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsWildCardRhsIdentExactMatch) {
@@ -524,7 +524,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(2), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: a1 Values: 2 3 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 	};
 }

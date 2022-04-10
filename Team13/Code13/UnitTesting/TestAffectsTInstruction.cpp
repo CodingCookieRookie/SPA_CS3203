@@ -5,7 +5,7 @@
 
 #include "../source/QPS/PQLEvaluator.h"
 #include "../source/QPS/PQLParser.h"
-#include "../source/QPS/AffectsStarInstruction.h"
+#include "../source/QPS/AffectsTInstruction.h"
 #include "../source/QPS/CacheStorage.h"
 #include "../source/PKB/PKBInserter.h"
 
@@ -14,7 +14,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace UnitTesting {
 	// Affects (a1, a2) or Affects(a1, 1) or Affects (a1, _ )
 	// Affects (_, a2) or Affects(_, 1) or Affects (_, _ )
-	TEST_CLASS(TestAffectsStarInstruction) {
+	TEST_CLASS(TestAffectsTInstruction) {
 private:
 	PKB* pkb;
 	PKBInserter* pkbInserter;
@@ -43,7 +43,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a2");
-		Instruction* instruction = new AffectsStarInstruction(lhsRef, rhsRef, affectsTProcessor, pkbGetter);
+		Instruction* instruction = new AffectsTInstruction(lhsRef, rhsRef, affectsTProcessor, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1", "a2" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -67,7 +67,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(3), evTable.getNumRow());
 		std::string expected = "Table String: size: 2\nSynonym: a1 Values: 2 2 3 \nSynonym: a2 Values: 3 4 4 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsSynonymRhsSynonym2) {
@@ -78,7 +78,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
-		Instruction* instruction = new AffectsStarInstruction(lhsRef, rhsRef, affectsTProcessor, pkbGetter);
+		Instruction* instruction = new AffectsTInstruction(lhsRef, rhsRef, affectsTProcessor, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -98,7 +98,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: a1 Values: \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsSynonymRhsSynonym3) {
@@ -111,7 +111,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
-		Instruction* instruction = new AffectsStarInstruction(lhsRef, rhsRef, affectsTProcessor, pkbGetter);
+		Instruction* instruction = new AffectsTInstruction(lhsRef, rhsRef, affectsTProcessor, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -131,7 +131,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: a1 Values: 3 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 	TEST_METHOD(execute_lhsSynonymRhsSynonym4) {
 		/*
@@ -144,7 +144,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
-		Instruction* instruction = new AffectsStarInstruction(lhsRef, rhsRef, affectsTProcessor, pkbGetter);
+		Instruction* instruction = new AffectsTInstruction(lhsRef, rhsRef, affectsTProcessor, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -169,7 +169,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(2), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: a1 Values: 3 4 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsSynonymRhsSynonym5) {
@@ -183,7 +183,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
-		Instruction* instruction = new AffectsStarInstruction(lhsRef, rhsRef, affectsTProcessor, pkbGetter);
+		Instruction* instruction = new AffectsTInstruction(lhsRef, rhsRef, affectsTProcessor, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -209,7 +209,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: a1 Values: \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsSynonymRhsSynonyn6) {
@@ -223,7 +223,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
-		Instruction* instruction = new AffectsStarInstruction(lhsRef, rhsRef, affectsTProcessor, pkbGetter);
+		Instruction* instruction = new AffectsTInstruction(lhsRef, rhsRef, affectsTProcessor, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -249,7 +249,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: a1 Values: 3 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsSynonymRhsInteger) {
@@ -262,7 +262,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "4");
-		Instruction* instruction = new AffectsStarInstruction(lhsRef, rhsRef, affectsTProcessor, pkbGetter);
+		Instruction* instruction = new AffectsTInstruction(lhsRef, rhsRef, affectsTProcessor, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -303,7 +303,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "");
-		Instruction* instruction = new AffectsStarInstruction(lhsRef, rhsRef, affectsTProcessor, pkbGetter);
+		Instruction* instruction = new AffectsTInstruction(lhsRef, rhsRef, affectsTProcessor, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -328,7 +328,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(3), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: a1 Values: 2 2 3 \n"; /* 2 affects* 3, 2 affects* 4, 3 affects* 4 */
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsWildCardRhsSynonym) {
@@ -341,7 +341,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "a1");
-		Instruction* instruction = new AffectsStarInstruction(lhsRef, rhsRef, affectsTProcessor, pkbGetter);
+		Instruction* instruction = new AffectsTInstruction(lhsRef, rhsRef, affectsTProcessor, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "a1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -366,7 +366,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(3), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: a1 Values: 3 4 4 \n"; /* 2 affects* 3, 2 affects* 4, 3 affects* 4 */
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsWildCardRhsInteger) {
@@ -379,7 +379,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "");
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "4");
-		Instruction* instruction = new AffectsStarInstruction(lhsRef, rhsRef, affectsTProcessor, pkbGetter);
+		Instruction* instruction = new AffectsTInstruction(lhsRef, rhsRef, affectsTProcessor, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -405,7 +405,7 @@ public:
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
 		Assert::IsTrue(evTable.getEvResult());
 		std::string expected = "Table String: size: 0\n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsWildCardRhsWildCard) {
@@ -418,7 +418,7 @@ public:
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "");
-		Instruction* instruction = new AffectsStarInstruction(lhsRef, rhsRef, affectsTProcessor, pkbGetter);
+		Instruction* instruction = new AffectsTInstruction(lhsRef, rhsRef, affectsTProcessor, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -444,7 +444,7 @@ public:
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
 		Assert::IsTrue(evTable.getEvResult());
 		std::string expected = "Table String: size: 0\n"; /* 2 affects* 3, 2 affects* 4, 3 affects* 4 */
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 	};
 }

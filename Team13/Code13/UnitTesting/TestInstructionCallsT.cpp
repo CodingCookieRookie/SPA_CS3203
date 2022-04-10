@@ -24,13 +24,13 @@ private:
 
 public:
 
-	TEST_METHOD(executeCallsStarInstruction_twoIdents_evaluatedTableFormed) {
+	TEST_METHOD(executeCallsTInstruction_twoIdents_evaluatedTableFormed) {
 		// 1. Setup:
 		// Calls("first", "second") RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::IDENT, "procedure2");
 		rhsRef = std::make_pair(PqlReferenceType::IDENT, "procedure3");
-		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef, pkbGetter);
+		Instruction* instruction = new CallsTInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{};
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -56,13 +56,13 @@ public:
 		Assert::AreEqual(true, evTable.getEvResult());
 	}
 
-	TEST_METHOD(executeCallsStarInstruction_lhsIdentRhsProc_evaluatedTableFormed) {
+	TEST_METHOD(executeCallsTInstruction_lhsIdentRhsProc_evaluatedTableFormed) {
 		// 1. Setup:
 		// Calls*("procedure1", q) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::IDENT, "procedure1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "q");
-		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef, pkbGetter);
+		Instruction* instruction = new CallsTInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "q" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -104,13 +104,13 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 	}
 
-	TEST_METHOD(executeCallsStarInstruction_lhsProcRhsIdent_evaluatedTableFormed) {
+	TEST_METHOD(executeCallsTInstruction_lhsProcRhsIdent_evaluatedTableFormed) {
 		// 1. Setup:
 		// Calls*(p, "procedure4") RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "p");
 		rhsRef = std::make_pair(PqlReferenceType::IDENT, "procedure4");
-		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef, pkbGetter);
+		Instruction* instruction = new CallsTInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "p" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -153,13 +153,13 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 	}
 
-	TEST_METHOD(executeCallsStarInstruction_twoProcs_evaluatedTableFormed) {
+	TEST_METHOD(executeCallsTInstruction_twoProcs_evaluatedTableFormed) {
 		// 1. Setup:
 		// Calls*(p, q) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "p");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "q");
-		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef, pkbGetter);
+		Instruction* instruction = new CallsTInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "p", "q" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -209,13 +209,13 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 	}
 
-	TEST_METHOD(executeCallsStarInstruction_twoProcStress_evaluatedTableFormed) {
+	TEST_METHOD(executeCallsTInstruction_twoProcStress_evaluatedTableFormed) {
 		// 1. Setup:
 		// Calls*(s1, s2) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "p");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "q");
-		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef, pkbGetter);
+		Instruction* instruction = new CallsTInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "p", "q" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -279,13 +279,13 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 	}
 
-	TEST_METHOD(executeCallsStarInstruction_lhsProcRhsWildcardStress_evaluatedTableFormed) {
+	TEST_METHOD(executeCallsTInstruction_lhsProcRhsWildcardStress_evaluatedTableFormed) {
 		// 1. Setup:
 		// Calls*(p, _) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "p");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
-		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef, pkbGetter);
+		Instruction* instruction = new CallsTInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "p" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -340,13 +340,13 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 	}
 
-	TEST_METHOD(executeCallsStarInstruction_lhsWildcardRhsIdentStress_evaluatedTableFormed) {
+	TEST_METHOD(executeCallsTInstruction_lhsWildcardRhsIdentStress_evaluatedTableFormed) {
 		// 1. Setup:
 		// Calls*(_, "procedure87") RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		rhsRef = std::make_pair(PqlReferenceType::IDENT, "procedure87");
-		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef, pkbGetter);
+		Instruction* instruction = new CallsTInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{};
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -383,13 +383,13 @@ public:
 		Assert::AreEqual(true, actualEvResult); // there exists a procedure which calls* of 87
 	}
 
-	TEST_METHOD(executeCallsStarInstruction_twoWildcardsStress_evaluatedTableFormed) {
+	TEST_METHOD(executeCallsTInstruction_twoWildcardsStress_evaluatedTableFormed) {
 		// 1. Setup:
 		// Calls*(_, _) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
-		Instruction* instruction = new CallsStarInstruction(lhsRef, rhsRef, pkbGetter);
+		Instruction* instruction = new CallsTInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{};
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);

@@ -2,7 +2,7 @@
 
 #include "RelationshipInstruction.h"
 
-class FollowsStarInstruction : public RelationshipInstruction {
+class FollowsTInstruction : public RelationshipInstruction {
 protected:
 	EvaluatedTable helperHandleTwoIntegers();
 	EvaluatedTable helperHandleOneInt(PqlReferenceType lhsRefType, PqlReferenceType rhsRefType);
@@ -10,6 +10,6 @@ protected:
 	EvaluatedTable helperHandleTwoWildcards();
 
 public:
-	FollowsStarInstruction(PqlReference lhsRef, PqlReference rhsRef, PKBGetter* pkbGetter);
+	FollowsTInstruction(PqlReference lhsRef, PqlReference rhsRef, PKBGetter* pkbGetter);
 	EvaluatedTable execute() override;
 };

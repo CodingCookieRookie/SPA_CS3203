@@ -10,7 +10,7 @@
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting {
-	TEST_CLASS(TestParentTInstructions) {
+	TEST_CLASS(TestInstructionParentT) {
 private:
 	PKB* pkb;
 	PKBGetter* pkbGetter;
@@ -24,13 +24,13 @@ private:
 
 public:
 
-	TEST_METHOD(executeParentStarInstruction_twoConstants_evaluatedTableFormed) {
+	TEST_METHOD(executeParentTInstruction_twoConstants_evaluatedTableFormed) {
 		// 1. Setup:
 		// Parent*(1, 2) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "1");
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "2");
-		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef, pkbGetter);
+		Instruction* instruction = new ParentTInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{};
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -47,13 +47,13 @@ public:
 		Assert::AreEqual(true, evTable.getEvResult());
 	}
 
-	TEST_METHOD(executeParentStarInstruction_lhsConstRhsStmt_evaluatedTableFormed) {
+	TEST_METHOD(executeParentTInstruction_lhsConstRhsStmt_evaluatedTableFormed) {
 		// 1. Setup:
 		// Parent*(1, s2) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::INTEGER, "1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s2");
-		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef, pkbGetter);
+		Instruction* instruction = new ParentTInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "s2" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -92,13 +92,13 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 	}
 
-	TEST_METHOD(executeParentStarInstruction_lhsStmtRhsConst_evaluatedTableFormed) {
+	TEST_METHOD(executeParentTInstruction_lhsStmtRhsConst_evaluatedTableFormed) {
 		// 1. Setup:
 		// Parent*(s1, 4) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "4");
-		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef, pkbGetter);
+		Instruction* instruction = new ParentTInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "s1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -138,13 +138,13 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 	}
 
-	TEST_METHOD(executeParentStarInstruction_twoStmts_evaluatedTableFormed) {
+	TEST_METHOD(executeParentTInstruction_twoStmts_evaluatedTableFormed) {
 		// 1. Setup:
 		// Follows'*(s1, s2) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s2");
-		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef, pkbGetter);
+		Instruction* instruction = new ParentTInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "s1", "s2" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -192,13 +192,13 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 	}
 
-	TEST_METHOD(executeParentStarInstruction_twoStmtsStress_evaluatedTableFormed) {
+	TEST_METHOD(executeParentTInstruction_twoStmtsStress_evaluatedTableFormed) {
 		// 1. Setup:
 		// Parent*(s1, s2) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s2");
-		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef, pkbGetter);
+		Instruction* instruction = new ParentTInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "s1", "s2" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -259,13 +259,13 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 	}
 
-	TEST_METHOD(executeParentStarInstruction_lhsStmtRhsWildcardStress_evaluatedTableFormed) {
+	TEST_METHOD(executeParentTInstruction_lhsStmtRhsWildcardStress_evaluatedTableFormed) {
 		// 1. Setup:
 		// Parent*(s1, _) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::SYNONYM, "s1");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
-		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef, pkbGetter);
+		Instruction* instruction = new ParentTInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{ "s1" };
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -317,13 +317,13 @@ public:
 		Assert::AreEqual(true, actualEvResult);
 	}
 
-	TEST_METHOD(executeParentStarInstruction_lhsWildcardRhsConstStress_evaluatedTableFormed) {
+	TEST_METHOD(executeParentTInstruction_lhsWildcardRhsConstStress_evaluatedTableFormed) {
 		// 1. Setup:
 		// Parent*(_, 87) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		rhsRef = std::make_pair(PqlReferenceType::INTEGER, "87");
-		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef, pkbGetter);
+		Instruction* instruction = new ParentTInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{};
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);
@@ -358,13 +358,13 @@ public:
 		Assert::AreEqual(true, actualEvResult); // there exists a parent* of 87
 	}
 
-	TEST_METHOD(executeParentStarInstruction_twoWildcards_evaluatedTableFormed) {
+	TEST_METHOD(executeParentTInstruction_twoWildcards_evaluatedTableFormed) {
 		// 1. Setup:
 		// Parent*(_, _) RelationshipInstruction
 		PqlReference lhsRef, rhsRef;
 		lhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
 		rhsRef = std::make_pair(PqlReferenceType::WILDCARD, "_");
-		Instruction* instruction = new ParentStarInstruction(lhsRef, rhsRef, pkbGetter);
+		Instruction* instruction = new ParentTInstruction(lhsRef, rhsRef, pkbGetter);
 
 		std::unordered_set<std::string> expectedSynonyms{};
 		Assert::IsTrue(instruction->getSynonyms() == expectedSynonyms);

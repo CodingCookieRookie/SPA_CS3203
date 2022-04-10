@@ -61,9 +61,6 @@
     <ClCompile Include="..\source\QPS\CallsInstruction.cpp">
       <Filter>Source Files\QPS</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\QPS\CallsStarInstruction.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\QPS\OnTheFlyRSProcessor.cpp">
       <Filter>Source Files\QPS</Filter>
     </ClCompile>
@@ -71,9 +68,6 @@
       <Filter>Source Files\QPS</Filter>
     </ClCompile>
     <ClCompile Include="..\source\QPS\FollowsInstruction.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\FollowsStarInstruction.cpp">
       <Filter>Source Files\QPS</Filter>
     </ClCompile>
     <ClCompile Include="..\source\QPS\ModifiesInstruction.cpp">
@@ -86,9 +80,6 @@
       <Filter>Source Files\QPS</Filter>
     </ClCompile>
     <ClCompile Include="..\source\QPS\ParentInstruction.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\ParentStarInstruction.cpp">
       <Filter>Source Files\QPS</Filter>
     </ClCompile>
     <ClCompile Include="..\source\QPS\ParsedPattern.cpp">
@@ -128,9 +119,6 @@
       <Filter>Source Files\QPS</Filter>
     </ClCompile>
     <ClCompile Include="..\source\QPS\WithInstruction.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\QPS\AffectsStarInstruction.cpp">
       <Filter>Source Files\QPS</Filter>
     </ClCompile>
     <ClCompile Include="..\source\QPS\AffectsInstruction.cpp">
@@ -218,13 +206,25 @@
     <ClCompile Include="..\source\QPS\Instructions\GetAllInstructions\GetAllWhileInstruction.cpp">
       <Filter>Source Files\QPS\Instruction</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\QPS\NextStarInstruction.cpp">
-      <Filter>Source Files\QPS</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\QPS\Processors.cpp">
       <Filter>Source Files\QPS</Filter>
     </ClCompile>
     <ClCompile Include="..\source\QPS\AffectsTProcessor.cpp">
+      <Filter>Source Files\QPS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\AffectsTInstruction.cpp">
+      <Filter>Source Files\QPS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\FollowsTInstruction.cpp">
+      <Filter>Source Files\QPS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\NextTInstruction.cpp">
+      <Filter>Source Files\QPS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\ParentTInstruction.cpp">
+      <Filter>Source Files\QPS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\QPS\CallsTInstruction.cpp">
       <Filter>Source Files\QPS</Filter>
     </ClCompile>
   </ItemGroup>
@@ -355,9 +355,6 @@
     <ClInclude Include="..\source\QPS\CallsInstruction.h">
       <Filter>Header Files\QPS</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\QPS\CallsStarInstruction.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\QPS\OnTheFlyRSProcessor.h">
       <Filter>Header Files\QPS</Filter>
     </ClInclude>
@@ -365,9 +362,6 @@
       <Filter>Header Files\QPS</Filter>
     </ClInclude>
     <ClInclude Include="..\source\QPS\FollowsInstruction.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\FollowsStarInstruction.h">
       <Filter>Header Files\QPS</Filter>
     </ClInclude>
     <ClInclude Include="..\source\QPS\Instruction.h">
@@ -383,9 +377,6 @@
       <Filter>Header Files\QPS</Filter>
     </ClInclude>
     <ClInclude Include="..\source\QPS\ParentInstruction.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\ParentStarInstruction.h">
       <Filter>Header Files\QPS</Filter>
     </ClInclude>
     <ClInclude Include="..\source\QPS\ParsedGetAll.h">
@@ -428,9 +419,6 @@
       <Filter>Header Files\QPS</Filter>
     </ClInclude>
     <ClInclude Include="..\source\QPS\AffectsInstruction.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\QPS\AffectsStarInstruction.h">
       <Filter>Header Files\QPS</Filter>
     </ClInclude>
     <ClInclude Include="..\source\PKB\Statement.h">
@@ -491,9 +479,6 @@
     <ClInclude Include="..\source\QPS\Instructions\GetAllInstructions\GetAllWhileInstruction.h">
       <Filter>Header Files\QPS\Instruction</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\QPS\NextStarInstruction.h">
-      <Filter>Header Files\QPS</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\QPS\Processors.h">
       <Filter>Header Files\QPS</Filter>
     </ClInclude>
@@ -501,6 +486,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\QPS\AffectsTProcessor.h">
+      <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\AffectsTInstruction.h">
+      <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\FollowsTInstruction.h">
+      <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\CallsTInstruction.h">
+      <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\NextTInstruction.h">
+      <Filter>Header Files\QPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\QPS\ParentTInstruction.h">
       <Filter>Header Files\QPS</Filter>
     </ClInclude>
   </ItemGroup>

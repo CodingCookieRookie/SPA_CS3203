@@ -1,6 +1,6 @@
 #pragma once
 
-#include "RelationShipInstruction.h"
+#include "RelationshipInstruction.h"
 
 class ModifiesInstruction : public RelationshipInstruction {
 protected:

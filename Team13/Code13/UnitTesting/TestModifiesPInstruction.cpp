@@ -48,7 +48,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 		std::string expected = "Table String: size: 2\nSynonym: p Values: 2 \nSynonym: v Values: 2 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsSynonymRhsIdentProc) {
@@ -72,7 +72,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: p Values: 2 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsSynonymRhsWildCardProc) {
@@ -98,7 +98,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(2), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: p Values: 2 2 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 	TEST_METHOD(execute_lhsIdentRhsSynonymProc) {
 		// 1. Setup:
@@ -121,7 +121,7 @@ public:
 		EvaluatedTable evTable = instruction->execute();
 		Assert::AreEqual(size_t(1), evTable.getNumRow());
 		std::string expected = "Table String: size: 1\nSynonym: v Values: 2 \n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsIdentRhsIdentProc) {
@@ -146,7 +146,7 @@ public:
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
 		Assert::AreEqual(true, evTable.getEvResult());
 		std::string expected = "Table String: size: 0\n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 
 	TEST_METHOD(execute_lhsIdentRhsWildCardProc) {
@@ -173,7 +173,7 @@ public:
 		Assert::AreEqual(size_t(0), evTable.getNumRow());
 		Assert::AreEqual(true, evTable.getEvResult());
 		std::string expected = "Table String: size: 0\n";
-		Assert::AreEqual(expected, evTable.getTableString());
+		Assert::AreEqual(expected, evTable.toString());
 	}
 	};
 }

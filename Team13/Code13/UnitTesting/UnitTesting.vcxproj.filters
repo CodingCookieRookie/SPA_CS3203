@@ -59,7 +59,6 @@
     <ClCompile Include="TestCFG.cpp" />
     <ClCompile Include="TestCacheStorage.cpp" />
     <ClCompile Include="TestAffectsInstruction.cpp" />
-    <ClCompile Include="TestAffectsStarInstruction.cpp" />
     <ClCompile Include="TestBidirectionalTableTwoWaySet.cpp" />
     <ClCompile Include="TestBidirectionalIndexTable.cpp" />
     <ClCompile Include="TestBidirectionalTableOneWaySet.cpp" />

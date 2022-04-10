@@ -1,9 +1,9 @@
-#include "FollowsStarInstruction.h"
+#include "FollowsTInstruction.h"
 
-FollowsStarInstruction::FollowsStarInstruction(PqlReference lhsRef, PqlReference rhsRef, PKBGetter* pkbGetter) :
+FollowsTInstruction::FollowsTInstruction(PqlReference lhsRef, PqlReference rhsRef, PKBGetter* pkbGetter) :
 	RelationshipInstruction(lhsRef, rhsRef, pkbGetter) {}
 
-EvaluatedTable FollowsStarInstruction::execute() {
+EvaluatedTable FollowsTInstruction::execute() {
 	EvaluatedTable resultTable;
 	// e.g Follows*(6, 7)
 	if (lhsRef.first == PqlReferenceType::INTEGER && rhsRef.first == PqlReferenceType::INTEGER) {
@@ -38,7 +38,7 @@ EvaluatedTable FollowsStarInstruction::execute() {
 	return resultTable;
 }
 
-EvaluatedTable FollowsStarInstruction::helperHandleTwoIntegers() {
+EvaluatedTable FollowsTInstruction::helperHandleTwoIntegers() {
 	StmtIndex lhsStmtIndex, rhsStmtIndex;
 	bool evResult = false;
 	int lhsRefValue = stoi(lhsRef.second);
@@ -51,7 +51,7 @@ EvaluatedTable FollowsStarInstruction::helperHandleTwoIntegers() {
 	return EvaluatedTable(evResult);
 }
 
-EvaluatedTable FollowsStarInstruction::helperHandleOneInt(PqlReferenceType lhsRefType, PqlReferenceType rhsRefType) {
+EvaluatedTable FollowsTInstruction::helperHandleOneInt(PqlReferenceType lhsRefType, PqlReferenceType rhsRefType) {
 	std::vector<StmtIndex> stmts = pkbGetter->getAllStmts();
 	std::vector<int> results;
 	int oneInt;
@@ -88,7 +88,7 @@ EvaluatedTable FollowsStarInstruction::helperHandleOneInt(PqlReferenceType lhsRe
 	return EvaluatedTable(PQLmap);
 }
 
-EvaluatedTable FollowsStarInstruction::helperHandleTwoStmtsMaybeWildcard() {
+EvaluatedTable FollowsTInstruction::helperHandleTwoStmtsMaybeWildcard() {
 	std::tuple<std::vector<int>, std::vector<int>> results;
 	/* e.g. {1, 2}, {2, 3}, {3, 6} */
 	std::unordered_map<std::string, std::vector<int>> PQLmap;
@@ -107,7 +107,7 @@ EvaluatedTable FollowsStarInstruction::helperHandleTwoStmtsMaybeWildcard() {
 	return EvaluatedTable(PQLmap);
 }
 
-EvaluatedTable FollowsStarInstruction::helperHandleTwoWildcards() {
+EvaluatedTable FollowsTInstruction::helperHandleTwoWildcards() {
 	bool isEmptyTable = true;
 	isEmptyTable = std::get<0>(pkbGetter->getRSAllInfo(RelationshipType::FOLLOWS_T)).empty();
 	// No Follows* rs exists => isEmptyTable == true => EvTable.evResult == false (innerJoinMerge() can drop table)

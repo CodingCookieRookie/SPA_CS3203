@@ -168,7 +168,6 @@
   <ItemGroup>
     <ClCompile Include="TestAffectsInstruction.cpp" />
     <ClCompile Include="TestAffectsProcessor.cpp" />
-    <ClCompile Include="TestAffectsStarInstruction.cpp" />
     <ClCompile Include="TestAffectsTProcessor.cpp" />
     <ClCompile Include="TestBidirectionalIndexTable.cpp" />
     <ClCompile Include="TestBidirectionalTableOneWaySet.cpp" />
