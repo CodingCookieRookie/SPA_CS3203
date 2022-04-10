@@ -194,38 +194,42 @@ void DesignExtractor::populateSameSynonymsRSInfo() {
 	/* For every SameSynonymsRS, populates its direct and transitive relationships */
 	for (const auto& [rs, rsT] : rsToRsTMap) {
 		RelationshipMap& rsMap = rsToASTMap[rs];
-		RelationshipMap& rsTMap = rsToASTMap[rsT];
 
-		for (auto& [predecessor, successors] : rsMap) {
+		for (const auto& [predecessor, successors] : rsMap) {
+
 			/* Populates direct relationship info */
 			for (SynonymIndex successor : successors) {
 				pkbInserter->insertRSInfo(rs, predecessor, successor);
 			}
 
 			/* Populates transitive relationship info */
-			std::unordered_set<SynonymIndex> allSuccessors = getAllSuccessors(predecessor, rsMap, rsTMap);
-			for (SynonymIndex successor : allSuccessors) {
-				pkbInserter->insertRSInfo(rsT, predecessor, successor);
-			}
+			populateSameSynonymRST(predecessor, rs, rsT);
 		}
 	}
 }
 
-std::unordered_set<SynonymIndex> DesignExtractor::getAllSuccessors(SynonymIndex predecessor, RelationshipMap& rsMap, RelationshipMap& rsTMap) {
-	/* Early termination if successors (for the curr predecessor) are already populated in the transitive table */
-	if (rsTMap.find(predecessor) != rsTMap.end()) {
-		return rsTMap[predecessor];
+void DesignExtractor::populateSameSynonymRST(SynonymIndex predecessor, RelationshipType rs, RelationshipType rsT) {
+	/* Terminates early if the info for curr procIndex has been added to PKB */
+	std::unordered_set<StmtIndex>& populatedIndices = rsToPopulatedIndicesMap[rsT];
+	if (populatedIndices.find(predecessor) != populatedIndices.end()) {
+		return;
 	}
+	populatedIndices.insert(predecessor);
 
-	std::unordered_set<SynonymIndex> successors = rsMap[predecessor];
+	RelationshipMap& rsMap = rsToASTMap[rs];
+	RelationshipMap& rsTMap = rsToASTMap[rsT];
+
+	std::unordered_set successors = rsMap[predecessor];
 	for (SynonymIndex successor : successors) {
-		std::unordered_set<SynonymIndex> grandSuccessors = getAllSuccessors(successor, rsMap, rsTMap);
-		successors.insert(grandSuccessors.begin(), grandSuccessors.end());
+		pkbInserter->insertRSInfo(rsT, predecessor, successor);
+		rsTMap[predecessor].insert(successor);
+		populateSameSynonymRST(successor, rs, rsT);
+		std::unordered_set<SynonymIndex> subsuccessors = rsTMap[successor];
+		for (SynonymIndex subsuccessor : subsuccessors) {
+			pkbInserter->insertRSInfo(rsT, predecessor, subsuccessor);
+			rsTMap[predecessor].insert(subsuccessor);
+		}
 	}
-
-	rsTMap[predecessor] = successors;
-
-	return successors;
 }
 
 void DesignExtractor::generateCFG(StmtLstNode* stmtLstNode) {

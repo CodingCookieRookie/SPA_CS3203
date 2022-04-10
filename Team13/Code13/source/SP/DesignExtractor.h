@@ -46,7 +46,7 @@ private:
 
 	/* PKB population for same synonyms RS (Follows/T, Parent/T, Calls/T) */
 	void populateSameSynonymsRSInfo();
-	std::unordered_set<SynonymIndex> getAllSuccessors(SynonymIndex predecessor, RelationshipMap& rsMap, RelationshipMap& rsTMap);
+	void populateSameSynonymRST(SynonymIndex predecessor, RelationshipType rs, RelationshipType rsT);
 
 public:
 	DesignExtractor(SourceAST& ast, PKBInserter* pkbInserter);
