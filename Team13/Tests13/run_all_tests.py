@@ -4,7 +4,7 @@ import os
 import subprocess
 import xml.etree.ElementTree as ET
 
-AUTOTESTER_PATH = '..\Code13\Release\AutoTester.exe'
+AUTOTESTER_PATH = '../Code13/Release/AutoTester.exe'
 SLN_PATH = '..\Code13\StartupSPASolution.sln'
 PROJECT_FLAG = '/Project'
 AUTOTESTER_PROJ = 'AutoTester'
@@ -66,8 +66,8 @@ def run_tests(subfolder):
             print(f'Number of errors: {num_errors} / {num_queries}')
 
 def main():
-    clean_and_build()
-    run_tests('./')
+    #clean_and_build()
+    run_tests('./iter3')
     curr_dir = os.getcwd()
     for sub in os.listdir():
         if os.path.isdir(os.path.join(curr_dir, sub)):
